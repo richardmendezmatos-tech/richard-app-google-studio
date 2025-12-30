@@ -12,6 +12,8 @@ export interface Car {
   img: string;
   year?: number;
   featured?: boolean;
+  description?: string;
+  features?: string[];
 }
 
 export enum ViewMode {
@@ -22,7 +24,7 @@ export enum ViewMode {
   BLOG = 'blog',
   DIGITAL_GARAGE = 'digital_garage',
   PRE_QUALIFY = 'pre_qualify',
-  
+
   // AI Lab views
   CHAT = 'chat',
   CODE_ANALYZER = 'code_analyzer',
