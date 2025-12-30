@@ -1,17 +1,16 @@
-
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ViewMode, Car } from './types';
-import Storefront from './components/Storefront';
-import AdminPanel from './components/AdminPanel';
-import AIConsultant from './components/AIConsultant';
+import Storefront from './components/Storefront'; // Keep Eager
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
+const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
 import ThemeToggle from './components/ThemeToggle';
-import AILabView from './components/AILabView';
-import UserLogin from './components/UserLogin';
-import AdminLogin from './components/AdminLogin';
-import BlogView from './components/BlogView';
-import DigitalGarage from './components/DigitalGarage';
-import PreQualifyView from './components/PreQualifyView';
+const AILabView = React.lazy(() => import('./components/AILabView'));
+const UserLogin = React.lazy(() => import('./components/UserLogin'));
+const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
+const BlogView = React.lazy(() => import('./components/BlogView'));
+const DigitalGarage = React.lazy(() => import('./components/DigitalGarage'));
+const PreQualifyView = React.lazy(() => import('./components/PreQualifyView'));
 import CookieConsent from './components/CookieConsent';
 import { LayoutDashboard, ShoppingBag, BotMessageSquare, Phone, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, Lock, User as UserIcon } from 'lucide-react';
 import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
@@ -60,8 +59,16 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     badge: 'Ultra Lujo',
     img: 'https://vehicle-images.dealerinspire.com/stock-images/chrome/c623910c732488a07106c68388836511.png',
     featured: true,
-  }
+  },
 ];
+
+// Loading Component
+const FullScreenLoader = () => (
+  <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 text-[#00aed9]">
+    <div className="animate-spin w-12 h-12 border-4 border-[#00aed9] rounded-full border-t-transparent mb-4"></div>
+    <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Cargando Sistema...</p>
+  </div>
+);
 
 const AppContent: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -109,17 +116,15 @@ const AppContent: React.FC = () => {
     try {
       addNotification('info', 'Iniciando reparación automática...');
       const tempId = Date.now();
-      const tempEmail = `admin_fix_${tempId}@richard.com`;
+      const tempEmail = "admin_fix_" + tempId + "@richard.com"; // Fixed string concatenation
       const tempPass = "fix123456";
       await registerUser(tempEmail, tempPass);
       await uploadInitialInventory(initialInventoryData);
-      addNotification('success', '✅ REPARACIÓN COMPLETADA.');
+      addNotification('success', '✅ REPARACIÓN COMPLETA.');
     } catch (error: any) {
       addNotification('error', 'Error en reparación: ' + error.message);
     }
   };
-
-  // ... (rest of the component)
 
   const getCurrentViewMode = (): ViewMode | string => {
     const path = location.pathname;
@@ -134,17 +139,14 @@ const AppContent: React.FC = () => {
   };
 
   // AuthGuard that remembers where the user wanted to go
-  // Fix: Make children optional in the type definition to resolve TS error in Route elements
   const AuthGuard = ({ children }: { children?: React.ReactNode }) => {
     if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
     if (!user) {
-      // We save the 'location' in the navigation state so the login page can redirect us back
       return <Navigate to="/login" state={{ from: location }} replace />;
     }
     return <>{children}</>;
   };
 
-  // Fix: Make children optional in the type definition to resolve TS error in Route elements
   const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
     if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
     if (!user) return <Navigate to="/admin-login" />;
@@ -171,10 +173,7 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* Main Sidebar Navigation */}
-      <nav className={`
-        fixed inset-y-0 left-0 w-72 bg-[#173d57] dark:bg-[#0d2232] text-white flex flex-col shadow-2xl z-40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      <nav className={"fixed inset-y-0 left-0 w-72 bg-[#173d57] dark:bg-[#0d2232] text-white flex flex-col shadow-2xl z-40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen " + (isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full')}>
         <div className="p-10 flex justify-between items-center cursor-pointer" onClick={() => navigate('/')}>
           <h1 className="text-3xl font-black tracking-tighter leading-none">
             <span className="text-[#00aed9]">RICHARD</span>
@@ -193,73 +192,65 @@ const AppContent: React.FC = () => {
 
           {/* Persistent Login/User Button */}
           {!loading && user ? (
-            <div className="space-y-3">
-              <div className="px-4 py-4 bg-white/5 rounded-2xl flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#00aed9] flex items-center justify-center text-white font-bold">
-                  {user.email?.[0].toUpperCase()}
+            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <UserIcon size={16} />
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Usuario Activo</p>
                   <p className="text-xs font-bold truncate text-white">{user.email}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-green-400 font-bold">{role === 'admin' ? 'Administrador' : 'Usuario'}</p>
                 </div>
               </div>
-
-              {role === 'admin' && (
-                <>
-                  <NavButton active={getCurrentViewMode() === ViewMode.ADMIN} onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }} icon={<LayoutDashboard size={20} />} label="Control Center" />
-                  <NavButton active={getCurrentViewMode() === ViewMode.AI_LAB} onClick={() => { navigate('/lab'); setIsMobileMenuOpen(false); }} icon={<FlaskConical size={20} />} label="Laboratorio IA" highlight />
-                </>
-              )}
-
-              <NavButton onClick={handleLogout} icon={<LogOut size={20} />} label="Cerrar Sesión" isAction />
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <button onClick={handleLogout} className="flex items-center justify-center gap-2 p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-bold transition-colors">
+                  <LogOut size={14} /> Salir
+                </button>
+                {role === 'admin' && (
+                  <button onClick={() => navigate('/admin')} className="flex items-center justify-center gap-2 p-2 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-xs font-bold transition-colors">
+                    <ShieldAlert size={14} /> Admin
+                  </button>
+                )}
+              </div>
             </div>
-          ) : !loading && (
-            <div className="pt-2">
-              <NavButton active={getCurrentViewMode() === 'login'} onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} icon={<LogIn size={20} />} label="Acceso Clientes" highlight />
-            </div>
+          ) : (
+            <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} icon={<LogIn size={20} />} label="Iniciar Sesión" isAction />
           )}
+
+          <div className="pt-4 my-4 border-t border-white/10" />
+
+          <NavButton active={getCurrentViewMode() === ViewMode.AI_LAB} onClick={() => { navigate('/lab'); setIsMobileMenuOpen(false); }} icon={<FlaskConical size={20} />} label="Laboratorio IA" highlight />
         </div>
 
-        <div className="p-6 bg-[#0d2232] dark:bg-black/20">
-          <div className="flex justify-between items-center mb-4">
-            <ThemeToggle />
-            {/* Administrative portal link hidden from normal navigation */}
-            <button
-              onClick={() => window.open('/#/admin-login', '_blank')}
-              className="text-[10px] uppercase font-bold text-slate-600 hover:text-slate-400 transition-colors flex items-center gap-1"
-            >
-              <Lock size={10} /> Portal Staff
-            </button>
-          </div>
-          <a href="tel:7873682880" className="flex items-center justify-center gap-2 w-full py-3 bg-[#00aed9]/10 text-[#00aed9] rounded-xl text-sm font-bold hover:bg-[#00aed9] hover:text-white transition-all">
-            <Phone size={16} /> Soporte Richard
-          </a>
+        <div className="p-6 border-t border-white/10">
+          <ThemeToggle />
         </div>
       </nav>
 
-      {isMobileMenuOpen && <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />}
-
-      <main className="flex-1 overflow-y-auto h-screen relative scroll-smooth">
-        <Routes>
-          <Route path="/" element={
-            <Storefront
-              inventory={inventory}
-              initialVisualSearch={pendingVisualSearch}
-              onClearVisualSearch={() => setPendingVisualSearch(null)}
-              onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
-              onOpenGarage={() => navigate('/garage')}
-            />
-          } />
-          <Route path="/garage" element={<AuthGuard><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></AuthGuard>} />
-          <Route path="/qualify" element={<PreQualifyView onExit={() => navigate('/')} />} />
-          <Route path="/consultant" element={<AIConsultant inventory={inventory} />} />
-          <Route path="/blog" element={<BlogView />} />
-          <Route path="/lab" element={<AuthGuard><AILabView onExit={() => navigate('/')} onVisualSearch={(img) => { setPendingVisualSearch(img); navigate('/'); }} /></AuthGuard>} />
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={() => { }} onAdd={() => { }} onDelete={() => { }} onInitializeDb={() => Promise.resolve()} /></AdminGuard>} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+      {/* Main Content Area */}
+      <main className="flex-1 relative w-full h-screen overflow-hidden">
+        <Suspense fallback={<FullScreenLoader />}>
+          <Routes>
+            <Route path="/" element={
+              <Storefront
+                inventory={inventory}
+                initialVisualSearch={pendingVisualSearch}
+                onClearVisualSearch={() => setPendingVisualSearch(null)}
+                onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
+                onOpenGarage={() => navigate('/garage')}
+              />
+            } />
+            <Route path="/garage" element={<AuthGuard><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></AuthGuard>} />
+            <Route path="/qualify" element={<PreQualifyView onExit={() => navigate('/')} />} />
+            <Route path="/consultant" element={<AIConsultant inventory={inventory} />} />
+            <Route path="/blog" element={<BlogView />} />
+            <Route path="/lab" element={<AuthGuard><AILabView onExit={() => navigate('/')} onVisualSearch={(img) => { setPendingVisualSearch(img); navigate('/'); }} /></AuthGuard>} />
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={() => { }} onAdd={() => { }} onDelete={() => { }} onInitializeDb={() => Promise.resolve()} /></AdminGuard>} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Suspense>
         <CookieConsent />
       </main>
     </div>
@@ -267,19 +258,24 @@ const AppContent: React.FC = () => {
 };
 
 const NavButton = ({ active, onClick, icon, label, isAction = false, highlight = false }: any) => {
-  const commonClasses = `w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ${active
-      ? 'bg-[#00aed9] text-white shadow-xl shadow-[#00aed9]/20'
-      : highlight
-        ? 'bg-gradient-to-r from-[#173d57] to-[#00aed9] text-white border border-[#00aed9]/30 hover:shadow-lg hover:shadow-[#00aed9]/20'
-        : `text-slate-400 hover:text-white hover:bg-white/5 ${isAction ? 'text-rose-400 hover:text-rose-300 hover:bg-rose-500/10' : ''}`
-    }`;
+  let classes = "w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ";
+
+  if (active) {
+    classes += "bg-[#00aed9] text-white shadow-xl shadow-[#00aed9]/20";
+  } else if (highlight) {
+    classes += "bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-500 border border-amber-500/30 hover:shadow-lg hover:shadow-orange-500/20";
+  } else if (isAction) {
+    classes += "bg-gradient-to-r from-[#00aed9]/10 to-[#00aed9]/5 text-[#00aed9] hover:bg-[#00aed9]/20";
+  } else {
+    classes += "text-slate-400 hover:bg-white/5 hover:text-white";
+  }
 
   return (
-    <button onClick={onClick} className={commonClasses}>
-      <span className="relative z-10 flex items-center gap-4">
-        {icon}
-        {label}
-      </span>
+    <button onClick={onClick} className={classes}>
+      <div className={`absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${active ? 'hidden' : ''}`} />
+      <span className="relative z-10">{icon}</span>
+      <span className="relative z-10">{label}</span>
+      {active && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full" />}
     </button>
   );
 };
