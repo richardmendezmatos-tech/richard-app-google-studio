@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   
   // Fallback de seguridad: Si no hay .env, usar la clave conocida de Firebase 
-  const apiKey = env.API_KEY || "AIzaSyDlj3o08kSJrEhKJjU2Xb1LMNeXD2hxWhY";
+  const apiKey = env.API_KEY || "";
 
   return {
     plugins: [
