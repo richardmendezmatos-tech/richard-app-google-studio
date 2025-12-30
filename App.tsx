@@ -14,6 +14,8 @@ const PreQualifyView = React.lazy(() => import('./components/PreQualifyView'));
 import CookieConsent from './components/CookieConsent';
 import { LayoutDashboard, ShoppingBag, BotMessageSquare, Phone, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, Lock, User as UserIcon } from 'lucide-react';
 import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import LoadingScreen from './components/LoadingScreen';
+import ReloadPrompt from './components/ReloadPrompt';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { NotificationProvider, useNotification } from './contexts/NotificationContext';
 import { logoutUser, syncInventory, addCar, updateCar, deleteCar, uploadInitialInventory, registerUser } from './services/firebaseService';
@@ -228,7 +230,9 @@ const AppContent: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative w-full h-screen overflow-hidden">
+      {/* Main Content Area */}
+      <main className="flex-1 relative w-full h-screen overflow-hidden bg-slate-950 text-slate-100">
+        <ReloadPrompt />
         <Suspense fallback={<FullScreenLoader />}>
           <Routes>
             <Route path="/" element={
