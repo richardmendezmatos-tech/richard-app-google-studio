@@ -1,0 +1,8 @@
+{
+  "name": "Richard Automotive | Command Center",
+  "description": "Plataforma premium de gestión y ventas automotriz impulsada por IA.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
