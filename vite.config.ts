@@ -1,4 +1,4 @@
-
+/// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   // Cargar variables de entorno
   const env = loadEnv(mode, '.', '');
-  
+
   // Fallback de seguridad: Si no hay .env, usar la clave conocida de Firebase 
   const apiKey = env.API_KEY || "";
 
@@ -47,6 +47,11 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       'process.env.API_KEY': JSON.stringify(apiKey)
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './vitest.setup.ts',
     }
   }
 })
