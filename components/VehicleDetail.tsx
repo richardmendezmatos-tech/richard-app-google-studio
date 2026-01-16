@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Car } from '../types';
 import { ChevronLeft, Share2, Calculator, Sparkles, Banknote, Calendar, CreditCard, AlertCircle, ChevronRight, Loader2, ShieldCheck, Zap, Globe, MessageCircle } from 'lucide-react';
 import { generateCarPitch } from '../services/geminiService';
+import { incrementCarView } from '../services/firebaseService';
 import DealBuilder from './deal/DealBuilder';
 
 interface Props {
@@ -27,6 +28,8 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                 if (found.price) {
                     // Auto-calculations now handled in DealBuilder
                 }
+                // Track View (Analytics)
+                incrementCarView(found.id);
             } else {
                 // Verify if inventory is loaded. If loaded and not found, redirect.
                 // For now, we wait.

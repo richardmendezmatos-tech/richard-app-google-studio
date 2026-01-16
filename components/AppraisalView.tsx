@@ -1,258 +1,444 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, CheckCircle, ChevronRight, Loader2, ScanLine, DollarSign, Car } from 'lucide-react';
+import { Camera, CheckCircle, ChevronRight, Info, AlertCircle, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
+import { submitApplication } from '../services/firebaseService';
+import { usePhotoUploader } from '../hooks/usePhotoUploader';
+import { analyzeTradeInImages } from '../services/geminiService';
+
 const AppraisalView: React.FC = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
-    const [scanning, setScanning] = useState(false);
-    const [offerReady, setOfferReady] = useState(false);
-
-    // Form State
+    const [step, setStep] = useState<'info' | 'photos' | 'scan' | 'offer'>('info');
     const [vehicleInfo, setVehicleInfo] = useState({
-        year: '2020',
+        year: '',
         make: '',
         model: '',
-        mileage: ''
+        mileage: '',
+        condition: 'good',
+        vin: ''
     });
 
-    const [photos, setPhotos] = useState<{ [key: string]: File | null }>({
+    // Use Custom Hook for Photo Management
+    const {
+        photos,
+        setPhoto,
+        uploadAllPhotos,
+        uploading: isUploadingPhotos,
+        count: uploadedCount
+    } = usePhotoUploader({
         front: null,
         back: null,
         interior: null,
         dashboard: null
     });
 
-    // Mock Offer Data
+    const [scanning, setScanning] = useState(false);
+    const [scanStage, setScanStage] = useState(''); // "Analizando Carrocería...", "Verificando Interior..."
+    const [offerReady, setOfferReady] = useState(false);
+
+    // AI Analysis Results
+    const [aiAnalysis, setAiAnalysis] = useState<{
+        condition: string;
+        defects: string[];
+        reasoning: string;
+    } | null>(null);
+
     const [offerAmount, setOfferAmount] = useState({ min: 0, max: 0 });
+    const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setVehicleInfo({ ...vehicleInfo, [e.target.name]: e.target.value });
     };
 
-    const handlePhotoUpload = (angle: string, file: File) => {
-        setPhotos(prev => ({ ...prev, [angle]: file }));
+    const handlePhotoUpload = (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(key, e.target.files[0]);
+        }
     };
 
-    const startScan = () => {
+    const totalPhotos = 4;
+    const progress = (uploadedCount / totalPhotos) * 100;
+
+    // Helper: File to Base64
+    const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string); // Includes "data:image..."
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    const startScan = async () => {
         setScanning(true);
-        // Simulate AI Processing
-        setTimeout(() => {
-            setScanning(false);
+        setScanStage('Subiendo fotos...');
+
+        try {
+            // 1. Convert Photos to Base64 for AI Analysis (Parallel to upload)
+            const photoKeys = ['front', 'back', 'interior', 'dashboard'];
+            const files = photoKeys.map(k => photos[k]).filter(f => f !== null) as File[];
+
+            if (files.length < 4) {
+                // Fallback if somehow triggered early, though UI prevents it
+                throw new Error("Missing photos");
+            }
+
+            const base64Promises = files.map(f => fileToBase64(f));
+            const base64Images = await Promise.all(base64Promises);
+            // Clean base64 strings (remove data:image/jpeg;base64, prefix if prompt requires raw bytes, 
+            // but Gemini Node SDK often handles data URI or needs base64 string only. 
+            // Our service wrapper handles the 'inlineData' structure, so let's pass the raw base64 string (split).
+            const cleanBase64 = base64Images.map(img => img.split(',')[1]);
+
+            // 2. Start Parallel Processes: upload to Firebase & Analyze with AI
+            setScanStage('Analizando Carrocería con IA...');
+
+            const uploadTask = uploadAllPhotos(); // Returns URLs
+            const aiTask = analyzeTradeInImages(cleanBase64); // Returns Analysis JSON
+
+            // Artificial minimum delay for "Scanner" VFX
+            const minDelay = new Promise(resolve => setTimeout(resolve, 3500));
+
+            const [urls, analysis, _] = await Promise.all([uploadTask, aiTask, minDelay]);
+
+            setUploadedUrls(urls);
+            setAiAnalysis(analysis);
+
+            // 3. Calculate Offer based on AI Adjustment
+            const baseValue = 15000; // Mock base value for demo
+            const adjustedMin = Math.round(baseValue * analysis.estimatedValueAdjustment);
+            const adjustedMax = Math.round((baseValue + 2500) * analysis.estimatedValueAdjustment);
+
+            setOfferAmount({ min: adjustedMin, max: adjustedMax });
             setOfferReady(true);
-            // Mock logic
-            const base = 15000;
-            setOfferAmount({ min: base, max: base + 2500 });
-        }, 4000);
+
+        } catch (error) {
+            console.error("Scan/Upload failed", error);
+            alert("Hubo un error al procesar las imágenes. Por favor intenta de nuevo.");
+        } finally {
+            setScanning(false);
+        }
     };
 
     // Render Steps
-    return (
-        <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
-            {/* Background Gradients */}
-            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 pointer-events-none" />
+    const renderStep = () => {
+        switch (step) {
+            case 'info':
+                return (
+                    <motion.div
+                        key="info"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="space-y-6"
+                    >
+                        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-6">Detalles del Vehículo</h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Año</label>
+                                <input
+                                    type="number"
+                                    name="year"
+                                    value={vehicleInfo.year}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#00aed9]"
+                                    placeholder="2018"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Marca</label>
+                                <input
+                                    type="text"
+                                    name="make"
+                                    value={vehicleInfo.make}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#00aed9]"
+                                    placeholder="Toyota"
+                                />
+                            </div>
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Modelo</label>
+                                <input
+                                    type="text"
+                                    name="model"
+                                    value={vehicleInfo.model}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#00aed9]"
+                                    placeholder="Camry SE"
+                                />
+                            </div>
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Kilometraje</label>
+                                <input
+                                    type="number"
+                                    name="mileage"
+                                    value={vehicleInfo.mileage}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-700 p-3 rounded-xl outline-none focus:ring-2 focus:ring-[#00aed9]"
+                                    placeholder="45000"
+                                />
+                            </div>
+                        </div>
 
-            {/* Header */}
-            <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/5 bg-slate-900/50 backdrop-blur-md">
-                <button onClick={() => navigate('/')} className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 font-bold uppercase text-xs tracking-widest">
-                    <ChevronRight className="rotate-180" size={16} /> Cancelar
+                        <button
+                            onClick={() => setStep('photos')}
+                            className="w-full py-4 bg-[#00aed9] text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                        >
+                            Siguiente Paso <ChevronRight size={18} />
+                        </button>
+                    </motion.div>
+                );
+
+            case 'photos':
+                return (
+                    <motion.div
+                        key="photos"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="space-y-6"
+                    >
+                        <div className="flex justify-between items-center mb-2">
+                            <h2 className="text-xl font-bold text-slate-800 dark:text-white">Fotos del Vehículo</h2>
+                            <span className={`text-xs font-black uppercase px-2 py-1 rounded-lg ${uploadedCount === 4 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+                                Fotos: {uploadedCount}/4
+                            </span>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mb-6">
+                            <div
+                                className={`h-full transition-all duration-500 ${uploadedCount === 4 ? 'bg-emerald-500' : 'bg-[#00aed9]'}`}
+                                style={{ width: `${progress}%` }}
+                            ></div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {Object.keys(photos).map((key) => (
+                                <label
+                                    key={key}
+                                    className={`aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all relative overflow-hidden group ${photos[key]
+                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                        : 'border-slate-300 dark:border-slate-700 hover:border-[#00aed9] hover:bg-slate-50 dark:hover:bg-slate-800'
+                                        }`}
+                                >
+                                    {photos[key] ? (
+                                        <>
+                                            <img
+                                                src={URL.createObjectURL(photos[key]!)}
+                                                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="bg-white/20 backdrop-blur-md p-2 rounded-full">
+                                                    <CheckCircle className="text-white drop-shadow-md" size={32} />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Camera className="text-slate-400 mb-2 group-hover:text-[#00aed9] group-hover:scale-110 transition-all" size={24} />
+                                            <span className="text-[10px] uppercase font-bold text-slate-400">{key}</span>
+                                        </>
+                                    )}
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handlePhotoUpload(key, e)}
+                                    />
+                                </label>
+                            ))}
+                        </div>
+
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl flex gap-3 text-blue-600 dark:text-blue-300 text-xs">
+                            <Info className="shrink-0" size={16} />
+                            <p>Toma fotos claras y bien iluminadas para obtener la mejor oferta posible.</p>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                if (uploadedCount === 4) setStep('scan');
+                            }}
+                            disabled={uploadedCount < 4}
+                            className="w-full py-4 bg-[#00aed9] disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        >
+                            {uploadedCount < 4 ? `Faltan Fotos(${uploadedCount}/4)` : 'Analizar Vehículo'}
+                            {uploadedCount === 4 && <ChevronRight size={18} />}
+                        </button>
+                    </motion.div>
+                );
+
+            case 'scan':
+                return (
+                    <motion.div
+                        key="scan"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="flex flex-col items-center justify-center py-10 space-y-8"
+                    >
+                        <div className="relative w-64 h-64">
+                            {/* Scanning Ring */}
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 border-4 border-dashed border-[#00aed9]/30 rounded-full"
+                            />
+                            <motion.div
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-4 border-4 border-dashed border-[#00aed9]/50 rounded-full"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                {/* Brain / AI Icon Pulsing */}
+                                <BrainCircuit className="text-[#00aed9] w-24 h-24 opacity-80 animate-pulse" />
+                            </div>
+
+                            {/* Scan Line */}
+                            <motion.div
+                                animate={{ top: ["0%", "100%", "0%"] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute left-0 right-0 h-1 bg-[#00aed9] shadow-[0_0_20px_#00aed9]"
+                            />
+                        </div>
+
+                        <div className="text-center space-y-2">
+                            <h3 className="text-2xl font-black uppercase text-slate-800 dark:text-white animate-pulse">
+                                {offerReady ? 'Análisis Completado' : scanStage || 'Iniciando Escáner...'}
+                            </h3>
+                            <p className="text-sm text-slate-500">
+                                {offerReady ? 'Generando tu oferta final...' : 'Nuestra IA está detectando daños y condiciones.'}
+                            </p>
+                        </div>
+
+                        {!scanning && !offerReady && (
+                            <button onClick={startScan} className="px-8 py-3 bg-[#0d2232] text-white rounded-full font-bold uppercase tracking-widest text-xs animate-in fade-in slide-in-from-bottom-4">
+                                Iniciar Escaneo IA
+                            </button>
+                        )}
+
+                        {offerReady && (
+                            <motion.button
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                onClick={() => setStep('offer')}
+                                className="px-8 py-4 bg-emerald-500 text-white rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-emerald-500/30 hover:scale-105 transition-transform"
+                            >
+                                Ver Oferta
+                            </motion.button>
+                        )}
+                    </motion.div>
+                );
+
+            case 'offer':
+                return (
+                    <motion.div
+                        key="offer"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="text-center space-y-8 py-6"
+                    >
+                        <div className="inline-block p-4 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 mb-4">
+                            <CheckCircle size={48} />
+                        </div>
+
+                        <div>
+                            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Oferta Estimada</h2>
+                            <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
+                                ${offerAmount.min.toLocaleString()} - ${offerAmount.max.toLocaleString()}
+                            </div>
+                        </div>
+
+                        {/* AI Report Card */}
+                        <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl text-left space-y-4 shadow-inner border border-slate-100 dark:border-slate-700">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Sparkles className="text-amber-400" size={20} fill="currentColor" />
+                                <h3 className="font-bold text-lg text-slate-800 dark:text-white">Reporte de Inspección IA</h3>
+                            </div>
+
+                            {aiAnalysis && (
+                                <div className="space-y-3 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-slate-500">Condición Detectada:</span>
+                                        <span className="font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 uppercase text-xs">{aiAnalysis.condition}</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-500 block mb-1">Observaciones:</span>
+                                        <p className="text-slate-700 dark:text-slate-300 italic">"{aiAnalysis.reasoning}"</p>
+                                    </div>
+                                    {aiAnalysis.defects.length > 0 && (
+                                        <div>
+                                            <span className="text-slate-500 block mb-1">Detalles / Daños:</span>
+                                            <ul className="list-disc list-inside text-rose-500 font-medium">
+                                                {aiAnalysis.defects.map((d, i) => <li key={i}>{d}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl text-left space-y-4">
+                            <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <span className="text-slate-500">Vehículo</span>
+                                <span className="font-bold">{vehicleInfo.year} {vehicleInfo.make} {vehicleInfo.model}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-slate-500">Válido por</span>
+                                <span className="font-bold text-[#00aed9]">7 Días</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        await submitApplication({
+                                            firstName: 'Usuario',
+                                            lastName: 'Invitado',
+                                            type: 'trade-in',
+                                            vehicleInfo,
+                                            offerAmount,
+                                            tradeInPhotos: uploadedUrls,
+                                            status: 'new',
+                                            aiSummary: aiAnalysis ? `IA Condition: ${aiAnalysis.condition}. Reasoning: ${aiAnalysis.reasoning}` : 'No AI Analysis'
+                                        });
+                                        navigate('/garage');
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert('Error guardando la oferta.');
+                                    }
+                                }}
+                                className="w-full py-4 bg-[#0d2232] text-white rounded-xl font-bold uppercase tracking-widest shadow-xl active:scale-95 transition-all"
+                            >
+                                Aceptar Oferta y Agendar Cita
+                            </button>
+                            <button onClick={() => navigate('/')} className="w-full py-4 text-slate-400 font-bold uppercase tracking-widest text-xs hover:text-slate-600">
+                                Lo pensaré
+                            </button>
+                        </div>
+                    </motion.div>
+                );
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-white dark:bg-slate-900 p-6 pb-24">
+            <header className="flex items-center gap-4 mb-8">
+                <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <ChevronRight className="rotate-180" size={20} />
                 </button>
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00aed9] rounded-full animate-pulse" />
-                    <span className="font-black tracking-widest text-[#00aed9]">AI APPRAISAL</span>
-                </div>
+                <h1 className="text-2xl font-black uppercase italic tracking-tighter">
+                    Vender mi <span className="text-[#00aed9]">Auto</span>
+                </h1>
             </header>
 
-            <main className="relative z-10 max-w-4xl mx-auto p-6 lg:p-12 flex flex-col items-center justify-center min-h-[80vh]">
-
-                <AnimatePresence mode="wait">
-
-                    {/* STEP 1: VEHICLE INFO */}
-                    {step === 1 && (
-                        <motion.div
-                            key="step1"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="w-full max-w-lg space-y-8"
-                        >
-                            <div className="text-center space-y-4">
-                                <div className="w-20 h-20 bg-[#00aed9]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#00aed9]/30">
-                                    <Car size={40} className="text-[#00aed9]" />
-                                </div>
-                                <h1 className="text-4xl font-black tracking-tighter">¿Qué auto vendes?</h1>
-                                <p className="text-slate-400">Ingresa los detalles básicos para calibrar el escáner.</p>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Año</label>
-                                        <select name="year" value={vehicleInfo.year} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 font-bold focus:border-[#00aed9] outline-none">
-                                            {Array.from({ length: 15 }, (_, i) => 2025 - i).map(y => (
-                                                <option key={y} value={y}>{y}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Marca</label>
-                                        <input name="make" placeholder="Ej. Toyota" value={vehicleInfo.make} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 font-bold focus:border-[#00aed9] outline-none" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Modelo</label>
-                                    <input name="model" placeholder="Ej. RAV4 XLE" value={vehicleInfo.model} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 font-bold focus:border-[#00aed9] outline-none" />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Millaje (Aprox)</label>
-                                    <input name="mileage" type="number" placeholder="0" value={vehicleInfo.mileage} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 font-bold focus:border-[#00aed9] outline-none" />
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => setStep(2)}
-                                disabled={!vehicleInfo.make || !vehicleInfo.model}
-                                className="w-full bg-white text-slate-900 font-black uppercase tracking-widest py-4 rounded-xl hover:bg-[#00aed9] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Continuar
-                            </button>
-                        </motion.div>
-                    )}
-
-                    {/* STEP 2: PHOTO SCAVENGER HUNT */}
-                    {step === 2 && !scanning && !offerReady && (
-                        <motion.div
-                            key="step2"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="w-full max-w-4xl"
-                        >
-                            <div className="text-center mb-10">
-                                <h2 className="text-3xl font-black mb-2">Escaneo Visual</h2>
-                                <p className="text-slate-400">Sube 4 fotos clave. Nuestra IA analizará la condición.</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                                {Object.keys(photos).map((angle) => (
-                                    <PhotoZone
-                                        key={angle}
-                                        label={angle}
-                                        file={photos[angle as keyof typeof photos]}
-                                        onUpload={(f) => handlePhotoUpload(angle, f)}
-                                    />
-                                ))}
-                            </div>
-
-                            <div className="flex justify-center">
-                                <button
-                                    onClick={startScan}
-                                    disabled={Object.values(photos).some(p => !p)}
-                                    className="px-12 py-4 bg-[#00aed9] text-white rounded-full font-black uppercase tracking-widest shadow-[0_0_30px_rgba(0,174,217,0.3)] hover:scale-105 transition-transform disabled:opacity-50 disabled:shadow-none"
-                                >
-                                    Analizar Vehículo
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* STEP 3: SCANNING ANIMATION */}
-                    {scanning && (
-                        <motion.div
-                            key="scanning"
-                            className="text-center relative w-full max-w-2xl aspect-video bg-slate-900 rounded-3xl overflow-hidden border border-[#00aed9]/30 flex items-center justify-center"
-                        >
-                            {/* Scanning overlay */}
-                            <motion.div
-                                className="absolute top-0 left-0 w-full h-1 bg-[#00aed9] shadow-[0_0_20px_#00aed9] z-20"
-                                animate={{ top: ["0%", "100%", "0%"] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                            />
-
-                            <div className="space-y-6 relative z-10">
-                                <Loader2 size={60} className="text-[#00aed9] animate-spin mx-auto" />
-                                <div>
-                                    <h3 className="text-2xl font-black uppercase tracking-widest text-white">Analizando Carrocería...</h3>
-                                    <p className="text-[#00aed9] font-mono text-sm mt-2">DETECTING_DENTS_AND_SCRATCHES_V4.2</p>
-                                </div>
-                            </div>
-
-                            {/* Grid Overlay */}
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-                            <div className="absolute inset-0 border-[1px] border-[#00aed9]/10" style={{ backgroundImage: 'linear-gradient(#00aed9 1px, transparent 1px), linear-gradient(90deg, #00aed9 1px, transparent 1px)', backgroundSize: '40px 40px', backgroundPosition: 'center center', opacity: 0.1 }} />
-                        </motion.div>
-                    )}
-
-                    {/* STEP 4: OFFER CERTIFICATE */}
-                    {offerReady && (
-                        <motion.div
-                            key="offer"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white text-slate-900 p-8 rounded-[40px] max-w-lg w-full text-center shadow-2xl relative overflow-hidden"
-                        >
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-[#00aed9]" />
-
-                            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <CheckCircle size={32} />
-                            </div>
-
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-2">Oferta de Retoma Garantizada</h2>
-                            <h1 className="text-5xl font-black tracking-tighter text-slate-900 mb-2">
-                                ${offerAmount.min.toLocaleString()} - ${offerAmount.max.toLocaleString()}
-                            </h1>
-                            <p className="text-slate-400 text-xs mb-8">*Válido por 7 días o 250 millas adicionales.</p>
-
-                            <div className="bg-slate-50 rounded-2xl p-4 mb-8 text-left space-y-2">
-                                <div className="flex justify-between text-sm font-bold">
-                                    <span>Vehículo</span>
-                                    <span>{vehicleInfo.year} {vehicleInfo.make} {vehicleInfo.model}</span>
-                                </div>
-                                <div className="flex justify-between text-sm font-bold">
-                                    <span>Condición Detectada</span>
-                                    <span className="text-emerald-500">Muy Buena</span>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => navigate('/garage')}
-                                className="w-full bg-[#173d57] text-white font-black uppercase tracking-widest py-4 rounded-xl hover:bg-[#0f2a3d] transition-colors"
-                            >
-                                Aceptar & Guardar en Garaje
-                            </button>
-                        </motion.div>
-                    )}
-
-                </AnimatePresence>
-            </main>
+            <AnimatePresence mode='wait'>
+                {renderStep()}
+            </AnimatePresence>
         </div>
-    );
-};
-
-// Sub-component for Scan Zone
-const PhotoZone = ({ label, file, onUpload }: { label: string, file: File | null, onUpload: (f: File) => void }) => {
-    return (
-        <label className={`relative aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group overflow-hidden ${file ? 'border-emerald-500 bg-emerald-500/10' : 'border-slate-700 hover:border-[#00aed9] hover:bg-slate-900'}`}>
-            <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])} />
-
-            {file ? (
-                <>
-                    <img src={URL.createObjectURL(file)} alt={label} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
-                    <div className="relative z-10 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg">
-                        <CheckCircle size={16} />
-                    </div>
-                    <span className="absolute bottom-4 text-[10px] font-black uppercase tracking-widest text-emerald-400 uppercase">{label}</span>
-                </>
-            ) : (
-                <>
-                    <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-slate-400 group-hover:text-[#00aed9]">
-                        <Camera size={20} />
-                    </div>
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">{label}</span>
-                </>
-            )}
-        </label>
     );
 };
 
