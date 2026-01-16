@@ -1,10 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Richard Automotive | Premium Experience</title>
+
+  <!-- SEO & Social Sharing -->
+  <meta name="description"
+    content="Gestión automotriz de próxima generación. Inventario, CRM y Herramientas de IA en una experiencia premium.">
+  <meta property="og:title" content="Richard Automotive | Command Center">
+  <meta property="og:description"
+    content="El futuro de la gestión automotriz está aquí. Accede a tu inventario y CRM con una experiencia visual incomparable.">
+  <meta property="og:image" content="/og-image.png">
+  <meta property="og:url" content="https://richard-automotive.web.app/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- PWA & Mobile -->
+  <link rel="icon" type="image/png" href="/app-icon.png">
+  <link rel="apple-touch-icon" href="/app-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d2232">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -24,7 +41,8 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <!-- Highlight.js Theme -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <style>
@@ -32,88 +50,110 @@
       --carvana-blue: #00aed9;
       --deep-navy: #0d2232;
     }
+
     body {
       font-family: 'Montserrat', sans-serif;
       /* background-color se elimina para ser controlado por el tema */
       color: #1e293b;
       -webkit-font-smoothing: antialiased;
     }
+
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
+
     .premium-gradient {
       background: linear-gradient(135deg, #00aed9 0%, #007fa1 100%);
     }
+
     .glass-morphism {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
+
     .dark .dark\:glass-morphism {
-      background: rgba(23, 61, 87, 0.5); /* #173d57 con alpha */
+      background: rgba(23, 61, 87, 0.5);
+      /* #173d57 con alpha */
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0, 174, 217, 0.2);
     }
+
     .hover-kinetic {
       transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     }
+
     .hover-kinetic:hover {
       transform: translateY(-8px) scale(1.01);
       box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.15);
     }
+
     .dark .hover-kinetic:hover {
       box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.08);
     }
+
     .text-brutalist {
       font-weight: 900;
       letter-spacing: -0.05em;
       line-height: 0.9;
     }
+
     /* 1. Estilo para navegadores modernos (Firefox y estándares 2025) */
     html {
-      scrollbar-width: thin; /* Hace la barra más delgada */
-      scrollbar-color: #4a90e2 #f0f0f0; /* Color del 'thumb' y del 'track' */
-      scroll-behavior: smooth; /* Desplazamiento suave al hacer clic en enlaces */
+      scrollbar-width: thin;
+      /* Hace la barra más delgada */
+      scrollbar-color: #4a90e2 #f0f0f0;
+      /* Color del 'thumb' y del 'track' */
+      scroll-behavior: smooth;
+      /* Desplazamiento suave al hacer clic en enlaces */
     }
 
     /* 2. Estilo para Chrome, Edge y Safari (Motores WebKit) */
     ::-webkit-scrollbar {
-      width: 10px; /* Ancho de la barra vertical */
+      width: 10px;
+      /* Ancho de la barra vertical */
     }
 
     ::-webkit-scrollbar-track {
-      background: #f0f0f0; /* Color de la pista de fondo */
+      background: #f0f0f0;
+      /* Color de la pista de fondo */
       border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #4a90e2; /* Color del deslizador */
+      background: #4a90e2;
+      /* Color del deslizador */
       border-radius: 10px;
-      border: 2px solid #f0f0f0; /* Crea un efecto de separación */
+      border: 2px solid #f0f0f0;
+      /* Crea un efecto de separación */
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #357abd; /* Color más oscuro al pasar el mouse */
+      background: #357abd;
+      /* Color más oscuro al pasar el mouse */
     }
-  
+
     /* Dark Mode Adaptation (Auto-added for consistency) */
     .dark html {
-        scrollbar-color: #00aed9 #0f172a;
+      scrollbar-color: #00aed9 #0f172a;
     }
+
     .dark ::-webkit-scrollbar-track {
-        background: #0f172a;
-        border-color: #0f172a;
+      background: #0f172a;
+      border-color: #0f172a;
     }
+
     .dark ::-webkit-scrollbar-thumb {
-        background: #00aed9;
-        border-color: #0f172a;
+      background: #00aed9;
+      border-color: #0f172a;
     }
+
     .dark ::-webkit-scrollbar-thumb:hover {
-        background: #0090b5;
+      background: #0090b5;
     }
 
     /* -- Accessibility & Animation -- */
@@ -124,24 +164,52 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes zoomIn {
-      from { transform: scale(.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    @keyframes slideInBottom {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    .animate-in.fade-in { animation: fadeIn 0.3s ease-out; }
-    .animate-in.fade-in.zoom-in { animation: zoomIn 0.3s ease-out; }
-    .animate-in.fade-in.slide-in-from-bottom-5 { animation: slideInBottom 0.3s ease-out; }
+      from {
+        opacity: 0;
+      }
 
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(.95);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInBottom {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-in.fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .animate-in.fade-in.zoom-in {
+      animation: zoomIn 0.3s ease-out;
+    }
+
+    .animate-in.fade-in.slide-in-from-bottom-5 {
+      animation: slideInBottom 0.3s ease-out;
+    }
   </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
@@ -158,10 +226,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
+
 <body>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

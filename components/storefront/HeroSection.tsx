@@ -13,11 +13,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
         <section className="relative h-[85vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden rounded-b-[60px] lg:rounded-b-[100px] shadow-2xl shadow-cyan-900/40">
             {/* Background Image with Parallax Effect */}
             <div className="absolute inset-0 bg-slate-900">
-                <img
-                    src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2940&auto=format&fit=crop"
-                    alt="Luxury Car Background"
-                    className="w-full h-full object-cover opacity-60 scale-105 animate-in fade-in zoom-in duration-[2s]"
-                />
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-in fade-in zoom-in duration-[2s]"
+                    style={{ backgroundImage: 'url("https://www.hyundai.com/content/dam/hyundai/ww/en/images/N/n-vision-74/highlights/n-vision-74-highlights-kv.jpg")' }}
+                ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/60 to-transparent" />
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-overlay"></div>
             </div>
