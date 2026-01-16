@@ -4,6 +4,7 @@ import { ViewMode, Car } from './types';
 import Storefront from './components/Storefront'; // Keep Eager
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
+import AIChatWidget from './components/AIChatWidget'; // Eager Load for global availability
 import ThemeToggle from './components/ThemeToggle';
 const AILabView = React.lazy(() => import('./components/AILabView'));
 const UserLogin = React.lazy(() => import('./components/UserLogin'));
@@ -23,10 +24,13 @@ import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
 import { ComparisonProvider } from './contexts/ComparisonContext';
 import LoadingScreen from './components/LoadingScreen';
 import ReloadPrompt from './components/ReloadPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
 import ComparisonBar from './components/ComparisonBar';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { NotificationProvider, useNotification } from './contexts/NotificationContext';
 import { logoutUser, syncInventory, addCar, updateCar, deleteCar, uploadInitialInventory, registerUser } from './services/firebaseService';
+import { initializePushNotifications } from './services/pushService';
+import { startGeofenceMonitoring } from './services/geofenceService';
 
 // Initial data for DB setup
 const initialInventoryData: Omit<Car, 'id'>[] = [
@@ -35,7 +39,7 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     price: 38500,
     type: 'suv',
     badge: 'Rediseñado',
-    img: 'https://s7d1.scene7.com/is/image/hyundai/2025-tucson-limited-amazon-gray-profile?fmt=png-alpha&wid=1200',
+    img: 'https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&w=1200&auto=format&fit=crop', // Modern Grey SUV
     featured: true,
   },
   {
@@ -43,7 +47,7 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     price: 42300,
     type: 'suv',
     badge: 'Más Vendido',
-    img: 'https://s7d1.scene7.com/is/image/hyundai/2024-santa-fe-calligraphy-earthy-brass-matte-profile?fmt=png-alpha&wid=1200',
+    img: 'https://images.unsplash.com/photo-1631522858632-1b157bd752e2?q=80&w=1200&auto=format&fit=crop', // Boxy SUV
     featured: true,
   },
   {
@@ -51,7 +55,7 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     price: 55900,
     type: 'suv',
     badge: 'Flagship',
-    img: 'https://s7d1.scene7.com/is/image/hyundai/2025-palisade-calligraphy-night-edition-hyper-white-profile?fmt=png-alpha&wid=1200',
+    img: 'https://images.unsplash.com/photo-1647494480572-c2834b6e56ad?q=80&w=1200&auto=format&fit=crop', // White Luxury SUV
     featured: true,
   },
   {
@@ -59,7 +63,7 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     price: 48900,
     type: 'suv',
     badge: '100% Eléctrico',
-    img: 'https://s7d1.scene7.com/is/image/hyundai/2025-ioniq-5-limited-rwd-atlas-white-profile?fmt=png-alpha&wid=1200',
+    img: 'https://images.unsplash.com/photo-1658314643093-5757788e895c?q=80&w=1200&auto=format&fit=crop', // White EV
     featured: true,
   },
   {
@@ -67,7 +71,7 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
     price: 78500,
     type: 'luxury',
     badge: 'Ultra Lujo',
-    img: 'https://vehicle-images.dealerinspire.com/stock-images/chrome/c623910c732488a07106c68388836511.png',
+    img: 'https://images.unsplash.com/photo-1627916533596-3392305a2789?q=80&w=1200&auto=format&fit=crop', // Luxury Genesis
     featured: true,
   },
 ];
@@ -102,6 +106,13 @@ const AppContent: React.FC = () => {
     const unsubscribe = syncInventory((updatedInventory) => {
       setInventory(updatedInventory);
     });
+
+    // Initialize Push Notifications (Native only)
+    initializePushNotifications();
+
+    // Initialize Geofencing (Free Native Feature)
+    startGeofenceMonitoring();
+
     return () => unsubscribe();
   }, []);
 
@@ -242,6 +253,8 @@ const AppContent: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 relative w-full h-screen overflow-y-auto bg-slate-950 text-slate-100">
         <ReloadPrompt />
+        <OfflineIndicator />
+        <AIChatWidget inventory={inventory} /> { /* Global Chat Widget */}
         <Suspense fallback={<FullScreenLoader />}>
           <Routes>
             <Route path="/" element={
@@ -266,7 +279,7 @@ const AppContent: React.FC = () => {
             <Route path="/lab" element={<AuthGuard><AILabView onExit={() => navigate('/')} onVisualSearch={(img) => { setPendingVisualSearch(img); navigate('/'); }} /></AuthGuard>} />
             <Route path="/login" element={<UserLogin />} />
             <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={() => { }} onAdd={() => { }} onDelete={() => { }} onInitializeDb={() => Promise.resolve()} /></AdminGuard>} />
+            <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={() => { }} onAdd={() => { }} onDelete={() => { }} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></AdminGuard>} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>
