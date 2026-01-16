@@ -73,15 +73,47 @@
       letter-spacing: -0.05em;
       line-height: 0.9;
     }
-    ::-webkit-scrollbar {
-      width: 6px;
+    /* 1. Estilo para navegadores modernos (Firefox y estándares 2025) */
+    html {
+      scrollbar-width: thin; /* Hace la barra más delgada */
+      scrollbar-color: #4a90e2 #f0f0f0; /* Color del 'thumb' y del 'track' */
+      scroll-behavior: smooth; /* Desplazamiento suave al hacer clic en enlaces */
     }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+
+    /* 2. Estilo para Chrome, Edge y Safari (Motores WebKit) */
+    ::-webkit-scrollbar {
+      width: 10px; /* Ancho de la barra vertical */
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f0f0f0; /* Color de la pista de fondo */
       border-radius: 10px;
     }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4a90e2; /* Color del deslizador */
+      border-radius: 10px;
+      border: 2px solid #f0f0f0; /* Crea un efecto de separación */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #357abd; /* Color más oscuro al pasar el mouse */
+    }
+  
+    /* Dark Mode Adaptation (Auto-added for consistency) */
+    .dark html {
+        scrollbar-color: #00aed9 #0f172a;
+    }
+    .dark ::-webkit-scrollbar-track {
+        background: #0f172a;
+        border-color: #0f172a;
+    }
     .dark ::-webkit-scrollbar-thumb {
-      background: #475569;
+        background: #00aed9;
+        border-color: #0f172a;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: #0090b5;
     }
 
     /* -- Accessibility & Animation -- */

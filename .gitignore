@@ -37,3 +37,14 @@ firebase-debug.log
 public/sw.js
 public/workbox-*.js
 .firebase/
+
+# Llaves y Secretos
+# .env (Already ignored)
+*.json
+serviceAccountKey.json
+
+# Archivos de sistema y Python
+__pycache__/
+*.pyc
+# .DS_Store (Already ignored)
+viva_env/

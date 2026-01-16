@@ -12,6 +12,19 @@ export default defineConfig(({ mode }) => {
   const apiKey = env.API_KEY || "";
 
   return {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage', 'firebase/functions'],
+            'vendor-ui': ['framer-motion', 'lucide-react'], // Removed highlight.js
+            'vendor-highlight': ['highlight.js'], // Isolated
+            'vendor-utils': ['react-to-print']
+          }
+        }
+      }
+    },
     plugins: [
       react(),
       VitePWA({
