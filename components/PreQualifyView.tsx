@@ -76,7 +76,17 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         setIsSubmitting(true);
 
         try {
-            await submitApplication(formData);
+            const submissionData = {
+                ...formData,
+                // Include Vehicle/Deal Context if available
+                ...(dealContext ? {
+                    vehicleInfo: dealContext.vehicle,
+                    quote: dealContext.quote,
+                    type: 'finance' // Explicit type
+                } : {})
+            };
+
+            await submitApplication(submissionData);
             const refId = `REF-${Math.floor(Math.random() * 1000000)}`;
             setReferenceId(refId);
             setIsSuccess(true);

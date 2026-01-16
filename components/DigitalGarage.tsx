@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Car } from '../types';
 import { getCookie, setCookie } from '../services/cookieService';
 import { analyzeGarageSelection } from '../services/geminiService';
-import { ArrowLeft, Car as CarIcon, FileText, RefreshCw, User, Loader2, Sparkles, TrendingUp, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { BiometricService } from '../services/biometricService';
+import { ArrowLeft, Car as CarIcon, FileText, RefreshCw, User, Loader2, Sparkles, TrendingUp, CheckCircle2, Clock, AlertTriangle, ScanFace, Lock, ShieldCheck } from 'lucide-react';
 import CarCard from './storefront/CarCard';
 
 interface Props {
@@ -18,7 +19,40 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
     const [aiAnalysis, setAiAnalysis] = useState<string>('');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-    // Mock Data for Applications and Trade-Ins
+
+
+    // Biometric State
+    const [isLocked, setIsLocked] = useState(true);
+    const [isBiometricEnabled, setIsBiometricEnabled] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
+
+    useEffect(() => {
+        checkBiometricStatus();
+    }, []);
+
+    const checkBiometricStatus = async () => {
+        const enabled = await BiometricService.isEnabled();
+        setIsBiometricEnabled(enabled);
+        // If enabled, keep locked. If disabled, unlock immediately.
+        if (!enabled) setIsLocked(false);
+    };
+
+    const handleUnlock = async () => {
+        setIsScanning(true);
+        const success = await BiometricService.verifyIdentity();
+        setIsScanning(false);
+        if (success) {
+            setIsLocked(false);
+        } else {
+            alert('No se pudo verificar la identidad.');
+        }
+    };
+
+    const toggleBiometric = async () => {
+        const newState = !isBiometricEnabled;
+        await BiometricService.setEnabled(newState);
+        setIsBiometricEnabled(newState);
+    };
     const applications = [
         { id: 'APP-001', date: '2025-10-24', status: 'approved', vehicle: 'Toyota RAV4 2024', amount: '$35,000' },
         { id: 'APP-002', date: '2025-12-15', status: 'pending', vehicle: 'Dodge Ram 1500', amount: '$42,000' }
@@ -190,11 +224,31 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
                                 <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Teléfono</label>
                                 <div className="text-white font-medium">+1 (787) 555-0199</div>
                             </div>
-                            <button className="w-full py-3 bg-red-500/10 text-red-500 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all">
-                                Cerrar Sesión
+                            <div className="text-white font-medium">+1 (787) 555-0199</div>
+                        </div>
+
+                        <div className="p-4 bg-slate-900/50 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div className="text-sm font-bold text-white flex items-center gap-2">
+                                    <ScanFace size={16} className="text-[#00aed9]" /> Biometría (FaceID)
+                                </div>
+                                <div className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                                    {isBiometricEnabled ? 'Activado' : 'Desactivado'}
+                                </div>
+                            </div>
+                            <button
+                                onClick={toggleBiometric}
+                                className={`w-12 h-6 rounded-full p-1 transition-colors ${isBiometricEnabled ? 'bg-[#00aed9]' : 'bg-slate-700'}`}
+                            >
+                                <div className={`w-4 h-4 rounded-full bg-white transition-transform ${isBiometricEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
                             </button>
                         </div>
+
+                        <button className="w-full py-3 bg-red-500/10 text-red-500 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                            Cerrar Sesión
+                        </button>
                     </div>
+
                 );
         }
     };
@@ -217,7 +271,40 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
             </header>
 
             <main className="flex-1 p-8 pt-4 relative z-10 overflow-y-auto custom-scrollbar">
-                {renderContent()}
+                {isLocked ? (
+                    <div className="h-full flex flex-col items-center justify-center space-y-8 animate-in fade-in zoom-in duration-300">
+                        <div className="w-32 h-32 bg-slate-800 rounded-3xl flex items-center justify-center relative overflow-hidden shadow-2xl border border-white/5">
+                            {isScanning ? (
+                                <>
+                                    <div className="absolute inset-0 bg-[#00aed9]/20 animate-pulse"></div>
+                                    <ScanFace size={64} className="text-[#00aed9] relative z-10 animate-pulse" />
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-[#00aed9] shadow-[0_0_15px_#00aed9] animate-[scan_1.5s_ease-in-out_infinite]"></div>
+                                </>
+                            ) : (
+                                <Lock size={48} className="text-slate-500" />
+                            )}
+                        </div>
+
+                        <div className="text-center space-y-2">
+                            <h2 className="text-2xl font-black uppercase tracking-tight">Acceso Seguro</h2>
+                            <p className="text-slate-400 text-sm">Requiere autenticación biométrica</p>
+                        </div>
+
+                        <button
+                            onClick={handleUnlock}
+                            disabled={isScanning}
+                            className="px-8 py-4 bg-[#00aed9] hover:bg-cyan-400 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-cyan-500/30 active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isScanning ? (
+                                <><Loader2 className="animate-spin" /> Verificando...</>
+                            ) : (
+                                <><ScanFace /> Escanear FaceID</>
+                            )}
+                        </button>
+                    </div>
+                ) : (
+                    renderContent()
+                )}
             </main>
         </div>
     );
