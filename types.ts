@@ -14,6 +14,9 @@ export interface Car {
   featured?: boolean;
   description?: string;
   features?: string[];
+  // Analytics
+  views?: number;
+  leads_count?: number;
 }
 
 export enum ViewMode {
@@ -66,6 +69,33 @@ export interface BlogPost {
   tags: string[];
 }
 
+export interface Lead {
+  id: string;
+  type: 'finance' | 'trade-in' | 'chat' | 'general';
+  status: 'new' | 'contacted' | 'negotiating' | 'sold' | 'lost';
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  timestamp: any; // Firestore Timestamp
+
+  // Context
+  vehicleOfInterest?: string; // Car Name
+  vehicleId?: string;
+  tradeInDetails?: string; // "2018 Toyota Camry"
+  tradeInPhotos?: string[]; // Array of photo URLs
+  message?: string; // Chat summary or initial message
+
+  // AI Metrics
+  aiScore?: number; // 0-100
+  aiSummary?: string; // "High intent, good credit"
+
+  // Automation Status
+  emailSent?: boolean;
+  nudgeSent?: boolean;
+  lastContacted?: any; // Timestamp or Date
+}
+
 declare global {
   interface AIStudio {
     hasSelectedApiKey: () => Promise<boolean>;
@@ -74,5 +104,6 @@ declare global {
 
   interface Window {
     webkitAudioContext: typeof AudioContext;
+    aistudio?: AIStudio;
   }
 }

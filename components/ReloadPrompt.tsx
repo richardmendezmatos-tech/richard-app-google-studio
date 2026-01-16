@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { RefreshCw, X } from 'lucide-react';
+import { RefreshCw, DownloadCloud } from 'lucide-react';
 
-const ReloadPrompt: React.FC = () => {
+const ReloadPrompt = () => {
     const {
         offlineReady: [offlineReady, setOfflineReady],
         needRefresh: [needRefresh, setNeedRefresh],
@@ -24,33 +24,38 @@ const ReloadPrompt: React.FC = () => {
     if (!offlineReady && !needRefresh) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 p-4 bg-slate-900 border border-slate-700 rounded-lg shadow-xl text-white max-w-sm animate-fade-in-up">
-            <div className="flex items-start gap-3">
-                {needRefresh ? (
-                    <RefreshCw className="w-5 h-5 text-cyan-400 mt-1 animate-spin-slow" />
-                ) : (
-                    <div className="w-5 h-5 text-green-400 mt-1">✓</div>
-                )}
-                <div className="flex-1">
-                    {offlineReady ? (
-                        <p className="text-sm font-medium">App lista para usar sin conexión.</p>
-                    ) : (
-                        <p className="text-sm font-medium">Nueva versión disponible.</p>
-                    )}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[2000] animate-in slide-in-from-bottom-5 fade-in">
+            <div className="bg-[#0d2232] border border-[#00aed9]/30 p-4 rounded-2xl shadow-2xl flex items-center gap-4 text-white min-w-[300px]">
+                <div className="p-3 bg-gradient-to-br from-[#00aed9] to-blue-600 rounded-xl relative">
+                    <DownloadCloud size={20} className="text-white relative z-10" />
+                    <div className="absolute inset-0 bg-white/20 animate-pulse rounded-xl"></div>
                 </div>
-                <button onClick={close} className="text-slate-400 hover:text-white">
-                    <X size={18} />
+
+                <div className="flex-1">
+                    <h4 className="font-bold text-sm">
+                        {offlineReady ? 'App lista para offline' : 'Nueva versión disponible'}
+                    </h4>
+                    <p className="text-[10px] text-slate-400">
+                        {offlineReady ? 'Ya puedes usar la app sin internet.' : 'Recarga para ver los cambios.'}
+                    </p>
+                </div>
+
+                {needRefresh && (
+                    <button
+                        className="px-4 py-2 bg-white text-[#0d2232] rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors flex items-center gap-2"
+                        onClick={() => updateServiceWorker(true)}
+                    >
+                        <RefreshCw size={14} /> Recargar
+                    </button>
+                )}
+
+                <button
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-xs"
+                    onClick={close}
+                >
+                    Cerrar
                 </button>
             </div>
-
-            {needRefresh && (
-                <button
-                    onClick={() => updateServiceWorker(true)}
-                    className="mt-2 w-full py-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-bold rounded-md transition-colors"
-                >
-                    Actualizar ahora
-                </button>
-            )}
         </div>
     );
 };

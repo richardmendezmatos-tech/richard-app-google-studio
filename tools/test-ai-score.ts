@@ -22,7 +22,7 @@ async function testAI() {
             throw new Error(`Server returned ${response.status}: ${await response.text()}`);
         }
 
-        const { result } = await response.json();
+        const { result } = await response.json() as any;
         console.log("\n✅ AI Analysis Result:");
         console.log(JSON.stringify(result, null, 2));
 
