@@ -24,6 +24,7 @@ export enum ViewMode {
   BLOG = 'blog',
   DIGITAL_GARAGE = 'digital_garage',
   PRE_QUALIFY = 'pre_qualify',
+  TRADE_IN = 'trade_in',
 
   // AI Lab views
   CHAT = 'chat',

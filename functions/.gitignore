@@ -7,3 +7,6 @@ lib
 
 # Genkit
 .genkit
+
+# Secrets
+serviceAccountKey.json

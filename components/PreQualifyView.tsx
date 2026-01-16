@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, User, Briefcase, Banknote, Calendar, ChevronRight, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useNotification } from '../contexts/NotificationContext';
 import { submitApplication } from '../services/firebaseService';
@@ -10,6 +11,15 @@ interface Props {
 
 const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const { addNotification } = useNotification();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Retrieve vehicle context if available
+    const dealContext = location.state as {
+        vehicle: { id: string, name: string, price: number, image: string },
+        quote: { monthlyPayment: number, downPayment: number, term: number }
+    } | undefined;
+
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -30,7 +40,8 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         employer: '',
         jobTitle: '',
         monthlyIncome: '',
-        timeAtJob: ''
+        timeAtJob: '',
+        creditAuth: false
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -42,7 +53,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         const d = formData;
         if (currentStep === 1) return d.firstName && d.lastName && d.email && d.phone;
         if (currentStep === 2) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
-        if (currentStep === 3) return d.dob && d.ssn.length >= 4; // Basic check
+        if (currentStep === 3) return d.dob && d.ssn.length >= 4 && d.creditAuth; // Must accept terms
         return false;
     };
 
@@ -63,7 +74,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         }
 
         setIsSubmitting(true);
-        
+
         try {
             await submitApplication(formData);
             const refId = `REF-${Math.floor(Math.random() * 1000000)}`;
@@ -93,7 +104,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-1">Número de Referencia</p>
                         <p className="text-xl font-mono font-bold text-[#00aed9]">{referenceId}</p>
                     </div>
-                    <button 
+                    <button
                         onClick={onExit}
                         className="w-full py-4 bg-[#173d57] hover:bg-[#00aed9] text-white rounded-2xl font-bold uppercase tracking-widest transition-all shadow-lg"
                     >
@@ -131,20 +142,19 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
             <main className="flex-1 flex justify-center p-4 md:p-10 overflow-y-auto">
                 <div className="w-full max-w-4xl">
-                    
+
                     {/* Progress Bar */}
                     <div className="mb-10 flex justify-between items-center relative">
                         <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 dark:bg-slate-800 -z-10 rounded-full"></div>
-                        <div 
-                            className="absolute top-1/2 left-0 h-1 bg-[#00aed9] -z-10 rounded-full transition-all duration-500" 
+                        <div
+                            className="absolute top-1/2 left-0 h-1 bg-[#00aed9] -z-10 rounded-full transition-all duration-500"
                             style={{ width: `${((step - 1) / 2) * 100}%` }}
                         ></div>
-                        
+
                         {[1, 2, 3].map((s) => (
                             <div key={s} className={`flex flex-col items-center gap-2 transition-all ${step >= s ? 'opacity-100' : 'opacity-50'}`}>
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-4 transition-all ${
-                                    step >= s ? 'bg-[#173d57] border-[#00aed9] text-white shadow-lg shadow-cyan-500/30' : 'bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-500'
-                                }`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-4 transition-all ${step >= s ? 'bg-[#173d57] border-[#00aed9] text-white shadow-lg shadow-cyan-500/30' : 'bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-500'
+                                    }`}>
                                     {s}
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest hidden md:block text-slate-500 dark:text-slate-400">
@@ -155,7 +165,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-[40px] shadow-xl border border-slate-100 dark:border-slate-700 p-8 md:p-12 animate-in fade-in slide-in-from-bottom-5">
-                        
+
                         {step === 1 && (
                             <div className="space-y-6 animate-in fade-in">
                                 <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight mb-6 flex items-center gap-3">
@@ -188,13 +198,13 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                     <Input label="Puesto / Título" name="jobTitle" value={formData.jobTitle} onChange={handleInputChange} placeholder="Ej. Gerente" />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input 
-                                        label="Ingreso Mensual Bruto ($)" 
-                                        name="monthlyIncome" 
-                                        type="number" 
-                                        value={formData.monthlyIncome} 
-                                        onChange={handleInputChange} 
-                                        placeholder="0.00" 
+                                    <Input
+                                        label="Ingreso Mensual Bruto ($)"
+                                        name="monthlyIncome"
+                                        type="number"
+                                        value={formData.monthlyIncome}
+                                        onChange={handleInputChange}
+                                        placeholder="0.00"
                                         icon={<Banknote size={16} />}
                                     />
                                     <Input label="Tiempo en empleo" name="timeAtJob" value={formData.timeAtJob} onChange={handleInputChange} placeholder="Ej. 2 años" />
@@ -215,21 +225,21 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input 
-                                        label="Fecha de Nacimiento" 
-                                        name="dob" 
-                                        type="date" 
-                                        value={formData.dob} 
-                                        onChange={handleInputChange} 
+                                    <Input
+                                        label="Fecha de Nacimiento"
+                                        name="dob"
+                                        type="date"
+                                        value={formData.dob}
+                                        onChange={handleInputChange}
                                         icon={<Calendar size={16} />}
                                     />
-                                    
+
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
                                             Seguro Social (SSN) <span className="text-red-500">*</span>
                                         </label>
                                         <div className="relative">
-                                            <input 
+                                            <input
                                                 type={showSSN ? "text" : "password"}
                                                 name="ssn"
                                                 value={formData.ssn}
@@ -237,7 +247,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                                 placeholder="XXX-XX-XXXX"
                                                 className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-700 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300 tracking-widest"
                                             />
-                                            <button 
+                                            <button
                                                 type="button"
                                                 onClick={() => setShowSSN(!showSSN)}
                                                 className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#00aed9]"
@@ -248,18 +258,30 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 mt-4">
-                                    <input type="checkbox" id="consent" className="mt-1 w-4 h-4 rounded border-slate-300 text-[#00aed9] focus:ring-[#00aed9]" />
-                                    <label htmlFor="consent" className="text-xs text-slate-500 dark:text-slate-400">
-                                        Autorizo a Richard Automotive a obtener mi reporte de crédito para fines de pre-cualificación. Entiendo que esto no garantiza una aprobación final de crédito.
-                                    </label>
+                                <div className="mt-6 p-4 bg-slate-100 dark:bg-slate-700/50 rounded-2xl border border-slate-200 dark:border-slate-600">
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed text-justify">
+                                        "Acepto y autorizo expresamente a Richard Automotive a consultar mi reporte de crédito e historial financiero a través de las agencias de información crediticia autorizadas. Entiendo que esta consulta se realiza bajo los términos de la Ley de Informes de Crédito Justos (FCRA) y será utilizada exclusivamente para evaluar mi perfil financiero en relación con mi solicitud. He leído y acepto el <Link to="/privacidad" target="_blank" className="underline hover:text-[#00aed9]">Aviso de Privacidad</Link> y los <Link to="/terminos" target="_blank" className="underline hover:text-[#00aed9]">Términos de Uso</Link>."
+                                    </p>
+                                    <div className="flex items-start gap-3">
+                                        <input
+                                            type="checkbox"
+                                            id="autoriza_credito"
+                                            name="creditAuth"
+                                            checked={formData.creditAuth}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, creditAuth: e.target.checked }))}
+                                            className="mt-1 w-5 h-5 rounded-md border-slate-300 text-[#00aed9] focus:ring-[#00aed9] cursor-pointer"
+                                        />
+                                        <label htmlFor="autoriza_credito" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                                            He leído y acepto la <span className="text-[#00aed9] underline">Autorización para Consulta de Historial Crediticio</span>.
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         )}
 
                         <div className="mt-12 flex justify-between items-center pt-8 border-t border-slate-100 dark:border-slate-700">
                             {step > 1 ? (
-                                <button 
+                                <button
                                     onClick={prevStep}
                                     className="px-6 py-3 rounded-xl text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                                 >
@@ -267,7 +289,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                 </button>
                             ) : <div></div>}
 
-                            <button 
+                            <button
                                 onClick={step === 3 ? handleSubmit : nextStep}
                                 disabled={isSubmitting}
                                 className="px-10 py-4 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
@@ -291,7 +313,7 @@ const Input = ({ label, icon, ...props }: any) => (
         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
             {icon} {label} <span className="text-red-500">*</span>
         </label>
-        <input 
+        <input
             {...props}
             className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-700 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300"
         />

@@ -10,13 +10,23 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/geolocation": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@capacitor/preferences": "^8.0.0",
+    "@capacitor/push-notifications": "^8.0.0",
     "@google/genai": "^0.2.0",
     "firebase": "^10.8.0",
+    "framer-motion": "^12.23.26",
     "highlight.js": "^11.9.0",
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.11.0"
+    "react-router-dom": "^7.11.0",
+    "react-to-print": "^3.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -25,8 +35,10 @@
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.16",
+    "firebase-admin": "^13.6.0",
     "firebase-tools": "^15.1.0",
     "jsdom": "^27.4.0",
+    "node-fetch": "^3.3.2",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",

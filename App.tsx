@@ -7,15 +7,23 @@ const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
 import ThemeToggle from './components/ThemeToggle';
 const AILabView = React.lazy(() => import('./components/AILabView'));
 const UserLogin = React.lazy(() => import('./components/UserLogin'));
+const VehicleDetail = React.lazy(() => import('./components/VehicleDetail'));
+const TradeInView = React.lazy(() => import('./components/TradeInView'));
+const AppraisalView = React.lazy(() => import('./components/AppraisalView'));
+const ComparisonView = React.lazy(() => import('./components/ComparisonView'));
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
 const BlogView = React.lazy(() => import('./components/BlogView'));
 const DigitalGarage = React.lazy(() => import('./components/DigitalGarage'));
 const PreQualifyView = React.lazy(() => import('./components/PreQualifyView'));
+const PrivacyView = React.lazy(() => import('./components/PrivacyView'));
+const TermsView = React.lazy(() => import('./components/TermsView'));
 import CookieConsent from './components/CookieConsent';
-import { LayoutDashboard, ShoppingBag, BotMessageSquare, Phone, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, Lock, User as UserIcon } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, BotMessageSquare, Phone, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, Lock, User as UserIcon, Car as CarIcon } from 'lucide-react';
 import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import { ComparisonProvider } from './contexts/ComparisonContext';
 import LoadingScreen from './components/LoadingScreen';
 import ReloadPrompt from './components/ReloadPrompt';
+import ComparisonBar from './components/ComparisonBar';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { NotificationProvider, useNotification } from './contexts/NotificationContext';
 import { logoutUser, syncInventory, addCar, updateCar, deleteCar, uploadInitialInventory, registerUser } from './services/firebaseService';
@@ -135,6 +143,7 @@ const AppContent: React.FC = () => {
     if (path === '/qualify') return ViewMode.PRE_QUALIFY;
     if (path === '/consultant') return ViewMode.AI_CONSULTANT;
     if (path === '/blog') return ViewMode.BLOG;
+    if (path === '/trade-in') return ViewMode.TRADE_IN;
     if (path === '/lab') return ViewMode.AI_LAB;
     if (path.startsWith('/login')) return 'login';
     return ViewMode.STOREFRONT;
@@ -187,6 +196,7 @@ const AppContent: React.FC = () => {
           <NavButton active={getCurrentViewMode() === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }} icon={<ShoppingBag size={20} />} label="Tienda Digital" />
           <NavButton active={getCurrentViewMode() === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileMenuOpen(false); }} icon={<Warehouse size={20} />} label="Mi Garaje" />
           <NavButton active={getCurrentViewMode() === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileMenuOpen(false); }} icon={<FileCheck2 size={20} />} label="Pre-Cualificación" />
+          <NavButton active={getCurrentViewMode() === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileMenuOpen(false); }} icon={<CarIcon size={20} />} label="Vender mi Auto" />
           <NavButton active={getCurrentViewMode() === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileMenuOpen(false); }} icon={<BotMessageSquare size={20} />} label="Consultor IA" />
           <NavButton active={getCurrentViewMode() === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileMenuOpen(false); }} icon={<Newspaper size={20} />} label="AI Newsroom" />
 
@@ -230,8 +240,7 @@ const AppContent: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      {/* Main Content Area */}
-      <main className="flex-1 relative w-full h-screen overflow-hidden bg-slate-950 text-slate-100">
+      <main className="flex-1 relative w-full h-screen overflow-y-auto bg-slate-950 text-slate-100">
         <ReloadPrompt />
         <Suspense fallback={<FullScreenLoader />}>
           <Routes>
@@ -244,8 +253,14 @@ const AppContent: React.FC = () => {
                 onOpenGarage={() => navigate('/garage')}
               />
             } />
+            <Route path="/vehicle/:id" element={<VehicleDetail inventory={inventory} />} />
+            <Route path="/trade-in" element={<TradeInView />} />
+            <Route path="/appraisal" element={<AppraisalView />} />
+            <Route path="/compare" element={<ComparisonView />} />
             <Route path="/garage" element={<AuthGuard><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></AuthGuard>} />
             <Route path="/qualify" element={<PreQualifyView onExit={() => navigate('/')} />} />
+            <Route path="/privacidad" element={<PrivacyView />} />
+            <Route path="/terminos" element={<TermsView />} />
             <Route path="/consultant" element={<AIConsultant inventory={inventory} />} />
             <Route path="/blog" element={<BlogView />} />
             <Route path="/lab" element={<AuthGuard><AILabView onExit={() => navigate('/')} onVisualSearch={(img) => { setPendingVisualSearch(img); navigate('/'); }} /></AuthGuard>} />
@@ -257,6 +272,7 @@ const AppContent: React.FC = () => {
         </Suspense>
         <CookieConsent />
       </main>
+
     </div>
   );
 };
@@ -290,9 +306,12 @@ const App: React.FC = () => {
     <ThemeProvider>
       <AuthProvider>
         <NotificationProvider>
-          <HashRouter>
-            <AppContent />
-          </HashRouter>
+          <ComparisonProvider>
+            <HashRouter>
+              <AppContent />
+              <ComparisonBar />
+            </HashRouter>
+          </ComparisonProvider>
         </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
