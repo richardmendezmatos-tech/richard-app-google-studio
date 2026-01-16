@@ -105,10 +105,10 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
             employer: data.employer || "Unspecified"
         });
 
-        // Send Real Email
+        // Send Real Email to Admin
         try {
             await sendNotificationEmail({
-                to: 'richardmendezmatos@gmail.com', // Using the owner's email
+                to: 'richardmendezmatos@gmail.com',
                 subject: `New Lead - ${data.firstName} ${data.lastName} (${analysis.category})`,
                 html: `
                     <h2>New Lead Received</h2>
@@ -123,18 +123,152 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
                     <p><strong>Recommended Action:</strong> ${analysis.recommendedAction}</p>
                 `
             });
+
+            // Send Automated Welcome Email to Client
+            if (data.email) {
+                const { getWelcomeEmailTemplate } = await import('./emailTemplates');
+                await sendNotificationEmail({
+                    to: data.email,
+                    subject: `🚗 Recibimos tu solicitud para: ${data.vehicleOfInterest || 'Richard Automotive'}`,
+                    html: getWelcomeEmailTemplate(data)
+                });
+                logger.info(`Welcome email sent to: ${data.email}`);
+            }
+
         } catch (emailError) {
             logger.error("Failed to send email", emailError);
         }
 
-        // In a real app, you would verify the 'snapshot.ref.update()' works here:
         await snapshot.ref.update({
             aiAnalysis: analysis,
-            status: analysis.score > 80 ? 'pre-approved' : 'pending_review'
+            status: analysis.score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
+            emailSent: true,
+            lastContacted: new Date()
         });
 
     } catch (err) {
         logger.error("Error analyzing lead", err);
+    }
+});
+
+// --- Scheduled Marketing Automation ---
+
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
+import { initializeApp, getApps } from 'firebase-admin/app';
+
+// Initialize Admin SDK (if not already done)
+if (getApps().length === 0) {
+    initializeApp();
+}
+const db = getFirestore();
+
+export const checkStaleLeads = onSchedule('every day 09:00', async (event) => {
+    logger.info("Running Stale Lead Check...");
+
+    // 3 Days ago
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    try {
+        const leadsRef = db.collection('applications');
+        const snapshot = await leadsRef
+            .where('status', '==', 'new')
+            .where('timestamp', '<=', Timestamp.fromDate(threeDaysAgo))
+            // .where('nudgeSent', '!=', true) // Requires index or separate query
+            .limit(50)
+            .get();
+
+        if (snapshot.empty) {
+            logger.info("No stale leads found.");
+            return;
+        }
+
+        const { getNudgeEmailTemplate } = await import('./emailTemplates');
+
+        let emailCount = 0;
+        const batch = db.batch();
+
+        for (const doc of snapshot.docs) {
+            const lead = doc.data();
+
+            // Client-side filtering if index is missing/complex
+            if (lead.nudgeSent || !lead.email) continue;
+
+            try {
+                await sendNotificationEmail({
+                    to: lead.email,
+                    subject: `¿Sigues buscando auto, ${lead.firstName}? 🤔`,
+                    html: getNudgeEmailTemplate(lead)
+                });
+
+                batch.update(doc.ref, {
+                    nudgeSent: true,
+                    lastContacted: new Date(),
+                    aiSummary: lead.aiSummary + " [Auto-Nudge Sent]"
+                });
+                emailCount++;
+            } catch (e) {
+                logger.error(`Failed to nudge lead ${doc.id}`, e);
+            }
+        }
+
+        await batch.commit();
+        logger.info(`Nudge campaign completed. Emailed ${emailCount} leads.`);
+
+    } catch (error) {
+        logger.error("Error in checkStaleLeads", error);
+    }
+});
+
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
+
+export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+
+    if (!before || !after) return;
+
+    // Check for Price Drop
+    if (after.price < before.price) {
+        const carId = event.params.carId;
+        const oldPrice = Number(before.price);
+        const newPrice = Number(after.price);
+
+        logger.info(`Price Drop Detected for ${carId}: ${oldPrice} -> ${newPrice}`);
+
+        // Find interested leads
+        const leadsRef = db.collection('applications');
+        const snapshot = await leadsRef
+            .where('vehicleId', '==', carId)
+            // Optional: Filter by status to avoid emailing sold leads
+            // .where('status', 'in', ['new', 'contacted', 'negotiating']) 
+            .get();
+
+        if (snapshot.empty) {
+            logger.info("No leads interested in this vehicle.");
+            return;
+        }
+
+        const { getPriceDropEmailTemplate } = await import('./emailTemplates');
+        let emailCount = 0;
+
+        for (const doc of snapshot.docs) {
+            const lead = doc.data();
+            if (!lead.email) continue;
+
+            try {
+                await sendNotificationEmail({
+                    to: lead.email,
+                    subject: `🚨 ¡Bajó de Precio! ${lead.vehicleOfInterest || 'El auto que te gusta'}`,
+                    html: getPriceDropEmailTemplate(lead, oldPrice, newPrice)
+                });
+                emailCount++;
+            } catch (e) {
+                logger.error(`Failed to send price drop alert to ${lead.email}`, e);
+            }
+        }
+        logger.info(`Price Drop Alert sent to ${emailCount} leads.`);
     }
 });
 

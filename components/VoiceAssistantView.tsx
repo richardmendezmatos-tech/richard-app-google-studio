@@ -13,17 +13,17 @@ const VoiceAssistantView: React.FC = () => {
     const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    
+
     const sessionPromise = useRef<Promise<any> | null>(null);
     const inputAudioContext = useRef<AudioContext | null>(null);
     const outputAudioContext = useRef<AudioContext | null>(null);
     const inputNode = useRef<ScriptProcessorNode | null>(null);
     const mediaStream = useRef<MediaStream | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
-    
+
     const nextStartTime = useRef(0);
     const audioSources = useRef<Set<AudioBufferSourceNode>>(new Set());
-    
+
     const currentInputTranscriptionRef = useRef('');
     const currentOutputTranscriptionRef = useRef('');
     const transcriptionIdCounter = useRef(0);
@@ -61,7 +61,7 @@ const VoiceAssistantView: React.FC = () => {
         setIsListening(false);
         setIsSpeaking(false);
     };
-    
+
     useEffect(() => {
         return () => {
             stopSession();
@@ -76,7 +76,7 @@ const VoiceAssistantView: React.FC = () => {
 
             inputAudioContext.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
             outputAudioContext.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
-            
+
             sessionPromise.current = connectToVoiceSession({
                 onopen: () => {
                     setConnectionState('connected');
@@ -113,20 +113,21 @@ const VoiceAssistantView: React.FC = () => {
             setConnectionState('error');
         }
     };
-    
+
     const handleTranscription = (message: LiveServerMessage) => {
-        if (message.serverContent?.outputTranscription) {
-            const { text } = message.serverContent.outputTranscription;
+        const content = message.serverContent as any;
+        if (content?.outputTranscription) {
+            const { text } = content.outputTranscription;
             currentOutputTranscriptionRef.current += text;
             updateTranscription('model', currentOutputTranscriptionRef.current, false);
-        } else if (message.serverContent?.inputTranscription) {
-            const { text } = message.serverContent.inputTranscription;
+        } else if (content?.inputTranscription) {
+            const { text } = content.inputTranscription;
             currentInputTranscriptionRef.current += text;
             updateTranscription('user', currentInputTranscriptionRef.current, false);
         }
 
-        if (message.serverContent?.turnComplete) {
-             setTranscriptions(prev => {
+        if (content?.turnComplete) {
+            setTranscriptions(prev => {
                 if (prev.length === 0) return prev;
                 const last = prev[prev.length - 1];
                 if (!last.isFinal) {
@@ -141,7 +142,7 @@ const VoiceAssistantView: React.FC = () => {
             setIsListening(false); // Reset listening state visualization
         }
     };
-    
+
     const updateTranscription = (role: 'user' | 'model', text: string, isFinal: boolean) => {
         setTranscriptions(prev => {
             const last = prev[prev.length - 1];
@@ -157,19 +158,20 @@ const VoiceAssistantView: React.FC = () => {
     };
 
     const handleAudio = async (message: LiveServerMessage) => {
-        const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+        const content = message.serverContent as any;
+        const audioData = content?.modelTurn?.parts?.[0]?.inlineData?.data;
         if (audioData) {
             setIsSpeaking(true);
             const audioBuffer = await decodeAudioData(decode(audioData), outputAudioContext.current!, 24000, 1);
             const source = outputAudioContext.current!.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(outputAudioContext.current!.destination);
-            
+
             source.onended = () => {
                 audioSources.current.delete(source);
                 if (audioSources.current.size === 0) setIsSpeaking(false);
             };
-            
+
             const currentTime = outputAudioContext.current!.currentTime;
             nextStartTime.current = Math.max(nextStartTime.current, currentTime);
             source.start(nextStartTime.current);
@@ -206,7 +208,7 @@ const VoiceAssistantView: React.FC = () => {
                     <div className={`absolute w-[300px] h-[300px] border border-[#00aed9]/30 rounded-full transition-all duration-500 ${isListening ? 'scale-110 border-green-500/30' : 'scale-100'}`} />
 
                     {/* Core Orb */}
-                    <div 
+                    <div
                         className={`w-40 h-40 rounded-full bg-gradient-to-br from-[#00aed9] to-blue-600 flex items-center justify-center shadow-[0_0_80px_rgba(0,174,217,0.4)] transition-all duration-300 z-20
                         ${isSpeaking ? 'animate-[pulse_1s_ease-in-out_infinite] scale-110 shadow-[0_0_120px_rgba(0,174,217,0.8)]' : ''}
                         ${isListening ? 'scale-95 ring-4 ring-green-500/50' : ''}
@@ -214,7 +216,7 @@ const VoiceAssistantView: React.FC = () => {
                     >
                         <Bot size={64} className="text-white drop-shadow-lg" />
                     </div>
-                    
+
                     {/* Connecting particles (Simulated) */}
                     {connectionState === 'connecting' && (
                         <div className="absolute w-48 h-48 border-4 border-t-[#00aed9] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
@@ -224,7 +226,7 @@ const VoiceAssistantView: React.FC = () => {
 
             {/* Transcript Area */}
             <div className="w-full max-w-3xl z-10 mb-8">
-                <div 
+                <div
                     ref={scrollRef}
                     className="h-48 overflow-y-auto space-y-4 px-4 mask-gradient-y scroll-smooth"
                     style={{ maskImage: 'linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)' }}
@@ -234,11 +236,10 @@ const VoiceAssistantView: React.FC = () => {
                     )}
                     {transcriptions.map(t => (
                         <div key={t.id} className={`flex ${t.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[80%] p-4 rounded-2xl ${
-                                t.role === 'user' 
-                                ? 'bg-slate-800 text-slate-200 rounded-br-none border border-slate-700' 
-                                : 'bg-[#00aed9]/10 text-[#00aed9] rounded-bl-none border border-[#00aed9]/20'
-                            }`}>
+                            <div className={`max-w-[80%] p-4 rounded-2xl ${t.role === 'user'
+                                    ? 'bg-slate-800 text-slate-200 rounded-br-none border border-slate-700'
+                                    : 'bg-[#00aed9]/10 text-[#00aed9] rounded-bl-none border border-[#00aed9]/20'
+                                }`}>
                                 <p className="text-lg font-medium leading-relaxed">{t.text}</p>
                             </div>
                         </div>
@@ -248,12 +249,12 @@ const VoiceAssistantView: React.FC = () => {
 
             {/* Control Bar */}
             <div className="z-10 pb-8">
-                <button 
+                <button
                     onClick={connectionState === 'disconnected' || connectionState === 'error' ? startSession : stopSession}
                     className={`
                         w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl hover:scale-105 active:scale-95
-                        ${connectionState === 'connected' 
-                            ? 'bg-red-500 hover:bg-red-600 shadow-red-500/40 text-white' 
+                        ${connectionState === 'connected'
+                            ? 'bg-red-500 hover:bg-red-600 shadow-red-500/40 text-white'
                             : 'bg-white hover:bg-slate-100 shadow-white/20 text-slate-900'}
                     `}
                     disabled={connectionState === 'connecting'}

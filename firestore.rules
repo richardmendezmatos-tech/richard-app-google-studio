@@ -2,28 +2,52 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to check if user is admin
+    // --- Helper Functions ---
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
     function isAdmin() {
-      return request.auth != null && 
+      return isAuthenticated() && 
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
 
-    // Car Inventory: Everyone reads, only Admins write
+    // --- Validation Functions ---
+    
+    function isValidCar() {
+      let car = request.resource.data;
+      return car.price is number && 
+             car.name is string && 
+             car.name.size() > 0 &&
+             car.type in ['suv', 'sedan', 'pickup', 'luxury'];
+    }
+
+    // --- Collections ---
+
+    // Car Inventory: Public Read, Admin Write (with Validation)
     match /cars/{carId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if isAdmin() && isValidCar();
+      allow delete: if isAdmin();
     }
     
-    // User Profiles: Users can read/write their own profile
-    // Prevent non-admins from setting role to 'admin' (Basic protection)
+    // User Profiles: Self-manage, Admin readout
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null && request.auth.uid == userId; 
+      allow read: if isOwner(userId) || isAdmin();
+      // Users can update their own profile, but NOT their role
+      allow update: if isOwner(userId) && 
+                    (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+      allow create: if isOwner(userId); // Initial creation on signup
     }
     
-    // Applications (Pre-qualification): Users can create, Admins can read
+    // Applications (Leads): Public Create-only, Admin Read/Write
     match /applications/{appId} {
-      allow create: if true; // Public submission
+      allow create: if true; // Anyone can submit a lead
       allow read, update, delete: if isAdmin();
     }
   }
