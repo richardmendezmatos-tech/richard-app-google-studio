@@ -11,7 +11,9 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
-  AuthError
+  AuthError,
+  setPersistence,
+  browserLocalPersistence
 } from "firebase/auth";
 import {
   getFirestore,
@@ -23,11 +25,12 @@ import {
   getDoc,
   deleteDoc,
   writeBatch,
+  increment,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseConfig } from "../firebaseConfig";
-import { Car, UserRole } from "../types";
+import { Car, UserRole, Lead } from "../types";
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
@@ -36,6 +39,18 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
+
+// Enable Offline Persistence
+import { enableMultiTabIndexedDbPersistence } from "firebase/firestore";
+if (typeof window !== 'undefined') {
+  enableMultiTabIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Persistence failed: Multiple tabs open.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('Persistence not supported by browser.');
+    }
+  });
+}
 
 // Use emulator for functions if in dev
 if (import.meta.env.DEV) {
@@ -93,22 +108,101 @@ export const loginUserClient = async (email: string, password: string) => {
  * 1. RECHAZA si el usuario NO tiene rol de 'admin'.
  * 2. Valida un token 2FA (simulado).
  */
+
+// --- Helper para obtener IP (Client-side best effort) ---
+const getClientIP = async (): Promise<string> => {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip;
+  } catch (e) {
+    return 'unknown_ip';
+  }
+};
+
+// --- Auditoría y Seguridad ---
+const auditLogsRef = collection(db, 'audit_logs');
+const rateLimitsRef = collection(db, 'login_attempts'); // Para Rate Limiting
+
+export const logAdminAccess = async (email: string, success: boolean, method: string) => {
+  const ip = await getClientIP();
+  const device = navigator.userAgent;
+
+  await addDoc(auditLogsRef, {
+    email,
+    ip,
+    device,
+    method, // 'password', '2fa', 'passkey'
+    success,
+    timestamp: new Date(),
+    location: window.location.pathname
+  });
+};
+
+/**
+ * LOGIN PARA ADMINISTRADORES (SECURED)
+ * Implementa:
+ * 1. Rate Limiting (Check de intentos fallidos en Firestore)
+ * 2. Role Check
+ * 3. 2FA Check
+ * 4. Audit Logging
+ */
 export const loginAdmin = async (email: string, password: string, twoFactorCode: string) => {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  const role = await getUserRole(userCredential.user.uid);
+  const ip = await getClientIP();
+  const attemptId = `${email}_${ip}`.replace(/[^a-zA-Z0-9]/g, '_'); // Sanitize for doc ID
 
-  if (role !== 'admin') {
-    await signOut(auth);
-    throw new Error("ACCESS_DENIED: Credenciales no válidas para este portal.");
+  // 1. Check Rate Limit (Frontend enforcement logic backed by Firestore)
+  // En producción real, esto debe ser una Cloud Function para evitar bypass.
+  // Aquí simulamos la lógica "Backend" consultando Firestore antes de auth.
+  const rateLimitDoc = await getDoc(doc(rateLimitsRef, attemptId));
+  if (rateLimitDoc.exists()) {
+    const data = rateLimitDoc.data();
+    const now = new Date().getTime();
+    if (data.attempts >= 5 && now - data.lastAttempt < 15 * 60 * 1000) { // 15 min ban
+      await logAdminAccess(email, false, 'blocked_ip');
+      throw new Error("ACCESS_DENIED: IP bloqueada temporalmente por intentos fallidos. Intente en 15 minutos.");
+    }
   }
 
-  // Simulación de validación 2FA (En producción, esto se verificaría con un servicio como Authy/Google Authenticator)
-  if (twoFactorCode !== '123456') { // Código de demo
-    await signOut(auth);
-    throw new Error("INVALID_2FA: Token de seguridad incorrecto.");
-  }
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const role = await getUserRole(userCredential.user.uid);
 
-  return userCredential;
+    if (role !== 'admin') {
+      await signOut(auth);
+      await logAdminAccess(email, false, 'role_check_failed');
+      throw new Error("ACCESS_DENIED: Credenciales no válidas para este portal.");
+    }
+
+    // 2. 2FA Check (Simulado pero estricto)
+    if (twoFactorCode !== '123456') {
+      await logAdminAccess(email, false, '2fa_failed');
+      await signOut(auth);
+      throw new Error("INVALID_2FA: Token de seguridad incorrecto.");
+    }
+
+    // Success - Reset attempts & Log
+    if (rateLimitDoc.exists()) {
+      await deleteDoc(doc(rateLimitsRef, attemptId));
+    }
+    await logAdminAccess(email, true, 'login_success');
+    return userCredential;
+
+  } catch (error: any) {
+    // Record Failed Attempt
+    const currentAttempts = rateLimitDoc.exists() ? rateLimitDoc.data().attempts : 0;
+    await setDoc(doc(rateLimitsRef, attemptId), {
+      attempts: currentAttempts + 1,
+      lastAttempt: new Date().getTime(),
+      ip
+    }, { merge: true });
+
+    // Si no fue error de bloqueo previo, loguear el fallo de auth
+    if (!error.message.includes("IP bloqueada")) {
+      await logAdminAccess(email, false, 'auth_failed');
+    }
+    throw error;
+  }
 };
 
 export const registerUser = async (email: string, password: string) => {
@@ -138,6 +232,8 @@ const facebookProvider = new FacebookAuthProvider();
 
 export const loginWithGoogle = async () => {
   try {
+    // Force persistence to be local (survives browser restart)
+    await setPersistence(auth, browserLocalPersistence);
     const result = await signInWithPopup(auth, googleProvider);
     // Verificar si existe perfil, si no, crearlo como user
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
@@ -230,16 +326,96 @@ export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
 
 // --- Funciones de Solicitudes (Pre-Cualificación) ---
 
+export const incrementCarView = async (carId: string) => {
+  const carRef = doc(db, 'cars', carId);
+  await setDoc(carRef, { views: increment(1) }, { merge: true });
+};
+
+export const incrementCarLead = async (carId: string) => {
+  const carRef = doc(db, 'cars', carId);
+  await setDoc(carRef, { leads_count: increment(1) }, { merge: true });
+};
+
+
+// Helper to calculate score based on data completeness and intent
+const calculateLeadScore = (data: any): number => {
+  let score = 40; // Base score for interest
+
+  // High Intent Signals
+  if (data.type === 'trade-in') score += 15; // Putting skin in the game
+  if (data.type === 'finance' && data.ssn) score += 25; // Serious buyer providing sensitive info
+
+  // Data Quality
+  if (data.firstName && data.lastName) score += 5;
+  if (data.phone && data.phone.length >= 10) score += 15;
+  if (data.email && data.email.includes('@')) score += 10;
+
+  // Context
+  if (data.vehicleInfo && data.vehicleInfo.id) score += 10;
+  if (data.monthlyIncome && Number(data.monthlyIncome) > 2000) score += 10;
+  if (data.message && data.message.length > 20) score += 5;
+
+  return Math.min(score, 99); // Cap at 99
+};
+
 export const submitApplication = async (data: any) => {
+  const score = calculateLeadScore(data);
   const safeData = {
     ...data,
-    ssn: `XXX-XX-${data.ssn.slice(-4)}`,
+    // Only mask SSN if it exists
+    ...(data.ssn ? { ssn: `XXX-XX-${data.ssn.slice(-4)}` } : {}),
     timestamp: new Date(),
-    status: 'pending'
+    status: 'new',
+    type: data.type || 'finance', // Default to finance if not specified
+    aiScore: score, // Persist score
+    aiSummary: data.aiSummary || 'Lead capturado automáticamente.'
   };
 
 
   await addDoc(appsCollectionRef, safeData);
+
+  // Analytics: Increment Lead Count for the specific vehicle
+  if (data.vehicleInfo && data.vehicleInfo.id) {
+    await incrementCarLead(data.vehicleInfo.id);
+  }
+};
+
+export const syncLeads = (callback: (leads: Lead[]) => void) => {
+  return onSnapshot(appsCollectionRef, snapshot => {
+    const leadsList = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        type: data.type || 'general',
+        status: data.status || 'new',
+        firstName: data.firstName || 'Cliente',
+        lastName: data.lastName || 'Desconocido',
+        email: data.email,
+        phone: data.phone,
+        timestamp: data.timestamp,
+        vehicleOfInterest: data.vehicleInfo?.name || data.vehicleOfInterest,
+        vehicleId: data.vehicleInfo?.id,
+        tradeInDetails: data.tradeIn ? `${data.tradeIn.year} ${data.tradeIn.make} ${data.tradeIn.model}` : undefined,
+        message: data.message,
+        aiScore: data.aiScore || calculateLeadScore(data), // Use stored or calculate on fly
+        aiSummary: data.aiSummary
+      } as Lead;
+    });
+
+    // Sort by timestamp newly created first
+    leadsList.sort((a, b) => {
+      const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp || 0);
+      const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    callback(leadsList);
+  });
+};
+
+export const updateLeadStatus = async (leadId: string, newStatus: string) => {
+  const leadRef = doc(db, 'applications', leadId);
+  await setDoc(leadRef, { status: newStatus }, { merge: true });
 };
 
 // --- Funciones de IA (Genkit) ---
