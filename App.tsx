@@ -36,43 +36,43 @@ import { startGeofenceMonitoring } from './services/geofenceService';
 // Initial data for DB setup
 const initialInventoryData: Omit<Car, 'id'>[] = [
   {
-    name: 'Hyundai Tucson 2025',
-    price: 38500,
+    name: 'Hyundai Tucson 2026',
+    price: 39500,
     type: 'suv',
     badge: 'Rediseñado',
-    img: 'https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&w=1200&auto=format&fit=crop', // Modern Grey SUV
+    img: 'https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&w=1200&auto=format&fit=crop',
     featured: true,
   },
   {
-    name: 'Hyundai Santa Fe 2024',
-    price: 42300,
+    name: 'Hyundai Elantra 2026',
+    price: 28900,
+    type: 'sedan',
+    badge: 'Deportivo',
+    img: 'https://images.unsplash.com/photo-1609520505218-7421da3b3d80?q=80&w=1200&auto=format&fit=crop', // White Sedan
+    featured: true,
+  },
+  {
+    name: 'Hyundai Venue 2026',
+    price: 24500,
     type: 'suv',
-    badge: 'Más Vendido',
-    img: 'https://images.unsplash.com/photo-1631522858632-1b157bd752e2?q=80&w=1200&auto=format&fit=crop', // Boxy SUV
-    featured: true,
+    badge: 'Compacto',
+    img: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&w=1200&auto=format&fit=crop', // Compact SUV vibe
+    featured: false,
   },
   {
-    name: 'Hyundai Palisade 2025',
-    price: 55900,
+    name: 'Hyundai Santa Fe 2026',
+    price: 44200,
     type: 'suv',
-    badge: 'Flagship',
-    img: 'https://images.unsplash.com/photo-1647494480572-c2834b6e56ad?q=80&w=1200&auto=format&fit=crop', // White Luxury SUV
+    badge: 'Más Espacio',
+    img: 'https://images.unsplash.com/photo-1631522858632-1b157bd752e2?q=80&w=1200&auto=format&fit=crop',
     featured: true,
   },
   {
-    name: 'Hyundai IONIQ 5 2025',
-    price: 48900,
-    type: 'suv',
-    badge: '100% Eléctrico',
-    img: 'https://images.unsplash.com/photo-1658314643093-5757788e895c?q=80&w=1200&auto=format&fit=crop', // White EV
-    featured: true,
-  },
-  {
-    name: 'Genesis GV80 2024',
-    price: 78500,
+    name: 'Hyundai Palisade 2026',
+    price: 58900,
     type: 'luxury',
-    badge: 'Ultra Lujo',
-    img: 'https://images.unsplash.com/photo-1627916533596-3392305a2789?q=80&w=1200&auto=format&fit=crop', // Luxury Genesis
+    badge: 'Flagship',
+    img: 'https://images.unsplash.com/photo-1647494480572-c2834b6e56ad?q=80&w=1200&auto=format&fit=crop',
     featured: true,
   },
 ];
