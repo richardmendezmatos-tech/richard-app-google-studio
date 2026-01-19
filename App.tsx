@@ -5,6 +5,7 @@ import Storefront from './components/Storefront'; // Keep Eager
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
 import AIChatWidget from './components/AIChatWidget'; // Eager Load for global availability
+import { WhatsAppFloat } from './components/WhatsAppFloat';
 import ThemeToggle from './components/ThemeToggle';
 const AILabView = React.lazy(() => import('./components/AILabView'));
 const UserLogin = React.lazy(() => import('./components/UserLogin'));
@@ -270,6 +271,7 @@ const AppContent: React.FC = () => {
         <ReloadPrompt />
         <OfflineIndicator />
         <AIChatWidget inventory={inventory} /> { /* Global Chat Widget */}
+        <WhatsAppFloat /> { /* Direct WhatsApp Button */}
         <Suspense fallback={<FullScreenLoader />}>
           <Routes>
             <Route path="/" element={
