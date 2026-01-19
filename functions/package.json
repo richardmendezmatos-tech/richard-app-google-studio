@@ -30,10 +30,12 @@
     "firebase-functions": "^7.0.3",
     "genkit": "^1.27.0",
     "nodemailer": "^7.0.12",
+    "twilio": "^5.11.2",
     "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/nodemailer": "^7.0.4",
+    "@types/twilio": "^3.19.2",
     "genkit-cli": "^1.27.0"
   }
 }

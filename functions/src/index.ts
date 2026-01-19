@@ -5,7 +5,7 @@ import { onCallGenkit } from 'firebase-functions/https';
 // Initialize Genkit with Google AI plugin
 const ai = genkit({
     plugins: [googleAI()],
-    model: 'googleai/gemini-1.5-flash',
+    model: 'googleai/gemini-1.0-pro',
 });
 
 // Define the Flow
@@ -64,7 +64,8 @@ export const analyzeLead = ai.defineFlow(
             monthlyIncome: z.string(),
             timeAtJob: z.string(),
             jobTitle: z.string(),
-            employer: z.string()
+            employer: z.string(),
+            vehicleId: z.string().optional()
         }),
         outputSchema: z.object({
             score: z.number().describe("Score from 1-100 based on financial stability"),
@@ -73,19 +74,36 @@ export const analyzeLead = ai.defineFlow(
             recommendedAction: z.string()
         })
     },
-    async (input) => { // Removed { sendChunk } since we are returning object, not streaming
+    async (input) => {
+        // RAG-Lite: Fetch Vehicle Context
+        let vehicleContext = "No vehicle specified.";
+        if (input.vehicleId) {
+            try {
+                const carDoc = await db.collection('cars').doc(input.vehicleId).get();
+                if (carDoc.exists) {
+                    const car = carDoc.data();
+                    vehicleContext = `Vehicle: ${car?.year} ${car?.make} ${car?.model}, Price: $${car?.price}, Mileage: ${car?.mileage}`;
+                }
+            } catch (e) {
+                console.error("Error fetching vehicle context:", e);
+            }
+        }
+
         const prompt = `
         Analiza este lead para un concesionario de autos:
         - Ingreso Mensual: ${input.monthlyIncome}
         - Tiempo en Empleo: ${input.timeAtJob}
         - Título: ${input.jobTitle}
         - Empleador: ${input.employer}
+        - Contexto del Vehículo: ${vehicleContext}
 
+        Si el vehículo es costoso y el ingreso bajo, ajusta el score y la recomendación.
+        
         Responde ESTRICTAMENTE con este JSON:
         {
-            "score": (número 1-100 basado en estabilidad financiera),
+            "score": (número 1-100 basado en estabilidad financiera y capacidad de compra),
             "category": ("High Potential" | "Standard" | "Needs Review"),
-            "summary": (Breve análisis de 1 frase),
+            "summary": (Breve análisis de 1 frase considerando el auto de interés),
             "recommendedAction": (Acción recomendada para el vendedor)
         }
         `;
@@ -98,6 +116,129 @@ export const analyzeLead = ai.defineFlow(
         return result.output;
     }
 );
+
+// --- Conversational AI (Chat / WhatsApp) ---
+
+const SALES_STAGES = `
+1. Introduction: Start conversation, introduce Richard Automotive. Verify they are speaking to the right person if needed.
+2. Qualification: Confirm if they are buying, trading-in, or just looking. Ask for budget or specific needs.
+3. Value Proposition: Explain why Richard Automotive is the best (Lifetime Warranty, fast service).
+4. Needs Analysis: detailed questions about what they need in a car (SUV vs Sedan, Gas vs Hybrid).
+5. Solution Presentation: Recommend specific cars from inventory based on needs.
+6. Objection Handling: Address price/financing concerns politely.
+7. Close: Ask to schedule a Test Drive or Visit.
+8. End: Polite goodbye.
+`;
+
+export const chatWithLead = ai.defineFlow(
+    {
+        name: 'chatWithLead',
+        inputSchema: z.object({
+            history: z.array(z.object({ role: z.enum(['user', 'model']), content: z.string() })),
+            message: z.string(),
+            vehicleId: z.string().optional()
+        }),
+        outputSchema: z.string()
+    },
+    async (input) => {
+        // RAG-Lite: Fetch Vehicle Data for Context
+        let knowledgeBase = `Eres Richard IA, el vendedor estrella de Richard Automotive.
+Tu objetivo es mover al cliente a través de estas ETAPAS DE VENTA:
+${SALES_STAGES}
+
+INSTRUCCIONES:
+- Analiza el historial para determinar la ETAPA ACTUAL.
+- Tu respuesta debe intentar mover la conversación a la siguiente etapa lógica.
+- Sé breve y profesional.
+- Si el cliente pregunta precio, DÁSELO. No lo escondas.
+- Si el cliente muestra interés claro, intenta CERRAR (Agendar Cita).
+`;
+
+        if (input.vehicleId) {
+            const carDoc = await db.collection('cars').doc(input.vehicleId).get();
+            if (carDoc.exists) {
+                const car = carDoc.data();
+                knowledgeBase += `\nCONTEXTO DEL VEHÍCULO DE INTERÉS:
+                Marca/Modelo: ${car?.year} ${car?.make} ${car?.model}. 
+                Precio: $${car?.price}. Millaje: ${car?.mileage || 'N/A'}. 
+                Características: ${car?.features?.join(', ') || 'No listadas'}.
+                Usa esto para la etapa de "Solution Presentation".`;
+            }
+        }
+
+        const result = await ai.generate({
+            prompt: `${knowledgeBase}\n\nHISTORIAL DE CONVERSACIÓN:\n${JSON.stringify(input.history)}\n\nCLIENTE (Mensaje Actual): "${input.message}"\n\nRICHARD IA:`,
+        });
+
+        return result.text;
+    }
+);
+
+import { onRequest } from 'firebase-functions/v2/https';
+
+// Generic Webhook for WhatsApp (compatible with Twilio payload)
+export const incomingWhatsAppMessage = onRequest(async (req, res) => {
+    if (req.method !== 'POST') {
+        res.status(405).send('Method Not Allowed');
+        return;
+    }
+
+    // Twilio sends form-urlencoded POST requests
+    const { Body, From, VehicleId } = req.body;
+
+    logger.info(`WhatsApp Message from ${From}: ${Body}`);
+
+    try {
+        const chatId = From.replace(/\D/g, ''); // Use numbers only for ID
+        const chatRef = db.collection('chats').doc(chatId);
+        const chatDoc = await chatRef.get();
+
+        let localHistory: { role: 'user' | 'model'; content: string }[] = [];
+
+        if (chatDoc.exists) {
+            const data = chatDoc.data();
+            if (data?.messages) {
+                // Keep last 10 messages for context window
+                localHistory = data.messages.slice(-10).map((m: any) => ({
+                    role: m.role,
+                    content: m.content
+                }));
+            }
+        }
+
+        const replyText = await chatWithLead({
+            history: localHistory,
+            message: Body || "Hola",
+            vehicleId: VehicleId
+        });
+
+        // Save new interaction to history
+        await chatRef.set({
+            messages: [
+                ...(chatDoc.exists ? chatDoc.data()?.messages || [] : []),
+                { role: 'user', content: Body || '', timestamp: new Date() },
+                { role: 'model', content: replyText, timestamp: new Date() }
+            ],
+            lastUpdated: new Date(),
+            phone: From
+        }, { merge: true });
+
+        // Use Twilio Service to generate TwiML XML
+        const { createTwiMLReply } = await import('./services/twilioService');
+        const twiml = createTwiMLReply(replyText);
+
+        // Log the reply for debugging
+        logger.info(`AI Reply to ${From}: ${replyText}`);
+
+        // Return XML content type for Twilio
+        res.set('Content-Type', 'text/xml');
+        res.status(200).send(twiml);
+
+    } catch (error) {
+        logger.error("Error processing WhatsApp message", error);
+        res.status(500).send('AI Error');
+    }
+});
 
 export const onNewApplication = onDocumentCreated('applications/{applicationId}', async (event) => {
     const snapshot = event.data;

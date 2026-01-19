@@ -6,7 +6,7 @@ import { syncLeads } from '../services/firebaseService';
 
 import InventoryHeatmap from './InventoryHeatmap';
 import { useReactToPrint } from 'react-to-print';
-import DealSheet from './DealSheet';
+// import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
 
 // Modular Components
 import { KanbanBoard } from './admin/KanbanBoard';
@@ -76,31 +76,23 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   const [deviceType, setDeviceType] = useState<'Mac' | 'iPhone'>('Mac');
 
   // Print Logic
+  /* REMOVED: react-to-print logic in favor of jsPDF
   const [selectedLeadForPrint, setSelectedLeadForPrint] = useState<Lead | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
     contentRef: printRef,
     onAfterPrint: () => setSelectedLeadForPrint(null),
   });
+  */
 
-  // --- LOGIC UPDATES ---
-  useEffect(() => {
-    const checkDevice = () => {
-      const isMobile = window.innerWidth < 768 || /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      setDeviceType(isMobile ? 'iPhone' : 'Mac');
-    };
-    checkDevice();
-    window.addEventListener('resize', checkDevice);
-    const unsub = syncLeads((data) => setLeads(data));
-    return () => {
-      window.removeEventListener('resize', checkDevice);
-      unsub();
-    };
-  }, []);
-
-  const triggerPrint = (lead: Lead) => {
-    setSelectedLeadForPrint(lead);
-    setTimeout(() => handlePrint(), 100);
+  const triggerPrint = async (lead: Lead) => {
+    try {
+      const { generateLeadPDF } = await import('../utils/pdfGenerator');
+      generateLeadPDF(lead);
+    } catch (e) {
+      console.error("PDF Error:", e);
+      alert("Error generando PDF. Ver consola.");
+    }
   };
 
   const getCarForLead = (lead: Lead) => {
@@ -149,6 +141,35 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                 <span className="hidden sm:inline">Reset DB</span>
               </button>
             )}
+            <button
+              onClick={async () => {
+                if (!confirm("¿Generar lead de prueba para validar IA?")) return;
+                try {
+                  const { submitApplication } = await import('../services/firebaseService');
+                  await submitApplication({
+                    firstName: "Test",
+                    lastName: "Buyer",
+                    email: "richardmendezmatos@gmail.com", // User's email to verify receipt
+                    phone: "7875550000",
+                    monthlyIncome: "5000",
+                    timeAtJob: "2 years",
+                    jobTitle: "Software Engineer",
+                    employer: "Tech Corp",
+                    type: 'finance',
+                    vehicleOfInterest: "Hyundai Tucson 2025",
+                    vehicleId: "test_vehicle_id",
+                    vehicleInfo: { id: "test_vehicle_id", price: 38500 },
+                    message: "I am interested in this car immediately."
+                  });
+                  alert("✅ Lead de prueba generado. Revisa el tablero y tu email.");
+                } catch (e: any) {
+                  alert("Error: " + e.message);
+                }
+              }}
+              className="flex-1 md:flex-none h-[44px] px-6 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <Smartphone size={18} strokeWidth={3} /> <span className="hidden sm:inline">Test AI Lead</span>
+            </button>
             <button
               onClick={() => { setEditingCar(null); setIsModalOpen(true); }}
               className="flex-1 md:flex-none h-[44px] px-6 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -221,11 +242,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
           {activeTab === 'pipeline' && (
             <div className="h-[calc(100vh-350px)] min-h-[500px]">
-              <div className="hidden">
-                {selectedLeadForPrint && (
-                  <DealSheet ref={printRef} lead={selectedLeadForPrint} car={getCarForLead(selectedLeadForPrint)} />
-                )}
-              </div>
+              {/* PDF Generator replaces DealSheet */}
               <KanbanBoard leads={leads} onPrint={triggerPrint} searchTerm={searchTerm} />
             </div>
           )}
