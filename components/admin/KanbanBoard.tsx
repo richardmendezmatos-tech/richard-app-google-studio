@@ -59,9 +59,10 @@ export const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint }) => (
 interface KanbanBoardProps {
     leads: Lead[];
     onPrint: (lead: Lead) => void;
+    searchTerm?: string;
 }
 
-export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint }) => {
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, searchTerm = '' }) => {
     const columns = [
         { id: 'new', title: 'Nuevos', color: 'bg-[#00aed9]', glow: 'shadow-[#00aed9]/20' },
         { id: 'contacted', title: 'Contactados', color: 'bg-amber-500', glow: 'shadow-amber-500/20' },
@@ -69,21 +70,68 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint }) => {
         { id: 'sold', title: 'Vendidos', color: 'bg-emerald-500', glow: 'shadow-emerald-500/20' },
     ];
 
+    // Filter leads based on search term
+    const filteredLeads = leads.filter(lead => {
+        if (!searchTerm) return true;
+        const term = searchTerm.toLowerCase();
+        return (
+            lead.firstName?.toLowerCase().includes(term) ||
+            lead.lastName?.toLowerCase().includes(term) ||
+            lead.vehicleOfInterest?.toLowerCase().includes(term) ||
+            lead.email?.toLowerCase().includes(term)
+        );
+    });
+
+    const handleDragStart = (e: React.DragEvent, leadId: string) => {
+        e.dataTransfer.setData('leadId', leadId);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault(); // Necessary to allow dropping
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e: React.DragEvent, status: string) => {
+        e.preventDefault();
+        const leadId = e.dataTransfer.getData('leadId');
+        if (leadId) {
+            updateLeadStatus(leadId, status);
+        }
+    };
+
     return (
         <div className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar">
             {columns.map(col => (
-                <div key={col.id} className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50 dark:border-white/5 shadow-xl shadow-slate-200/20 dark:shadow-none">
+                <div
+                    key={col.id}
+                    className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50 dark:border-white/5 shadow-xl shadow-slate-200/20 dark:shadow-none transition-colors duration-300"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, col.id)}
+                >
                     <div className="flex items-center gap-3 mb-6 px-2">
                         <div className={`w-3 h-3 rounded-full ${col.color} ${col.glow} shadow-lg animate-pulse`} />
                         <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{col.title}</span>
                         <span className="ml-auto bg-white/80 dark:bg-slate-800 px-3 py-1 rounded-full text-[10px] font-black shadow-sm text-slate-600 dark:text-slate-200 border border-slate-100 dark:border-white/5">
-                            {leads.filter(l => (l.status || 'new') === col.id).length}
+                            {filteredLeads.filter(l => (l.status || 'new') === col.id).length}
                         </span>
                     </div>
-                    <div className="space-y-4 overflow-y-auto flex-1 custom-scrollbar pr-1">
-                        {leads.filter(l => (l.status || 'new') === col.id).map(lead => (
-                            <LeadCard key={lead.id} lead={lead} onPrint={() => onPrint(lead)} />
+                    <div className="space-y-4 overflow-y-auto flex-1 custom-scrollbar pr-1 min-h-[100px]">
+                        {filteredLeads.filter(l => (l.status || 'new') === col.id).map(lead => (
+                            <div
+                                key={lead.id}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, lead.id)}
+                                className="cursor-grab active:cursor-grabbing"
+                            >
+                                <LeadCard lead={lead} onPrint={() => onPrint(lead)} />
+                            </div>
                         ))}
+                        {filteredLeads.filter(l => (l.status || 'new') === col.id).length === 0 && (
+                            <div className="h-full flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-white/5 rounded-3xl p-4 opacity-50">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pointer-events-none">Arrastra aquí</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             ))}

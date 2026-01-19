@@ -226,7 +226,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                   <DealSheet ref={printRef} lead={selectedLeadForPrint} car={getCarForLead(selectedLeadForPrint)} />
                 )}
               </div>
-              <KanbanBoard leads={leads} onPrint={triggerPrint} />
+              <KanbanBoard leads={leads} onPrint={triggerPrint} searchTerm={searchTerm} />
             </div>
           )}
 

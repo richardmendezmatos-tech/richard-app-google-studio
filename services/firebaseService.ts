@@ -148,28 +148,56 @@ export const logAdminAccess = async (email: string, success: boolean, method: st
  * 4. Audit Logging
  */
 export const loginAdmin = async (email: string, password: string, twoFactorCode: string) => {
-  const ip = await getClientIP();
+  // Optimization: Parallelize IP check and Auth attempt to reduce waterfall latency
+  const [ip, authResult] = await Promise.all([
+    getClientIP(),
+    signInWithEmailAndPassword(auth, email, password).catch(e => ({ error: e } as any))
+  ]);
+
   const attemptId = `${email}_${ip}`.replace(/[^a-zA-Z0-9]/g, '_'); // Sanitize for doc ID
 
+  // Helper to record failures
+  const recordFailure = async () => {
+    const currentAttempts = rateLimitDoc.exists() ? rateLimitDoc.data().attempts : 0;
+    await setDoc(doc(rateLimitsRef, attemptId), {
+      attempts: currentAttempts + 1,
+      lastAttempt: new Date().getTime(),
+      ip
+    }, { merge: true });
+  };
+
   // 1. Check Rate Limit (Frontend enforcement logic backed by Firestore)
-  // En producción real, esto debe ser una Cloud Function para evitar bypass.
-  // Aquí simulamos la lógica "Backend" consultando Firestore antes de auth.
   const rateLimitDoc = await getDoc(doc(rateLimitsRef, attemptId));
   if (rateLimitDoc.exists()) {
     const data = rateLimitDoc.data();
     const now = new Date().getTime();
     if (data.attempts >= 5 && now - data.lastAttempt < 15 * 60 * 1000) { // 15 min ban
       await logAdminAccess(email, false, 'blocked_ip');
+      // If we authenticated successfully but are rate limited, sign out immediately
+      if (!(authResult as any).error) await signOut(auth);
       throw new Error("ACCESS_DENIED: IP bloqueada temporalmente por intentos fallidos. Intente en 15 minutos.");
     }
   }
 
+  // Handle Auth Result from the parallel promise
+  if ((authResult as any).error) {
+    const error = (authResult as any).error;
+    await recordFailure();
+
+    if (!error.message.includes("IP bloqueada")) {
+      await logAdminAccess(email, false, 'auth_failed');
+    }
+    throw error;
+  }
+
+  const userCredential = authResult as any;
+
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const role = await getUserRole(userCredential.user.uid);
 
     if (role !== 'admin') {
       await signOut(auth);
+      await recordFailure();
       await logAdminAccess(email, false, 'role_check_failed');
       throw new Error("ACCESS_DENIED: Credenciales no válidas para este portal.");
     }
@@ -178,6 +206,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode:
     if (twoFactorCode !== '123456') {
       await logAdminAccess(email, false, '2fa_failed');
       await signOut(auth);
+      await recordFailure();
       throw new Error("INVALID_2FA: Token de seguridad incorrecto.");
     }
 
@@ -189,18 +218,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode:
     return userCredential;
 
   } catch (error: any) {
-    // Record Failed Attempt
-    const currentAttempts = rateLimitDoc.exists() ? rateLimitDoc.data().attempts : 0;
-    await setDoc(doc(rateLimitsRef, attemptId), {
-      attempts: currentAttempts + 1,
-      lastAttempt: new Date().getTime(),
-      ip
-    }, { merge: true });
-
-    // Si no fue error de bloqueo previo, loguear el fallo de auth
-    if (!error.message.includes("IP bloqueada")) {
-      await logAdminAccess(email, false, 'auth_failed');
-    }
+    // If logic inside try fails (and wasn't handled specifically above), propagate
     throw error;
   }
 };

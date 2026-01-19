@@ -125,19 +125,20 @@ export const calculateNeuralMatch = async (userProfile: string, inventory: Car[]
     name: c.name,
     type: c.type,
     price: c.price,
-    features: c.badge
+    features: c.features?.join(', ') || c.badge || "Standard Config",
+    description: c.description ? c.description.substring(0, 100) : undefined // Include snippet of description
   }));
 
   const prompt = `
-    Role: You are an expert car sales consultant matching customers to inventory.
-    User Profile: "${userProfile}"
+    Rol: Eres un experto consultor de ventas de autos "Richard AI". Tu misión es conectar al usuario con su auto ideal.
+    Perfil del Usuario: "${userProfile}"
     
-    Inventory: 
+    Inventario Disponible: 
     ${JSON.stringify(inventoryContext)}
     
-    Task 1: Create a cool, short "Driver Persona" or Archetype for this user in Spanish (e.g. "Padre Aventurero", "Ejecutivo Urbano").
-    Task 2: Score each car from 0-100 based on how well it fits the user profile.
-    Generate a concise reason in Spanish (max 15 words).
+    Tarea 1: Crea un "Persona" (Arquetipo de Conductor) corto y cool en Español (ej. "Padre Aventurero", "Ejecutivo Urbano").
+    Tarea 2: Evalúa cada auto del 0-100 basándote en qué tan bien encaja con el perfil.
+    Tarea 3: Genera una razón CONVINCENTE y PERSONALIZADA en Español (max 15 palabras) de por qué ese auto específica es el match.
   `;
 
   try {
