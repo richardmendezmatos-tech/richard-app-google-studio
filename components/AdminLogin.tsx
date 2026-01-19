@@ -5,7 +5,7 @@ import { ShieldAlert, Fingerprint, Lock, ArrowRight, ShieldCheck, Mail, Eye, Eye
 import { useNavigate } from 'react-router-dom';
 
 const AdminLogin: React.FC = () => {
-  const [email, setEmail] = useState('admin@richard.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');

@@ -69,6 +69,12 @@ export interface BlogPost {
   tags: string[];
 }
 
+
+export interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
 export interface Lead {
   id: string;
   type: 'finance' | 'trade-in' | 'chat' | 'general';
@@ -77,7 +83,7 @@ export interface Lead {
   lastName?: string;
   email?: string;
   phone?: string;
-  timestamp: any; // Firestore Timestamp
+  timestamp: FirestoreTimestamp;
 
   // Context
   vehicleOfInterest?: string; // Car Name
@@ -93,7 +99,7 @@ export interface Lead {
   // Automation Status
   emailSent?: boolean;
   nudgeSent?: boolean;
-  lastContacted?: any; // Timestamp or Date
+  lastContacted?: FirestoreTimestamp;
 }
 
 declare global {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, useContext } from 'react';
-import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter, BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ViewMode, Car } from './types';
 import Storefront from './components/Storefront'; // Keep Eager
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
@@ -195,15 +195,15 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* Main Sidebar Navigation */}
-      <nav className={"fixed inset-y-0 left-0 w-72 bg-[#173d57] dark:bg-[#0d2232] text-white flex flex-col shadow-2xl z-40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen " + (isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full')}>
-        <div className="p-10 flex justify-between items-center cursor-pointer" onClick={() => navigate('/')}>
-          <h1 className="text-3xl font-black tracking-tighter leading-none">
+      <nav className={"fixed inset-y-0 left-0 w-72 bg-[#173d57]/95 dark:bg-[#0d2232]/95 backdrop-blur-2xl border-r border-white/5 text-white flex flex-col shadow-2xl z-40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen pointer-events-auto " + (isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full')}>
+        <div className="p-10 flex justify-between items-center cursor-pointer group" onClick={() => navigate('/')}>
+          <h1 className="text-3xl font-black tracking-tighter leading-none group-hover:scale-105 transition-transform">
             <span className="text-[#00aed9]">RICHARD</span>
             <br />AUTOMOTIVE
           </h1>
         </div>
 
-        <div className="flex-1 px-6 space-y-3 overflow-y-auto">
+        <div className="flex-1 px-6 space-y-2 overflow-y-auto custom-scrollbar">
           <NavButton active={getCurrentViewMode() === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }} icon={<ShoppingBag size={20} />} label="Tienda Digital" />
           <NavButton active={getCurrentViewMode() === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileMenuOpen(false); }} icon={<Warehouse size={20} />} label="Mi Garaje" />
           <NavButton active={getCurrentViewMode() === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileMenuOpen(false); }} icon={<FileCheck2 size={20} />} label="Pre-Cualificación" />
@@ -211,26 +211,26 @@ const AppContent: React.FC = () => {
           <NavButton active={getCurrentViewMode() === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileMenuOpen(false); }} icon={<BotMessageSquare size={20} />} label="Consultor IA" />
           <NavButton active={getCurrentViewMode() === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileMenuOpen(false); }} icon={<Newspaper size={20} />} label="AI Newsroom" />
 
-          <div className="pt-4 my-4 border-t border-white/10" />
+          <div className="pt-4 my-2 border-t border-white/5" />
 
           {/* Persistent Login/User Button */}
           {!loading && user ? (
-            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
-                  <UserIcon size={16} />
+            <div className="p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-inner">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00aed9] to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+                  <UserIcon size={18} />
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-xs font-bold truncate text-white">{user.email}</p>
-                  <p className="text-[10px] uppercase tracking-wider text-green-400 font-bold">{role === 'admin' ? 'Administrador' : 'Usuario'}</p>
+                  <p className="text-xs font-black truncate text-white uppercase tracking-tight">{user.email}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-[#00aed9] font-black">{role === 'admin' ? 'Administrador' : 'Usuario'}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-2">
-                <button onClick={handleLogout} className="flex items-center justify-center gap-2 p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-bold transition-colors">
+                <button onClick={handleLogout} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-red-500/10">
                   <LogOut size={14} /> Salir
                 </button>
                 {role === 'admin' && (
-                  <button onClick={() => navigate('/admin')} className="flex items-center justify-center gap-2 p-2 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-xs font-bold transition-colors">
+                  <button onClick={() => navigate('/admin')} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-cyan-500/10">
                     <ShieldAlert size={14} /> Admin
                   </button>
                 )}
@@ -240,12 +240,12 @@ const AppContent: React.FC = () => {
             <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} icon={<LogIn size={20} />} label="Iniciar Sesión" isAction />
           )}
 
-          <div className="pt-4 my-4 border-t border-white/10" />
+          <div className="pt-2 my-2 border-t border-white/5" />
 
           <NavButton active={getCurrentViewMode() === ViewMode.AI_LAB} onClick={() => { navigate('/lab'); setIsMobileMenuOpen(false); }} icon={<FlaskConical size={20} />} label="Laboratorio IA" highlight />
         </div>
 
-        <div className="p-6 border-t border-white/10">
+        <div className="p-6 border-t border-white/5 bg-black/10 backdrop-blur-md">
           <ThemeToggle />
         </div>
       </nav>
@@ -314,16 +314,30 @@ const NavButton = ({ active, onClick, icon, label, isAction = false, highlight =
 };
 
 // Fix for index.tsx error: added missing App component and default export.
+
+// Conditional Router to support clean URLs on web and HashRouter on mobile (Capacitor)
+const SmartRouter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isNative = !!((window as any).Capacitor && (window as any).Capacitor.isNative);
+
+  const Router = isNative ? HashRouter : BrowserRouter;
+
+  useEffect(() => {
+    console.log(`[SmartRouter] Active mode: ${isNative ? 'HashRouter (Native/Capacitor)' : 'BrowserRouter (Web)'}`);
+  }, [isNative]);
+
+  return <Router>{children}</Router>;
+};
+
 const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
         <NotificationProvider>
           <ComparisonProvider>
-            <HashRouter>
+            <SmartRouter>
               <AppContent />
               <ComparisonBar />
-            </HashRouter>
+            </SmartRouter>
           </ComparisonProvider>
         </NotificationProvider>
       </AuthProvider>
