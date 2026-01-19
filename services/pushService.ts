@@ -4,7 +4,6 @@ import { Capacitor } from '@capacitor/core';
 export const initializePushNotifications = async () => {
     // Only run on native devices
     if (!Capacitor.isNativePlatform()) {
-        console.log('Push notifications not supported on web');
         return;
     }
 
@@ -23,7 +22,7 @@ export const initializePushNotifications = async () => {
 
     // On success, we get a specific token
     PushNotifications.addListener('registration', (token) => {
-        console.log('Push Registration Token: ', token.value);
+        // console.log('Push Registration Token: ', token.value);
         // TODO: Send this token to your specific user profile in Firestore
         // updateDoc(doc(db, 'users', userId), { fcmToken: token.value });
     });
@@ -35,13 +34,13 @@ export const initializePushNotifications = async () => {
 
     // Show us the notification payload if the app is open on our device
     PushNotifications.addListener('pushNotificationReceived', (notification) => {
-        console.log('Push received: ', notification);
+        // console.log('Push received: ', notification);
         alert(`Mensaje de Richard Auto: ${notification.title}\n${notification.body}`);
     });
 
     // Method called when tapping on a notification
     PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-        console.log('Push action performed: ', notification);
+        // console.log('Push action performed: ', notification);
         // navigate('/garage'); // Example navigation
     });
 };

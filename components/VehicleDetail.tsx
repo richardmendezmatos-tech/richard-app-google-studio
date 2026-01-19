@@ -65,7 +65,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                     text: `Mira este ${car.name} en Richard Automotive`,
                     url: window.location.href
                 });
-            } catch (err) { console.log('Share cancelled'); }
+            } catch (err) { /* Share cancelled */ }
         } else {
             alert('Enlace copiado al portapapeles');
             // fallback copy to clipboard logic here

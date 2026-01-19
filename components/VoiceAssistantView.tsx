@@ -54,7 +54,7 @@ const VoiceAssistantView: React.FC = () => {
             try {
                 const session = await sessionPromise.current;
                 session.close();
-            } catch (e) { console.log("Session already closed"); }
+            } catch (e) { /* Session already closed */ }
             sessionPromise.current = null;
         }
         setConnectionState('disconnected');
@@ -237,8 +237,8 @@ const VoiceAssistantView: React.FC = () => {
                     {transcriptions.map(t => (
                         <div key={t.id} className={`flex ${t.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[80%] p-4 rounded-2xl ${t.role === 'user'
-                                    ? 'bg-slate-800 text-slate-200 rounded-br-none border border-slate-700'
-                                    : 'bg-[#00aed9]/10 text-[#00aed9] rounded-bl-none border border-[#00aed9]/20'
+                                ? 'bg-slate-800 text-slate-200 rounded-br-none border border-slate-700'
+                                : 'bg-[#00aed9]/10 text-[#00aed9] rounded-bl-none border border-[#00aed9]/20'
                                 }`}>
                                 <p className="text-lg font-medium leading-relaxed">{t.text}</p>
                             </div>
