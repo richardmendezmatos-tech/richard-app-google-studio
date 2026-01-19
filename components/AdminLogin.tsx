@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { loginAdmin } from '../services/firebaseService';
+import * as React from 'react';
+import { useState } from 'react';
+import { loginAdmin } from '../services/authService';
 import { ShieldAlert, Fingerprint, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,6 +50,7 @@ const AdminLogin: React.FC = () => {
     setError(null);
     try {
       // Bypass all security - use Firebase Auth directly
+      // Note: This is a dev-only shortcut using the main auth instance
       const { signInWithEmailAndPassword } = await import('firebase/auth');
       const { auth } = await import('../services/firebaseService');
 

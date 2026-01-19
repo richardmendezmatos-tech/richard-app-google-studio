@@ -294,7 +294,7 @@ const AppContent: React.FC = () => {
             <Route path="/lab" element={<AuthGuard><AILabView onExit={() => navigate('/')} onVisualSearch={(img) => { setPendingVisualSearch(img); navigate('/'); }} /></AuthGuard>} />
             <Route path="/login" element={<UserLogin />} />
             <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={() => { }} onAdd={() => { }} onDelete={() => { }} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></AdminGuard>} />
+            <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={updateCar} onAdd={addCar} onDelete={deleteCar} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></AdminGuard>} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>
