@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { loginUserClient, registerUser, loginWithGoogle, loginWithFacebook } from '../services/firebaseService';
+import * as React from 'react';
+import { useState } from 'react';
+import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook } from '../services/authService';
 import { ArrowRight, Zap, Check, X, Apple, Chrome, Globe, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
@@ -10,10 +11,10 @@ const UserLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get the path the user was trying to access before being redirected to login.
   const from = location.state?.from?.pathname || "/";
 
@@ -24,9 +25,9 @@ const UserLogin: React.FC = () => {
 
     try {
       if (isRegistering) {
-        await registerUser(email, password);
+        await signUpWithEmail(email, password);
       } else {
-        await loginUserClient(email, password);
+        await signInWithEmail(email, password);
       }
       navigate(from, { replace: true });
     } catch (err: any) {
@@ -38,86 +39,86 @@ const UserLogin: React.FC = () => {
   };
 
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-      setLoading(true);
-      setError(null);
-      try {
-          if (provider === 'google') await loginWithGoogle();
-          if (provider === 'facebook') await loginWithFacebook();
-          navigate(from, { replace: true });
-      } catch (err: any) {
-          console.error(err);
-          handleAuthError(err);
-      } finally {
-          setLoading(false);
-      }
+    setLoading(true);
+    setError(null);
+    try {
+      if (provider === 'google') await signInWithGoogle();
+      if (provider === 'facebook') await signInWithFacebook();
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      console.error(err);
+      handleAuthError(err);
+    } finally {
+      setLoading(false);
+    }
   };
-  
+
   const handleAuthError = (err: any) => {
     if (err.message.includes('ADMIN_PORTAL_ONLY')) {
-        setError('Acceso no autorizado en este portal. Use el portal administrativo.');
+      setError('Acceso no autorizado en este portal. Use el portal administrativo.');
     } else if (err.code === 'auth/email-already-in-use') {
-        setError('Este correo ya está registrado.');
+      setError('Este correo ya está registrado.');
     } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('Credenciales incorrectas.');
+      setError('Credenciales incorrectas.');
     } else {
-        setError('Error de autenticación. Intente nuevamente.');
+      setError('Error de autenticación. Intente nuevamente.');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-900">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00aed9]/10 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00aed9]/10 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="relative w-full max-w-[480px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/20 dark:border-slate-700 rounded-[40px] shadow-2xl overflow-hidden">
         <div className="pt-12 pb-8 px-10 text-center relative">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-lg bg-[#00aed9]/10 text-[#00aed9]">
-                <Zap size={32} />
-            </div>
-            <h2 className="text-3xl font-black tracking-tighter uppercase mb-2 text-slate-800 dark:text-white">
-                {isRegistering ? 'Crear Cuenta' : 'Bienvenido'}
-            </h2>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                Gestiona tu garaje digital y recibe ofertas personalizadas.
-            </p>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-lg bg-[#00aed9]/10 text-[#00aed9]">
+            <Zap size={32} />
+          </div>
+          <h2 className="text-3xl font-black tracking-tighter uppercase mb-2 text-slate-800 dark:text-white">
+            {isRegistering ? 'Crear Cuenta' : 'Bienvenido'}
+          </h2>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            Gestiona tu garaje digital y recibe ofertas personalizadas.
+          </p>
         </div>
-        
+
         {!isRegistering && (
-             <div className="px-10 pb-6 space-y-3">
-                <button onClick={() => handleSocialLogin('google')} className="w-full social-button bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
-                    <Chrome size={20} /><span>Continuar con Google</span>
-                </button>
-                <button className="w-full social-button bg-black text-white hover:bg-slate-900">
-                    <Apple size={20} /><span>Continuar con Apple</span>
-                </button>
-                <div className="divider">O usa tu email</div>
-            </div>
+          <div className="px-10 pb-6 space-y-3">
+            <button onClick={() => handleSocialLogin('google')} className="w-full social-button bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+              <Chrome size={20} /><span>Continuar con Google</span>
+            </button>
+            <button className="w-full social-button bg-black text-white hover:bg-slate-900">
+              <Apple size={20} /><span>Continuar con Apple</span>
+            </button>
+            <div className="divider">O usa tu email</div>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-4">
-            <div className="space-y-4">
-                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="correo@ejemplo.com" className="form-input" />
-                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Contraseña" className="form-input" />
-            </div>
+          <div className="space-y-4">
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="correo@ejemplo.com" className="form-input" />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Contraseña" className="form-input" />
+          </div>
 
-            {error && <div className="error-box">{error}</div>}
+          {error && <div className="error-box">{error}</div>}
 
-            <button type="submit" disabled={loading} className="w-full primary-button">
-                {loading ? <div className="loader" /> : <>{isRegistering ? 'Registrar' : 'Ingresar'} <ArrowRight size={18} /></>}
+          <button type="submit" disabled={loading} className="w-full primary-button">
+            {loading ? <div className="loader" /> : <>{isRegistering ? 'Registrar' : 'Ingresar'} <ArrowRight size={18} /></>}
+          </button>
+
+          <div className="text-center mt-4">
+            <button type="button" onClick={() => setIsRegistering(!isRegistering)} className="toggle-button">
+              {isRegistering ? '¿Ya tienes cuenta? Entrar' : '¿No tienes cuenta? Regístrate'}
             </button>
-            
-            <div className="text-center mt-4">
-                <button type="button" onClick={() => setIsRegistering(!isRegistering)} className="toggle-button">
-                    {isRegistering ? '¿Ya tienes cuenta? Entrar' : '¿No tienes cuenta? Regístrate'}
-                </button>
-            </div>
+          </div>
         </form>
-         <div className="py-4 text-center border-t bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700">
-            <Link to="/" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                Volver a la Tienda
-            </Link>
+        <div className="py-4 text-center border-t bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700">
+          <Link to="/" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            Volver a la Tienda
+          </Link>
         </div>
       </div>
       <style>{`
