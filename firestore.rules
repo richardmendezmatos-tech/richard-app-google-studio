@@ -38,11 +38,14 @@ service cloud.firestore {
 
     // --- Collections ---
 
-    // Car Inventory: Public Read, Admin Write (with Validation)
+    // Car Inventory: Public Read, Admin Write (with Validation), Public Analytics Update
     match /cars/{carId} {
       allow read: if true;
-      allow create, update: if isAdmin() && isValidCar();
-      allow delete: if isAdmin();
+      // Admin full access
+      allow create, delete: if isAdmin();
+      // Update: Admin can update all (with validation), Public can ONLY update views/leads_count
+      allow update: if (isAdmin() && isValidCar()) || 
+                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'leads_count']));
     }
     
     // User Profiles: Self-manage, Admin readout
