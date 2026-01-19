@@ -1,18 +1,17 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
+    // Inventory and general images
     match /{allPaths=**} {
-      // 1. Read Access: Public (Inventory images need to be seen)
+      // 1. Read Access: Public (Required for storefront)
       allow read: if true;
       
       // 2. Write Access: Admins Only + Validation
       allow write: if request.auth != null && 
-                   // Must be Admin
                    firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin' &&
-                   // Must be an Image
                    request.resource.contentType.matches('image/.*') &&
-                   // Max Size: 5MB (5 * 1024 * 1024 = 5242880 bytes)
-                   request.resource.size < 5 * 1024 * 1024;
+                   request.resource.size < 10 * 1024 * 1024; // Increased to 10MB for high-res
     }
   }
 }

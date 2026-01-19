@@ -1,17 +1,22 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Car, CarType, Lead } from '../types';
-import { Plus, Trash2, Edit3, BarChart3, Package, DollarSign, X, TrendingUp, Search, UploadCloud, Loader2, Image as ImageIcon, Link as LinkIcon, DatabaseZap, Wand2, Phone, Mail, MessageSquare, CheckCircle, Clock, Send, Smartphone, Monitor, Server, Camera, Eye } from 'lucide-react';
-import { uploadImage, generateCarDescriptionAI, syncLeads, updateLeadStatus } from '../services/firebaseService';
+import { Car as CarType, Lead } from '../types';
+import { Plus, Trash2, Edit3, BarChart3, Package, Search, Loader2, DatabaseZap, Smartphone, Monitor, Server, Camera, CarFront, ShieldAlert } from 'lucide-react';
+import { syncLeads } from '../services/firebaseService';
 
 import InventoryHeatmap from './InventoryHeatmap';
 import { useReactToPrint } from 'react-to-print';
 import DealSheet from './DealSheet';
 
+// Modular Components
+import { KanbanBoard } from './admin/KanbanBoard';
+import { AdminModal } from './admin/AdminModal';
+import { AuditLogViewer } from './admin/AuditLogViewer';
+
 interface Props {
-  inventory: Car[];
-  onUpdate: (car: Car) => void;
-  onAdd: (car: Omit<Car, 'id'>) => void;
+  inventory: CarType[];
+  onUpdate: (car: CarType) => void;
+  onAdd: (car: Omit<CarType, 'id'>) => void;
   onDelete: (id: string) => void;
   onInitializeDb?: () => Promise<void>;
 }
@@ -38,25 +43,31 @@ const CountUp = ({ end, prefix = '', suffix = '', duration = 1500 }: { end: numb
   return <span>{prefix}{count.toLocaleString()}{suffix}</span>;
 };
 
-const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: any, label: string, value: string | React.ReactNode, color: string, subValue?: string }) => (
-  <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-transform hover:scale-[1.02]">
-    <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-opacity-100`}>
-      <Icon className={color.replace('bg-', 'text-')} size={24} />
+
+const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: React.ElementType, label: string, value: string | React.ReactNode, color: string, subValue?: string }) => (
+  <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-5 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-white/5 flex items-center gap-4 transition-all hover:scale-[1.02] hover:shadow-2xl group">
+    <div className={`p-4 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center transition-transform group-hover:rotate-6`}>
+      <Icon className={color.replace('bg-', 'text-').replace('text-opacity-100', '')} size={28} strokeWidth={2.5} />
     </div>
     <div>
-      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</h4>
-      <div className="text-xl font-black text-slate-800 dark:text-white leading-tight">{value}</div>
-      {subValue && <div className="text-[10px] font-medium text-slate-400 mt-0.5">{subValue}</div>}
+      <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">{label}</h4>
+      <div className="text-2xl font-black text-slate-800 dark:text-white leading-none tracking-tighter">{value}</div>
+      {subValue && (
+        <div className="flex items-center gap-1.5 mt-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{subValue}</div>
+        </div>
+      )}
     </div>
   </div>
 );
 
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
-  const [activeTab, setActiveTab] = useState<'inventory' | 'pipeline' | 'analytics'>('inventory');
+  const [activeTab, setActiveTab] = useState<'inventory' | 'pipeline' | 'analytics' | 'security'>('inventory');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [editingCar, setEditingCar] = useState<CarType | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isInitializing, setIsInitializing] = useState(false);
 
@@ -147,54 +158,55 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           </div>
         </header>
 
-        {/* WIDGETS GRID (4 REQUIRED INDICATORS) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4">
+        {/* KPI WIDGETS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatusWidget
+            icon={CarFront}
+            label="Total Inventario"
+            value={<CountUp end={inventory.length} prefix="" />}
+            color="bg-blue-500 text-blue-500 bg-opacity-100 text-opacity-100"
+            subValue={inventory.length > 0 ? "Actualizado" : "Sin stock"}
+          />
+          <StatusWidget
+            icon={BarChart3}
+            label="Leads Activos"
+            value={<CountUp end={leads.filter(l => l.status === 'new').length} />}
+            color="bg-emerald-500 text-emerald-500 bg-opacity-100 text-opacity-100"
+            subValue="Potenciales hoy"
+          />
           <StatusWidget
             icon={Package}
-            label="Total de Items"
-            value={<CountUp end={inventory.length} />}
-            color="bg-blue-500 text-blue-600"
-            subValue="En Inventario"
+            label="Valor Total"
+            value={<CountUp end={inventory.reduce((sum, car) => sum + car.price, 0)} prefix="$" />}
+            color="bg-purple-500 text-purple-500 bg-opacity-100 text-opacity-100"
+            subValue="Estimado"
           />
           <StatusWidget
-            icon={Camera}
-            label="Fotos Hoy"
-            value={<CountUp end={uploadedTodayCount} />}
-            color="bg-purple-500 text-purple-600"
-            subValue="Subidas Recientes"
-          />
-          <StatusWidget
-            icon={Server}
-            label="Estado Servidor"
-            value="Óptimo"
-            color="bg-emerald-500 text-emerald-600"
-            subValue="99.9% Uptime"
-          />
-          <StatusWidget
-            icon={deviceType === 'Mac' ? Monitor : Smartphone}
-            label="Dispositivo"
-            value={deviceType}
-            color="bg-amber-500 text-amber-600"
-            subValue="Detectado"
+            icon={activeTab === 'inventory' ? Loader2 : Search}
+            label="Estado del Sistema"
+            value="Online"
+            color="bg-amber-500 text-amber-500 bg-opacity-100 text-opacity-100"
+            subValue={`v2.6.0 • ${deviceType}`}
           />
         </div>
 
         {/* NAVIGATION TABS */}
-        <div className="flex p-1 bg-white dark:bg-slate-800 rounded-xl shadow-sm w-full md:w-fit overflow-x-auto">
+        <div className="flex p-2 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-white/5 shadow-inner w-full md:w-fit overflow-x-auto gap-1">
           {[
             { id: 'inventory', label: 'Inventario', icon: Package },
-            { id: 'pipeline', label: 'CRM Pipeline', icon: TrendingUp },
-            { id: 'analytics', label: 'Analytics', icon: BarChart3 }
+            { id: 'pipeline', label: 'CRM Pipeline', icon: BarChart3 },
+            { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+            { id: 'security', label: 'Seguridad', icon: ShieldAlert }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 md:flex-none px-6 h-[44px] rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all whitespace-nowrap ${activeTab === tab.id
-                  ? 'bg-[#00aed9] text-white shadow-md'
-                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+              className={`flex-1 md:flex-none px-8 h-[48px] rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-3 transition-all whitespace-nowrap ${activeTab === tab.id
+                ? 'bg-[#00aed9] text-white shadow-lg shadow-[#00aed9]/30 scale-105'
+                : 'text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-200'
                 }`}
             >
-              <tab.icon size={16} /> {tab.label}
+              <tab.icon size={16} strokeWidth={2.5} /> {tab.label}
             </button>
           ))}
         </div>
@@ -215,6 +227,12 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                 )}
               </div>
               <KanbanBoard leads={leads} onPrint={triggerPrint} />
+            </div>
+          )}
+
+          {activeTab === 'security' && (
+            <div className="min-h-[600px]">
+              <AuditLogViewer />
             </div>
           )}
 
@@ -298,7 +316,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           car={editingCar}
           onClose={() => setIsModalOpen(false)}
           onPhotoUploaded={handlePhotoUploaded}
-          onSave={(data: Omit<Car, 'id'>) => {
+          onSave={(data: Omit<CarType, 'id'>) => {
             if (editingCar) onUpdate({ ...data, id: editingCar.id });
             else onAdd(data);
             setIsModalOpen(false);
@@ -308,233 +326,5 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     </div>
   );
 };
-
-// --- SUBCOMPONENTS (REFACTORED FOR RESPONSIVENESS) ---
-
-const AdminModal = ({ car, onClose, onSave, onPhotoUploaded }: any) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(car?.img || '');
-  const [isUploading, setIsUploading] = useState(false);
-  const [description, setDescription] = useState(car?.description || '');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Instant Preview Logic
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      // FileReader for Instant Preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsUploading(true);
-    try {
-      const fd = new FormData(e.currentTarget);
-      let finalImageUrl = previewUrl;
-      // Upload ONLY if a new file was selected. If preview was set via text URL, use that.
-      if (selectedFile) {
-        finalImageUrl = await uploadImage(selectedFile);
-        onPhotoUploaded?.(); // Update counter
-      }
-      onSave({
-        name: fd.get('name') as string,
-        price: Number(fd.get('price')),
-        type: fd.get('type') as CarType,
-        badge: fd.get('badge') as string,
-        img: finalImageUrl,
-        description: description,
-        features: (fd.get('features') as string).split(',').map(f => f.trim()),
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full sm:max-w-2xl sm:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 z-10 sticky top-0">
-          <div>
-            <div className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest">Editor de Inventario</div>
-            <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{car ? 'Editar Unidad' : 'Nueva Unidad'}</h2>
-          </div>
-          <button onClick={onClose} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-rose-500 hover:text-white transition-colors">
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Scrollable Form */}
-        <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            {/* Image Uploader */}
-            <div className="space-y-4">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block">Media</label>
-              <div className="flex gap-4">
-                <div className="w-24 h-24 shrink-0 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 overflow-hidden relative">
-                  {previewUrl ? (
-                    <img src={previewUrl} className="w-full h-full object-cover" />
-                  ) : (
-                    <ImageIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300" />
-                  )}
-                </div>
-                <div className="flex-1 space-y-3">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-[44px] border-2 border-dashed border-[#00aed9] bg-[#00aed9]/5 rounded-xl flex items-center justify-center gap-2 text-[#00aed9] font-bold text-xs uppercase tracking-widest hover:bg-[#00aed9]/10 transition-colors"
-                  >
-                    <Camera size={18} /> Subir Foto / Tomar
-                  </button>
-                  <input
-                    name="imgurl"
-                    placeholder="O pegar URL..."
-                    value={!selectedFile ? previewUrl : ''}
-                    onChange={(e) => { setPreviewUrl(e.target.value); setSelectedFile(null); }}
-                    className="w-full h-[44px] px-4 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#00aed9]"
-                  />
-                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                </div>
-              </div>
-            </div>
-
-            {/* Basic Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Nombre</label>
-                <input name="name" defaultValue={car?.name} required className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="Ej. Toyota Corolla" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Precio</label>
-                <input name="price" type="number" defaultValue={car?.price} required className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="25000" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tipo</label>
-                <select name="type" defaultValue={car?.type || 'suv'} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] appearance-none">
-                  <option value="suv">SUV</option>
-                  <option value="sedan">Sedan</option>
-                  <option value="pickup">Pickup</option>
-                  <option value="luxury">Luxury</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Badge</label>
-                <input name="badge" defaultValue={car?.badge} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="Opcional" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Características</label>
-              <input name="features" defaultValue={car?.features?.join(', ')} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="GPS, Cuero, Turbo..." />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
-              <textarea
-                name="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-medium outline-none focus:ring-2 focus:ring-[#00aed9] resize-none"
-              />
-            </div>
-
-            <button type="submit" disabled={isUploading} className="w-full h-[56px] bg-[#0d2232] text-white rounded-2xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-              {isUploading ? 'Guardando...' : 'Guardar Unidad'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Kanban components kept minimal due to file size limits, but integrated stylistically
-const KanbanBoard = ({ leads, onPrint }: { leads: Lead[], onPrint: (lead: Lead) => void }) => {
-  const columns = [
-    { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
-    { id: 'contacted', title: 'Contactados', color: 'bg-amber-500' },
-    { id: 'negotiating', title: 'Negociando', color: 'bg-purple-500' },
-    { id: 'sold', title: 'Vendidos', color: 'bg-emerald-500' },
-  ];
-
-  return (
-    <div className="flex gap-4 h-full overflow-x-auto pb-4 px-1">
-      {columns.map(col => (
-        <div key={col.id} className="min-w-[280px] w-full bg-slate-50/50 dark:bg-slate-800/50 rounded-3xl p-4 flex flex-col h-full border border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center gap-2 mb-4">
-            <div className={`w-2 h-2 rounded-full ${col.color}`} />
-            <span className="text-xs font-black uppercase tracking-widest text-slate-500">{col.title}</span>
-            <span className="ml-auto bg-white dark:bg-slate-800 px-2 py-0.5 rounded text-[10px] font-bold shadow-sm">
-              {leads.filter(l => (l.status || 'new') === col.id).length}
-            </span>
-          </div>
-          <div className="space-y-3 overflow-y-auto flex-1 custom-scrollbar pr-1">
-            {leads.filter(l => (l.status || 'new') === col.id).map(lead => (
-              <LeadCard key={lead.id} lead={lead} onPrint={() => onPrint(lead)} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const LeadCard = ({ lead, onPrint }: { lead: Lead, onPrint: () => void }) => (
-  <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 group hover:border-[#00aed9] transition-all">
-    <div className="flex justify-between mb-2">
-      <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-bold uppercase text-slate-500">{lead.type}</span>
-      <span className="text-[10px] font-bold text-slate-300">{new Date((lead.timestamp?.seconds || 0) * 1000).toLocaleDateString()}</span>
-    </div>
-    <div className="font-bold text-slate-800 dark:text-white text-sm mb-1">{lead.firstName} {lead.lastName}</div>
-    <div className="text-xs text-slate-500 truncate mb-3">{lead.vehicleOfInterest || lead.message || 'Sin detalles'}</div>
-
-    {/* AI Summary Highlight */}
-    {lead.aiSummary && (
-      <div className="mb-3 p-2 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
-        <div className="flex items-center gap-1.5 mb-1">
-          <Wand2 size={10} className="text-indigo-500" />
-          <span className="text-[9px] font-black uppercase tracking-wider text-indigo-400">Análisis IA</span>
-        </div>
-        <p className="text-[10px] leading-snug text-slate-600 dark:text-slate-300 line-clamp-2" title={lead.aiSummary}>
-          {lead.aiSummary}
-        </p>
-      </div>
-    )}
-
-    <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-      <div className="flex gap-1">
-        {lead.phone && <a href={`tel:${lead.phone}`} className="p-2 bg-emerald-50 text-emerald-500 rounded-lg"><Phone size={12} /></a>}
-        {lead.email && <a href={`mailto:${lead.email}`} className="p-2 bg-blue-50 text-blue-500 rounded-lg"><Mail size={12} /></a>}
-      </div>
-      <button onClick={onPrint} className="text-[10px] font-bold text-slate-400 hover:text-[#00aed9] uppercase tracking-wider">Ver Hoja</button>
-    </div>
-
-    <select
-      value={lead.status || 'new'}
-      onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-      className="mt-3 w-full text-[10px] font-bold uppercase bg-slate-50 dark:bg-slate-800 rounded-lg py-2 px-2 outline-none"
-    >
-      <option value="new">Nuevo</option>
-      <option value="contacted">Contactado</option>
-      <option value="negotiating">Negociando</option>
-      <option value="sold">Vendido</option>
-    </select>
-  </div>
-);
 
 export default AdminPanel;
