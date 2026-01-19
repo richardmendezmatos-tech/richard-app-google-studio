@@ -84,6 +84,46 @@ const FullScreenLoader = () => (
   </div>
 );
 
+// AuthGuard Component
+const AuthGuard = ({ children }: { children?: React.ReactNode }) => {
+  const { user, loading } = useContext(AuthContext);
+  const location = useLocation();
+
+  if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  return <>{children}</>;
+};
+
+// AdminGuard Component
+const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
+  const { user, role, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Handle logout inside guard if needed
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate('/');
+    } catch (e) { console.error(e); }
+  };
+
+  if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
+  if (!user) return <Navigate to="/admin-login" />;
+  if (role !== 'admin') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-50 dark:bg-slate-900">
+        <ShieldAlert size={48} className="text-red-500 mb-6" />
+        <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase mb-2">Acceso Denegado</h2>
+        <p className="text-slate-500 max-w-md mb-8">Esta sección es exclusiva para administradores.</p>
+        <button onClick={handleLogout} className="px-8 py-3 bg-slate-800 text-white rounded-xl font-bold uppercase">Cerrar Sesión</button>
+      </div>
+    );
+  }
+  return <>{children}</>;
+};
+
 const AppContent: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [inventory, setInventory] = useState<Car[]>([]);
@@ -158,31 +198,6 @@ const AppContent: React.FC = () => {
     if (path === '/lab') return ViewMode.AI_LAB;
     if (path.startsWith('/login')) return 'login';
     return ViewMode.STOREFRONT;
-  };
-
-  // AuthGuard that remembers where the user wanted to go
-  const AuthGuard = ({ children }: { children?: React.ReactNode }) => {
-    if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
-    if (!user) {
-      return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-    return <>{children}</>;
-  };
-
-  const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
-    if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-cyan-500 rounded-full border-t-transparent"></div></div>;
-    if (!user) return <Navigate to="/admin-login" />;
-    if (role !== 'admin') {
-      return (
-        <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-50 dark:bg-slate-900">
-          <ShieldAlert size={48} className="text-red-500 mb-6" />
-          <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase mb-2">Acceso Denegado</h2>
-          <p className="text-slate-500 max-w-md mb-8">Esta sección es exclusiva para administradores.</p>
-          <button onClick={handleLogout} className="px-8 py-3 bg-slate-800 text-white rounded-xl font-bold uppercase">Cerrar Sesión</button>
-        </div>
-      );
-    }
-    return <>{children}</>;
   };
 
   return (

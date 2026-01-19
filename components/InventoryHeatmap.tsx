@@ -1,6 +1,6 @@
 import React from 'react';
 import { Car } from '../types';
-import { Flame, Skull, Ghost, Eye, MessageSquare, TrendingUp } from 'lucide-react';
+import { Flame, Skull, Ghost, Eye, MessageSquare, TrendingUp, AlertTriangle } from 'lucide-react';
 
 interface Props {
     inventory: Car[];
@@ -100,11 +100,18 @@ const AnalyticsCard = ({ car, rank, type }: { car: Car, rank?: number, type: 'ho
                 </div>
                 {type !== 'ghost' && (
                     <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${(car.leads_count || 0) > 0
-                            ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30'
-                            : 'bg-rose-100 text-rose-600 dark:bg-rose-900/30'
+                        ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30'
+                        : 'bg-rose-100 text-rose-600 dark:bg-rose-900/30'
                         }`}>
                         <MessageSquare size={10} /> {car.leads_count || 0}
                     </div>
+                )}
+
+                {/* ACTIONABLE INSIGHTS */}
+                {type === 'zombie' && (
+                    <button className="mt-2 text-[9px] font-black uppercase tracking-widest text-amber-500 border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-900/10 px-2 py-1 rounded-lg hover:bg-amber-100 transition-colors flex items-center gap-1">
+                        <AlertTriangle size={10} /> Optimizar
+                    </button>
                 )}
             </div>
         </div>

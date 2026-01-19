@@ -73,14 +73,29 @@ export const analyzeLead = ai.defineFlow(
             recommendedAction: z.string()
         })
     },
-    async (input) => {
-        // Prompt removed for mock response
-        return {
-            score: 85,
-            category: "High Potential" as const,
-            summary: "Candidate has stable employment and sufficient income.",
-            recommendedAction: "Call immediately to finalize verification."
-        };
+    async (input) => { // Removed { sendChunk } since we are returning object, not streaming
+        const prompt = `
+        Analiza este lead para un concesionario de autos:
+        - Ingreso Mensual: ${input.monthlyIncome}
+        - Tiempo en Empleo: ${input.timeAtJob}
+        - Título: ${input.jobTitle}
+        - Empleador: ${input.employer}
+
+        Responde ESTRICTAMENTE con este JSON:
+        {
+            "score": (número 1-100 basado en estabilidad financiera),
+            "category": ("High Potential" | "Standard" | "Needs Review"),
+            "summary": (Breve análisis de 1 frase),
+            "recommendedAction": (Acción recomendada para el vendedor)
+        }
+        `;
+
+        const result = await ai.generate({
+            prompt: prompt,
+            output: { format: 'json' }
+        });
+
+        return result.output;
     }
 );
 
@@ -269,6 +284,46 @@ export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) =
             }
         }
         logger.info(`Price Drop Alert sent to ${emailCount} leads.`);
+    }
+});
+
+export const onLeadStatusChange = onDocumentUpdated('applications/{leadId}', async (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+
+    if (!before || !after) return;
+
+    const oldStatus = before.status;
+    const newStatus = after.status;
+
+    // Only react if status CHANGED
+    if (oldStatus === newStatus) return;
+
+    logger.info(`Lead Status Changed: ${oldStatus} -> ${newStatus} for ${event.params.leadId}`);
+
+    const lead = after;
+    if (!lead.email) return;
+
+    const { getContactedEmailTemplate, getSoldEmailTemplate } = await import('./emailTemplates');
+
+    try {
+        if (newStatus === 'contacted' && oldStatus === 'new') {
+            await sendNotificationEmail({
+                to: lead.email,
+                subject: `📋 Actualización: Estamos revisando tu solicitud`,
+                html: getContactedEmailTemplate(lead)
+            });
+            logger.info(`Contacted email sent to ${lead.email}`);
+        } else if (newStatus === 'sold') {
+            await sendNotificationEmail({
+                to: lead.email,
+                subject: `🎉 ¡Felicidades por tu nuevo auto!`,
+                html: getSoldEmailTemplate(lead)
+            });
+            logger.info(`Sold email sent to ${lead.email}`);
+        }
+    } catch (e) {
+        logger.error(`Failed to send status update email to ${lead.email}`, e);
     }
 });
 

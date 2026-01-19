@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { X, ImageIcon, Camera } from 'lucide-react';
+import { X, ImageIcon, Camera, Wand2, Loader2 } from 'lucide-react';
 import { Car, CarType } from '../../types';
 import { uploadImage } from '../../services/firebaseService';
 
@@ -16,7 +16,46 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
     const [previewUrl, setPreviewUrl] = useState<string>(car?.img || '');
     const [isUploading, setIsUploading] = useState(false);
     const [description, setDescription] = useState(car?.description || '');
+    const [isGenerating, setIsGenerating] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // AI Generation
+    const generateAIDescription = async () => {
+        // Collect basic info
+        const form = document.querySelector('form');
+        if (!form) return;
+        const formData = new FormData(form);
+        const name = formData.get('name') as string;
+        const features = (formData.get('features') as string).split(',').filter(f => f.trim() !== '');
+
+        if (!name) {
+            alert("Por favor ingresa primero el nombre del vehículo.");
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            // Import dynamically to avoid top-level issues if needed, or rely on existing services
+            const { httpsCallable } = await import('firebase/functions');
+            const { functions } = await import('../../services/firebaseService');
+
+            const generateDescription = httpsCallable(functions, 'generateDescription');
+            const result = await generateDescription({
+                carModel: name,
+                features: features
+            });
+
+            // Genkit callable usually returns the text directly in data or data.text
+            const text = result.data as string;
+            setDescription(text);
+        } catch (error) {
+            console.error("AI Generation Error:", error);
+            alert("Error generando descripción. Intenta nuevamente.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
 
     // Instant Preview Logic
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +182,18 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
+                                <button
+                                    type="button"
+                                    onClick={generateAIDescription}
+                                    disabled={isGenerating}
+                                    className="text-[10px] font-black uppercase tracking-widest text-[#00aed9] flex items-center gap-1 hover:underline disabled:opacity-50"
+                                >
+                                    {isGenerating ? <Loader2 size={12} className="animate-spin" /> : <Wand2 size={12} />}
+                                    {isGenerating ? 'Generando...' : 'Generar con IA'}
+                                </button>
+                            </div>
                             <textarea
                                 name="description"
                                 value={description}

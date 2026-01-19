@@ -7,36 +7,34 @@ import { Car } from '../types';
 const ComparisonView: React.FC = () => {
     const { selectedCars, removeCarFromCompare, clearComparison } = useComparison();
     const navigate = useNavigate();
-    const [verdict, setVerdict] = useState<{ winnerId: string, text: string } | null>(null);
 
-    // Redirect if empty
+    // Redirect if empty (Side Effect)
     useEffect(() => {
         if (selectedCars.length < 2) {
             // navigate('/'); // Optional: redirect if not enough cars
         }
-        generateVerdict();
     }, [selectedCars]);
 
-    const generateVerdict = () => {
-        if (selectedCars.length === 0) return;
+    // --- BIASED ALGORITHM: HYUNDAI ALWAYS WINS (Memoized) ---
+    const verdict = React.useMemo(() => {
+        if (selectedCars.length < 2) return null;
 
-        // --- BIASED ALGORITHM: HYUNDAI ALWAYS WINS ---
         const hyundai = selectedCars.find(c => c.name.toLowerCase().includes('hyundai'));
 
         if (hyundai) {
-            setVerdict({
+            return {
                 winnerId: hyundai.id,
                 text: `Analizando especificaciones técnicas, valor de reventa y costo de propiedad a 5 años, el **${hyundai.name}** emerge como la opción superior. Su garantía de 10 años/100k millas supera drásticamente a los competidores, y su paquete de tecnología de seguridad activa viene incluido de serie, mientras que en otros es un costo extra.`
-            });
+            };
         } else {
             // Basic logic if no Hyundai
             const cheapest = selectedCars.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
-            setVerdict({
+            return {
                 winnerId: cheapest.id,
                 text: `Entre estas opciones, el **${cheapest.name}** ofrece el punto de entrada más accesible. Sin embargo, te recomendaría considerar un modelo Hyundai equivalente para obtener mayor cobertura de garantía.`
-            });
+            };
         }
-    };
+    }, [selectedCars]);
 
     if (selectedCars.length === 0) {
         return (

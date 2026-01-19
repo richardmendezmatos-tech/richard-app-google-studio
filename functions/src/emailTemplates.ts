@@ -140,3 +140,76 @@ export const getPriceDropEmailTemplate = (lead: any, oldPrice: number, newPrice:
 </html>
     `;
 };
+
+export const getContactedEmailTemplate = (lead: any) => {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+        .header { background-color: #00aed9; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { padding: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background-color: #173d57; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>¡Estamos revisando tu caso! 📋</h2>
+        </div>
+        <div class="content">
+            <p>Hola <strong>${lead.firstName}</strong>,</p>
+            <p>Queríamos informarte que un asesor de ventas de <strong>Richard Automotive</strong> ha comenzado a trabajar en tu solicitud para el <strong>${lead.vehicleOfInterest}</strong>.</p>
+            <p>Estamos verificando el inventario y las opciones de financiamiento para ti.</p>
+            <p>Si necesitas agilizar el proceso, puedes enviarnos tus documentos por aquí.</p>
+            <br>
+            <center>
+                <a href="https://richard-automotive.web.app/login" class="btn">Subir Documentos</a>
+            </center>
+            <br>
+            <p style="font-size: 12px; color: #666;">Te contactaremos pronto por teléfono o WhatsApp.</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+};
+
+export const getSoldEmailTemplate = (lead: any) => {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #10b981; border-radius: 10px; }
+        .header { background-color: #10b981; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { padding: 30px; text-align: center; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #173d57; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .confetti { font-size: 40px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>¡Felicidades! 🎉</h1>
+        </div>
+        <div class="content">
+            <div class="confetti">🚗💨</div>
+            <h2>¡Disfruta tu Nuevo Auto, ${lead.firstName}!</h2>
+            <p>Ha sido un placer ayudarte a conseguir tu <strong>${lead.vehicleOfInterest}</strong>.</p>
+            <p>En <strong>Richard Automotive</strong> nos esforzamos por brindar la mejor experiencia. Esperamos que disfrutes cada milla.</p>
+            <br>
+            <p>¿Nos dejarías una reseña de tu experiencia?</p>
+            <br>
+            <a href="https://g.page/richard-automotive/review" class="btn">Dejar Reseña en Google</a>
+            <br><br>
+            <p style="font-size: 12px; color: #666;">Recuerda que tu primer mantenimiento es gratis. ¡Te esperamos pronto!</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+};
