@@ -114,8 +114,12 @@ export async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
-        await createUserProfile(result.user, 'user');
-        await logAuthActivity(result.user.email || 'google_user', true, 'login_google');
+        // Optimization: Fire-and-forget DB operations to speed up UI
+        Promise.all([
+            createUserProfile(result.user, 'user'),
+            logAuthActivity(result.user.email || 'google_user', true, 'login_google')
+        ]).catch(e => console.error("Background Auth Ops Failed:", e));
+
         return result.user;
     } catch (error: any) {
         console.error("Error signing in with Google:", error.message);
@@ -128,8 +132,12 @@ export async function signInWithFacebook() {
     const provider = new FacebookAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
-        await createUserProfile(result.user, 'user');
-        await logAuthActivity(result.user.email || 'facebook_user', true, 'login_facebook');
+        // Optimization: Fire-and-forget DB operations
+        Promise.all([
+            createUserProfile(result.user, 'user'),
+            logAuthActivity(result.user.email || 'facebook_user', true, 'login_facebook')
+        ]).catch(e => console.error("Background Auth Ops Failed:", e));
+
         return result.user;
     } catch (error: any) {
         console.error("Error signing in with Facebook:", error.message);
