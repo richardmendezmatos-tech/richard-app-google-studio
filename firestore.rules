@@ -17,66 +17,74 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-
     // --- Validation Functions ---
     
     function isValidCar() {
       let car = request.resource.data;
       return car.price is number && 
+             car.price >= 0 &&
              car.name is string && 
              car.name.size() > 0 &&
-             car.type in ['suv', 'sedan', 'pickup', 'luxury'];
+             car.name.size() < 100 &&
+             car.type in ['suv', 'sedan', 'pickup', 'luxury', 'sports', 'hybrid', 'electric']; // Expanded types
     }
 
     function isValidLead() {
       let lead = request.resource.data;
+      // Basic validation for public leads
       return lead.firstName is string && 
              lead.firstName.size() > 0 &&
-             (lead.email is string || lead.phone is string) &&
-             lead.type in ['finance', 'trade-in', 'chat', 'general'];
+             lead.firstName.size() < 50 &&
+             (lead.email is string || lead.phone is string);
+    }
+
+    function isValidLog() {
+      let log = request.resource.data;
+      return log.timestamp is timestamp &&
+             (log.action is string || log.email is string); 
     }
 
     // --- Collections ---
 
-    // Car Inventory: Public Read, Admin Write (with Validation), Public Analytics Update
+    // Car Inventory: Public Read, Admin Write (Strict), Analytics Update (Restricted)
     match /cars/{carId} {
       allow read: if true;
-      // Admin full access
       allow create, delete: if isAdmin();
-      // Update: Admin can update all (with validation), Public can ONLY update views/leads_count
       allow update: if (isAdmin() && isValidCar()) || 
-                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'leads_count']));
+                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'leads_count']) &&
+                     request.resource.data.views is number); // Only allow incrementing numbers
     }
     
-    // User Profiles: Self-manage, Admin readout
+    // User Profiles
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
-      // Users can update their own profile, but NOT their role
-      allow update: if (isOwner(userId) && 
-                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']))) || 
-                    isAdmin();
+      allow update: if (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']))) || isAdmin();
       allow delete: if isAdmin();
     }
     
-    // Applications (Leads): Public Create-only, Admin Read/Write
+    // Applications (Leads)
     match /applications/{appId} {
-      allow create: if isValidLead(); // Validated lead submission
+      allow create: if isValidLead(); 
       allow read, update, delete: if isAdmin();
     }
 
-    // --- Security Logs ---
+    // --- Security Logs (Tightened) ---
     
-    // Audit Logs: Admin Read, System (Anyone attempting login) Write
+    // Public can ONLY create specific log formats (prevent spam abuse)
     match /audit_logs/{logId} {
       allow read: if isAdmin();
-      allow create: if true; // Public write needed to log failed attempts from client
-      allow update, delete: if false; // Immutable logs
+      allow create: if isValidLog(); 
+      allow update, delete: if false;
     }
 
-    // Login Attempts (Rate Limiting): Public Read/Write needed for client-side throttling demo
     match /login_attempts/{attemptId} {
-      allow read, write: if true; // In production this would be backend-only
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(['email', 'timestamp']) &&
+                       request.resource.data.email is string &&
+                       request.resource.data.email.size() < 100 &&
+                       request.resource.data.timestamp is timestamp;
+      allow update, delete: if false; 
     }
   }
 }

@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Richard Automotive | Premium Experience</title>
+  <title>Richard Automotive | AI Command Center</title>
 
-  <!-- SEO & Social Sharing -->
+  <!-- SEO & Social Sharing (Elite) -->
   <meta name="description"
-    content="Gestión automotriz de próxima generación. Inventario, CRM y Herramientas de IA en una experiencia premium.">
-  <meta property="og:title" content="Richard Automotive | Command Center">
+    content="Experience the future of automotive retail. AI-powered inventory, instant financing, and a premium digital garage.">
+  <meta name="keywords" content="cars, auto, dealership, AI, financing, hybrid, electric, puerto rico, luxury cars">
+  <meta property="og:title" content="Richard Automotive | The Future of Driving">
   <meta property="og:description"
-    content="El futuro de la gestión automotriz está aquí. Accede a tu inventario y CRM con una experiencia visual incomparable.">
-  <meta property="og:image" content="https://richard-automotive.web.app/og-image.png">
+    content="Don't just buy a car. Upgrade your lifestyle. Access our AI Command Center now.">
+  <meta property="og:image" content="https://richard-automotive.web.app/og-image-v2.jpg">
   <meta property="og:url" content="https://richard-automotive.web.app/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
@@ -25,7 +26,7 @@
   <!-- iOS Web App Capable -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0d2232">
+  <meta name="theme-color" content="#0f172a">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -38,6 +39,13 @@
             ring: "hsl(var(--ring))",
             background: "hsl(var(--background))",
             foreground: "hsl(var(--foreground))",
+            primary: {
+              DEFAULT: "#00aed9",
+              foreground: "#ffffff"
+            }
+          },
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif']
           }
         }
       }
@@ -45,7 +53,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <!-- Highlight.js Theme -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -60,6 +68,8 @@
       /* background-color se elimina para ser controlado por el tema */
       color: #1e293b;
       -webkit-font-smoothing: antialiased;
+      background-color: #0f172a;
+      /* Default dark background to prevent white flash */
     }
 
     .bento-grid {
@@ -80,11 +90,11 @@
     }
 
     .dark .dark\:glass-morphism {
-      background: rgba(23, 61, 87, 0.5);
-      /* #173d57 con alpha */
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 174, 217, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
 
     .hover-kinetic {
@@ -93,52 +103,32 @@
 
     .hover-kinetic:hover {
       transform: translateY(-8px) scale(1.01);
-      box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.15);
+      box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.25);
     }
 
     .dark .hover-kinetic:hover {
-      box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.15);
+      border-color: #00aed9;
     }
 
-    .text-brutalist {
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      line-height: 0.9;
-    }
-
-    /* 1. Estilo para navegadores modernos (Firefox y estándares 2025) */
+    /* Modern Scrollbar */
     html {
       scrollbar-width: thin;
-      /* Hace la barra más delgada */
-      scrollbar-color: #4a90e2 #f0f0f0;
-      /* Color del 'thumb' y del 'track' */
+      scrollbar-color: #00aed9 #0f172a;
       scroll-behavior: smooth;
-      /* Desplazamiento suave al hacer clic en enlaces */
     }
 
-    /* 2. Estilo para Chrome, Edge y Safari (Motores WebKit) */
     ::-webkit-scrollbar {
-      width: 10px;
-      /* Ancho de la barra vertical */
+      width: 6px;
     }
 
     ::-webkit-scrollbar-track {
-      background: #f0f0f0;
-      /* Color de la pista de fondo */
-      border-radius: 10px;
+      background: #0f172a;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #4a90e2;
-      /* Color del deslizador */
-      border-radius: 10px;
-      border: 2px solid #f0f0f0;
-      /* Crea un efecto de separación */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #357abd;
-      /* Color más oscuro al pasar el mouse */
+      background: #00aed9;
+      border-radius: 20px;
     }
 
     /* Dark Mode Adaptation (Auto-added for consistency) */

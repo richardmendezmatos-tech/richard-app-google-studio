@@ -1,5 +1,6 @@
-
 import React, { useState, useEffect, useContext } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query'; // Import React Query
+import { getPaginatedCars } from '../services/firebaseService'; // Import Service
 import { Car, CarType } from '../types';
 import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, UploadCloud, ArrowUpDown, DatabaseZap, Wrench } from 'lucide-react';
 import CarDetailModal from './CarDetailModal';
@@ -109,7 +110,31 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         }
     };
 
-    // Lógica de Filtrado y Ordenamiento
+    // --- React Query for Pagination (v5) ---
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        status
+    } = useInfiniteQuery({
+        queryKey: ['cars', filter, sortOrder],
+        queryFn: ({ pageParam }) => getPaginatedCars(9, pageParam as any, filter, sortOrder),
+        initialPageParam: null,
+        getNextPageParam: (lastPage: any) => lastPage.hasMore ? lastPage.lastDoc : undefined,
+        enabled: !searchTerm && !visualContext,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // Flatten pages for display
+    const serverCars = data?.pages.flatMap(page => page.cars) || [];
+
+    // --- Hybrid Data Logic ---
+    // If Searching or Visual Context: Use 'filteredAndSorted' (Client-side from full inventory prop)
+    // Else: Use 'serverCars' (Server-side Pagination)
+    const isSearching = !!searchTerm || !!visualContext;
+
+    // Client-Side filtering (Legacy logic, used when searching)
     const filteredAndSorted = inventory.filter(c => {
         let matchesSearch = true;
         if (visualContext) {
@@ -127,6 +152,12 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         if (sortOrder === 'desc') return b.price - a.price;
         return 0;
     });
+
+    // Final list to display
+    const displayCars = isSearching ? filteredAndSorted : serverCars;
+
+    // Loading State handling for initial load (server mode only)
+    const isLoadingInitial = !isSearching && status === 'pending';
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -262,7 +293,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                         <div className="flex justify-between items-end px-2 mt-8 mb-6">
                             <div>
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white">
-                                    {filteredAndSorted.length} Vehículos Encontrados
+                                    {displayCars.length} {isSearching ? 'Resultados' : 'Vehículos'}
                                 </h3>
                                 {savedCarIds.length > 0 && (
                                     <button
@@ -285,49 +316,77 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                         </div>
 
                         {/* Inventory Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-10">
-                            {inventory.length === 0 ? (
+                        <div className="pb-10 space-y-8">
+                            {isLoadingInitial ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                                    {[1, 2, 3, 4, 5, 6].map(i => (
+                                        <div key={i} className="h-[400px] bg-slate-100 dark:bg-slate-800 rounded-[40px] animate-pulse" />
+                                    ))}
+                                </div>
+                            ) : displayCars.length === 0 ? (
                                 <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white dark:bg-slate-800/50 rounded-[40px] border-2 border-dashed border-slate-300 dark:border-slate-700 animate-in fade-in">
-                                    <DatabaseZap size={48} className="text-slate-400 mb-4" />
-                                    <h3 className="text-2xl font-black text-slate-700 dark:text-white uppercase tracking-tight">Base de datos vacía</h3>
-                                    <p className="text-slate-500 mt-2 max-w-md">No hay autos visibles.</p>
-
-                                    {onMagicFix && (
-                                        <button
-                                            onClick={handleMagicClick}
-                                            disabled={isFixing}
-                                            className="mt-6 px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-full font-black uppercase tracking-widest shadow-xl shadow-rose-600/30 active:scale-95 transition-all flex items-center gap-3 animate-bounce"
-                                        >
-                                            {isFixing ? (
-                                                <>
-                                                    <Loader2 className="animate-spin" /> Reparando Sistema...
-                                                </>
+                                    {isSearching ? (
+                                        <>
+                                            <p className="text-2xl font-black text-slate-300 dark:text-slate-500 uppercase tracking-tight">Sin Resultados</p>
+                                            <button onClick={() => { setSearchTerm(''); setFilter('all'); setVisualContext(null); }} className="mt-4 text-[#00aed9] font-bold underline hover:text-cyan-400">Limpiar Filtros</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <DatabaseZap size={48} className="text-slate-400 mb-4" />
+                                            <h3 className="text-2xl font-black text-slate-700 dark:text-white uppercase tracking-tight">Base de datos vacía</h3>
+                                            <p className="text-slate-500 mt-2 max-w-md">No hay autos visibles.</p>
+                                            {onMagicFix ? (
+                                                <button
+                                                    onClick={handleMagicClick}
+                                                    disabled={isFixing}
+                                                    className="mt-6 px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-full font-black uppercase tracking-widest shadow-xl shadow-rose-600/30 active:scale-95 transition-all flex items-center gap-3 animate-bounce"
+                                                >
+                                                    {isFixing ? (
+                                                        <> <Loader2 className="animate-spin" /> Reparando... </>
+                                                    ) : (
+                                                        <> <Wrench size={20} /> 🚨 Reparación Automática </>
+                                                    )}
+                                                </button>
                                             ) : (
-                                                <>
-                                                    <Wrench size={20} /> 🚨 Reparación Automática
-                                                </>
+                                                <p className="text-slate-500 mb-6 max-w-md">Ve al Admin Panel para configurar.</p>
                                             )}
-                                        </button>
-                                    )}
-                                    {!onMagicFix && (
-                                        <p className="text-slate-500 mb-6 max-w-md">Ve al Admin Panel para configurar.</p>
+                                        </>
                                     )}
                                 </div>
-                            ) : filteredAndSorted.length > 0 ? filteredAndSorted.map((car) => (
-                                <CarCard
-                                    key={car.id}
-                                    car={car}
-                                    onSelect={() => setSelectedCar(car)}
-                                    onCompare={(e) => handleToggleCompare(e, car)}
-                                    isComparing={compareList.some(c => c.id === car.id)}
-                                    isSaved={savedCarIds.includes(car.id)}
-                                    onToggleSave={(e) => toggleSaveCar(e, car.id)}
-                                />
-                            )) : (
-                                <div className="col-span-full py-32 text-center bg-white dark:bg-slate-800/50 rounded-[40px] border border-dashed border-slate-300 dark:border-slate-700">
-                                    <p className="text-2xl font-black text-slate-300 dark:text-slate-500 uppercase tracking-tight">Sin Resultados</p>
-                                    <button onClick={() => { setSearchTerm(''); setFilter('all'); setVisualContext(null); }} className="mt-4 text-[#00aed9] font-bold underline hover:text-cyan-400">Limpiar Filtros</button>
-                                </div>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                                        {displayCars.map((car) => (
+                                            <CarCard
+                                                key={car.id}
+                                                car={car}
+                                                onSelect={() => setSelectedCar(car)}
+                                                onCompare={(e) => handleToggleCompare(e, car)}
+                                                isComparing={compareList.some(c => c.id === car.id)}
+                                                isSaved={savedCarIds.includes(car.id)}
+                                                onToggleSave={(e) => toggleSaveCar(e, car.id)}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Load More Button */}
+                                    {!isSearching && hasNextPage && (
+                                        <div className="flex justify-center pt-8">
+                                            <button
+                                                onClick={() => fetchNextPage()}
+                                                disabled={isFetchingNextPage}
+                                                className="px-8 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-bold text-slate-600 dark:text-white hover:bg-[#00aed9] hover:text-white hover:border-[#00aed9] transition-all shadow-lg shadow-slate-200/50 dark:shadow-none active:scale-95 flex items-center gap-2 group"
+                                            >
+                                                {isFetchingNextPage ? (
+                                                    <Loader2 className="animate-spin" />
+                                                ) : (
+                                                    <ArrowUpDown className="group-hover:translate-y-1 transition-transform" size={18} />
+                                                )}
+                                                {isFetchingNextPage ? 'Cargando más...' : 'Cargar Más Vehículos'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

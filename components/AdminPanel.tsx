@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Car as CarType, Lead } from '../types';
 import { Plus, Trash2, Edit3, BarChart3, Package, Search, Loader2, DatabaseZap, Smartphone, Monitor, Server, Camera, CarFront, ShieldAlert } from 'lucide-react';
-import { syncLeads } from '../services/firebaseService';
+import { syncLeads, auth } from '../services/firebaseService';
 
 import InventoryHeatmap from './InventoryHeatmap';
-import { useReactToPrint } from 'react-to-print';
+// import { useReactToPrint } from 'react-to-print'; // Removed
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
 
 // Modular Components
@@ -248,8 +248,37 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           )}
 
           {activeTab === 'security' && (
-            <div className="min-h-[600px]">
-              <AuditLogViewer />
+            <div className="space-y-6">
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Smartphone className="text-[#00aed9]" size={20} />
+                    Acceso Biométrico (Passkeys)
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm mt-1">
+                    Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o TouchID.
+                  </p>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!auth.currentUser) return alert("Debes estar logueado.");
+                    try {
+                      const { registerPasskey } = await import('../services/authService');
+                      await registerPasskey(auth.currentUser);
+                      alert("✅ Dispositivo vinculado exitosamente.");
+                    } catch (e: any) {
+                      alert("Error: " + e.message);
+                    }
+                  }}
+                  className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                >
+                  <Smartphone size={16} /> Vincular Dispositivo
+                </button>
+              </div>
+
+              <div className="min-h-[600px]">
+                <AuditLogViewer />
+              </div>
             </div>
           )}
 

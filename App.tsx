@@ -29,7 +29,7 @@ import OfflineIndicator from './components/OfflineIndicator';
 import ComparisonBar from './components/ComparisonBar';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { NotificationProvider, useNotification } from './contexts/NotificationContext';
-import { logoutUser, syncInventory, addCar, updateCar, deleteCar, uploadInitialInventory, registerUser } from './services/firebaseService';
+import { syncInventory, addCar, updateCar, deleteCar, uploadInitialInventory } from './services/firebaseService';
 import { initializePushNotifications } from './services/pushService';
 import { startGeofenceMonitoring } from './services/geofenceService';
 
@@ -79,9 +79,16 @@ const initialInventoryData: Omit<Car, 'id'>[] = [
 
 // Loading Component
 const FullScreenLoader = () => (
-  <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 text-[#00aed9]">
-    <div className="animate-spin w-12 h-12 border-4 border-[#00aed9] rounded-full border-t-transparent mb-4"></div>
-    <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Cargando Sistema...</p>
+  <div className="h-screen w-full flex flex-col items-center justify-center bg-[#0d2232] text-white relative overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-900/20 to-[#0d2232]"></div>
+    <div className="z-10 flex flex-col items-center">
+      <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin mb-6 shadow-[0_0_30px_rgba(0,174,217,0.3)]"></div>
+      <h1 className="text-2xl font-black tracking-tighter mb-2">RICHARD <span className="text-[#00aed9]">AUTOMOTIVE</span></h1>
+      <div className="flex items-center gap-2">
+        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">Initializing System v2.7</p>
+      </div>
+    </div>
   </div>
 );
 
@@ -105,7 +112,8 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
   // Handle logout inside guard if needed
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      const { signOutUser } = await import('./services/authService');
+      await signOutUser();
       navigate('/');
     } catch (e) { console.error(e); }
   };
@@ -159,7 +167,8 @@ const AppContent: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      const { signOutUser } = await import('./services/authService');
+      await signOutUser();
       navigate('/');
       addNotification('info', 'Has cerrado sesión correctamente.');
     } catch (error) {
@@ -180,7 +189,8 @@ const AppContent: React.FC = () => {
       const tempId = Date.now();
       const tempEmail = "admin_fix_" + tempId + "@richard.com"; // Fixed string concatenation
       const tempPass = "fix123456";
-      await registerUser(tempEmail, tempPass);
+      const { signUpWithEmail } = await import('./services/authService');
+      await signUpWithEmail(tempEmail, tempPass);
       await uploadInitialInventory(initialInventoryData);
       addNotification('success', '✅ REPARACIÓN COMPLETA.');
     } catch (error: any) {

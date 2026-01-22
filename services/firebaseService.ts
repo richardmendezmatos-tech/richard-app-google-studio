@@ -1,20 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  User,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  AuthError,
-  setPersistence,
-  browserLocalPersistence
-} from "firebase/auth";
+import { getAuth } from "firebase/auth"; // Only getAuth needed for export
 import {
   getFirestore,
   collection,
@@ -22,15 +9,30 @@ import {
   addDoc,
   doc,
   setDoc,
-  getDoc,
   deleteDoc,
   writeBatch,
   increment,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
+  getDocs,
+  QueryDocumentSnapshot
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { getPerformance } from "firebase/performance";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"; // App Check Enterprise
+import {
+  getCountFromServer,
+  getAggregateFromServer,
+  sum,
+  average,
+  AggregateField
+} from "firebase/firestore"; // Aggregations
 import { firebaseConfig } from "../firebaseConfig";
-import { Car, UserRole, Lead } from "../types";
+import { Car, Lead } from "../types";
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
@@ -39,6 +41,30 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
+
+// Initialize Performance Monitoring
+let performance;
+if (typeof window !== 'undefined') {
+  performance = getPerformance(app);
+
+  // Initialize App Check (Security)
+  // Note: Replacing generic "debug" with actual ReCaptcha key in prod is required.
+  // Using Debug provider for localhost to avoid issues during dev.
+  // Enable Debug Token for Localhost
+  if (import.meta.env.DEV) {
+    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+
+  const appCheckKey = import.meta.env.VITE_RECAPTCHA_KEY;
+  if (appCheckKey) {
+    // Elite Security: Enterprise ReCaptcha
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(appCheckKey),
+      isTokenAutoRefreshEnabled: true
+    });
+  }
+}
+export { performance };
 
 // Enable Offline Persistence
 import { enableMultiTabIndexedDbPersistence } from "firebase/firestore";
@@ -55,235 +81,90 @@ if (typeof window !== 'undefined') {
 // Use emulator for functions if in dev
 if (import.meta.env.DEV) {
   // connectFunctionsEmulator(functions, "localhost", 5001); 
-  // Note: Genkit usually serves on a different port or wraps functions.
-  // Standard firebase emulator port for functions is 5001.
-  // But Genkit dev UI is 4000.  Usually Genkit dev server proxies callable calls?
-  // Let's assume standard callable function behavior for now.
 }
 
 const carsCollectionRef = collection(db, 'cars');
 const appsCollectionRef = collection(db, 'applications');
 
-// --- Funciones de Autenticación & Roles ---
+// --- Aggregation Queries (Optimization) ---
+export const getInventoryStats = async () => {
+  const coll = collection(db, 'cars');
+  const snapshot = await getAggregateFromServer(coll, {
+    count: (sum as any)('count') || ((field: any) => new (AggregateField as any)('count')), // v10 syntax varies, simplified
+    totalValue: sum('price'),
+    avgPrice: average('price')
+  }).catch(() => null); // Fallback
 
-export const onAuthChange = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, callback);
-};
+  // Note: If SDK version < 9.14, sum/avg might not exist.
+  // Using simple count() for safety if unsure of version.
+  const countSnapshot = await getCountFromServer(coll);
 
-// Función auxiliar para obtener el rol
-export const getUserRole = async (uid: string): Promise<UserRole> => {
-  try {
-    const userDoc = await getDoc(doc(db, 'users', uid));
-    if (userDoc.exists()) {
-      return userDoc.data().role as UserRole;
-    }
-    return 'user'; // Default role
-  } catch (e) {
-    console.error("Error fetching role:", e);
-    return 'user';
-  }
-};
-
-/**
- * LOGIN PARA CLIENTES
- * Simula endpoint: /api/v1/auth/client/login
- * Regla: RECHAZA si el usuario tiene rol de 'admin'.
- */
-export const loginUserClient = async (email: string, password: string) => {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  const role = await getUserRole(userCredential.user.uid);
-
-  if (role === 'admin') {
-    await signOut(auth); // Seguridad: Cerrar sesión inmediatamente
-    throw new Error("ADMIN_PORTAL_ONLY: Acceso no autorizado en este portal.");
-  }
-
-  return userCredential;
-};
-
-/**
- * LOGIN PARA ADMINISTRADORES
- * Simula endpoint: /api/v1/auth/admin/login
- * Reglas:
- * 1. RECHAZA si el usuario NO tiene rol de 'admin'.
- * 2. Valida un token 2FA (simulado).
- */
-
-// --- Helper para obtener IP (Client-side best effort) ---
-const getClientIP = async (): Promise<string> => {
-  try {
-    const res = await fetch('https://api.ipify.org?format=json');
-    const data = await res.json();
-    return data.ip;
-  } catch (e) {
-    return 'unknown_ip';
-  }
-};
-
-// --- Auditoría y Seguridad ---
-const auditLogsRef = collection(db, 'audit_logs');
-const rateLimitsRef = collection(db, 'login_attempts'); // Para Rate Limiting
-
-export const logAdminAccess = async (email: string, success: boolean, method: string) => {
-  const ip = await getClientIP();
-  const device = navigator.userAgent;
-
-  await addDoc(auditLogsRef, {
-    email,
-    ip,
-    device,
-    method, // 'password', '2fa', 'passkey'
-    success,
-    timestamp: new Date(),
-    location: window.location.pathname
-  });
-};
-
-/**
- * LOGIN PARA ADMINISTRADORES (SECURED)
- * Implementa:
- * 1. Rate Limiting (Check de intentos fallidos en Firestore)
- * 2. Role Check
- * 3. 2FA Check
- * 4. Audit Logging
- */
-export const loginAdmin = async (email: string, password: string, twoFactorCode: string) => {
-  // Optimization: Parallelize IP check and Auth attempt to reduce waterfall latency
-  const [ip, authResult] = await Promise.all([
-    getClientIP(),
-    signInWithEmailAndPassword(auth, email, password).catch(e => ({ error: e } as any))
-  ]);
-
-  const attemptId = `${email}_${ip}`.replace(/[^a-zA-Z0-9]/g, '_'); // Sanitize for doc ID
-
-  // Helper to record failures
-  const recordFailure = async () => {
-    const currentAttempts = rateLimitDoc.exists() ? rateLimitDoc.data().attempts : 0;
-    await setDoc(doc(rateLimitsRef, attemptId), {
-      attempts: currentAttempts + 1,
-      lastAttempt: new Date().getTime(),
-      ip
-    }, { merge: true });
+  return {
+    count: countSnapshot.data().count,
+    totalValue: snapshot?.data().totalValue || 0,
+    avgPrice: snapshot?.data().avgPrice || 0
   };
+};
 
-  // 1. Check Rate Limit (Frontend enforcement logic backed by Firestore)
-  const rateLimitDoc = await getDoc(doc(rateLimitsRef, attemptId));
-  if (rateLimitDoc.exists()) {
-    const data = rateLimitDoc.data();
-    const now = new Date().getTime();
-    if (data.attempts >= 5 && now - data.lastAttempt < 15 * 60 * 1000) { // 15 min ban
-      await logAdminAccess(email, false, 'blocked_ip');
-      // If we authenticated successfully but are rate limited, sign out immediately
-      if (!(authResult as any).error) await signOut(auth);
-      throw new Error("ACCESS_DENIED: IP bloqueada temporalmente por intentos fallidos. Intente en 15 minutos.");
-    }
+export interface PaginatedResult {
+  cars: Car[];
+  lastDoc: QueryDocumentSnapshot | null;
+  hasMore: boolean;
+}
+
+export const getPaginatedCars = async (
+  pageSize: number = 9,
+  lastVisible: QueryDocumentSnapshot | null = null,
+  filterType: string = 'all',
+  sortOrder: 'asc' | 'desc' | null = null
+): Promise<PaginatedResult> => {
+  let constraints: any[] = [];
+
+  // 1. Filter
+  if (filterType && filterType !== 'all') {
+    constraints.push(where('type', '==', filterType));
   }
 
-  // Handle Auth Result from the parallel promise
-  if ((authResult as any).error) {
-    const error = (authResult as any).error;
-    await recordFailure();
-
-    if (!error.message.includes("IP bloqueada")) {
-      await logAdminAccess(email, false, 'auth_failed');
-    }
-    throw error;
+  // 2. Sort
+  // Must generally match where clause or exist as composite index
+  if (sortOrder) {
+    constraints.push(orderBy('price', sortOrder));
+  } else {
+    // Default consistent sort
+    constraints.push(orderBy('name', 'asc'));
   }
 
-  const userCredential = authResult as any;
+  // 3. Cursor
+  if (lastVisible) {
+    constraints.push(startAfter(lastVisible));
+  }
+
+  // 4. Limit
+  constraints.push(limit(pageSize));
+
+  const q = query(carsCollectionRef, ...constraints);
 
   try {
-    const role = await getUserRole(userCredential.user.uid);
+    const snapshot = await getDocs(q);
+    const cars = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Car[];
+    const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
 
-    if (role !== 'admin') {
-      await signOut(auth);
-      await recordFailure();
-      await logAdminAccess(email, false, 'role_check_failed');
-      throw new Error("ACCESS_DENIED: Credenciales no válidas para este portal.");
+    return {
+      cars,
+      lastDoc,
+      hasMore: snapshot.docs.length === pageSize
+    };
+  } catch (e: any) {
+    console.error("Pagination Error:", e);
+    // Fallback if index missing: return empty or try without sort
+    if (e.code === 'failed-precondition') {
+      console.warn("Index missing for this query. Check console link.");
     }
-
-    // 2. 2FA Check (Simulado pero estricto)
-    if (twoFactorCode !== '123456') {
-      await logAdminAccess(email, false, '2fa_failed');
-      await signOut(auth);
-      await recordFailure();
-      throw new Error("INVALID_2FA: Token de seguridad incorrecto.");
-    }
-
-    // Success - Reset attempts & Log
-    if (rateLimitDoc.exists()) {
-      await deleteDoc(doc(rateLimitsRef, attemptId));
-    }
-    await logAdminAccess(email, true, 'login_success');
-    return userCredential;
-
-  } catch (error: any) {
-    // If logic inside try fails (and wasn't handled specifically above), propagate
-    throw error;
+    throw e;
   }
 };
 
-export const registerUser = async (email: string, password: string) => {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-  // Al registrarse, creamos el perfil en Firestore
-  // Lógica simple para demo: Si el email contiene "admin" o "richard", es admin.
-  // En producción, esto se haría manualmente o mediante Claims.
-  const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
-
-  await setDoc(doc(db, 'users', userCredential.user.uid), {
-    email,
-    role,
-    createdAt: new Date()
-  });
-
-  return userCredential;
-};
-
-export const logoutUser = () => {
-  return signOut(auth);
-};
-
-// Social Auth Providers
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
-
-export const loginWithGoogle = async () => {
-  try {
-    // Force persistence to be local (survives browser restart)
-    await setPersistence(auth, browserLocalPersistence);
-    const result = await signInWithPopup(auth, googleProvider);
-    // Verificar si existe perfil, si no, crearlo como user
-    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', result.user.uid), {
-        email: result.user.email,
-        role: 'user', // Social login siempre es user por defecto para seguridad
-        createdAt: new Date()
-      });
-    }
-    return result.user;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const loginWithFacebook = async () => {
-  try {
-    const result = await signInWithPopup(auth, facebookProvider);
-    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', result.user.uid), {
-        email: result.user.email,
-        role: 'user',
-        createdAt: new Date()
-      });
-    }
-    return result.user;
-  } catch (error) {
-    throw error;
-  }
-};
+// --- Funciones de Base de Datos (Firestore) --- (Moved auth to authService.ts)
 
 
 // --- Funciones de Base de Datos (Firestore) ---
@@ -347,6 +228,13 @@ export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
 export const incrementCarView = async (carId: string) => {
   const carRef = doc(db, 'cars', carId);
   await setDoc(carRef, { views: increment(1) }, { merge: true });
+
+  if (typeof window !== 'undefined') {
+    const { logEvent } = await import("firebase/analytics");
+    logEvent(analytics, 'view_item', {
+      items: [{ item_id: carId }]
+    });
+  }
 };
 
 export const incrementCarLead = async (carId: string) => {
@@ -396,6 +284,17 @@ export const submitApplication = async (data: any) => {
   if (data.vehicleInfo && data.vehicleInfo.id) {
     await incrementCarLead(data.vehicleInfo.id);
   }
+
+  // GA4 Event for Funnel Analysis (BigQuery)
+  if (typeof window !== 'undefined') {
+    const { logEvent } = await import("firebase/analytics");
+    logEvent(analytics, 'generate_lead', {
+      currency: 'USD',
+      value: score, // Use AI score as value proxy
+      lead_type: safeData.type,
+      vehicle_id: safeData.vehicleId
+    });
+  }
 };
 
 export const syncLeads = (callback: (leads: Lead[]) => void) => {
@@ -422,9 +321,16 @@ export const syncLeads = (callback: (leads: Lead[]) => void) => {
 
     // Sort by timestamp newly created first
     leadsList.sort((a, b) => {
-      const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp || 0);
-      const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp || 0);
-      return dateB.getTime() - dateA.getTime();
+      // Handle both Firestore Timestamp objects (with toDate) and plain objects
+      const getMillis = (obj: any) => {
+        if (!obj) return 0;
+        if (typeof obj.toDate === 'function') return obj.toDate().getTime();
+        if (obj.seconds) return obj.seconds * 1000;
+        if (obj instanceof Date) return obj.getTime();
+        return 0;
+      };
+
+      return getMillis(b.timestamp) - getMillis(a.timestamp);
     });
 
     callback(leadsList);

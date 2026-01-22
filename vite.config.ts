@@ -1,32 +1,55 @@
-/// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite'
+import vue from '@vitejs/plugin-vue';
 import react from '@vitejs/plugin-react'
+import viteAngular from '@analogjs/vite-plugin-angular';
 import { VitePWA } from 'vite-plugin-pwa'
+import viteCompression from 'vite-plugin-compression';
+import eslint from 'vite-plugin-eslint';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Cargar variables de entorno
-  const env = loadEnv(mode, '.', '');
-
-  // Fallback de seguridad: Si no hay .env, usar la clave conocida de Firebase 
-  const apiKey = env.API_KEY || "";
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiKey = env.VITE_FIREBASE_API_KEY || env.API_KEY || "";
 
   return {
+    server: {
+      host: true, // Expone a la red local (0.0.0.0)
+    },
     build: {
+      target: 'es2022',
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage', 'firebase/functions'],
-            'vendor-ui': ['framer-motion', 'lucide-react'], // Removed highlight.js
-            'vendor-highlight': ['highlight.js'], // Isolated
-            'vendor-utils': ['react-to-print']
-          }
+          // Automatic chunking by Vite/Rollup
         }
       }
     },
     plugins: [
       react(),
+      vue(),
+      // Guarded Analog Plugin: Prevents interference with React/JSX files
+      (() => {
+        const p = viteAngular({ tsconfig: 'tsconfig.json' });
+        const wrap = (x: any) => ({
+          ...x,
+          transform(code: string, id: string) {
+            if (id.includes('.tsx') || id.includes('.jsx')) return null;
+            if (typeof x.transform === 'function') {
+              return x.transform.call(this, code, id);
+            }
+            return null;
+          }
+        });
+        return Array.isArray(p) ? p.map(wrap) : wrap(p);
+      })(),
+      /* eslint({
+        cache: true,
+        fix: true,
+        include: ['./**\/*.{js,jsx,ts,tsx}'],
+        exclude: [/node_modules/],
+      }), */
+      viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+      visualizer({ filename: 'stats.html' }),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
@@ -40,7 +63,7 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'firebase-storage-images',
                 expiration: {
                   maxEntries: 60,
-                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+                  maxAgeSeconds: 30 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
@@ -54,7 +77,7 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'external-images',
                 expiration: {
                   maxEntries: 30,
-                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+                  maxAgeSeconds: 30 * 24 * 60 * 60,
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
@@ -67,25 +90,34 @@ export default defineConfig(({ mode }) => {
           name: 'Richard Automotive',
           short_name: 'RichardAuto',
           description: 'Inventario Premium de Autos en Puerto Rico',
-          theme_color: '#00aed9', // Tu color Cyan
-          background_color: '#0f172a', // Tu color Slate oscuro
+          theme_color: '#00aed9',
+          background_color: '#0f172a',
           display: 'standalone',
+          start_url: '/',
+          lang: 'es-PR',
+          orientation: 'portrait',
           icons: [
             {
-              src: 'https://i.postimg.cc/ryZDJfy7/IMG-8290.png',
+              src: 'app-icon.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: 'https://i.postimg.cc/ryZDJfy7/IMG-8290.png',
+              src: 'app-icon.png',
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: 'https://i.postimg.cc/ryZDJfy7/IMG-8290.png',
+              src: 'app-icon.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
+              purpose: 'any'
+            },
+            {
+              src: 'app-icon.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
             }
           ]
         }
