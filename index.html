@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <script id="wsod-protection">
+    /**
+     * RICHARD AUTOMOTIVE | SAFETY SHIELD v1.0
+     * Web Reliability Engineering - Anti-WSoD System
+     */
+    (function () {
+      const handleError = function (msg, url, lineNo, columnNo, error) {
+        if (window._safetyShieldActive) return;
+        window._safetyShieldActive = true;
+
+        console.error('CRITICAL FAULT DETECTED:', msg, error);
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+          #wsod-fallback {
+            position: fixed; inset: 0; z-index: 999999;
+            background: #0f172a; color: #f8fafc;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif; text-align: center; p: 2rem;
+          }
+          .wsod-card {
+            max-width: 450px; padding: 3rem; background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+          }
+          .wsod-icon { font-size: 3rem; margin-bottom: 1.5rem; color: #00aed9; }
+          .wsod-title { font-weight: 900; font-size: 1.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: -0.025em; }
+          .wsod-text { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2.5rem; }
+          .wsod-btn {
+            display: block; width: 100%; padding: 1.25rem; background: #00aed9;
+            color: white; border-radius: 1rem; font-weight: 800; border: none;
+            text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 10px 20px -5px rgba(0,174,217,0.4);
+            margin-bottom: 1rem; font-size: 0.8rem;
+          }
+          .wsod-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+          .wsod-link { color: #64748b; font-size: 0.8rem; text-decoration: none; font-weight: 600; }
+          .wsod-link:hover { color: #00aed9; }
+        `;
+        document.head.appendChild(style);
+
+        const fallback = document.createElement('div');
+        fallback.id = 'wsod-fallback';
+        fallback.innerHTML = `
+          <div class="wsod-card">
+            <div class="wsod-icon">⚠️</div>
+            <h1 class="wsod-title">Sistema Interrumpido</h1>
+            <p class="wsod-text">Algo no salió como esperábamos, pero estamos en ello. El sistema ha detectado un fallo crítico y ha detenido la ejecución para proteger tus datos.</p>
+            <button class="wsod-btn" onclick="window.location.reload()">Recargar Página</button>
+            <a href="/" class="wsod-link">Ir al inicio</a>
+          </div>
+        `;
+        document.body.prepend(fallback);
+        return false;
+      };
+
+      window.onerror = handleError;
+      window.addEventListener('unhandledrejection', function (event) {
+        handleError('Unhandled Promise Rejection: ' + event.reason);
+      });
+
+      // SIMULADOR DE ERROR (Descomentar para probar)
+      // window.simulateCrash = function() { throw new Error('Simulated System Crash'); };
+    })();
+  </script>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Richard Automotive | 2026 AI Command Center</title>
+
+  <!-- SEO & Social Sharing (Elite) -->
+  <meta name="description"
+    content="Experience the future of automotive retail. AI-powered inventory, instant financing, and a premium digital garage.">
+  <meta name="keywords" content="cars, auto, dealership, AI, financing, hybrid, electric, puerto rico, luxury cars">
+  <meta property="og:title" content="Richard Automotive | The Future of Driving">
+  <meta property="og:description"
+    content="Don't just buy a car. Upgrade your lifestyle. Access our AI Command Center now.">
+  <meta property="og:image" content="https://richard-automotive.web.app/og-image-v2.jpg">
+  <meta property="og:url" content="https://richard-automotive.web.app/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- PWA & Mobile -->
+  <!-- Manifiesto inyectado automáticamente por vite-plugin-pwa -->
+  <link rel="icon" type="image/png" href="/richard-app-google-studio/app-icon.png">
+  <link rel="apple-touch-icon" href="/richard-app-google-studio/app-icon.png">
+
+  <!-- iOS Web App Capable -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <!-- Highlight.js Theme -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <!-- Styles migrated to index.css -->
+
+  <script type="module" crossorigin src="/richard-app-google-studio/assets/index-BeqFQMH-.js"></script>
+  <link rel="stylesheet" crossorigin href="/richard-app-google-studio/assets/index-BreVpFhh.css">
+<link rel="manifest" href="/richard-app-google-studio/manifest.webmanifest"></head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>

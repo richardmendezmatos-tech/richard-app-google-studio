@@ -1,0 +1,12 @@
+# Dependencies
+node_modules
+lib
+
+# Env
+.env
+
+# Genkit
+.genkit
+
+# Secrets
+serviceAccountKey.json

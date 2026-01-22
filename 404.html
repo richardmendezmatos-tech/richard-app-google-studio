@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada | Richard Automotive</title>
+    <style>
+        :root {
+            --primary: #00aed9;
+            --bg-dark: #0f172a;
+            --text-light: #f8fafc;
+            --slate-400: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 174, 217, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .error-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 4rem 2rem;
+            border-radius: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .number-404 {
+            font-size: clamp(6rem, 20vw, 10rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(0, 174, 217, 0.3));
+            animation: levitate 4s ease-in-out infinite;
+            letter-spacing: -5px;
+        }
+
+        @keyframes levitate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .error-message {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--slate-400);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline decoration-thickness(2px);
+            text-underline-offset: 4px;
+        }
+
+        .redirect-timer {
+            font-size: 0.9rem;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 3rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 174, 217, 0.1);
+            border-radius: 99px;
+            display: inline-block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #white;
+            box-shadow: 0 10px 20px -5px rgba(0, 174, 217, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(0, 174, 217, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.2;
+            animation: float-particle linear infinite;
+        }
+
+        @keyframes float-particle {
+            to { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <main class="error-container">
+        <div class="glass-card">
+            <h1 class="number-404">404</h1>
+            <p class="error-message">
+                Lo sentimos, la sección <span id="route-name" class="highlight">/unknown</span> no está disponible.
+            </p>
+            <div class="redirect-timer">
+                Redirección automática en <span id="countdown">10</span>s
+            </div>
+            <div class="button-group">
+                <button onclick="goBack()" class="btn btn-secondary" aria-label="Regresar a la página anterior">
+                    &larr; Volver atrás
+                </button>
+                <a href="/" class="btn btn-primary" aria-label="Ir a la página de inicio">
+                    Ir al Inicio
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Detection Logic
+        const routeNameEl = document.getElementById('route-name');
+        const countdownEl = document.getElementById('countdown');
+        let seconds = 10;
+
+        // 1. URL Detection
+        const currentPath = window.location.pathname;
+        routeNameEl.textContent = currentPath === '/' ? 'especificada' : currentPath;
+
+        // 2. Countdown logic
+        const timer = setInterval(() => {
+            seconds--;
+            countdownEl.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = '/';
+            }
+        }, 1000);
+
+        // 3. History Back
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        // 4. Background decoration (Aesthetic touch)
+        function createParticles() {
+            for(let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 4 + 2 + 'px';
+                p.style.width = size;
+                p.style.height = size;
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = Math.random() * 100 + 'vh';
+                p.style.animationDuration = Math.random() * 5 + 5 + 's';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(p);
+            }
+        }
+        createParticles();
+    </script>
+</body>
+</html>
