@@ -18,7 +18,7 @@ import {
     addDoc,
     deleteDoc
 } from "firebase/firestore";
-import { auth, db } from "./firebaseService";
+import { auth, db, analytics } from "./firebaseService";
 import { UserRole } from "../types";
 
 // --- Types & Constants ---
@@ -77,6 +77,14 @@ export const logAuthActivity = async (email: string, success: boolean, method: s
         timestamp: new Date(),
         location: window.location.pathname
     });
+
+    if (success && typeof window !== 'undefined') {
+        try {
+            const { logEvent } = await import("firebase/analytics");
+            const eventName = method.includes('login') ? 'login' : (method.includes('signup') ? 'sign_up' : method);
+            logEvent(analytics, eventName, { method });
+        } catch (e) { /* ignore analytics errors */ }
+    }
 };
 
 // --- User Management Functions ---
@@ -254,8 +262,58 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode:
 
 // --- Authentication State Observer ---
 
+// --- Authentication State Observer ---
+
 export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {
     return onAuthStateChanged(auth, (user) => {
         callback(user);
     });
+};
+
+// --- Passkey / Biometric Authentication ---
+
+export const registerPasskey = async (user: User) => {
+    // 1. Check browser support
+    if (!window.PublicKeyCredential) {
+        throw new Error("Passkeys not supported in this browser.");
+    }
+
+    try {
+        // 2. Create Challenge (In real production, this comes from server)
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
+
+        // 3. Request Credential Creation
+        const credential = await navigator.credentials.create({
+            publicKey: {
+                challenge,
+                rp: { name: "Richard Automotive", id: window.location.hostname },
+                user: {
+                    id: Uint8Array.from(user.uid, c => c.charCodeAt(0)),
+                    name: user.email || "user",
+                    displayName: user.displayName || user.email || "User"
+                },
+                pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                authenticatorSelection: { authenticatorAttachment: "platform" },
+                timeout: 60000,
+                attestation: "none"
+            }
+        });
+
+        // 4. Save Credential ID (Mocking backend registration)
+        if (credential) {
+            // Store specific credential ID for reference
+            await setDoc(doc(db, 'users', user.uid, 'credentials', credential.id), {
+                credentialId: credential.id,
+                type: 'passkey',
+                createdAt: new Date(),
+                userAgent: navigator.userAgent
+            });
+            await logAuthActivity(user.email || 'unknown', true, 'passkey_registered');
+            return credential;
+        }
+    } catch (e: any) {
+        console.error("Passkey Error:", e);
+        throw new Error("Error registrando Passkey: " + e.message);
+    }
 };

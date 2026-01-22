@@ -377,6 +377,34 @@ export const checkStaleLeads = onSchedule('every day 09:00', async (event) => {
     }
 });
 
+export const cleanupOldLogs = onSchedule('every sunday 00:00', async (event) => {
+    logger.info("Running Log Cleanup...");
+    // 30 Days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    try {
+        const logsRef = db.collection('audit_logs');
+        const snapshot = await logsRef
+            .where('timestamp', '<=', Timestamp.fromDate(thirtyDaysAgo))
+            .limit(500) // Batch limit
+            .get();
+
+        if (snapshot.empty) {
+            logger.info("No old logs to clean.");
+            return;
+        }
+
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+
+        logger.info(`Deleted ${snapshot.size} old logs.`);
+    } catch (error) {
+        logger.error("Error cleaning logs", error);
+    }
+});
+
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) => {

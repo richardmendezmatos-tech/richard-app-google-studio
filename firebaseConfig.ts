@@ -5,11 +5,11 @@
 // ---------------------------------------------------------------------------
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyDlj3o08kSJrEhKJjU2Xb1LMNeXD2hxWhY",
-  authDomain: "richard-automotive.firebaseapp.com",
-  projectId: "richard-automotive",
-  storageBucket: "richard-automotive.firebasestorage.app",
-  messagingSenderId: "197990063384",
-  appId: "1:197990063384:web:2e797f109bda021e2e926d",
-  measurementId: "G-BB5QFNTHHG"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
