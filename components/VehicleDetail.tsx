@@ -14,40 +14,31 @@ interface Props {
 const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [car, setCar] = useState<Car | null>(null);
+    const car = React.useMemo(() => {
+        if (!id || inventory.length === 0) return null;
+        return inventory.find(c => c.id === id) || null;
+    }, [id, inventory]);
 
     // AI State
     const [aiPitch, setAiPitch] = useState<string>('');
     const [loadingPitch, setLoadingPitch] = useState(false);
 
     useEffect(() => {
-        if (id && inventory.length > 0) {
-            const found = inventory.find(c => c.id === id);
-            if (found) {
-                setCar(found);
-                if (found.price) {
-                    // Auto-calculations now handled in DealBuilder
-                }
-                // Track View (Analytics)
-                incrementCarView(found.id);
-            } else {
-                // Verify if inventory is loaded. If loaded and not found, redirect.
-                // For now, we wait.
-            }
+        if (car) {
+            incrementCarView(car.id);
         }
-    }, [id, inventory]);
-
+    }, [car?.id]);
 
     // Generate AI Pitch on load
     useEffect(() => {
-        if (car && !aiPitch) {
+        if (car && !aiPitch && !loadingPitch) {
             setLoadingPitch(true);
             generateCarPitch(car)
                 .then(text => setAiPitch(text))
-                .catch(() => setAiPitch("No pudimos conectar con Richard IA en este momento."))
+                .catch((e) => setAiPitch(`Error: ${e.message}`))
                 .finally(() => setLoadingPitch(false));
         }
-    }, [car]);
+    }, [car, aiPitch, loadingPitch]);
 
     if (!car) {
         return (
@@ -129,7 +120,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                         ) : (
                             <div
                                 className="prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-300 leading-relaxed"
-                                dangerouslySetInnerHTML={{ __html: aiPitch.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#00aed9]">$1</strong>').replace(/\n/g, '<br/>') }}
+                                dangerouslySetInnerHTML={{ __html: (aiPitch || '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#00aed9]">$1</strong>').replace(/\n/g, '<br/>') }}
                             />
                         )}
                     </div>

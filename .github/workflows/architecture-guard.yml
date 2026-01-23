@@ -1,0 +1,35 @@
+name: Richard AI Architecture Guard
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'java-backend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'java-backend/**'
+
+jobs:
+  architecture-check:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: java-backend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up GraalVM (Java 21)
+      uses: graalvm/setup-graalvm@v1
+      with:
+        java-version: '21'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Architecture Verification (ArchUnit)
+      run: ./mvnw test -Dtest=ArchitectureTest
+      
+    - name: Verify Build & SBOM
+      run: ./mvnw verify -DskipTests=true # Architecture already checked, save time

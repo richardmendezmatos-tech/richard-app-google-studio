@@ -20,6 +20,22 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     const [loadingPitch, setLoadingPitch] = useState(false);
     const [errors, setErrors] = useState<{ downPayment?: string }>({});
 
+    // Monthly payment derived state
+    const calculatedPayment = React.useMemo(() => {
+        const dpVal = downPayment === '' ? 0 : downPayment;
+        const tiVal = tradeIn === '' ? 0 : tradeIn;
+        const principal = Math.max(0, car.price - dpVal - tiVal);
+
+        if (principal <= 0) return 0;
+
+        const monthlyRate = creditRate / 12;
+        if (monthlyRate === 0) return Math.round(principal / term);
+
+        const numerator = monthlyRate * Math.pow(1 + monthlyRate, term);
+        const denominator = Math.pow(1 + monthlyRate, term) - 1;
+        return Math.round(principal * (numerator / denominator));
+    }, [downPayment, tradeIn, term, creditRate, car.price]);
+
     const modalRef = useRef<HTMLDivElement>(null);
 
     // Focus trap y manejo de Escape
@@ -42,45 +58,16 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         };
     }, [onClose]);
 
-    // Lógica de cálculo de pago
-    useEffect(() => {
-        const dpVal = downPayment === '' ? 0 : downPayment;
-        const tiVal = tradeIn === '' ? 0 : tradeIn;
-
-        const principal = Math.max(0, car.price - dpVal - tiVal);
-
-        if (principal <= 0) {
-            setEstimatedPayment(0);
-            return;
-        }
-
-        // Fórmula de amortización: P * (r(1+r)^n) / ((1+r)^n - 1)
-        const monthlyRate = creditRate / 12;
-        // Si la tasa es 0 (ej. promoción), división simple
-        if (monthlyRate === 0) {
-            const payment = Math.round(principal / term);
-            setEstimatedPayment(payment);
-            return;
-        }
-
-        const numerator = monthlyRate * Math.pow(1 + monthlyRate, term);
-        const denominator = Math.pow(1 + monthlyRate, term) - 1;
-        const payment = principal * (numerator / denominator);
-
-        setEstimatedPayment(Math.round(payment));
-
-    }, [downPayment, tradeIn, term, creditRate, car.price]);
-
-    // Cargar Pitch de IA solo cuando se activa la pestaña
-    useEffect(() => {
-        if (activeTab === 'insight' && !aiPitch) {
+    const handleTabChange = (tab: 'calculator' | 'insight') => {
+        setActiveTab(tab);
+        if (tab === 'insight' && !aiPitch && !loadingPitch) {
             setLoadingPitch(true);
             generateCarPitch(car)
                 .then(text => setAiPitch(text))
                 .catch(() => setAiPitch("No pudimos conectar con Richard IA en este momento."))
                 .finally(() => setLoadingPitch(false));
         }
-    }, [activeTab, car, aiPitch]);
+    };
 
     const validate = (): boolean => {
         const newErrors: { downPayment?: string } = {};
@@ -100,7 +87,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     };
 
     const handleRequestApproval = () => {
-        if (activeTab !== 'calculator') setActiveTab('calculator');
+        if (activeTab !== 'calculator') handleTabChange('calculator');
 
         if (!validate()) {
             // Vibración visual si hay error
@@ -113,7 +100,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         const dpVal = downPayment === '' ? 0 : downPayment;
         const tiVal = tradeIn === '' ? 0 : tradeIn;
 
-        window.open(`https://wa.me/17873682880?text=Hola, vi el análisis de IA del ${car.name}. Me interesa con un pago estimado de $${estimatedPayment}/mes (Pronto: $${dpVal}, TradeIn: $${tiVal}, Término: ${term} meses).`, '_blank');
+        window.open(`https://wa.me/17873682880?text=Hola, vi el análisis de IA del ${car.name}. Me interesa con un pago estimado de $${calculatedPayment}/mes (Pronto: $${dpVal}, TradeIn: $${tiVal}, Término: ${term} meses).`, '_blank');
     };
 
     const handleShare = async () => {
@@ -198,20 +185,20 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                             <Calculator size={14} /> Pago Mensual Estimado
                         </div>
                         <div className="text-5xl lg:text-6xl font-black premium-gradient text-transparent bg-clip-text tracking-tighter my-2">
-                            ${estimatedPayment}
+                            ${calculatedPayment}
                         </div>
                     </div>
 
                     {/* Tabs */}
                     <div className="flex bg-slate-200 dark:bg-slate-800 p-1.5 rounded-2xl mb-4 shrink-0">
                         <button
-                            onClick={() => setActiveTab('calculator')}
+                            onClick={() => handleTabChange('calculator')}
                             className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'calculator' ? 'bg-white dark:bg-slate-600 text-[#00aed9] shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
                         >
                             Calculadora
                         </button>
                         <button
-                            onClick={() => setActiveTab('insight')}
+                            onClick={() => handleTabChange('insight')}
                             className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'insight' ? 'bg-white dark:bg-slate-600 text-[#00aed9] shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
                         >
                             <Sparkles size={14} /> Richard's Insight
@@ -317,8 +304,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                                                 key={t}
                                                 onClick={() => setTerm(t)}
                                                 className={`py-4 rounded-[20px] font-bold text-sm transition-all border-2 ${term === t
-                                                        ? 'bg-[#173d57] border-[#173d57] text-white shadow-lg transform scale-105'
-                                                        : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 hover:border-[#00aed9] hover:text-[#00aed9]'
+                                                    ? 'bg-[#173d57] border-[#173d57] text-white shadow-lg transform scale-105'
+                                                    : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 hover:border-[#00aed9] hover:text-[#00aed9]'
                                                     }`}
                                             >
                                                 {t} Meses

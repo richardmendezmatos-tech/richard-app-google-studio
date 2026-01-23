@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "richard-automotive"
+  },
+  "targets": {},
+  "etags": {
+    "richard-automotive": {
+      "extensionInstances": {
+        "storage-resize-images": "223b830432296a9d0562b8c718050dc3205fb372c00ed46257b4de19e0f7062f"
+      }
+    }
   }
 }

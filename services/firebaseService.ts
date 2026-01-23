@@ -18,12 +18,13 @@ import {
   limit,
   startAfter,
   getDocs,
-  QueryDocumentSnapshot
+  QueryDocumentSnapshot,
+  serverTimestamp // Logic: Added for newsletter
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { getPerformance } from "firebase/performance";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"; // App Check Enterprise
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"; // App Check v3
 import {
   getCountFromServer,
   getAggregateFromServer,
@@ -48,8 +49,6 @@ if (typeof window !== 'undefined') {
   performance = getPerformance(app);
 
   // Initialize App Check (Security)
-  // Note: Replacing generic "debug" with actual ReCaptcha key in prod is required.
-  // Using Debug provider for localhost to avoid issues during dev.
   // Enable Debug Token for Localhost
   if (import.meta.env.DEV) {
     (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
@@ -57,23 +56,25 @@ if (typeof window !== 'undefined') {
 
   const appCheckKey = import.meta.env.VITE_RECAPTCHA_KEY;
   if (appCheckKey) {
-    // Elite Security: Enterprise ReCaptcha
+    // Security: ReCaptcha v3
     initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider(appCheckKey),
+      provider: new ReCaptchaV3Provider(appCheckKey),
       isTokenAutoRefreshEnabled: true
     });
   }
 }
 export { performance };
 
-// Enable Offline Persistence
+// Enable Offline Persistence (Multi-tab support)
 import { enableMultiTabIndexedDbPersistence } from "firebase/firestore";
 if (typeof window !== 'undefined') {
   enableMultiTabIndexedDbPersistence(db).catch((err) => {
     if (err.code === 'failed-precondition') {
-      console.warn('Persistence failed: Multiple tabs open.');
+      // Múltiples pestañas abiertas, la persistencia solo funciona en una (en modo single-tab)
+      console.warn('Persistencia falló: Múltiples pestañas abiertas.');
     } else if (err.code === 'unimplemented') {
-      console.warn('Persistence not supported by browser.');
+      // El navegador actual no lo soporta
+      console.warn('El navegador no soporta persistencia.');
     }
   });
 }
@@ -118,7 +119,7 @@ export const getPaginatedCars = async (
   filterType: string = 'all',
   sortOrder: 'asc' | 'desc' | null = null
 ): Promise<PaginatedResult> => {
-  let constraints: any[] = [];
+  const constraints: any[] = [];
 
   // 1. Filter
   if (filterType && filterType !== 'all') {
@@ -178,6 +179,8 @@ export const syncInventory = (callback: (inventory: Car[]) => void) => {
     // Ordenar por nombre para consistencia visual
     inventoryList.sort((a, b) => a.name.localeCompare(b.name));
     callback(inventoryList);
+  }, (error) => {
+    console.error("syncInventory Error:", error);
   });
 };
 
@@ -334,6 +337,8 @@ export const syncLeads = (callback: (leads: Lead[]) => void) => {
     });
 
     callback(leadsList);
+  }, (error) => {
+    console.error("syncLeads Error:", error);
   });
 };
 
@@ -419,5 +424,19 @@ export const generateCarDescriptionAI = async (
       console.error("Error generating description:", error);
       throw new Error("Failed to generate description via AI.");
     }
+  }
+};
+
+// Newsletter Subscription
+export const subscribeToNewsletter = async (email: string) => {
+  try {
+    const subscribersRef = collection(db, "subscribers");
+    await addDoc(subscribersRef, {
+      email,
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Error subscribing:", error);
+    throw error;
   }
 };

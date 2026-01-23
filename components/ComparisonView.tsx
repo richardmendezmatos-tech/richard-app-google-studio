@@ -19,7 +19,7 @@ const ComparisonView: React.FC = () => {
     const verdict = React.useMemo(() => {
         if (selectedCars.length < 2) return null;
 
-        const hyundai = selectedCars.find(c => c.name.toLowerCase().includes('hyundai'));
+        const hyundai = selectedCars.find(c => (c.name || '').toLowerCase().includes('hyundai'));
 
         if (hyundai) {
             return {
@@ -129,11 +129,11 @@ const ComparisonView: React.FC = () => {
                                 <div className={`bg-slate-900/50 rounded-b-3xl p-6 space-y-4 border-x border-b ${isWinner ? 'border-[#00aed9] bg-[#00aed9]/5' : 'border-white/5'}`}>
                                     <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
                                         <span className="lg:hidden text-xs text-slate-500">Precio</span>
-                                        <span className="text-xl font-bold text-white">${car.price.toLocaleString()}</span>
+                                        <span className="text-xl font-bold text-white">${(car.price || 0).toLocaleString()}</span>
                                     </div>
                                     <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
                                         <span className="lg:hidden text-xs text-slate-500">Mensual</span>
-                                        <span className="text-[#00aed9] font-bold">${Math.round(car.price / 72).toLocaleString()}</span>
+                                        <span className="text-[#00aed9] font-bold">${Math.round((car.price || 0) / 72).toLocaleString()}</span>
                                     </div>
                                     <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
                                         <span className="lg:hidden text-xs text-slate-500">Motor</span>

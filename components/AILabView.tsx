@@ -10,12 +10,16 @@ import VoiceAssistantView from './VoiceAssistantView';
 import DevOpsView from './DevOpsView';
 
 interface Props {
-    onExit: () => void;
-    onVisualSearch: (base64: string) => void;
+  onExit: () => void;
 }
 
-const AILabView: React.FC<Props> = ({ onExit, onVisualSearch }) => {
+const AILabView: React.FC<Props> = ({ onExit }) => {
   const [labView, setLabView] = useState<ViewMode>(ViewMode.CHAT);
+
+  const handleVisualSearch = async (base64: string) => {
+    // This will be handled inside ImageView or as a global service
+    console.log("Visual search triggered from Lab");
+  };
 
   const renderContent = () => {
     switch (labView) {
@@ -24,7 +28,7 @@ const AILabView: React.FC<Props> = ({ onExit, onVisualSearch }) => {
       case ViewMode.CODE_ANALYZER:
         return <CodeLab />;
       case ViewMode.IMAGES:
-        return <ImageView onSearchSimilar={onVisualSearch} />;
+        return <ImageView />;
       case ViewMode.VIDEO_STUDIO:
         return <VideoView />;
       case ViewMode.VOICE_ASSISTANT:
@@ -42,16 +46,16 @@ const AILabView: React.FC<Props> = ({ onExit, onVisualSearch }) => {
       <main className="flex-1 overflow-hidden relative flex flex-col">
         {/* Top Header Area specific to Lab */}
         <div className="h-16 border-b border-slate-800 flex items-center justify-between px-8 bg-slate-900/50 backdrop-blur-md z-10 shrink-0">
-             <div className="flex items-center gap-2">
-                 <div className={`w-2 h-2 rounded-full ${labView === ViewMode.VOICE_ASSISTANT ? 'bg-green-500 animate-pulse' : 'bg-[#00aed9]'}`}></div>
-                 <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
-                     System Status: Online | Model: Gemini 2.5/3.0
-                 </span>
-             </div>
-             <div className="text-xs font-bold text-slate-500">RICHARD AI LABS</div>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${labView === ViewMode.VOICE_ASSISTANT ? 'bg-green-500 animate-pulse' : 'bg-[#00aed9]'}`}></div>
+            <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+              System Status: Online | Model: Gemini 2.5/3.0
+            </span>
+          </div>
+          <div className="text-xs font-bold text-slate-500">RICHARD AI LABS</div>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar relative">
-            {renderContent()}
+          {renderContent()}
         </div>
       </main>
     </div>

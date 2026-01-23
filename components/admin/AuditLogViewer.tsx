@@ -34,6 +34,9 @@ export const AuditLogViewer: React.FC = () => {
             })) as AuditLog[];
             setLogs(logsData);
             setLoading(false);
+        }, (error) => {
+            console.error("AuditLog onSnapshot error:", error);
+            setLoading(false);
         });
 
         return () => unsubscribe();

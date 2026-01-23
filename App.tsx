@@ -2,11 +2,12 @@ import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { HashRouter, BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ViewMode, Car } from './types';
 import Storefront from './components/Storefront'; // Keep Eager
-const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
-const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
 import AIChatWidget from './components/AIChatWidget'; // Eager Load for global availability
 import { WhatsAppFloat } from './components/WhatsAppFloat';
 import ThemeToggle from './components/ThemeToggle';
+// Lazy Imports
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
+const AIConsultant = React.lazy(() => import('./components/AIConsultant'));
 const AILabView = React.lazy(() => import('./components/AILabView'));
 const UserLogin = React.lazy(() => import('./components/UserLogin'));
 const VehicleDetail = React.lazy(() => import('./components/VehicleDetail'));
@@ -19,11 +20,14 @@ const DigitalGarage = React.lazy(() => import('./components/DigitalGarage'));
 const PreQualifyView = React.lazy(() => import('./components/PreQualifyView'));
 const PrivacyView = React.lazy(() => import('./components/PrivacyView'));
 const TermsView = React.lazy(() => import('./components/TermsView'));
+const NotFound = React.lazy(() => import('./components/NotFound'));
 import CookieConsent from './components/CookieConsent';
-import { LayoutDashboard, ShoppingBag, BotMessageSquare, Phone, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, Lock, User as UserIcon, Car as CarIcon } from 'lucide-react';
+import VueWrapper from './components/VueWrapper';
+import AngularWrapper from './components/AngularWrapper';
+const FrameworkDashboard = React.lazy(() => import('./components/FrameworkDashboard'));
+import { ShoppingBag, BotMessageSquare, FlaskConical, LogIn, LogOut, Menu, Newspaper, Warehouse, FileCheck2, ShieldAlert, User as UserIcon, Car as CarIcon, Cpu } from 'lucide-react';
 import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
 import { ComparisonProvider } from './contexts/ComparisonContext';
-import LoadingScreen from './components/LoadingScreen';
 import ReloadPrompt from './components/ReloadPrompt';
 import OfflineIndicator from './components/OfflineIndicator';
 import ComparisonBar from './components/ComparisonBar';
@@ -207,6 +211,7 @@ const AppContent: React.FC = () => {
     if (path === '/blog') return ViewMode.BLOG;
     if (path === '/trade-in') return ViewMode.TRADE_IN;
     if (path === '/lab') return ViewMode.AI_LAB;
+    if (path === '/framework-lab') return 'framework-lab';
     if (path.startsWith('/login')) return 'login';
     return ViewMode.STOREFRONT;
   };
@@ -236,6 +241,7 @@ const AppContent: React.FC = () => {
           <NavButton active={getCurrentViewMode() === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileMenuOpen(false); }} icon={<CarIcon size={20} />} label="Vender mi Auto" />
           <NavButton active={getCurrentViewMode() === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileMenuOpen(false); }} icon={<BotMessageSquare size={20} />} label="Consultor IA" />
           <NavButton active={getCurrentViewMode() === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileMenuOpen(false); }} icon={<Newspaper size={20} />} label="AI Newsroom" />
+          <NavButton active={location.pathname === '/framework-lab'} onClick={() => { navigate('/framework-lab'); setIsMobileMenuOpen(false); }} icon={<Cpu size={20} className="text-cyan-400" />} label="Framework Lab" />
 
           <div className="pt-4 my-2 border-t border-white/5" />
 
@@ -307,7 +313,8 @@ const AppContent: React.FC = () => {
             <Route path="/login" element={<UserLogin />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminGuard><AdminPanel inventory={inventory} onUpdate={updateCar} onAdd={addCar} onDelete={deleteCar} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></AdminGuard>} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/framework-lab" element={<FrameworkDashboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
         <CookieConsent />
