@@ -17,13 +17,10 @@ const DealBuilder: React.FC<DealBuilderProps> = ({ vehicleId, vehiclePrice, vehi
     const [downPayment, setDownPayment] = useState<number>(Math.round(vehiclePrice * 0.1)); // Default 10%
     const [term, setTerm] = useState<number>(72);
     const [creditTier, setCreditTier] = useState<CreditTier>('good');
-    const [payment, setPayment] = useState<number>(0);
-    const [showBreakdown, setShowBreakdown] = useState(false);
-
-    // Calculate on change
-    useEffect(() => {
+    // Derived payment calculation instead of synchronous effect
+    const payment = React.useMemo(() => {
         const result = calculateLoan(vehiclePrice, downPayment, term, creditTier);
-        setPayment(result.monthlyPayment);
+        return result.monthlyPayment;
     }, [vehiclePrice, downPayment, term, creditTier]);
 
     // Derived Visuals for "Deserve It Meter" (Purchase Power)

@@ -1,12 +1,8 @@
-import { genkit, z } from 'genkit';
-import { googleAI } from '@genkit-ai/googleai';
+import { z } from 'genkit';
 import { onCallGenkit } from 'firebase-functions/https';
-
-// Initialize Genkit with Google AI plugin
-const ai = genkit({
-    plugins: [googleAI()],
-    model: 'googleai/gemini-1.0-pro',
-});
+import * as logger from 'firebase-functions/logger';
+import { db } from './services/firebaseAdmin';
+import { ai } from './services/aiManager';
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -21,6 +17,19 @@ export const generateCarDescription = ai.defineFlow(
     },
     async (input, { sendChunk }) => {
         const { carModel, features } = input;
+        const cacheKey = `car_desc_${carModel.toLowerCase().replace(/\s+/g, '_')}_${features?.join('_').toLowerCase().replace(/\s+/g, '_')}`;
+
+        // 1. Check Cache
+        const { cache } = await import('./services/cacheService');
+        const cachedResult = await cache.get<string>(cacheKey);
+
+        if (cachedResult) {
+            logger.info(`Cache Hit for ${cacheKey}`);
+            sendChunk(cachedResult);
+            return cachedResult;
+        }
+
+        logger.info(`Cache Miss for ${cacheKey}. Generating via AI...`);
 
         const prompt = `
       Eres un experto en marketing automotriz para el mercado de Puerto Rico.
@@ -34,12 +43,19 @@ export const generateCarDescription = ai.defineFlow(
 
         const { response, stream } = await ai.generateStream(prompt);
 
+        let fullText = '';
         for await (const chunk of stream) {
+            fullText += chunk.text;
             sendChunk(chunk.text);
         }
 
         const result = await response;
-        return result.text;
+        const output = result.text || fullText;
+
+        // 2. Save to Cache (TTL 24 hours)
+        await cache.set(cacheKey, output, 86400);
+
+        return output;
     }
 );
 
@@ -48,10 +64,44 @@ export const generateDescription = onCallGenkit({
     cors: true,
 }, generateCarDescription);
 
+// --- Semantic Search Flow ---
+export const semanticCarSearch = ai.defineFlow(
+    {
+        name: 'semanticCarSearch',
+        inputSchema: z.object({ query: z.string() }),
+        outputSchema: z.array(z.any()),
+    },
+    async (input) => {
+        const { semanticSearch } = await import('./services/vectorService');
+        return await semanticSearch(input.query);
+    }
+);
+
+export const searchCarsSemantic = onCallGenkit({
+    authPolicy: () => true,
+    cors: true,
+}, semanticCarSearch);
+
+export const reindexInventory = ai.defineFlow(
+    { name: 'reindexInventory', inputSchema: z.void(), outputSchema: z.string() },
+    async () => {
+        const { db } = await import('./services/firebaseAdmin');
+        const { updateCarEmbedding } = await import('./services/vectorService');
+        const snapshot = await db.collection('cars').get();
+        let count = 0;
+        for (const doc of snapshot.docs) {
+            await updateCarEmbedding(doc.id, doc.data());
+            count++;
+        }
+        return `Re-indexed ${count} cars.`;
+    }
+);
+
+export const triggerReindex = onCallGenkit({ authPolicy: () => true, cors: true }, reindexInventory);
+
 
 // Import Cloud Functions v2
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
-import * as logger from 'firebase-functions/logger';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { sendNotificationEmail } from './services/emailService';
 
 // --- New Lead Notification & Analysis ---
@@ -240,6 +290,43 @@ export const incomingWhatsAppMessage = onRequest(async (req, res) => {
     }
 });
 
+// --- Inventory Semantic Indexing ---
+
+export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+
+    logger.info(`Indexing new car: ${event.params.carId}`);
+    try {
+        const { updateCarEmbedding } = await import('./services/vectorService');
+        await updateCarEmbedding(event.params.carId, data);
+    } catch (e) {
+        logger.error(`Error indexing car ${event.params.carId}:`, e);
+    }
+});
+
+export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+    if (!before || !after) return;
+
+    const coreFieldsChanged =
+        before.name !== after.name ||
+        before.type !== after.type ||
+        before.description !== after.description ||
+        JSON.stringify(before.features) !== JSON.stringify(after.features);
+
+    if (coreFieldsChanged) {
+        logger.info(`Re-indexing car due to changes: ${event.params.carId}`);
+        try {
+            const { updateCarEmbedding } = await import('./services/vectorService');
+            await updateCarEmbedding(event.params.carId, after);
+        } catch (e) {
+            logger.error(`Error re-indexing car ${event.params.carId}:`, e);
+        }
+    }
+});
+
 export const onNewApplication = onDocumentCreated('applications/{applicationId}', async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
@@ -310,14 +397,7 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
 // --- Scheduled Marketing Automation ---
 
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-import { initializeApp, getApps } from 'firebase-admin/app';
-
-// Initialize Admin SDK (if not already done)
-if (getApps().length === 0) {
-    initializeApp();
-}
-const db = getFirestore();
+import { Timestamp } from 'firebase-admin/firestore';
 
 export const checkStaleLeads = onSchedule('every day 09:00', async (event) => {
     logger.info("Running Stale Lead Check...");
@@ -405,7 +485,6 @@ export const cleanupOldLogs = onSchedule('every sunday 00:00', async (event) => 
     }
 });
 
-import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) => {
     const before = event.data?.before.data();
@@ -495,6 +574,10 @@ export const onLeadStatusChange = onDocumentUpdated('applications/{leadId}', asy
         logger.error(`Failed to send status update email to ${lead.email}`, e);
     }
 });
+
+// Passport.js Integration
+import authApp from './authApp';
+export const authApi = onRequest({ cors: true }, authApp);
 
 // Start a flow server for local development handling stream requests
 import { startFlowServer } from '@genkit-ai/express';

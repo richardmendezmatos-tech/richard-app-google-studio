@@ -31,7 +31,7 @@ def test_connections():
         #    print(model.name)
         
         response = client.models.generate_content(
-            model='gemini-2.0-flash-exp', # Trying the latest or 'gemini-1.5-flash-latest'
+            model='gemini-1.5-flash', # Actualizado desde gemini-2.0-flash-exp
             contents='Responde solo con: "Conexión a Gemini exitosa 🚀"'
         )
         print(f"✅ Respuesta de Gemini: {response.text}")

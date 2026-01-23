@@ -87,12 +87,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, search
     // Filter leads based on search term
     const filteredLeads = leads.filter(lead => {
         if (!searchTerm) return true;
-        const term = searchTerm.toLowerCase();
+        const term = (searchTerm || '').toLowerCase();
+        const safeTerm = term || '';
         return (
-            lead.firstName?.toLowerCase().includes(term) ||
-            lead.lastName?.toLowerCase().includes(term) ||
-            lead.vehicleOfInterest?.toLowerCase().includes(term) ||
-            lead.email?.toLowerCase().includes(term)
+            (lead.firstName || '').toLowerCase().includes(safeTerm) ||
+            (lead.lastName || '').toLowerCase().includes(safeTerm) ||
+            (lead.vehicleOfInterest || '').toLowerCase().includes(safeTerm) ||
+            (lead.email || '').toLowerCase().includes(safeTerm)
         );
     });
 

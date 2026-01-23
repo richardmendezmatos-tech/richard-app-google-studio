@@ -1,14 +1,13 @@
-
+import 'zone.js'; // Must be first for Angular
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import App from './App';
+import './index.css'; // Premium UI Styles
+
+// Initialize Capacitor PWA Elements (Camera, etc.)
+defineCustomElements(window);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +18,11 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(

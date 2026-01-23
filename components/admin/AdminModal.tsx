@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { X, ImageIcon, Camera, Wand2, Loader2 } from 'lucide-react';
 import { Car, CarType } from '../../types';
 import { uploadImage } from '../../services/firebaseService';
+import { cameraService } from '../../services/cameraService';
 
 interface AdminModalProps {
     car: Car | null;
@@ -17,6 +18,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
     const [isUploading, setIsUploading] = useState(false);
     const [description, setDescription] = useState(car?.description || '');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [cameraCapturedBlob, setCameraCapturedBlob] = useState<Blob | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // AI Generation
@@ -62,12 +64,27 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setSelectedFile(file);
+            setCameraCapturedBlob(null); // Clear camera blob if file selected
             // FileReader for Instant Preview
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewUrl(reader.result as string);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleNativeCamera = async () => {
+        try {
+            const photo = await cameraService.takePhoto();
+            if (photo) {
+                setPreviewUrl(photo.preview);
+                setCameraCapturedBlob(photo.blob);
+                setSelectedFile(null); // Clear manual file if camera used
+            }
+        } catch (err) {
+            console.error("Camera Error:", err);
+            alert("No se pudo acceder a la cámara nativa.");
         }
     };
 
@@ -81,6 +98,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             if (selectedFile) {
                 finalImageUrl = await uploadImage(selectedFile);
                 onPhotoUploaded?.(); // Update counter
+            } else if (cameraCapturedBlob) {
+                // Convert Blob to File for Firebase compatibility if needed
+                const file = cameraService.blobToFile(cameraCapturedBlob, `camera_${Date.now()}.jpg`);
+                finalImageUrl = await uploadImage(file);
+                onPhotoUploaded?.();
             }
             onSave({
                 name: fd.get('name') as string,
@@ -128,20 +150,27 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                                         <ImageIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-300" />
                                     )}
                                 </div>
-                                <div className="flex-1 space-y-3">
+                                <div className="flex-1 grid grid-cols-2 gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={handleNativeCamera}
+                                        className="h-[44px] bg-[#00aed9]/10 border border-[#00aed9]/25 text-[#00aed9] rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-widest hover:bg-[#00aed9] hover:text-white transition-all shadow-sm"
+                                    >
+                                        <Camera size={16} /> Capturar Cámara
+                                    </button>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="w-full h-[44px] border-2 border-dashed border-[#00aed9] bg-[#00aed9]/5 rounded-xl flex items-center justify-center gap-2 text-[#00aed9] font-bold text-xs uppercase tracking-widest hover:bg-[#00aed9]/10 transition-colors"
+                                        className="h-[44px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
                                     >
-                                        <Camera size={18} /> Subir Foto / Tomar
+                                        <ImageIcon size={16} /> Galería
                                     </button>
                                     <input
                                         name="imgurl"
                                         placeholder="O pegar URL..."
-                                        value={!selectedFile ? previewUrl : ''}
-                                        onChange={(e) => { setPreviewUrl(e.target.value); setSelectedFile(null); }}
-                                        className="w-full h-[44px] px-4 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#00aed9]"
+                                        value={!selectedFile && !cameraCapturedBlob ? previewUrl : ''}
+                                        onChange={(e) => { setPreviewUrl(e.target.value); setSelectedFile(null); setCameraCapturedBlob(null); }}
+                                        className="col-span-2 h-[44px] px-4 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#00aed9] border border-slate-100 dark:border-slate-700"
                                     />
                                     <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                                 </div>

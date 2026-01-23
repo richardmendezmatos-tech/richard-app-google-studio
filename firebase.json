@@ -56,5 +56,8 @@
         ]
       }
     ]
+  },
+  "extensions": {
+    "storage-resize-images": "firebase/storage-resize-images@0.3.0"
   }
 }

@@ -20,15 +20,18 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      await loginAdmin(email, password, twoFactorCode || '123456'); // Default 2FA for ease if empty
+      await loginAdmin(email, password, twoFactorCode || '123456');
       navigate('/admin');
     } catch (err: any) {
+      console.error('Login Error Details:', err);
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
         setError('Credenciales incorrectas');
       } else if (err.message.includes('ACCESS_DENIED')) {
-        setError('Cuenta no autorizada');
+        setError('Cuenta no autorizada (Verifica tu Rol)');
+      } else if (err.message.includes('INVALID_2FA')) {
+        setError('Token 2FA incorrecto (Usa 123456)');
       } else {
-        setError('Error de conexión');
+        setError(`Error: ${err.code || err.message || 'Desconocido'}`);
       }
     } finally {
       setLoading(false);

@@ -13,24 +13,15 @@ interface ComparisonContextType {
 const ComparisonContext = createContext<ComparisonContextType | undefined>(undefined);
 
 export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [selectedCars, setSelectedCars] = useState<Car[]>([]);
-
-    useEffect(() => {
-        // Load initial state (could be from cookies/localstorage)
-        const saved = getCookie('richard_compare_cars');
-        if (saved) {
-            try {
-                // We're just storing IDs in cookie usually, but for simplicity here we might need a way to rehydrate
-                // For now, let's start empty or simple persistence if we had the full inventory available globally context-free
-                // Skipping complex rehydration for this demo step to keep it stateless on refresh for now, 
-                // or we could persist the whole object in localstorage (better for this size)
-                const stored = localStorage.getItem('richard_compare_cars_full');
-                if (stored) setSelectedCars(JSON.parse(stored));
-            } catch (e) {
-                console.error("Error parsing comparison cookie", e);
-            }
+    const [selectedCars, setSelectedCars] = useState<Car[]>(() => {
+        try {
+            const stored = localStorage.getItem('richard_compare_cars_full');
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.error("Error parsing comparisons from local storage", e);
+            return [];
         }
-    }, []);
+    });
 
     const saveState = (cars: Car[]) => {
         setSelectedCars(cars);

@@ -48,18 +48,20 @@ firebase deploy
 ```
 
 ## 4. Seguridad de Élite (App Check Obligatorio)
-He configurado el código para usar **reCAPTCHA Enterprise**. Esto protegerá tu backend de bots y DDoS.
+He configurado el código para usar **reCAPTCHA v3 (Estándar)**. Esto protegerá tu backend de bots.
 
 ### Pasos de Activación
-1.  Ve a [Firebase Console > App Check](https://console.firebase.google.com/project/richard-automotive/appcheck).
-2.  Haz clic en **Register** para tu app Web.
-3.  Selecciona **reCAPTCHA Enterprise**.
-4.  Copia la **Site Key** y agrégala a tu archivo `.env`:
+1.  Ve a la [Consola de Admin de reCAPTCHA](https://www.google.com/recaptcha/admin/create).
+2.  Registra un nuevo sitio:
+    *   **Tipo**: reCAPTCHA v3.
+    *   **Dominios**: Agrega `localhost` y tu dominio de producción (ej. `richard-automotive.web.app`).
+3.  Copia la **Clave del Sitio (Site Key)** (NO la clave secreta) y agrégala a tu archivo `.env`:
     ```bash
-    VITE_RECAPTCHA_KEY=tu-site-key-aqui
+    VITE_RECAPTCHA_KEY=tu-site-key-v3
     ```
-5.  **Importante**: Para hacer la seguridad **Obligatoria**, ve a la pestaña "APIs", busca **Cloud Firestore** y **Cloud Storage**, abre el menú y haz clic en **Enforce**.
-    *   *Nota: Al hacer esto, cualquier script o bot externo dejará de tener acceso a tu base de datos.*
+4.  **En Firebase Console**:
+    *   Ve a **App Check** > **Apps**.
+    *   Registra tu app Web y pega la **Clave Secreta** (Secret Key) que obtuviste en el paso 2.
 
 ## 5. Genkit AI Dashboard (Entorno de Pruebas)
 Tu proyecto ya incluye **Genkit** pre-instalado y configurado en la carpeta `functions`.
@@ -73,3 +75,38 @@ No necesitas instalarlo globalmente. Para abrir el Panel de Desarrollo de IA:
     ```
 3.  Se abrirá automáticamente en tu navegador (puerto 4000).
     *   Aquí puedes probar los flujos `analyzeLead` y `chatWithLead` con datos reales.
+
+---
+
+## 🛠️ Guía Rápida de Mantenimiento
+
+Para asegurarte de estar siempre en la carpeta correcta y que los comandos funcionen:
+
+### 1. ¿Dónde estoy?
+Antes de ejecutar comandos, verifica tu ubicación:
+*   `pwd`: Muestra la ruta actual.
+*   `ls`: Muestra los archivos. Debes ver `firebase.json` y `package.json`.
+
+### 2. Cómo llegar a la carpeta principal
+Si estás en la carpeta `android` o `ios`, sube un nivel:
+```bash
+cd ..
+```
+O entra directamente desde cualquier lugar:
+```bash
+cd /Users/richardmendez/richard-automotive-_-command-center
+```
+
+### 3. Ciclo de Despliegue (Cómo subir cambios)
+Cuando hagas cambios en el código y quieras verlos en internet:
+```bash
+# 1. Entrar a la carpeta
+cd /Users/richardmendez/richard-automotive-_-command-center
+
+# 2. Construir la app
+npm run build
+
+# 3. Subir a la nube
+npx firebase deploy
+```
+

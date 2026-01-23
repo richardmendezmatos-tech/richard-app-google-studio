@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { generateBlogPost } from '../services/geminiService';
+import { subscribeToNewsletter } from '../services/firebaseService';
 import { BlogPost } from '../types';
 import { Newspaper, Loader2, Sparkles, Tag, Calendar, User, ArrowRight, Share2 } from 'lucide-react';
 import { useNotification } from '../contexts/NotificationContext';
@@ -10,6 +11,8 @@ const BlogView: React.FC = () => {
     const [topic, setTopic] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+    const [subscriberEmail, setSubscriberEmail] = useState('');
+    const [isSubscribing, setIsSubscribing] = useState(false);
     const { addNotification } = useNotification();
 
     const handleGenerate = async () => {
@@ -28,6 +31,24 @@ const BlogView: React.FC = () => {
             addNotification('error', 'No se pudo generar el artículo. Intenta otro tema.');
         } finally {
             setIsGenerating(false);
+        }
+    };
+
+    const handleSubscribe = async () => {
+        if (!subscriberEmail || !subscriberEmail.includes('@')) {
+            addNotification('error', 'Por favor ingresa un email válido.');
+            return;
+        }
+        setIsSubscribing(true);
+        try {
+            await subscribeToNewsletter(subscriberEmail);
+            addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
+            setSubscriberEmail('');
+        } catch (error) {
+            console.error(error);
+            addNotification('error', 'Error al suscribirse. Intenta de nuevo.');
+        } finally {
+            setIsSubscribing(false);
         }
     };
 
@@ -151,9 +172,21 @@ const BlogView: React.FC = () => {
                             <h4 className="font-black text-xl mb-2">Suscríbete al Newsletter</h4>
                             <p className="text-sm text-blue-100 mb-6">Recibe las últimas noticias de Richard Automotive directamente en tu email.</p>
                             <div className="flex gap-2">
-                                <input type="email" placeholder="Tu email" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm placeholder:text-blue-200/50 outline-none focus:bg-white/20 transition-all" />
-                                <button className="bg-[#00aed9] hover:bg-cyan-400 text-white px-4 rounded-xl flex items-center justify-center transition-colors">
-                                    <ArrowRight size={18} />
+                                <input
+                                    type="email"
+                                    value={subscriberEmail}
+                                    onChange={(e) => setSubscriberEmail(e.target.value)}
+                                    placeholder="Tu email"
+                                    disabled={isSubscribing}
+                                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm placeholder:text-blue-200/50 outline-none focus:bg-white/20 transition-all disabled:opacity-50"
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
+                                />
+                                <button
+                                    onClick={handleSubscribe}
+                                    disabled={isSubscribing}
+                                    className="bg-[#00aed9] hover:bg-cyan-400 disabled:bg-slate-500 text-white px-4 rounded-xl flex items-center justify-center transition-colors"
+                                >
+                                    {isSubscribing ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
                                 </button>
                             </div>
                         </div>

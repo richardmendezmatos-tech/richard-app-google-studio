@@ -60,8 +60,11 @@ const TradeInView: React.FC = () => {
         const conditionFactors = { excellent: 1.1, good: 1.0, fair: 0.85, poor: 0.6 };
         base = base * conditionFactors[formData.condition];
 
-        // Randomize slightly to feel organic
-        base = base + (Math.random() * 1000 - 500);
+        // Organic feel adjustment without Math.random during render
+        // We use year/make lengths as a stable "random" seed
+        const seed = (formData.make.length + formData.model.length + parseInt(formData.year || '0')) % 1000;
+        const variation = (seed - 500); // Stable variation between -500 and 500
+        base = base + variation;
 
         return Math.max(1500, Math.round(base)); // Min $1500
     };
@@ -172,7 +175,7 @@ const TradeInView: React.FC = () => {
                         </div>
                     </div>
                 );
-            case 'result':
+            case 'result': {
                 const offerValue = getEstimatedValue();
                 return (
                     <div className="text-center animate-in zoom-in duration-500 space-y-8 py-8">
@@ -194,6 +197,7 @@ const TradeInView: React.FC = () => {
                         </div>
                     </div>
                 );
+            }
         }
     };
 

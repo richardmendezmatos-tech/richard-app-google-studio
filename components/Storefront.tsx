@@ -18,7 +18,7 @@ import TrustBar from './storefront/TrustBar';
 import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from './FAQSection';
 import SocialFooter from './storefront/SocialFooter';
-import CarCard from './storefront/CarCard';
+import PremiumGlassCard from './storefront/PremiumGlassCard'; // Premium UI Upgrade
 
 interface Props {
     inventory: Car[];
@@ -40,6 +40,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
     const [isComparisonOpen, setIsComparisonOpen] = useState(false);
     const [analyzingImage, setAnalyzingImage] = useState(false);
     const [visualContext, setVisualContext] = useState<string | null>(null);
+    const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
     const [compareList, setCompareList] = useState<Car[]>([]);
     const [isFixing, setIsFixing] = useState(false);
 
@@ -91,14 +92,29 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         setIsVisualSearchOpen(true);
         try {
             const analysis = await analyzeCarImage(base64);
-            setSearchTerm(analysis.keywords[1] || analysis.keywords[0]);
-            const detectedType = analysis.type.toLowerCase();
+            const query = analysis.search_query || analysis.keywords[0];
+
+            setSearchTerm(query);
+
+            // NEW: Semantic Search (Matrix-4 Component 3)
+            const { searchSemanticInventoryByText } = await import('../services/geminiService');
+            const semanticMatches = await searchSemanticInventoryByText(query);
+
+            if (semanticMatches.length > 0) {
+                setVisualContext(`Identificado: ${analysis.description}. Encontramos coincidencias similares en el inventario.`);
+                setSemanticResultIds(semanticMatches.map((m: any) => m.car_id));
+            } else {
+                setVisualContext(analysis.description);
+                setSemanticResultIds([]);
+            }
+
+            const detectedType = (analysis.type || '').toLowerCase();
             if (['suv', 'sedan', 'pickup', 'luxury'].includes(detectedType)) {
                 setFilter(detectedType as CarType);
             } else {
                 setFilter('all');
             }
-            setVisualContext(analysis.description);
+
             if (onClearVisualSearch) onClearVisualSearch();
             setIsVisualSearchOpen(false);
         } catch (error) {
@@ -136,13 +152,18 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
 
     // Client-Side filtering (Legacy logic, used when searching)
     const filteredAndSorted = inventory.filter(c => {
+        // If we have semantic matches, restrict to those IDs
+        if (semanticResultIds.length > 0) {
+            return semanticResultIds.includes(c.id);
+        }
+
         let matchesSearch = true;
         if (visualContext) {
-            matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                visualContext.toLowerCase().includes(c.type) ||
+            matchesSearch = ((c.name || '').toLowerCase().includes(searchTerm.toLowerCase())) ||
+                ((visualContext || '').toLowerCase().includes(c.type || '')) ||
                 c.type.includes(visualContext.split(' ')[0] || '');
         } else {
-            matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase());
+            matchesSearch = (c.name || '').toLowerCase().includes(searchTerm.toLowerCase());
         }
         const matchesType = filter === 'all' || c.type === filter;
 
@@ -227,7 +248,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                                         placeholder={visualContext ? `Buscando similares a: ${searchTerm}...` : "Buscar modelo, año o características..."}
                                         className="w-full pl-16 pr-20 py-4 bg-transparent outline-none text-lg font-semibold dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                         value={searchTerm}
-                                        onChange={(e) => { setSearchTerm(e.target.value); setVisualContext(null); }}
+                                        onChange={(e) => { setSearchTerm(e.target.value); setVisualContext(null); setSemanticResultIds([]); }}
                                     />
 
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
@@ -310,7 +331,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                                     <p className="text-xs text-slate-600 dark:text-slate-300">
                                         <span className="font-bold text-[#00aed9]">:</span> Resultados visuales.
                                     </p>
-                                    <button onClick={() => { setVisualContext(null); setSearchTerm(''); setFilter('all'); }} className="ml-2 text-[10px] font-bold underline hover:text-[#00aed9]">Limpiar</button>
+                                    <button onClick={() => { setVisualContext(null); setSearchTerm(''); setFilter('all'); setSemanticResultIds([]); }} className="ml-2 text-[10px] font-bold underline hover:text-[#00aed9]">Limpiar</button>
                                 </div>
                             )}
                         </div>
@@ -357,7 +378,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                                 <>
                                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                                         {displayCars.map((car) => (
-                                            <CarCard
+                                            <PremiumGlassCard
                                                 key={car.id}
                                                 car={car}
                                                 onSelect={() => setSelectedCar(car)}

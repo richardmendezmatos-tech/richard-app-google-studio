@@ -91,7 +91,7 @@ const AnalyticsCard = ({ car, rank, type }: { car: Car, rank?: number, type: 'ho
             <img src={car.img} className="w-12 h-12 object-contain" alt={car.name} />
             <div className="flex-1 min-w-0">
                 <div className="text-xs font-bold text-slate-800 dark:text-white truncate">{car.name}</div>
-                <div className="text-[10px] text-slate-400 font-mono">${car.price.toLocaleString()}</div>
+                <div className="text-[10px] text-slate-400 font-mono">${(car.price || 0).toLocaleString()}</div>
             </div>
 
             <div className="flex flex-col items-end gap-1">

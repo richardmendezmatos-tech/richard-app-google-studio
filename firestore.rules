@@ -86,5 +86,11 @@ service cloud.firestore {
                        request.resource.data.timestamp is timestamp;
       allow update, delete: if false; 
     }
+
+    match /subscribers/{id} {
+        allow create: if request.resource.data.email is string &&
+                         request.resource.data.timestamp is timestamp;
+        allow read, update, delete: if isAdmin();
+    }
   }
 }

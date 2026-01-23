@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Car } from '../types';
 import { getAIResponse } from '../services/geminiService';
 import { submitApplication } from '../services/firebaseService';
-import { MessageSquare, X, Send, Bot, Sparkles, ChevronDown, RefreshCw, User, Phone, Mail, Calendar, Terminal, CheckCircle, AlertCircle, Mic, MicOff, Volume2, MessageCircle } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles, ChevronDown, RefreshCw, Terminal, Mic, MicOff, Volume2, MessageCircle } from 'lucide-react';
 
 interface Props {
   inventory: Car[];
@@ -124,23 +124,6 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
     recognition.start();
   };
 
-  // Lead Form State
-  const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadForm, setLeadForm] = useState({ name: '', phone: '', email: '' });
-
-  const handleLeadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await submitApplication({
-      firstName: leadForm.name,
-      phone: leadForm.phone,
-      email: leadForm.email,
-      type: 'chat',
-      status: 'new',
-      message: messages.map(m => m.text).join('\n').slice(0, 500) // Summarize chat
-    });
-    setShowLeadForm(false);
-    setMessages(prev => [...prev, { role: 'bot', text: '¡Listo! He enviado tus datos a un asesor humano. Te llamarán pronto. 😉' }]);
-  };
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

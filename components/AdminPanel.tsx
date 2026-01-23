@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Car as CarType, Lead } from '../types';
-import { Plus, Trash2, Edit3, BarChart3, Package, Search, Loader2, DatabaseZap, Smartphone, Monitor, Server, Camera, CarFront, ShieldAlert } from 'lucide-react';
+import { Plus, Trash2, Edit3, BarChart3, Package, Search, Loader2, DatabaseZap, Smartphone, Monitor, Server, Camera, CarFront, ShieldAlert, Sparkles } from 'lucide-react';
 import { syncLeads, auth } from '../services/firebaseService';
 
 import InventoryHeatmap from './InventoryHeatmap';
@@ -12,6 +12,8 @@ import InventoryHeatmap from './InventoryHeatmap';
 import { KanbanBoard } from './admin/KanbanBoard';
 import { AdminModal } from './admin/AdminModal';
 import { AuditLogViewer } from './admin/AuditLogViewer';
+import { GapAnalyticsWidget } from './admin/GapAnalyticsWidget'; // Component 4
+import { MarketingModal } from './admin/MarketingModal'; // Component 2
 
 interface Props {
   inventory: CarType[];
@@ -40,7 +42,7 @@ const CountUp = ({ end, prefix = '', suffix = '', duration = 1500 }: { end: numb
     return () => cancelAnimationFrame(animationFrame);
   }, [end, duration]);
 
-  return <span>{prefix}{count.toLocaleString()}{suffix}</span>;
+  return <span>{prefix}{(count || 0).toLocaleString()}{suffix}</span>;
 };
 
 
@@ -64,9 +66,11 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
-  const [activeTab, setActiveTab] = useState<'inventory' | 'pipeline' | 'analytics' | 'security'>('inventory');
+  const [activeTab, setActiveTab] = useState<'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing'>('inventory');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMarketingModalOpen, setIsMarketingModalOpen] = useState(false);
+  const [marketingCar, setMarketingCar] = useState<CarType | null>(null);
   const [editingCar, setEditingCar] = useState<CarType | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isInitializing, setIsInitializing] = useState(false);
@@ -74,6 +78,20 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   // Widget States
   const [uploadedTodayCount, setUploadedTodayCount] = useState(0);
   const [deviceType, setDeviceType] = useState<'Mac' | 'iPhone'>('Mac');
+
+  useEffect(() => {
+    // Sync Leads in real-time
+    const unsubscribe = syncLeads((updatedLeads) => {
+      setLeads(updatedLeads);
+    });
+
+    // Detect device (Basic)
+    if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('Android')) {
+      setDeviceType('iPhone');
+    }
+
+    return () => unsubscribe();
+  }, []);
 
   // Print Logic
   /* REMOVED: react-to-print logic in favor of jsPDF
@@ -101,7 +119,9 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     return undefined;
   };
 
-  const filteredInventory = inventory.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredInventory = (inventory || []).filter(c =>
+    (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
+  );
 
   const handleInitClick = async () => {
     if (!onInitializeDb) return;
@@ -198,7 +218,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           <StatusWidget
             icon={Package}
             label="Valor Total"
-            value={<CountUp end={inventory.reduce((sum, car) => sum + car.price, 0)} prefix="$" />}
+            value={<CountUp end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)} prefix="$" />}
             color="bg-purple-500 text-purple-500 bg-opacity-100 text-opacity-100"
             subValue="Estimado"
           />
@@ -216,6 +236,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           {[
             { id: 'inventory', label: 'Inventario', icon: Package },
             { id: 'pipeline', label: 'CRM Pipeline', icon: BarChart3 },
+            { id: 'marketing', label: 'Marketing Hub', icon: Sparkles },
             { id: 'analytics', label: 'Analytics', icon: BarChart3 },
             { id: 'security', label: 'Seguridad', icon: ShieldAlert }
           ].map(tab => (
@@ -237,6 +258,38 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           {activeTab === 'analytics' && (
             <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
               <InventoryHeatmap inventory={inventory} />
+            </div>
+          )}
+
+          {activeTab === 'marketing' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
+              <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-100 dark:border-slate-700 shadow-sm space-y-6">
+                <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
+                  <Sparkles size={20} /> Content Engine
+                </div>
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Estrategia Semántica</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                  Richard IA utiliza búsqueda semántica para identificar qué modelos de tu inventario tienen más "momentum" basado en las consultas de los usuarios. Selecciona una unidad abajo para generar contenido viral.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {inventory.slice(0, 4).map(car => (
+                    <button
+                      key={car.id}
+                      onClick={() => { setMarketingCar(car); setIsMarketingModalOpen(true); }}
+                      className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-[#00aed9] hover:bg-white dark:hover:bg-slate-800 transition-all text-left group"
+                    >
+                      <img src={car.img} alt={car.name} className="w-12 h-12 rounded-lg object-cover" />
+                      <div>
+                        <div className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">{car.name}</div>
+                        <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">Generar Post ✨</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="lg:col-span-1 h-full">
+                <GapAnalyticsWidget />
+              </div>
             </div>
           )}
 
@@ -334,10 +387,17 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                           }
                         </td>
                         <td className="px-6 py-4 text-right font-bold text-slate-700 dark:text-slate-300">
-                          ${car.price.toLocaleString()}
+                          ${(car.price || 0).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => { setMarketingCar(car); setIsMarketingModalOpen(true); }}
+                              className="w-[40px] h-[40px] rounded-lg bg-[#00aed9]/10 flex items-center justify-center text-[#00aed9] hover:bg-[#00aed9] hover:text-white transition-colors"
+                              title="Generar Marketing Content"
+                            >
+                              <Sparkles size={16} />
+                            </button>
                             <button onClick={() => { setEditingCar(car); setIsModalOpen(true); }} className="w-[40px] h-[40px] rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 hover:bg-[#00aed9] hover:text-white transition-colors">
                               <Edit3 size={16} />
                             </button>

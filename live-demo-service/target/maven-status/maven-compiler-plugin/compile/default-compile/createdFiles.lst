@@ -1,0 +1,4 @@
+com/richard/live/service/internal/PlaceholderServiceImpl.class
+com/richard/live/LiveDemoServiceApplication.class
+com/richard/live/domain/PlaceholderDomain.class
+com/richard/live/infrastructure/web/PlaceholderController.class

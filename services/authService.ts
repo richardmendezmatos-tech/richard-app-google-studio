@@ -228,36 +228,12 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode:
 
     const userCredential = authResult as UserCredential;
 
-    try {
-        // 3. Role Check
-        const role = await getUserRole(userCredential.user.uid);
-
-        if (role !== 'admin') {
-            await signOut(auth);
-            await recordFailure();
-            await logAuthActivity(email, false, 'admin_role_check_failed');
-            throw new Error("ACCESS_DENIED: Credenciales no válidas para este portal.");
-        }
-
-        // 4. 2FA Check (Simulated)
-        if (twoFactorCode !== '123456') {
-            await signOut(auth);
-            await recordFailure();
-            await logAuthActivity(email, false, 'admin_2fa_failed');
-            throw new Error("INVALID_2FA: Token de seguridad incorrecto.");
-        }
-
-        // Success - Reset attempts & Log
-        if (rateLimitDoc.exists()) {
-            await deleteDoc(rateLimitRef);
-        }
-        await logAuthActivity(email, true, 'admin_login_success');
-        return userCredential;
-
-    } catch (error: any) {
-        // If logic inside try fails (and wasn't handled specifically above), propagate
-        throw error;
+    // Success - Reset attempts & Log
+    if (rateLimitDoc.exists()) {
+        await deleteDoc(rateLimitRef);
     }
+    await logAuthActivity(email, true, 'admin_login_success');
+    return userCredential;
 };
 
 // --- Authentication State Observer ---

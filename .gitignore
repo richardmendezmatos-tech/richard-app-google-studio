@@ -40,11 +40,15 @@ public/workbox-*.js
 
 # Llaves y Secretos
 # .env (Already ignored)
-*.json
+# *.json (Removed to allow critical configs like vercel.json)
 serviceAccountKey.json
+firebaseConfig.ts
+fb_config.js
 
 # Archivos de sistema y Python
 __pycache__/
 *.pyc
 # .DS_Store (Already ignored)
 viva_env/
+.vercel
+.env*.local

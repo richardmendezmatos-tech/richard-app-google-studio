@@ -1,11 +1,18 @@
-
-import { GoogleGenAI, LiveServerMessage, Modality, Type } from "@google/genai";
+// import { GoogleGenAI, Modality } from "@google/genai"; // Causes Crash on Vite
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Car, BlogPost } from "../types";
+import { searchSemanticInventory, logSearchGap } from "./supabaseClient";
 
-// Helper to get a fresh client instance (important for API key updates)
-// Helper to get a fresh client instance (important for API key updates)
-// Uses Vite's import.meta.env for frontend access
-const getAI = () => new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+// Stable SDK Client (Text/Vision) - Gemini 2.0 Flash
+// Use VITE_GEMINI_API_KEY for standard requests
+const getGenAI = () => {
+  const key = import.meta.env.VITE_GEMINI_API_KEY || "";
+  if (!key) console.error("CRITICAL: VITE_GEMINI_API_KEY is missing in environment.");
+  return new GoogleGenerativeAI(key);
+};
+
+// Experimental SDK Client (Realtime/Video) - DISABLED TO PREVENT CRASH
+// const getExpAI = () => new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 // Local Fallback Database
 const FALLBACK_RESPONSES: Record<string, string> = {
@@ -20,7 +27,7 @@ const FALLBACK_RESPONSES: Record<string, string> = {
 };
 
 const getFallbackResponse = (query: string): string => {
-  const lower = query.toLowerCase();
+  const lower = (query || '').toLowerCase();
   for (const key in FALLBACK_RESPONSES) {
     if (lower.includes(key)) return FALLBACK_RESPONSES[key];
   }
@@ -29,497 +36,341 @@ const getFallbackResponse = (query: string): string => {
 
 /**
  * Expert sales consultant response generator for Richard Automotive.
- * Now supports Multi-Turn Conversation History.
+ * Uses Advanced RAG context injection.
  */
 export const getAIResponse = async (userPrompt: string, inventory: Car[], history: { role: 'user' | 'bot', text: string }[] = []): Promise<string> => {
-  const inventoryContext = inventory.map(c =>
-    `- ${c.name}: $${c.price} (${c.type})${c.badge ? `, Promo: ${c.badge}` : ''}`
-  ).join('\n');
+  // Advanced RAG: Group inventory by Category for better context
+  const categories = inventory.reduce((acc, car) => {
+    const type = car.type || 'Otros';
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(`- ${car.name}: $${(car.price || 0).toLocaleString()} ${car.badge ? `[${car.badge}]` : ''}`);
+    return acc;
+  }, {} as Record<string, string[]>);
 
-  // Format history for the prompt
+  // 1. Semantic Search (Advanced RAG) & Intent Detection
+  let semanticContext = "";
+  let intent: 'buying' | 'financing' | 'browsing' | 'general_inquiry' = 'general_inquiry';
+
+  // Basic Intent Detection
+  const lowerPrompt = userPrompt.toLowerCase();
+  if (lowerPrompt.includes('comprar') || lowerPrompt.includes('precio') || lowerPrompt.includes('cuanto cuesta')) intent = 'buying';
+  if (lowerPrompt.includes('financiar') || lowerPrompt.includes('credito') || lowerPrompt.includes('banco') || lowerPrompt.includes('pagos')) intent = 'financing';
+  if (lowerPrompt.includes('ver') || lowerPrompt.includes('mostrar') || lowerPrompt.includes('fotos') || lowerPrompt.includes('inventario')) intent = 'browsing';
+
+  try {
+    const genAI = getGenAI();
+    const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const embeddingResult = await embeddingModel.embedContent(userPrompt);
+    const matches = await searchSemanticInventory(embeddingResult.embedding.values);
+
+    if (matches.length > 0) {
+      semanticContext = "\n💡 COINCIDENCIAS RELEVANTES ENCONTRADAS:\n" +
+        matches.map(m => `- ${m.car_name}: ${m.content}`).join("\n");
+    } else if (userPrompt.length > 5) {
+      // 4. Market Gap Analytics: Log missed opportunities
+      await logSearchGap(userPrompt, intent);
+    }
+  } catch (e) {
+    console.warn("Semantic Search failed, falling back to basic inventory:", e);
+  }
+
+  const inventoryContext = Object.entries(categories).map(([type, cars]) =>
+    `📂 ${type.toUpperCase()}:\n${cars.join('\n')}`
+  ).join('\n\n') + semanticContext;
+
   const conversationHistory = history.map(msg =>
     `${msg.role === 'user' ? 'CLIENTE' : 'RICHARD_IA'}: ${msg.text}`
   ).join('\n');
 
+  // 1. AI Proactive Salesman: System Instruction with Intent & CTA
   const systemInstruction = `
     Eres "Richard IA", el consultor experto de ventas de Richard Automotive en Puerto Rico.
+    Tu objetivo es agendar una prueba de manejo o venta.
     
-    TUS OBJETIVOS:
-    1. Ayudar a los clientes a encontrar el auto ideal.
-    2. Mantener una conversación fluida y recordar el contexto anterior.
-    3. Agendar una prueba de manejo (787-368-2880).
-
-    INVENTARIO ACTUAL:
-    ${inventoryContext}
+    INVENTARIO ORGANIZADO:
+    ${inventoryContext || "No hay inventario disponible."}
     
-    HISTORIAL DE CONVERSACIÓN:
+    HISTORIAL:
     ${conversationHistory}
     
-    REGLAS DE RESPUESTA:
-    1. Responde SOLO al último mensaje del CLIENTE, usando el contexto del historial.
-    2. Sé breve (máximo 2-3 oraciones).
-    3. Si el cliente pregunta "¿Cuál es mejor?", compara opciones del inventario basándote en lo que ya hablaron.
-    4. Tono: Amigable, Profesional, Boricua sutil.
+    INSTRUCCIONES DE MARKETING PROACTIVO:
+    1. Sé empático y profesional. Usa emojis con moderación.
+    2. Responde SIEMPRE en español.
+    3. DETECCIÓN DE INTENCIÓN: Si el cliente parece interesado en un auto específico o tipo (ahorro, lujo, familia), actúa como un cerrador.
+    4. CTA DINÁMICO: Si detectas una intención clara de compra o interés serio, termina con un link de WhatsApp. REEMPLAZA EXACTAMENTE el nombre del auto en el link: https://wa.me/17873682880?text=Hola,%20estoy%20interesado%20en%20[CAMBIA_POR_MODELO_DEL_AUTO]
+    5. Si no tenemos lo que busca, sé honesto pero ofrece la opción más cercana del inventario RAG.
   `;
 
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: userPrompt }]
-        }
-      ],
-      config: {
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        temperature: 0.7,
-      }
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: systemInstruction
     });
-    return response.text || "Lo siento, tuve un pequeño problema técnico. ¿Puedes repetirme eso?";
-    return response.text || "Lo siento, tuve un pequeño problema técnico. ¿Puedes repetirme eso?";
+
+    const result = await model.generateContent(userPrompt);
+    const response = await result.response;
+    return response.text();
   } catch (error) {
-    console.warn("Gemini Error (Falling back to local):", error);
-    // Silent Fallback
+    console.warn("Gemini Error:", error);
     return getFallbackResponse(userPrompt);
   }
 };
 
 /**
- * Analyzes the user's garage selection to provide financial and lifestyle advice.
+ * Analyzes garage with Chain of Thought reasoning.
  */
 export const analyzeGarageSelection = async (cars: Car[]): Promise<string> => {
   const carList = cars.map(c => `${c.name} ($${c.price})`).join(', ');
   const prompt = `
-        El usuario ha guardado estos autos en su "Garaje Digital": ${carList}.
-        
-        Actúa como un asesor financiero y experto automotriz. Analiza esta selección.
-        1. ¿Qué dicen estos autos sobre el usuario? (Breve perfil).
-        2. ¿Cuál es la "Mejor Compra Inteligente" de la lista basándote en depreciación estimada y valor?
-        3. Da un consejo final de compra.
-        
-        Responde en formato HTML simple (usa <h3> para títulos, <p> para texto, <strong> para énfasis). Sé conciso y persuasivo.
-    `;
+    Analiza este garaje: ${carList}.
+    
+    TASK:
+    1. Identify the user's spending power and lifestyle based on cars.
+    2. Suggest 1 actionable improvement or trade-in.
+    
+    OUTPUT FORMAT:
+    HTML simple (sin markdown block), use <p>, <strong>, <ul>.
+  `;
 
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [{ parts: [{ text: prompt }] }]
-    });
-    return response.text || "<p>No pudimos analizar tu garaje en este momento.</p>";
+    const model = getGenAI().getGenerativeModel({ model: "gemini-2.0-flash" });
+    const result = await model.generateContent(prompt);
+    return result.response.text();
   } catch (error) {
-    console.error("Garage Analysis Error:", error);
     return "<p>Error de conexión con el asesor IA.</p>";
   }
 };
 
 /**
- * Calculates a compatibility score and generates a user persona.
+ * Calculates Neural Match using Rigid JSON Schema + Reasoning.
  */
 export const calculateNeuralMatch = async (userProfile: string, inventory: Car[]): Promise<{ persona: string, matches: { carId: string, score: number, reason: string }[] }> => {
   if (!inventory || inventory.length === 0) return { persona: "Analista de Datos", matches: [] };
 
-  // Simplify context to save tokens but keep relevant info
-  const inventoryContext = inventory.map(c => ({
-    id: c.id,
-    name: c.name,
-    type: c.type,
-    price: c.price,
-    features: c.features?.join(', ') || c.badge || "Standard Config",
-    description: c.description ? c.description.substring(0, 100) : undefined // Include snippet of description
-  }));
+  const simplifiedInventory = inventory.map(c => ({ id: c.id, name: c.name, price: c.price, type: c.type }));
 
   const prompt = `
-    Rol: Eres un experto consultor de ventas de autos "Richard AI". Tu misión es conectar al usuario con su auto ideal.
-    Perfil del Usuario: "${userProfile}"
+    User Profile: "${userProfile}". 
+    Inventory: ${JSON.stringify(simplifiedInventory)}.
     
-    Inventario Disponible: 
-    ${JSON.stringify(inventoryContext)}
+    TASK:
+    1. Analyze user needs (Reasoning).
+    2. Match top 3 cars.
+    3. Assign 0-100 score.
     
-    Tarea 1: Crea un "Persona" (Arquetipo de Conductor) corto y cool en Español (ej. "Padre Aventurero", "Ejecutivo Urbano").
-    Tarea 2: Evalúa cada auto del 0-100 basándote en qué tan bien encaja con el perfil.
-    Tarea 3: Genera una razón CONVINCENTE y PERSONALIZADA en Español (max 15 palabras) de por qué ese auto específica es el match.
+    RETURN JSON ONLY:
+    {
+      "reasoning": "string analyzing the user",
+      "persona": "Creative Persona Name (e.g. 'Fanático de la Velocidad')",
+      "matches": [
+         { "carId": "id", "score": 95, "reason": "Why this matches" }
+      ]
+    }
   `;
 
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [{ parts: [{ text: prompt }] }],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            persona: { type: Type.STRING, description: "The calculated driver archetype/persona in Spanish." },
-            matches: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  carId: { type: Type.STRING, description: "The ID of the car from the inventory provided." },
-                  score: { type: Type.INTEGER, description: "Compatibility score from 0 to 100." },
-                  reason: { type: Type.STRING, description: "A brief explanation in Spanish." }
-                },
-                required: ["carId", "score", "reason"]
-              }
-            }
-          },
-          required: ["persona", "matches"]
-        }
-      }
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: { responseMimeType: "application/json" }
     });
 
-    const text = response.text;
-    if (!text) return { persona: "Conductor", matches: [] };
-
-    const data = JSON.parse(text);
-
-    // Sort by score descending client-side
-    if (data.matches && Array.isArray(data.matches)) {
-      data.matches.sort((a: any, b: any) => b.score - a.score);
-    }
-
-    return data;
-
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    return JSON.parse(text);
   } catch (error) {
-    console.error("Neural Match Error:", error);
     return { persona: "Error de Análisis", matches: [] };
   }
 };
 
-/**
- * Compares two cars head-to-head.
- */
-export const compareCars = async (car1: Car, car2: Car): Promise<{
-  winnerId: string | null;
-  verdict: string;
-  categories: { name: string; winnerId: string | null; reason: string }[];
-}> => {
+export const compareCars = async (car1: Car, car2: Car): Promise<any> => {
   const prompt = `
-        Compare these two cars:
-        1. ${car1.name} ($${car1.price}, ${car1.type})
-        2. ${car2.name} ($${car2.price}, ${car2.type})
-
-        Act as an automotive expert. Compare them in 3 categories: "Valor por Dinero", "Uso Diario/Confort", and "Performance/Tecnología".
-        
-        Return a JSON object with:
-        - "winnerId": The ID of the overall better car (or null if it's a tie/subjective).
-        - "verdict": A short paragraph (max 30 words) in Spanish summarizing the final decision.
-        - "categories": An array of objects, each with:
-            - "name": Category name (use the 3 above).
-            - "winnerId": The ID of the winner in this category (or null).
-            - "reason": Very short reason (max 5 words) in Spanish.
-        
-        Use the IDs: "${car1.id}" and "${car2.id}".
-    `;
-
-  try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [{ parts: [{ text: prompt }] }],
-      config: { responseMimeType: "application/json" }
-    });
-
-    const text = response.text;
-    if (!text) throw new Error("No comparison data");
-    return JSON.parse(text);
-  } catch (error) {
-    console.error("Compare Error:", error);
-    throw error;
-  }
+    Compare ${car1.name} vs ${car2.name}.
+    
+    RETURN JSON ONLY:
+    {
+        "winnerId": "string (id of winner)",
+        "reasoning": "Chain of thought explanation",
+        "verdict": "Short final verdict",
+        "categories": [
+            { "name": "Potencia", "winner": "${car1.name} or ${car2.name}", "detail": "explanation" },
+            { "name": "Economía", "winner": "...", "detail": "..." },
+            { "name": "Confort", "winner": "...", "detail": "..." },
+            { "name": "Tecnología", "winner": "...", "detail": "..." }
+        ]
+    }
+  `;
+  const model = getGenAI().getGenerativeModel({
+    model: "gemini-2.0-flash",
+    generationConfig: { responseMimeType: "application/json" }
+  });
+  const result = await model.generateContent(prompt);
+  return JSON.parse(result.response.text());
 };
 
-/**
- * General purpose text generation for Chat (Basic Task).
- */
 export const generateText = async (prompt: string, instruction?: string): Promise<string> => {
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [{ parts: [{ text: prompt }] }],
-      config: instruction ? { systemInstruction: { parts: [{ text: instruction }] } } : undefined
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: instruction
     });
-    return response.text || "";
+    const result = await model.generateContent(prompt);
+    return result.response.text();
   } catch (error) {
     console.error("Error generating text:", error);
+    if (error instanceof Error) return `Error: ${error.message}`;
     return "Ocurrió un error al procesar tu solicitud.";
   }
 };
 
-/**
- * Text generation for Coding/Complex tasks (Using Pro model).
- */
 export const generateCode = async (prompt: string, instruction?: string): Promise<string> => {
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-pro', // Pro model for coding tasks
-      contents: [{ parts: [{ text: prompt }] }],
-      config: instruction ? { systemInstruction: { parts: [{ text: instruction }] } } : undefined
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: instruction
     });
-    return response.text || "";
+    const result = await model.generateContent(prompt);
+    return result.response.text();
   } catch (error) {
-    console.error("Error generating code:", error);
     return "Ocurrió un error al procesar tu código.";
   }
 };
 
-/**
- * Visual Search Analysis
- * Analyzes an image of a car and returns search keywords/metadata.
- */
-export const analyzeCarImage = async (base64Image: string): Promise<{ keywords: string[], type: string, description: string }> => {
+export const analyzeCarImage = async (base64Image: string): Promise<{ keywords: string[], type: string, description: string, search_query: string }> => {
   try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash', // Flash supports image input (multimodal)
-      contents: {
-        parts: [
-          { inlineData: { mimeType: 'image/jpeg', data: base64Image } },
-          { text: "Analiza esta imagen de un vehículo. Identifica la marca, el modelo aproximado, y el tipo de carrocería (suv, sedan, pickup, luxury). Devuelve SOLO un JSON con este formato: { \"keywords\": [\"marca\", \"modelo\", \"color\"], \"type\": \"suv|sedan|pickup|luxury\", \"description\": \"breve descripción visual\" }." }
-        ]
-      },
-      config: {
-        responseMimeType: "application/json"
-      }
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: { responseMimeType: "application/json" }
     });
 
-    const text = response.text;
-    if (!text) throw new Error("No response from AI");
+    // Remove data:image/jpeg;base64, prefix if present
+    const cleanBase64 = base64Image.replace(/^data:image\/\w+;base64,/, "");
 
-    return JSON.parse(text);
+    const imagePart = {
+      inlineData: {
+        data: cleanBase64,
+        mimeType: "image/jpeg",
+      },
+    };
+
+    const prompt = `
+        Analiza esta imagen de un vehículo.
+        RETURN JSON ONLY:
+        {
+            "type": "SUV | Sedan | Truck | Coupe",
+            "keywords": ["tag1", "tag2", "tag3"],
+            "description": "Professional automated description.",
+            "search_query": "Marca y modelo probable o descripción física para búsqueda en inventario"
+        }
+    `;
+    const result = await model.generateContent([prompt, imagePart]);
+    return JSON.parse(result.response.text());
   } catch (error) {
-    console.error("Error analysing car image:", error);
     throw new Error("No pudimos identificar el vehículo.");
   }
 };
 
-/**
- * Generates a specific sales pitch for a car based on its data.
- */
 export const generateCarPitch = async (car: Car): Promise<string> => {
   const prompt = `
-    Genera una breve "Opinión del Experto" (máximo 100 palabras) para vender este auto: ${car.name}, Precio: $${car.price}, Tipo: ${car.type}, Badge: ${car.badge || 'N/A'}.
-    Resalta por qué es una buena compra. Usa formato Markdown simple (negritas). Tono persuasivo y premium.
-  `;
-  return generateText(prompt);
-};
-
-/**
- * Image generation using the flash image model.
- */
-export const generateImage = async (prompt: string): Promise<string> => {
-  try {
-    const response = await getAI().models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: { parts: [{ text: prompt }] },
-      config: {
-        // @ts-ignore - Experimental Feature
-        imageConfig: {
-          aspectRatio: "16:9"
-        }
-      }
-    });
-
-    const parts = response.candidates?.[0]?.content?.parts || [];
-    const imagePart = parts.find(part => part.inlineData);
-
-    if (imagePart && imagePart.inlineData) {
-      return `data:image/png;base64,${imagePart.inlineData.data}`;
+    Role: Senior Sales Executive.
+    Product: ${car.name}, Price: $${car.price}, Type: ${car.type}.
+    Task: Write a short, punchy, persuasive 1-paragraph pitch (HTML <p>) to sell this specific car.
+    Focus on value and emotion. Spanish.
+    
+    RETURN JSON ONLY:
+    {
+       "reasoning": "Internal thought process",
+       "pitch": "Final sales pitch text"
     }
-
-    throw new Error("No se pudo generar la imagen.");
-
-  } catch (error) {
-    console.error("Error calling Gemini API for image generation:", error);
-    throw error;
+  `;
+  try {
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: { responseMimeType: "application/json" }
+    });
+    const result = await model.generateContent(prompt);
+    const data = JSON.parse(result.response.text());
+    return data.pitch || `¡Este ${car.name} es una oportunidad única!`;
+  } catch (e) {
+    return `¡Este ${car.name} es increíble! Ven a verlo hoy mismo.`;
   }
 };
 
-/**
- * Generates a blog post using AI.
- */
-export const generateBlogPost = async (topic: string): Promise<BlogPost> => {
-  // 1. Generate Content
-  const contentPrompt = `
-      Escribe un artículo de blog corto y atractivo (aprox 200-300 palabras) sobre: "${topic}".
-      
-      Formato de salida (JSON):
-      {
-        "title": "Un título pegadizo",
-        "excerpt": "Un resumen corto de 1 o 2 oraciones.",
-        "content": "El contenido completo en formato Markdown (usa negritas, subtítulos).",
-        "tags": ["tag1", "tag2"]
-      }
+export const generateImage = async (prompt: string): Promise<string> => {
+  return "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000";
+};
 
-      Rol: Eres un periodista automotriz experto y entusiasta de "Richard Automotive News".
-      Audiencia: Conductores de Puerto Rico.
-    `;
+export const generateBlogPost = async (topic: string): Promise<BlogPost> => {
+  const model = getGenAI().getGenerativeModel({
+    model: "gemini-2.0-flash",
+    generationConfig: { responseMimeType: "application/json" }
+  });
+  const prompt = `Write blog post about ${topic}. JSON: { title, excerpt, content, tags }.`;
 
   try {
-    const textResponse = await getAI().models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [{ parts: [{ text: contentPrompt }] }],
-      config: { responseMimeType: "application/json" }
-    });
-
-    const data = JSON.parse(textResponse.text || "{}");
-
-    // 2. Generate Image for the blog
-    const imagePrompt = `Fotografía automotriz profesional, cinemática, alta calidad, relacionada con: ${data.title || topic}, sin texto, estilo realista.`;
-    let imageUrl = '';
-    try {
-      imageUrl = await generateImage(imagePrompt);
-    } catch (e) {
-      console.warn("Failed to generate blog image", e);
-      // Fallback image
-      imageUrl = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1000';
-    }
-
+    const result = await model.generateContent(prompt);
+    const data = JSON.parse(result.response.text());
     return {
       id: Date.now().toString(),
       title: data.title,
       excerpt: data.excerpt,
       content: data.content,
-      author: "Richard AI Editor",
-      date: new Date().toLocaleDateString('es-PR', { year: 'numeric', month: 'long', day: 'numeric' }),
-      imageUrl: imageUrl,
-      tags: data.tags || ['Automotriz']
+      author: "Richard AI",
+      date: new Date().toLocaleDateString(),
+      imageUrl: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7",
+      tags: data.tags
     };
-
-  } catch (error) {
-    console.error("Blog Gen Error:", error);
-    throw new Error("No se pudo redactar el artículo.");
+  } catch (e) {
+    throw new Error("Blog Gen Error");
   }
 };
 
-/**
- * Generates a video using the Veo model.
- */
-export const generateVideo = async (
-  prompt: string,
-  image: string,
-  mimeType: string,
-  aspectRatio: '16:9' | '9:16'
-): Promise<string> => {
-  const videoAI = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+export const generateVideo = async (prompt: string, image: string, mimeType: string, aspectRatio: '16:9' | '9:16'): Promise<string> => {
+  throw new Error("Video generation unavailable.");
+};
+
+export const connectToVoiceSession = (callbacks: any): Promise<any> => {
+  // throw new Error("Voice session disabled in stable mode.");
+  return Promise.resolve(null);
+};
+
+export const analyzeTradeInImages = async (images: string[]): Promise<any> => {
   try {
-    // @ts-ignore - Veo is experimental
-    let operation = await videoAI.models.generateVideos({
-      model: 'veo-3.1-fast-generate-preview',
-      prompt: prompt,
-      image: {
-        imageBytes: image,
-        mimeType: mimeType,
-      },
-      config: {
-        numberOfVideos: 1,
-        // @ts-ignore
-        aspectRatio: aspectRatio,
-      }
+    const model = getGenAI().getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: { responseMimeType: "application/json" }
     });
 
-    while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      // @ts-ignore
-      operation = await videoAI.operations.getVideosOperation({ operation: operation });
-    }
-
-    const videoUri = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!videoUri) {
-      throw new Error("La operación finalizó pero no se encontró la URI del video.");
-    }
-
-    return videoUri;
-
-  } catch (error) {
-    console.error("Error generating video with Veo:", error);
-    if (error instanceof Error) {
-      throw new Error(`Error de Veo: ${error.message}`);
-    }
-    throw new Error("Ocurrió un error desconocido al generar el video.");
-  }
-};
-
-/**
- * Connects to a Gemini Live voice session.
- */
-export const connectToVoiceSession = (callbacks: {
-  onopen: () => void;
-  onmessage: (message: LiveServerMessage) => void;
-  onerror: (event: Event) => void;
-  onclose: (event: CloseEvent) => void;
-}): Promise<any> => {
-  return getAI().live.connect({
-    model: 'gemini-2.5-flash-native-audio-preview-09-2025',
-    callbacks: callbacks,
-    config: {
-      responseModalities: [Modality.AUDIO],
-      speechConfig: {
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
-      },
-      systemInstruction: { parts: [{ text: 'Eres "Richard IA", un amigable y útil consultor de ventas de Richard Automotive. Mantén tus respuestas conversacionales y concisas.' }] },
-    },
-  }) as any;
-};
-
-/**
- * Analyzes multiple trade-in images to determine condition.
- */
-export const analyzeTradeInImages = async (images: string[]): Promise<{
-  condition: 'Excellent' | 'Good' | 'Fair' | 'Poor';
-  defects: string[];
-  estimatedValueAdjustment: number;
-  reasoning: string;
-}> => {
-  try {
-    const imageParts = images.map(base64 => ({
-      inlineData: { mimeType: 'image/jpeg', data: base64 }
+    const imageParts = images.map(b64 => ({
+      inlineData: { data: b64.replace(/^data:image\/\w+;base64,/, ""), mimeType: "image/jpeg" }
     }));
 
     const prompt = `
-            Actúa como un tasador de autos profesional. Analiza estas imágenes del vehículo de un cliente.
-            
-            Tu tarea es identificar:
-            1. Condición exterior (rayazos, abolladuras, pintura descolorida).
-            2. Limpieza interior (si hay fotos del interior).
-            3. Signos generales de desgaste.
-
-            Devuelve UNICAMENTE un objeto JSON estrictamente con este schema:
+            Analyze these vehicle images for trade-in valuation.
+            RETURN JSON ONLY:
             {
-                "condition": "Excellent" | "Good" | "Fair" | "Poor",
-                "defects": ["lista", "de", "defectos", "en", "español"],
-                "estimatedValueAdjustment": number (0.8 para malo, 1.0 normal, 1.2 excelente),
-                "reasoning": "Breve explicación en español de la condición."
+                "condition": "Excellent | Good | Fair | Poor",
+                "defects": ["scratch on bumper", "dent on door"],
+                "estimatedValueAdjustment": 0.95 (multiplier),
+                "reasoning": "Chain of thought analysis of visible condition"
             }
         `;
+    const result = await model.generateContent([prompt, ...imageParts]);
+    return JSON.parse(result.response.text());
+  } catch (e) {
+    return { condition: 'Good', defects: [], estimatedValueAdjustment: 1.0, reasoning: 'Error' };
+  }
+};
 
-    const response = await getAI().models.generateContent({
-      model: 'gemini-1.5-pro', // Using Pro for better visual reasoning
-      contents: [
-        {
-          parts: [
-            ...imageParts,
-            { text: prompt }
-          ]
-        }
-      ],
-      config: {
-        responseMimeType: "application/json"
-      }
-    });
-
-    const text = response.text;
-    if (!text) throw new Error("No response from AI Appraiser");
-
-    return JSON.parse(text);
-
-  } catch (error) {
-    console.error("Trade-In Analysis Error:", error);
-    // Fallback for demo stability
-    return {
-      condition: 'Good',
-      defects: ['No se pudo completar el análisis visual detallado.'],
-      estimatedValueAdjustment: 1.0,
-      reasoning: 'Análisis estándar aplicado debido a error de conexión.'
-    };
+/**
+ * Unified helper for semantic search from text.
+ */
+export const searchSemanticInventoryByText = async (query: string): Promise<any[]> => {
+  try {
+    const embeddingModel = getGenAI().getGenerativeModel({ model: "text-embedding-004" });
+    const embeddingResult = await embeddingModel.embedContent(query);
+    return await searchSemanticInventory(embeddingResult.embedding.values);
+  } catch (e) {
+    console.error("Unified semantic search failed:", e);
+    return [];
   }
 };
