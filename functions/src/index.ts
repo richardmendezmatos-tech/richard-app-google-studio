@@ -598,3 +598,19 @@ if (process.env.GENKIT_ENV === 'dev') {
 
 // --- AI Evaluation Pipeline ---
 export { triggerEval } from './evals';
+
+// --- New Lead Trigger (User Request) ---
+export const onNewLead = onDocumentCreated('leads/{leadId}', async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+
+    const nombre = data.nombre;
+    const telefono = data.telefono;
+    // const ingreso = data.ingreso; // unused in log
+
+    logger.info(`Nuevo lead recibido: ${nombre} - ${telefono}`);
+
+    // Aquí podrías usar una librería como 'nodemailer' o 'twilio'
+    // para enviarte el mensaje directo a tu celular.
+});
+
