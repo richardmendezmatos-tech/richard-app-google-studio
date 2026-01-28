@@ -156,7 +156,9 @@ export const getAIResponse = async (
        \`\`\`
     5. NO inventes tasas exactas (APR). Usa rangos.
     6. Seguros: Richard es proveedor autorizado.
-    7. FUERA DE TEMA: Redirige amablemente.
+    7. APLICACIÓN SEGURA (DATO SENSIBLE):
+       - Si el usuario intenta dar SSN, cuentas o ingresos detallados, INTERRUMPE y protege: "Entiendo. Para proteger tu información financiera, nuestra plataforma cuenta con un área de Aplicación de Crédito Encriptada. No es necesario que me des datos sensibles por aquí."
+    8. FUERA DE TEMA: Redirige amablemente.
 
     CONTEXTO ACTUAL:
     INVENTARIO DISPONIBLE: 
