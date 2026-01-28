@@ -19,6 +19,7 @@ import ComparisonBar from './components/ComparisonBar';
 import { BrandErrorBoundary } from './components/common/BrandErrorBoundary';
 import { CinemaLayout } from './components/layout/CinemaLayout';
 import { AnimatedRoutes } from './components/AnimatedRoutes';
+import { CookieConsent } from './components/common/CookieConsent';
 
 // --- Router Logic ---
 const SmartRouter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,14 +48,14 @@ const AppContent: React.FC = () => {
   const { addCar: handleAdd, updateCar: handleUpdate, deleteCar: handleDelete } = useCarMutations();
   const { addNotification } = useNotification();
 
-  // App Lifecycle
+  // Lifecycle
   useEffect(() => {
     initializePushNotifications();
     startGeofenceMonitoring();
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (let registration of registrations) registration.unregister();
+        for (const registration of registrations) registration.unregister();
       });
     }
   }, []);
@@ -65,8 +66,9 @@ const AppContent: React.FC = () => {
       addNotification('info', 'Iniciando reparación automática...');
       await uploadInitialInventory(initialInventoryData);
       addNotification('success', '✅ REPARACIÓN DE INVENTARIO COMPLETA.');
-    } catch (error: any) {
-      addNotification('error', 'Error en reparación: ' + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      addNotification('error', 'Error en reparación: ' + message);
     }
   }, [addNotification]);
 
@@ -82,6 +84,7 @@ const AppContent: React.FC = () => {
           handleUpdate={handleUpdate}
           handleDelete={handleDelete}
         />
+        <CookieConsent />
       </CinemaLayout>
     </BrandErrorBoundary>
   );

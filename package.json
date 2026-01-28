@@ -19,6 +19,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.15",
     "@capacitor/android": "^8.0.0",
     "@capacitor/camera": "^8.0.0",
     "@capacitor/cli": "^8.0.0",
@@ -60,7 +61,8 @@
     "react-router-dom": "^7.11.0",
     "rxjs": "^7.8.2",
     "tailwind-merge": "^3.4.0",
-    "three": "^0.182.0"
+    "three": "^0.182.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
