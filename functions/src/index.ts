@@ -630,3 +630,8 @@ export const onNewLead = onDocumentCreated('leads/{leadId}', async (event) => {
     }
 });
 
+
+// --- Vercel AI SDK (Streaming) ---
+export { chatStream } from './chatStream';
+
+
