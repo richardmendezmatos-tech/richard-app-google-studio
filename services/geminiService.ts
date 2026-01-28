@@ -161,7 +161,7 @@ export const getAIResponse = async (
        - Acto seguido, MUESTRA ESTE BOTÓN HTML EXACTO:
        <div style="background: #f4f4f4; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #000; margin-top: 10px;">
            <p style="margin-bottom: 10px; font-weight: bold;">🛡️ Área Segura de Aplicación</p>
-           <a href="/aplicar" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Iniciar Aplicación de Crédito</a>
+           <a href="/qualify" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Iniciar Aplicación de Crédito</a>
        </div>
     8. FUERA DE TEMA: Redirige amablemente.
 
