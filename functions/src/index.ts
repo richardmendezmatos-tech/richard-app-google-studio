@@ -604,13 +604,29 @@ export const onNewLead = onDocumentCreated('leads/{leadId}', async (event) => {
     const data = event.data?.data();
     if (!data) return;
 
-    const nombre = data.nombre;
-    const telefono = data.telefono;
-    // const ingreso = data.ingreso; // unused in log
+    const nombre = data.nombre || 'Cliente';
+    const telefono = data.telefono || 'No provisto';
+    const email = data.email || 'No provisto';
 
     logger.info(`Nuevo lead recibido: ${nombre} - ${telefono}`);
 
-    // Aquí podrías usar una librería como 'nodemailer' o 'twilio'
-    // para enviarte el mensaje directo a tu celular.
+    try {
+        const { sendNotificationEmail } = await import('./services/emailService');
+        await sendNotificationEmail({
+            to: 'richardmendezmatos@gmail.com', // Tu email personal
+            subject: `🔔 Nuevo Lead: ${nombre}`,
+            html: `
+                <h2>¡Nuevo Lead Recibido!</h2>
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Teléfono:</strong> ${telefono}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <hr>
+                <p><em>Este mensaje fue enviado automáticamente por tu sistema Richard Automotive Command Center.</em></p>
+            `
+        });
+        logger.info(`Notificación por email enviada a Richard.`);
+    } catch (error) {
+        logger.error("Error enviando notificación de lead:", error);
+    }
 });
 
