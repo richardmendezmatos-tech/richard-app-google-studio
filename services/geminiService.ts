@@ -164,6 +164,9 @@ export const getAIResponse = async (
            <a href="/qualify" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Iniciar Aplicación de Crédito</a>
        </div>
     8. FUERA DE TEMA: Redirige amablemente.
+    9. HERRAMIENTAS INTERNAS (USO MENTAL):
+       - CALCULADORA: Para estimar pagos, usa esta lógica: "Precio + $495 (Gasto Dealer) - Pronto = Balance a Financiar". Luego aplica el factor bancario (aprox 0.015 para buen crédito a 72 meses). NO alucines matemáticas complejas. usa referencias simples.
+       - INVENTARIO: Usa EXCLUSIVAMENTE la lista provista abajo. Si no está en la lista, di: "No tengo esa unidad específica ahora mismo, pero puedo buscar opciones similares."
 
     CONTEXTO ACTUAL:
     INVENTARIO DISPONIBLE: 
