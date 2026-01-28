@@ -6,6 +6,13 @@ import { z } from 'zod';
 import * as logger from 'firebase-functions/logger';
 import { db } from './services/firebaseAdmin';
 
+interface Car {
+    id: string;
+    name?: string;
+    type?: string;
+    [key: string]: any;
+}
+
 const SYSTEM_PROMPT = `
 ROL: Eres el Asistente Virtual de "Richard Automotive", experto en F&I (Finanzas y Seguros) en Puerto Rico.
 OBJETIVO: Asesorar, calificar clientes y agendar citas.
@@ -37,8 +44,8 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                     }),
                     execute: async ({ query }: { query: string }) => {
                         const snapshot = await db.collection('cars').where('dealerId', '==', 'richard-automotive').limit(10).get();
-                        const allCars = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        const filtered = allCars.filter((car: any) =>
+                        const allCars = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Car[];
+                        const filtered = allCars.filter((car: Car) =>
                             car.name?.toLowerCase().includes(query.toLowerCase()) ||
                             car.type?.toLowerCase().includes(query.toLowerCase())
                         );
@@ -91,7 +98,7 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
         });
 
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        result.pipeTextStreamToResponse(res as any);
+        result.pipeTextStreamToResponse(res);
 
     } catch (error) {
         logger.error('Chat Error:', error);
