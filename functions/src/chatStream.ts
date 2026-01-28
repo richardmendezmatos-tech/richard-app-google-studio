@@ -30,10 +30,8 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
             system: SYSTEM_PROMPT,
             messages,
             tools: {
-                // @ts-expect-error - AI SDK v6 Type Churn
                 checkInventory: tool({
                     description: 'Busca autos en el inventario por marca, modelo o tipo.',
-                    // @ts-expect-error - inputSchema is the new standard in AI SDK v6 but types are lagging
                     inputSchema: z.object({
                         query: z.string().describe('Término de búsqueda, ej: "Toyota"'),
                     }),
@@ -47,10 +45,8 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                         return filtered.length > 0 ? filtered.slice(0, 5) : allCars.slice(0, 3);
                     },
                 }),
-                // @ts-expect-error - AI SDK v6 Type Churn
                 calculatePayment: tool({
                     description: 'Calcula el pago mensual estimado de un auto.',
-                    // @ts-expect-error - inputSchema is the new standard in AI SDK v6 but types are lagging
                     inputSchema: z.object({
                         price: z.number(),
                         downPayment: z.number(),
@@ -68,10 +64,8 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                         return { monthlyPayment: Math.round(payment), details: `Interés: ${rate}%` };
                     },
                 }),
-                // @ts-expect-error - AI SDK v6 Type Churn
                 saveLead: tool({
                     description: 'Guarda el lead en la base de datos.',
-                    // @ts-expect-error - inputSchema is the new standard in AI SDK v6 but types are lagging
                     inputSchema: z.object({
                         name: z.string(),
                         phone: z.string(),
