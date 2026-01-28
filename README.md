@@ -1,36 +1,53 @@
+# 🚗 Richard Automotive: AI Finance Advisor
+**Transformando la experiencia de financiamiento de autos en Puerto Rico.**
 
-# 🚗 Richard Automotive - Guía de Inicio Rápido
+Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**. Utiliza modelos de lenguaje avanzados para asesorar a clientes sobre F&I (Finance & Insurance), seguros de vida y cierres de préstamos vehiculares.
 
-¡Bienvenido! Sigue estos pasos para encender y desplegar tu aplicación premium.
+---
 
-## 1. Encender el Motor (Local)
+## 🛠️ Tecnologías
+* **Motor IA:** Google Gemini API (v1.5 Flash/Pro)
+* **Backend:** Firebase (Functions & Firestore)
+* **Frontend:** HTML5 / Tailwind CSS (Diseño Minimalista)
+* **Seguridad:** Capas de protección anti-prompt injection
 
-1. Abre este proyecto en **Visual Studio Code**.
-2. Abre la terminal y ejecuta:
-   ```bash
-   npm install
-   npm run dev
-   ```
-3. Haz clic en el enlace `http://localhost:5173`.
+## 🧠 Características del Asistente
+El chatbot está entrenado para manejar la lógica compleja de un **F&I Manager**:
+- **Cálculo Consultivo:** Explicación del impacto del pronto (down payment) en el pago mensual.
+- **Asesoría de Seguros:** Integración de pólizas de vida y protección de activos (GAP).
+- **Manejo de Objeciones:** Estrategias para clientes con crédito afectado o puntuaciones bajas.
+- **Captura de Leads:** Flujo optimizado para convertir dudas en citas presenciales.
 
-## 2. Despliegue en Vercel (Producción)
+## 🔒 Seguridad y Privacidad
+Este repositorio incluye una arquitectura de seguridad diseñada para:
+1. Prevenir la revelación de instrucciones internas (System Prompts).
+2. Proteger la identidad y los datos comerciales de la marca.
+3. Garantizar un tono profesional y ético en todas las interacciones.
 
-Esta aplicación está lista para producción en Vercel.
+## 📂 Estructura del Proyecto
+* `/public`: Interfaz web del chat.
+* `/functions`: Lógica de conexión con la API de Gemini.
+* `/prompts`: Manuales de identidad y escenarios de entrenamiento (Few-shot prompting).
+
+## Guía de Inicio Rápido (Local)
+
+1. Abre la terminal y ejecuta:
+    ```bash
+    npm install
+    npm run dev
+    ```
+2. Haz clic en el enlace `http://localhost:5173`.
+
+## Despliegue en Vercel (Producción)
 
 1. **Sube tu código a GitHub.**
 2. **Conecta con Vercel:** Ve a [vercel.com](https://vercel.com) e importa tu repositorio.
-3. **Configura la API Key:** 
-   - En el paso de configuración, busca la sección **Environment Variables**.
-   - Agrega una nueva variable:
+3. **Configura la API Key:**
+   - En **Environment Variables**, agrega:
      - **Key:** `API_KEY`
-     - **Value:** (Pega tu API Key de Google Gemini)
-4. **Build & Deploy:** Haz clic en "Deploy". Vercel detectará automáticamente la configuración de Vite y el archivo `vercel.json`.
+     - **Value:** (Tu API Key de Google Gemini)
+4. **Deploy:** Vercel detectará automáticamente la configuración.
 
-## 3. Configuración de Firebase
-
-Asegúrate de que en la consola de Firebase, en la sección de **Authentication** > **Settings** > **Authorized Domains**, añadas el dominio que te asigne Vercel (ej: `richard-automotive.vercel.app`) para que el login social funcione correctamente.
-
-## 4. Comandos Útiles
-
-- **npm run build:** Genera la versión de producción en la carpeta `/dist`.
-- **npm run preview:** Previsualiza la versión de producción localmente.
+---
+© 2026 Richard Automotive | Richard O. Méndez Matos
+*Expertise en F&I, Seguros y Financiamiento Automotriz.*

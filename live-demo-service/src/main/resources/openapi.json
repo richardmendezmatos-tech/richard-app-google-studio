@@ -1,0 +1,54 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Richard Automotive Enterprise API",
+        "description": "API Core del sistema Fortune 500 para gestión automotriz.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Cloud Architecture Team",
+            "email": "arch@richardautomotive.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8100",
+            "description": "Local Enterprise Node"
+        }
+    ],
+    "paths": {
+        "/health": {
+            "get": {
+                "summary": "System Health Check",
+                "description": "Monitor de salud para K8s y Liveness Probes.",
+                "operationId": "getHealth",
+                "responses": {
+                    "200": {
+                        "description": "Sistema Operativo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "UP"
+                                        },
+                                        "checks": {
+                                            "type": "object",
+                                            "properties": {
+                                                "database": {
+                                                    "type": "string",
+                                                    "example": "OK"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

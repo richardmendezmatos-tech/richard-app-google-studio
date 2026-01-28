@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Car } from '../../types';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Loader2, Sparkles } from 'lucide-react';
 import { useComparison } from '../../contexts/ComparisonContext';
+import { OptimizedImage } from '../OptimizedImage';
 
 interface PremiumGlassCardProps {
     car: Car;
@@ -16,7 +17,6 @@ interface PremiumGlassCardProps {
 const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onToggleSave }) => {
     const navigate = useNavigate();
     const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
     const cardRef = useRef<HTMLButtonElement>(null);
 
     // Check if this specific car is in comparison
@@ -84,19 +84,10 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
                 </div>
 
                 {/* Image */}
-                {!isImageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center z-0">
-                        <Loader2 className="text-[#00aed9] animate-spin relative z-10" size={32} />
-                    </div>
-                )}
-                <img
+                <OptimizedImage
                     src={car.img}
                     alt={car.name}
-                    loading="lazy"
-                    onLoad={() => setIsImageLoaded(true)}
-                    className={`w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10
-                        ${isImageLoaded ? 'opacity-100 scale-100 group-hover:scale-110 group-hover:-rotate-1' : 'opacity-0 scale-95'}
-                    `}
+                    className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-1"
                 />
             </div>
 

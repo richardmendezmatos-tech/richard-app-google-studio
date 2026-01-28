@@ -10,6 +10,7 @@ export interface Car {
   type: CarType;
   badge?: string;
   img: string;
+  images?: string[];
   year?: number;
   featured?: boolean;
   description?: string;
@@ -17,6 +18,7 @@ export interface Car {
   // Analytics
   views?: number;
   leads_count?: number;
+  dealerId?: string;
 }
 
 export enum ViewMode {
@@ -36,7 +38,8 @@ export enum ViewMode {
   VIDEO_STUDIO = 'video_studio',
   VOICE_ASSISTANT = 'voice_assistant',
   DEVOPS = 'devops',
-  SETTINGS = 'settings'
+  SETTINGS = 'settings',
+  DIGITAL_TWIN = 'digital_twin'
 }
 
 export interface ChatMessage {

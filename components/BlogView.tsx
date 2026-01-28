@@ -9,6 +9,8 @@ import { useNotification } from '../contexts/NotificationContext';
 const BlogView: React.FC = () => {
     const [posts, setPosts] = useState<BlogPost[]>([]);
     const [topic, setTopic] = useState('');
+    const [tone, setTone] = useState<'professional' | 'casual' | 'hype'>('professional');
+    const [postType, setPostType] = useState<'news' | 'review' | 'guide'>('news');
     const [isGenerating, setIsGenerating] = useState(false);
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
     const [subscriberEmail, setSubscriberEmail] = useState('');
@@ -22,7 +24,7 @@ const BlogView: React.FC = () => {
         addNotification('info', 'Richard IA está investigando y redactando tu artículo...');
 
         try {
-            const newPost = await generateBlogPost(topic);
+            const newPost = await generateBlogPost(topic, tone, postType);
             setPosts(prev => [newPost, ...prev]);
             setTopic('');
             addNotification('success', '¡Artículo publicado con éxito en el Newsroom!');
@@ -72,6 +74,7 @@ const BlogView: React.FC = () => {
     };
 
     const dummyPosts: BlogPost[] = [
+
         {
             id: '1',
             title: 'El Futuro Eléctrico: ¿Por qué el IONIQ 5 está cambiando el juego?',
@@ -90,41 +93,73 @@ const BlogView: React.FC = () => {
         <div className="p-6 lg:p-12 max-w-[1600px] mx-auto min-h-screen space-y-12">
 
             {/* Header Section */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
+            <header className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8 border-b border-slate-200 dark:border-slate-800 pb-8">
                 <div>
                     <div className="flex items-center gap-2 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em] mb-2 animate-in fade-in">
                         <Newspaper size={14} /> Richard Automotive Newsroom
                     </div>
-                    <h2 className="text-4xl lg:text-5xl font-black text-slate-800 dark:text-white tracking-tighter uppercase leading-none">
-                        AI <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00aed9] to-purple-500">Journalist</span>
+                    <h2 className="text-4xl lg:text-6xl font-black text-slate-800 dark:text-white tracking-tighter uppercase leading-none">
+                        AI <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00aed9] to-purple-500">Journalist 2.0</span>
                     </h2>
-                    <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-xl">
-                        Noticias, reviews y tendencias del mundo automotriz generadas al instante por nuestra inteligencia artificial editorial.
+                    <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-xl text-lg">
+                        El primer sistema de redacción automotriz autónomo.
+                        <span className="block text-sm opacity-60 mt-1">Powered by Gemini 1.5 Flash Pro</span>
                     </p>
                 </div>
 
-                {/* Generator Input */}
-                <div className="w-full md:w-auto flex flex-col gap-2">
-                    <div className="relative group min-w-[320px]">
+                {/* AI CONTROL DECK */}
+                <div className="w-full xl:w-auto bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none animate-in slide-in-from-right duration-500">
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        {/* 1. TONE SELECTOR */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tono Editorial</label>
+                            <div className="flex bg-slate-100 dark:bg-slate-900 rounded-xl p-1">
+                                {['professional', 'casual', 'hype'].map(t => (
+                                    <button
+                                        key={t}
+                                        onClick={() => setTone(t as any)}
+                                        className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all ${tone === t ? 'bg-white dark:bg-slate-700 text-[#00aed9] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                    >
+                                        {t === 'hype' ? '🔥' : t.slice(0, 4)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 2. FORMAT SELECTOR */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Formato</label>
+                            <select
+                                value={postType}
+                                onChange={(e) => setPostType(e.target.value as any)}
+                                className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl px-4 py-2.5 text-xs font-bold uppercase text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#00aed9]"
+                            >
+                                <option value="news">📰 Noticias</option>
+                                <option value="review">⭐ Review</option>
+                                <option value="guide">📘 Guía</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* MAIN INPUT */}
+                    <div className="relative group w-full md:min-w-[400px]">
                         <input
                             type="text"
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
-                            placeholder="Ej. Ventajas de los Híbridos..."
-                            className="w-full pl-6 pr-14 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-[#00aed9] outline-none transition-all shadow-lg"
+                            placeholder={postType === 'review' ? "Ej. Hyundai Tucson 2025..." : "Ej. Ventajas de los Híbridos..."}
+                            className="w-full pl-6 pr-16 py-4 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-[#00aed9] outline-none transition-all font-medium placeholder:text-slate-400"
                             onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
                         />
                         <button
                             onClick={handleGenerate}
                             disabled={isGenerating || !topic.trim()}
-                            className="absolute right-2 top-2 bottom-2 aspect-square bg-[#00aed9] hover:bg-cyan-500 disabled:opacity-50 disabled:bg-slate-500 text-white rounded-xl flex items-center justify-center transition-all shadow-md"
+                            className="absolute right-2 top-2 bottom-2 aspect-square bg-gradient-to-r from-[#00aed9] to-purple-600 hover:from-cyan-400 hover:to-purple-500 disabled:opacity-50 disabled:grayscale text-white rounded-xl flex items-center justify-center transition-all shadow-lg hover:scale-105 active:scale-95"
                         >
-                            {isGenerating ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
+                            {isGenerating ? <Loader2 size={24} className="animate-spin" /> : <Sparkles size={24} />}
                         </button>
                     </div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide pl-2">
-                        * Genera un artículo completo con una sola frase.
-                    </p>
                 </div>
             </header>
 
@@ -154,7 +189,7 @@ const BlogView: React.FC = () => {
                                 <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-3 leading-tight group-hover:text-[#00aed9] transition-colors">
                                     {post.title}
                                 </h3>
-                                <p className="text-slate-500 dark:text-slate-400 line-clamp-3 mb-6 leading-relaxed">
+                                <p className="text-slate-500 dark:text-slate-300 line-clamp-3 mb-6 leading-relaxed">
                                     {post.excerpt}
                                 </p>
                                 <div className="flex items-center text-[#00aed9] font-bold text-xs uppercase tracking-widest gap-2 mt-auto">
@@ -178,7 +213,7 @@ const BlogView: React.FC = () => {
                                     onChange={(e) => setSubscriberEmail(e.target.value)}
                                     placeholder="Tu email"
                                     disabled={isSubscribing}
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm placeholder:text-blue-200/50 outline-none focus:bg-white/20 transition-all disabled:opacity-50"
+                                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-blue-200/50 outline-none focus:bg-white/20 transition-all disabled:opacity-50"
                                     onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
                                 />
                                 <button
@@ -238,8 +273,8 @@ const BlogView: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="p-8 md:p-12 prose prose-lg dark:prose-invert max-w-none">
-                            <p className="lead font-bold text-xl text-slate-600 dark:text-slate-300 mb-8">{selectedPost.excerpt}</p>
+                        <div className="p-8 md:p-12 prose prose-lg dark:prose-invert max-w-none text-slate-700 dark:text-slate-300">
+                            <p className="lead font-bold text-xl text-slate-800 dark:text-white mb-8">{selectedPost.excerpt}</p>
                             <div dangerouslySetInnerHTML={{ __html: selectedPost.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/><br/>').replace(/## (.*)/g, '<h2 class="text-2xl font-bold mt-8 mb-4 text-[#00aed9]">$1</h2>') }} />
                         </div>
 

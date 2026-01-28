@@ -19,6 +19,8 @@ import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from './FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import PremiumGlassCard from './storefront/PremiumGlassCard'; // Premium UI Upgrade
+import { logBehavioralEvent } from '../services/retargetingService';
+import { useDealer } from '../contexts/DealerContext';
 
 interface Props {
     inventory: Car[];
@@ -77,9 +79,15 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         }
 
         setSavedCarIds(prev => {
-            const newSaved = prev.includes(carId)
-                ? prev.filter(id => id !== carId)
-                : [...prev, carId];
+            const isSaving = !prev.includes(carId);
+            const newSaved = isSaving
+                ? [...prev, carId]
+                : prev.filter(id => id !== carId);
+
+            // Retargeting Logic
+            if (isSaving) {
+                logBehavioralEvent({ carId, action: 'garage_add' });
+            }
 
             // Guardar en cookie por 30 días
             setCookie('richard_saved_cars', JSON.stringify(newSaved), 30);
@@ -141,6 +149,8 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         enabled: !searchTerm && !visualContext,
         staleTime: 5 * 60 * 1000,
     });
+
+    const { currentDealer } = useDealer();
 
     // Flatten pages for display
     const serverCars = data?.pages.flatMap(page => page.cars) || [];
@@ -381,7 +391,10 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                                             <PremiumGlassCard
                                                 key={car.id}
                                                 car={car}
-                                                onSelect={() => setSelectedCar(car)}
+                                                onSelect={() => {
+                                                    setSelectedCar(car);
+                                                    logBehavioralEvent({ carId: car.id, action: 'view' });
+                                                }}
                                                 onCompare={(e) => handleToggleCompare(e, car)}
                                                 isComparing={compareList.some(c => c.id === car.id)}
                                                 isSaved={savedCarIds.includes(car.id)}

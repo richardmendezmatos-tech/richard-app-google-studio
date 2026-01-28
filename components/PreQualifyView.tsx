@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, User, Briefcase, Banknote, Calendar, ChevronRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, User, Briefcase, Banknote, Calendar, ChevronRight, Loader2, Eye, EyeOff, MessagesSquare, FileText } from 'lucide-react';
 import { useNotification } from '../contexts/NotificationContext';
 import { submitApplication } from '../services/firebaseService';
 
@@ -12,7 +12,6 @@ interface Props {
 const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const { addNotification } = useNotification();
     const location = useLocation();
-    const navigate = useNavigate();
 
     // Retrieve vehicle context if available
     const dealContext = location.state as {
@@ -25,6 +24,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [showSSN, setShowSSN] = useState(false);
     const [referenceId, setReferenceId] = useState('');
+    // const [processingStage, setProcessingStage] = useState(''); // Removed as per instruction
 
     // Form State
     const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         const d = formData;
         if (currentStep === 1) return d.firstName && d.lastName && d.email && d.phone;
         if (currentStep === 2) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
-        if (currentStep === 3) return d.dob && d.ssn.length >= 4 && d.creditAuth; // Must accept terms
+        if (currentStep === 3) return d.dob && d.ssn.length >= 4 && d.creditAuth;
         return false;
     };
 
@@ -68,148 +68,175 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const prevStep = () => setStep(prev => prev - 1);
 
     const handleSubmit = async () => {
-        if (!validateStep(3)) {
-            addNotification('error', 'Por favor completa la información de identidad.');
-            return;
-        }
+        if (!validateStep(3)) return;
 
         setIsSubmitting(true);
+
+        // Simulation Stages - Removed as per instruction
+        // const stages = [
+        //     "Conectando con Servidor Seguro...",
+        //     "Encriptando Datos (256-bit SSL)...",
+        //     "Consultando Buró de Crédito...",
+        //     "Analizando Capacidad de Pago...",
+        //     "Generando Oferta Preliminar..."
+        // ];
+
+        // for (const stage of stages) {
+        //     setProcessingStage(stage);
+        //     await new Promise(r => setTimeout(r, 800)); // Cinematic delay
+        // }
 
         try {
             const submissionData = {
                 ...formData,
-                // Include Vehicle/Deal Context if available
                 ...(dealContext ? {
                     vehicleInfo: dealContext.vehicle,
                     quote: dealContext.quote,
-                    type: 'finance' // Explicit type
+                    type: 'finance'
                 } : {})
             };
 
             await submitApplication(submissionData);
-            const refId = `REF-${Math.floor(Math.random() * 1000000)}`;
+            // Ethical Change: Reference ID for Case Tracking, not "Approval"
+            const refId = `CASE-${Math.floor(Math.random() * 1000000)}`;
             setReferenceId(refId);
             setIsSuccess(true);
-            addNotification('success', 'Solicitud guardada correctamente en la base de datos.');
         } catch (error) {
             console.error("Error submitting application:", error);
-            addNotification('error', 'Hubo un error al enviar la solicitud. Intenta nuevamente.');
+            addNotification('error', 'Hubo un error al procesar. Intenta nuevamente.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    // SUCCESS VIEW: REALISTIC & SECURE
     if (isSuccess) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-6">
-                <div className="bg-white dark:bg-slate-800 p-12 rounded-[40px] shadow-2xl text-center max-w-lg w-full border border-slate-100 dark:border-slate-700 animate-in zoom-in duration-500">
-                    <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle2 size={48} className="text-emerald-500" />
+            <div className="min-h-screen bg-[#0d2232] flex items-center justify-center p-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                <div className="bg-slate-900/90 backdrop-blur-xl p-12 rounded-[40px] shadow-[0_0_60px_rgba(0,174,217,0.1)] text-center max-w-lg w-full border border-white/10 animate-in zoom-in duration-500 relative z-10">
+                    <div className="w-24 h-24 bg-[#00aed9]/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(0,174,217,0.2)]">
+                        <FileText size={48} className="text-[#00aed9]" />
                     </div>
-                    <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tighter mb-4">¡Pre-Aprobación Recibida!</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
-                        Tus datos han sido procesados y guardados exitosamente en el sistema seguro. Un oficial de finanzas de Richard Automotive te contactará al <strong>{formData.phone}</strong>.
+                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-4">En Revisión por Expertos</h2>
+                    <p className="text-slate-300 mb-8 leading-relaxed font-light">
+                        Tu perfil ha sido asignado a nuestro equipo de <span className="text-[#00aed9] font-bold">Expertos Financieros</span>. Están analizando tu caso manualmente para asegurar las mejores condiciones reales.
+                        <br /><br />
+                        <span className="font-medium text-white">Gracias por confiar en nosotros.</span>
                     </p>
-                    <div className="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-xl mb-8">
-                        <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-1">Número de Referencia</p>
-                        <p className="text-xl font-mono font-bold text-[#00aed9]">{referenceId}</p>
+                    <div className="bg-slate-800 p-6 rounded-2xl mb-8 border border-white/5">
+                        <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-2">Número de Caso</p>
+                        <p className="text-3xl font-mono font-bold text-white tracking-widest">{referenceId}</p>
                     </div>
                     <button
                         onClick={onExit}
                         className="w-full py-4 bg-[#173d57] hover:bg-[#00aed9] text-white rounded-2xl font-bold uppercase tracking-widest transition-all shadow-lg"
                     >
-                        Volver a la Tienda
+                        Volver al Inicio
                     </button>
                 </div>
             </div>
         );
     }
 
+    // SOFIA AI AGENT HELP TEXTS (REALISTIC)
+    const sofiaTips = [
+        "Hola, soy Sofia 👩‍💼. Recopilaré tu información de forma segura para crear tu expediente.",
+        "Estos datos ayudarán a nuestros analistas humanos a encontrar el mejor banco para ti 🏦.",
+        "Tu seguridad es legalmente sagrada 🔒. Esta conexión está encriptada y tus datos solo los verá un oficial autorizado."
+    ];
+
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
-            {/* Header Seguro */}
-            <div className="bg-[#173d57] text-white p-6 shadow-md z-10 flex justify-between items-center">
+        <div className="min-h-screen bg-[#0b1116] text-white flex flex-col font-sans">
+            {/* Fintech Header */}
+            <div className="bg-[#0f1922] border-b border-white/5 p-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
                 <div className="flex items-center gap-4">
-                    <button onClick={onExit} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <button onClick={onExit} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
                         <ArrowLeft />
                     </button>
                     <div>
-                        <h1 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
-                            <ShieldCheck className="text-emerald-400" /> Solicitud Segura
+                        <h1 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+                            <span className="text-[#00aed9]">RICHARD</span> FINANCIAL
                         </h1>
-                        <p className="text-xs text-slate-400 font-mono flex items-center gap-1">
-                            <Lock size={10} /> 256-bit SSL Encrypted Connection
-                        </p>
                     </div>
                 </div>
-                <div className="hidden md:block">
-                    <div className="flex items-center gap-2 text-xs font-bold bg-white/10 px-4 py-2 rounded-full">
-                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                        Servidor Seguro Activo
-                    </div>
+                <div className="flex items-center gap-2 text-[10px] font-bold bg-[#00aed9]/10 text-[#00aed9] px-3 py-1.5 rounded-full border border-[#00aed9]/20">
+                    <Lock size={10} /> SECURE APPLICATION
                 </div>
             </div>
 
-            <main className="flex-1 flex justify-center p-4 md:p-10 overflow-y-auto">
-                <div className="w-full max-w-4xl">
+            <main className="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full">
 
-                    {/* Progress Bar */}
-                    <div className="mb-10 flex justify-between items-center relative">
-                        <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 dark:bg-slate-800 -z-10 rounded-full"></div>
-                        <div
-                            className="absolute top-1/2 left-0 h-1 bg-[#00aed9] -z-10 rounded-full transition-all duration-500"
-                            style={{ width: `${((step - 1) / 2) * 100}%` }}
-                        ></div>
-
-                        {[1, 2, 3].map((s) => (
-                            <div key={s} className={`flex flex-col items-center gap-2 transition-all ${step >= s ? 'opacity-100' : 'opacity-50'}`}>
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-4 transition-all ${step >= s ? 'bg-[#173d57] border-[#00aed9] text-white shadow-lg shadow-cyan-500/30' : 'bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-500'
-                                    }`}>
-                                    {s}
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest hidden md:block text-slate-500 dark:text-slate-400">
-                                    {s === 1 ? 'Contacto' : s === 2 ? 'Ingresos' : 'Identidad'}
-                                </span>
+                {/* Visual Sidebar with Sofia */}
+                <div className="w-full md:w-1/3 p-6 md:p-12 flex flex-col justify-center relative overflow-hidden">
+                    {/* Sofia Avatar Area */}
+                    <div className="relative z-10 bg-slate-800/50 backdrop-blur-xl border border-white/10 p-6 rounded-3xl animate-in slide-in-from-left duration-700">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-[#00aed9]/30">
+                                <img src="https://cdn-icons-png.flaticon.com/512/4128/4128335.png" alt="Sofia AI" className="w-10 h-10 object-cover" />
                             </div>
-                        ))}
+                            <div>
+                                <h3 className="font-bold text-lg">Sofia AI</h3>
+                                <p className="text-xs text-[#00aed9] font-mono">ASISTENTE DE SOLICITUD</p>
+                            </div>
+                        </div>
+                        <div className="relative bg-slate-900/80 p-4 rounded-xl rounded-tl-sm border border-[#00aed9]/20">
+                            <p className="text-sm text-slate-300 leading-relaxed italic">
+                                "{sofiaTips[step - 1]}"
+                            </p>
+                        </div>
                     </div>
+                </div>
 
-                    <div className="bg-white dark:bg-slate-800 rounded-[40px] shadow-xl border border-slate-100 dark:border-slate-700 p-8 md:p-12 animate-in fade-in slide-in-from-bottom-5">
+                {/* Form Area */}
+                <div className="w-full md:w-2/3 p-4 md:p-12 flex items-center justify-center">
+                    <div className="w-full max-w-2xl">
 
-                        {step === 1 && (
-                            <div className="space-y-6 animate-in fade-in">
-                                <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight mb-6 flex items-center gap-3">
-                                    <User className="text-[#00aed9]" /> Información Personal
-                                </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input label="Nombre(s)" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Ej. Juan" />
-                                    <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Ej. Del Pueblo" />
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input label="Teléfono Celular" name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(787) 000-0000" />
-                                    <Input label="Correo Electrónico" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="ejemplo@email.com" />
-                                </div>
-                            </div>
-                        )}
+                        {/* Progress */}
+                        <div className="flex gap-2 mb-8">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-[#00aed9] shadow-[0_0_10px_#00aed9]' : 'bg-slate-800'}`} />
+                            ))}
+                        </div>
 
-                        {step === 2 && (
-                            <div className="space-y-6 animate-in fade-in">
-                                <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight mb-6 flex items-center gap-3">
-                                    <Briefcase className="text-[#00aed9]" /> Empleo e Ingresos
-                                </h2>
-                                <Input label="Dirección Residencial" name="address" value={formData.address} onChange={handleInputChange} placeholder="Calle, Número, Urb..." />
-                                <div className="grid grid-cols-2 gap-6">
-                                    <Input label="Ciudad" name="city" value={formData.city} onChange={handleInputChange} placeholder="San Juan" />
-                                    <Input label="Código Postal" name="zip" value={formData.zip} onChange={handleInputChange} placeholder="009..." />
+                        <div className="bg-[#131f2a] p-8 md:p-10 rounded-[30px] border border-white/5 shadow-2xl relative overflow-hidden">
+                            {/* Loading Overlay */}
+                            {isSubmitting && (
+                                <div className="absolute inset-0 bg-[#0d2232]/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-center p-8 animate-in fade-in duration-300">
+                                    <div className="w-20 h-20 border-4 border-[#00aed9]/30 border-t-[#00aed9] rounded-full animate-spin mb-6"></div>
+                                    <h3 className="text-xl font-bold text-white mb-2 animate-pulse">Encriptando y Enviando...</h3>
+                                    <p className="text-slate-400 font-mono text-xs">Protegiendo sus datos</p>
                                 </div>
-                                <div className="border-t border-slate-100 dark:border-slate-700 my-6"></div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input label="Patrono Actual" name="employer" value={formData.employer} onChange={handleInputChange} placeholder="Nombre de la empresa" />
-                                    <Input label="Puesto / Título" name="jobTitle" value={formData.jobTitle} onChange={handleInputChange} placeholder="Ej. Gerente" />
+                            )}
+
+                            {step === 1 && (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                                    <h2 className="text-3xl font-black text-white mb-6">¿Quién solicita?</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <Input label="Nombre(s)" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Tu nombre oficial" autoFocus />
+                                        <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Tus apellidos" />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <Input label="Móvil (SMS)" name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(787) 000-0000" icon={<MessagesSquare size={16} />} />
+                                        <Input label="Email Personal" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="tu@email.com" />
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            )}
+
+                            {step === 2 && (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                                    <h2 className="text-3xl font-black text-white mb-6">Perfil Financiero</h2>
+                                    <Input label="Dirección Residencial" name="address" value={formData.address} onChange={handleInputChange} placeholder="Dirección completa" autoFocus />
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <Input label="Ciudad" name="city" value={formData.city} onChange={handleInputChange} />
+                                        <Input label="Zip Code" name="zip" value={formData.zip} onChange={handleInputChange} />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <Input label="Patrono / Empresa" name="employer" value={formData.employer} onChange={handleInputChange} icon={<Briefcase size={16} />} />
+                                        <Input label="Puesto / Cargo" name="jobTitle" value={formData.jobTitle} onChange={handleInputChange} />
+                                    </div>
                                     <Input
-                                        label="Ingreso Mensual Bruto ($)"
+                                        label="Ingreso Mensual ($)"
                                         name="monthlyIncome"
                                         type="number"
                                         value={formData.monthlyIncome}
@@ -217,99 +244,73 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                         placeholder="0.00"
                                         icon={<Banknote size={16} />}
                                     />
-                                    <Input label="Tiempo en empleo" name="timeAtJob" value={formData.timeAtJob} onChange={handleInputChange} placeholder="Ej. 2 años" />
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {step === 3 && (
-                            <div className="space-y-6 animate-in fade-in">
-                                <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight mb-6 flex items-center gap-3">
-                                    <Lock className="text-[#00aed9]" /> Identidad Segura
-                                </h2>
-                                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-4 rounded-2xl flex gap-3 mb-6">
-                                    <ShieldCheck className="text-blue-500 shrink-0" />
-                                    <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-                                        Esta información es encriptada y utilizada únicamente para obtener tu reporte de crédito preliminar. No almacenamos tu Seguro Social completo en servidores públicos.
-                                    </p>
-                                </div>
+                            {step === 3 && (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                                    <h2 className="text-3xl font-black text-white mb-6">Seguridad Legal</h2>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Input
-                                        label="Fecha de Nacimiento"
-                                        name="dob"
-                                        type="date"
-                                        value={formData.dob}
-                                        onChange={handleInputChange}
-                                        icon={<Calendar size={16} />}
-                                    />
+                                    <div className="bg-[#00aed9]/10 border border-[#00aed9]/20 p-4 rounded-xl flex gap-3">
+                                        <ShieldCheck className="text-[#00aed9] shrink-0" />
+                                        <p className="text-xs text-[#00aed9] font-medium leading-relaxed">
+                                            Autorización Oficial. Sus datos serán procesados cumpliendo con la Ley de Crédito Justo y Privacidad Financiera.
+                                        </p>
+                                    </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
-                                            Seguro Social (SSN) <span className="text-red-500">*</span>
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type={showSSN ? "text" : "password"}
-                                                name="ssn"
-                                                value={formData.ssn}
-                                                onChange={handleInputChange}
-                                                placeholder="XXX-XX-XXXX"
-                                                className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-700 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300 tracking-widest"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowSSN(!showSSN)}
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#00aed9]"
-                                            >
-                                                {showSSN ? <EyeOff size={20} /> : <Eye size={20} />}
-                                            </button>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <Input label="Fecha Nacimiento" name="dob" type="date" value={formData.dob} onChange={handleInputChange} icon={<Calendar size={16} />} />
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">SSN (Últimos 4)</label>
+                                            <div className="relative">
+                                                <input
+                                                    type={showSSN ? "text" : "password"}
+                                                    name="ssn"
+                                                    value={formData.ssn}
+                                                    onChange={handleInputChange}
+                                                    placeholder="XXX-XX-XXXX"
+                                                    className="w-full bg-[#0b1116] border border-white/10 rounded-xl px-4 py-4 text-white focus:border-[#00aed9] focus:ring-1 focus:ring-[#00aed9] outline-none transition-all text-center tracking-[0.5em] font-mono"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowSSN(!showSSN)}
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                                                >
+                                                    {showSSN ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="mt-6 p-4 bg-slate-100 dark:bg-slate-700/50 rounded-2xl border border-slate-200 dark:border-slate-600">
-                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-4 leading-relaxed text-justify">
-                                        "Acepto y autorizo expresamente a Richard Automotive a consultar mi reporte de crédito e historial financiero a través de las agencias de información crediticia autorizadas. Entiendo que esta consulta se realiza bajo los términos de la Ley de Informes de Crédito Justos (FCRA) y será utilizada exclusivamente para evaluar mi perfil financiero en relación con mi solicitud. He leído y acepto el <Link to="/privacidad" target="_blank" className="underline hover:text-[#00aed9]">Aviso de Privacidad</Link> y los <Link to="/terminos" target="_blank" className="underline hover:text-[#00aed9]">Términos de Uso</Link>."
-                                    </p>
-                                    <div className="flex items-start gap-3">
-                                        <input
-                                            type="checkbox"
-                                            id="autoriza_credito"
-                                            name="creditAuth"
-                                            checked={formData.creditAuth}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, creditAuth: e.target.checked }))}
-                                            className="mt-1 w-5 h-5 rounded-md border-slate-300 text-[#00aed9] focus:ring-[#00aed9] cursor-pointer"
-                                        />
-                                        <label htmlFor="autoriza_credito" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
-                                            He leído y acepto la <span className="text-[#00aed9] underline">Autorización para Consulta de Historial Crediticio</span>.
-                                        </label>
+                                    <div className="mt-4 flex items-start gap-3 p-4 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setFormData(prev => ({ ...prev, creditAuth: !prev.creditAuth }))}>
+                                        <div className={`w-6 h-6 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${formData.creditAuth ? 'bg-[#00aed9] border-[#00aed9]' : 'border-slate-600'}`}>
+                                            {formData.creditAuth && <CheckCircle2 size={16} className="text-white" />}
+                                        </div>
+                                        <p className="text-xs text-slate-400 select-none">
+                                            Autorizo a Richard Automotive a consultar mi reporte de crédito real para propósitos de evaluación financiera. Entiendo que esto es una solicitud de crédito.
+                                        </p>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        <div className="mt-12 flex justify-between items-center pt-8 border-t border-slate-100 dark:border-slate-700">
-                            {step > 1 ? (
+                            <div className="mt-10 flex justify-between items-center">
+                                {step > 1 ? (
+                                    <button onClick={prevStep} className="text-slate-500 hover:text-white font-bold text-sm px-4 py-2 transition-colors">ATRAS</button>
+                                ) : <div></div>}
+
                                 <button
-                                    onClick={prevStep}
-                                    className="px-6 py-3 rounded-xl text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                    onClick={step === 3 ? handleSubmit : nextStep}
+                                    disabled={isSubmitting}
+                                    className="px-10 py-4 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                                 >
-                                    Atrás
+                                    {isSubmitting ? (
+                                        <> <Loader2 className="animate-spin" /> Procesando... </>
+                                    ) : (
+                                        step === 3 ? 'Enviar Solicitud Segura' : <>Siguiente <ChevronRight size={18} /></>
+                                    )}
                                 </button>
-                            ) : <div></div>}
+                            </div>
 
-                            <button
-                                onClick={step === 3 ? handleSubmit : nextStep}
-                                disabled={isSubmitting}
-                                className="px-10 py-4 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                            >
-                                {isSubmitting ? (
-                                    <> <Loader2 className="animate-spin" /> Procesando... </>
-                                ) : (
-                                    step === 3 ? 'Enviar Solicitud Segura' : <>Siguiente <ChevronRight size={18} /></>
-                                )}
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -320,12 +321,12 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
 const Input = ({ label, icon, ...props }: any) => (
     <div className="space-y-2">
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
-            {icon} {label} <span className="text-red-500">*</span>
+        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+            {icon} {label}
         </label>
         <input
             {...props}
-            className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-700 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300"
+            className="w-full bg-[#0b1116] border border-white/10 rounded-xl px-4 py-4 text-white focus:border-[#00aed9] focus:ring-1 focus:ring-[#00aed9] outline-none transition-all placeholder:text-slate-700 font-medium"
         />
     </div>
 );

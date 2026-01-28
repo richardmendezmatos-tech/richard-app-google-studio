@@ -1,5 +1,5 @@
 import { genkit } from 'genkit';
-import { googleAI } from '@genkit-ai/googleai';
+import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 import { vertexAI } from '@genkit-ai/vertexai';
 
 export const ai = genkit({
@@ -7,5 +7,5 @@ export const ai = genkit({
         googleAI(),
         vertexAI({ location: 'us-central1' })
     ],
-    model: 'vertexai/gemini-1.5-flash',
+    model: gemini15Flash,
 });

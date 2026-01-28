@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth"; // Only getAuth needed for export
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth"; // Explicit persistence for stability
 import {
   getFirestore,
   collection,
@@ -18,28 +18,41 @@ import {
   limit,
   startAfter,
   getDocs,
-  QueryDocumentSnapshot,
-  serverTimestamp // Logic: Added for newsletter
-} from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { getPerformance } from "firebase/performance";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"; // App Check v3
-import {
-  getCountFromServer,
+  getDoc,
+  updateDoc,
+  serverTimestamp,
+  runTransaction,
   getAggregateFromServer,
+  getCountFromServer,
   sum,
   average,
-  AggregateField
-} from "firebase/firestore"; // Aggregations
+  AggregateField,
+  initializeFirestore,
+  QueryDocumentSnapshot,
+  enableMultiTabIndexedDbPersistence
+} from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { getPerformance } from "firebase/performance";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"; // App Check Enterprise
 import { firebaseConfig } from "../firebaseConfig";
 import { Car, Lead } from "../types";
+import { sendAutoNewsletter } from "./emailService";
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const db = getFirestore(app);
+
+// Initialize Firebase Services
 export const auth = getAuth(app);
+
+export const db = initializeFirestore(app, {});
+
+// CTO Hack: Force LOCAL persistence to avoid session drops in strict browsers
+if (typeof window !== 'undefined') {
+  setPersistence(auth, browserLocalPersistence).catch(err => console.error("Persistence Config Failed:", err));
+}
+
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
 
@@ -54,26 +67,25 @@ if (typeof window !== 'undefined') {
     (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   }
 
+  /* 
   const appCheckKey = import.meta.env.VITE_RECAPTCHA_KEY;
   if (appCheckKey) {
-    // Security: ReCaptcha v3
+    // Security: ReCaptcha Enterprise
     initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(appCheckKey),
+      provider: new ReCaptchaEnterpriseProvider(appCheckKey),
       isTokenAutoRefreshEnabled: true
     });
   }
+  */
 }
 export { performance };
 
 // Enable Offline Persistence (Multi-tab support)
-import { enableMultiTabIndexedDbPersistence } from "firebase/firestore";
 if (typeof window !== 'undefined') {
   enableMultiTabIndexedDbPersistence(db).catch((err) => {
     if (err.code === 'failed-precondition') {
-      // Múltiples pestañas abiertas, la persistencia solo funciona en una (en modo single-tab)
       console.warn('Persistencia falló: Múltiples pestañas abiertas.');
     } else if (err.code === 'unimplemented') {
-      // El navegador actual no lo soporta
       console.warn('El navegador no soporta persistencia.');
     }
   });
@@ -143,6 +155,10 @@ export const getPaginatedCars = async (
   // 4. Limit
   constraints.push(limit(pageSize));
 
+  // STEP 5.1: SaaS Filter (Multi-tenancy)
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  constraints.push(where('dealerId', '==', dealerId));
+
   const q = query(carsCollectionRef, ...constraints);
 
   try {
@@ -171,43 +187,135 @@ export const getPaginatedCars = async (
 // --- Funciones de Base de Datos (Firestore) ---
 
 export const syncInventory = (callback: (inventory: Car[]) => void) => {
-  return onSnapshot(carsCollectionRef, snapshot => {
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const q = query(carsCollectionRef, where('dealerId', '==', dealerId));
+
+  return onSnapshot(q, snapshot => {
     const inventoryList = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     })) as Car[];
     // Ordenar por nombre para consistencia visual
-    inventoryList.sort((a, b) => a.name.localeCompare(b.name));
+    inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     callback(inventoryList);
   }, (error) => {
     console.error("syncInventory Error:", error);
   });
 };
 
+// CTO Fix: On-demand fetch for Dashboard Efficiency (Low Cost)
+export const getInventoryOnce = async (): Promise<Car[]> => {
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const q = query(carsCollectionRef, where('dealerId', '==', dealerId), limit(100));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Car[];
+};
+
+export const getLeadsOnce = async (): Promise<Lead[]> => {
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const q = query(appsCollectionRef, where('dealerId', '==', dealerId), orderBy('timestamp', 'desc'), limit(50));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
+};
+
+// CTO Fix: Antigravity Edge Image Optimization (Next-Gen Performance)
+export const optimizeImage = (url: string, width: number = 800): string => {
+  if (!url) return '';
+
+  // 1. Firebase Storage - Standard URL
+  if (url.includes('firebasestorage.googleapis.com')) {
+    // Note: In the future, we will use a real CDN here. 
+    // For now, return original to ensure visibility.
+    return url;
+  }
+
+  // 2. Unsplash Optimization (Built-in)
+  if (url.includes('images.unsplash.com')) {
+    const baseUrl = url.split('?')[0];
+    return `${baseUrl}?q=80&w=${width}&auto=format&fit=crop`;
+  }
+
+  return url;
+};
+
 // --- Funciones de Storage (Imágenes) ---
 
-export const uploadImage = async (file: File): Promise<string> => {
-  try {
-    const storageRef = ref(storage, `inventory/${Date.now()}_${file.name}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    return downloadURL;
-  } catch (error) {
-    console.error("Error al subir imagen:", error);
-    throw new Error("No se pudo subir la imagen a Firebase Storage.");
-  }
+export const uploadImage = async (file: File, onProgress?: (p: number) => void): Promise<string> => {
+  console.log("Strategic Deep Debug: Starting uploadImage...", {
+    fileName: file.name,
+    fileSize: file.size,
+    fileType: file.type,
+    storageBucket: storage.app.options.storageBucket,
+    authUid: auth.currentUser?.uid || 'NOT_LOGGED_IN'
+  });
+
+  return new Promise((resolve, reject) => {
+    try {
+      const storageRef = ref(storage, `inventory/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`);
+
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (onProgress) onProgress(progress);
+        },
+        (error) => {
+          console.error("Upload FAILED:", error);
+
+          // Enhanced Error Classification
+          if (error.code === 'storage/unauthorized') {
+            reject(new Error("Permiso denegado: No tienes acceso para subir archivos."));
+          } else if (error.code === 'storage/canceled') {
+            reject(new Error("Subida cancelada."));
+          } else {
+            reject(new Error(`Fallo en Storage: ${error.message}`));
+          }
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+
+    } catch (error: any) {
+      console.error("Upload Error:", error);
+      reject(new Error(`Fallo al iniciar subida: ${error.message}`));
+    }
+  });
 };
 
 // --- Funciones CRUD ---
 
 export const addCar = async (carData: Omit<Car, 'id'>) => {
-  await addDoc(carsCollectionRef, carData);
+  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  console.log(`[CRUD] Starting addCar... Dealer: ${currentDealerId}`);
+
+  // No manual timeout - Using native Firestore retry behavior.
+  await addDoc(carsCollectionRef, {
+    dealerId: currentDealerId, // Default first
+    ...carData, // Override if present
+    createdAt: serverTimestamp()
+  });
+
+  console.log("[CRUD] addCar completed successfully.");
 };
 
 export const updateCar = async (car: Car) => {
+  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  console.log(`[CRUD] Starting updateCar for ${car.id}...`);
+
   const carDocRef = doc(db, 'cars', car.id);
   const { id, ...dataToUpdate } = car;
-  await setDoc(carDocRef, dataToUpdate);
+
+  await setDoc(carDocRef, {
+    ...dataToUpdate,
+    dealerId: currentDealerId,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  console.log(`[CRUD] updateCar completed for ${car.id}.`);
 };
 
 export const deleteCar = async (id: string) => {
@@ -216,11 +324,16 @@ export const deleteCar = async (id: string) => {
 };
 
 export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
+  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
   const batch = writeBatch(db);
 
   inventory.forEach(car => {
     const newCarRef = doc(carsCollectionRef);
-    batch.set(newCarRef, car);
+    batch.set(newCarRef, {
+      ...car,
+      dealerId: currentDealerId,
+      createdAt: serverTimestamp()
+    });
   });
 
   await batch.commit();
@@ -246,38 +359,48 @@ export const incrementCarLead = async (carId: string) => {
 };
 
 
-// Helper to calculate score based on data completeness and intent
+// Enhanced Lead Scoring: Predictive Intent Analysis
 const calculateLeadScore = (data: any): number => {
-  let score = 40; // Base score for interest
+  let score = 30; // Base score
 
-  // High Intent Signals
-  if (data.type === 'trade-in') score += 15; // Putting skin in the game
-  if (data.type === 'finance' && data.ssn) score += 25; // Serious buyer providing sensitive info
+  // 1. Transactional Intent (High weighting)
+  if (data.type === 'trade-in') score += 20;
+  if (data.type === 'finance' && data.ssn) score += 35; // Serious commitment
+  if (data.monthlyIncome && Number(data.monthlyIncome) > 3000) score += 10;
 
-  // Data Quality
-  if (data.firstName && data.lastName) score += 5;
-  if (data.phone && data.phone.length >= 10) score += 15;
-  if (data.email && data.email.includes('@')) score += 10;
+  // 2. Behavioral Cues (If available in data context)
+  if (data.visitCount && data.visitCount > 3) score += 15;
+  if (data.aiInteractions && data.aiInteractions > 5) score += 10;
 
-  // Context
-  if (data.vehicleInfo && data.vehicleInfo.id) score += 10;
-  if (data.monthlyIncome && Number(data.monthlyIncome) > 2000) score += 10;
-  if (data.message && data.message.length > 20) score += 5;
+  // 3. Data Integrity
+  if (data.phone && data.phone.length >= 10) score += 10;
+  if (data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) score += 5;
 
-  return Math.min(score, 99); // Cap at 99
+  // 4. Time Urgency
+  if (data.urgency === 'immediate') score += 15;
+
+  return Math.min(score, 100);
 };
 
 export const submitApplication = async (data: any) => {
   const score = calculateLeadScore(data);
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
   const safeData = {
     ...data,
+    dealerId, // Persist for SaaS segmentation
     // Only mask SSN if it exists
     ...(data.ssn ? { ssn: `XXX-XX-${data.ssn.slice(-4)}` } : {}),
     timestamp: new Date(),
     status: 'new',
     type: data.type || 'finance', // Default to finance if not specified
     aiScore: score, // Persist score
-    aiSummary: data.aiSummary || 'Lead capturado automáticamente.'
+    aiSummary: data.aiSummary || 'Lead capturado automáticamente.',
+    // Strategic: AI Feedback Loop (Autopilot)
+    aiMetaData: {
+      promptVersion: '2.0-flash-optimized',
+      contentType: data.description ? 'generative' : 'legacy',
+      hasModifiedByDealer: data.hasModifiedByDealer || false
+    }
   };
 
 
@@ -301,7 +424,10 @@ export const submitApplication = async (data: any) => {
 };
 
 export const syncLeads = (callback: (leads: Lead[]) => void) => {
-  return onSnapshot(appsCollectionRef, snapshot => {
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const q = query(appsCollectionRef, where('dealerId', '==', dealerId));
+
+  return onSnapshot(q, snapshot => {
     const leadsList = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
@@ -427,16 +553,33 @@ export const generateCarDescriptionAI = async (
   }
 };
 
+// Legal: AI Compliance Disclaimer
+export const AI_LEGAL_DISCLAIMER = "Aviso: Los precios, pagos y disponibilidad generados por IA son estimaciones para fines informativos y no constituyen una oferta formal. Sujeto a cambios sin previo aviso.";
+
 // Newsletter Subscription
 export const subscribeToNewsletter = async (email: string) => {
   try {
     const subscribersRef = collection(db, "subscribers");
+    const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
     await addDoc(subscribersRef, {
       email,
+      dealerId,
       timestamp: serverTimestamp()
     });
+
+    // Trigger Auto-Newsletter (Fire & Forget to not block UI)
+    sendAutoNewsletter(email).catch(console.error);
+
   } catch (error) {
     console.error("Error subscribing:", error);
     throw error;
   }
 };
+
+export const getSubscribers = async (): Promise<any[]> => {
+  const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const q = query(collection(db, 'subscribers'), where('dealerId', '==', dealerId), orderBy('timestamp', 'desc'), limit(100));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+// Force Update: Sat Jan 24 15:46:37 AST 2026

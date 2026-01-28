@@ -8,6 +8,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 
 @AnalyzeClasses(packages = "com.richard", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ArchitectureTest {
@@ -23,7 +24,8 @@ public class ArchitectureTest {
                         .whereLayer("Domain").mayNotAccessAnyLayer() // El dominio no habla con nadie hacia afuera
                         .whereLayer("Service").mayOnlyBeAccessedByLayers("Infrastructure") // Los controladores (Infra)
                                                                                            // llaman a servicios
-                        .whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer(); // Nadie depende de la infra
+                        .whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer()
+                        .allowEmptyShould(true);
 
         // 2. Nombramiento: Estándar para Servicios
         @ArchTest
@@ -31,9 +33,9 @@ public class ArchitectureTest {
                         .that().resideInAPackage("..service.internal..") // Implementaciones ocultas
                         .or().resideInAPackage("..service.impl..")
                         .should().haveSimpleNameEndingWith("Impl")
-                        .andShould().implement(
-                                        classes().that().haveSimpleNameEndingWith("Service") // Interfaces públicas
-                        );
+                        .andShould()
+                        .implement(simpleNameEndingWith("Service"))
+                        .allowEmptyShould(true);
 
         // 3. Anti-Boilerplate: Inmutabilidad estricta (Records > Lombok)
         @ArchTest

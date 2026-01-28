@@ -1,0 +1,74 @@
+
+> richard-automotive@1.0.0 build
+> vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 1597 modules transformed.
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AIConsultant-Ca_jIdrQ.js.gz                      4.15kb / gzip: 1.57kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminLogin-DF10VMCu.js.gz                        5.86kb / gzip: 2.01kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AppraisalView-DkR3jSnq.js.gz                     11.81kb / gzip: 3.66kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/ComparisonView-Rfxe4fLg.js.gz                    8.19kb / gzip: 2.48kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalGarage-BiKuD_Yc.js.gz                     15.67kb / gzip: 4.64kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminPanel-ClvCdzg5.js.gz                        39.67kb / gzip: 11.07kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/TradeInView-CDkBi9fw.js.gz                       8.47kb / gzip: 2.55kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/PreQualifyView-hjoEVIAN.js.gz                    11.72kb / gzip: 3.66kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/PrivacyView-Dtv7pVdJ.js.gz                       5.30kb / gzip: 2.09kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/UserLogin-DpUJCKOi.js.gz                         6.55kb / gzip: 2.49kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/BlogView-DJD3M3Lx.js.gz                          9.35kb / gzip: 3.30kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/TermsView-Dsfky50u.js.gz                         4.74kb / gzip: 2.06kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/VehicleDetail-BAdpySxG.js.gz                     12.07kb / gzip: 4.18kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-action-sheet.entry-rrdi8TIl.js.gz            2.87kb / gzip: 1.05kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal-instance.entry-Bul1V5XC.js.gz   3.33kb / gzip: 1.44kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-Bvd0JlfM.css.gz                            105.58kb / gzip: 15.43kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-CGg4tUPp.js.gz                               1.22kb / gzip: 0.57kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-5zAeFgMX.js.gz                               3.37kb / gzip: 1.08kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal.entry-C-9rkHjR.js.gz            2.91kb / gzip: 1.28kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-toast.entry-DGMdc1aT.js.gz                   1.52kb / gzip: 0.72kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/workbox-window.prod.es5-BIl4cyR9.js.gz           5.63kb / gzip: 2.31kb
+dist//Users/richardmendez/richard-automotive-_-command-center/index.html.gz                                           5.22kb / gzip: 2.30kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera.entry-DiO4Rgd-.js.gz                  22.24kb / gzip: 6.55kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/NotFound-Cm6zUeE9.js.gz                          3.55kb / gzip: 1.48kb
+dist//Users/richardmendez/richard-automotive-_-command-center/sw.js.gz                                                4.38kb / gzip: 1.67kb
+dist//Users/richardmendez/richard-automotive-_-command-center/workbox-1d305bb8.js.gz                                  21.36kb / gzip: 7.26kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-2CdK5uia.js.gz                             3.67kb / gzip: 1.73kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/purify.es-Bzr520pe.js.gz                         21.92kb / gzip: 8.42kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/KanbanBoard-BJxT7CJk.js.gz                       56.55kb / gzip: 19.44kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/html2canvas.esm-DXEQVQnt.js.gz                   196.33kb / gzip: 46.08kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index.es-DLJ14rU2.js.gz                          154.87kb / gzip: 51.53kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pdfGenerator--Bk33_Uv.js.gz                      407.14kb / gzip: 132.27kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AILabView-Du5Q_4RG.js.gz                         983.13kb / gzip: 316.47kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/FrameworkDashboard-DIJ-HHoM.js.gz                1069.14kb / gzip: 327.04kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalTwinDashboard-Z6jwA2VF.js.gz              1145.07kb / gzip: 321.27kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-BRyBM4dg.js.gz                             1219.50kb / gzip: 373.81kb
+
+
+
+PWA v0.19.8
+mode      generateSW
+precache  58 entries (8102.84 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-1d305bb8.js
+✗ Build failed in 4.98s
+error during build:
+[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] There was an error during the build:
+  [vite]: Rollup failed to resolve import "@angular/compiler" from "/Users/richardmendez/richard-automotive-_-command-center/components/AngularWrapper.tsx".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+Additionally, handling the error in the 'buildEnd' hook caused the following error:
+  [vite]: Rollup failed to resolve import "@angular/compiler" from "/Users/richardmendez/richard-automotive-_-command-center/components/AngularWrapper.tsx".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at getRollupError (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:23418:39
+    at async catchUnfinishedHookActions (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:22876:16)
+    at async rollupInternal (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:23401:5)
+    at async buildEnvironment (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33541:12)
+    at async Object.build (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33900:19)
+    at async Object.buildApp (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33897:153)
+    at async CAC.<anonymous> (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/cli.js:629:3)

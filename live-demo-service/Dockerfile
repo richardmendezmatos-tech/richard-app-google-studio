@@ -1,16 +1,21 @@
-FROM ghcr.io/graalvm/native-image-community:21 AS builder
+# Stage 1: Build
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+COPY pom.xml .
 COPY src ./src
-# Build native image
-RUN ./mvnw -Pnative native:compile
+RUN mvn clean package -DskipTests
 
-FROM gcr.io/distroless/base-debian12
-WORKDIR /
-COPY --from=builder /app/target/live-demo-service /app
-# 4. Thread Pinning Detection in Production
-ENV JAVA_TOOL_OPTIONS="-Djdk.tracePinnedThreads=short"
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/target/live-demo-service-1.0.0-SNAPSHOT.jar app.jar
+
+# Configuration
+ENV JAVA_OPTS="-XX:+UseZGC -XX:+ZGenerational"
 EXPOSE 8100
-ENTRYPOINT ["/app"]
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -q --spider http://localhost:8100/health || exit 1
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

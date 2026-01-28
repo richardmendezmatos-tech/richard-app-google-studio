@@ -23,11 +23,15 @@
     "emitDecoratorMetadata": true
   },
   "include": [
+    "src",
     "**/*.ts",
-    "**/*.tsx",
-    "**/*.vue"
+    "**/*.tsx"
   ],
   "exclude": [
+    "node_modules",
+    "dist",
+    "functions",
+    "richard-qwik-marketplace",
     "vite.config.ts"
   ],
   "references": [

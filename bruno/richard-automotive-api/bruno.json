@@ -1,0 +1,9 @@
+{
+    "version": "1",
+    "name": "Richard Automotive Enterprise API",
+    "type": "collection",
+    "ignore": [
+        ".env",
+        ".git"
+    ]
+}

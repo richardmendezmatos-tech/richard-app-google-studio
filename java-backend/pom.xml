@@ -28,6 +28,12 @@
             <version>${resilience4j.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-annotations</artifactId>
+            <version>${resilience4j.version}</version>
+        </dependency>
+
         <!-- Observability Core -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
@@ -58,14 +64,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <compilerArgs>
-                        <!-- Enable Preview Features for AntiGravity Pattern Matching if using JDK 21+ Preview -->
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
 

@@ -1,10 +1,14 @@
-import 'zone.js'; // Must be first for Angular
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import App from './App';
 import './index.css'; // Premium UI Styles
+
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { DealerProvider } from './contexts/DealerContext';
 
 // Initialize Capacitor PWA Elements (Camera, etc.)
 defineCustomElements(window);
@@ -27,8 +31,12 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <Provider store={store}>
+      <DealerProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </DealerProvider>
+    </Provider>
   </React.StrictMode>
 );

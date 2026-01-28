@@ -1,0 +1,70 @@
+# ANTIGRAVITY INFRASTRUCTURE MANIFEST v1.0
+# Project: Richard Automotive Command Center
+# GCP Project ID: richard-automotive
+
+version: 2026.1
+project_id: richard-automotive
+
+# 1. CDN & Edge Optimization
+edge_layer:
+  provider: antigravity-global-edge
+  origin: firebase-hosting
+  cache_policies:
+    - path: "/assets/**"
+      ttl: 31536000
+      stale_while_revalidate: 86400
+    - path: "/index.html"
+      ttl: 60
+      priority: low-latency
+  compression:
+    brotli: true
+    gzip: true
+
+# 2. Storage Lifecycle Management
+storage_buckets:
+  - id: richard-automotive.firebasestorage.app
+    policies:
+      - name: auto-archive-old-inventory
+        condition:
+          age_days: 30
+          access_frequency: null # Files not accessed in 30 days
+        action:
+          type: move_to_class
+          storage_class: ARCHIVE # Significant cost reduction
+    monitoring:
+      alert_on_size_increase_gb: 5
+
+# 3. Security & WAF (L7 Firewall)
+security:
+  waf:
+    enabled: true
+    mode: prevention
+    rulesets_applied:
+      - owasp-top-10
+      - firebase-anti-bruteforce
+  cloud_functions_shield:
+    proxy_through_edge: true
+    headers_required: [X-Antigravity-Token]
+
+# 4. Monitoring & Alarms
+observability:
+  metrics:
+    firestore_latency:
+      threshold: 200ms
+      alert_channel: antigravity-dashboard-ceo
+      action: auto-optimize-indexes
+    error_rate:
+      threshold: 1%
+      period: 5m
+
+# 5. Deployment Orchestration
+pipeline:
+  trigger:
+    branch: production
+    repo: richard-automotive-command-center
+  pre_deploy_tests:
+    - lighthouse-performance
+    - firebase-rule-validation
+  deployment_target:
+    type: firebase-hosting
+    concurrency: BlueGreen
