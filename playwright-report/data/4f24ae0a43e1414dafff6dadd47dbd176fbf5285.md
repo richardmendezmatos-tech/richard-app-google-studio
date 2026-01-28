@@ -1,0 +1,361 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: RICHARDAUTO
+      - button [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+    - navigation [ref=e8]:
+      - heading "RICHARD AUTOMOTIVE" [level=1] [ref=e10] [cursor=pointer]:
+        - text: RICHARD
+        - text: AUTOMOTIVE
+      - generic [ref=e11]:
+        - button "Tienda Digital" [ref=e12] [cursor=pointer]:
+          - img [ref=e15]
+          - generic [ref=e18]: Tienda Digital
+        - button "Mi Garaje" [ref=e19] [cursor=pointer]:
+          - img [ref=e22]
+          - generic [ref=e25]: Mi Garaje
+        - button "Pre-Cualificación" [ref=e26] [cursor=pointer]:
+          - img [ref=e29]
+          - generic [ref=e33]: Pre-Cualificación
+        - button "Vender mi Auto" [ref=e34] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e41]: Vender mi Auto
+        - button "Consultor IA" [ref=e42] [cursor=pointer]:
+          - img [ref=e45]
+          - generic [ref=e48]: Consultor IA
+        - button "AI Newsroom" [ref=e49] [cursor=pointer]:
+          - img [ref=e52]
+          - generic [ref=e55]: AI Newsroom
+        - button "Framework Lab" [ref=e56] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Framework Lab
+        - button "Iniciar Sesión" [ref=e64] [cursor=pointer]:
+          - img [ref=e67]
+          - generic [ref=e70]: Iniciar Sesión
+        - button "Laboratorio IA" [ref=e72] [cursor=pointer]:
+          - img [ref=e75]
+          - generic [ref=e77]: Laboratorio IA
+      - button "Activar modo oscuro" [ref=e79] [cursor=pointer]:
+        - img [ref=e80]
+    - main [ref=e82]:
+      - button [ref=e84] [cursor=pointer]:
+        - img [ref=e85]
+      - link "Habla con Richard IA" [ref=e88] [cursor=pointer]:
+        - /url: https://wa.me/17875550123?text=Hola%2C%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n%20sobre%20su%20inventario.
+        - img [ref=e89]
+        - generic: Habla con Richard IA
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - img [ref=e95]
+              - heading "Multi-Framework Core" [level=1] [ref=e98]
+            - paragraph [ref=e99]: Sistema de orquestación en tiempo real sincronizando tres frameworks independientes:React +Vue +Angular
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Global Event Bus
+              - generic [ref=e105]: Active
+            - button [ref=e106] [cursor=pointer]:
+              - img [ref=e107]
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - paragraph [ref=e112]: Total Framework Interaction
+            - paragraph [ref=e113]: "1"
+          - generic [ref=e114]:
+            - paragraph [ref=e115]: Last Source
+            - paragraph [ref=e116]: Vue
+          - generic [ref=e117]:
+            - paragraph [ref=e118]: Last Action
+            - paragraph [ref=e119]: Incremented Count
+        - generic [ref=e120]:
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - img [ref=e126]
+              - generic [ref=e130]:
+                - heading "React Native" [level=2] [ref=e131]
+                - paragraph [ref=e132]: Component Runtime
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - paragraph [ref=e136]: Global Shared Count
+                - heading "1" [level=3] [ref=e137]
+              - generic [ref=e138]:
+                - paragraph [ref=e139]: State Source
+                - generic [ref=e140]: Vue
+            - generic [ref=e141]:
+              - button "React Push" [ref=e142] [cursor=pointer]
+              - button "Reset" [ref=e143] [cursor=pointer]
+            - generic [ref=e144]:
+              - paragraph [ref=e147]: Active State
+              - paragraph [ref=e148]: Richard Automotive
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - img [ref=e156]
+              - generic [ref=e160]:
+                - heading "Vue Layer" [level=2] [ref=e161]
+                - paragraph [ref=e162]: State Subscriber
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - paragraph [ref=e166]: Global Shared Count
+                - heading "1" [level=3] [ref=e167]
+              - generic [ref=e168]:
+                - paragraph [ref=e169]: Last Action From
+                - paragraph [ref=e170]: Vue
+            - generic [ref=e171]:
+              - button "Push State" [active] [ref=e172] [cursor=pointer]
+              - button "Reset" [ref=e173] [cursor=pointer]
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - img [ref=e182]
+              - generic [ref=e185]:
+                - heading "Angular Core" [level=2] [ref=e186]
+                - paragraph [ref=e187]: Reactive Subscriber
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - paragraph [ref=e191]: Global Shared Count
+                - heading "0" [level=3] [ref=e192]
+              - generic [ref=e193]:
+                - paragraph [ref=e194]: Last Action From
+                - paragraph [ref=e195]: System
+            - generic [ref=e196]:
+              - button "Emit State" [ref=e197] [cursor=pointer]
+              - button "Reset" [ref=e198] [cursor=pointer]
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - img [ref=e205]
+              - generic [ref=e207]:
+                - heading "Svelte Cyber" [level=2] [ref=e208]
+                - paragraph [ref=e209]: Compiled Component
+            - generic [ref=e211]:
+              - generic [ref=e212]:
+                - paragraph [ref=e213]: Global Shared Count
+                - heading "1" [level=3] [ref=e214]
+              - generic [ref=e215]:
+                - paragraph [ref=e216]: Last Action From
+                - paragraph [ref=e217]: Vue
+            - generic [ref=e218]:
+              - button "Mutate State" [ref=e219] [cursor=pointer]
+              - button "Reset" [ref=e220] [cursor=pointer]
+          - generic [ref=e224]:
+            - generic [ref=e225]:
+              - img [ref=e227]
+              - generic [ref=e229]:
+                - heading "Solid Flux" [level=2] [ref=e230]
+                - paragraph [ref=e231]: Fine-Grained Reactivity
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - paragraph [ref=e235]: Global Shared Count
+                - heading "1" [level=3] [ref=e236]
+              - generic [ref=e237]:
+                - paragraph [ref=e238]: Last Action From
+                - paragraph [ref=e239]: Vue
+            - generic [ref=e240]:
+              - button "Signal Update" [ref=e241] [cursor=pointer]
+              - button "Reset" [ref=e242] [cursor=pointer]
+          - generic [ref=e246]:
+            - generic [ref=e247]:
+              - img [ref=e249]
+              - generic [ref=e254]:
+                - heading "Astro Islands" [level=2] [ref=e255]
+                - paragraph [ref=e256]: Static-First Architecture
+            - generic [ref=e257]:
+              - generic [ref=e259]: HTML
+              - generic [ref=e260]:
+                - paragraph [ref=e261]: Astro renders to pure HTML by default. This "Island" represents a static zone with hydrated interactive bits only where needed.
+                - generic [ref=e262]:
+                  - generic [ref=e263]: Zero JS Default
+                  - generic [ref=e264]: Partial Hydration
+            - button "View Build Output" [ref=e265] [cursor=pointer]
+          - generic [ref=e268]:
+            - generic [ref=e269]:
+              - img [ref=e271]
+              - generic [ref=e273]:
+                - heading "Passport.js Node" [level=2] [ref=e274]
+                - paragraph [ref=e275]: Express Auth Layer
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - img [ref=e278]
+                - textbox "Email (ej. admin@richard.com)" [ref=e281]
+              - generic [ref=e282]:
+                - img [ref=e283]
+                - textbox "Password" [ref=e286]: richard2026
+              - button "Login con Passport" [ref=e287] [cursor=pointer]:
+                - img [ref=e288]
+                - text: Login con Passport
+          - generic [ref=e295]:
+            - generic [ref=e296]:
+              - img [ref=e298]
+              - generic [ref=e302]:
+                - heading "jQuery Legacy" [level=2] [ref=e303]
+                - paragraph [ref=e304]: Direct DOM Operator
+            - generic [ref=e306]:
+              - generic [ref=e307]:
+                - paragraph [ref=e308]: Global Shared Count
+                - heading "1" [level=3] [ref=e309]
+              - generic [ref=e310]:
+                - paragraph [ref=e311]: Last Action From
+                - paragraph [ref=e312]: Vue
+            - generic [ref=e313]:
+              - button "Legacy Push" [ref=e314] [cursor=pointer]
+              - button "Reset" [ref=e315] [cursor=pointer]
+          - generic [ref=e318]:
+            - generic [ref=e319]:
+              - img [ref=e321]
+              - generic [ref=e323]:
+                - heading "Memcached Layer" [level=2] [ref=e324]
+                - paragraph [ref=e325]: Performance Accelerator
+            - generic [ref=e326]:
+              - generic [ref=e327]:
+                - generic [ref=e328]:
+                  - generic [ref=e329]:
+                    - img [ref=e330]
+                    - paragraph [ref=e333]: Latency
+                  - paragraph [ref=e334]: "--"
+                - generic [ref=e335]:
+                  - generic [ref=e336]:
+                    - img [ref=e337]
+                    - paragraph [ref=e340]: Status
+                  - paragraph [ref=e341]: Idle
+              - generic [ref=e342]:
+                - paragraph [ref=e343]: Service Output
+                - paragraph [ref=e344]: Presiona el botón para testear la aceleración de caché de IA.
+              - button "Test AI Speed" [ref=e345] [cursor=pointer]:
+                - img [ref=e346]
+                - text: Test AI Speed
+              - paragraph [ref=e351]: "Primera carga: Procesando vía Gemini AI"
+          - generic [ref=e354]:
+            - generic [ref=e355]:
+              - img [ref=e357]
+              - generic [ref=e361]:
+                - heading "PHP Bridge" [level=2] [ref=e362]
+                - paragraph [ref=e363]: Legacy API Interface
+            - generic [ref=e364]:
+              - generic [ref=e365]:
+                - generic [ref=e366]:
+                  - generic [ref=e367]: bridge.php
+                  - generic [ref=e368]: v8.2.12
+                - paragraph [ref=e369]: Esperando ejecución de script...
+              - button "Execute PHP Script" [ref=e370] [cursor=pointer]:
+                - img [ref=e371]
+                - text: Execute PHP Script
+              - generic [ref=e373]:
+                - generic [ref=e374]:
+                  - img [ref=e375]
+                  - generic [ref=e378]:
+                    - generic [ref=e379]: Runtime
+                    - generic [ref=e380]: Apache/CGI
+                - generic [ref=e381]:
+                  - img [ref=e382]
+                  - generic [ref=e385]:
+                    - generic [ref=e386]: Memory
+                    - generic [ref=e387]: 0MB
+          - generic [ref=e390]:
+            - generic [ref=e391]:
+              - img [ref=e393]
+              - generic [ref=e396]:
+                - heading "Vertex AI" [level=2] [ref=e397]
+                - paragraph [ref=e398]: Enterprise Foundation
+            - generic [ref=e399]:
+              - generic [ref=e400]:
+                - generic [ref=e401]:
+                  - img [ref=e402]
+                  - generic [ref=e404]: "Model: gemini-1.5-flash (Vertex)"
+                - generic [ref=e405]:
+                  - img [ref=e406]
+                  - paragraph [ref=e409]: Ready for Enterprise Grounding & Safety Validation
+              - button "Test Vertex AI Flow" [ref=e410] [cursor=pointer]:
+                - img [ref=e411]
+                - text: Test Vertex AI Flow
+              - generic [ref=e414]:
+                - generic [ref=e415]:
+                  - img [ref=e416]
+                  - generic [ref=e418]: "Grounding: Active"
+                - generic [ref=e419]:
+                  - img [ref=e420]
+                  - generic [ref=e423]: "Safety: Level 4"
+          - generic [ref=e426]:
+            - generic [ref=e427]:
+              - img [ref=e429]
+              - generic [ref=e431]:
+                - heading "Búsqueda Semántica" [level=2] [ref=e432]
+                - paragraph [ref=e433]: Búsqueda RAG (AI Powered)
+            - generic [ref=e434]:
+              - 'textbox "Ej: ''carro familiar con poco millaje''..." [ref=e435]'
+              - button [ref=e436] [cursor=pointer]:
+                - img [ref=e437]
+            - generic [ref=e441]:
+              - img [ref=e442]
+              - paragraph [ref=e446]: Navega por el inventario usando lenguaje natural
+            - generic [ref=e447]:
+              - generic [ref=e448]: Vertex Embeddings v4
+              - generic [ref=e449]: "Cosine Similarity: Active"
+          - generic [ref=e451]:
+            - generic [ref=e452]:
+              - generic [ref=e453]:
+                - img [ref=e455]
+                - generic [ref=e468]:
+                  - heading "Richard AI" [level=2] [ref=e469]
+                  - paragraph [ref=e470]: Autonomous Orchestrator v4.0
+              - generic [ref=e471]:
+                - generic [ref=e472]:
+                  - img [ref=e473]
+                  - generic [ref=e475]: 240ms
+                - button "Activar Richard Voice" [ref=e476] [cursor=pointer]:
+                  - img [ref=e477]
+            - generic [ref=e480]:
+              - generic [ref=e481]:
+                - generic [ref=e482]:
+                  - img [ref=e483]
+                  - img [ref=e487]
+                - paragraph [ref=e490]: Vector DB
+                - heading "ready" [level=3] [ref=e491]
+              - generic [ref=e492]:
+                - generic [ref=e493]:
+                  - img [ref=e494]
+                  - img [ref=e496]
+                - paragraph [ref=e499]: Compute
+                - heading "online" [level=3] [ref=e500]
+            - button "Re-index Car Inventory" [ref=e502] [cursor=pointer]:
+              - img [ref=e503]
+              - text: Re-index Car Inventory
+            - generic [ref=e508]:
+              - generic [ref=e509]:
+                - img [ref=e510]
+                - generic [ref=e512]: Live AI Execution Log
+              - generic [ref=e513]:
+                - generic [ref=e514]:
+                  - generic [ref=e515]: "[0]"
+                  - generic [ref=e516]: "[SYSTEM] AI Node Initialized"
+                - generic [ref=e517]:
+                  - generic [ref=e518]: "[1]"
+                  - generic [ref=e519]: "[VERIFY] Vertex AI Auth Successful"
+                - generic [ref=e520]:
+                  - generic [ref=e521]: "[2]"
+                  - generic [ref=e522]: "[CACHE] Memcached Heat Map: 84% Hit Ratio"
+            - generic [ref=e523]:
+              - generic [ref=e524]:
+                - img [ref=e525]
+                - generic [ref=e528]: "Loom Virtual Threads: Optimized"
+              - link "View Detailed Metrics" [ref=e529] [cursor=pointer]:
+                - /url: "#"
+                - text: View Detailed Metrics
+                - img [ref=e530]
+        - paragraph [ref=e534]: Richard Automotive Engineering • Experimental Multi-Runtime v1.0
+      - generic [ref=e536]:
+        - img [ref=e539]
+        - generic [ref=e541]:
+          - heading "Valoramos tu Privacidad" [level=4] [ref=e542]
+          - paragraph [ref=e543]: Utilizamos cookies propias y de terceros para mejorar tu experiencia de navegación, analizar el tráfico del sitio y personalizar el contenido del inventario. Al hacer clic en "Aceptar todo", consientes el uso de todas las cookies.
+        - generic [ref=e544]:
+          - button "Rechazar" [ref=e545] [cursor=pointer]
+          - button "Aceptar Todo" [ref=e546] [cursor=pointer]:
+            - img [ref=e547]
+            - text: Aceptar Todo
+        - button [ref=e550] [cursor=pointer]:
+          - img [ref=e551]
+  - iframe [ref=e554]:
+    
+```

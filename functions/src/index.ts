@@ -62,6 +62,8 @@ export const generateCarDescription = ai.defineFlow(
 export const generateDescription = onCallGenkit({
     authPolicy: () => true, // Allow all for dev/demo purposes
     cors: true,
+    minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
+    memory: "512MiB",
 }, generateCarDescription);
 
 // --- Semantic Search Flow ---
@@ -80,6 +82,8 @@ export const semanticCarSearch = ai.defineFlow(
 export const searchCarsSemantic = onCallGenkit({
     authPolicy: () => true,
     cors: true,
+    minInstances: 1, // CTO: Instant AI search for premium UX
+    memory: "512MiB",
 }, semanticCarSearch);
 
 export const reindexInventory = ai.defineFlow(
@@ -118,10 +122,10 @@ export const analyzeLead = ai.defineFlow(
             vehicleId: z.string().optional()
         }),
         outputSchema: z.object({
-            score: z.number().describe("Score from 1-100 based on financial stability"),
-            category: z.enum(["High Potential", "Standard", "Needs Review"]),
-            summary: z.string().describe("Brief analysis for the sales agent"),
-            recommendedAction: z.string()
+            cliente_score: z.number().describe("Score from 1-100 based on financial stability"),
+            unidad_interes: z.string().describe("The vehicle the client is interested in"),
+            siguiente_paso: z.string().describe("Recommended next step for the sales agent"),
+            resumen: z.string().describe("Brief analysis for the sales agent")
         })
     },
     async (input) => {
@@ -149,12 +153,12 @@ export const analyzeLead = ai.defineFlow(
 
         Si el vehículo es costoso y el ingreso bajo, ajusta el score y la recomendación.
         
-        Responde ESTRICTAMENTE con este JSON:
+        Respond STRICTLY with this JSON (Spanish Keys):
         {
-            "score": (número 1-100 basado en estabilidad financiera y capacidad de compra),
-            "category": ("High Potential" | "Standard" | "Needs Review"),
-            "summary": (Breve análisis de 1 frase considerando el auto de interés),
-            "recommendedAction": (Acción recomendada para el vendedor)
+            "cliente_score": (número 1-100),
+            "unidad_interes": (Modelo del auto o "General"),
+            "siguiente_paso": (Acción recomendada: "Llamar ahora", "Pedir documentos", "Enviar inventario"),
+            "resumen": (Breve análisis de 1 frase)
         }
         `;
 
@@ -352,7 +356,7 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
         try {
             await sendNotificationEmail({
                 to: 'richardmendezmatos@gmail.com',
-                subject: `New Lead - ${data.firstName} ${data.lastName} (${analysis.category})`,
+                subject: `New Lead - ${data.firstName} ${data.lastName} (Score: ${analysis.cliente_score})`,
                 html: `
                     <h2>New Lead Received</h2>
                     <p><strong>Applicant:</strong> ${data.firstName} ${data.lastName}</p>
@@ -360,10 +364,10 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
                     <p><strong>Email:</strong> ${data.email}</p>
                     <hr>
                     <h3>AI Analysis</h3>
-                    <p><strong>Score:</strong> ${analysis.score}/100</p>
-                    <p><strong>Category:</strong> ${analysis.category}</p>
-                    <p><strong>Summary:</strong> ${analysis.summary}</p>
-                    <p><strong>Recommended Action:</strong> ${analysis.recommendedAction}</p>
+                    <p><strong>Score:</strong> ${analysis.cliente_score}/100</p>
+                    <p><strong>Interés:</strong> ${analysis.unidad_interes}</p>
+                    <p><strong>Resumen:</strong> ${analysis.resumen}</p>
+                    <p><strong>Siguiente Paso:</strong> ${analysis.siguiente_paso}</p>
                 `
             });
 
@@ -384,7 +388,7 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
 
         await snapshot.ref.update({
             aiAnalysis: analysis,
-            status: analysis.score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
+            status: analysis.cliente_score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
             emailSent: true,
             lastContacted: new Date()
         });
@@ -579,6 +583,9 @@ export const onLeadStatusChange = onDocumentUpdated('applications/{leadId}', asy
 import authApp from './authApp';
 export const authApi = onRequest({ cors: true }, authApp);
 
+// Google One Tap Verification
+export { verifyGoogleToken } from './googleOneTap';
+
 // Start a flow server for local development handling stream requests
 import { startFlowServer } from '@genkit-ai/express';
 if (process.env.GENKIT_ENV === 'dev') {
@@ -589,3 +596,5 @@ if (process.env.GENKIT_ENV === 'dev') {
     });
 }
 
+// --- AI Evaluation Pipeline ---
+export { triggerEval } from './evals';

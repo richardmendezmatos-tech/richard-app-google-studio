@@ -1,9 +1,13 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook } from '../services/authService';
+import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential } from '../services/authService';
+import { auth } from '../services/firebaseService';
+import { getRedirectResult } from 'firebase/auth';
 import { ArrowRight, Zap, Check, X, Apple, Chrome, Globe, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlice';
 
 const UserLogin: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -12,27 +16,83 @@ const UserLogin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the path the user was trying to access before being redirected to login.
   const from = location.state?.from?.pathname || "/";
+
+  // --- Google One Tap Integration ---
+  React.useEffect(() => {
+    // Only show One Tap if not already loading and not on mobile (popups often fail)
+    if (loading || isRegistering) return;
+
+    const initializeOneTap = () => {
+      if (!(window as any).google) return;
+
+      (window as any).google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: async (response: any) => {
+          setLoading(true);
+          dispatch(loginStart());
+          try {
+            const user = await signInWithGoogleCredential(response.credential);
+            dispatch(loginSuccess(user));
+            navigate(from, { replace: true });
+          } catch (err: any) {
+            setError(getErrorMsg(err));
+            dispatch(loginFailure(getErrorMsg(err)));
+          } finally {
+            setLoading(false);
+          }
+        },
+        cancel_on_tap_outside: false
+      });
+
+      (window as any).google.accounts.id.prompt();
+    };
+
+    // Wait for script to load
+    const timer = setTimeout(initializeOneTap, 1500);
+    return () => clearTimeout(timer);
+  }, [isRegistering, loading]);
+
+  // Handle successful redirect return
+  React.useEffect(() => {
+    const checkRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          dispatch(loginSuccess(result.user));
+          navigate(from, { replace: true });
+        }
+      } catch (err: any) {
+        setError(getErrorMsg(err));
+      }
+    };
+    checkRedirect();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    dispatch(loginStart());
 
     try {
+      let user;
       if (isRegistering) {
-        await signUpWithEmail(email, password);
+        user = await signUpWithEmail(email, password);
       } else {
-        await signInWithEmail(email, password);
+        user = await signInWithEmail(email, password);
       }
+      dispatch(loginSuccess(user));
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error(err);
-      handleAuthError(err);
+      const msg = getErrorMsg(err);
+      setError(msg); // Keep local for now
+      dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
     }
@@ -41,28 +101,47 @@ const UserLogin: React.FC = () => {
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setLoading(true);
     setError(null);
+    dispatch(loginStart());
     try {
-      if (provider === 'google') await signInWithGoogle();
-      if (provider === 'facebook') await signInWithFacebook();
-      navigate(from, { replace: true });
+      let user;
+      if (provider === 'google') user = await signInWithGoogle();
+      if (provider === 'facebook') user = await signInWithFacebook();
+
+      if (user) {
+        dispatch(loginSuccess(user));
+        navigate(from, { replace: true });
+      }
     } catch (err: any) {
       console.error(err);
-      handleAuthError(err);
+      const msg = getErrorMsg(err);
+      setError(msg);
+      dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAuthError = (err: any) => {
-    if (err.message.includes('ADMIN_PORTAL_ONLY')) {
-      setError('Acceso no autorizado en este portal. Use el portal administrativo.');
+  const getErrorMsg = (err: any) => {
+    console.error("Auth Debug Details:", err); // Critical for remote debugging
+    if (err.message?.includes('ADMIN_PORTAL_ONLY')) {
+      return 'Acceso no autorizado en este portal. Use el portal administrativo.';
     } else if (err.code === 'auth/email-already-in-use') {
-      setError('Este correo ya está registrado.');
+      return 'Este correo ya está registrado.';
     } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-      setError('Credenciales incorrectas.');
+      return 'Credenciales incorrectas.';
+    } else if (err.code === 'auth/popup-closed-by-user') {
+      return 'La ventana de inicio de sesión se cerró antes de completar.';
+    } else if (err.code === 'auth/cancelled-popup-request') {
+      return 'Solicitud de inicio de sesión cancelada.';
+    } else if (err.message?.includes('projectconfigservice.getprojectconfig-are-blocked')) {
+      return 'ERROR CRÍTICO: La API de Autenticación está bloqueada en Google Cloud Console. Por favor, habilite el "Identity Toolkit API" para su API Key.';
     } else {
-      setError('Error de autenticación. Intente nuevamente.');
+      return `Error (${err.code || 'unknown'}): ${err.message || 'Intente nuevamente'}`;
     }
+  };
+  // Kept handleAuthError alias if needed or just replace usages
+  const handleAuthError = (err: any) => {
+    setError(getErrorMsg(err));
   };
 
   return (
@@ -87,12 +166,27 @@ const UserLogin: React.FC = () => {
 
         {!isRegistering && (
           <div className="px-10 pb-6 space-y-3">
-            <button onClick={() => handleSocialLogin('google')} className="w-full social-button bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
-              <Chrome size={20} /><span>Continuar con Google</span>
+            <button
+              onClick={() => handleSocialLogin('google')}
+              className="w-full social-button bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:shadow-lg hover:shadow-cyan-500/10 transition-all active:scale-95"
+            >
+              <Chrome size={20} className="text-[#4285F4]" />
+              <span className="font-bold">Continuar con Google</span>
             </button>
-            <button className="w-full social-button bg-black text-white hover:bg-slate-900">
-              <Apple size={20} /><span>Continuar con Apple</span>
+
+            <button
+              onClick={() => handleSocialLogin('facebook')}
+              className="w-full social-button bg-[#1877F2] text-white hover:bg-[#166fe5] shadow-lg shadow-[#1877F2]/20 transition-all active:scale-95"
+            >
+              <Globe size={20} />
+              <span className="font-bold">Continuar con Facebook</span>
             </button>
+
+            <button className="w-full social-button bg-black text-white hover:bg-slate-900 transition-all active:scale-95">
+              <Apple size={20} />
+              <span className="font-bold">Continuar con Apple</span>
+            </button>
+
             <div className="divider">O usa tu email</div>
           </div>
         )}

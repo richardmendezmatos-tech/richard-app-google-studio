@@ -1,4 +1,4 @@
 /Users/richardmendez/richard-automotive-_-command-center/live-demo-service/src/main/java/com/richard/live/LiveDemoServiceApplication.java
+/Users/richardmendez/richard-automotive-_-command-center/live-demo-service/src/main/java/com/richard/live/domain/PlaceholderDomain.java
 /Users/richardmendez/richard-automotive-_-command-center/live-demo-service/src/main/java/com/richard/live/infrastructure/web/PlaceholderController.java
 /Users/richardmendez/richard-automotive-_-command-center/live-demo-service/src/main/java/com/richard/live/service/internal/PlaceholderServiceImpl.java
-/Users/richardmendez/richard-automotive-_-command-center/live-demo-service/src/main/java/com/richard/live/domain/PlaceholderDomain.java

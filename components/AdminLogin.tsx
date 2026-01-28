@@ -1,11 +1,18 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import { loginAdmin } from '../services/authService';
+import { loginAdmin, loginWithPasskey } from '../services/authService';
 import { ShieldAlert, Fingerprint, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Import for "trusting" the passkey result
+import { auth } from '../services/firebaseService';
+import GoogleOneTap from './GoogleOneTap';
+
+import { useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlice';
 
 const AdminLogin: React.FC = () => {
+  // ... existing state ...
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -13,55 +20,134 @@ const AdminLogin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  // CTO: Ghost Mode Listener
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get('richard_key');
+    if (key) {
+      handleGhostLogin(key);
+    }
+  }, []);
+
+  const handleGhostLogin = async (key: string) => {
     setLoading(true);
-
+    setError("Activando Protocolo Ghost de CTO...");
     try {
-      await loginAdmin(email, password, twoFactorCode || '123456');
+      const { validateGhostKey } = await import('../services/authService');
+      const user = await validateGhostKey(key);
+      dispatch(loginSuccess(user));
       navigate('/admin');
     } catch (err: any) {
-      console.error('Login Error Details:', err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        setError('Credenciales incorrectas');
-      } else if (err.message.includes('ACCESS_DENIED')) {
-        setError('Cuenta no autorizada (Verifica tu Rol)');
-      } else if (err.message.includes('INVALID_2FA')) {
-        setError('Token 2FA incorrecto (Usa 123456)');
-      } else {
-        setError(`Error: ${err.code || err.message || 'Desconocido'}`);
-      }
+      setError("Llave Maestra Rechazada.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePasskeyLogin = () => {
-    // Simulación de WebAuthn
+  const handleMagicLink = async () => {
+    if (!email) return setError("Ingresa tu email primero");
     setLoading(true);
-    setTimeout(() => {
-      setError('Dispositivo Passkey no detectado (Simulación)');
+    try {
+      const { sendMagicLink } = await import('../services/authService');
+      await sendMagicLink(email);
+      setError("✨ Enlace enviado a tu correo. Revisa tu bandeja.");
+    } catch (err: any) {
+      setError("Error: " + err.message);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    dispatch(loginStart());
+
+    try {
+      const user = await loginAdmin(email, password, twoFactorCode || '123456');
+      dispatch(loginSuccess(user));
+      navigate('/admin');
+    } catch (err: any) {
+      console.error('Login Error Details:', err);
+      let msg = '';
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        msg = 'Credenciales incorrectas';
+      } else if (err.message.includes('ACCESS_DENIED')) {
+        msg = 'Cuenta no autorizada (Verifica tu Rol)';
+      } else if (err.message.includes('INVALID_2FA')) {
+        msg = 'Token 2FA incorrecto (Usa 123456)';
+      } else {
+        msg = `Error: ${err.code || err.message || 'Desconocido'}`;
+      }
+      setError(msg);
+      dispatch(loginFailure(msg));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasskeyLogin = async () => {
+    setError(null);
+    setLoading(true);
+    dispatch(loginStart());
+    try {
+      // 1. Trigger Native WebAuthn Prompt (TouchID/FaceID)
+      const credential = await loginWithPasskey();
+
+      if (credential) {
+        // 2. Security Check: In a real app, verify signature with backend.
+        // For development/demo, we allow if specific ENV is set, otherwise fail safe.
+        if (import.meta.env.DEV) {
+          console.log("Passkey verified (DEV override):", credential);
+          // Login logic for dev demo
+          const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
+          const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
+          await signInWithEmailAndPassword(auth, devEmail, devPass);
+          dispatch(loginSuccess({ email: devEmail, role: 'admin' }));
+          navigate('/admin');
+        } else {
+          throw new Error("Passkey backend verification not implemented for production.");
+        }
+      }
+    } catch (err: any) {
+      console.error("Passkey Failed:", err);
+      const msg = err.message || "No se pudo verificar la identidad biométrica.";
+      setError(msg);
+      dispatch(loginFailure(msg));
+    } finally {
+      setLoading(false);
+    }
   };
 
   // DEV MODE: Quick Access (Auto-login)
   const handleDevQuickAccess = async () => {
+    if (!import.meta.env.DEV) {
+      setError("⛔️ Acceso rápido deshabilitado en Producción.");
+      return;
+    }
     setLoading(true);
     setError(null);
+    dispatch(loginStart());
     try {
       // Bypass all security - use Firebase Auth directly
       // Note: This is a dev-only shortcut using the main auth instance
       const { signInWithEmailAndPassword } = await import('firebase/auth');
       const { auth } = await import('../services/firebaseService');
 
-      await signInWithEmailAndPassword(auth, 'admin@richard.com', '123456');
+      const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'admin@richard.com';
+      const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
+
+      await signInWithEmailAndPassword(auth, devEmail, devPass);
+      dispatch(loginSuccess({ email: devEmail, role: 'admin' }));
       navigate('/admin');
     } catch (err: any) {
       console.error('Quick Access Error:', err);
-      setError('Error: ' + (err.code || err.message || 'Verifica que el usuario admin@richard.com existe'));
+      const msg = 'Error: ' + (err.code || err.message || 'Verifica que el usuario admin@richard.com existe');
+      setError(msg);
+      dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
     }
@@ -69,6 +155,7 @@ const AdminLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#050b14] relative overflow-hidden font-sans">
+      <GoogleOneTap onSuccess={() => navigate('/admin')} />
 
       {/* Background Ambience */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#00aed9]/20 rounded-full blur-[120px] pointer-events-none opacity-40 animate-pulse"></div>
@@ -149,13 +236,19 @@ const AdminLogin: React.FC = () => {
               </div>
             </div>
 
-            {/* Error Message Container (Fixed Height to prevent layout shift) */}
-            <div className="h-6 flex items-center justify-center">
+            <div className="h-10 flex flex-col items-center justify-center">
               {error && (
-                <div className="flex items-center gap-2 text-rose-400 animate-in fade-in slide-in-from-top-1">
-                  <ShieldAlert size={12} />
-                  <span className="text-xs font-bold">{error}</span>
-                </div>
+                <>
+                  <div className="flex items-center gap-2 text-rose-400 animate-in fade-in slide-in-from-top-1">
+                    <ShieldAlert size={12} />
+                    <span className="text-xs font-bold">{error}</span>
+                  </div>
+                  {error && !error.includes('enviado') && (
+                    <button type="button" onClick={handleMagicLink} className="mt-1 text-[9px] font-black text-[#00aed9] uppercase tracking-widest hover:underline">
+                      ¿Problemas de acceso? Enviar Enlace Mágico 📧
+                    </button>
+                  )}
+                </>
               )}
             </div>
 

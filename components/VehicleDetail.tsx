@@ -2,10 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Car } from '../types';
-import { ChevronLeft, Share2, Calculator, Sparkles, Banknote, Calendar, CreditCard, AlertCircle, ChevronRight, Loader2, ShieldCheck, Zap, Globe, MessageCircle } from 'lucide-react';
+import { ChevronLeft, Share2, Calculator, Sparkles, Banknote, Calendar, CreditCard, AlertCircle, ChevronRight, Loader2, ShieldCheck, Zap, Globe, MessageCircle, FileSearch } from 'lucide-react';
 import { generateCarPitch } from '../services/geminiService';
 import { incrementCarView } from '../services/firebaseService';
+import { useDealer } from '../contexts/DealerContext';
+import { logIntentSignal } from '../services/moatTrackingService';
 import DealBuilder from './deal/DealBuilder';
+import SEO from './SEO';
+import Viewer360 from './common/Viewer360';
 
 interface Props {
     inventory: Car[];
@@ -14,20 +18,45 @@ interface Props {
 const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const car = React.useMemo(() => {
-        if (!id || inventory.length === 0) return null;
-        return inventory.find(c => c.id === id) || null;
-    }, [id, inventory]);
-
-    // AI State
-    const [aiPitch, setAiPitch] = useState<string>('');
+    const { currentDealer } = useDealer();
+    const [engagedTime, setEngagedTime] = useState(0);
+    const [aiPitch, setAiPitch] = useState<string | null>(null);
     const [loadingPitch, setLoadingPitch] = useState(false);
+
+    const car = inventory.find(c => c.id === id);
 
     useEffect(() => {
         if (car) {
             incrementCarView(car.id);
         }
     }, [car?.id]);
+
+    // Moat: Track engaged time on vehicle
+    useEffect(() => {
+        if (!car) return;
+        const timer = setInterval(() => setEngagedTime(prev => prev + 1), 5000);
+        return () => {
+            if (engagedTime > 0) {
+                logIntentSignal({
+                    carId: id || 'unknown',
+                    dealerId: currentDealer.id,
+                    eventType: 'engaged_time',
+                    value: engagedTime,
+                    sessionId: sessionStorage.getItem('session_id') || 'anon'
+                });
+            }
+            clearInterval(timer);
+        };
+    }, [engagedTime, car, id, currentDealer.id]);
+
+    const handleGalleryOpen = () => {
+        logIntentSignal({
+            carId: id || 'unknown',
+            dealerId: currentDealer.id,
+            eventType: 'gallery_open',
+            sessionId: sessionStorage.getItem('session_id') || 'anon'
+        });
+    };
 
     // Generate AI Pitch on load
     useEffect(() => {
@@ -65,6 +94,32 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
+            <SEO
+                title={car.name}
+                description={`Compra este ${car.name} 2026 por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
+                image={car.img}
+                url={`/vehicle/${car.id}`}
+                type="product"
+                schema={{
+                    "@context": "https://schema.org/",
+                    "@type": "Car",
+                    "name": car.name,
+                    "image": car.img,
+                    "description": `Compra este ${car.name} 2026 en Richard Automotive.`,
+                    "brand": {
+                        "@type": "Brand",
+                        "name": car.name.split(' ')[0]
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "url": `https://richard-automotive.web.app/vehicle/${car.id}`,
+                        "priceCurrency": "USD",
+                        "price": car.price,
+                        "itemCondition": "https://schema.org/NewCondition",
+                        "availability": "https://schema.org/InStock"
+                    }
+                }}
+            />
 
             {/* Navigation Bar (Mobile) / Breadcrumb */}
             <div className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 z-40 flex justify-between items-center lg:hidden border-b border-slate-200 dark:border-slate-800">
@@ -88,23 +143,14 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 
                 {/* Left Column: Media Gallery */}
                 <div className="space-y-6">
-                    <div className="aspect-[4/3] bg-white dark:bg-slate-900 rounded-[40px] shadow-xl overflow-hidden relative group">
-                        {/* Bages */}
-                        <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
-                            {car.badge && (
-                                <span className="bg-[#00aed9] text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
-                                    {car.badge}
-                                </span>
-                            )}
-                        </div>
-
-                        <img
-                            src={car.img}
+                    {/* 360 Viewer Integration */}
+                    <div className="relative z-10">
+                        <Viewer360
+                            images={car.images && car.images.length > 0 ? car.images : [car.img]}
                             alt={car.name}
-                            className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-700"
+                            badge={car.badge}
+                            onFullscreen={handleGalleryOpen}
                         />
-
-                        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-slate-900/20 to-transparent" />
                     </div>
 
                     {/* AI Insight Card */}

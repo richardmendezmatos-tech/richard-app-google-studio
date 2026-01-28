@@ -13,16 +13,17 @@ export const MarketingModal: React.FC<Props> = ({ car, onClose }) => {
     const [content, setContent] = useState<MarketingContent | null>(null);
     const [loading, setLoading] = useState(true);
     const [copiedField, setCopiedField] = useState<string | null>(null);
+    const [locale, setLocale] = useState<'es' | 'en'>('es');
 
     useEffect(() => {
         const fetchContent = async () => {
             setLoading(true);
-            const data = await generateCarMarketingContent(car);
+            const data = await generateCarMarketingContent(car, locale);
             setContent(data);
             setLoading(false);
         };
         fetchContent();
-    }, [car]);
+    }, [car, locale]);
 
     const copyToClipboard = (text: string, field: string) => {
         navigator.clipboard.writeText(text);
@@ -36,7 +37,7 @@ export const MarketingModal: React.FC<Props> = ({ car, onClose }) => {
 
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-                    <div>
+                    <div className="flex-1">
                         <div className="flex items-center gap-2 text-[#00aed9] font-black text-[10px] uppercase tracking-[0.2em] mb-1">
                             <Sparkles size={14} /> AI Marketing Engine
                         </div>
@@ -44,9 +45,28 @@ export const MarketingModal: React.FC<Props> = ({ car, onClose }) => {
                             Campaña: <span className="text-[#00aed9]">{car.name}</span>
                         </h2>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-400">
-                        <X size={24} />
-                    </button>
+
+                    <div className="flex items-center gap-4">
+                        {/* Language Toggle */}
+                        <div className="flex bg-slate-200 dark:bg-slate-700 p-1 rounded-xl">
+                            <button
+                                onClick={() => setLocale('es')}
+                                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${locale === 'es' ? 'bg-[#00aed9] text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
+                            >
+                                ES
+                            </button>
+                            <button
+                                onClick={() => setLocale('en')}
+                                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${locale === 'en' ? 'bg-[#00aed9] text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
+                            >
+                                EN
+                            </button>
+                        </div>
+
+                        <button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-400">
+                            <X size={24} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">

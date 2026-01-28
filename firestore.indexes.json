@@ -5,6 +5,116 @@
             "queryScope": "COLLECTION",
             "fields": [
                 {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "name",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "price",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "price",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "type",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "name",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "type",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "price",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "type",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "price",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
                     "fieldPath": "type",
                     "order": "ASCENDING"
                 },

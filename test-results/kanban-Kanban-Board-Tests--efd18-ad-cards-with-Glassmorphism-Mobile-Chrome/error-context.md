@@ -1,0 +1,133 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: RICHARDAUTO
+      - button [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+    - navigation [ref=e8]:
+      - heading "RICHARD AUTOMOTIVE" [level=1] [ref=e10] [cursor=pointer]:
+        - text: RICHARD
+        - text: AUTOMOTIVE
+      - generic [ref=e11]:
+        - button "Tienda Digital" [ref=e12] [cursor=pointer]:
+          - img [ref=e14]
+          - generic [ref=e17]: Tienda Digital
+        - button "Mi Garaje" [ref=e19] [cursor=pointer]:
+          - img [ref=e22]
+          - generic [ref=e25]: Mi Garaje
+        - button "Pre-Cualificación" [ref=e26] [cursor=pointer]:
+          - img [ref=e29]
+          - generic [ref=e33]: Pre-Cualificación
+        - button "Vender mi Auto" [ref=e34] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e41]: Vender mi Auto
+        - button "Consultor IA" [ref=e42] [cursor=pointer]:
+          - img [ref=e45]
+          - generic [ref=e48]: Consultor IA
+        - button "AI Newsroom" [ref=e49] [cursor=pointer]:
+          - img [ref=e52]
+          - generic [ref=e55]: AI Newsroom
+        - button "Framework Lab" [ref=e56] [cursor=pointer]:
+          - img [ref=e59]
+          - generic [ref=e62]: Framework Lab
+        - button "Iniciar Sesión" [ref=e64] [cursor=pointer]:
+          - img [ref=e67]
+          - generic [ref=e70]: Iniciar Sesión
+        - button "Laboratorio IA" [ref=e72] [cursor=pointer]:
+          - img [ref=e75]
+          - generic [ref=e77]: Laboratorio IA
+      - button "Activar modo oscuro" [ref=e79] [cursor=pointer]:
+        - img [ref=e80]
+    - main [ref=e82]:
+      - button [ref=e84] [cursor=pointer]:
+        - img [ref=e85]
+      - link "Habla con Richard IA" [ref=e88] [cursor=pointer]:
+        - /url: https://wa.me/17875550123?text=Hola%2C%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n%20sobre%20su%20inventario.
+        - img [ref=e89]
+        - generic: Habla con Richard IA
+      - generic [ref=e91]:
+        - heading "Kanban Demo" [level=1] [ref=e92]
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]:
+                - generic [ref=e98]: Nuevos
+                - generic [ref=e99]: "1"
+              - button "finance Juan Del Pueblo Hyundai Tucson IA Insights 85% Interesado en financiamiento. Hoja de Venta" [ref=e101] [cursor=pointer]:
+                - generic [ref=e102]:
+                  - img [ref=e104]
+                  - generic [ref=e112]: finance
+                  - generic [ref=e113]: Juan Del Pueblo
+                  - generic [ref=e114]: Hyundai Tucson
+                  - generic [ref=e115]:
+                    - generic [ref=e116]:
+                      - generic [ref=e117]:
+                        - img [ref=e118]
+                        - generic [ref=e121]: IA Insights
+                      - generic [ref=e122]: 85%
+                    - paragraph [ref=e123]: Interesado en financiamiento.
+                  - generic [ref=e124]:
+                    - generic [ref=e125]:
+                      - link "Llamar" [ref=e126]:
+                        - /url: tel:555-555-5555
+                        - img [ref=e127]
+                      - link "WhatsApp" [ref=e129]:
+                        - /url: https://wa.me/5555555555
+                        - img [ref=e130]
+                      - link "Enviar Correo" [ref=e132]:
+                        - /url: mailto:juan@example.com
+                        - img [ref=e133]
+                    - button "Hoja de Venta" [ref=e136]
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - generic [ref=e140]: Contactados
+                - generic [ref=e141]: "1"
+              - button "trade-in Maria Rivera Hyundai Elantra IA Insights 92% Quiere cambiar su auto actual. Hoja de Venta" [ref=e143] [cursor=pointer]:
+                - generic [ref=e144]:
+                  - img [ref=e146]
+                  - generic [ref=e154]: trade-in
+                  - generic [ref=e155]: Maria Rivera
+                  - generic [ref=e156]: Hyundai Elantra
+                  - generic [ref=e157]:
+                    - generic [ref=e158]:
+                      - generic [ref=e159]:
+                        - img [ref=e160]
+                        - generic [ref=e163]: IA Insights
+                      - generic [ref=e164]: 92%
+                    - paragraph [ref=e165]: Quiere cambiar su auto actual.
+                  - generic [ref=e166]:
+                    - link "Enviar Correo" [ref=e168]:
+                      - /url: mailto:maria@example.com
+                      - img [ref=e169]
+                    - button "Hoja de Venta" [ref=e172]
+            - generic [ref=e173]:
+              - generic [ref=e174]:
+                - generic [ref=e176]: Negociando
+                - generic [ref=e177]: "0"
+              - generic [ref=e179]:
+                - generic: Vacío
+            - generic [ref=e180]:
+              - generic [ref=e181]:
+                - generic [ref=e183]: Vendidos
+                - generic [ref=e184]: "0"
+              - generic [ref=e186]:
+                - generic: Vacío
+          - status [ref=e187]
+      - generic [ref=e189]:
+        - img [ref=e192]
+        - generic [ref=e194]:
+          - heading "Valoramos tu Privacidad" [level=4] [ref=e195]
+          - paragraph [ref=e196]: Utilizamos cookies propias y de terceros para mejorar tu experiencia de navegación, analizar el tráfico del sitio y personalizar el contenido del inventario. Al hacer clic en "Aceptar todo", consientes el uso de todas las cookies.
+        - generic [ref=e197]:
+          - button "Rechazar" [ref=e198] [cursor=pointer]
+          - button "Aceptar Todo" [ref=e199] [cursor=pointer]:
+            - img [ref=e200]
+            - text: Aceptar Todo
+        - button [ref=e203] [cursor=pointer]:
+          - img [ref=e204]
+  - iframe [ref=e207]:
+    
+```

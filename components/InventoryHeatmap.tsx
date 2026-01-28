@@ -1,6 +1,6 @@
 import React from 'react';
 import { Car } from '../types';
-import { Flame, Skull, Ghost, Eye, MessageSquare, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Flame, Skull, Ghost, Eye, MessageSquare, TrendingUp, AlertTriangle, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 
 interface Props {
     inventory: Car[];
@@ -74,6 +74,41 @@ const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
                             <div className="text-center py-10 opacity-50 text-xs uppercase font-bold">Todo se ha visto al menos una vez.</div>
                         )}
                     </div>
+                </div>
+            </div>
+
+            {/* Strategic: Premium Monetization Layer */}
+            <div className="relative group">
+                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md rounded-[2.5rem] z-20 flex flex-col items-center justify-center border border-white/10 group-hover:bg-slate-900/30 transition-all duration-500">
+                    <div className="w-16 h-16 bg-[#00aed9]/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,174,217,0.3)] group-hover:scale-110 transition-transform">
+                        <Lock className="text-[#00aed9]" size={32} />
+                    </div>
+                    <div className="text-center px-8 space-y-2">
+                        <div className="flex items-center justify-center gap-2 text-white font-black text-xl uppercase tracking-tighter">
+                            <Sparkles className="text-amber-500" size={24} /> Market Gap Analytics Pro
+                        </div>
+                        <p className="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
+                            Accede a datos granulares sobre la competencia en tiempo real, predicciones de subasta y sugerencias de compra automáticas.
+                        </p>
+                        <button className="mt-8 px-10 py-4 bg-gradient-to-r from-[#00aed9] to-cyan-500 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-[#00aed9]/30 hover:scale-[1.05] active:scale-95 transition-all">
+                            Mejorar a Plan Corporativo
+                        </button>
+                    </div>
+                </div>
+
+                <div className="opacity-20 blur-sm pointer-events-none select-none">
+                    <div className="grid grid-cols-2 gap-8 p-10">
+                        <div className="h-40 bg-slate-800 rounded-3xl animate-pulse" />
+                        <div className="h-40 bg-slate-800 rounded-3xl animate-pulse" />
+                        <div className="h-40 bg-slate-800 rounded-3xl animate-pulse" />
+                        <div className="h-40 bg-slate-800 rounded-3xl animate-pulse" />
+                    </div>
+                </div>
+
+                {/* Security Badge for CEO Trust */}
+                <div className="absolute top-6 right-8 z-30 flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full shadow-lg">
+                    <ShieldCheck className="text-emerald-500" size={14} />
+                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Zero Trust Audit Compliant</span>
                 </div>
             </div>
         </div>

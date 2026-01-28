@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 export interface FrameworkState {
     globalCount: number;
     lastAction: string;
-    source: 'React' | 'Vue' | 'Angular' | 'jQuery' | 'PHP' | 'System';
+    source: 'React' | 'Vue' | 'Angular' | 'Svelte' | 'Solid' | 'Astro' | 'jQuery' | 'PHP' | 'System';
     timestamp: number;
 }
 
@@ -29,7 +29,7 @@ class FrameworkService {
     }
 
     // Actions
-    increment(source: 'React' | 'Vue' | 'Angular') {
+    increment(source: 'React' | 'Vue' | 'Angular' | 'Svelte' | 'Solid' | 'Astro') {
         const current = this.state$.getValue();
         this.state$.next({
             ...current,
@@ -40,7 +40,7 @@ class FrameworkService {
         });
     }
 
-    reset(source: 'React' | 'Vue' | 'Angular') {
+    reset(source: 'React' | 'Vue' | 'Angular' | 'Svelte' | 'Solid' | 'Astro') {
         this.state$.next({
             ...initialState,
             lastAction: 'Reset State',
@@ -49,7 +49,7 @@ class FrameworkService {
         });
     }
 
-    updateAction(action: string, source: 'React' | 'Vue' | 'Angular') {
+    updateAction(action: string, source: 'React' | 'Vue' | 'Angular' | 'Svelte' | 'Solid' | 'Astro') {
         const current = this.state$.getValue();
         this.state$.next({
             ...current,
