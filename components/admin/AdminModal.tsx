@@ -1,10 +1,9 @@
 
 import React, { useState, useRef } from 'react';
-import { X, ImageIcon, Camera, Wand2, Loader2, Sparkles } from 'lucide-react';
+import { X, Wand2, Loader2 } from 'lucide-react';
 import { Car, CarType } from '../../types';
-import { uploadImage } from '../../services/firebaseService';
-import { cameraService } from '../../services/cameraService';
 import { useDealer } from '../../contexts/DealerContext';
+import { ImageUploader, type UploadResult } from './ImageUploader';
 
 interface AdminModalProps {
     car: Car | null;
@@ -14,21 +13,13 @@ interface AdminModalProps {
 }
 
 export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, onPhotoUploaded }) => {
-    const { currentDealer } = useDealer(); // Correct property name
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const [previewUrls, setPreviewUrls] = useState<string[]>(car?.images || (car?.img ? [car.img] : []));
-
-    // ... (rest of code)
-
+    const { currentDealer } = useDealer();
+    const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [description, setDescription] = useState(car?.description || '');
     const [isGenerating, setIsGenerating] = useState(false);
-    const [cameraCapturedBlob, setCameraCapturedBlob] = useState<Blob | null>(null);
-    const [isDragging, setIsDragging] = useState(false);
     const [aiTier, setAiTier] = useState<'Standard' | 'Premium' | null>(null);
-    const [isAnalyzingVision, setIsAnalyzingVision] = useState(false);
     const [debugLogs, setDebugLogs] = useState<string[]>([]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const logDebug = (msg: string) => {
@@ -99,105 +90,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
         }
     };
 
-    // Strategic: Sundar's Multimodal Vision Sensor
-    const handleVisionAnalysis = async () => {
-        if (previewUrls.length === 0) {
-            alert("Sube una imagen primero para analizar.");
-            return;
-        }
-
-        setIsAnalyzingVision(true);
-        // Simulate Gemini 1.5 Flash Vision sweep
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        const visionDetectedFeatures = ['Sunroof', 'Rines 19"', 'Asientos de Cuero', 'Faros LED', 'Sensores de Proximidad'];
-        const form = document.querySelector('form');
-        if (form) {
-            const currentFeatures = (form.querySelector('input[name="features"]') as HTMLInputElement).value;
-            const merged = Array.from(new Set([
-                ...currentFeatures.split(',').map(f => f.trim()).filter(f => f !== ''),
-                ...visionDetectedFeatures
-            ])).join(', ');
-            (form.querySelector('input[name="features"]') as HTMLInputElement).value = merged;
-        }
-
-        setIsAnalyzingVision(false);
-    };
-
-
-    // Instant Preview Logic
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
-        let newFiles: File[] = [];
-
-        if ('files' in e.target && e.target.files) {
-            newFiles = Array.from(e.target.files);
-        } else if ('dataTransfer' in e && e.dataTransfer.files) {
-            newFiles = Array.from(e.dataTransfer.files);
-        }
-
-        if (newFiles.length > 0) {
-            setSelectedFiles(prev => [...prev, ...newFiles]);
-            setCameraCapturedBlob(null); // Clear camera blob if file selected
-
-            // Generate Previews
-            newFiles.forEach(file => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setPreviewUrls(prev => [...prev, reader.result as string]);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    };
-
-    const removeImage = (index: number) => {
-        // Be careful to sync previewUrls and selectedFiles indices if they are mixed
-        // Simple strategy: remove from both if index matches, but this is tricky because previewUrls might have existing string URLs
-        // For stable MVP: Just remove from previewUrls and if it corresponds to a new file, remove it.
-        // ACTUALLY: Let's simpler logic -> If we remove an image, we just remove it from the final list.
-        // It's hard to track which File corresponds to which URL if we mix.
-        // Limitation: If user removes an image, we might re-upload others.
-        // For 10x UX: Just modify previewUrls. At submit time, we won't know which file to skip easily.
-        // FIX: We will rely on previewUrls logic primarily for display. 
-        // Real implementation: User deletes image at index i.
-
-        setPreviewUrls(prev => prev.filter((_, i) => i !== index));
-        // We also need to remove from selectedFiles if it was a new file.
-        // This is complex. Let's start fresh or append.
-        // Simplification for speed: Just filter previewUrls. 
-        // When uploading, we will upload ALL selectedFiles, and append to existing URLs.
-        // If user deleted a preview that came from a file... we might upload it anyway.
-        // Let's implement robust removal later. For now, valid for increasing limit.
-    };
-
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(false);
-    };
-
-    const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragging(false);
-        handleFileChange(e);
-    };
-
-    const handleNativeCamera = async () => {
-        try {
-            const photo = await cameraService.takePhoto();
-            if (photo) {
-                setPreviewUrls(prev => [...prev, photo.preview]);
-                setCameraCapturedBlob(photo.blob);
-                // setSelectedFile(null); // Clear manual file if camera used - No, we want to add
-            }
-        } catch (err) {
-            console.error("Camera Error:", err);
-            alert("No se pudo acceder a la cámara nativa.");
-        }
+    // Handle upload completion
+    const handleUploadComplete = (results: UploadResult[]) => {
+        setUploadResults(results);
+        onPhotoUploaded?.();
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -217,33 +113,24 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             const fd = new FormData(formRef.current);
             logDebug("FormData constructed successfully.");
 
+            // Collect all image URLs from upload results
             const finalImageUrls: string[] = [];
 
-            // 1. Keep existing URLs (those that are already http)
-            previewUrls.forEach(url => {
-                if (url.startsWith('http')) finalImageUrls.push(url);
-            });
-
-            // 2. Upload new selected files
-            if (selectedFiles.length > 0) {
-                logDebug(`Uploading ${selectedFiles.length} new files...`);
-                const uploadPromises = selectedFiles.map(file => uploadImage(file));
-                const uploadedUrls = await Promise.all(uploadPromises);
-                finalImageUrls.push(...uploadedUrls);
-                logDebug("Files uploaded successfully.");
-                onPhotoUploaded?.();
+            // Keep existing images if editing
+            if (car?.images) {
+                finalImageUrls.push(...car.images);
             }
 
-            // 3. Upload Camera Blob
-            if (cameraCapturedBlob) {
-                logDebug(`Starting upload for camera blob (${cameraCapturedBlob.size} bytes)`);
-                const file = cameraService.blobToFile(cameraCapturedBlob, `camera_${Date.now()}.jpg`);
-                // Ensure type is image/jpeg
-                const jpgFile = new File([file], file.name, { type: 'image/jpeg' });
-                const url = await uploadImage(jpgFile);
-                finalImageUrls.push(url);
-                logDebug("Camera upload component returned successfully.");
-                onPhotoUploaded?.();
+            // Add newly uploaded images
+            uploadResults.forEach(result => {
+                if (result.url) finalImageUrls.push(result.url);
+                if (result.webpUrl) finalImageUrls.push(result.webpUrl);
+            });
+
+            logDebug(`Total images: ${finalImageUrls.length}`);
+            if (uploadResults.length > 0) {
+                const totalSavings = uploadResults.reduce((sum, r) => sum + (r.savings || 0), 0);
+                logDebug(`Image optimization saved ${totalSavings.toFixed(0)}% total`);
             }
 
             // Ensure we have at least one image
@@ -263,10 +150,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             });
             logDebug("✅ SUCCESS: Document saved successfully.");
             onClose(); // Close only after success
-        } catch (error: any) {
-            logDebug(`!!! ERROR: ${error.message}`);
+        } catch (error) {
+            logDebug(`!!! ERROR: ${error instanceof Error ? error.message : 'Unknown error'}`);
             console.error("Upload/Save Strategic Error:", error);
-            const errorMsg = error.message || "Error desconocido";
+            const errorMsg = error instanceof Error ? error.message : "Error desconocido";
             if (errorMsg.includes("Storage")) {
                 alert(`Error de Storage (Consola): ${errorMsg}`);
             } else {
@@ -296,73 +183,9 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
 
                         {/* Image Uploader */}
-                        <div className="space-y-4">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block">Galería de Imágenes ({previewUrls.length})</label>
-
-                            {/* Drag Drop Area */}
-                            <div
-                                className={`group relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-[2rem] transition-all duration-300 ${isDragging ? 'border-[#00aed9] bg-[#00aed9]/5 scale-[0.98]' : 'border-slate-200 dark:border-slate-800 hover:border-[#00aed9]/50'}`}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
-                            >
-                                <div className="flex flex-col items-center gap-4 w-full">
-                                    <div className="flex gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={handleNativeCamera}
-                                            className="h-[36px] px-4 bg-[#00aed9]/10 border border-[#00aed9]/25 text-[#00aed9] rounded-xl flex items-center justify-center gap-2 font-bold text-[9px] uppercase tracking-widest hover:bg-[#00aed9] hover:text-white transition-all shadow-sm"
-                                        >
-                                            <Camera size={14} /> Cámara
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="h-[36px] px-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-xl flex items-center justify-center gap-2 font-bold text-[9px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
-                                        >
-                                            <ImageIcon size={14} /> Subir Fotos
-                                        </button>
-
-                                        {previewUrls.length > 0 && (
-                                            <button
-                                                type="button"
-                                                onClick={handleVisionAnalysis}
-                                                disabled={isAnalyzingVision}
-                                                className="h-[36px] px-4 bg-purple-500/10 border border-purple-500/25 text-purple-500 rounded-xl flex items-center justify-center gap-2 font-bold text-[9px] uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all shadow-sm group/vision"
-                                            >
-                                                {isAnalyzingVision ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="group-hover/vision:rotate-12 transition-transform" />}
-                                                {isAnalyzingVision ? 'Escaneando...' : 'IA Vision'}
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-xs text-slate-400 font-bold">o arrastra tus archivos aquí</p>
-                                </div>
-
-                                <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
-                            </div>
-
-                            {/* Preview Grid */}
-                            {previewUrls.length > 0 && (
-                                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-                                    {previewUrls.map((url, index) => (
-                                        <div key={index} className="aspect-square relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
-                                            <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(index)}
-                                                className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500"
-                                            >
-                                                <X size={12} />
-                                            </button>
-                                            {index === 0 && (
-                                                <div className="absolute bottom-0 left-0 right-0 bg-[#00aed9] text-white text-[8px] font-bold text-center py-0.5">PRINCIPAL</div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                        </div>
+                        <ImageUploader
+                            onUploadComplete={handleUploadComplete}
+                        />
 
                         {/* Basic Info */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
