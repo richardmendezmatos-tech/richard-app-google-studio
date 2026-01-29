@@ -4,5 +4,6 @@ Disallow: /admin
 Disallow: /admin-login
 Disallow: /garage
 Disallow: /lab
+Disallow: /api/
 
-Sitemap: https://richard-automotive.web.app/sitemap.xml
+Sitemap: https://www.richard-automotive.com/sitemap.xml
