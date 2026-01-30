@@ -43,7 +43,6 @@ public/workbox-*.js
 .firebase/
 firebase-export-*/
 serviceAccountKey.json
-firebaseConfig.ts
 
 # Python / Backend junk
 __pycache__/
