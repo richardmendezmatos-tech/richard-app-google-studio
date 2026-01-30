@@ -74,6 +74,7 @@ export const CookieConsent: React.FC = () => {
                                 {!showSettings && (
                                     <button
                                         onClick={() => setIsVisible(false)}
+                                        aria-label="Cerrar banner de cookies"
                                         className="p-1 hover:bg-white/5 rounded-full transition-colors"
                                     >
                                         <X className="w-4 h-4 text-slate-400" />
@@ -138,6 +139,7 @@ export const CookieConsent: React.FC = () => {
                                             </div>
                                             <button
                                                 onClick={() => setSettings(s => ({ ...s, analytics: !s.analytics }))}
+                                                aria-label="Activar o desactivar cookies analíticas"
                                                 className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors ${settings.analytics ? 'bg-cyan-500' : 'bg-slate-700'}`}
                                             >
                                                 <motion.div
@@ -155,6 +157,7 @@ export const CookieConsent: React.FC = () => {
                                             </div>
                                             <button
                                                 onClick={() => setSettings(s => ({ ...s, marketing: !s.marketing }))}
+                                                aria-label="Activar o desactivar cookies de marketing"
                                                 className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors ${settings.marketing ? 'bg-cyan-500' : 'bg-slate-700'}`}
                                             >
                                                 <motion.div

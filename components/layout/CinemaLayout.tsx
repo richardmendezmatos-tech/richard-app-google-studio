@@ -6,13 +6,15 @@ import { VoiceWidget } from '../ai/VoiceWidget';
 import AIChatWidget from '../AIChatWidget';
 import ReloadPrompt from '../ReloadPrompt';
 import OfflineIndicator from '../OfflineIndicator';
-import CookieConsent from '../CookieConsent';
+
+import { ScrollNavigator } from '../common/ScrollNavigator';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom';
+import { Car } from '../../types';
 
 interface CinemaLayoutProps {
     children: React.ReactNode;
-    inventory?: any[]; // Passed down for widgets
+    inventory?: Car[]; // Passed down for widgets
 }
 
 export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
@@ -39,7 +41,14 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
             {/* Mobile Header */}
             <div className="lg:hidden p-4 bg-[#173d57] text-white flex justify-between items-center shadow-md z-50">
                 <span className="font-black text-xl tracking-tight">RICHARD<span className="text-[#00aed9]">AUTO</span></span>
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}><Menu /></button>
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    title="Abrir menú"
+                    aria-label="Abrir menú"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                    <Menu />
+                </button>
             </div>
 
             {/* Main Sidebar Component */}
@@ -48,7 +57,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
             {/* Main Content Area */}
             <main
                 id="main-content"
-                className="flex-1 relative w-full h-screen overflow-y-auto bg-slate-950 text-slate-100 scroll-smooth"
+                className="flex-1 relative w-full h-screen overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 scroll-smooth"
             >
                 {/* Global Floating Widgets */}
                 <ReloadPrompt />
@@ -56,13 +65,14 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
                 <AIChatWidget inventory={inventory} />
                 <VoiceWidget />
                 <WhatsAppFloat />
+                <ScrollNavigator />
 
                 {/* Dynamic Content */}
                 <div className="relative z-10 min-h-full">
                     {children}
                 </div>
 
-                <CookieConsent />
+
             </main>
 
         </div>

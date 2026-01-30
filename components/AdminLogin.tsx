@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { loginAdmin, loginWithPasskey } from '../services/authService';
-import { ShieldAlert, Fingerprint, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Import for "trusting" the passkey result
 import { auth } from '../services/firebaseService';
@@ -16,11 +16,26 @@ const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [twoFactorCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const handleGhostLogin = React.useCallback(async (key: string) => {
+    setLoading(true);
+    setError("Activando Protocolo Ghost de CTO...");
+    try {
+      const { validateGhostKey } = await import('../services/authService');
+      const user = await validateGhostKey(key);
+      dispatch(loginSuccess(user));
+      navigate('/admin');
+    } catch {
+      setError("Llave Maestra Rechazada.");
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, navigate]);
 
   // CTO: Ghost Mode Listener
   React.useEffect(() => {
@@ -29,22 +44,7 @@ const AdminLogin: React.FC = () => {
     if (key) {
       handleGhostLogin(key);
     }
-  }, []);
-
-  const handleGhostLogin = async (key: string) => {
-    setLoading(true);
-    setError("Activando Protocolo Ghost de CTO...");
-    try {
-      const { validateGhostKey } = await import('../services/authService');
-      const user = await validateGhostKey(key);
-      dispatch(loginSuccess(user));
-      navigate('/admin');
-    } catch (err: any) {
-      setError("Llave Maestra Rechazada.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [handleGhostLogin]);
 
   const handleMagicLink = async () => {
     if (!email) return setError("Ingresa tu email primero");
@@ -53,8 +53,9 @@ const AdminLogin: React.FC = () => {
       const { sendMagicLink } = await import('../services/authService');
       await sendMagicLink(email);
       setError("✨ Enlace enviado a tu correo. Revisa tu bandeja.");
-    } catch (err: any) {
-      setError("Error: " + err.message);
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      setError("Error: " + errorMsg);
     } finally {
       setLoading(false);
     }
@@ -70,17 +71,18 @@ const AdminLogin: React.FC = () => {
       const user = await loginAdmin(email, password, twoFactorCode || '123456');
       dispatch(loginSuccess(user));
       navigate('/admin');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login Error Details:', err);
       let msg = '';
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+      const error = err as { code?: string; message: string };
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
         msg = 'Credenciales incorrectas';
-      } else if (err.message.includes('ACCESS_DENIED')) {
+      } else if (error.message.includes('ACCESS_DENIED')) {
         msg = 'Cuenta no autorizada (Verifica tu Rol)';
-      } else if (err.message.includes('INVALID_2FA')) {
+      } else if (error.message.includes('INVALID_2FA')) {
         msg = 'Token 2FA incorrecto (Usa 123456)';
       } else {
-        msg = `Error: ${err.code || err.message || 'Desconocido'}`;
+        msg = `Error: ${error.code || error.message || 'Desconocido'}`;
       }
       setError(msg);
       dispatch(loginFailure(msg));
@@ -112,9 +114,10 @@ const AdminLogin: React.FC = () => {
           throw new Error("Passkey backend verification not implemented for production.");
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Passkey Failed:", err);
-      const msg = err.message || "No se pudo verificar la identidad biométrica.";
+      const error = err as { message?: string };
+      const msg = error.message || "No se pudo verificar la identidad biométrica.";
       setError(msg);
       dispatch(loginFailure(msg));
     } finally {
@@ -143,9 +146,10 @@ const AdminLogin: React.FC = () => {
       await signInWithEmailAndPassword(auth, devEmail, devPass);
       dispatch(loginSuccess({ email: devEmail, role: 'admin' }));
       navigate('/admin');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Quick Access Error:', err);
-      const msg = 'Error: ' + (err.code || err.message || 'Verifica que el usuario admin@richard.com existe');
+      const error = err as { code?: string; message: string };
+      const msg = 'Error: ' + (error.code || error.message || 'Verifica que el usuario admin@richard.com existe');
       setError(msg);
       dispatch(loginFailure(msg));
     } finally {

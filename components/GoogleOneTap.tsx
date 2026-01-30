@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../services/firebaseService';
@@ -36,23 +36,38 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({
         };
     }, []);
 
+    const handleCredentialResponse = useCallback(async (response: any) => {
+        try {
+            console.log('Google Security Token Recibido:', response.credential);
+            const credential = GoogleAuthProvider.credential(response.credential);
+            const result = await signInWithCredential(auth, credential);
+
+            console.log('Usuario autenticado vía One Tap:', result.user.email);
+
+            if (onSuccess) onSuccess();
+            else {
+                navigate('/admin');
+            }
+
+        } catch (error) {
+            console.error('Error en One Tap Login:', error);
+        }
+    }, [onSuccess, navigate]);
+
     useEffect(() => {
         if (!scriptLoaded || !clientId) return;
 
-        // 2. Initialize Google One Tap
         const initializeGoogleOneTap = () => {
             if (!window.google) return;
 
             window.google.accounts.id.initialize({
                 client_id: clientId,
                 callback: handleCredentialResponse,
-                auto_select: false, // Optional: auto sign-in returning users
+                auto_select: false,
                 cancel_on_tap_outside: true,
-                // FedCM support (modern browser requirement 2025/2026)
                 use_fedcm_for_prompt: true
             });
 
-            // 3. Render the Prompt
             window.google.accounts.id.prompt((notification: any) => {
                 if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                     console.log('One Tap skipped/not displayed:', notification.getNotDisplayedReason());
@@ -61,49 +76,7 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({
         };
 
         initializeGoogleOneTap();
-    }, [scriptLoaded, clientId]);
-
-    const handleCredentialResponse = async (response: any) => {
-        try {
-            console.log('Google Security Token Recibido:', response.credential);
-
-            // --- OPTION A: Full Stack Verification (As requested by Senior Requirements) ---
-            // Send token to our secure backend to verify authenticity before creating session
-            /*
-            const verifyResponse = await fetch('https://us-central1-richard-automotive.cloudfunctions.net/verifyGoogleToken', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ credential: response.credential })
-            });
-            
-            if (!verifyResponse.ok) throw new Error('Backend Token Verification Failed');
-            const data = await verifyResponse.json();
-            console.log('Backend Verification Success:', data);
-            */
-
-            // --- OPTION B: Firebase Native Bridge (Recommended for this project) ---
-            // Since we are using Firebase Auth, we verify and sign-in directly using the Credential
-            // This internally verifies the token with Google Servers securely.
-            const credential = GoogleAuthProvider.credential(response.credential);
-            const result = await signInWithCredential(auth, credential);
-
-            console.log('Usuario autenticado vía One Tap:', result.user.email);
-
-            if (onSuccess) onSuccess();
-            else {
-                // CTO: Critical - Update Redux state even in One Tap
-                const { loginSuccess } = await import('../store/slices/authSlice');
-                try {
-                    // Note: This requires a dispatch instance. 
-                    // Since GoogleOneTap is a component, we should add useDispatch.
-                } catch (e) { }
-                navigate('/admin');
-            }
-
-        } catch (error) {
-            console.error('Error en One Tap Login:', error);
-        }
-    };
+    }, [scriptLoaded, clientId, handleCredentialResponse]);
 
     return (
         // One Tap is an overlay, so this component doesn't need to render UI unless we want a fallback button

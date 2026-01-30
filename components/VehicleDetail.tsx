@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Car } from '../types';
-import { ChevronLeft, Share2, Calculator, Sparkles, Banknote, Calendar, CreditCard, AlertCircle, ChevronRight, Loader2, ShieldCheck, Zap, Globe, MessageCircle, FileSearch } from 'lucide-react';
+import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
 import { generateCarPitch } from '../services/geminiService';
 import { incrementCarView } from '../services/firebaseService';
 import { useDealer } from '../contexts/DealerContext';
 import { logIntentSignal } from '../services/moatTrackingService';
+import { trackCarView } from '../services/analytics';
 import DealBuilder from './deal/DealBuilder';
 import SEO from './SEO';
 import Viewer360 from './common/Viewer360';
+import { VehicleSchema } from './seo/VehicleSchema';
+import { useMetaPixel } from '../hooks/useMetaPixel';
 
 interface Props {
     inventory: Car[];
@@ -22,12 +25,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     const [engagedTime, setEngagedTime] = useState(0);
     const [aiPitch, setAiPitch] = useState<string | null>(null);
     const [loadingPitch, setLoadingPitch] = useState(false);
+    const { trackEvent } = useMetaPixel();
 
     const car = inventory.find(c => c.id === id);
 
     useEffect(() => {
         if (car) {
             incrementCarView(car.id);
+            trackCarView(car.id, car.name, car.price);
+            // Growth: Track Meta ViewContent
+            trackEvent('ViewContent', {
+                content_ids: [car.id],
+                content_type: 'vehicle',
+                content_name: car.name,
+                value: car.price,
+                currency: 'USD'
+            });
         }
     }, [car?.id]);
 
@@ -60,13 +73,25 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 
     // Generate AI Pitch on load
     useEffect(() => {
-        if (car && !aiPitch && !loadingPitch) {
+        if (!car || aiPitch || loadingPitch) return;
+
+        let isMounted = true;
+
+        const fetchPitch = async () => {
             setLoadingPitch(true);
-            generateCarPitch(car)
-                .then(text => setAiPitch(text))
-                .catch((e) => setAiPitch(`Error: ${e.message}`))
-                .finally(() => setLoadingPitch(false));
-        }
+            try {
+                const text = await generateCarPitch(car);
+                if (isMounted) setAiPitch(text);
+            } catch (e: any) {
+                if (isMounted) setAiPitch(`Error: ${e.message}`);
+            } finally {
+                if (isMounted) setLoadingPitch(false);
+            }
+        };
+
+        fetchPitch();
+
+        return () => { isMounted = false; };
     }, [car, aiPitch, loadingPitch]);
 
     if (!car) {
@@ -120,14 +145,15 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                     }
                 }}
             />
+            <VehicleSchema car={car} />
 
             {/* Navigation Bar (Mobile) / Breadcrumb */}
             <div className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 z-40 flex justify-between items-center lg:hidden border-b border-slate-200 dark:border-slate-800">
-                <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => navigate(-1)} aria-label="Volver atrás" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                     <ChevronLeft className="text-slate-800 dark:text-white" />
                 </button>
                 <span className="font-bold text-slate-800 dark:text-white text-sm truncate max-w-[200px]">{car.name}</span>
-                <button onClick={handleShare} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={handleShare} aria-label="Compartir vehículo" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                     <Share2 className="text-slate-800 dark:text-white" size={20} />
                 </button>
             </div>

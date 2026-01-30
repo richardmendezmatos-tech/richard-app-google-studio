@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getPaginatedCars } from '../services/firebaseService';
+import { getPaginatedCars } from '../services/inventoryService';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export const useCars = (pageSize: number = 9, filterType: string = 'all') => {

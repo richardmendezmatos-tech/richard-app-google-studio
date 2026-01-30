@@ -128,7 +128,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
             {/* Cinematic Footer Stripes */}
             <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
             <div className="absolute bottom-8 w-full text-center animate-bounce duration-[2000ms]">
-                <span className="text-[10px] uppercase tracking-[0.5em] text-white/30">Scroll to Explore</span>
+                <span className="text-[10px] uppercase tracking-[0.5em] text-white/30 italic">Explore Richard Automotive Experience</span>
             </div>
 
         </section>

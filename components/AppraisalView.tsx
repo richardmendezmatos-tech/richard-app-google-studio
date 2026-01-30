@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Camera, CheckCircle, ChevronRight, Info, AlertCircle, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import SEO from './SEO';
 
 import { submitApplication } from '../services/firebaseService';
 import { usePhotoUploader } from '../hooks/usePhotoUploader';
@@ -24,7 +25,7 @@ const AppraisalView: React.FC = () => {
         photos,
         setPhoto,
         uploadAllPhotos,
-        uploading: isUploadingPhotos,
+
         count: uploadedCount
     } = usePhotoUploader({
         front: null,
@@ -59,6 +60,13 @@ const AppraisalView: React.FC = () => {
 
     const totalPhotos = 4;
     const progress = (uploadedCount / totalPhotos) * 100;
+    const progressRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (progressRef.current) {
+            progressRef.current.style.width = `${progress}%`;
+        }
+    }, [progress]);
 
     // Helper: File to Base64
     const fileToBase64 = (file: File): Promise<string> => {
@@ -100,7 +108,7 @@ const AppraisalView: React.FC = () => {
             // Artificial minimum delay for "Scanner" VFX
             const minDelay = new Promise(resolve => setTimeout(resolve, 3500));
 
-            const [urls, analysis, _] = await Promise.all([uploadTask, aiTask, minDelay]);
+            const [urls, analysis] = await Promise.all([uploadTask, aiTask, minDelay]);
 
             setUploadedUrls(urls);
             setAiAnalysis(analysis);
@@ -207,12 +215,10 @@ const AppraisalView: React.FC = () => {
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mb-6">
-                            <div
-                                className={`h-full transition-all duration-500 ${uploadedCount === 4 ? 'bg-emerald-500' : 'bg-[#00aed9]'}`}
-                                style={{ width: `${progress}%` }}
-                            ></div>
-                        </div>
+                        <div
+                            ref={progressRef}
+                            className={`h-full transition-all duration-500 ${uploadedCount === 4 ? 'bg-emerald-500' : 'bg-[#00aed9]'}`}
+                        ></div>
 
                         <div className="grid grid-cols-2 gap-4">
                             {Object.keys(photos).map((key) => (
@@ -227,6 +233,7 @@ const AppraisalView: React.FC = () => {
                                         <>
                                             <img
                                                 src={URL.createObjectURL(photos[key]!)}
+                                                alt={`Vista ${key}`}
                                                 className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                             />
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -426,8 +433,19 @@ const AppraisalView: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-900 p-6 pb-24">
+            <SEO
+                title="Vende tu Auto | Tasación Instantánea con IA - Richard Automotive"
+                description="Recibe una oferta inmediata por tu auto. Sube fotos, nuestra IA analiza la condición y te damos el mejor precio de trade-in en Puerto Rico."
+                url="/appraisal"
+                type="website"
+            />
             <header className="flex items-center gap-4 mb-8">
-                <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center"
+                    title="Volver"
+                    aria-label="Volver atrás"
+                >
                     <ChevronRight className="rotate-180" size={20} />
                 </button>
                 <h1 className="text-2xl font-black uppercase italic tracking-tighter">

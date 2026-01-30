@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { SITE_CONFIG } from '../src/constants/siteConfig';
 import { createInteractiveMenu } from '../services/whatsappService';
+import { useMetaPixel } from '../hooks/useMetaPixel';
+import { addLead } from '../services/crmService';
 
 export const WhatsAppFloat: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+
     const phoneNumber = SITE_CONFIG.contact.whatsapp;
+    // START: Growth Suite Integration
+    const location = useLocation();
+    const { trackEvent } = useMetaPixel();
+
+    // Auto-detect vehicle context from URL or State (simplified for floating button)
+    // The floating button is global, so it might not always have specific vehicle context unless passed or inferred.
+    // For now, checks URL state if available (common pattern in this app).
+    const state = location.state as { vehicle?: any } | null;
+    const vehicle = state?.vehicle;
+    // END: Growth Suite Integration
 
     // Show preview after 5 seconds on first visit
     useEffect(() => {
@@ -28,13 +42,51 @@ export const WhatsAppFloat: React.FC = () => {
     ];
 
     const handleQuickAction = (message: string) => {
-        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        // Growth: Track Lead Event
+        trackEvent('Lead', {
+            content_name: 'WhatsApp Click',
+            content_category: 'Floating Button',
+            value: 0.00,
+            currency: 'USD'
+        });
+
+        // Contextual Message Injection
+        let finalMessage = message;
+        if (vehicle) {
+            finalMessage += ` [Contexto: ${vehicle.year} ${vehicle.make} ${vehicle.model}]`;
+        }
+
+        // CRM Capture
+        addLead({
+            type: 'whatsapp',
+            name: 'Visitor (Quick Action)',
+            phone: 'Unknown',
+            notes: `Clicked Quick Action: ${message}. Context: ${vehicle ? `${vehicle.make} ${vehicle.model}` : 'None'}`,
+            carId: vehicle?.id
+        });
+
+        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(finalMessage)}`;
         window.open(url, '_blank');
         setIsOpen(false);
     };
 
     const handleOpenChat = () => {
+        trackEvent('Lead', {
+            content_name: 'WhatsApp Open Chat',
+            content_category: 'Floating Button'
+        });
+
         const menu = createInteractiveMenu();
+
+        // CRM Capture
+        addLead({
+            type: 'whatsapp',
+            name: 'Visitor (Chat Open)',
+            phone: 'Unknown',
+            notes: 'Opened full chat menu',
+            carId: vehicle?.id
+        });
+
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(menu)}`;
         window.open(url, '_blank');
     };
@@ -60,6 +112,7 @@ export const WhatsAppFloat: React.FC = () => {
                             >
                                 <button
                                     onClick={() => setShowPreview(false)}
+                                    aria-label="Cerrar vista previa"
                                     className="absolute top-2 right-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                 >
                                     <X size={16} />
@@ -104,6 +157,7 @@ export const WhatsAppFloat: React.FC = () => {
                                         </div>
                                         <button
                                             onClick={() => setIsOpen(false)}
+                                            aria-label="Cerrar panel de WhatsApp"
                                             className="text-white/80 hover:text-white"
                                         >
                                             <X size={20} />

@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useDealer } from '../contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
 import { Car as CarType, Lead } from '../types';
-import { Plus, Trash2, Edit3, BarChart3, Package, Search, Loader2, DatabaseZap, Smartphone, Monitor, Server, Camera, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Leaf, Scale, FlaskConical } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Trash2, Edit3, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Leaf, Scale, FlaskConical } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getLeadsOnce, optimizeImage, auth, getSubscribers } from '../services/firebaseService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
@@ -15,11 +15,10 @@ import InventoryHeatmap from './InventoryHeatmap';
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
 
 // Modular Components
-import { KanbanBoard } from './admin/KanbanBoard';
+import CRMBoard from './admin/CRMBoard';
 import { AdminModal } from './admin/AdminModal';
 import { AuditLogViewer } from './admin/AuditLogViewer';
 import { GapAnalyticsWidget } from './admin/GapAnalyticsWidget'; // Component 4
-import { MarketingModal } from './admin/MarketingModal'; // Component 2
 import { SortableInventory } from './admin/SortableInventory';
 import B2BBillingDashboard from './admin/B2BBillingDashboard';
 import { EnterpriseStatus } from './admin/EnterpriseStatus';
@@ -33,6 +32,12 @@ interface Props {
   onAdd: (car: Omit<CarType, 'id'>) => Promise<void>;
   onDelete: (id: string) => void;
   onInitializeDb?: () => Promise<void>;
+}
+
+interface Subscriber {
+  id?: string;
+  email: string;
+  timestamp?: { seconds: number };
 }
 
 // --- WIDGETS SECTION ---
@@ -58,7 +63,7 @@ const CountUp = ({ end, prefix = '', suffix = '', duration = 1500 }: { end: numb
 };
 
 
-const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: any, label: string, value: string | React.ReactNode, color: string, subValue?: string }) => (
+const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: React.ElementType, label: string, value: string | React.ReactNode, color: string, subValue?: string }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -88,18 +93,15 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab'>('dashboard');
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMarketingModalOpen, setIsMarketingModalOpen] = useState(false);
-  const [marketingCar, setMarketingCar] = useState<CarType | null>(null);
   const [editingCar, setEditingCar] = useState<CarType | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isInitializing, setIsInitializing] = useState(false);
 
   // Widget States
-  const [uploadedTodayCount, setUploadedTodayCount] = useState(0);
   const [deviceType, setDeviceType] = useState<'Mac' | 'iPhone'>('Mac');
-  const [securityScore, setSecurityScore] = useState(98);
+  const securityScore = 98;
 
   const navigate = useNavigate(); // For Quick Actions
 
@@ -119,7 +121,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('Android')) {
       setDeviceType('iPhone');
     }
-  }, []);
+  }, [fetchDashboardData]);
 
   useEffect(() => {
     if (activeTab === 'marketing') {
@@ -140,11 +142,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     }
   }, []);
 
-  const getCarForLead = (lead: Lead) => {
-    if (lead.vehicleId) return inventory.find(c => c.id === lead.vehicleId);
-    if (lead.vehicleOfInterest) return inventory.find(c => c.name === lead.vehicleOfInterest);
-    return undefined;
-  };
+
 
   const filteredInventory = useMemo(() => (inventory || []).filter(c =>
     (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
@@ -159,8 +157,9 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   }, [onInitializeDb]);
 
   const handlePhotoUploaded = useCallback(() => {
-    setUploadedTodayCount(prev => prev + 1);
-  }, []);
+    // Refresh data if needed
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden">
@@ -258,7 +257,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           ].map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as 'dashboard' | 'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab')}
               className={`flex-1 md:flex-none px-6 h-[44px] rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-3 transition-all whitespace-nowrap ${activeTab === tab.id
                 ? 'bg-[#00aed9] text-white shadow-lg shadow-[#00aed9]/30'
                 : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
@@ -358,13 +357,13 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                   {inventory.slice(0, 4).map(car => (
                     <button
                       key={car.id}
-                      onClick={() => { setMarketingCar(car); setIsMarketingModalOpen(true); }}
+                      onClick={() => { /* Plan logic here if needed */ }}
                       className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
                     >
                       <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" />
                       <div>
                         <div className="text-sm font-black text-white uppercase tracking-tight">{car.name}</div>
-                        <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">Generar Post ✨</div>
+                        <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">Planear Post ✨</div>
                       </div>
                     </button>
                   ))}
@@ -402,7 +401,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
           {activeTab === 'pipeline' && (
             <div className="h-[calc(100vh-350px)] min-h-[500px]">
-              <KanbanBoard leads={leads} onPrint={triggerPrint} searchTerm={searchTerm} userRole={(user?.role as any) || 'admin'} />
+              <CRMBoard />
             </div>
           )}
 
@@ -425,8 +424,9 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                       const { registerPasskey } = await import('../services/authService');
                       await registerPasskey(auth.currentUser);
                       alert("✅ Dispositivo vinculado exitosamente.");
-                    } catch (e: any) {
-                      alert("Error: " + e.message);
+                    } catch (err: unknown) {
+                      const error = err as { message: string };
+                      alert("Error: " + error.message);
                     }
                   }}
                   className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
@@ -547,16 +547,24 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                           <td className="px-6 py-4 text-right">
                             <div className="flex justify-end gap-2">
                               <button
-                                onClick={() => { setMarketingCar(car); setIsMarketingModalOpen(true); }}
+                                onClick={() => { setActiveTab('marketing'); }}
                                 className="w-[40px] h-[40px] rounded-lg bg-[#00aed9]/10 flex items-center justify-center text-[#00aed9] hover:bg-[#00aed9] hover:text-white transition-colors"
-                                title="Generar Marketing Content"
+                                title="Planear Contenido"
                               >
                                 <Sparkles size={16} />
                               </button>
-                              <button onClick={() => { setEditingCar(car); setIsModalOpen(true); }} className="w-[40px] h-[40px] rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-[#00aed9] hover:text-white transition-colors">
+                              <button
+                                onClick={() => { setEditingCar(car); setIsModalOpen(true); }}
+                                className="w-[40px] h-[40px] rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-[#00aed9] hover:text-white transition-colors"
+                                title="Editar Vehículo"
+                              >
                                 <Edit3 size={16} />
                               </button>
-                              <button onClick={() => onDelete(car.id)} className="w-[40px] h-[40px] rounded-lg bg-rose-900/20 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors">
+                              <button
+                                onClick={() => onDelete(car.id)}
+                                className="w-[40px] h-[40px] rounded-lg bg-rose-900/20 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors"
+                                title="Eliminar Vehículo"
+                              >
                                 <Trash2 size={16} />
                               </button>
                             </div>

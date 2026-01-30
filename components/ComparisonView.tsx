@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useComparison } from '../contexts/ComparisonContext';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Crown, Sparkles, TrendingUp, AlertTriangle, X } from 'lucide-react';
-import { Car } from '../types';
+import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
+
 
 const ComparisonView: React.FC = () => {
     const { selectedCars, removeCarFromCompare, clearComparison } = useComparison();
@@ -117,7 +117,9 @@ const ComparisonView: React.FC = () => {
 
                                 {/* Car Header */}
                                 <div className={`bg-slate-800 rounded-t-3xl p-6 relative overflow-hidden ${isWinner ? 'border-2 border-[#00aed9]' : 'border border-white/5'}`}>
-                                    <button onClick={() => removeCarFromCompare(car.id)} className="absolute top-4 right-4 text-slate-500 hover:text-white"><X size={20} /></button>
+                                    <button onClick={() => removeCarFromCompare(car.id)} className="absolute top-4 right-4 text-slate-500 hover:text-white" title="Quitar de la comparativa">
+                                        <X size={20} />
+                                    </button>
                                     <div className="aspect-video mb-4 flex items-center justify-center">
                                         <img src={car.img} alt={car.name} className="max-w-full max-h-full object-contain drop-shadow-xl" />
                                     </div>

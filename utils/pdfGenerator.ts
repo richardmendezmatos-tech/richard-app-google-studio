@@ -43,7 +43,7 @@ export const generateLeadPDF = (lead: Lead) => {
 
     // -- AI Insights Section --
     if (lead.aiSummary) {
-        const finalY = (doc as any).lastAutoTable.finalY + 20;
+        const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 20;
 
         doc.setFontSize(14);
         doc.setTextColor(0, 174, 217);

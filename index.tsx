@@ -28,15 +28,37 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <DealerProvider>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </DealerProvider>
-    </Provider>
-  </React.StrictMode>
-);
+// Global Error Handler for "Loading" Stuck State
+const showError = (msg: string) => {
+  const errDiv = document.createElement('div');
+  errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:red;z-index:999999;padding:20px;font-size:20px;';
+  errDiv.innerText = 'CRITICAL STARTUP ERROR:\n' + msg;
+  document.body.appendChild(errDiv);
+};
+
+window.onerror = (msg, url, line, col, error) => {
+  showError(`${msg}\n${error?.stack || ''}`);
+};
+
+window.addEventListener('unhandledrejection', (e) => {
+  showError(`Unhandled Promise: ${e.reason}`);
+});
+
+console.log("🚀 [Index] Booting React Application...");
+try {
+  const root = ReactDOM.createRoot(rootElement);
+  console.log("✅ [Index] Root created, rendering...");
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <DealerProvider>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </DealerProvider>
+      </Provider>
+    </React.StrictMode>
+  );
+} catch (e: any) {
+  showError(e.message + '\n' + e.stack);
+}

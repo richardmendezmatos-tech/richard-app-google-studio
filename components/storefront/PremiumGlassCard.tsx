@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '../../types';
-import { ShieldCheck, Heart, GitCompare, ChevronRight, Loader2, Sparkles } from 'lucide-react';
+import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '../../contexts/ComparisonContext';
-import { OptimizedImage } from '../OptimizedImage';
+import { OptimizedImage } from '../common/OptimizedImage';
 
 interface PremiumGlassCardProps {
     car: Car;

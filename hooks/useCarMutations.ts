@@ -1,27 +1,27 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addCar, updateCar, deleteCar } from '../services/firebaseService';
+import { addVehicle, updateVehicle, deleteVehicle } from '../services/inventoryService';
 import { Car } from '../types';
 
 export const useCarMutations = () => {
     const queryClient = useQueryClient();
 
     const addMutation = useMutation({
-        mutationFn: addCar,
+        mutationFn: addVehicle,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cars'] });
         },
     });
 
     const updateMutation = useMutation({
-        mutationFn: updateCar,
+        mutationFn: ({ id, ...updates }: Car) => updateVehicle(id, updates),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cars'] });
         },
     });
 
     const deleteMutation = useMutation({
-        mutationFn: deleteCar,
+        mutationFn: deleteVehicle,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cars'] });
         },

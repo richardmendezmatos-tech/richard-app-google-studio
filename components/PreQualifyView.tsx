@@ -1,9 +1,10 @@
-
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, User, Briefcase, Banknote, Calendar, ChevronRight, Loader2, Eye, EyeOff, MessagesSquare, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, Briefcase, Loader2, Eye, EyeOff, MessagesSquare, FileText, Banknote, Calendar, ChevronRight } from 'lucide-react';
 import { useNotification } from '../contexts/NotificationContext';
 import { submitApplication } from '../services/firebaseService';
+import { addLead } from '../services/crmService';
+import { useMetaPixel } from '../hooks/useMetaPixel';
 
 interface Props {
     onExit: () => void;
@@ -12,6 +13,7 @@ interface Props {
 const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const { addNotification } = useNotification();
     const location = useLocation();
+    const { trackEvent } = useMetaPixel();
 
     // Retrieve vehicle context if available
     const dealContext = location.state as {
@@ -24,7 +26,6 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [showSSN, setShowSSN] = useState(false);
     const [referenceId, setReferenceId] = useState('');
-    // const [processingStage, setProcessingStage] = useState(''); // Removed as per instruction
 
     // Form State
     const [formData, setFormData] = useState({
@@ -72,20 +73,6 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
         setIsSubmitting(true);
 
-        // Simulation Stages - Removed as per instruction
-        // const stages = [
-        //     "Conectando con Servidor Seguro...",
-        //     "Encriptando Datos (256-bit SSL)...",
-        //     "Consultando Buró de Crédito...",
-        //     "Analizando Capacidad de Pago...",
-        //     "Generando Oferta Preliminar..."
-        // ];
-
-        // for (const stage of stages) {
-        //     setProcessingStage(stage);
-        //     await new Promise(r => setTimeout(r, 800)); // Cinematic delay
-        // }
-
         try {
             const submissionData = {
                 ...formData,
@@ -99,7 +86,27 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
             await submitApplication(submissionData);
             // Ethical Change: Reference ID for Case Tracking, not "Approval"
             const refId = `CASE-${Math.floor(Math.random() * 1000000)}`;
+
+            // CRM Integration: Add summary lead to board
+            addLead({
+                type: 'form',
+                name: `${formData.firstName} ${formData.lastName}`,
+                phone: formData.phone,
+                email: formData.email,
+                notes: `Finance Application #${refId} - Income: $${formData.monthlyIncome}`
+            });
+
             setReferenceId(refId);
+
+            // Growth: Track CompleteRegistration
+            trackEvent('CompleteRegistration', {
+                content_name: 'Credit Application',
+                status: 'success',
+                transaction_id: refId,
+                value: 0.00,
+                currency: 'USD'
+            });
+
             setIsSuccess(true);
         } catch (error) {
             console.error("Error submitting application:", error);
@@ -151,7 +158,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
             {/* Fintech Header */}
             <div className="bg-[#0f1922] border-b border-white/5 p-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
                 <div className="flex items-center gap-4">
-                    <button onClick={onExit} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
+                    <button onClick={onExit} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white" title="Volver">
                         <ArrowLeft />
                     </button>
                     <div>

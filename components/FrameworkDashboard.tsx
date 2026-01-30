@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { frameworkService, FrameworkState } from '../services/frameworkService';
 import { Cpu, RotateCcw, Activity, Zap, Server, Shield, Terminal, Share2, Layers } from 'lucide-react';
 
@@ -56,7 +56,7 @@ const FrameworkDashboard: React.FC = () => {
                         <div className="text-xl font-bold text-emerald-500 font-mono">99.99%</div>
                     </div>
                     <button
-                        onClick={() => frameworkService.reset('System')}
+                        onClick={() => frameworkService.reset('React')}
                         className="px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg uppercase font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                     >
                         <RotateCcw size={16} /> Reset Core
@@ -184,33 +184,61 @@ const FrameworkDashboard: React.FC = () => {
     );
 };
 
-// --- SUBCOMPONENTS ---
+// Generate stable "random" values based on index to satisfy purity rules
+const BARS_DATA = [15, 45, 25, 65, 35, 85, 45, 75, 55, 95];
 
-const MetricCard = ({ label, value, icon: Icon, color, chartColor, detail }: any) => (
-    <div className="p-6 bg-slate-950/50 border border-white/5 rounded-2xl hover:bg-white/5 transition-all group cursor-default backdrop-blur-sm">
-        <div className="flex justify-between items-start mb-4">
-            <div className={`p-2 rounded-xl bg-white/5 ${color}`}>
-                <Icon size={20} />
+interface MetricCardProps {
+    label: string;
+    value: string;
+    icon: React.ElementType;
+    color: string;
+    chartColor: string;
+    detail: string;
+}
+
+const MetricCard = ({ label, value, icon: Icon, color, chartColor, detail }: MetricCardProps) => {
+    const barsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        BARS_DATA.forEach((h, i) => {
+            if (barsRef.current[i]) {
+                barsRef.current[i]!.style.height = `${h}%`;
+            }
+        });
+    }, []);
+
+    return (
+        <div className="p-6 bg-slate-950/50 border border-white/5 rounded-2xl hover:bg-white/5 transition-all group cursor-default backdrop-blur-sm">
+            <div className="flex justify-between items-start mb-4">
+                <div className={`p-2 rounded-xl bg-white/5 ${color}`}>
+                    <Icon size={20} />
+                </div>
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${color} bg-white/5 px-2 py-1 rounded`}>{detail}</span>
             </div>
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${color} bg-white/5 px-2 py-1 rounded`}>{detail}</span>
-        </div>
-        <div className="text-3xl font-black text-white tracking-tighter mb-1">{value}</div>
-        <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</div>
+            <div className="text-3xl font-black text-white tracking-tighter mb-1">{value}</div>
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</div>
 
-        {/* Fake Mini Chart */}
-        <div className="flex gap-1 mt-4 h-1 items-end opacity-50 group-hover:opacity-100 transition-opacity">
-            {[...Array(10)].map((_, i) => (
-                <div
-                    key={i}
-                    className={`flex-1 rounded-full ${chartColor}`}
-                    style={{ height: `${Math.random() * 100}%` }}
-                />
-            ))}
+            {/* Fake Mini Chart */}
+            <div className="flex gap-1 mt-4 h-1 items-end opacity-50 group-hover:opacity-100 transition-opacity">
+                {BARS_DATA.map((_, i) => (
+                    <div
+                        key={i}
+                        ref={el => barsRef.current[i] = el}
+                        className={`flex-1 rounded-full ${chartColor}`}
+                    />
+                ))}
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
-const ModuleCard = ({ title, status, ping }: any) => (
+interface ModuleCardProps {
+    title: string;
+    status: string;
+    ping: number;
+}
+
+const ModuleCard = ({ title, status, ping }: ModuleCardProps) => (
     <div className="p-4 bg-slate-900 border border-white/5 rounded-xl flex flex-col gap-2 hover:border-cyan-500/30 transition-all cursor-crosshair">
         <div className="flex justify-between items-center">
             <span className="text-xs font-bold text-white uppercase">{title}</span>

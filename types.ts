@@ -3,6 +3,15 @@ export type CarType = 'suv' | 'sedan' | 'luxury' | 'pickup';
 
 export type UserRole = 'admin' | 'user';
 
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+  role?: UserRole;
+  [key: string]: unknown;
+}
+
 export interface Car {
   id: string;
   name: string;

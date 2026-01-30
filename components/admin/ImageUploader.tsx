@@ -241,6 +241,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     max={maxFiles}
                     onChange={handleFileSelect}
                     className="hidden"
+                    aria-label="Seleccionar imágenes para subir"
                 />
             </motion.div>
 
@@ -332,6 +333,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                                     {file.status === 'error' && (
                                         <button
                                             onClick={() => removeFile(index)}
+                                            aria-label="Eliminar imagen"
                                             className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors"
                                         >
                                             <X size={16} className="text-red-500" />
