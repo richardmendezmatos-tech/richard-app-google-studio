@@ -30,6 +30,12 @@ if (!rootElement) {
 
 // Global Error Handler for "Loading" Stuck State
 const showError = (msg: string) => {
+  // IGNORE specific Firebase background errors that don't break the app
+  if (msg.includes('installations/request-failed') || msg.includes('403') || msg.includes('FirebaseError')) {
+    console.warn("[Startup] Suppressed non-critical background error:", msg);
+    return;
+  }
+
   const errDiv = document.createElement('div');
   errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:red;z-index:999999;padding:20px;font-size:20px;';
   errDiv.innerText = 'CRITICAL STARTUP ERROR:\n' + msg;
