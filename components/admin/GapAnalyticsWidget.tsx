@@ -27,7 +27,24 @@ export const GapAnalyticsWidget: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchGaps();
+        let isMounted = true;
+
+        const fetchGapsAsync = async () => {
+            setLoading(true);
+            const { data } = await supabase
+                .from('search_gaps')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            if (isMounted) {
+                if (data) setGaps(data);
+                setLoading(false);
+            }
+        };
+
+        fetchGapsAsync();
+        return () => { isMounted = false; };
     }, []);
 
     return (
@@ -36,7 +53,11 @@ export const GapAnalyticsWidget: React.FC = () => {
                 <h3 className="text-lg font-black flex items-center gap-2 text-slate-800 dark:text-white uppercase tracking-tight">
                     <TrendingDown className="text-rose-500" size={20} /> Oportunidades Perdidas
                 </h3>
-                <button onClick={fetchGaps} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <button
+                    onClick={fetchGaps}
+                    title="Refrescar datos"
+                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
+                >
                     <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
                 </button>
             </div>

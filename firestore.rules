@@ -60,6 +60,28 @@ service cloud.firestore {
                                     (resource == null || resource.data.dealerId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.dealerId);
     }
 
+    // CRM Leads (Unified Collection)
+    match /leads/{leadId} {
+      // Public create for Trade-In/WhatsApp/etc forms
+      allow create: if request.resource.data.keys().hasAll(['type', 'name', 'status', 'createdAt']);
+      
+      // Admin only for management
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Secure PII Vault (Full SSN)
+    match /applications_secure/{appId} {
+      // Allow creation when submitting application
+      allow create: if true; 
+      
+      // Strict Read: Only specialized admins or specific UID (Richard)
+      allow read: if isAdmin() && 
+                    (request.auth.uid == 'REPLACE_WITH_YOUR_UID' || 
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.superAdmin == true);
+      
+      allow update, delete: if false; // Audit trail preservation
+    }
+
     // --- Security Logs ---
     match /audit_logs/{logId} {
       allow read: if isAdmin();

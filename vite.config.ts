@@ -5,6 +5,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import path from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -24,16 +26,40 @@ export default defineConfig(({ mode }) => {
             'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
           }
         }
+      },
+      chunkSizeWarningLimit: 1500,
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+        'node:child_process': path.resolve(__dirname, './src/shims-node.ts'),
+        'node:net': path.resolve(__dirname, './src/shims-node.ts'),
+        'child_process': path.resolve(__dirname, './src/shims-node.ts'),
+        'net': path.resolve(__dirname, './src/shims-node.ts'),
       }
+    },
+    define: {
+      'process.env.API_KEY': JSON.stringify(apiKey),
+      'global': 'globalThis',
     },
     plugins: [
       react(),
+      nodePolyfills({
+        // Disable the specific polyfills that are conflicting with our custom shims
+        exclude: ['child_process', 'net'],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+      }),
       viteCompression({ algorithm: 'gzip', ext: '.gz' }),
       ViteImageOptimizer({
         png: { quality: 80 },
         jpeg: { quality: 80 },
         jpg: { quality: 80 },
         webp: { lossless: true },
+        exclude: ['hero.jpg'], // Corrupted file causing build errors
       }),
       visualizer({ filename: 'stats.html' }),
       VitePWA({
@@ -69,9 +95,6 @@ export default defineConfig(({ mode }) => {
           ]
         }
       })
-    ],
-    define: {
-      'process.env.API_KEY': JSON.stringify(apiKey)
-    }
+    ]
   }
 })

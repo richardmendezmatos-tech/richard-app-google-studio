@@ -7,10 +7,13 @@ import CarDetailModal from './CarDetailModal';
 import AIChatWidget from './AIChatWidget';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
-import { analyzeCarImage } from '../services/geminiService';
+import VisualSearchModal from './VisualSearchModal';
+import { useVisualSearch } from '../hooks/useVisualSearch';
 import { getCookie, setCookie } from '../services/cookieService';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { SocialProofWidget } from './conversion/SocialProofWidget';
+import SEO from './SEO';
 
 // Import New Modular Components
 import HeroSection from './storefront/HeroSection';
@@ -20,7 +23,7 @@ import FAQSection from './FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import PremiumGlassCard from './storefront/PremiumGlassCard'; // Premium UI Upgrade
 import { logBehavioralEvent } from '../services/retargetingService';
-import { useDealer } from '../contexts/DealerContext';
+
 
 interface Props {
     inventory: Car[];
@@ -34,13 +37,24 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState<CarType | 'all'>('all');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-    const [savedCarIds, setSavedCarIds] = useState<string[]>([]);
+    // Initialize state directly from cookie to avoid effect warning
+    const [savedCarIds, setSavedCarIds] = useState<string[]>(() => {
+        const savedCookie = getCookie('richard_saved_cars');
+        if (savedCookie) {
+            try {
+                return JSON.parse(savedCookie);
+            } catch (e) {
+                console.error("Error parsing saved cars cookie", e);
+                return [];
+            }
+        }
+        return [];
+    });
 
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
     const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
     const [isNeuralMatchOpen, setIsNeuralMatchOpen] = useState(false);
     const [isComparisonOpen, setIsComparisonOpen] = useState(false);
-    const [analyzingImage, setAnalyzingImage] = useState(false);
     const [visualContext, setVisualContext] = useState<string | null>(null);
     const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
     const [compareList, setCompareList] = useState<Car[]>([]);
@@ -63,11 +77,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
     }, []);
 
     // Effect to handle incoming visual search
-    useEffect(() => {
-        if (initialVisualSearch) {
-            performVisualAnalysis(initialVisualSearch);
-        }
-    }, [initialVisualSearch]);
+
 
     const toggleSaveCar = (e: React.MouseEvent, carId: string) => {
         e.stopPropagation();
@@ -95,44 +105,33 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         });
     };
 
-    const performVisualAnalysis = async (base64: string) => {
-        setAnalyzingImage(true);
-        setIsVisualSearchOpen(true);
-        try {
-            const analysis = await analyzeCarImage(base64);
-            const query = analysis.search_query || analysis.keywords[0];
+    // --- Visual Search Hook ---
+    const {
+        isAnalyzing,
+        error: visualError,
+        analyze
+    } = useVisualSearch(inventory);
 
-            setSearchTerm(query);
+    const handleVisualAnalyze = async (file: File) => {
+        const result = await analyze(file);
+        if (result && result.analysis) {
+            // Update filters based on analysis
+            setSearchTerm(result.analysis.brand || '');
+            setVisualContext(result.analysis.type ? `Tipo: ${result.analysis.type.toUpperCase()}` : 'Resultados Visuales');
 
-            // NEW: Semantic Search (Matrix-4 Component 3)
-            const { searchSemanticInventoryByText } = await import('../services/geminiService');
-            const semanticMatches = await searchSemanticInventoryByText(query);
-
-            if (semanticMatches.length > 0) {
-                setVisualContext(`Identificado: ${analysis.description}. Encontramos coincidencias similares en el inventario.`);
-                setSemanticResultIds(semanticMatches.map((m: any) => m.car_id));
+            // Set semantic IDs to filter the list
+            if (result.matches.length > 0) {
+                setSemanticResultIds(result.matches.map(c => c.id));
             } else {
-                setVisualContext(analysis.description);
-                setSemanticResultIds([]);
+                setSemanticResultIds(['NO_MATCHES']); // Dummy ID to show empty state
             }
 
-            const detectedType = (analysis.type || '').toLowerCase();
-            if (['suv', 'sedan', 'pickup', 'luxury'].includes(detectedType)) {
-                setFilter(detectedType as CarType);
-            } else {
-                setFilter('all');
-            }
-
-            if (onClearVisualSearch) onClearVisualSearch();
-            setIsVisualSearchOpen(false);
-        } catch (error) {
-            console.error("Error en búsqueda visual automática", error);
-            alert("No pudimos analizar la imagen importada.");
-            setIsVisualSearchOpen(false);
-        } finally {
-            setAnalyzingImage(false);
+            setIsVisualSearchOpen(false); // Close modal on success
+            return result;
         }
+        return null;
     };
+
 
     // --- React Query for Pagination (v5) ---
     const {
@@ -150,7 +149,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
         staleTime: 5 * 60 * 1000,
     });
 
-    const { currentDealer } = useDealer();
+    // const { currentDealer } = useDealer(); // Unused
 
     // Flatten pages for display
     const serverCars = data?.pages.flatMap(page => page.cars) || [];
@@ -190,17 +189,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
     // Loading State handling for initial load (server mode only)
     const isLoadingInitial = !isSearching && status === 'pending';
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
 
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async () => {
-            const base64 = (reader.result as string).split(',')[1];
-            await performVisualAnalysis(base64);
-        };
-    };
 
     const handleToggleCompare = (e: React.MouseEvent, car: Car) => {
         e.stopPropagation();
@@ -226,7 +215,13 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
 
     return (
         <>
-            <div className="p-0 lg:p-0 w-full pb-24 space-y-0 bg-slate-50 dark:bg-slate-950">
+            <div className="p-0 lg:p-0 h-full w-full bg-slate-50 dark:bg-slate-950">
+                <SEO
+                    title="Richard Automotive | Autos Seminuevos de Lujo en Puerto Rico"
+                    description="El dealer más tecnológico de Puerto Rico. Encuentra autos certificados, financiamiento flexible, y usa nuestra IA para encontrar tu auto ideal."
+                    url="/"
+                    type="website"
+                />
 
                 {/* 1. Hero Section (Full Width) */}
                 <HeroSection
@@ -425,12 +420,13 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                         </div>
                     </div>
 
-                    <FAQSection />
-
-                    <TestimonialsSection />
-
-                    <SocialFooter />
                 </div>
+
+                <FAQSection />
+
+                <TestimonialsSection />
+
+                <SocialFooter />
             </div>
 
             {/* Floating Comparison Bar */}
@@ -462,7 +458,7 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
                             </button>
                         )}
                         <div className="w-px h-6 bg-white/20 mx-1"></div>
-                        <button onClick={() => setCompareList([])} className="p-1.5 hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-colors">
+                        <button onClick={() => setCompareList([])} aria-label="Limpiar comparativa" className="p-1.5 hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition-colors">
                             <X size={16} />
                         </button>
                     </div>
@@ -494,44 +490,24 @@ const Storefront: React.FC<Props> = ({ inventory, initialVisualSearch, onClearVi
             }
 
             {/* Visual Search Modal */}
-            {
-                isVisualSearchOpen && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d2232]/90 backdrop-blur-xl animate-in fade-in">
-                        <div className="bg-white dark:bg-slate-900 p-8 rounded-[40px] max-w-lg w-full relative shadow-2xl border border-slate-700">
-                            <button onClick={() => setIsVisualSearchOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"><X /></button>
-                            <h3 className="text-3xl font-black text-slate-800 dark:text-white mb-2 flex items-center gap-3">
-                                <Camera className="text-[#00aed9]" size={32} /> Visual AI
-                            </h3>
-                            <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium">Sube una foto y nuestra IA encontrará el match perfecto en nuestro inventario.</p>
-
-                            {analyzingImage ? (
-                                <div className="flex flex-col items-center justify-center h-48 space-y-4 border-2 border-dashed border-[#00aed9]/30 rounded-3xl bg-[#00aed9]/5">
-                                    <Loader2 className="w-12 h-12 text-[#00aed9] animate-spin" />
-                                    <p className="text-sm font-bold animate-pulse text-[#00aed9] uppercase tracking-widest">Escaneando...</p>
-                                </div>
-                            ) : (
-                                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all group hover:border-[#00aed9]">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <UploadCloud className="w-12 h-12 mb-3 text-slate-400 group-hover:text-[#00aed9] transition-colors scale-100 group-hover:scale-110 duration-300" />
-                                        <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-bold text-[#00aed9]">Sube una foto</span> o arrastra aquí</p>
-                                    </div>
-                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                                </label>
-                            )}
-                        </div>
-                    </div>
-                )
-            }
+            <VisualSearchModal
+                isOpen={isVisualSearchOpen}
+                onClose={() => setIsVisualSearchOpen(false)}
+                onAnalyze={handleVisualAnalyze}
+                isAnalyzing={isAnalyzing}
+                error={visualError}
+            />
 
             {/* Detail Modal */}
-            {
-                selectedCar && (
-                    <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
-                )
-            }
+            {selectedCar && (
+                <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
+            )}
 
             {/* Chat Widget */}
             <AIChatWidget inventory={inventory} />
+
+            {/* Social Proof Widget */}
+            <SocialProofWidget />
         </>
     );
 };

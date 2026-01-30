@@ -1,8 +1,7 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-import { useChat, Message } from 'ai/react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Car } from '../types';
 import { AGENTS, detectIntent, AgentPersona } from '../services/agentSystem';
+import { useCopilotAgent } from '../hooks/useCopilotAgent';
 import { MessageSquare, X, Send, ChevronDown, RefreshCw, Mic, MicOff, ShieldCheck, Calculator } from 'lucide-react';
 import { AI_LEGAL_DISCLAIMER } from '../services/firebaseService';
 import GenUICarCard from './chat/GenUICarCard';
@@ -18,23 +17,19 @@ const QUICK_PROMPTS = [
   "📅 Agendar Test Drive"
 ];
 
-const AIChatWidget: React.FC<Props> = ({ inventory }) => {
+const AIChatWidget: React.FC<Props> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPersona, setCurrentPersona] = useState<AgentPersona>('ricardo');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showDebug, setShowDebug] = useState(false);
 
-  // Dynamic API URL for Firebase Function
-  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-  const apiEndpoint = `https://us-central1-${projectId}.cloudfunctions.net/chatStream`;
-
-  // AI SDK Hook
-  const { messages, input, setInput, append, isLoading, setMessages } = useChat({
-    api: apiEndpoint,
+  // Copilot SDK Hook
+  const { messages, input, setInput, append, isLoading, setMessages } = useCopilotAgent('main-chat-session', {
     initialMessages: [
       { id: 'welcome', role: 'assistant', content: '¡Hola! Soy Ricardo, tu experto en autos. ¿Qué buscas hoy?', data: { agent: 'ricardo' } }
     ],
-    onFinish: (message: Message) => {
-      const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+    onFinish: (message) => {
+      const lastUserMsg = messages.slice().reverse().find(m => m.role === 'user');
       if (lastUserMsg) {
         const detected = detectIntent(lastUserMsg.content);
         setCurrentPersona(detected);
@@ -44,23 +39,14 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
         autoSpeakRef.current = false;
       }
     },
-    onResponse: () => {
-      setApiStatus('success');
-    },
     onError: (err: Error) => {
-      console.error("Chat Error:", err);
-      setApiStatus('error');
+      console.error("Copilot Error:", err);
     }
   });
 
-  // Local state for UI enhancements
-  const [showDebug, setShowDebug] = useState(false);
-  const [apiStatus, setApiStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
   // Voice State
   const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<null | { stop: () => void }>(null);
   const autoSpeakRef = useRef(false);
 
   useEffect(() => {
@@ -76,9 +62,6 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
     utterance.lang = 'es-US';
     utterance.rate = 1.1;
     utterance.pitch = 1.0;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -88,12 +71,13 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
       setIsListening(false);
       return;
     }
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    // @ts-expect-error - webkitSpeechRecognition is not standard
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return alert("Voz no soportada.");
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'es-ES';
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: { results: { transcript: string }[][] }) => {
       const transcript = event.results[0][0].transcript;
       setInput(transcript);
       handleFormSubmit(null, transcript, true);
@@ -121,7 +105,6 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
     }
 
     autoSpeakRef.current = autoSpeak;
-    setApiStatus('loading');
 
     // Auto Persona detection BEFORE sending to feel responsive
     setCurrentPersona(detectIntent(userMsg));
@@ -132,12 +115,12 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
     });
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setMessages([
       { id: 'welcome', role: 'assistant', content: '¡Hola! Soy Ricardo. ¿En qué puedo ayudarte?', data: { agent: 'ricardo' } }
     ]);
     localStorage.removeItem('richard_chat_history');
-  };
+  }, [setMessages]);
 
   const activeAgent = AGENTS[currentPersona];
 
@@ -171,7 +154,7 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
               <button onClick={handleReset} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-300 hover:text-white" title="Reiniciar Chat">
                 <RefreshCw size={18} />
               </button>
-              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-300 hover:text-white">
+              <button onClick={() => setIsOpen(false)} aria-label="Minimizar chat" className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-300 hover:text-white">
                 <ChevronDown size={22} />
               </button>
             </div>
@@ -179,7 +162,7 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
 
           {/* Chat Body */}
           <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50/50 dark:bg-transparent" ref={scrollRef}>
-            {messages.map((msg: Message) => (
+            {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}>
                   <div className={`max-w-[85%] p-4 text-sm leading-relaxed shadow-sm ${msg.role === 'user'
@@ -189,7 +172,9 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
 
                     {msg.role === 'assistant' && (
                       <div className="text-[9px] font-black uppercase text-slate-400 mb-1 tracking-widest">
-                        {msg.data && (msg.data as any).agent ? AGENTS[(msg.data as any).agent as AgentPersona]?.name : activeAgent.name}
+                        {msg.data && typeof msg.data === 'object' && 'agent' in msg.data
+                          ? AGENTS[msg.data.agent as AgentPersona]?.name
+                          : activeAgent.name}
                       </div>
                     )}
                     {msg.content}
@@ -197,14 +182,14 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
                 </div>
 
                 {/* --- GENERATIVE UI: TOOL INVOCATIONS --- */}
-                {msg.toolInvocations?.map((toolInvocation: any) => {
+                {msg.toolInvocations?.map((toolInvocation) => {
                   const { toolName, toolCallId, state } = toolInvocation;
 
                   if (state === 'result') {
-                    if (toolName === 'checkInventory') {
-                      return <GenUICarCard key={toolCallId} cars={toolInvocation.result} />;
+                    if (toolName === 'search_inventory') {
+                      return <GenUICarCard key={toolCallId} cars={toolInvocation.result.vehicles || []} />;
                     }
-                    if (toolName === 'calculatePayment') {
+                    if (toolName === 'calculate_financing') {
                       return (
                         <div key={toolCallId} className="flex justify-start">
                           <div className="bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3">
@@ -223,7 +208,9 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
                   } else {
                     return (
                       <div key={toolCallId} className="flex justify-start opacity-50 italic text-[10px] text-slate-400">
-                        {toolName === 'checkInventory' ? "🔍 Buscando autos..." : "🧮 Calculando pago..."}
+                        {toolName === 'search_inventory' ? "🔍 Buscando autos..." :
+                          toolName === 'calculate_financing' ? "🧮 Calculando pago..." :
+                            "⚙️ Procesando..."}
                       </div>
                     );
                   }
@@ -271,7 +258,7 @@ const AIChatWidget: React.FC<Props> = ({ inventory }) => {
                 value={input}
                 onChange={e => setInput(e.target.value)}
               />
-              <button type="submit" disabled={!input.trim() || isLoading} className="absolute right-1.5 top-1.5 w-9 h-9 bg-[#00aed9] text-white rounded-full flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-md">
+              <button type="submit" disabled={!input.trim() || isLoading} aria-label="Enviar mensaje" className="absolute right-1.5 top-1.5 w-9 h-9 bg-[#00aed9] text-white rounded-full flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-md">
                 <Send size={16} className={input.trim() ? "translate-x-0.5" : ""} />
               </button>
               <button type="button" onClick={toggleVoiceParams} className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md ${isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-[#00aed9]'}`}>

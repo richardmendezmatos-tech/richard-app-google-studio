@@ -4,34 +4,36 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldAlert } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { Car } from '../types';
 import { logout as logoutAction } from '../store/slices/authSlice';
+import { lazyRetry } from '../src/utils/lazyRetry';
 
 // --- Lazy Imports (Manteniendo los existentes) ---
 import Storefront from './Storefront'; // Eager
-const AdminPanel = React.lazy(() => import('./AdminPanel'));
-const DigitalTwinDashboard = React.lazy(() => import('./DigitalTwin/DigitalTwinDashboard'));
-const AIConsultant = React.lazy(() => import('./AIConsultant'));
-const AILabView = React.lazy(() => import('./AILabView'));
-const UserLogin = React.lazy(() => import('./UserLogin'));
-const VehicleDetail = React.lazy(() => import('./VehicleDetail'));
-const TradeInView = React.lazy(() => import('./TradeInView'));
-const AppraisalView = React.lazy(() => import('./AppraisalView'));
-const ComparisonView = React.lazy(() => import('./ComparisonView'));
-const AdminLogin = React.lazy(() => import('./AdminLogin'));
-const BlogView = React.lazy(() => import('./BlogView'));
-const UserProfile = React.lazy(() => import('./UserProfile'));
-const DigitalGarage = React.lazy(() => import('./DigitalGarage'));
-const PreQualifyView = React.lazy(() => import('./PreQualifyView'));
-const PrivacyView = React.lazy(() => import('./PrivacyView'));
-const TermsView = React.lazy(() => import('./TermsView'));
-const NotFound = React.lazy(() => import('./NotFound'));
-const FrameworkDashboard = React.lazy(() => import('./FrameworkDashboard'));
-const KanbanDemo = React.lazy(() => import('./KanbanDemo'));
-const BetaOnboard = React.lazy(() => import('./admin/BetaOnboard'));
-const EarlyAdopterOnboard = React.lazy(() => import('./admin/EarlyAdopterOnboard'));
-const B2BBillingDashboard = React.lazy(() => import('./admin/B2BBillingDashboard'));
+const AdminPanel = React.lazy(() => lazyRetry(() => import('./AdminPanel')));
+const DigitalTwinDashboard = React.lazy(() => lazyRetry(() => import('./DigitalTwin/DigitalTwinDashboard')));
+const AIConsultant = React.lazy(() => lazyRetry(() => import('./AIConsultant')));
+const AILabView = React.lazy(() => lazyRetry(() => import('./AILabView')));
+const UserLogin = React.lazy(() => lazyRetry(() => import('./UserLogin')));
+const VehicleDetail = React.lazy(() => lazyRetry(() => import('./VehicleDetail')));
+const TradeInView = React.lazy(() => lazyRetry(() => import('./TradeInView')));
+const AppraisalView = React.lazy(() => lazyRetry(() => import('./AppraisalView')));
+const ComparisonView = React.lazy(() => lazyRetry(() => import('./ComparisonView')));
+const AdminLogin = React.lazy(() => lazyRetry(() => import('./AdminLogin')));
+const BlogView = React.lazy(() => lazyRetry(() => import('./BlogView')));
+const UserProfile = React.lazy(() => lazyRetry(() => import('./UserProfile')));
+const DigitalGarage = React.lazy(() => lazyRetry(() => import('./DigitalGarage')));
+const PreQualifyView = React.lazy(() => lazyRetry(() => import('./PreQualifyView')));
+const PrivacyView = React.lazy(() => lazyRetry(() => import('./PrivacyView')));
+const TermsView = React.lazy(() => lazyRetry(() => import('./TermsView')));
+const NotFound = React.lazy(() => lazyRetry(() => import('./NotFound')));
+const FrameworkDashboard = React.lazy(() => lazyRetry(() => import('./FrameworkDashboard')));
+const KanbanDemo = React.lazy(() => lazyRetry(() => import('./KanbanDemo')));
+const BetaOnboard = React.lazy(() => lazyRetry(() => import('./admin/BetaOnboard')));
+const EarlyAdopterOnboard = React.lazy(() => lazyRetry(() => import('./admin/EarlyAdopterOnboard')));
+const B2BBillingDashboard = React.lazy(() => lazyRetry(() => import('./admin/B2BBillingDashboard')));
 import ChaosTest from './ChaosTest';
-import { uploadInitialInventory } from '../services/firebaseService';
+import { uploadInitialInventory } from '../services/inventoryService';
 import { initialInventoryData } from '../src/constants/initialInventory';
 
 // --- Guards ---
@@ -67,9 +69,9 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        let unsubscribe: any;
+        let unsubscribe: () => void;
         import('../services/firebaseService').then(({ auth }) => {
-            unsubscribe = auth.onAuthStateChanged((fbUser) => {
+            unsubscribe = auth.onAuthStateChanged(() => {
                 setCheckingAuth(false);
             });
         });
@@ -121,20 +123,20 @@ const pageVariants = {
     }
 };
 
-const pageTransition = {
+const pageTransition: any = {
     type: "tween",
     ease: "anticipate",
     duration: 0.4
 };
 
 interface AnimatedRoutesProps {
-    inventory: any[];
+    inventory: Car[];
     pendingVisualSearch: string | null;
     setPendingVisualSearch: (val: string | null) => void;
     handleMagicFix: () => Promise<void>;
-    handleAdd: any;
-    handleUpdate: any;
-    handleDelete: any;
+    handleAdd: (car: Omit<Car, 'id'>) => Promise<void>;
+    handleUpdate: (car: Car) => Promise<void>;
+    handleDelete: (id: string) => void;
 }
 
 export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
@@ -175,7 +177,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                     <Route path="/consultant" element={<PageWrapper><AIConsultant inventory={inventory} /></PageWrapper>} />
                     <Route path="/blog" element={<PageWrapper><BlogView /></PageWrapper>} />
                     <Route path="/profile" element={<AuthGuard><PageWrapper><UserProfile /></PageWrapper></AuthGuard>} />
-                    <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView onExit={() => navigate('/')} /></PageWrapper></AuthGuard>} />
+                    <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
                     <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
                     <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
                     <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />

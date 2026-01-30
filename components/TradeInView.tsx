@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Car, CheckCircle2, DollarSign, AlertCircle, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, Car, ChevronRight, Loader2 } from 'lucide-react';
+import { addLead } from '../services/crmService';
 
 type Step = 'identify' | 'details' | 'condition' | 'result';
 
@@ -23,7 +24,7 @@ const TradeInView: React.FC = () => {
         mileage: '',
         condition: 'good'
     });
-    const [showConfetti, setShowConfetti] = useState(false);
+
 
     // Mock Data for Selectors
     const years = Array.from({ length: 15 }, (_, i) => (2025 - i).toString());
@@ -46,7 +47,15 @@ const TradeInView: React.FC = () => {
         setTimeout(() => {
             setIsLoading(false);
             setStep('result');
-            setShowConfetti(true);
+            setStep('result');
+
+            // Capture Lead
+            addLead({
+                type: 'trade-in',
+                name: 'Anonymous Visitor',
+                phone: 'Not provided',
+                notes: `Trade-In: ${formData.year} ${formData.make} ${formData.model} (${formData.mileage} miles) - Condition: ${formData.condition}`
+            });
         }, 2000);
     };
 
@@ -78,6 +87,7 @@ const TradeInView: React.FC = () => {
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest text-[#00aed9]">Año</label>
                                 <select
+                                    aria-label="Seleccionar Año del Auto"
                                     className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-[#00aed9] focus:ring-1 focus:ring-[#00aed9] outline-none transition-all"
                                     value={formData.year}
                                     onChange={(e) => handleInputChange('year', e.target.value)}
@@ -89,6 +99,7 @@ const TradeInView: React.FC = () => {
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest text-[#00aed9]">Marca</label>
                                 <select
+                                    aria-label="Seleccionar Marca de Auto"
                                     className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-[#00aed9] focus:ring-1 focus:ring-[#00aed9] outline-none transition-all"
                                     value={formData.make}
                                     onChange={(e) => handleInputChange('make', e.target.value)}
@@ -100,6 +111,7 @@ const TradeInView: React.FC = () => {
                             <div className="space-y-2 md:col-span-2">
                                 <label className="text-xs font-bold uppercase tracking-widest text-[#00aed9]">Modelo</label>
                                 <select
+                                    aria-label="Seleccionar Modelo de Auto"
                                     className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-[#00aed9] focus:ring-1 focus:ring-[#00aed9] outline-none transition-all"
                                     value={formData.model}
                                     onChange={(e) => handleInputChange('model', e.target.value)}

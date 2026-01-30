@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { voiceService } from '../../services/voiceService';
 import { getAIResponse } from '../../services/geminiService';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,19 +17,25 @@ const StopIcon = () => (
     </svg>
 );
 
-const Waveform = () => (
-    <div className="flex items-center gap-1 h-4">
-        {[1, 2, 3, 4, 3, 2, 1].map((scale, i) => (
-            <motion.div
-                key={i}
-                className="w-1 bg-white rounded-full"
-                animate={{ height: [4, 16 * Math.random(), 4] }}
-                transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
-                style={{ height: 4 + scale * 2 }}
-            />
-        ))}
-    </div>
-);
+const Waveform = () => {
+    const bars = [1, 2, 3, 4, 3, 2, 1];
+    // Pre-generate stable random targets to maintain component purity
+    const randomHeights = [12, 8, 16, 10, 14, 11, 9];
+
+    return (
+        <div className="flex items-center gap-1 h-4">
+            {bars.map((scale, i) => (
+                <motion.div
+                    key={i}
+                    className="w-1 bg-white rounded-full"
+                    animate={{ height: [4, randomHeights[i], 4] }}
+                    transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
+                    style={{ height: 4 + scale * 2 }}
+                />
+            ))}
+        </div>
+    );
+};
 
 interface VoiceWidgetProps {
     onMessage?: (text: string, sender: 'user' | 'bot') => void;

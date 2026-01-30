@@ -16,10 +16,27 @@ export const EnterpriseStatus = () => {
     };
 
     useEffect(() => {
-        checkStatus();
-        // Poll every 30 seconds
-        const interval = setInterval(checkStatus, 30000);
-        return () => clearInterval(interval);
+        let isMounted = true;
+
+        const fetchStatus = async () => {
+            setLoading(true);
+            try {
+                const result = await enterpriseService.getSystemHealth();
+                if (isMounted) {
+                    setHealth(result);
+                    setLastPing(new Date());
+                }
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        };
+
+        fetchStatus();
+        const interval = setInterval(fetchStatus, 30000);
+        return () => {
+            isMounted = false;
+            clearInterval(interval);
+        };
     }, []);
 
     const isUp = health?.status === 'UP';

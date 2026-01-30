@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Home } from 'lucide-react';
 
@@ -23,16 +23,47 @@ const NotFound: React.FC = () => {
         return () => clearInterval(timer);
     }, [navigate]);
 
-    // Generate particles only once to keep component pure
-    const particles = React.useMemo(() => [...Array(20)].map((_, i) => ({
-        id: i,
-        width: Math.random() * 4 + 2 + 'px',
-        height: Math.random() * 4 + 2 + 'px',
-        left: Math.random() * 100 + '%',
-        top: Math.random() * 100 + '%',
-        animationDuration: Math.random() * 3 + 2 + 's',
-        animationDelay: Math.random() * 2 + 's'
-    })), []);
+    interface Particle {
+        id: number;
+        width: string;
+        height: string;
+        left: string;
+        top: string;
+        animationDuration: string;
+        animationDelay: string;
+    }
+
+    const [particles, setParticles] = useState<Particle[]>([]);
+    const particlesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            const data = [...Array(20)].map((_, i) => ({
+                id: i,
+                width: Math.random() * 4 + 2 + 'px',
+                height: Math.random() * 4 + 2 + 'px',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                animationDuration: Math.random() * 3 + 2 + 's',
+                animationDelay: Math.random() * 2 + 's'
+            }));
+            setParticles(data);
+
+            // Set styles directly on DOM to avoid lint warnings about inline styles
+            data.forEach((p, i) => {
+                const el = particlesRef.current[i];
+                if (el) {
+                    el.style.width = p.width;
+                    el.style.height = p.height;
+                    el.style.left = p.left;
+                    el.style.top = p.top;
+                    el.style.animationDuration = p.animationDuration;
+                    el.style.animationDelay = p.animationDelay;
+                }
+            });
+        }, 0);
+        return () => clearTimeout(timeout);
+    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950 relative overflow-hidden">
@@ -42,21 +73,26 @@ const NotFound: React.FC = () => {
 
             {/* Dynamic Particles simulation with CSS */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
-                {particles.map((p) => (
+                {particles.map((p, i) => (
                     <div
                         key={p.id}
+                        ref={el => particlesRef.current[i] = el}
                         className="absolute rounded-full bg-[#00aed9] animate-pulse"
-                        style={{
-                            width: p.width,
-                            height: p.height,
-                            left: p.left,
-                            top: p.top,
-                            animationDuration: p.animationDuration,
-                            animationDelay: p.animationDelay
-                        }}
                     />
                 ))}
             </div>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .absolute.rounded-full.bg-\\[\\#00aed9\\] {
+                    width: var(--p-width);
+                    height: var(--p-height);
+                    left: var(--p-left);
+                    top: var(--p-top);
+                    animation-duration: var(--p-duration);
+                    animation-delay: var(--p-delay);
+                }
+            `}} />
 
             <div className="max-w-md w-full z-10 animate-in fade-in zoom-in duration-700">
                 <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center space-y-6">

@@ -1,11 +1,11 @@
 
 import React, { useEffect, useRef } from 'react';
-// @ts-ignore
+// @ts-expect-error: Vanilla HyperList is not typed for 2026 vite standard
 import { createHyperList } from './vanilla/HyperList';
 import { Activity, Zap, Cpu, Code2 } from 'lucide-react';
 
-const AILabView: React.FC<{ onExit?: () => void }> = ({ onExit }) => {
-  const hyperListRef = useRef<any>(null);
+const AILabView: React.FC = () => {
+  const hyperListRef = useRef<{ updateBatchStatus: (ids: number[], status: string) => void } | null>(null);
 
   useEffect(() => {
     // Mount the Vanilla High-Perf component

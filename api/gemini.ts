@@ -36,10 +36,11 @@ export default async function handler(request: Request) {
         // 4. Return formatted JSON response
         return Response.json({ text });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Gemini API Proxy Error:", error);
+        const err = error as Error;
         return Response.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: err.message || 'Internal Server Error' },
             { status: 500 }
         );
     }

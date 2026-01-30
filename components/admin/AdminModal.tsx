@@ -173,7 +173,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                         <div className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest">Editor de Inventario</div>
                         <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{car ? 'Editar Unidad' : 'Nueva Unidad'}</h2>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-rose-500 hover:text-white transition-colors">
+                    <button onClick={onClose} aria-label="Cerrar modal" className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-rose-500 hover:text-white transition-colors">
                         <X size={20} />
                     </button>
                 </div>
@@ -202,7 +202,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tipo</label>
-                                <select name="type" defaultValue={car?.type || 'suv'} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] appearance-none">
+                                <select name="type" defaultValue={car?.type || 'suv'} aria-label="Tipo de vehículo" className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] appearance-none">
                                     <option value="suv">SUV</option>
                                     <option value="sedan">Sedan</option>
                                     <option value="pickup">Pickup</option>
@@ -222,7 +222,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
 
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
+                                <label htmlFor="description-field" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
                                 <button
                                     type="button"
                                     onClick={generateAIDescription}
@@ -239,11 +239,13 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                                 )}
                             </div>
                             <textarea
+                                id="description-field"
                                 name="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 rows={3}
                                 className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-medium outline-none focus:ring-2 focus:ring-[#00aed9] resize-none"
+                                placeholder="Descripción del vehículo"
                             />
                         </div>
 

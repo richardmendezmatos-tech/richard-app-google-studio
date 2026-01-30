@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Globe, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
+import { SITE_CONFIG } from '../../src/constants/siteConfig';
 
 const SocialFooter: React.FC = () => {
     return (
@@ -21,10 +22,18 @@ const SocialFooter: React.FC = () => {
                 </div>
 
                 <div className="flex gap-4">
-                    <SocialButton icon={<Instagram size={20} />} label="Instagram" href="#" />
-                    <SocialButton icon={<Facebook size={20} />} label="Facebook" href="#" />
-                    <SocialButton icon={<Youtube size={20} />} label="YouTube" href="#" />
-                    <SocialButton icon={<Twitter size={20} />} label="X / Twitter" href="#" />
+                    {SITE_CONFIG.social.instagram && (
+                        <SocialButton icon={<Instagram size={20} />} label="Instagram" href={SITE_CONFIG.social.instagram} />
+                    )}
+                    {SITE_CONFIG.social.facebook && (
+                        <SocialButton icon={<Facebook size={20} />} label="Facebook" href={SITE_CONFIG.social.facebook} />
+                    )}
+                    {SITE_CONFIG.social.youtube && (
+                        <SocialButton icon={<Youtube size={20} />} label="YouTube" href={SITE_CONFIG.social.youtube} />
+                    )}
+                    {SITE_CONFIG.social.twitter && (
+                        <SocialButton icon={<Twitter size={20} />} label="X / Twitter" href={SITE_CONFIG.social.twitter} />
+                    )}
                 </div>
             </div>
 
