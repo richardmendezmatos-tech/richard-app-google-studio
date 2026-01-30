@@ -406,7 +406,15 @@ const AppraisalView: React.FC = () => {
                                             firstName: 'Usuario',
                                             lastName: 'Invitado',
                                             type: 'trade-in',
-                                            vehicleInfo,
+                                            customer: { name: 'Usuario Invitado' },
+                                            vehicle: {
+                                                year: vehicleInfo.year,
+                                                make: vehicleInfo.make,
+                                                model: vehicleInfo.model,
+                                                mileage: vehicleInfo.mileage,
+                                                vin: vehicleInfo.vin,
+                                                condition: vehicleInfo.condition
+                                            },
                                             offerAmount,
                                             tradeInPhotos: uploadedUrls,
                                             status: 'new',

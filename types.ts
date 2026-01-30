@@ -9,7 +9,7 @@ export interface User {
   displayName?: string | null;
   photoURL?: string | null;
   role?: UserRole;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 export interface Car {
@@ -112,6 +112,12 @@ export interface Lead {
   emailSent?: boolean;
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
+}
+
+export interface Subscriber {
+  id?: string;
+  email: string;
+  timestamp?: FirestoreTimestamp | { seconds: number };
 }
 
 declare global {

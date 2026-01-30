@@ -9,7 +9,7 @@ const VoiceOrb: React.FC = () => {
 
     useEffect(() => {
         const unsubStatus = voiceService.onStatusChange(setIsListening);
-        const unsubResult = voiceService.onResult((text, isFinal) => {
+        const unsubResult = voiceService.onResult((text: string, isFinal: boolean) => {
             setTranscript(text);
             if (isFinal) {
                 setTimeout(() => setTranscript(''), 2000);

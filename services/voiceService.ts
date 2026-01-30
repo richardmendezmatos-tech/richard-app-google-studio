@@ -17,11 +17,27 @@ export class VoiceService {
     private synthesis: SpeechSynthesis;
     private isListening: boolean = false;
     private voice: SpeechSynthesisVoice | null = null;
+    private statusListeners: ((status: boolean) => void)[] = [];
+    private resultListeners: ((text: string, isFinal: boolean) => void)[] = [];
 
     constructor() {
         this.synthesis = window.speechSynthesis;
         this.initRecognition();
         this.loadVoice();
+    }
+
+    public onStatusChange(callback: (status: boolean) => void) {
+        this.statusListeners.push(callback);
+        return () => {
+            this.statusListeners = this.statusListeners.filter(l => l !== callback);
+        };
+    }
+
+    public onResult(callback: (text: string, isFinal: boolean) => void) {
+        this.resultListeners.push(callback);
+        return () => {
+            this.resultListeners = this.resultListeners.filter(l => l !== callback);
+        };
     }
 
     private initRecognition() {
@@ -57,9 +73,16 @@ export class VoiceService {
     public startListening(config: VoiceConfig) {
         if (!this.recognition) return;
 
+        this.recognition.onstart = () => {
+            this.isListening = true;
+            this.statusListeners.forEach(l => l(true));
+        };
+
         this.recognition.onresult = (event: any) => {
             const text = event.results[0][0].transcript;
+            const isFinal = event.results[0].isFinal;
             config.onResult(text);
+            this.resultListeners.forEach(l => l(text, isFinal));
         };
 
         this.recognition.onerror = (event: any) => {
@@ -68,6 +91,7 @@ export class VoiceService {
 
         this.recognition.onend = () => {
             this.isListening = false;
+            this.statusListeners.forEach(l => l(false));
             config.onEnd();
         };
 

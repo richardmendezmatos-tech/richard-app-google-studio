@@ -1,10 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { useAuth } from '../hooks/useAuthListener'; // Assuming hook exists, or Context
 import { AuthContext } from '../contexts/AuthContext';
 import { useContext } from 'react';
 import { updateUserProfile, updateUserPassword } from '../services/authService';
 import { uploadImage } from '../services/firebaseService';
-import { User, Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2, LogOut } from 'lucide-react';
+import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2 } from 'lucide-react';
 import { useNotification } from '../contexts/NotificationContext';
 
 const UserProfile: React.FC = () => {
@@ -28,10 +27,10 @@ const UserProfile: React.FC = () => {
                 const file = e.target.files[0];
                 const url = await uploadImage(file);
                 setPhotoURL(url); // Optimistic update
-                await updateUserProfile(user, { photoURL: url });
+                await updateUserProfile(user as any, { photoURL: url });
                 addNotification('success', 'Foto de perfil actualizada');
-            } catch (error: any) {
-                addNotification('error', 'Error subiendo imagen: ' + error.message);
+            } catch {
+                addNotification('error', 'Error subiendo imagen');
                 setPhotoURL(user.photoURL || ''); // Revert
             } finally {
                 setIsLoading(false);
@@ -43,9 +42,9 @@ const UserProfile: React.FC = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await updateUserProfile(user, { displayName });
+            await updateUserProfile(user as any, { displayName });
             addNotification('success', 'Perfil actualizado correctamente');
-        } catch (error: any) {
+        } catch (_error: any) {
             addNotification('error', 'Error actualizando perfil');
         } finally {
             setIsLoading(false);
@@ -65,11 +64,11 @@ const UserProfile: React.FC = () => {
 
         setIsLoading(true);
         try {
-            await updateUserPassword(user, passwords.new);
+            await updateUserPassword(user as any, passwords.new);
             addNotification('success', 'Contraseña actualizada. Mantén tu cuenta segura.');
             setPasswords({ new: '', confirm: '' });
-        } catch (error: any) {
-            addNotification('error', error.message);
+        } catch {
+            addNotification('error', 'Error actualizando contraseña');
         } finally {
             setIsLoading(false);
         }
@@ -106,10 +105,12 @@ const UserProfile: React.FC = () => {
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     className="absolute bottom-0 right-0 z-20 bg-[#00aed9] text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+                                    title="Cambiar Foto de Perfil"
+                                    aria-label="Cambiar Foto de Perfil"
                                 >
                                     <Camera size={18} />
                                 </button>
-                                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" title="Subir imagen de perfil" />
                             </div>
 
                             <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-1">{displayName || 'Usuario Sin Nombre'}</h2>

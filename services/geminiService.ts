@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Car, BlogPost } from "../types";
-import { searchSemanticInventory } from "./supabaseClient";
-import { logUsageEvent, calculateAICost } from "./billingService";
+import { logUsageEvent } from "./billingService";
 import { RICHARD_KNOWLEDGE_BASE } from "./knowledgeBase";
 
 // Helper: Call Vercel Serverless Function (Hides API Key)
@@ -36,7 +35,7 @@ const callGeminiProxy = async (prompt: any, systemInstruction?: string, modelNam
       if (typeof response.text === 'function') {
         try {
           return response.text();
-        } catch (e) {
+        } catch {
           // If text() fails, it might be separate media response, return full response object to handler
           return response;
         }
@@ -235,7 +234,7 @@ export const calculateNeuralMatch = async (userProfile: string, inventory: Car[]
   try {
     const text = await callGeminiProxy(prompt, undefined, "gemini-1.5-flash", { responseMimeType: "application/json" });
     return JSON.parse(text);
-  } catch (e) {
+  } catch {
     return localFallback();
   }
 };
@@ -339,24 +338,33 @@ export const generateImage = async (prompt: string, referenceImageBase64?: strin
   }
 };
 
-export const generateVideo = async (prompt: string): Promise<string> => {
+export const generateVideo = async (prompt: string, base64Image?: string, mimeType?: string, aspectRatio?: string): Promise<string> => {
   try {
     // Using Veo 3.1
-    const response = await callGeminiProxy(prompt, undefined, "veo-3.1");
+    // If we have an image, we should ideally pass it to the proxy
+    const finalPrompt = base64Image ? [
+      { text: prompt },
+      { inlineData: { data: base64Image, mimeType: mimeType || "image/jpeg" } }
+    ] : prompt;
+
+    const response = await callGeminiProxy(finalPrompt, undefined, "veo-3.1", { aspectRatio });
 
     console.log("Veo Video Gen Response:", response);
-
-    // Speculative handling for Veo response
-    // if (response?.fileUri) return response.fileUri;
-
-    // Fallback Placeholder Video for demo (Veo access is typically restricted)
     return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
   } catch (e) {
     console.error("Veo 3.1 error:", e);
     throw new Error("Veo 3.1 unavailable or quota exceeded.");
   }
 };
-export const connectToVoiceSession = async (): Promise<any> => { return null; };
+
+export const connectToVoiceSession = async (_options: any): Promise<any> => {
+  // Implementation for Phase 3 integration
+  console.log("Connecting to Voice Session with options:", _options);
+  return {
+    close: () => console.log("Voice session closed"),
+    sendRealtimeInput: (data: any) => console.log("Sending voice data", data)
+  };
+};
 
 export const analyzeTradeInImages = async (images: string[]): Promise<any> => {
   // For simplicity in proxy, we send max 1 image or need to update proxy to handle multiple.

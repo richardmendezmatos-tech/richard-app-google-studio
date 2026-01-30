@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": [
       "ES2020",
       "DOM",
@@ -20,7 +21,10 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "include": [
     "src",

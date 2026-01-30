@@ -108,9 +108,10 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     }, []);
 
     const handleCopilotEvent = useCallback((event: SessionEvent) => {
-        switch (event.type) {
+        const anyEvent = event as any;
+        switch (anyEvent.type) {
             case 'assistant.message_delta':
-                updateLastMessageContent(event.data.deltaContent || '');
+                updateLastMessageContent(anyEvent.data.deltaContent || '');
                 break;
 
             case 'assistant.message_done': {
@@ -123,15 +124,15 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
             }
 
             case 'tool.call':
-                addToolInvocation(event.data as unknown as ToolCallData);
+                addToolInvocation(anyEvent.data as unknown as ToolCallData);
                 break;
 
             case 'tool.result':
-                updateToolResult(event.data as unknown as ToolResultData);
+                updateToolResult(anyEvent.data as unknown as ToolResultData);
                 break;
 
             case 'session.error': {
-                const err = new Error(event.data.message || 'Session error');
+                const err = new Error(anyEvent.data.message || 'Session error');
                 setError(err);
                 options.onError?.(err);
                 setIsLoading(false);

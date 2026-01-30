@@ -9,6 +9,7 @@ interface SceneProps {
         isSpeaking: boolean;
         volume: number; // 0 to 1
     };
+    modelUrl?: string | null;
 }
 
 // --- ERROR BOUNDARY ---

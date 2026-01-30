@@ -36,7 +36,7 @@ const KanbanDemo: React.FC = () => {
         <div className="min-h-screen bg-slate-900 p-8">
             <h1 className="text-3xl text-white font-black mb-8">Kanban Demo</h1>
             <div className="h-[600px]">
-                <KanbanBoard leads={mockLeads} onPrint={(lead) => console.log('Print', lead)} />
+                <KanbanBoard leads={mockLeads} onPrint={(lead) => console.log('Print', lead)} userRole="admin" />
             </div>
         </div>
     );

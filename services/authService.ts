@@ -120,7 +120,7 @@ export const logAuthActivity = async (email: string, success: boolean, method: s
         location: window.location.pathname
     });
 
-    if (success && typeof window !== 'undefined') {
+    if (success && typeof window !== 'undefined' && analytics) {
         try {
             const { logEvent } = await import("firebase/analytics");
             const eventName = method.includes('login') ? 'login' : (method.includes('signup') ? 'sign_up' : method);

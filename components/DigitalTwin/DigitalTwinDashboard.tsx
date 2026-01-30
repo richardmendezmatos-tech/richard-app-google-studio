@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RefreshCw, Camera, Activity, Send, Sparkles, FileUp, ShieldCheck, Image as ImageIcon, Video as VideoIcon, Loader2, UserPlus } from 'lucide-react';
+import { RefreshCw, Camera, Activity, Send, Sparkles, FileUp, ShieldCheck, Image as ImageIcon, Video as VideoIcon, Loader2, UserPlus, Upload, Film } from 'lucide-react';
 import { AI_LEGAL_DISCLAIMER } from '../../services/firebaseService';
 import FaceTracker from './FaceTracker';
 import AvatarScene from './AvatarScene';
@@ -56,9 +56,19 @@ const DigitalTwinDashboard = () => {
         }
     }, []);
 
-    // ... (rest of AI state)
-
-    // ... (inside render, replace handleFaceUpdate to include AvatarCreator callback) ...
+    // ... (rest of render logic depends on these being initialized correctly)
+    const [mode, setMode] = useState<'mirror' | 'ai'>('mirror');
+    const [aiState, setAiState] = useState({ isSpeaking: false, volume: 0 });
+    const [input, setInput] = useState('');
+    const [messages, setMessages] = useState<{ role: 'user' | 'bot', text: string }[]>([]);
+    const [isThinking, setIsThinking] = useState(false);
+    const [activeTab, setActiveTab] = useState<'chat' | 'docs' | 'media'>('chat');
+    const [docs, setDocs] = useState<{ name: string, type: string, status: 'processed' | 'pending' }[]>([]);
+    const [mediaPrompt, setMediaPrompt] = useState('');
+    const [referenceImage, setReferenceImage] = useState<string | null>(null);
+    const [isGeneratingMedia, setIsGeneratingMedia] = useState(false);
+    const [mediaMode, setMediaMode] = useState<'generate' | 'flow'>('generate'); // New state for sub-tabs
+    const [generatedMedia, setGeneratedMedia] = useState<{ type: 'image' | 'video', url: string } | null>(null);
 
     {/* 3D Scene */ }
     <div className="w-full h-full relative group/scene">
@@ -67,20 +77,6 @@ const DigitalTwinDashboard = () => {
         </SafeComponent>
 
     </div>
-
-
-    const [mode, setMode] = useState<'mirror' | 'ai'>('mirror');
-    const [input, setInput] = useState('');
-    const [messages, setMessages] = useState<{ role: 'user' | 'bot', text: string }[]>([]);
-    const [isThinking, setIsThinking] = useState(false);
-    const [aiState, setAiState] = useState({ isSpeaking: false, volume: 0 });
-    const [activeTab, setActiveTab] = useState<'chat' | 'docs' | 'media'>('chat');
-    const [docs, setDocs] = useState<{ name: string, type: string, status: 'processed' | 'pending' }[]>([]);
-    const [mediaPrompt, setMediaPrompt] = useState('');
-    const [referenceImage, setReferenceImage] = useState<string | null>(null);
-    const [isGeneratingMedia, setIsGeneratingMedia] = useState(false);
-    const [mediaMode, setMediaMode] = useState<'generate' | 'flow'>('generate'); // New state for sub-tabs
-    const [generatedMedia, setGeneratedMedia] = useState<{ type: 'image' | 'video', url: string } | null>(null);
 
     // Refs for animation loop
     const speechLoopRef = useRef<number>();
@@ -548,6 +544,8 @@ const DigitalTwinDashboard = () => {
                                 <button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isThinking}
+                                    title="Enviar mensaje"
+                                    aria-label="Enviar mensaje"
                                     className="w-10 h-10 bg-[#00aed9] text-white rounded-full flex items-center justify-center hover:bg-[#009bc2] disabled:opacity-50 transition-colors"
                                 >
                                     <Send size={18} />
