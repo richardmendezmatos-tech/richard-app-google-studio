@@ -1,8 +1,8 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { User } from 'firebase/auth';
+import { User as FirebaseUser } from 'firebase/auth';
 import { subscribeToAuthChanges, getUserRole } from '../services/authService';
-import { UserRole } from '../types';
+import { User, UserRole } from '../types';
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
 }
 
+// Export context separately to help with Fast Refresh
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   role: null,
@@ -26,11 +27,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = subscribeToAuthChanges(async (currentUser) => {
+    const unsubscribe = subscribeToAuthChanges(async (currentUser: FirebaseUser | null) => {
       if (currentUser) {
         const userRole = await getUserRole(currentUser.uid);
         setRole(userRole);
-        setUser(currentUser);
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+          role: userRole
+        });
       } else {
         setUser(null);
         setRole(null);

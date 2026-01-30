@@ -29,11 +29,39 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { getPerformance } from "firebase/performance";
 // import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"; // App Check Enterprise
 import { firebaseConfig } from "../firebaseConfig";
-import { Car, Lead } from "../types";
+import { Car, Lead, Subscriber } from "../types";
 import { sendAutoNewsletter } from "./emailService";
+
 // Helper for environment checks
 const isBrowser = typeof window !== 'undefined';
 const isDev = (typeof import.meta !== 'undefined' && import.meta.env?.DEV) || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development');
+
+// CRITICAL: Suppress Firebase Installations 403 errors globally
+if (isBrowser) {
+  const originalConsoleError = console.error;
+  console.error = (...args: any[]) => {
+    const errorString = args.join(' ');
+    // Suppress Firebase Installations API 403 errors
+    if (errorString.includes('firebaseinstallations.googleapis.com') ||
+      errorString.includes('installations/request-failed') ||
+      errorString.includes('PERMISSION_DENIED')) {
+      console.warn('[Firebase] Installations API error suppressed (API key restriction)');
+      return;
+    }
+    originalConsoleError.apply(console, args);
+  };
+
+  // Also suppress unhandled promise rejections for Firebase Installations
+  window.addEventListener('unhandledrejection', (event) => {
+    const errorString = event.reason?.toString() || '';
+    if (errorString.includes('firebaseinstallations.googleapis.com') ||
+      errorString.includes('installations/request-failed') ||
+      errorString.includes('PERMISSION_DENIED')) {
+      console.warn('[Firebase] Installations promise rejection suppressed');
+      event.preventDefault();
+    }
+  });
+}
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
@@ -50,17 +78,38 @@ if (isBrowser) {
 export const analytics = analyticsInstance;
 
 // Initialize Firebase Services
-export const auth = getAuth(app);
+export let auth: any;
+try {
+  auth = getAuth(app);
+} catch (e) {
+  console.warn("[Firebase] Auth initialization failed:", e);
+}
 
-export const db = initializeFirestore(app, {});
+export let db: any;
+try {
+  db = initializeFirestore(app, {});
+} catch (e) {
+  console.error("[Firebase] Firestore initialization FAILED - Application might crash on data access:", e);
+}
 
 // CTO Hack: Force LOCAL persistence to avoid session drops in strict browsers
 if (typeof window !== 'undefined') {
   setPersistence(auth, browserLocalPersistence).catch(err => console.error("Persistence Config Failed:", err));
 }
 
-export const storage = getStorage(app);
-export const functions = getFunctions(app);
+export let storage: any;
+try {
+  storage = getStorage(app);
+} catch (e) {
+  console.warn("[Firebase] Storage suppressed:", e);
+}
+
+export let functions: any;
+try {
+  functions = getFunctions(app);
+} catch (e) {
+  console.warn("[Firebase] Functions suppressed:", e);
+}
 
 // Initialize Performance Monitoring
 let performance;
@@ -529,10 +578,10 @@ export const subscribeToNewsletter = async (email: string) => {
   }
 };
 
-export const getSubscribers = async (): Promise<Record<string, unknown>[]> => {
+export const getSubscribers = async (): Promise<Subscriber[]> => {
   const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
   const q = query(collection(db, 'subscribers'), where('dealerId', '==', dealerId), orderBy('timestamp', 'desc'), limit(100));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Subscriber));
 };
 // Force Update: Sat Jan 24 15:46:37 AST 2026

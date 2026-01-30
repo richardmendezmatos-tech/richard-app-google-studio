@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, TouchSensor, useDraggable, useDroppable } from '@dnd-kit/core';
-// import { Droppable, Draggable } from './dnd/dnd-kit-wrapper'; // Removed wrapper
+import { CSS } from '@dnd-kit/utilities';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '../../services/crmService';
 import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -55,7 +55,11 @@ const CRMBoard: React.FC = () => {
                 <MessageCircle className="text-[#00aed9]" /> CRM de Ventas
             </h2>
 
-            <DndContext sensors={sensors} onDragStart={(e) => setActiveId(e.active.id as string)} onDragEnd={handleDragEnd}>
+            <DndContext
+                sensors={sensors}
+                onDragStart={(event) => setActiveId(event.active.id as string)}
+                onDragEnd={handleDragEnd}
+            >
                 <div className="flex gap-6 min-w-max h-[calc(100vh-200px)]">
                     {COLUMNS.map(column => (
                         <Column
@@ -102,19 +106,16 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
         id: lead.id,
     });
 
-    const style = transform ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    } : undefined;
+    const style = {
+        transform: CSS.Translate.toString(transform),
+    };
 
     if (isDragging) {
         return (
             <div
                 ref={setNodeRef}
-                className="opacity-30 grayscale pointer-events-none transition-transform"
-                style={{
-                    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-                    zIndex: 50
-                }}
+                className="opacity-30 grayscale pointer-events-none transition-transform z-50"
+                style={style}
             >
                 <LeadCard lead={lead} />
             </div>
@@ -127,9 +128,7 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
             {...listeners}
             {...attributes}
             className="relative z-10 transition-transform"
-            style={{
-                transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-            }}
+            style={style}
         >
             <LeadCard lead={lead} />
         </div>
@@ -162,7 +161,10 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
     };
 
     return (
-        <div className={`bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${isOverlay ? 'shadow-2xl rotate-2 scale-105' : ''}`}>
+        <div
+            className={`bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${isOverlay ? 'shadow-2xl rotate-2 scale-105' : ''
+                }`}
+        >
             <div className="flex justify-between items-start mb-2">
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase ${lead.type === 'whatsapp' ? 'bg-green-100 text-green-700' :
                     lead.type === 'visual_ai' ? 'bg-purple-100 text-purple-700' :

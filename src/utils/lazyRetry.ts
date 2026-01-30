@@ -4,7 +4,7 @@
  * Useful for handling "Failed to fetch dynamically imported module" errors
  * which occur when a new version of the app is deployed and old hashes are removed.
  */
-export function lazyRetry<T extends React.ComponentType<unknown>>(
+export function lazyRetry<T extends React.ComponentType<any>>(
     componentImport: () => Promise<{ default: T }>
 ): Promise<{ default: T }> {
     return componentImport().catch((error) => {

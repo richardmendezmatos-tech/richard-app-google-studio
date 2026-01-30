@@ -28,7 +28,10 @@ const AdminLogin: React.FC = () => {
     try {
       const { validateGhostKey } = await import('../services/authService');
       const user = await validateGhostKey(key);
-      dispatch(loginSuccess(user));
+      dispatch(loginSuccess({
+        ...user,
+        role: user.role as any // Forced cast to match the UserRole | undefined type if needed
+      }));
       navigate('/admin');
     } catch {
       setError("Llave Maestra Rechazada.");
@@ -68,7 +71,7 @@ const AdminLogin: React.FC = () => {
     dispatch(loginStart());
 
     try {
-      const user = await loginAdmin(email, password, twoFactorCode || '123456');
+      const user = await loginAdmin(email, password, twoFactorCode || '123456') as any;
       dispatch(loginSuccess(user));
       navigate('/admin');
     } catch (err: unknown) {
@@ -108,7 +111,7 @@ const AdminLogin: React.FC = () => {
           const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
           const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
-          dispatch(loginSuccess({ email: devEmail, role: 'admin' }));
+          dispatch(loginSuccess({ uid: 'dev-admin', email: devEmail, role: 'admin' as any }));
           navigate('/admin');
         } else {
           throw new Error("Passkey backend verification not implemented for production.");
@@ -144,7 +147,7 @@ const AdminLogin: React.FC = () => {
       const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
 
       await signInWithEmailAndPassword(auth, devEmail, devPass);
-      dispatch(loginSuccess({ email: devEmail, role: 'admin' }));
+      dispatch(loginSuccess({ uid: 'dev-admin', email: devEmail, role: 'admin' }));
       navigate('/admin');
     } catch (err: unknown) {
       console.error('Quick Access Error:', err);

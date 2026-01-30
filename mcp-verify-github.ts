@@ -43,8 +43,11 @@ async function verifyGithubMCP() {
 
         // Demonstrate a simple repository search as verification
         console.log("🔍 Checking repository visibility...");
-        const result = await client.callTool("search_repositories", {
-            query: "richard-app-google-studio"
+        const result = await client.callTool({
+            name: "search_repositories",
+            arguments: {
+                query: "richard-app-google-studio"
+            }
         });
 
         console.log("📦 Repository Search Result:", JSON.stringify(result, null, 2));

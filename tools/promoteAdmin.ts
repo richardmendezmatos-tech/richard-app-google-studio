@@ -10,7 +10,7 @@ import { db } from "../services/firebaseService";
  * 2. Pega el UID en la llamada final de este script.
  */
 
-export const promoteToAdmin = async (uid) => {
+export const promoteToAdmin = async (uid: string) => {
     try {
         const userRef = doc(db, 'users', uid);
         await setDoc(userRef, {

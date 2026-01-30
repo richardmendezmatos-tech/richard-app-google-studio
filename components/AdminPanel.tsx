@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useDealer } from '../contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
-import { Car as CarType, Lead } from '../types';
+import { Car as CarType, Lead, Subscriber } from '../types';
 import { Plus, Trash2, Edit3, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Leaf, Scale, FlaskConical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getLeadsOnce, optimizeImage, auth, getSubscribers } from '../services/firebaseService';
@@ -34,11 +34,7 @@ interface Props {
   onInitializeDb?: () => Promise<void>;
 }
 
-interface Subscriber {
-  id?: string;
-  email: string;
-  timestamp?: { seconds: number };
-}
+
 
 // --- WIDGETS SECTION ---
 const CountUp = ({ end, prefix = '', suffix = '', duration = 1500 }: { end: number, prefix?: string, suffix?: string, duration?: number }) => {

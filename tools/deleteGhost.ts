@@ -28,7 +28,8 @@ async function deleteGhost() {
         await deleteDoc(doc(db, "cars", "UhxMCV9XKFu1zkbufCGD"));
         console.log("✅ Successfully deleted ghost document.");
     } catch (e) {
-        console.error("❌ Error deleting document (likely permission denied):", e.message);
+        const error = e as Error;
+        console.error("❌ Error deleting document (likely permission denied):", error.message);
     }
 }
 
