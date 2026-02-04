@@ -29,6 +29,7 @@
     "@genkit-ai/flow": "^0.5.17",
     "@genkit-ai/googleai": "^1.27.0",
     "@genkit-ai/vertexai": "^1.27.0",
+    "@sendgrid/mail": "^8.1.6",
     "ai": "^6.0.57",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

@@ -331,7 +331,10 @@ export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
     }
 });
 
-export const onNewApplication = onDocumentCreated('applications/{applicationId}', async (event) => {
+export const onNewApplication = onDocumentCreated({
+    document: 'applications/{applicationId}',
+    secrets: ["SENDGRID_API_KEY"],
+}, async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
         return;
@@ -403,7 +406,10 @@ export const onNewApplication = onDocumentCreated('applications/{applicationId}'
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { Timestamp } from 'firebase-admin/firestore';
 
-export const checkStaleLeads = onSchedule('every day 09:00', async (event) => {
+export const checkStaleLeads = onSchedule({
+    schedule: 'every day 09:00',
+    secrets: ["SENDGRID_API_KEY"],
+}, async (event) => {
     logger.info("Running Stale Lead Check...");
 
     // 3 Days ago
@@ -490,7 +496,10 @@ export const cleanupOldLogs = onSchedule('every sunday 00:00', async (event) => 
 });
 
 
-export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) => {
+export const onVehicleUpdate = onDocumentUpdated({
+    document: 'cars/{carId}',
+    secrets: ["SENDGRID_API_KEY"],
+}, async (event) => {
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
@@ -539,7 +548,10 @@ export const onVehicleUpdate = onDocumentUpdated('cars/{carId}', async (event) =
     }
 });
 
-export const onLeadStatusChange = onDocumentUpdated('applications/{leadId}', async (event) => {
+export const onLeadStatusChange = onDocumentUpdated({
+    document: 'applications/{leadId}',
+    secrets: ["SENDGRID_API_KEY"],
+}, async (event) => {
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
@@ -599,39 +611,10 @@ if (process.env.GENKIT_ENV === 'dev') {
 // --- AI Evaluation Pipeline ---
 export { triggerEval } from './evals';
 
-// --- New Lead Trigger (User Request) ---
-export const onNewLead = onDocumentCreated('leads/{leadId}', async (event) => {
-    const data = event.data?.data();
-    if (!data) return;
-
-    const nombre = data.nombre || 'Cliente';
-    const telefono = data.telefono || 'No provisto';
-    const email = data.email || 'No provisto';
-
-    logger.info(`Nuevo lead recibido: ${nombre} - ${telefono}`);
-
-    try {
-        const { sendNotificationEmail } = await import('./services/emailService');
-        await sendNotificationEmail({
-            to: 'richardmendezmatos@gmail.com', // Tu email personal
-            subject: `🔔 Nuevo Lead: ${nombre}`,
-            html: `
-                <h2>¡Nuevo Lead Recibido!</h2>
-                <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Teléfono:</strong> ${telefono}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <hr>
-                <p><em>Este mensaje fue enviado automáticamente por tu sistema Richard Automotive Command Center.</em></p>
-            `
-        });
-        logger.info(`Notificación por email enviada a Richard.`);
-    } catch (error) {
-        logger.error("Error enviando notificación de lead:", error);
-    }
-});
-
+// --- Email Automation & Marketing (SendGrid) ---
+export { onLeadCreated, onAppointmentCompleted } from './triggers/emailTriggers';
+export { processEmailQueue } from './scheduled/emailScheduler';
+export { sendgridWebhook } from './webhooks/sendgridWebhook';
 
 // --- Vercel AI SDK (Streaming) ---
 export { chatStream } from './chatStream';
-
-

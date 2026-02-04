@@ -90,9 +90,15 @@ service cloud.firestore {
     }
 
     match /login_attempts/{attemptId} {
+      // Allow reading by admins to check status
       allow read: if isAdmin();
-      allow create: if request.resource.data.keys().hasAll(['email', 'timestamp']);
-      allow update, delete: if false; 
+      
+      // Allow creation/updates by anyone (to record failed attempts from client)
+      // We validate the schema to prevent abuse
+      allow create, update: if request.resource.data.keys().hasAll(['ip', 'attempts', 'lastAttempt']);
+      
+      // Allow Admin to reset (delete) the record on successful login
+      allow delete: if isAdmin();
     }
 
     match /subscribers/{id} {

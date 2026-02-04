@@ -1,74 +1,85 @@
 
-> richard-automotive@1.0.0 build
+> richard-automotive@1.0.3 build
 > vite build
 
-vite v7.3.1 building client environment for production...
+vite v5.4.21 building for production...
+
+/index.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
 transforming...
-✓ 2 modules transformed.
+✓ 1690 modules transformed.
+
+✨ [36m[vite-plugin-image-optimizer][39m - optimized images successfully: 
+[2mdist[22m/[94mapp-icon.png[39m          [90m[32m0%[39m[90m [39m [33m[1mskipped[22m[39m [2moriginal: 88.16 kB <= optimized: 88.16 kB[22m
+[2mdist[22m/[94mmodules/app-icon.png[39m  [90m[32m0%[39m[90m [39m [33m[1mskipped[22m[39m [2moriginal: 88.16 kB <= optimized: 88.16 kB[22m
+[2mdist[22m/[94mmodules/og-image.png[39m  [90m[32m0%[39m[90m [39m [33m[1mskipped[22m[39m [2moriginal: 181.96 kB <= optimized: 181.96 kB[22m
+[2mdist[22m/[94mog-image.png[39m          [90m[32m0%[39m[90m [39m [33m[1mskipped[22m[39m [2moriginal: 181.96 kB <= optimized: 181.96 kB[22m
+
+
 
 ✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/AIConsultant-Ca_jIdrQ.js.gz                      4.15kb / gzip: 1.57kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminLogin-DF10VMCu.js.gz                        5.86kb / gzip: 2.01kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/BlogView-DJD3M3Lx.js.gz                          9.35kb / gzip: 3.30kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/ComparisonView-Rfxe4fLg.js.gz                    8.19kb / gzip: 2.48kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/NotFound-Cm6zUeE9.js.gz                          3.55kb / gzip: 1.48kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/AppraisalView-DkR3jSnq.js.gz                     11.81kb / gzip: 3.66kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalGarage-BiKuD_Yc.js.gz                     15.67kb / gzip: 4.64kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/PrivacyView-Dtv7pVdJ.js.gz                       5.30kb / gzip: 2.09kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/UserLogin-DpUJCKOi.js.gz                         6.55kb / gzip: 2.49kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-2CdK5uia.js.gz                             3.67kb / gzip: 1.73kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/PreQualifyView-hjoEVIAN.js.gz                    11.72kb / gzip: 3.66kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/TermsView-Dsfky50u.js.gz                         4.74kb / gzip: 2.06kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/VehicleDetail-BAdpySxG.js.gz                     12.07kb / gzip: 4.18kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-action-sheet.entry-rrdi8TIl.js.gz            2.87kb / gzip: 1.05kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal-instance.entry-Bul1V5XC.js.gz   3.33kb / gzip: 1.44kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-Bvd0JlfM.css.gz                            105.58kb / gzip: 15.43kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera.entry-DiO4Rgd-.js.gz                  22.24kb / gzip: 6.55kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal.entry-C-9rkHjR.js.gz            2.91kb / gzip: 1.28kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/TradeInView-CDkBi9fw.js.gz                       8.47kb / gzip: 2.55kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-CGg4tUPp.js.gz                               1.22kb / gzip: 0.57kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-5zAeFgMX.js.gz                               3.37kb / gzip: 1.08kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminPanel-ClvCdzg5.js.gz                        39.67kb / gzip: 11.07kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/workbox-window.prod.es5-BIl4cyR9.js.gz           5.63kb / gzip: 2.31kb
-dist//Users/richardmendez/richard-automotive-_-command-center/index.html.gz                                           5.22kb / gzip: 2.30kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/purify.es-Bzr520pe.js.gz                         21.92kb / gzip: 8.42kb
-dist//Users/richardmendez/richard-automotive-_-command-center/workbox-1d305bb8.js.gz                                  21.36kb / gzip: 7.26kb
-dist//Users/richardmendez/richard-automotive-_-command-center/sw.js.gz                                                4.38kb / gzip: 1.67kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-toast.entry-DGMdc1aT.js.gz                   1.52kb / gzip: 0.72kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/KanbanBoard-BJxT7CJk.js.gz                       56.55kb / gzip: 19.44kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/html2canvas.esm-DXEQVQnt.js.gz                   196.33kb / gzip: 46.08kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/index.es-DLJ14rU2.js.gz                          154.87kb / gzip: 51.53kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/pdfGenerator--Bk33_Uv.js.gz                      407.14kb / gzip: 132.27kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/AILabView-Du5Q_4RG.js.gz                         983.13kb / gzip: 316.47kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/FrameworkDashboard-DIJ-HHoM.js.gz                1069.14kb / gzip: 327.04kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalTwinDashboard-Z6jwA2VF.js.gz              1145.07kb / gzip: 321.27kb
-dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-BRyBM4dg.js.gz                             1219.50kb / gzip: 373.81kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AIConsultant-CPnpULMy.js.gz                      4.67kb / gzip: 1.85kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminLogin-D15Rbr-D.js.gz                        8.65kb / gzip: 3.23kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/B2BBillingDashboard-BLEhci1A.js.gz               10.21kb / gzip: 2.86kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AILabView-CUJjdkB6.js.gz                         6.51kb / gzip: 2.31kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/BetaOnboard-DxkM1U9B.js.gz                       3.88kb / gzip: 1.75kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/BlogView-CuUIFC7U.js.gz                          11.01kb / gzip: 3.76kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/EarlyAdopterOnboard-B8TYB85n.js.gz               3.27kb / gzip: 1.58kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/NotFound-By0eYyEs.js.gz                          4.15kb / gzip: 1.63kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/ComparisonView-D6pIMMXp.js.gz                    8.52kb / gzip: 2.66kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalGarage-DLrRqb5Z.js.gz                     15.38kb / gzip: 4.62kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/TermsView-xd3rC_J8.js.gz                         4.86kb / gzip: 2.14kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/TradeInView-Djj6sZyk.js.gz                       8.87kb / gzip: 2.73kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/PreQualifyView-DSa9uqv3.js.gz                    11.98kb / gzip: 4.22kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/FrameworkDashboard-_rp3BETS.js.gz                18.51kb / gzip: 5.78kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/PrivacyView-BjdYoVjn.js.gz                       5.39kb / gzip: 2.15kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/UserProfile-Bov4tNGG.js.gz                       10.86kb / gzip: 3.10kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/UserLogin-Dh3302mf.js.gz                         8.61kb / gzip: 3.35kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/VehicleDetail-BR4-0b1s.js.gz                     19.00kb / gzip: 6.56kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-action-sheet.entry-DULIXgma.js.gz            2.98kb / gzip: 1.12kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AppraisalView-vNtYph6r.js.gz                     12.32kb / gzip: 3.97kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/KanbanDemo-xKFo3V1T.js.gz                        19.32kb / gzip: 7.50kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-dxR-SOJy.css.gz                            88.04kb / gzip: 13.64kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal-instance.entry-73lyDN1z.js.gz   3.46kb / gzip: 1.53kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera-modal.entry-BD_X6CU8.js.gz            3.01kb / gzip: 1.36kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-toast.entry-DBdwkQT6.js.gz                   1.64kb / gzip: 0.79kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/purify.es-B9ZVCkUG.js.gz                         22.15kb / gzip: 8.58kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-BfqEMwra.js.gz                               3.48kb / gzip: 1.15kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/web-opOx9xKl.js.gz                               1.33kb / gzip: 0.64kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/workbox-window.prod.es5-vqzQaGvo.js.gz           5.64kb / gzip: 2.34kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pwa-camera.entry-CS03TX5o.js.gz                  22.92kb / gzip: 7.01kb
+dist//Users/richardmendez/richard-automotive-_-command-center/sw.js.gz                                                4.08kb / gzip: 1.60kb
+dist//Users/richardmendez/richard-automotive-_-command-center/index.html.gz                                           6.73kb / gzip: 2.67kb
+dist//Users/richardmendez/richard-automotive-_-command-center/workbox-8c29f6e4.js.gz                                  14.81kb / gzip: 5.11kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/sortable.esm-mofHJhH-.js.gz                      50.13kb / gzip: 16.78kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/html2canvas.esm-BgurttRc.js.gz                   197.60kb / gzip: 46.69kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index.es-epqvY9ZG.js.gz                          147.11kb / gzip: 50.19kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/vendor-react-CbtXgbLr.js.gz                      175.42kb / gzip: 57.35kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/AdminPanel-D0GG9mPn.js.gz                        267.14kb / gzip: 76.21kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/pdfGenerator-PHJRCiWh.js.gz                      409.75kb / gzip: 133.85kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/vendor-firebase-CjOMN0cJ.js.gz                   607.80kb / gzip: 144.75kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/index-wzPh8uiW.js.gz                             661.23kb / gzip: 194.06kb
+dist//Users/richardmendez/richard-automotive-_-command-center/assets/DigitalTwinDashboard-DS6rEhoU.js.gz              1138.89kb / gzip: 319.36kb
 
 
 
 PWA v0.19.8
 mode      generateSW
-precache  58 entries (8102.84 KiB)
+precache  60 entries (4559.68 KiB)
 files generated
+  dist/sw.js.map
   dist/sw.js
-  dist/workbox-1d305bb8.js
-✗ Build failed in 4.74s
+  dist/workbox-8c29f6e4.js.map
+  dist/workbox-8c29f6e4.js
+x Build failed in 9.06s
 error during build:
-[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] There was an error during the build:
-  [vite]: Rollup failed to resolve import "zone.js" from "/Users/richardmendez/richard-automotive-_-command-center/index.tsx".
-This is most likely unintended because it can break your application at runtime.
-If you do want to externalize this module explicitly add it to
-`build.rollupOptions.external`
+[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] src/features/admin/components/AdminPanel.tsx: There was an error during the build:
+  Could not resolve "./AILabView" from "src/features/admin/components/AdminPanel.tsx"
 Additionally, handling the error in the 'buildEnd' hook caused the following error:
-  [vite]: Rollup failed to resolve import "zone.js" from "/Users/richardmendez/richard-automotive-_-command-center/index.tsx".
-This is most likely unintended because it can break your application at runtime.
-If you do want to externalize this module explicitly add it to
-`build.rollupOptions.external`
+  Could not resolve "./AILabView" from "src/features/admin/components/AdminPanel.tsx"
+file: /Users/richardmendez/richard-automotive-_-command-center/src/features/admin/components/AdminPanel.tsx
     at getRollupError (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
     at file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:23418:39
     at async catchUnfinishedHookActions (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:22876:16)
     at async rollupInternal (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/rollup/dist/es/shared/node-entry.js:23401:5)
-    at async buildEnvironment (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33541:12)
-    at async Object.build (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33900:19)
-    at async Object.buildApp (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/config.js:33897:153)
-    at async CAC.<anonymous> (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/cli.js:629:3)
+    at async build (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65709:14)
+    at async CAC.<anonymous> (file:///Users/richardmendez/richard-automotive-_-command-center/node_modules/vite/dist/node/cli.js:829:5)
