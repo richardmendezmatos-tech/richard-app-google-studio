@@ -16,7 +16,11 @@
     "test": "vitest run",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "deploy:firebase:rules": "firebase use richard-automotive && firebase deploy --only firestore:rules",
+    "deploy:firebase:indexes": "firebase use richard-automotive && firebase deploy --only firestore:indexes",
+    "deploy:firebase:functions": "firebase use richard-automotive && firebase deploy --only functions",
+    "deploy:firebase:full": "firebase use richard-automotive && firebase deploy"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.15",

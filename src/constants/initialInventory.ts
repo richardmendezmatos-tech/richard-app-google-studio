@@ -1,5 +1,5 @@
 
-import { Car } from '../../types';
+import { Car } from '@/types/types';
 
 export const initialInventoryData: Omit<Car, 'id'>[] = [
     {
