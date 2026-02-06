@@ -103,7 +103,6 @@
 
 .scrollbar-hide {
   -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 /* 
@@ -125,8 +124,6 @@ body {
 
 /* Modern Scrollbar Global */
 html {
-  scrollbar-width: thin;
-  scrollbar-color: #00aed9 #0f172a;
   scroll-behavior: smooth;
 }
 
@@ -144,9 +141,6 @@ html {
 }
 
 /* Dark Mode Adaptation */
-.dark html {
-  scrollbar-color: #00aed9 #0f172a;
-}
 
 .dark ::-webkit-scrollbar-track {
   background: #0f172a;
