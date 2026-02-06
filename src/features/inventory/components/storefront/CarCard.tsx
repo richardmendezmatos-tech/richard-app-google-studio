@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Car } from '@/types/types';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/contexts/ComparisonContext';
-import { OptimizedImage } from '@/features/inventory/components/common/OptimizedImage';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface CarCardProps {
     car: Car;

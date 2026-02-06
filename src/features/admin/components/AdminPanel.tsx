@@ -1,14 +1,13 @@
-
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
 import { Car as CarType, Lead, Subscriber } from '@/types/types';
-import { Plus, Trash2, Edit3, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Leaf, Scale, FlaskConical } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getLeadsOnce, optimizeImage, auth, getSubscribers } from '@/services/firebaseService';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { calculatePredictiveDTS } from '@/services/predictionService';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '@/store';
+// import { calculatePredictiveDTS } from '@/services/predictionService';
 
 import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatmap';
 // import { useReactToPrint } from 'react-to-print'; // Removed
@@ -22,6 +21,7 @@ import { GapAnalyticsWidget } from './GapAnalyticsWidget'; // Component 4
 import { SortableInventory } from './SortableInventory';
 import B2BBillingDashboard from './B2BBillingDashboard';
 import { EnterpriseStatus } from './EnterpriseStatus';
+import { AdminCarCard } from './AdminCarCard';
 
 // Lazy Load Lab to keep Admin bundle light
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
@@ -84,7 +84,6 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
-  const { user } = useSelector((state: RootState) => state.auth);
   const { currentDealer } = useDealer();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab'>('dashboard');
@@ -128,6 +127,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     }
   }, [activeTab]);
 
+  /* 
   const triggerPrint = useCallback(async (lead: Lead) => {
     try {
       const { generateLeadPDF } = await import('@/utils/pdfGenerator');
@@ -137,6 +137,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
       alert("Error generando PDF. Ver consola.");
     }
   }, []);
+  */
 
 
 
@@ -455,7 +456,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
 
               {/* Main List */}
-              <div className="flex-1 bg-white/5 backdrop-blur-md rounded-[2rem] shadow-xl border border-white/10 overflow-hidden flex flex-col h-[calc(100vh-350px)]">
+              <div className="flex-1 bg-white/5 backdrop-blur-md rounded-[2.5rem] shadow-xl border border-white/10 overflow-hidden flex flex-col min-h-[calc(100vh-200px)]">
                 {/* Search Bar */}
                 <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
                   <div className="relative w-full md:w-96 group">
@@ -481,99 +482,37 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                   )}
                 </div>
 
-                {/* Table */}
-                <div className="flex-1 overflow-auto custom-scrollbar">
-                  <table className="w-full text-left border-collapse">
-                    <thead className="bg-slate-900/80 sticky top-0 z-10 backdrop-blur-md">
-                      <tr>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Vehículo</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest hidden md:table-cell">Categoría</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest hidden sm:table-cell">Status</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest hidden md:table-cell">Market Advantage</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Precio</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
+                {/* Grid View */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-1">
+                  <motion.div
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-8"
+                  >
+                    <AnimatePresence mode='popLayout'>
                       {filteredInventory.map((car) => (
-                        <tr key={car.id} className="hover:bg-white/5 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-16 h-16 bg-slate-800 rounded-lg border border-white/10 flex items-center justify-center p-1 overflow-hidden">
-                                <img src={optimizeImage(car.img, 200)} className="max-w-full max-h-full object-cover rounded-md" alt={car.name} />
-                              </div>
-                              <div>
-                                <div className="font-bold text-white">{car.name}</div>
-                                <div className="text-xs text-slate-500 hidden sm:block truncate max-w-[150px]">{car.description || 'Sin descripción'}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 hidden md:table-cell">
-                            <span className="px-3 py-1 bg-slate-800 rounded-full text-xs font-bold text-slate-400 uppercase">{car.type}</span>
-                          </td>
-                          <td className="px-6 py-4 hidden sm:table-cell">
-                            {car.badge ?
-                              <span className="px-3 py-1 bg-[#00aed9]/10 text-[#00aed9] rounded-full text-xs font-bold uppercase">{car.badge}</span> :
-                              <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-xs font-bold uppercase">Stock</span>
-                            }
-                          </td>
-                          <td className="px-6 py-4 hidden md:table-cell">
-                            {(() => {
-                              const prediction = calculatePredictiveDTS(car, leads.filter(l => l.vehicleId === car.id).length);
-                              const isGreen = car.name.toLowerCase().includes('electric') || car.name.toLowerCase().includes('tesla') || car.type === 'luxury'; // Heuristic
-                              return (
-                                <div className="space-y-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <div className={`w-1.5 h-1.5 rounded-full ${prediction.advantageScore > 75 ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{prediction.daysToSale} DTS</span>
-                                    {isGreen && (
-                                      <span className="flex items-center gap-0.5 px-1.5 py-0.25 bg-emerald-500/10 text-emerald-500 rounded text-[7px] font-black uppercase">
-                                        <Leaf size={8} fill="currentColor" /> Eco
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-[9px] text-slate-500 font-bold uppercase tracking-tight">AI Confidence: {prediction.confidence}%</div>
-                                </div>
-                              );
-                            })()}
-                          </td>
-                          <td className="px-6 py-4 text-right font-bold text-slate-200">
-                            ${(car.price || 0).toLocaleString()}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => { setActiveTab('marketing'); }}
-                                className="w-[40px] h-[40px] rounded-lg bg-[#00aed9]/10 flex items-center justify-center text-[#00aed9] hover:bg-[#00aed9] hover:text-white transition-colors"
-                                title="Planear Contenido"
-                              >
-                                <Sparkles size={16} />
-                              </button>
-                              <button
-                                onClick={() => { setEditingCar(car); setIsModalOpen(true); }}
-                                className="w-[40px] h-[40px] rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-[#00aed9] hover:text-white transition-colors"
-                                title="Editar Vehículo"
-                              >
-                                <Edit3 size={16} />
-                              </button>
-                              <button
-                                onClick={() => onDelete(car.id)}
-                                className="w-[40px] h-[40px] rounded-lg bg-rose-900/20 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors"
-                                title="Eliminar Vehículo"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
+                        <AdminCarCard
+                          key={car.id}
+                          car={car}
+                          leadCount={leads.filter(l => l.vehicleId === car.id).length}
+                          onEdit={(c) => { setEditingCar(c); setIsModalOpen(true); }}
+                          onDelete={onDelete}
+                          onPlanContent={() => setActiveTab('marketing')}
+                        />
                       ))}
-                    </tbody>
-                  </table>
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {filteredInventory.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 opacity-30">
+                      <Package size={64} className="mb-4" />
+                      <p className="font-bold uppercase tracking-widest text-sm">No se encontraron vehículos</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Sidebar Reordering */}
-              <div className="w-full lg:w-96 bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-350px)]">
+              <div className="w-full lg:w-96 bg-white/5 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/10 shadow-xl overflow-y-auto max-h-[calc(100vh-200px)]">
                 <SortableInventory
                   inventory={inventory.slice(0, 10)}
                   onReorder={(newOrder) => {

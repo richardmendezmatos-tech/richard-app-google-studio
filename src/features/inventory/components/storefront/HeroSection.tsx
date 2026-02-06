@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign } from 'lucide-react';
-import OptimizedImage from '@/features/inventory/components/common/OptimizedImage';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface HeroSectionProps {
     onNeuralMatch: () => void;
@@ -36,7 +36,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
                 <div className="absolute inset-0 transition-transform duration-[30s] ease-linear scale-110 group-hover:scale-125">
                     {/* Using a high-end dark car texture/image as base */}
                     <OptimizedImage
-                        src="/hero.jpg"
+                        src="/hyundai-kona-hero.avif"
                         alt="Cinematic Background"
                         className="w-full h-full object-cover opacity-40 blur-sm scale-110"
                         priority

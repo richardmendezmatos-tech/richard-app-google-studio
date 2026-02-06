@@ -9,7 +9,29 @@
                     "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "price",
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
                     "order": "ASCENDING"
                 }
             ]
@@ -24,6 +46,28 @@
                 },
                 {
                     "fieldPath": "price",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "cars",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "dealerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "price",
+                    "order": "DESCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
                     "order": "DESCENDING"
                 }
             ]
@@ -39,23 +83,9 @@
                 {
                     "fieldPath": "name",
                     "order": "ASCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "cars",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "dealerId",
-                    "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "type",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "price",
+                    "fieldPath": "__name__",
                     "order": "ASCENDING"
                 }
             ]
@@ -70,46 +100,14 @@
                 },
                 {
                     "fieldPath": "type",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "price",
-                    "order": "DESCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "cars",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "dealerId",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "type",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "name",
-                    "order": "ASCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "leads",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "dealerId",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "status",
                     "order": "ASCENDING"
                 },
                 {
                     "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
                     "order": "DESCENDING"
                 }
             ]
@@ -124,6 +122,10 @@
                 },
                 {
                     "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
                     "order": "DESCENDING"
                 }
             ]
@@ -138,6 +140,10 @@
                 },
                 {
                     "fieldPath": "timestamp",
+                    "order": "DESCENDING"
+                },
+                {
+                    "fieldPath": "__name__",
                     "order": "DESCENDING"
                 }
             ]

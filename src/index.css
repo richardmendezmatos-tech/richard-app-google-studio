@@ -41,8 +41,8 @@
       transparent 40%),
     linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-radius: 24px;
 
   /* Specular Border (Double Layer trick) */
@@ -73,6 +73,9 @@
       rgba(255, 255, 255, 0.1) 40%,
       transparent 80%);
   -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -216,15 +219,15 @@ html {
 /* Legacy Helpers (from inline style) */
 .glass-morphism {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .dark .dark\:glass-morphism {
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
@@ -241,4 +244,54 @@ html {
 .dark .hover-kinetic:hover {
   box-shadow: 0 25px 50px -12px rgba(0, 174, 217, 0.15);
   border-color: #00aed9;
+}
+
+/* 
+  DIGITAL TWIN & SCANNING 
+*/
+
+.scan-laser-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #22d3ee;
+  z-index: 30;
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
+  display: flex;
+  align-items: center;
+}
+
+.scan-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.scan-grid-overlay.active {
+  opacity: 1;
+}
+
+.active-scan-laser-glow {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 9999px;
+  background-color: #22d3ee;
+  filter: blur(4px);
+}
+
+.cinematic-layer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

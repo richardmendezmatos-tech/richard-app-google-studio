@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 
 // Define Facebook Pixel Types
 interface Fbq {

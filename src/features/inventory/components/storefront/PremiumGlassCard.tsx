@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Car } from '@/types/types';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/contexts/ComparisonContext';
-import { OptimizedImage } from '@/features/inventory/components/common/OptimizedImage';
+import OptimizedImage from '@/components/common/OptimizedImage';
+import { AnimatedCounter } from '@/components/common/AnimatedCounter';
 
 interface PremiumGlassCardProps {
     car: Car;
@@ -110,9 +111,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
 
                 <div className="mt-auto flex items-end justify-between border-t border-white/10 pt-6">
                     <div>
-                        <p className="text-3xl font-black text-white tracking-tight text-glow">${car.price.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-white tracking-tight text-glow">
+                            <AnimatedCounter value={car.price || 0} format="currency" />
+                        </p>
                         <p className="text-[10px] font-bold text-[#00aed9] mt-1 flex items-center gap-1">
-                            Est. ${estimatedMonthly}/mo
+                            Est. <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />/mo
                         </p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[#00aed9] text-white flex items-center justify-center shadow-[0_0_15px_rgba(0,174,217,0.5)] group-hover:scale-110 transition-transform">

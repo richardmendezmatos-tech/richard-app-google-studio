@@ -20,7 +20,8 @@
     "deploy:firebase:rules": "firebase use richard-automotive && firebase deploy --only firestore:rules",
     "deploy:firebase:indexes": "firebase use richard-automotive && firebase deploy --only firestore:indexes",
     "deploy:firebase:functions": "firebase use richard-automotive && firebase deploy --only functions",
-    "deploy:firebase:full": "firebase use richard-automotive && firebase deploy"
+    "deploy:firebase:full": "firebase use richard-automotive && firebase deploy",
+    "optimize": "node scripts/optimize-assets.js"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.15",
@@ -50,6 +51,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/jquery": "^3.5.33",
     "ai": "^3.4.0",
+    "animejs": "^4.3.5",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "firebase": "^10.8.0",

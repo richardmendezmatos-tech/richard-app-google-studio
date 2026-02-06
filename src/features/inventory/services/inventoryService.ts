@@ -56,7 +56,7 @@ export const getPaginatedCars = async (
     if (sortOrder) {
         constraints.push(orderBy('price', sortOrder));
     } else {
-        constraints.push(orderBy('name', 'asc'));
+        constraints.push(orderBy('createdAt', 'desc'));
     }
 
     // 3. Cursor

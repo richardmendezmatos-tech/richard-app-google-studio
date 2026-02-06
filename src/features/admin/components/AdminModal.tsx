@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { X, Wand2, Loader2 } from 'lucide-react';
+import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
 import { Car, CarType } from '@/types/types';
 import { useDealer } from '@/contexts/DealerContext';
 import { ImageUploader, type UploadResult } from './ImageUploader';
@@ -20,6 +20,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
     const [isGenerating, setIsGenerating] = useState(false);
     const [aiTier, setAiTier] = useState<'Standard' | 'Premium' | null>(null);
     const [debugLogs, setDebugLogs] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const logDebug = (msg: string) => {
@@ -106,35 +107,35 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                 throw new Error("Referencia al formulario perdida.");
             }
 
-            const { auth } = await import('@/services/firebaseService');
-            logDebug(`Auth Context: ${auth.currentUser?.email || 'OFFLINE/LOGGED_OUT'}`);
-            logDebug(`UID: ${auth.currentUser?.uid || 'N/A'}`);
-
             const fd = new FormData(formRef.current);
-            logDebug("FormData constructed successfully.");
+            logDebug(`FormData extracted. Name: ${fd.get('name')}`);
 
             // Collect all image URLs from upload results
             const finalImageUrls: string[] = [];
 
-            // Keep existing images if editing
-            if (car?.images) {
-                finalImageUrls.push(...car.images);
-            }
-
-            // Add newly uploaded images
+            // Add newly uploaded images FIRST (so the most recent upload becomes the main one)
             uploadResults.forEach(result => {
                 if (result.url) finalImageUrls.push(result.url);
+                // Also add webpUrl if present as secondary
                 if (result.webpUrl) finalImageUrls.push(result.webpUrl);
             });
 
-            logDebug(`Total images: ${finalImageUrls.length}`);
+            // Keep existing images AFTER
+            if (car?.images) {
+                // Filter out duplicates if any
+                const existing = car.images.filter(url => !finalImageUrls.includes(url));
+                finalImageUrls.push(...existing);
+            }
+
+            logDebug(`Total images to save: ${finalImageUrls.length}`);
             if (uploadResults.length > 0) {
                 const totalSavings = uploadResults.reduce((sum, r) => sum + (r.savings || 0), 0);
-                logDebug(`Image optimization saved ${totalSavings.toFixed(0)}% total`);
+                logDebug(`Optimization metrics: ${totalSavings.toFixed(0)}% saved`);
             }
 
             // Ensure we have at least one image
             const mainImage = finalImageUrls.length > 0 ? finalImageUrls[0] : '';
+            logDebug(`Main image identified: ${mainImage.substring(0, 30)}...`);
 
             logDebug("Persisting document to Firestore...");
             await onSave({
@@ -154,11 +155,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             logDebug(`!!! ERROR: ${error instanceof Error ? error.message : 'Unknown error'}`);
             console.error("Upload/Save Strategic Error:", error);
             const errorMsg = error instanceof Error ? error.message : "Error desconocido";
-            if (errorMsg.includes("Storage")) {
-                alert(`Error de Storage (Consola): ${errorMsg}`);
-            } else {
-                alert(`Error al guardar: ${errorMsg}`);
-            }
+            setErrorMessage(errorMsg); // Show persistent UI error
         } finally {
             setIsUploading(false);
         }
@@ -166,7 +163,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white dark:bg-slate-900 w-full sm:max-w-2xl sm:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col">
+            <div className="bg-white dark:bg-slate-900 w-full sm:max-w-7xl sm:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 z-10 sticky top-0">
                     <div>
@@ -179,92 +176,149 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                 </div>
 
                 {/* Scrollable Form */}
-                <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
-                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-
-                        {/* Image Uploader */}
-                        <ImageUploader
-                            onUploadComplete={handleUploadComplete}
-                        />
-
-                        {/* Basic Info */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Nombre</label>
-                                <input name="name" defaultValue={car?.name} required className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="Ej. Toyota Corolla" />
+                <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+                    {/* Left Side: Media & Preview */}
+                    <div className="w-full lg:w-1/2 p-8 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-100 dark:border-white/5 overflow-y-auto custom-scrollbar">
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="w-2 h-6 bg-[#00aed9] rounded-full" />
+                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Multimedia y Galería</h3>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Precio</label>
-                                <input name="price" type="number" defaultValue={car?.price} required className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="25000" />
-                            </div>
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tipo</label>
-                                <select name="type" defaultValue={car?.type || 'suv'} aria-label="Tipo de vehículo" className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] appearance-none">
-                                    <option value="suv">SUV</option>
-                                    <option value="sedan">Sedan</option>
-                                    <option value="pickup">Pickup</option>
-                                    <option value="luxury">Luxury</option>
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Badge</label>
-                                <input name="badge" defaultValue={car?.badge} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="Opcional" />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Características</label>
-                            <input name="features" defaultValue={car?.features?.join(', ')} className="w-full h-[50px] px-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9]" placeholder="GPS, Cuero, Turbo..." />
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <label htmlFor="description-field" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</label>
-                                <button
-                                    type="button"
-                                    onClick={generateAIDescription}
-                                    disabled={isGenerating}
-                                    className="text-[10px] font-black uppercase tracking-widest text-[#00aed9] flex items-center gap-1 hover:underline disabled:opacity-50"
-                                >
-                                    {isGenerating ? <Loader2 size={12} className="animate-spin" /> : <Wand2 size={12} />}
-                                    {isGenerating ? 'Generando...' : 'Generar con IA'}
-                                </button>
-                                {aiTier && (
-                                    <span className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${aiTier === 'Premium' ? 'bg-purple-500/10 text-purple-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
-                                        Tier: {aiTier}
-                                    </span>
-                                )}
-                            </div>
-                            <textarea
-                                id="description-field"
-                                name="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={3}
-                                className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-medium outline-none focus:ring-2 focus:ring-[#00aed9] resize-none"
-                                placeholder="Descripción del vehículo"
+                            {/* Image Uploader */}
+                            <ImageUploader
+                                onUploadComplete={handleUploadComplete}
+                                onLog={logDebug}
                             />
-                        </div>
 
-                        {/* Strategic Debug Console */}
-                        {debugLogs.length > 0 && (
-                            <div className="p-4 bg-slate-950 rounded-2xl border border-rose-500/20 space-y-1">
-                                <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest border-b border-rose-500/10 pb-2 mb-2">Diagnostic Console (Copy for IT)</div>
-                                <div className="max-h-32 overflow-y-auto custom-scrollbar">
-                                    {debugLogs.map((log, i) => (
-                                        <div key={i} className="text-[9px] font-mono text-slate-300 break-all leading-relaxed">{log}</div>
-                                    ))}
+                            {/* Stats or Preview Placeholder */}
+                            <div className="p-6 rounded-3xl bg-gradient-to-br from-[#173d57]/10 to-transparent border border-[#00aed9]/10">
+                                <div className="flex items-center gap-3 text-[#00aed9] mb-3">
+                                    <Sparkles size={18} />
+                                    <span className="text-xs font-black uppercase tracking-widest">Sugerencia Pro</span>
+                                </div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                    Las unidades con más de 5 fotos de alta calidad tienen un **40% más de probabilidad** de ser vendidas en la primera semana. Asegúrate de incluir interiores y motor.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Side: Data Form */}
+                    <div className="w-full lg:w-1/2 p-8 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-900">
+                        {errorMessage && (
+                            <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/50 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                                <ShieldAlert className="text-rose-500 shrink-0 mt-0.5" size={20} />
+                                <div>
+                                    <h4 className="text-sm font-black text-rose-500 uppercase tracking-wide">Error al Guardar</h4>
+                                    <p className="text-xs text-rose-300 mt-1 font-mono">{errorMessage}</p>
                                 </div>
                             </div>
                         )}
 
-                        <button type="submit" disabled={isUploading} className="w-full h-[56px] bg-[#0d2232] text-white rounded-2xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-                            {isUploading ? 'Guardando...' : 'Guardar Unidad'}
-                        </button>
-                    </form>
+                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-6 bg-purple-500 rounded-full" />
+                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Detalles Técnicos</h3>
+                            </div>
+
+                            {/* Basic Info */}
+                            <div className="grid grid-cols-1 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Nombre de la Unidad</label>
+                                    <input name="name" defaultValue={car?.name} required className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white" placeholder="Ej. Toyota Corolla GR" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Precio (USD)</label>
+                                        <input name="price" type="number" defaultValue={car?.price} required className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white" placeholder="25000" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Etiqueta (Badge)</label>
+                                        <input name="badge" defaultValue={car?.badge} className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white" placeholder="Ej. Recién Llegado" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Categoría</label>
+                                    <div className="relative">
+                                        <select name="type" defaultValue={car?.type || 'suv'} aria-label="Tipo de vehículo" className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white appearance-none">
+                                            <option value="suv">🚙 SUV / Crossover</option>
+                                            <option value="sedan">🚗 Sedan / Coupe</option>
+                                            <option value="pickup">🛻 Pickup / Truck</option>
+                                            <option value="luxury">💎 Luxury / Sport</option>
+                                        </select>
+                                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                                            <X size={16} className="rotate-45" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Características (Separadas por coma)</label>
+                                    <input name="features" defaultValue={car?.features?.join(', ')} className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white" placeholder="GPS, Cuero, Techo Panorámico..." />
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center mb-1">
+                                    <label htmlFor="description-field" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Descripción Narrativa</label>
+                                    <button
+                                        type="button"
+                                        onClick={generateAIDescription}
+                                        disabled={isGenerating}
+                                        className="text-[10px] font-black uppercase tracking-widest text-[#00aed9] bg-[#00aed9]/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-[#00aed9] hover:text-white transition-all disabled:opacity-50"
+                                    >
+                                        {isGenerating ? <Loader2 size={12} className="animate-spin" /> : <Wand2 size={12} />}
+                                        {isGenerating ? 'Escribiendo...' : 'Mejorar con IA ✨'}
+                                    </button>
+                                </div>
+                                <textarea
+                                    id="description-field"
+                                    name="description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    rows={4}
+                                    className="w-full p-5 bg-slate-50 dark:bg-slate-800 rounded-[2rem] font-medium outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-700 dark:text-slate-200 resize-none"
+                                    placeholder="Escribe la historia de este vehículo..."
+                                />
+                                {aiTier && (
+                                    <span className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${aiTier === 'Premium' ? 'bg-purple-500/10 text-purple-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                                        IA Engine: {aiTier}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Strategic Debug Console */}
+                            {debugLogs.length > 0 && (
+                                <div className="p-5 bg-slate-950 rounded-[2rem] border border-rose-500/20 space-y-2">
+                                    <div className="text-[9px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
+                                        Log de Diagnóstico (IT)
+                                    </div>
+                                    <div className="max-h-24 overflow-y-auto custom-scrollbar">
+                                        {debugLogs.map((log, i) => (
+                                            <div key={i} className="text-[8px] font-mono text-slate-500 break-all leading-relaxed">{log}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="pt-2">
+                                <button type="submit" disabled={isUploading} className="w-full h-[64px] bg-gradient-to-r from-[#0d2232] to-[#173d57] text-white rounded-[2rem] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3">
+                                    {isUploading ? (
+                                        <>
+                                            <Loader2 size={20} className="animate-spin" />
+                                            <span>Sincronizando...</span>
+                                        </>
+                                    ) : (
+                                        <span>Guardar en Inventario</span>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

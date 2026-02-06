@@ -1,18 +1,17 @@
 
-import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect, FC, FormEvent } from 'react';
 import { loginAdmin, loginWithPasskey } from '../services/authService';
-import { ShieldAlert, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace, Command, Cpu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth'; // Import for "trusting" the passkey result
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/services/firebaseService';
 import GoogleOneTap from '@/components/layout/GoogleOneTap';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
 
-const AdminLogin: React.FC = () => {
-  // ... existing state ...
+const AdminLogin: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +21,7 @@ const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleGhostLogin = React.useCallback(async (key: string) => {
+  const handleGhostLogin = useCallback(async (key: string) => {
     setLoading(true);
     setError("Activando Protocolo Ghost de CTO...");
     try {
@@ -30,7 +29,7 @@ const AdminLogin: React.FC = () => {
       const user = await validateGhostKey(key);
       dispatch(loginSuccess({
         ...user,
-        role: user.role as any // Forced cast to match the UserRole | undefined type if needed
+        role: user.role as any
       }));
       navigate('/admin');
     } catch {
@@ -40,8 +39,7 @@ const AdminLogin: React.FC = () => {
     }
   }, [dispatch, navigate]);
 
-  // CTO: Ghost Mode Listener
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const key = params.get('richard_key');
     if (key) {
@@ -64,7 +62,7 @@ const AdminLogin: React.FC = () => {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -99,15 +97,11 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
     dispatch(loginStart());
     try {
-      // 1. Trigger Native WebAuthn Prompt (TouchID/FaceID)
       const credential = await loginWithPasskey();
 
       if (credential) {
-        // 2. Security Check: In a real app, verify signature with backend.
-        // For development/demo, we allow if specific ENV is set, otherwise fail safe.
         if (import.meta.env.DEV) {
           console.log("Passkey verified (DEV override):", credential);
-          // Login logic for dev demo
           const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
           const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
@@ -128,7 +122,6 @@ const AdminLogin: React.FC = () => {
     }
   };
 
-  // DEV MODE: Quick Access (Auto-login)
   const handleDevQuickAccess = async () => {
     if (!import.meta.env.DEV) {
       setError("⛔️ Acceso rápido deshabilitado en Producción.");
@@ -138,8 +131,6 @@ const AdminLogin: React.FC = () => {
     setError(null);
     dispatch(loginStart());
     try {
-      // Bypass all security - use Firebase Auth directly
-      // Note: This is a dev-only shortcut using the main auth instance
       const { signInWithEmailAndPassword } = await import('firebase/auth');
       const { auth } = await import('@/services/firebaseService');
 
@@ -161,138 +152,175 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#050b14] relative overflow-hidden font-sans">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#050b14] relative overflow-hidden font-sans selection:bg-[#00aed9]/30">
       <GoogleOneTap onSuccess={() => navigate('/admin')} />
 
-      {/* Background Ambience */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#00aed9]/20 rounded-full blur-[120px] pointer-events-none opacity-40 animate-pulse"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none opacity-30"></div>
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-[#00aed9]/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[100px]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]"></div>
+      </div>
 
-      {/* Glassmorphic Card */}
-      <div className="w-full max-w-[420px] bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[30px] shadow-2xl relative z-10 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-[440px] relative z-10"
+      >
+        {/* Main Card */}
+        <div className="glass-premium overflow-hidden">
 
-        {/* Top Decorative Line */}
-        <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#00aed9] to-transparent opacity-50"></div>
+          {/* Header */}
+          <div className="relative p-8 pb-6 text-center border-b border-white/5">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00aed9] to-transparent opacity-60"></div>
 
-        {/* DEV MODE BANNER (Only in Development) */}
-        {import.meta.env.DEV && (
-          <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-b border-amber-500/20 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Modo Desarrollo</span>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00aed9]/20 to-indigo-500/10 border border-[#00aed9]/20 mb-4 shadow-[0_0_30px_-5px_rgba(0,174,217,0.3)]"
+            >
+              <Command className="text-[#00aed9]" size={32} strokeWidth={1.5} />
+            </motion.div>
+
+            <h1 className="text-2xl font-black text-white tracking-tight mb-1">
+              Command <span className="text-[#00aed9]">Center</span>
+            </h1>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+              <ShieldCheck size={10} /> Secure Admin Access
+            </p>
+          </div>
+
+          {/* Body */}
+          <div className="p-8 pt-6">
+            <form onSubmit={handleLogin} className="space-y-6">
+
+              {/* Inputs */}
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Work Email</label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors">
+                      <Mail size={18} strokeWidth={1.5} />
+                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-white/5 transition-all"
+                      placeholder="admin@richard.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Password</label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors">
+                      <Lock size={18} strokeWidth={1.5} />
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full pl-11 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-white/5 transition-all"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
+                    </button>
+                  </div>
+                </div>
               </div>
+
+              {/* Status Message */}
+              <div className="min-h-[24px]">
+                <AnimatePresence mode="wait">
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-2 text-rose-400 justify-center bg-rose-500/10 py-2 rounded-lg border border-rose-500/20"
+                    >
+                      <ShieldAlert size={14} />
+                      <span className="text-xs font-bold">{error}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 bg-gradient-to-r from-[#00aed9] to-[#009ac0] hover:to-[#00aed9] text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-[#00aed9]/25 hover:shadow-cyan-400/40 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                  <span className="relative flex items-center justify-center gap-2">
+                    {loading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      <>Authenticate <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></>
+                    )}
+                  </span>
+                </button>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handlePasskeyLogin}
+                    disabled={loading}
+                    className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
+                  >
+                    <ScanFace size={16} className="text-purple-400 group-hover:scale-110 transition-transform" />
+                    Biometric
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleMagicLink}
+                    disabled={loading}
+                    className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
+                  >
+                    <Cpu size={16} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                    Magic Link
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <div className="mt-8 text-center">
+              <button className="text-[10px] font-medium text-slate-500 hover:text-[#00aed9] transition-colors">
+                Locked Out? <span className="underline decoration-slate-700 underline-offset-4 hover:decoration-[#00aed9]">Contact System Admin</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Dev Mode Strip */}
+          {import.meta.env.DEV && (
+            <div className="border-t border-white/5 bg-amber-500/5 p-2 flex justify-center">
               <button
                 onClick={handleDevQuickAccess}
                 disabled={loading}
-                className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border border-amber-500/30 disabled:opacity-50"
+                className="px-3 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors border border-amber-500/20 flex items-center gap-2"
               >
-                Quick Access
+                <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+                Dev Quick Access
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="p-8 sm:p-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00aed9]/20 to-purple-500/10 border border-white/5 mb-5 shadow-lg shadow-[#00aed9]/10">
-              <ShieldCheck className="text-[#00aed9]" size={28} />
-            </div>
-            <h1 className="text-2xl font-black text-white tracking-tight mb-2">Command Center</h1>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Acceso Seguro Administrativo</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-
-            {/* Email Field */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Email Corporativo</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors"><Mail size={18} /></div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-black/40 transition-all hover:bg-black/30"
-                  placeholder="admin@empresa.com"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Contraseña</label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors"><Lock size={18} /></div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-black/40 transition-all hover:bg-black/30"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-
-            <div className="h-10 flex flex-col items-center justify-center">
-              {error && (
-                <>
-                  <div className="flex items-center gap-2 text-rose-400 animate-in fade-in slide-in-from-top-1">
-                    <ShieldAlert size={12} />
-                    <span className="text-xs font-bold">{error}</span>
-                  </div>
-                  {error && !error.includes('enviado') && (
-                    <button type="button" onClick={handleMagicLink} className="mt-1 text-[9px] font-black text-[#00aed9] uppercase tracking-widest hover:underline">
-                      ¿Problemas de acceso? Enviar Enlace Mágico 📧
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Main Action Codes */}
-            <div className="space-y-3 pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 bg-[#00aed9] hover:bg-[#009ac0] text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-[#00aed9]/25 hover:shadow-cyan-400/40 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed group"
-              >
-                {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <>Acceder al Panel <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></>}
-              </button>
-
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-white/5"></div>
-                <span className="flex-shrink-0 mx-4 text-[10px] font-bold text-slate-600 uppercase">O usa biométricos</span>
-                <div className="flex-grow border-t border-white/5"></div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handlePasskeyLogin}
-                className="w-full py-3.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all hover:border-white/20 active:bg-white/15"
-              >
-                <ScanFace size={16} className="text-purple-400" /> Acceso con Passkey
-              </button>
-            </div>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <a href="#" className="text-[10px] font-medium text-slate-500 hover:text-[#00aed9] transition-colors">
-              ¿Problemas de acceso? <span className="underline decoration-slate-700 underline-offset-4">Contactar Soporte IT</span>
-            </a>
-          </div>
         </div>
-      </div>
+      </motion.div>
+
     </div>
   );
 };

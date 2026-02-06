@@ -14,6 +14,7 @@ interface OptimizedImageProps {
     fallbackSrc?: string;
     placeholder?: string; // Base64 blur placeholder
     webpSrc?: string;     // Optional WebP source
+    loading?: "lazy" | "eager";
 }
 
 /**
@@ -31,7 +32,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onLoad,
     fallbackSrc,
     placeholder,
-    webpSrc
+    webpSrc,
+    loading = "lazy"
 }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isInView, setIsInView] = useState(priority);
@@ -39,8 +41,22 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     const imgRef = useRef<HTMLImageElement>(null);
     const observerRef = useRef<IntersectionObserver | null>(null);
 
-    // Optimized source from our edge service
-    const optimizedSrc = src ? optimizeImage(src, width) : '';
+    // Helper to check if image is local and can have optimized versions
+    const isLocal = src.startsWith('/') && !src.startsWith('http');
+
+    const getOptimizedPath = (format: 'webp' | 'avif', size: 'thumbnail' | 'mobile' | 'desktop') => {
+        if (!isLocal) return null;
+        const fileName = src.split('/').pop()?.split('.')[0];
+        return `/optimized/${fileName}-${size}.${format}`;
+    };
+
+    const avifDesktop = getOptimizedPath('avif', 'desktop');
+    const avifMobile = getOptimizedPath('avif', 'mobile');
+    const webpDesktop = getOptimizedPath('webp', 'desktop');
+    const webpMobile = getOptimizedPath('webp', 'mobile');
+
+    // Optimized source from our edge service (for external URLs)
+    const optimizedSrc = isLocal ? src : (src ? optimizeImage(src, width) : '');
 
     // Intersection Observer for lazy loading
     useEffect(() => {
@@ -103,10 +119,18 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
                 )}
             </AnimatePresence>
 
-            {/* Actual Image with WebP support */}
+            {/* Actual Image with AVIF/WebP support */}
             {isInView && (
-                <picture>
+                <picture className="w-full h-full">
+                    {/* AVIF Sources */}
+                    {avifDesktop && <source srcSet={avifDesktop} media="(min-width: 1024px)" type="image/avif" />}
+                    {avifMobile && <source srcSet={avifMobile} type="image/avif" />}
+
+                    {/* WebP Sources */}
+                    {webpDesktop && <source srcSet={webpDesktop} media="(min-width: 1024px)" type="image/webp" />}
+                    {webpMobile && <source srcSet={webpMobile} type="image/webp" />}
                     {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
+
                     <motion.img
                         ref={imgRef}
                         initial={{ opacity: 0 }}
@@ -114,7 +138,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         src={optimizedSrc}
                         alt={alt}
-                        loading={priority ? "eager" : "lazy"}
+                        loading={priority ? "eager" : loading}
                         decoding="async"
                         onLoad={handleLoad}
                         onError={handleError}

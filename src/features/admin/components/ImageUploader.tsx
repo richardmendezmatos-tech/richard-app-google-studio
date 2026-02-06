@@ -21,6 +21,7 @@ interface ImageUploaderProps {
     maxFiles?: number;
     storagePath?: string;
     existingImages?: string[];
+    onLog?: (msg: string) => void;
 }
 
 interface UploadingFile {
@@ -35,11 +36,17 @@ interface UploadingFile {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
     onUploadComplete,
     maxFiles = 5,
-    storagePath = 'inventory'
+    storagePath = 'inventory',
+    onLog
 }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [files, setFiles] = useState<UploadingFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const log = (msg: string) => {
+        if (onLog) onLog(`[ImgUp] ${msg}`);
+        console.log(`[ImgUp] ${msg}`);
+    };
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -65,6 +72,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         setFiles(uploadingFiles);
 
         // Process each file
+        const successfulResults: UploadResult[] = [];
+
         for (let i = 0; i < uploadingFiles.length; i++) {
             const uploadFile = uploadingFiles[i];
 
@@ -83,46 +92,59 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     idx === i ? { ...f, status: 'optimizing', progress: 20 } : f
                 ));
 
-                // Optimize image
+                // OPTIMIZATION RESTORED - Process image
                 const optimized = await optimizeImageComplete(uploadFile.file, {
                     quality: 0.85,
                     maxWidth: 1600,
                     generateWebP: true
                 });
 
-                // Update status to uploading
+                // Update status to uploading directly
                 setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, status: 'uploading', progress: 50 } : f
+                    idx === i ? { ...f, status: 'uploading', progress: 40 } : f
                 ));
 
-                // Upload to Firebase Storage
                 const timestamp = Date.now();
-                const fileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '')}`;
+                const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '')}`;
 
-                // Upload main image (JPEG)
-                const mainRef = ref(storage, `${storagePath}/${fileName}.jpg`);
-                await uploadBytes(mainRef, optimized.jpeg);
-                const mainUrl = await getDownloadURL(mainRef);
+                // Upload Optimized JPEG
+                const jpegRef = ref(storage, `${storagePath}/${baseFileName}.jpg`);
+                await uploadBytes(jpegRef, optimized.jpeg, { contentType: 'image/jpeg' });
+                const jpegUrl = await getDownloadURL(jpegRef);
 
-                // Upload thumbnail
-                const thumbRef = ref(storage, `${storagePath}/thumbnails/${fileName}_thumb.jpg`);
-                await uploadBytes(thumbRef, optimized.thumbnail);
-                const thumbUrl = await getDownloadURL(thumbRef);
+                setFiles(prev => prev.map((f, idx) =>
+                    idx === i ? { ...f, progress: 60 } : f
+                ));
 
-                // Upload WebP if available
+                // Upload WebP
+                let webpUrl = '';
                 if (optimized.webp) {
-                    const webpRef = ref(storage, `${storagePath}/${fileName}.webp`);
-                    await uploadBytes(webpRef, optimized.webp);
+                    const webpRef = ref(storage, `${storagePath}/${baseFileName}.webp`);
+                    await uploadBytes(webpRef, optimized.webp, { contentType: 'image/webp' });
+                    webpUrl = await getDownloadURL(webpRef);
                 }
 
+                setFiles(prev => prev.map((f, idx) =>
+                    idx === i ? { ...f, progress: 80 } : f
+                ));
+
+                // Upload Thumbnail
+                const thumbRef = ref(storage, `${storagePath}/${baseFileName}_thumb.jpg`);
+                await uploadBytes(thumbRef, optimized.thumbnail, { contentType: 'image/jpeg' });
+                const thumbUrl = await getDownloadURL(thumbRef);
+
                 const result: UploadResult = {
-                    url: mainUrl,
+                    url: jpegUrl,
+                    webpUrl: webpUrl,
                     thumbnailUrl: thumbUrl,
                     blurPlaceholder: optimized.blurPlaceholder,
                     originalSize: uploadFile.file.size,
                     optimizedSize: optimized.jpeg.size,
-                    savings: ((uploadFile.file.size - optimized.jpeg.size) / uploadFile.file.size) * 100
+                    savings: optimized.savings.percentage
                 };
+
+                // Add to success collector
+                successfulResults.push(result);
 
                 // Update status to complete
                 setFiles(prev => prev.map((f, idx) =>
@@ -139,14 +161,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         }
 
         // Notify parent when all complete
-        const results = uploadingFiles
-            .filter(f => f.result)
-            .map(f => f.result!);
-
-        if (results.length > 0) {
-            onUploadComplete(results);
+        log(`All files processed. Success count: ${successfulResults.length}`);
+        if (successfulResults.length > 0) {
+            onUploadComplete(successfulResults);
         }
-    }, [maxFiles, storagePath, onUploadComplete]);
+    }, [maxFiles, storagePath, onUploadComplete, onLog]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -236,7 +255,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/jpeg,image/png,image/webp,image/heic"
+                    accept="image/jpeg,image/png,image/webp"
                     multiple
                     max={maxFiles}
                     onChange={handleFileSelect}
