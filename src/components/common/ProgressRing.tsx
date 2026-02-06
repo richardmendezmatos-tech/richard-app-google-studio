@@ -52,9 +52,9 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
                 delay: delay,
                 round: 1,
                 easing: 'easeInOutQuart',
-                onUpdate: (self: any) => {
+                onUpdate: (anim) => {
                     if (textRef.current) {
-                        const target = self.targets[0] as { val: number };
+                        const target = anim.targets[0] as { val: number };
                         textRef.current.innerHTML = String(Math.round(target.val));
                     }
                 }
@@ -65,10 +65,7 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
     return (
         <div className="flex flex-col items-center justify-center p-4">
             <div className="relative" style={{ '--ring-size': `${size}px` } as React.CSSProperties}>
-                <div
-                    className="absolute inset-0"
-                    style={{ width: 'var(--ring-size)', height: 'var(--ring-size)' }}
-                />
+                <div className="absolute inset-0 progress-ring-container" />
                 {/* Background Circle */}
                 <svg width={size} height={size} className="transform -rotate-90">
                     <circle
