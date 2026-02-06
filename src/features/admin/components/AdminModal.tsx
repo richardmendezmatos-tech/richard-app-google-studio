@@ -4,6 +4,7 @@ import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
 import { Car, CarType } from '@/types/types';
 import { useDealer } from '@/contexts/DealerContext';
 import { ImageUploader, type UploadResult } from './ImageUploader';
+import { blobToBase64 } from '@/services/imageOptimizationService';
 
 interface AdminModalProps {
     car: Car | null;
@@ -59,11 +60,47 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             }
 
             // High Variance: Premium AI for expensive units
-            // High Variance: Premium AI for expensive units
             const prompt = `Genera una descripción profesional y atractiva para la venta de este vehículo: ${name}.
             Características principales: ${features.join(', ')}.
             Precio: $${price}.
-            El tono debe ser persuasivo, resaltando el valor y la oportunidad.`;
+            El tono debe ser persuasivo, resaltando el valor y la oportunidad.
+            
+            ADICIONAL: Si se incluye una imagen, analiza visualmente el vehículo y menciona detalles específicos que veas (color, rines, estado de la pintura, extras visibles) para hacer la descripción más auténtica.`;
+
+            // VISION UPGRADE: Prepare multimodal contents
+            let contents: any[] = [prompt];
+
+            if (uploadResults.length > 0) {
+                try {
+                    const firstImageUrl = uploadResults[0].url;
+                    // Fetch the image and convert to base64 for Gemini
+                    const imgResponse = await fetch(firstImageUrl);
+                    const blob = await imgResponse.blob();
+                    const base64Data = await blobToBase64(blob);
+
+                    // Remove data:image/jpeg;base64, prefix
+                    const base64Content = base64Data.split(',')[1];
+
+                    contents = [
+                        {
+                            role: 'user',
+                            parts: [
+                                { text: prompt },
+                                {
+                                    inlineData: {
+                                        mimeType: blob.type,
+                                        data: base64Content
+                                    }
+                                }
+                            ]
+                        }
+                    ];
+                    logDebug("AI Vision: Imagen enviada exitosamente para análisis.");
+                } catch (imgError) {
+                    console.error("Error preparing vision data:", imgError);
+                    logDebug("AI Vision: Fallo al cargar imagen, procediendo solo con texto.");
+                }
+            }
 
             const response = await fetch('/api/gemini', {
                 method: 'POST',
@@ -71,9 +108,9 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    prompt,
+                    contents,
                     model: 'gemini-1.5-flash',
-                    systemInstruction: 'Eres un vendedor experto de autos de lujo y seminuevos. Escribe en español latino de forma entusiasta pero profesional.'
+                    systemInstruction: 'Eres un vendedor experto de autos de lujo y seminuevos. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.'
                 })
             });
 

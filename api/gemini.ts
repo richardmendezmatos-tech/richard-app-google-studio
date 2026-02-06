@@ -9,10 +9,9 @@ export default async function handler(request: Request) {
     }
 
     try {
-        const { prompt, systemInstruction, model: modelName, config } = await request.json();
+        const { prompt, contents, systemInstruction, model: modelName, config } = await request.json();
 
         // 1. Secure API Key Access (Server-Side Only)
-        // Helper to ensure we don't accidentally leak if env is missing
         const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
 
         if (!apiKey) {
@@ -28,8 +27,9 @@ export default async function handler(request: Request) {
             generationConfig: config
         });
 
-        // 3. Generate Content (Waits for full response)
-        const result = await model.generateContent(prompt);
+        // 3. Generate Content (Supports strings and multimodal parts)
+        // If contents is provided (multimodal), use it; otherwise fallback to prompt string.
+        const result = await model.generateContent(contents || prompt);
         const response = await result.response;
         const text = response.text();
 

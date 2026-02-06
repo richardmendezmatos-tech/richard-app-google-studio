@@ -1,5 +1,5 @@
-
 import { Car } from "@/types/types";
+import { blobToBase64 } from "@/services/imageOptimizationService";
 
 
 export interface MarketingContent {
@@ -45,6 +45,9 @@ export const generateCarMarketingContent = async (car: Car, locale: 'es' | 'en' 
         ÁNGULO PSICOLÓGICO OBLIGATORIO:
         "${psychology}"
         
+        INSTRUCCIONES VISUALES (Si se incluye imagen):
+        Analiza visualmente la foto. Menciona detalles que veas (estado de los rines, color especial, diseño de rines, estado impecable, extras como spoilers o barras de techo) para que el copy se sienta real y no genérico.
+        
         Genera 3 piezas de contenido distintas en ${locale === 'es' ? 'Español Latino Neutro' : 'Inglés Nativo'}:
 
         1. FACEBOOK (Estructura PAS: Problema - Agitación - Solución):
@@ -72,6 +75,39 @@ export const generateCarMarketingContent = async (car: Car, locale: 'es' | 'en' 
         }
     `;
 
+    // VISION UPGRADE: Prepare multimodal contents
+    let contents: any[] = [prompt];
+
+    if (car.img) {
+        try {
+            // Fetch the image and convert to base64 for Gemini
+            const imgResponse = await fetch(car.img);
+            const blob = await imgResponse.blob();
+            const base64Data = await blobToBase64(blob);
+
+            // Remove data:image/jpeg;base64, prefix
+            const base64Content = base64Data.split(',')[1];
+
+            contents = [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                mimeType: blob.type,
+                                data: base64Content
+                            }
+                        }
+                    ]
+                }
+            ];
+            console.log("Marketing Vision: Imagen enviada exitosamente para análisis.");
+        } catch (imgError) {
+            console.error("Error preparing marketing vision data:", imgError);
+        }
+    }
+
     try {
         const response = await fetch('/api/gemini', {
             method: 'POST',
@@ -79,7 +115,7 @@ export const generateCarMarketingContent = async (car: Car, locale: 'es' | 'en' 
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                prompt,
+                contents,
                 model: 'gemini-1.5-flash',
                 config: { responseMimeType: "application/json" }
             })
@@ -88,7 +124,16 @@ export const generateCarMarketingContent = async (car: Car, locale: 'es' | 'en' 
         if (!response.ok) throw new Error("API Error");
 
         const data = await response.json();
-        return JSON.parse(data.text);
+
+        // Robust cleaning of the response if needed
+        let cleanText = data.text;
+        if (cleanText.includes('```json')) {
+            cleanText = cleanText.split('```json')[1].split('```')[0].trim();
+        } else if (cleanText.includes('```')) {
+            cleanText = cleanText.split('```')[1].split('```')[0].trim();
+        }
+
+        return JSON.parse(cleanText);
 
     } catch (error) {
         console.error("Marketing Gen Error:", error);
