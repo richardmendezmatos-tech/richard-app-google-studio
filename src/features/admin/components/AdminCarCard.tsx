@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Car as CarType } from '@/types/types';
-import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag } from 'lucide-react';
+import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { optimizeImage } from '@/services/firebaseService';
 import { calculatePredictiveDTS } from '@/services/predictionService';
@@ -32,21 +32,20 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ y: -5 }}
-            className="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/10 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
+            className="group relative glass-premium overflow-hidden shadow-xl hover-kinetic flex flex-col h-full"
         >
             {/* Image Section */}
-            <div className="relative h-72 overflow-hidden">
+            <div className="relative h-64 overflow-hidden">
                 <img
-                    src={optimizeImage(car.img, 400)}
+                    src={optimizeImage(car.img, 600)}
                     alt={car.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
                 {/* Status Badges */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
+                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
                         {car.type}
                     </span>
                     {car.badge && (
@@ -54,88 +53,90 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
                             {car.badge}
                         </span>
                     )}
-                    {isEco && (
-                        <span className="px-3 py-1 bg-emerald-500 rounded-full text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-1">
-                            <Leaf size={10} fill="currentColor" /> Eco
-                        </span>
-                    )}
                 </div>
 
-                {/* Price Tag */}
-                <div className="absolute bottom-4 left-4">
-                    <div className="text-2xl font-black text-white tracking-tighter">
+                {isEco && (
+                    <div className="absolute top-4 right-4 h-8 w-8 bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-500">
+                        <Leaf size={14} fill="currentColor" />
+                    </div>
+                )}
+
+                {/* Price Display */}
+                <div className="absolute bottom-4 left-6">
+                    <div className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest mb-0.5">Precio de Venta</div>
+                    <div className="text-3xl font-black text-white tracking-tighter text-glow">
                         <AnimatedCounter value={car.price || 0} format="currency" />
                     </div>
                 </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-6 space-y-4">
+            <div className="p-8 space-y-6 flex-1 flex flex-col">
                 <div>
-                    <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight truncate">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight truncate mb-1">
                         {car.name}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-1">
-                        {car.description || 'Sin descripción detallada.'}
-                    </p>
-                </div>
-
-                {/* Metrics Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-slate-50 dark:bg-white/5 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                            <TrendingUp size={12} />
-                            <span className="text-[9px] font-black uppercase tracking-wider">Advantage</span>
-                        </div>
-                        <div className={`text-sm font-black ${prediction.advantageScore > 75 ? 'text-emerald-500' : 'text-amber-500'}`}>
-                            <AnimatedCounter value={prediction.advantageScore} format="percent" delay={200} />
-                        </div>
-                    </div>
-                    <div className="bg-slate-50 dark:bg-white/5 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                            <Clock size={12} />
-                            <span className="text-[9px] font-black uppercase tracking-wider">Days to Sale</span>
-                        </div>
-                        <div className="text-sm font-black text-white">
-                            <AnimatedCounter value={prediction.daysToSale} delay={400} /> <span className="text-[10px] opacity-50">Días</span>
-                        </div>
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        <Gauge size={12} /> {car.type === 'luxury' ? 'Premium Trim' : 'Standard Trim'} • {car.badge || 'No special badge'}
                     </div>
                 </div>
 
-                {/* Tags Section */}
+                {/* Predictive Metrics */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 p-4 rounded-3xl border border-white/5 space-y-2">
+                        <div className="flex items-center gap-2 text-slate-400">
+                            <TrendingUp size={14} className="text-[#00aed9]" />
+                            <span className="text-[10px] font-black uppercase tracking-wider">Advantage</span>
+                        </div>
+                        <div className={`text-xl font-black ${prediction.advantageScore > 75 ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            <AnimatedCounter value={prediction.advantageScore} format="percent" />
+                        </div>
+                    </div>
+                    <div className="bg-white/5 p-4 rounded-3xl border border-white/5 space-y-2">
+                        <div className="flex items-center gap-2 text-slate-400">
+                            <Clock size={14} className="text-amber-500" />
+                            <span className="text-[10px] font-black uppercase tracking-wider">Exp. Sales</span>
+                        </div>
+                        <div className="text-xl font-black text-white">
+                            <AnimatedCounter value={prediction.daysToSale} /> <span className="text-[10px] opacity-40 uppercase tracking-widest">Días</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Features Tags */}
                 {car.features && car.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                        {car.features.slice(0, 3).map((f, i) => (
-                            <span key={i} className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-white/5 rounded-lg text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
-                                <Tag size={8} /> {f}
+                    <div className="flex flex-wrap gap-2">
+                        {car.features.slice(0, 2).map((f, i) => (
+                            <span key={i} className="px-3 py-1.5 bg-white/5 rounded-xl text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                <Tag size={10} className="text-slate-600" /> {f}
                             </span>
                         ))}
                     </div>
                 )}
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-2">
+                {/* Professional Actions */}
+                <div className="flex gap-3 pt-4 mt-auto">
                     <button
                         onClick={onPlanContent}
-                        className="flex-1 h-10 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 group/btn"
+                        className="flex-1 h-12 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group/btn"
                     >
-                        <Sparkles size={14} className="group-hover/btn:rotate-12 transition-transform" />
+                        <Sparkles size={16} className="group-hover/btn:rotate-12 transition-transform" />
                         Marketing
                     </button>
                     <div className="flex gap-2">
                         <button
                             onClick={() => onEdit(car)}
-                            className="w-10 h-10 bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all"
-                            title="Editar"
+                            className="w-12 h-12 bg-white/5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-2xl flex items-center justify-center transition-all border border-white/5"
+                            title="Editar Unidad"
                         >
-                            <Edit3 size={16} />
+                            <Edit3 size={18} />
                         </button>
                         <button
                             onClick={() => onDelete(car.id)}
-                            className="w-10 h-10 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl flex items-center justify-center transition-all"
-                            title="Eliminar"
+                            className="w-12 h-12 bg-rose-500/5 text-rose-500/60 hover:text-white hover:bg-rose-500 rounded-2xl flex items-center justify-center transition-all border border-rose-500/10"
+                            title="Eliminar Unidad"
                         >
-                            <Trash2 size={16} />
+                            <Trash2 size={18} />
                         </button>
                     </div>
                 </div>
