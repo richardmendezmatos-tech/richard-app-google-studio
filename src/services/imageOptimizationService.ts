@@ -39,6 +39,10 @@ export const compressImage = async (
     maxWidth: number = 1600
 ): Promise<Blob> => {
     return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject(new Error('Optimization timed out (15s). Try a smaller image or different format.'));
+        }, 15000);
+
         const img = new Image();
         const reader = new FileReader();
 
@@ -47,6 +51,7 @@ export const compressImage = async (
         };
 
         img.onload = () => {
+            clearTimeout(timeoutId);
             // Calculate new dimensions
             let width = img.width;
             let height = img.height;
@@ -56,50 +61,46 @@ export const compressImage = async (
                 width = maxWidth;
             }
 
-            // Use OffscreenCanvas if available (better performance)
-            const canvas = typeof OffscreenCanvas !== 'undefined'
-                ? new OffscreenCanvas(width, height)
-                : document.createElement('canvas');
+            // Fallback to DOM Canvas to avoid OffscreenCanvas quirks
+            const canvas = document.createElement('canvas');
 
             canvas.width = width;
             canvas.height = height;
 
             const ctx = canvas.getContext('2d');
-            if (!ctx || !(ctx instanceof CanvasRenderingContext2D || ctx instanceof OffscreenCanvasRenderingContext2D)) {
+            if (!ctx) {
                 reject(new Error('Failed to get canvas context'));
                 return;
             }
 
-            // Enable image smoothing for better quality (only if supported)
-            if ('imageSmoothingEnabled' in ctx) {
-                ctx.imageSmoothingEnabled = true;
-            }
-            if ('imageSmoothingQuality' in ctx) {
-                ctx.imageSmoothingQuality = 'high';
-            }
+            // Enable image smoothing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
 
             // Draw image
             ctx.drawImage(img, 0, 0, width, height);
 
             // Convert to blob
-            if (canvas instanceof OffscreenCanvas) {
-                canvas.convertToBlob({ type: 'image/jpeg', quality })
-                    .then(resolve)
-                    .catch(reject);
-            } else {
-                canvas.toBlob(
-                    (blob) => {
-                        if (blob) resolve(blob);
-                        else reject(new Error('Failed to create blob'));
-                    },
-                    'image/jpeg',
-                    quality
-                );
-            }
+            canvas.toBlob(
+                (blob) => {
+                    if (blob) resolve(blob);
+                    else reject(new Error('Failed to create blob'));
+                },
+                'image/jpeg',
+                quality
+            );
         };
 
-        img.onerror = () => reject(new Error('Failed to load image'));
-        reader.onerror = () => reject(new Error('Failed to read file'));
+        img.onerror = () => {
+            clearTimeout(timeoutId);
+            reject(new Error('Failed to load image. File may be corrupted or unsupported format.'));
+        };
+
+        reader.onerror = () => {
+            clearTimeout(timeoutId);
+            reject(new Error('Failed to read file.'));
+        };
+
         reader.readAsDataURL(file);
     });
 };
@@ -254,13 +255,13 @@ export const calculateSavings = (originalSize: number, optimizedSize: number) =>
  * Validate image file
  */
 export const validateImageFile = (file: File): { valid: boolean; error?: string } => {
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp']; // Removed HEIC support until heic2any is added
     const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (!validTypes.includes(file.type)) {
         return {
             valid: false,
-            error: 'Formato no válido. Usa JPEG, PNG, WebP o HEIC.'
+            error: 'Formato no válido. Usa JPEG, PNG o WebP. (HEIC/iPhone requiere conversión previa)'
         };
     }
 

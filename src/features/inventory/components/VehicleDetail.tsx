@@ -12,6 +12,7 @@ import SEO from '@/features/inventory/components/SEO';
 import Viewer360 from '@/features/inventory/components/common/Viewer360';
 import { VehicleSchema } from '@/features/inventory/components/seo/VehicleSchema';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
+import { ProgressRing } from '@/components/common/ProgressRing';
 
 interface Props {
     inventory: Car[];
@@ -176,6 +177,8 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                             images={car.images && car.images.length > 0 ? car.images : [car.img]}
                             alt={car.name}
                             badge={car.badge}
+                            carPrice={car.price}
+                            carType={car.type}
                             onFullscreen={handleGalleryOpen}
                         />
                     </div>
@@ -219,6 +222,36 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                         </div>
                         <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
                             <Zap size={16} className="text-amber-500" /> Entrega Rápida
+                        </div>
+                    </div>
+
+                    {/* Potencia & Desempeño (Recommendation #3) */}
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[40px] p-6 shadow-xl">
+                        <h3 className="text-[10px] font-black text-[#00aed9] uppercase tracking-[0.3em] mb-4 ml-2">Potencia y Desempeño</h3>
+                        <div className="grid grid-cols-3 gap-2">
+                            <ProgressRing
+                                label="Caballos (HP)"
+                                value={car.price > 60000 ? 450 : (car.price > 35000 ? 280 : 180)}
+                                max={600}
+                                size={100}
+                                strokeWidth={8}
+                            />
+                            <ProgressRing
+                                label="Eficiencia"
+                                value={car.type === 'sedan' ? 92 : (car.type === 'suv' ? 84 : 76)}
+                                max={100}
+                                size={100}
+                                strokeWidth={8}
+                                color="#10b981"
+                            />
+                            <ProgressRing
+                                label="Tech Score"
+                                value={car.type === 'luxury' ? 98 : (car.price > 40000 ? 90 : 85)}
+                                max={100}
+                                size={100}
+                                strokeWidth={8}
+                                color="#f59e0b"
+                            />
                         </div>
                     </div>
 

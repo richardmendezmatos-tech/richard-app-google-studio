@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '@/services/firebaseService';
@@ -15,7 +15,7 @@ declare global {
     }
 }
 
-const GoogleOneTap: React.FC<GoogleOneTapProps> = ({
+const GoogleOneTap: FC<GoogleOneTapProps> = ({
     clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID,
     onSuccess
 }) => {

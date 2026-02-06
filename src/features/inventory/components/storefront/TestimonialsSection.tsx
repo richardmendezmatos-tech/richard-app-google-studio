@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Heart } from 'lucide-react';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 const TestimonialsSection: React.FC = () => {
     const testimonials = [
@@ -58,7 +59,12 @@ const TestimonialsSection: React.FC = () => {
                         </p>
 
                         <div className="flex items-center gap-4 border-t border-slate-100 dark:border-slate-700/50 pt-6">
-                            <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-[#00aed9]/20" />
+                            <OptimizedImage
+                                src={t.img}
+                                alt={t.name}
+                                className="w-12 h-12 rounded-full object-cover ring-2 ring-[#00aed9]/20"
+                                width={48}
+                            />
                             <div>
                                 <h4 className="font-bold text-slate-800 dark:text-white text-sm">{t.name}</h4>
                                 <p className="text-xs text-[#00aed9] font-bold uppercase tracking-wide">{t.role}</p>

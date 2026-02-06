@@ -21,10 +21,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
-          }
+          // Manual chunks removed to prevent split-brain issues with React symbols
         }
       },
       chunkSizeWarningLimit: 1500,

@@ -14,6 +14,7 @@ import { AuthContext } from '@/features/auth/context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SocialProofWidget } from '@/components/layout/conversion/SocialProofWidget';
 import SEO from '../../../components/seo/SEO';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 
 // Import New Modular Components
@@ -23,6 +24,7 @@ import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from '../../../components/layout/FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import PremiumGlassCard from './storefront/PremiumGlassCard'; // Premium UI Upgrade
+import { StaggerContainer } from '@/components/common/StaggerContainer';
 
 
 
@@ -366,7 +368,10 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 </div>
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                                    <StaggerContainer
+                                        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+                                        key={`${filter}-${searchTerm}-${sortOrder}`} // Force re-animation on filter changes
+                                    >
                                         {displayCars.map((car) => (
                                             <PremiumGlassCard
                                                 key={car.id}
@@ -380,9 +385,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                                 isSaved={savedCars.isSaved(car.id)}
                                                 onToggleSave={(e) => handleToggleSave(e, car.id)}
                                             />
-
                                         ))}
-                                    </div>
+                                    </StaggerContainer>
 
                                     {/* Load More Button */}
                                     {!isSearching && hasNextPage && (
@@ -422,7 +426,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                         <div className="flex -space-x-3">
                             {compareList.map((c: Car) => (
                                 <div key={c.id} className="w-10 h-10 rounded-full border-2 border-[#173d57] dark:border-[#0d2232] bg-white flex items-center justify-center overflow-hidden">
-                                    <img src={c.img} alt={c.name} className="w-full h-full object-cover" />
+                                    <OptimizedImage src={c.img} alt={c.name} className="w-full h-full object-cover" width={40} />
                                 </div>
                             ))}
 
