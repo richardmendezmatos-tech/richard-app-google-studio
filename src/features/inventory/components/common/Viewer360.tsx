@@ -50,8 +50,8 @@ const Viewer360: React.FC<Props> = ({ images, alt, badge, carPrice = 0, carType 
             pos: 110,
             duration: 2500,
             ease: 'inOutQuad',
-            onUpdate: (self) => {
-                const target = (self as any).targets[0] as { pos: number };
+            onUpdate: (anim) => {
+                const target = anim.targets[0] as { pos: number };
                 setScanPosition(target.pos);
             }
         });
@@ -147,8 +147,8 @@ const Viewer360: React.FC<Props> = ({ images, alt, badge, carPrice = 0, carType 
                 <>
                     {/* Laser Line */}
                     <div
-                        className="scan-laser-line"
-                        style={{ top: `${scanPosition}%` }}
+                        className="scan-laser-line viewer-dynamic-laser"
+                        style={{ '--scan-pos': `${scanPosition}%` } as React.CSSProperties}
                     >
                         <div className="w-full h-[1px] bg-white opacity-50" />
                         <div className="active-scan-laser-glow -left-2" />
@@ -200,8 +200,11 @@ const Viewer360: React.FC<Props> = ({ images, alt, badge, carPrice = 0, carType 
 
             {/* Main Image Layer */}
             <div
-                className={`cinematic-layer ${isScanning ? 'animate-pulse' : ''}`}
-                style={activeMode === 'cinematic' ? { transform: `scale(1.1) translate(${parallax.x}px, ${parallax.y}px)` } : {}}
+                className={`cinematic-layer ${isScanning ? 'animate-pulse' : ''} ${activeMode === 'cinematic' ? 'cinematic-parallax-layer' : ''}`}
+                style={activeMode === 'cinematic' ? {
+                    '--p-x': `${parallax.x}px`,
+                    '--p-y': `${parallax.y}px`
+                } as React.CSSProperties : {}}
             >
                 <img
                     src={images[currentFrame]}
@@ -254,8 +257,8 @@ const Viewer360: React.FC<Props> = ({ images, alt, badge, carPrice = 0, carType 
             {activeMode === '360' && !isScanning && (
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-48 h-1 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm pointer-events-none">
                     <div
-                        className="h-full bg-[#00aed9] transition-all duration-75"
-                        style={{ width: `${((currentFrame + 1) / images.length) * 100}%` }}
+                        className="h-full bg-[#00aed9] transition-all duration-75 viewer-progress-fill"
+                        style={{ '--progress-w': `${((currentFrame + 1) / images.length) * 100}%` } as React.CSSProperties}
                     />
                 </div>
             )}
