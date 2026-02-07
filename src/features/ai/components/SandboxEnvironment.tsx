@@ -50,6 +50,32 @@ const useVehicleTelemetry = () => {
     }, []);
 
     return data;
+    return data;
+};
+
+// --- WHATSAPP ALERT SERVICE ---
+// Simulates edge computing trigger
+const useWhatsAppAlert = (telemetry) => {
+    const [lastAlert, setLastAlert] = useState(0);
+
+    useEffect(() => {
+        if (telemetry.temp > 115 && Date.now() - lastAlert > 30000) { // Cooldown 30s
+            console.log("CRITICAL TEMP DETECTED: Dispatching WhatsApp...");
+            setLastAlert(Date.now());
+            
+            // Call the Vercel Function (Backend Proxy)
+            fetch('/api/send-whatsapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: '17873682880', // Richard's Number
+                    message: \`⚠️ *ALERTA CRÍTICA DE IOT* ⚠️\\n\\nLa unidad de prueba #404 reporta sobrecalentamiento.\\n\\n🌡️ Temp: \${telemetry.temp.toFixed(1)}°C\\n⚙️ RPM: \${telemetry.rpm.toFixed(0)}\\n\\nSe recomienda detener el motor inmediatamente.\`
+                })
+            }).then(res => res.json())
+              .then(data => console.log("WhatsApp dispatched:", data))
+              .catch(err => console.error("Alert failed:", err));
+        }
+    }, [telemetry.temp]);
 };
 
 function SmartEngine({ telemetry }) {
@@ -93,6 +119,7 @@ function SmartEngine({ telemetry }) {
 
 export default function App() {
   const telemetry = useVehicleTelemetry();
+  useWhatsAppAlert(telemetry); // Activate Monitor
 
   return (
     <div className="h-screen w-full bg-slate-950 text-white relative flex flex-col overflow-hidden">
