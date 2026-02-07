@@ -4,7 +4,7 @@ import { useNotification } from '@/contexts/NotificationContext';
 import { useAuthListener } from './useAuthListener';
 import { useCars } from '@/features/inventory/hooks/useCars';
 import { useCarMutations } from '@/features/inventory/hooks/useCarMutations';
-import { initializePushNotifications } from '@/services/pushService';
+
 import { startGeofenceMonitoring } from '@/services/geofenceService';
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
 import { initialInventoryData } from '@/constants/initialInventory';
@@ -26,7 +26,7 @@ export const useAppController = () => {
 
     // Lifecycle: Global Services
     useEffect(() => {
-        initializePushNotifications();
+
         startGeofenceMonitoring();
 
         if ('serviceWorker' in navigator) {
