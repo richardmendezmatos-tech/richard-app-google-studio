@@ -479,3 +479,65 @@ export const generateEmbedding = async (text: string): Promise<number[]> => {
     throw error;
   }
 };
+
+/**
+ * PHASE 11: Enhanced RAG with Conversation History
+ * Generates contextual responses using conversation history + semantic search.
+ */
+export const generateContextualResponse = async (
+  userMessage: string,
+  leadId: string,
+  inventoryContext: Car[]
+): Promise<string> => {
+  try {
+    // Dynamic imports to avoid circular dependencies
+    const { conversationService } = await import('./conversationService');
+    const { customerMemoryService } = await import('./customerMemoryService');
+
+    // 1. Get conversation history (last 5 messages)
+    const conversationHistory = await conversationService.getContextForRAG(leadId, 5);
+
+    // 2. Get semantic context from past interactions
+    const semanticContext = await customerMemoryService.getRelevantContext(leadId, userMessage);
+
+    // 3. Format inventory
+    const inventoryList = inventoryContext.slice(0, 5).map(car => 
+      `- ${car.name}: $${(car.price || 0).toLocaleString()} ${car.badge ? `[${car.badge}]` : ''}`
+    ).join('\n');
+
+    // 4. Build enhanced prompt
+    const enhancedPrompt = `
+CONTEXTO DE CONVERSACIÓN RECIENTE:
+${conversationHistory}
+
+CONTEXTO RELEVANTE DE INTERACCIONES PASADAS:
+${semanticContext.length > 0 ? semanticContext.join('\n') : 'No hay contexto previo relevante.'}
+
+INVENTARIO DISPONIBLE:
+${inventoryList || 'No hay inventario disponible.'}
+
+MENSAJE ACTUAL DEL CLIENTE:
+${userMessage}
+
+INSTRUCCIONES:
+- Usa el contexto de la conversación para dar respuestas coherentes y personalizadas
+- Si el cliente mencionó algo antes, refiérelo naturalmente
+- Mantén el tono profesional pero cercano de Richard Automotive
+- Si hablas de precios o financiamiento, usa rangos y menciona que son estimados
+- Siempre busca agendar una cita o prueba de manejo como objetivo final
+`;
+
+    // 5. Generate response with full context
+    const response = await callGeminiProxy(
+      enhancedPrompt,
+      RICHARD_KNOWLEDGE_BASE,
+      'gemini-1.5-flash'
+    );
+
+    return response;
+  } catch (error) {
+    console.error('Error in generateContextualResponse:', error);
+    // Fallback to standard response without context
+    return await getAIResponse(userMessage, inventoryContext);
+  }
+};
