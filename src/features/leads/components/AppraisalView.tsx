@@ -10,7 +10,11 @@ import { analyzeTradeInImages } from '@/services/geminiService';
 
 const AppraisalView: React.FC = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState<'info' | 'photos' | 'scan' | 'offer'>('info');
+    const [step, setStep] = useState<'contact' | 'info' | 'photos' | 'scan' | 'offer'>('contact');
+    const [contactInfo, setContactInfo] = useState({
+        name: '',
+        phone: ''
+    });
     const [vehicleInfo, setVehicleInfo] = useState({
         year: '',
         make: '',
@@ -48,6 +52,10 @@ const AppraisalView: React.FC = () => {
     const [offerAmount, setOfferAmount] = useState({ min: 0, max: 0 });
     const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
+    const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setContactInfo({ ...contactInfo, [e.target.name]: e.target.value });
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setVehicleInfo({ ...vehicleInfo, [e.target.name]: e.target.value });
     };
@@ -56,6 +64,26 @@ const AppraisalView: React.FC = () => {
         if (e.target.files && e.target.files[0]) {
             setPhoto(key, e.target.files[0]);
         }
+    };
+
+    const handleExpressCapture = async () => {
+        if (!contactInfo.name || !contactInfo.phone) {
+            alert("Por favor ingresa tu nombre y WhatsApp para continuar.");
+            return;
+        }
+
+        try {
+            const { addLead } = await import('@/features/leads/services/crmService');
+            addLead({
+                type: 'trade-in',
+                name: contactInfo.name,
+                phone: contactInfo.phone,
+                notes: `Appraisal Express Capture - Started appraisal flow`
+            });
+        } catch (e) {
+            console.error("CRM Express fail:", e);
+        }
+        setStep('info');
     };
 
     const totalPhotos = 4;
@@ -132,6 +160,62 @@ const AppraisalView: React.FC = () => {
     // Render Steps
     const renderStep = () => {
         switch (step) {
+            case 'contact':
+                return (
+                    <motion.div
+                        key="contact"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="space-y-6"
+                    >
+                        <div className="text-center mb-8">
+                            <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+                                <Sparkles className="text-emerald-500" size={40} />
+                            </div>
+                            <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">¿Cuánto vale tu auto?</h2>
+                            <p className="text-slate-500 text-sm mt-2">Tasación gratuita impulsada por IA en segundos. Empecemos por lo básico.</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Tu Nombre</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={contactInfo.name}
+                                    onChange={handleContactChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#00aed9] font-medium"
+                                    placeholder="Ej. Juan Pérez"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase ml-1">WhatsApp / Móvil</label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={contactInfo.phone}
+                                    onChange={handleContactChange}
+                                    className="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#00aed9] font-medium"
+                                    placeholder="(787) 000-0000"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleExpressCapture}
+                            className="w-full py-5 bg-[#0d2232] text-white rounded-2xl font-bold uppercase tracking-widest shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                        >
+                            Ver mi Valorización <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+
+                        <p className="text-[10px] text-slate-400 text-center uppercase tracking-widest leading-relaxed">
+                            Al continuar, aceptas que Richard Automotive te contacte para tu oferta. <br /> Sin spam. Tu privacidad es prioridad.
+                        </p>
+                    </motion.div>
+                );
+
             case 'info':
                 return (
                     <motion.div
@@ -403,10 +487,11 @@ const AppraisalView: React.FC = () => {
                                 onClick={async () => {
                                     try {
                                         await submitApplication({
-                                            firstName: 'Usuario',
-                                            lastName: 'Invitado',
+                                            firstName: contactInfo.name.split(' ')[0],
+                                            lastName: contactInfo.name.split(' ').slice(1).join(' ') || 'N/A',
+                                            phone: contactInfo.phone,
                                             type: 'trade-in',
-                                            customer: { name: 'Usuario Invitado' },
+                                            customer: { name: contactInfo.name, phone: contactInfo.phone },
                                             vehicle: {
                                                 year: vehicleInfo.year,
                                                 make: vehicleInfo.make,

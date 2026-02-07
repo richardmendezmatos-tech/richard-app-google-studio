@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/types/types';
 import { getCookie, setCookie } from '@/services/cookieService';
 import { analyzeGarageSelection } from '@/services/geminiService';
 import { BiometricService } from '@/services/biometricService';
-import { ArrowLeft, Car as CarIcon, FileText, RefreshCw, User, Loader2, Sparkles, TrendingUp, CheckCircle2, Clock, AlertTriangle, ScanFace, Lock, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Car as CarIcon, FileText, RefreshCw, User, Loader2, Sparkles, ScanFace, Lock } from 'lucide-react';
 import CarCard from '@/features/inventory/components/storefront/CarCard';
+import PhotoAppraisal from '@/features/garage/components/PhotoAppraisal';
 
 interface Props {
     inventory: Car[];
@@ -60,17 +61,7 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
         { id: 'TRD-992', date: '2025-12-30', vehicle: 'Honda Civic 2018', estimatedValue: '$14,500', status: 'valid' }
     ];
 
-    useEffect(() => {
-        const savedIds = JSON.parse(getCookie('richard_saved_cars') || '[]');
-        const cars = inventory.filter(c => savedIds.includes(c.id));
-        setSavedCars(cars);
-
-        if (cars.length > 0 && activeTab === 'cars') {
-            runAnalysis(cars);
-        }
-    }, [inventory, activeTab]);
-
-    const runAnalysis = async (cars: Car[]) => {
+    const runAnalysis = useCallback(async (cars: Car[]) => {
         if (aiAnalysis || isAnalyzing) return;
         setIsAnalyzing(true);
         try {
@@ -81,7 +72,17 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
         } finally {
             setIsAnalyzing(false);
         }
-    };
+    }, [aiAnalysis, isAnalyzing]);
+
+    useEffect(() => {
+        const savedIds = JSON.parse(getCookie('richard_saved_cars') || '[]');
+        const cars = inventory.filter(c => savedIds.includes(c.id));
+        setSavedCars(cars);
+
+        if (cars.length > 0 && activeTab === 'cars') {
+            runAnalysis(cars);
+        }
+    }, [inventory, activeTab, runAnalysis]);
 
     const toggleSave = (e: React.MouseEvent, car: Car) => {
         e.stopPropagation();
@@ -166,7 +167,7 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
                                 <div>
                                     <div className="flex items-center gap-3 mb-1">
                                         <h3 className="font-bold text-white text-lg">{app.vehicle}</h3>
-                                        <StatusBadge status={app.status as any} />
+                                        <StatusBadge status={app.status as 'approved' | 'pending' | 'rejected'} />
                                     </div>
                                     <p className="text-slate-400 text-sm">ID: {app.id} • Enviada: {app.date}</p>
                                 </div>
@@ -180,25 +181,26 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
                 );
             case 'trade-ins':
                 return (
-                    <div className="grid gap-4 max-w-4xl">
-                        {tradeIns.map(offer => (
-                            <div key={offer.id} className="bg-slate-800/50 p-6 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-[#00aed9]/30 transition-colors">
-                                <div>
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <h3 className="font-bold text-white text-lg">{offer.vehicle}</h3>
-                                        <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase rounded">Oferta Visible</span>
+                    <div className="space-y-12">
+                        <PhotoAppraisal />
+                        <div className="grid gap-4 max-w-4xl">
+                            <h3 className="text-xl font-black uppercase tracking-tight text-white mb-4">Valoraciones Previas</h3>
+                            {tradeIns.map(offer => (
+                                <div key={offer.id} className="bg-slate-800/50 p-6 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-[#00aed9]/30 transition-colors">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h3 className="font-bold text-white text-lg">{offer.vehicle}</h3>
+                                            <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase rounded">Oferta Visible</span>
+                                        </div>
+                                        <p className="text-slate-400 text-sm">Fecha: {offer.date}</p>
                                     </div>
-                                    <p className="text-slate-400 text-sm">Fecha: {offer.date}</p>
+                                    <div className="text-right">
+                                        <div className="text-2xl font-black text-[#00aed9]">{offer.estimatedValue}</div>
+                                        <div className="text-xs text-slate-500 uppercase font-bold">Valor Estimado</div>
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-2xl font-black text-[#00aed9]">{offer.estimatedValue}</div>
-                                    <div className="text-xs text-slate-500 uppercase font-bold">Valor Estimado</div>
-                                </div>
-                            </div>
-                        ))}
-                        <button className="w-full py-4 border-2 border-dashed border-slate-700 text-slate-500 rounded-2xl font-bold uppercase hover:border-[#00aed9] hover:text-[#00aed9] transition-all flex items-center justify-center gap-2">
-                            <RefreshCw size={20} /> Cotizar otro vehículo
-                        </button>
+                            ))}
+                        </div>
                     </div>
                 );
             case 'profile':
@@ -235,6 +237,7 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
                             </div>
                             <button
                                 onClick={toggleBiometric}
+                                title={isBiometricEnabled ? 'Desactivar FaceID' : 'Activar FaceID'}
                                 className={`w-12 h-6 rounded-full p-1 transition-colors ${isBiometricEnabled ? 'bg-[#00aed9]' : 'bg-slate-700'}`}
                             >
                                 <div className={`w-4 h-4 rounded-full bg-white transition-transform ${isBiometricEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
@@ -255,7 +258,11 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
 
             <header className="p-8 pb-0 relative z-10">
                 <div className="flex items-center gap-4 mb-8">
-                    <button onClick={onExit} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
+                    <button
+                        onClick={onExit}
+                        title="Regresar a la tienda"
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white"
+                    >
                         <ArrowLeft />
                     </button>
                     <div>
@@ -306,7 +313,14 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
     );
 };
 
-const TabButton = ({ active, onClick, icon, label }: any) => (
+interface TabButtonProps {
+    active: boolean;
+    onClick: () => void;
+    icon: React.ReactNode;
+    label: string;
+}
+
+const TabButton = ({ active, onClick, icon, label }: TabButtonProps) => (
     <button
         onClick={onClick}
         className={`px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all ${active ? 'bg-[#00aed9] text-slate-900 shadow-lg shadow-cyan-500/20' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'}`}

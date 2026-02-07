@@ -1,0 +1,32 @@
+{
+    "id": "6271ddd5-RAG-SYNERGY",
+    "fecha": "2026-02-07",
+    "categoria": "AI_STRATEGY",
+    "titulo": "Sinergia Multi-Agente para RAG",
+    "autor": "Antigravity (Workspace Manager)",
+    "resumen": "Propuesta de implementación de una arquitectura de 4 agentes especializados (Investigador, Síntesis, Auditor, Acción) para optimizar el RAG y la conversión de leads.",
+    "estatus": "Borrador - Esperando Feedback",
+    "componentes": [
+        {
+            "nombre": "Research Agent",
+            "prioridad": "Alta",
+            "descripcion": "Optimización de recuperación de inventario y manuales F&I."
+        },
+        {
+            "nombre": "Synthesis Agent",
+            "prioridad": "Alta",
+            "descripcion": "Generación de lenguaje natural con tono Richard Automotive."
+        },
+        {
+            "nombre": "Validation Agent",
+            "prioridad": "Muy Alta",
+            "descripcion": "Prevención de alucinaciones y cumplimiento de reglas de oro."
+        },
+        {
+            "nombre": "Action Agent",
+            "prioridad": "Media",
+            "descripcion": "Estructuración de LEAD_DATA y triggers de conversión."
+        }
+    ],
+    "eficiencia_estimada_Ew": 0.95
+}

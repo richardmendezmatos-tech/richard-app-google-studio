@@ -52,14 +52,32 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
     const validateStep = (currentStep: number) => {
         const d = formData;
-        if (currentStep === 1) return d.firstName && d.lastName && d.email && d.phone;
-        if (currentStep === 2) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
-        if (currentStep === 3) return d.dob && d.ssn.length >= 4 && d.creditAuth;
-        return false;
+        // Step 1: Ultra-low friction (Express Capture)
+        if (currentStep === 1) return d.firstName && d.phone;
+        // Step 2: Basic Contact Refinement
+        if (currentStep === 2) return d.lastName && d.email;
+        // Step 3: Financial Profile
+        if (currentStep === 4) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
+        // Step 4: Legal & Security
+        if (currentStep === 5) return d.dob && d.ssn.length >= 4 && d.creditAuth;
+        return true; // Step 3 (Info block) is just informational
     };
 
-    const nextStep = () => {
+    const nextStep = async () => {
         if (validateStep(step)) {
+            // Early Conversion: Save lead to CRM at Step 1
+            if (step === 1) {
+                try {
+                    addLead({
+                        type: 'chat', // Mark as chat/express to differentiate
+                        name: `${formData.firstName}`,
+                        phone: formData.phone,
+                        notes: `Express Lead Capture - Initial Interest`
+                    });
+                } catch (e) {
+                    console.error("Silent fail on express capture:", e);
+                }
+            }
             setStep(prev => prev + 1);
         } else {
             addNotification('error', 'Por favor completa todos los campos requeridos.');
@@ -69,7 +87,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     const prevStep = () => setStep(prev => prev - 1);
 
     const handleSubmit = async () => {
-        if (!validateStep(3)) return;
+        if (!validateStep(5)) return;
 
         setIsSubmitting(true);
 
@@ -84,16 +102,15 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
             };
 
             await submitApplication(submissionData);
-            // Ethical Change: Reference ID for Case Tracking, not "Approval"
             const refId = `CASE-${Math.floor(Math.random() * 1000000)}`;
 
-            // CRM Integration: Add summary lead to board
+            // Full CRM update
             addLead({
                 type: 'form',
                 name: `${formData.firstName} ${formData.lastName}`,
                 phone: formData.phone,
                 email: formData.email,
-                notes: `Finance Application #${refId} - Income: $${formData.monthlyIncome}`
+                notes: `Finance Application #${refId} - Total Completion`
             });
 
             setReferenceId(refId);
@@ -201,7 +218,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
                         {/* Progress */}
                         <div className="flex gap-2 mb-8">
-                            {[1, 2, 3].map(i => (
+                            {[1, 2, 3, 4, 5].map(i => (
                                 <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-[#00aed9] shadow-[0_0_10px_#00aed9]' : 'bg-slate-800'}`} />
                             ))}
                         </div>
@@ -218,19 +235,49 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
                             {step === 1 && (
                                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
-                                    <h2 className="text-3xl font-black text-white mb-6">¿Quién solicita?</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <Input label="Nombre(s)" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Tu nombre oficial" autoFocus />
-                                        <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Tus apellidos" />
+                                    <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tighter">Consulta Rápida</h2>
+                                    <p className="text-slate-400 text-sm mb-6">Empecemos con algo simple. ¿A quién contactamos?</p>
+                                    <div className="space-y-6">
+                                        <Input label="Tu Nombre" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Ej. Juan" autoFocus />
+                                        <Input label="WhatsApp / Móvil" name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(787) 000-0000" icon={<MessagesSquare size={16} />} />
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <Input label="Móvil (SMS)" name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(787) 000-0000" icon={<MessagesSquare size={16} />} />
-                                        <Input label="Email Personal" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="tu@email.com" />
+                                    <div className="bg-[#00aed9]/5 border border-[#00aed9]/10 p-4 rounded-xl">
+                                        <p className="text-[10px] text-[#00aed9] uppercase font-bold tracking-widest text-center">Sin compromiso • Respuesta en minutos</p>
                                     </div>
                                 </div>
                             )}
 
                             {step === 2 && (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                                    <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tighter">Un poco más sobre ti</h2>
+                                    <div className="grid grid-cols-1 gap-6">
+                                        <Input label="Apellidos" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Tus apellidos" autoFocus />
+                                        <Input label="Email Personal" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="tu@email.com" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {step === 3 && (
+                                <div className="space-y-6 animate-in slide-in-from-right duration-500 py-4 text-center">
+                                    <div className="w-16 h-16 bg-[#00aed9]/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#00aed9]/20">
+                                        <ShieldCheck className="text-[#00aed9]" size={32} />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter">¡Excelente, {formData.firstName}!</h2>
+                                    <p className="text-slate-300 leading-relaxed font-light">
+                                        Ya tenemos lo básico. Ahora, para darte una cifra real de financiamiento, necesitamos tu perfil financiero.
+                                        <br />
+                                        <span className="text-[#00aed9] font-bold">Tus datos están protegidos por encriptación bancaria 256-bit.</span>
+                                    </p>
+                                    <button
+                                        onClick={() => setStep(4)}
+                                        className="mt-6 w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all border border-white/10"
+                                    >
+                                        Continuar a Perfil Financiero
+                                    </button>
+                                </div>
+                            )}
+
+                            {step === 4 && (
                                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                                     <h2 className="text-3xl font-black text-white mb-6">Perfil Financiero</h2>
                                     <Input label="Dirección Residencial" name="address" value={formData.address} onChange={handleInputChange} placeholder="Dirección completa" autoFocus />
@@ -254,7 +301,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                 </div>
                             )}
 
-                            {step === 3 && (
+                            {step === 5 && (
                                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                                     <h2 className="text-3xl font-black text-white mb-6">Seguridad Legal</h2>
 
@@ -306,14 +353,14 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                                 ) : <div></div>}
 
                                 <button
-                                    onClick={step === 3 ? handleSubmit : nextStep}
+                                    onClick={step === 5 ? handleSubmit : nextStep}
                                     disabled={isSubmitting}
                                     className="px-10 py-4 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                                 >
                                     {isSubmitting ? (
                                         <> <Loader2 className="animate-spin" /> Procesando... </>
                                     ) : (
-                                        step === 3 ? 'Enviar Solicitud Segura' : <>Siguiente <ChevronRight size={18} /></>
+                                        step === 5 ? 'Enviar Solicitud Segura' : (step === 1 ? 'Ver Mi Pre-Calificación' : <>Siguiente <ChevronRight size={18} /></>)
                                     )}
                                 </button>
                             </div>
@@ -326,7 +373,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     );
 };
 
-const Input = ({ label, icon, ...props }: any) => (
+const Input = ({ label, icon, ...props }: { label: string, icon?: React.ReactNode } & React.InputHTMLAttributes<HTMLInputElement | HTMLSelectElement>) => (
     <div className="space-y-2">
         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
             {icon} {label}

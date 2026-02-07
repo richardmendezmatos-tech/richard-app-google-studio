@@ -15,6 +15,7 @@ import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatm
 
 // Modular Components
 import CRMBoard from './CRMBoard';
+import SalesCopilot from './SalesCopilot';
 import { AdminModal } from './AdminModal';
 import { AuditLogViewer } from './AuditLogViewer';
 import { GapAnalyticsWidget } from './GapAnalyticsWidget'; // Component 4
@@ -87,7 +88,7 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
   const { currentDealer } = useDealer();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab'>('dashboard');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -259,6 +260,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             { id: 'dashboard', label: 'Dashboard', icon: Monitor },
             { id: 'inventory', label: 'Inventario', icon: Package },
             { id: 'pipeline', label: 'CRM Leads', icon: BarChart3 },
+            { id: 'copilot', label: 'Copilot', icon: Zap },
             { id: 'marketing', label: 'Marketing', icon: Sparkles },
             { id: 'security', label: 'Seguridad', icon: ShieldAlert },
             { id: 'security', label: 'Seguridad', icon: ShieldAlert },
@@ -412,6 +414,12 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           {activeTab === 'pipeline' && (
             <div className="h-[calc(100vh-350px)] min-h-[500px]">
               <CRMBoard />
+            </div>
+          )}
+
+          {activeTab === 'copilot' && (
+            <div className="min-h-[600px]">
+              <SalesCopilot />
             </div>
           )}
 

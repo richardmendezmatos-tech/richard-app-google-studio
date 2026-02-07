@@ -3,6 +3,7 @@ import { onCallGenkit } from 'firebase-functions/https';
 import * as logger from 'firebase-functions/logger';
 import { db } from './services/firebaseAdmin';
 import { ai } from './services/aiManager';
+import { orchestrateResponse } from './agents/rag-synergy-logic';
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -109,6 +110,7 @@ import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/fire
 import { sendNotificationEmail } from './services/emailService';
 
 // --- New Lead Notification & Analysis ---
+import { calculateLeadScore } from './lead-scoring/lead-scoring-logic';
 
 // Define a Flow for Lead Analysis
 export const analyzeLead = ai.defineFlow(
@@ -119,112 +121,176 @@ export const analyzeLead = ai.defineFlow(
             timeAtJob: z.string(),
             jobTitle: z.string(),
             employer: z.string(),
-            vehicleId: z.string().optional()
+            vehicleId: z.string().optional(),
+            hasPronto: z.boolean().optional(),
+            chatInteractions: z.number().optional(),
+            viewedInventoryMultipleTimes: z.boolean().optional(),
+            location: z.string().optional()
         }),
         outputSchema: z.object({
-            cliente_score: z.number().describe("Score from 1-100 based on financial stability"),
-            unidad_interes: z.string().describe("The vehicle the client is interested in"),
-            siguiente_paso: z.string().describe("Recommended next step for the sales agent"),
-            resumen: z.string().describe("Brief analysis for the sales agent")
+            score: z.number(),
+            category: z.string(),
+            insights: z.array(z.string()),
+            nextAction: z.string(),
+            reasoning: z.string(),
+            unidad_interes: z.string()
         })
     },
     async (input) => {
         // RAG-Lite: Fetch Vehicle Context
         let vehicleContext = "No vehicle specified.";
+        let unidad_interes = input.vehicleId || "General";
+
         if (input.vehicleId) {
             try {
                 const carDoc = await db.collection('cars').doc(input.vehicleId).get();
                 if (carDoc.exists) {
                     const car = carDoc.data();
-                    vehicleContext = `Vehicle: ${car?.year} ${car?.make} ${car?.model}, Price: $${car?.price}, Mileage: ${car?.mileage}`;
+                    unidad_interes = `${car?.year} ${car?.make} ${car?.model}`;
+                    vehicleContext = `Vehicle: ${unidad_interes}, Price: $${car?.price}, Mileage: ${car?.mileage}`;
+                    console.log(`Analyzing lead with vehicle context: ${vehicleContext}`);
                 }
             } catch (e) {
                 console.error("Error fetching vehicle context:", e);
             }
         }
 
-        const prompt = `
-        Analiza este lead para un concesionario de autos:
-        - Ingreso Mensual: ${input.monthlyIncome}
-        - Tiempo en Empleo: ${input.timeAtJob}
-        - Título: ${input.jobTitle}
-        - Empleador: ${input.employer}
-        - Contexto del Vehículo: ${vehicleContext}
+        const scoringResult = calculateLeadScore(input);
 
-        Si el vehículo es costoso y el ingreso bajo, ajusta el score y la recomendación.
-        
-        Respond STRICTLY with this JSON (Spanish Keys):
-        {
-            "cliente_score": (número 1-100),
-            "unidad_interes": (Modelo del auto o "General"),
-            "siguiente_paso": (Acción recomendada: "Llamar ahora", "Pedir documentos", "Enviar inventario"),
-            "resumen": (Breve análisis de 1 frase)
-        }
-        `;
-
-        const result = await ai.generate({
-            prompt: prompt,
-            output: { format: 'json' }
-        });
-
-        return result.output;
+        return {
+            ...scoringResult,
+            unidad_interes
+        };
     }
 );
 
 // --- Conversational AI (Chat / WhatsApp) ---
 
-const SALES_STAGES = `
-1. Introduction: Start conversation, introduce Richard Automotive. Verify they are speaking to the right person if needed.
-2. Qualification: Confirm if they are buying, trading-in, or just looking. Ask for budget or specific needs.
-3. Value Proposition: Explain why Richard Automotive is the best (Lifetime Warranty, fast service).
-4. Needs Analysis: detailed questions about what they need in a car (SUV vs Sedan, Gas vs Hybrid).
-5. Solution Presentation: Recommend specific cars from inventory based on needs.
-6. Objection Handling: Address price/financing concerns politely.
-7. Close: Ask to schedule a Test Drive or Visit.
-8. End: Polite goodbye.
-`;
-
 export const chatWithLead = ai.defineFlow(
     {
         name: 'chatWithLead',
         inputSchema: z.object({
-            history: z.array(z.object({ role: z.enum(['user', 'model']), content: z.string() })),
+            leadId: z.string().optional(),
             message: z.string(),
-            vehicleId: z.string().optional()
+            vehicleId: z.string().optional(),
+            history: z.array(z.object({
+                role: z.enum(['user', 'model']),
+                content: z.string()
+            })).optional()
         }),
         outputSchema: z.string()
     },
     async (input) => {
-        // RAG-Lite: Fetch Vehicle Data for Context
-        let knowledgeBase = `Eres Richard IA, el vendedor estrella de Richard Automotive.
-Tu objetivo es mover al cliente a través de estas ETAPAS DE VENTA:
-${SALES_STAGES}
-
-INSTRUCCIONES:
-- Analiza el historial para determinar la ETAPA ACTUAL.
-- Tu respuesta debe intentar mover la conversación a la siguiente etapa lógica.
-- Sé breve y profesional.
-- Si el cliente pregunta precio, DÁSELO. No lo escondas.
-- Si el cliente muestra interés claro, intenta CERRAR (Agendar Cita).
-`;
-
-        if (input.vehicleId) {
-            const carDoc = await db.collection('cars').doc(input.vehicleId).get();
-            if (carDoc.exists) {
-                const car = carDoc.data();
-                knowledgeBase += `\nCONTEXTO DEL VEHÍCULO DE INTERÉS:
-                Marca/Modelo: ${car?.year} ${car?.make} ${car?.model}. 
-                Precio: $${car?.price}. Millaje: ${car?.mileage || 'N/A'}. 
-                Características: ${car?.features?.join(', ') || 'No listadas'}.
-                Usa esto para la etapa de "Solution Presentation".`;
+        // Fetch Lead Context if leadId is provided
+        let leadContext = {};
+        if (input.leadId) {
+            const leadDoc = await db.collection('applications').doc(input.leadId).get();
+            if (leadDoc.exists) {
+                leadContext = leadDoc.data() || {};
             }
         }
 
-        const result = await ai.generate({
-            prompt: `${knowledgeBase}\n\nHISTORIAL DE CONVERSACIÓN:\n${JSON.stringify(input.history)}\n\nCLIENTE (Mensaje Actual): "${input.message}"\n\nRICHARD IA:`,
+        // Fetch Vehicle Context
+        let vehicleContext = null;
+        if (input.vehicleId) {
+            const carDoc = await db.collection('cars').doc(input.vehicleId).get();
+            if (carDoc.exists) {
+                vehicleContext = carDoc.data();
+            }
+        }
+
+        const result = await orchestrateResponse({
+            message: input.message,
+            history: input.history || [],
+            leadContext,
+            vehicleContext
         });
 
-        return result.text;
+        return result.response;
+    }
+);
+
+// --- Phase 4: Smart Garage & Predictive Retention ---
+
+export const predictTradeInValue = ai.defineFlow(
+    {
+        name: 'predictTradeInValue',
+        inputSchema: z.object({
+            make: z.string(),
+            model: z.string(),
+            year: z.number(),
+            mileage: z.number(),
+            condition: z.enum(['excellent', 'good', 'fair', 'poor'])
+        }),
+        outputSchema: z.object({
+            estimatedValue: z.number(),
+            confidence: z.number(),
+            marketTrends: z.string()
+        })
+    },
+    async (input) => {
+        logger.info(`Predicting trade-in value for ${input.year} ${input.make} ${input.model}`);
+
+        const result = await ai.generate({
+            prompt: `Eres un experto en valoración de autos en Puerto Rico. 
+            Analiza: ${input.year} ${input.make} ${input.model}, Millaje: ${input.mileage}, Condición: ${input.condition}.
+            RETORNA JSON: { "estimatedValue": number, "marketTrends": "string" }`,
+            config: { temperature: 0.1 }
+        });
+
+        const data = JSON.parse(result.text);
+        return {
+            ...data,
+            confidence: 0.85
+        };
+    }
+);
+
+export const getUserGarage = ai.defineFlow(
+    {
+        name: 'getUserGarage',
+        inputSchema: z.object({ userId: z.string() }),
+        outputSchema: z.array(z.any())
+    },
+    async (input) => {
+        const snapshot = await db.collection('users').doc(input.userId).collection('garage').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+);
+
+// --- Phase 3: Advanced RAG & Voice AI Flows ---
+
+export const multiAgentSync = ai.defineFlow(
+    {
+        name: 'multiAgentSync',
+        inputSchema: z.object({ message: z.string(), leadId: z.string() }),
+        outputSchema: z.any()
+    },
+    async (input) => {
+        const leadDoc = await db.collection('applications').doc(input.leadId).get();
+        const leadData = leadDoc.data();
+
+        return await orchestrateResponse({
+            message: input.message,
+            history: [],
+            leadContext: leadData
+        });
+    }
+);
+
+export const transcribeAudio = ai.defineFlow(
+    {
+        name: 'transcribeAudio',
+        inputSchema: z.object({ audioBase64: z.string() }),
+        outputSchema: z.object({ text: z.string(), confidence: z.number() })
+    },
+    async (_input) => {
+        logger.info("Voice AI: Received audio for transcription");
+        // Placeholder for Gemini 1.5 Flash Audio-to-Text
+        return {
+            text: "Simulated transcription: ¿Tienen la Toyota Tacoma 2024 en inventario?",
+            confidence: 0.98
+        };
     }
 );
 
@@ -253,7 +319,7 @@ export const incomingWhatsAppMessage = onRequest(async (req, res) => {
             const data = chatDoc.data();
             if (data?.messages) {
                 // Keep last 10 messages for context window
-                localHistory = data.messages.slice(-10).map((m: any) => ({
+                localHistory = (data.messages as { role: 'user' | 'model', content: string }[]).slice(-10).map((m) => ({
                     role: m.role,
                     content: m.content
                 }));
@@ -263,7 +329,8 @@ export const incomingWhatsAppMessage = onRequest(async (req, res) => {
         const replyText = await chatWithLead({
             history: localHistory,
             message: Body || "Hola",
-            vehicleId: VehicleId
+            vehicleId: VehicleId,
+            leadId: chatId
         });
 
         // Save new interaction to history
@@ -359,7 +426,7 @@ export const onNewApplication = onDocumentCreated({
         try {
             await sendNotificationEmail({
                 to: 'richardmendezmatos@gmail.com',
-                subject: `New Lead - ${data.firstName} ${data.lastName} (Score: ${analysis.cliente_score})`,
+                subject: `New Lead - ${data.firstName} ${data.lastName} (Score: ${analysis.score})`,
                 html: `
                     <h2>New Lead Received</h2>
                     <p><strong>Applicant:</strong> ${data.firstName} ${data.lastName}</p>
@@ -367,10 +434,10 @@ export const onNewApplication = onDocumentCreated({
                     <p><strong>Email:</strong> ${data.email}</p>
                     <hr>
                     <h3>AI Analysis</h3>
-                    <p><strong>Score:</strong> ${analysis.cliente_score}/100</p>
+                    <p><strong>Score:</strong> ${analysis.score}/100 (${analysis.category})</p>
                     <p><strong>Interés:</strong> ${analysis.unidad_interes}</p>
-                    <p><strong>Resumen:</strong> ${analysis.resumen}</p>
-                    <p><strong>Siguiente Paso:</strong> ${analysis.siguiente_paso}</p>
+                    <p><strong>Resumen:</strong> ${analysis.reasoning}</p>
+                    <p><strong>Siguiente Paso:</strong> ${analysis.nextAction}</p>
                 `
             });
 
@@ -391,7 +458,7 @@ export const onNewApplication = onDocumentCreated({
 
         await snapshot.ref.update({
             aiAnalysis: analysis,
-            status: analysis.cliente_score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
+            status: analysis.score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
             emailSent: true,
             lastContacted: new Date()
         });
@@ -409,7 +476,7 @@ import { Timestamp } from 'firebase-admin/firestore';
 export const checkStaleLeads = onSchedule({
     schedule: 'every day 09:00',
     secrets: ["SENDGRID_API_KEY"],
-}, async (event) => {
+}, async () => {
     logger.info("Running Stale Lead Check...");
 
     // 3 Days ago
@@ -467,7 +534,7 @@ export const checkStaleLeads = onSchedule({
     }
 });
 
-export const cleanupOldLogs = onSchedule('every sunday 00:00', async (event) => {
+export const cleanupOldLogs = onSchedule('every sunday 00:00', async () => {
     logger.info("Running Log Cleanup...");
     // 30 Days ago
     const thirtyDaysAgo = new Date();
