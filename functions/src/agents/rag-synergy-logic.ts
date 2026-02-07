@@ -2,6 +2,7 @@ import { ai } from '../services/aiManager';
 import { z } from 'genkit';
 import * as logger from 'firebase-functions/logger';
 import { LoanSimulation, simulateLoan } from '../services/financeService';
+import { customerMemoryService } from '../services/customerMemoryService';
 
 const SALES_STAGES = `
 1. Introduction: Start conversation, introduce Richard Automotive. Verify they are speaking to the right person if needed.
@@ -35,9 +36,19 @@ export async function orchestrateResponse(input: {
     message: string,
     history: any[],
     leadContext: any,
-    vehicleContext?: any
+    vehicleContext?: any,
+    leadId?: string
 }) {
     logger.info("Starting Multi-Agent Orchestration", { message: input.message });
+
+    // --- STEP 0: MEMORY RETRIEVAL ---
+    const customerMemory = input.leadId ? await customerMemoryService.getMemory(input.leadId) : null;
+    if (input.leadId) {
+        // Asynchronously update memory in the background
+        customerMemoryService.updateMemory(input.leadId, input.vehicleContext?.id, input.message).catch(e =>
+            logger.error("Failed to update customer memory", e)
+        );
+    }
 
     // --- STEP 1: RESEARCH AGENT ---
     // (Simulated as a focused prompt for retrieval strategy)
@@ -46,6 +57,7 @@ export async function orchestrateResponse(input: {
         Analiza este mensaje: "${input.message}"
         Historial: ${JSON.stringify(input.history.slice(-3))}
         Contexto del Lead: ${JSON.stringify(input.leadContext)}
+        Memoria Histórica: ${JSON.stringify(customerMemory || 'No hay memoria previa')}
         
         RETORNA SOLO UN OBJETO JSON con:
         - queryExpansion: versión profesional de la búsqueda.

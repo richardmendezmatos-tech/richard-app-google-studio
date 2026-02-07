@@ -203,7 +203,8 @@ export const chatWithLead = ai.defineFlow(
             message: input.message,
             history: input.history || [],
             leadContext,
-            vehicleContext
+            vehicleContext,
+            leadId: input.leadId
         });
 
         return result.response;
@@ -273,7 +274,8 @@ export const multiAgentSync = ai.defineFlow(
         return await orchestrateResponse({
             message: input.message,
             history: [],
-            leadContext: leadData
+            leadContext: leadData,
+            leadId: input.leadId
         });
     }
 );
@@ -685,3 +687,20 @@ export { sendgridWebhook } from './webhooks/sendgridWebhook';
 
 // --- Vercel AI SDK (Streaming) ---
 export { chatStream } from './chatStream';
+
+// --- Phase 6: Voice & WhatsApp Exports ---
+export const processVoiceChunk = onCallGenkit({ authPolicy: () => true, cors: true }, ai.defineFlow(
+    { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
+    async (input) => {
+        const { voiceIntelligenceService } = await import('./services/voiceIntelligenceService');
+        await voiceIntelligenceService.processCallChunk(input.leadId, input.text);
+    }
+));
+
+export const getLeadMemory = onCallGenkit({ authPolicy: () => true, cors: true }, ai.defineFlow(
+    { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
+    async (input) => {
+        const { customerMemoryService } = await import('./services/customerMemoryService');
+        return await customerMemoryService.getMemory(input.leadId);
+    }
+));
