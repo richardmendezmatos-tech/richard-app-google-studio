@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, TouchSensor, useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '@/features/leads/services/crmService';
-import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2, Zap } from 'lucide-react';
 
 const COLUMNS = [
     { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
@@ -114,7 +114,7 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
         return (
             <div
                 ref={setNodeRef}
-                className="opacity-30 grayscale pointer-events-none transition-transform z-50"
+                className="lead-dragging"
                 style={style}
             >
                 <LeadCard lead={lead} />
@@ -127,7 +127,7 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className="relative z-10 transition-transform"
+            className="lead-static"
             style={style}
         >
             <LeadCard lead={lead} />
@@ -181,6 +181,29 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
             </div>
 
             <h4 className="font-bold text-slate-700 dark:text-slate-200 leading-tight mb-1">{lead.name}</h4>
+
+            {lead.aiAnalysis && (
+                <div className="mb-3 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                            <Zap size={12} className={lead.aiAnalysis.score > 70 ? "text-amber-500" : "text-slate-400"} />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">AI Score</span>
+                        </div>
+                        <span className={`text-xs font-black ${lead.aiAnalysis.score > 80 ? 'text-green-500' :
+                            lead.aiAnalysis.score > 50 ? 'text-amber-500' :
+                                'text-slate-400'
+                            }`}>
+                            {lead.aiAnalysis.score}/100
+                        </span>
+                    </div>
+                    <div className={`px-2 py-1 rounded-md text-[10px] font-bold text-center uppercase border ${lead.aiAnalysis.category === 'HOT' ? 'bg-red-500/10 border-red-500/50 text-red-500' :
+                        lead.aiAnalysis.category === 'WARM' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' :
+                            'bg-slate-500/10 border-slate-500/50 text-slate-500'
+                        }`}>
+                        {lead.aiAnalysis.category}
+                    </div>
+                </div>
+            )}
 
             {lead.carId && (
                 <div className="flex items-center gap-1 text-xs text-slate-500 mb-2 bg-slate-50 dark:bg-slate-700/50 p-1.5 rounded-lg">

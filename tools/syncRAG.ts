@@ -16,9 +16,18 @@ const firebaseConfig = {
     appId: process.env.VITE_FIREBASE_APP_ID,
 };
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!;
-const geminiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY!;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const geminiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+
+// Robust Validation for CI Environments
+if (!supabaseUrl || !supabaseKey || !geminiKey) {
+    console.error("❌ CRITICAL ERROR: Missing required environment variables.");
+    console.error(`- SUPABASE_URL: ${supabaseUrl ? "✅ OK" : "❌ MISSING (Check GitHub Secrets)"}`);
+    console.error(`- SUPABASE_KEY: ${supabaseKey ? "✅ OK" : "❌ MISSING (Check GitHub Secrets)"}`);
+    console.error(`- GEMINI_API_KEY: ${geminiKey ? "✅ OK" : "❌ MISSING (Check GitHub Secrets)"}`);
+    process.exit(1);
+}
 
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);

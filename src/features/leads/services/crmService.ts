@@ -3,7 +3,7 @@ import { collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, getDoc,
 
 export interface Lead {
     id: string;
-    type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai';
+    type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai' | 'chat';
     status: 'new' | 'contacted' | 'negotiation' | 'sold' | 'lost';
     name: string;
     phone?: string;
@@ -12,9 +12,17 @@ export interface Lead {
     notes?: string;
     ssn?: string; // Masked version by default
     createdAt?: Timestamp; // Firestore Timestamp
+    aiAnalysis?: {
+        score: number;
+        category: string;
+        insights: string[];
+        nextAction: string;
+        reasoning: string;
+        unidad_interes: string;
+    };
 }
 
-const LEADS_COLLECTION = 'leads';
+const LEADS_COLLECTION = 'applications';
 
 /**
  * Adds a new lead to Firestore

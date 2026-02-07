@@ -96,6 +96,21 @@
   text-shadow: 0 0 20px rgba(0, 174, 217, 0.5);
 }
 
+/* Drag & Drop Classes */
+.lead-dragging {
+    opacity: 0.3;
+    filter: grayscale(1);
+    pointer-events: none;
+    z-index: 50;
+    transition: transform 0.2s ease;
+}
+
+.lead-static {
+    position: relative;
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
+
 /* Hide Scrollbar */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
