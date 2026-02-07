@@ -35,8 +35,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log(`[Visual Cortex] Processing image: ${imageUrl}`);
 
         // 1. Fetch the Image
-        // Use built-in fetch (Node 18+)
-        const imageResponse = await fetch(imageUrl);
+        // Check if it's a Twilio media URL (requires authentication)
+        const isTwilioMedia = imageUrl.includes('twilio.com');
+
+        let fetchOptions: RequestInit = {};
+        if (isTwilioMedia) {
+            const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+            const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+
+            if (twilioAccountSid && twilioAuthToken) {
+                const auth = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+                fetchOptions.headers = {
+                    'Authorization': `Basic ${auth}`
+                };
+                console.log(`[Visual Cortex] Using Twilio authentication for media URL`);
+            } else {
+                console.warn(`[Visual Cortex] Twilio media URL detected but credentials not available`);
+            }
+        }
+
+        const imageResponse = await fetch(imageUrl, fetchOptions);
         if (!imageResponse.ok) {
             throw new Error(`Failed to fetch image (${imageResponse.status}): ${imageResponse.statusText}`);
         }
