@@ -19,7 +19,7 @@ out
 *.pem
 
 # Environment Variables
-.env
+# .env (Encrypted by dotenvx)
 .env*.local
 
 # Logs
