@@ -15,7 +15,6 @@ import twilio from 'twilio';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "");
-// Temporary diagnostic: Use gemini-pro (text-only) to check basic access
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 // Initialize Twilio Client (for proactive replies if TwiML is too limited)
@@ -33,10 +32,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const body = req.body;
 
         // Twilio Payload parsing
-        // Note: Vercel might parse body automatically if content-type is correct, 
-        // but Twilio sends application/x-www-form-urlencoded.
-        // If req.body is already an object, great. If string, we verify.
-
         const incomingMsg = body.Body || "";
         const sender = body.From; // "whatsapp:+1..."
         const numMedia = parseInt(body.NumMedia || "0");
@@ -45,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         let responseText = "";
 
-        // 1. IMAGE HANDLING (Visual Cortex)
+        // 1. IMAGE HANDLING (Visual Cortex via Internal API)
         if (numMedia > 0) {
             const mediaUrl = body.MediaUrl0;
             const mediaType = body.MediaContentType0;
@@ -53,34 +48,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             console.log(`[Twilio Webhook] Processing Image: ${mediaUrl} (${mediaType})`);
 
             if (mediaType.startsWith('image/')) {
-                // Determine user intent from caption or default to appraisal
-                const intentPrompt = incomingMsg ? `User said: "${incomingMsg}".` : "";
+                try {
+                    // Call our internal Visual Cortex endpoint
+                    // This bypasses the direct SDK limitation by using the serverless function
+                    const baseUrl = process.env.VERCEL_URL
+                        ? `https://${process.env.VERCEL_URL}`
+                        : 'http://localhost:3000';
 
-                // Fetch Image Buffer
-                const imageResp = await fetch(mediaUrl);
-                const arrayBuffer = await imageResp.arrayBuffer();
-                const b64 = Buffer.from(arrayBuffer).toString('base64');
+                    const cortexResponse = await fetch(`${baseUrl}/api/process-image`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            imageUrl: mediaUrl,
+                            prompt: incomingMsg || "Analyze this car for trade-in appraisal"
+                        })
+                    });
 
-                // Analyze with Gemini
-                const prompt = `
-                    ACT AS: Richard Automotive F&I Manager.
-                    TASK: Analyze this car photo sent by a customer via WhatsApp.
-                    CONTEXT: ${intentPrompt}
-                    
-                    OUTPUT: A friendly, short WhatsApp response (in Spanish from Puerto Rico).
-                    - Identify the car (Make, Model, Year approx).
-                    - Give a rough "Trade-in Range" estimate based on market value (be conservative).
-                    - Ask if they want to schedule an inspection.
-                    - Tone: Helpful, fast, professional.
-                    - Max length: 3 sentences.
-                `;
+                    const cortexData = await cortexResponse.json();
 
-                const result = await model.generateContent([
-                    prompt,
-                    { inlineData: { data: b64, mimeType: mediaType } }
-                ]);
-
-                responseText = (await result.response).text();
+                    if (cortexData.success && cortexData.data) {
+                        const car = cortexData.data;
+                        responseText = `🚗 Veo un **${car.make || 'vehículo'} ${car.model || ''}** ${car.year ? `(${car.year})` : ''}.\n\n` +
+                            `Basado en el mercado actual, el valor estimado es **$${car.estimatedMarketValue?.toLocaleString() || 'por determinar'}**.\n\n` +
+                            `¿Te gustaría agendar una inspección para una tasación oficial? 📞 787-368-2880`;
+                    } else {
+                        responseText = "📷 Recibí tu foto, pero no pude identificar el vehículo claramente. ¿Puedes enviar otra foto más nítida o decirme el modelo?";
+                    }
+                } catch (error) {
+                    console.error("Visual Cortex Internal Call Error:", error);
+                    responseText = "📷 Recibí tu foto. Estoy procesándola, pero tuve un problema técnico. Intenta nuevamente o llama al 787-368-2880.";
+                }
             } else {
                 responseText = "📁 Recibí tu archivo, pero por ahora solo puedo analizar fotos de vehículos (JPG/PNG).";
             }
