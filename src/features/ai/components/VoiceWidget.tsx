@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { voiceService } from '@/services/voiceService';
 import { getAIResponse } from '@/services/geminiService';
+import { validationAgentService } from '@/services/validationAgentService';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Icons
@@ -76,7 +77,11 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
 
                 try {
                     // Send to Gemini
-                    const response = await getAIResponse(text, [], [], "Responde brevemente para ser hablado.");
+                    const rawResponse = await getAIResponse(text, [], [], "Responde brevemente para ser hablado.");
+
+                    // Validation Agent Audit (Voice optimized check)
+                    const validation = await validationAgentService.validateResponse(text, rawResponse, []);
+                    const response = validation.sanitizedResponse;
 
                     // Show bot message
                     if (onMessage) onMessage(response, 'bot');

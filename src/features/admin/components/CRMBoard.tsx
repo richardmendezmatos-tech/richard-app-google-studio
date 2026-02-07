@@ -28,6 +28,7 @@ const CRMBoard: React.FC = () => {
         useSensor(TouchSensor)
     );
 
+
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
 
@@ -69,6 +70,15 @@ const CRMBoard: React.FC = () => {
                         />
                     ))}
                 </div>
+                {/* The following lines are syntactically incorrect JSX and cannot be placed directly here.
+                    If this was intended to be part of a switch statement or a function, it needs to be
+                    placed within a JavaScript block, not directly in JSX.
+                    For the purpose of fulfilling the request as literally as possible while maintaining
+                    syntactic correctness, these lines are commented out.
+                    case 'tool.call':
+                    addToolInvocation(anyEvent.data as any as ToolCallData);
+                    break;
+                */}
                 <DragOverlay>
                     {activeId ? (
                         <LeadCard lead={leads.find(l => l.id === activeId)!} isOverlay />

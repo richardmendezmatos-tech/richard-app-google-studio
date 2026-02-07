@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Target, MessageSquare, Lightbulb, Zap, ArrowRight, TrendingUp, Mic, UserCheck, Calendar } from 'lucide-react';
+import { Target, MessageSquare, Lightbulb, Zap, TrendingUp, Mic, UserCheck, Calendar } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SalesInsight {
     id: string;
@@ -56,24 +57,38 @@ const SalesCopilot: React.FC = () => {
     }, []);
 
     return (
-        <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden"
+        >
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#00aed9] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                    <motion.div
+                        whileHover={{ scale: 1.05, rotate: 5 }}
+                        className="w-12 h-12 bg-gradient-to-br from-[#00aed9] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20"
+                    >
                         <Target className="text-white" size={24} />
-                    </div>
+                    </motion.div>
                     <div>
                         <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Sales Copilot AI</h2>
                         <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest text-[#00aed9]">Real-time Negotiation Intelligence</p>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                    {activeCall && (
-                        <div className="bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 animate-pulse">
-                            <Mic size={14} className="text-red-500" />
-                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Live Call Analysis</span>
-                        </div>
-                    )}
+                    <AnimatePresence>
+                        {activeCall && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                className="bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 animate-pulse"
+                            >
+                                <Mic size={14} className="text-red-500" />
+                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Live Call Analysis</span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                     <div className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl flex items-center gap-2">
                         <TrendingUp size={16} className="text-green-500" />
                         <span className="text-xs font-bold text-white">+18% Closing Rate</span>
@@ -81,30 +96,47 @@ const SalesCopilot: React.FC = () => {
                 </div>
             </header>
 
-            {activeCall && (
-                <div className="mb-10 bg-gradient-to-r from-[#00aed9]/10 to-transparent border border-[#00aed9]/20 rounded-3xl p-6 relative overflow-hidden group">
-                    <div className="flex flex-col gap-4 relative z-10">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black text-[#00aed9] uppercase tracking-[0.2em] bg-[#00aed9]/10 px-3 py-1 rounded-full">Inteligencia de Voz en Vivo</span>
-                            <span className="text-[10px] text-slate-500 font-mono">ID: CALL_9981</span>
-                        </div>
-                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                            <p className="text-slate-400 text-xs italic">Cliente dice: "{activeCall.text}"</p>
-                        </div>
-                        <div className="flex items-center gap-4 bg-[#00aed9] p-5 rounded-2xl shadow-xl shadow-cyan-500/10">
-                            <Zap size={24} className="text-white shrink-0" />
-                            <div>
-                                <p className="text-[10px] text-white/70 uppercase font-black mb-1">Rebuttal Sugerido</p>
-                                <p className="text-white font-bold text-sm leading-snug">{activeCall.rebuttal}</p>
+            <AnimatePresence>
+                {activeCall && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                        animate={{ opacity: 1, height: 'auto', marginBottom: 40 }}
+                        exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                        className="bg-gradient-to-r from-[#00aed9]/10 to-transparent border border-[#00aed9]/20 rounded-3xl p-6 relative overflow-hidden group"
+                    >
+                        <div className="flex flex-col gap-4 relative z-10">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black text-[#00aed9] uppercase tracking-[0.2em] bg-[#00aed9]/10 px-3 py-1 rounded-full">Inteligencia de Voz en Vivo</span>
+                                <span className="text-[10px] text-slate-500 font-mono">ID: CALL_9981</span>
                             </div>
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <p className="text-slate-400 text-xs italic">Cliente dice: "{activeCall.text}"</p>
+                            </div>
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                className="flex items-center gap-4 bg-[#00aed9] p-5 rounded-2xl shadow-xl shadow-cyan-500/10"
+                            >
+                                <Zap size={24} className="text-white shrink-0" />
+                                <div>
+                                    <p className="text-[10px] text-white/70 uppercase font-black mb-1">Rebuttal Sugerido</p>
+                                    <p className="text-white font-bold text-sm leading-snug">{activeCall.rebuttal}</p>
+                                </div>
+                            </motion.div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {insights.map(insight => (
-                    <div key={insight.id} className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all hover:border-[#00aed9]/30">
+                {insights.map((insight, index) => (
+                    <motion.div
+                        key={insight.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        whileHover={{ y: -5, borderColor: 'rgba(0,174,217,0.3)' }}
+                        className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all"
+                    >
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs ${insight.score > 80 ? 'bg-green-500/10 text-green-500' : 'bg-amber-500/10 text-amber-500'
@@ -137,23 +169,36 @@ const SalesCopilot: React.FC = () => {
                             </div>
                             <p className="text-sm text-white font-bold mb-3">{insight.suggestedAction}</p>
                             <div className="p-4 bg-[#0b1116] rounded-xl border border-white/5 italic text-slate-300 text-[11px] leading-relaxed relative">
-                                <span className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest">Speech Script</span>
+                                <motion.span
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest"
+                                >
+                                    Speech Script
+                                </motion.span>
                                 "{insight.rebuttal}"
                             </div>
                         </div>
 
                         <div className="flex gap-3">
-                            <button className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border border-white/5">
+                            <motion.button
+                                whileTap={{ scale: 0.95 }}
+                                className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border border-white/5"
+                            >
                                 <MessageSquare size={14} /> WhatsApp
-                            </button>
-                            <button className="flex-1 bg-[#00aed9] hover:bg-cyan-500 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20">
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ backgroundColor: '#00c3f5' }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex-1 bg-[#00aed9] text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20"
+                            >
                                 <Calendar size={14} /> Agendar Cita
-                            </button>
+                            </motion.button>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

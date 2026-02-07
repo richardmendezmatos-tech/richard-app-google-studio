@@ -43,10 +43,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     const [files, setFiles] = useState<UploadingFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const log = (msg: string) => {
+    const log = useCallback((msg: string) => {
         if (onLog) onLog(`[ImgUp] ${msg}`);
         console.log(`[ImgUp] ${msg}`);
-    };
+    }, [onLog]);
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -71,12 +71,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
         setFiles(uploadingFiles);
 
-        // Process each file
-        const successfulResults: UploadResult[] = [];
-
-        for (let i = 0; i < uploadingFiles.length; i++) {
-            const uploadFile = uploadingFiles[i];
-
+        // Process ALL files in parallel
+        const uploadPromises = uploadingFiles.map(async (uploadFile, i) => {
             try {
                 // Validate
                 const validation = validateImageFile(uploadFile.file);
@@ -84,54 +80,65 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     setFiles(prev => prev.map((f, idx) =>
                         idx === i ? { ...f, status: 'error', error: validation.error } : f
                     ));
-                    continue;
+                    return null;
                 }
 
                 // Update status to optimizing
                 setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, status: 'optimizing', progress: 20 } : f
+                    idx === i ? { ...f, status: 'optimizing', progress: 10 } : f
                 ));
 
-                // OPTIMIZATION RESTORED - Process image
+                // Process image (internally parallel)
                 const optimized = await optimizeImageComplete(uploadFile.file, {
                     quality: 0.85,
                     maxWidth: 1600,
                     generateWebP: true
                 });
 
-                // Update status to uploading directly
+                // Update status to uploading 
                 setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, status: 'uploading', progress: 40 } : f
+                    idx === i ? { ...f, status: 'uploading', progress: 30 } : f
                 ));
 
                 const timestamp = Date.now();
-                const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '')}`;
+                const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
 
-                // Upload Optimized JPEG
+                // Parallel Upload of ALL versions
+                const uploadTasks: { type: string, ref: import('firebase/storage').StorageReference, task: Promise<string> }[] = [];
+
+                // 1. JPEG Task
                 const jpegRef = ref(storage, `${storagePath}/${baseFileName}.jpg`);
-                await uploadBytes(jpegRef, optimized.jpeg, { contentType: 'image/jpeg' });
-                const jpegUrl = await getDownloadURL(jpegRef);
+                uploadTasks.push({
+                    type: 'jpeg',
+                    ref: jpegRef,
+                    task: uploadBytes(jpegRef, optimized.jpeg, { contentType: 'image/jpeg' }).then(() => getDownloadURL(jpegRef))
+                });
 
-                setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, progress: 60 } : f
-                ));
-
-                // Upload WebP
-                let webpUrl = '';
+                // 2. WebP Task
                 if (optimized.webp) {
                     const webpRef = ref(storage, `${storagePath}/${baseFileName}.webp`);
-                    await uploadBytes(webpRef, optimized.webp, { contentType: 'image/webp' });
-                    webpUrl = await getDownloadURL(webpRef);
+                    uploadTasks.push({
+                        type: 'webp',
+                        ref: webpRef,
+                        task: uploadBytes(webpRef, optimized.webp, { contentType: 'image/webp' }).then(() => getDownloadURL(webpRef))
+                    });
                 }
 
-                setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, progress: 80 } : f
-                ));
-
-                // Upload Thumbnail
+                // 3. Thumbnail Task
                 const thumbRef = ref(storage, `${storagePath}/${baseFileName}_thumb.jpg`);
-                await uploadBytes(thumbRef, optimized.thumbnail, { contentType: 'image/jpeg' });
-                const thumbUrl = await getDownloadURL(thumbRef);
+                uploadTasks.push({
+                    type: 'thumb',
+                    ref: thumbRef,
+                    task: uploadBytes(thumbRef, optimized.thumbnail, { contentType: 'image/jpeg' }).then(() => getDownloadURL(thumbRef))
+                });
+
+                // Wait for all uploads of THIS image
+                const uploadResults = await Promise.all(uploadTasks.map(t => t.task));
+
+                // Map results back to specific fields
+                const jpegUrl = uploadResults[uploadTasks.findIndex(t => t.type === 'jpeg')];
+                const webpUrl = optimized.webp ? uploadResults[uploadTasks.findIndex(t => t.type === 'webp')] : '';
+                const thumbUrl = uploadResults[uploadTasks.findIndex(t => t.type === 'thumb')];
 
                 const result: UploadResult = {
                     url: jpegUrl,
@@ -143,13 +150,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     savings: optimized.savings.percentage
                 };
 
-                // Add to success collector
-                successfulResults.push(result);
-
                 // Update status to complete
                 setFiles(prev => prev.map((f, idx) =>
                     idx === i ? { ...f, status: 'complete', progress: 100, result } : f
                 ));
+
+                return result;
 
             } catch (error) {
                 console.error('Upload error:', error);
@@ -157,15 +163,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 setFiles(prev => prev.map((f, idx) =>
                     idx === i ? { ...f, status: 'error', error: errorMessage } : f
                 ));
+                return null;
             }
-        }
+        });
 
-        // Notify parent when all complete
-        log(`All files processed. Success count: ${successfulResults.length}`);
+        // Wait for all file uploads to finish
+        const finalResultsArr = await Promise.all(uploadPromises);
+        const successfulResults = finalResultsArr.filter((r): r is UploadResult => r !== null);
+
+        // Notify parent 
+        log(`Parallel processing complete. Success count: ${successfulResults.length}`);
         if (successfulResults.length > 0) {
             onUploadComplete(successfulResults);
         }
-    }, [maxFiles, storagePath, onUploadComplete, onLog]);
+    }, [maxFiles, storagePath, onUploadComplete, log]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();

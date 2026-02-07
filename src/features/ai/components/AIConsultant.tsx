@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Car } from '@/types/types';
 import { getAIResponse } from '@/services/geminiService';
+import { validationAgentService } from '@/services/validationAgentService';
 import { Send, User, Bot, Sparkles } from 'lucide-react';
 
 interface Props {
@@ -33,9 +34,19 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsTyping(true);
 
-    const response = await getAIResponse(userMsg, inventory);
-    setMessages(prev => [...prev, { role: 'bot', text: response }]);
-    setIsTyping(false);
+    try {
+      const rawResponse = await getAIResponse(userMsg, inventory);
+
+      // Validation Agent Audit
+      const validation = await validationAgentService.validateResponse(userMsg, rawResponse, inventory);
+
+      setMessages(prev => [...prev, { role: 'bot', text: validation.sanitizedResponse }]);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setMessages(prev => [...prev, { role: 'bot', text: 'Lo siento, tuve un problema procesando tu mensaje. ¿Puedes intentarlo de nuevo?' }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -68,8 +79,8 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
                   {msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}
                 </div>
                 <div className={`p-6 rounded-[24px] text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                    ? 'bg-slate-800 dark:bg-slate-700 text-white rounded-tr-none'
-                    : 'bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700'
+                  ? 'bg-slate-800 dark:bg-slate-700 text-white rounded-tr-none'
+                  : 'bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700'
                   }`}>
                   {msg.text}
                 </div>
@@ -94,6 +105,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
           <div className="relative group">
             <input
               type="text"
+              aria-label="Escribe tu mensaje"
               className="w-full bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-[28px] py-5 pl-8 pr-16 text-lg dark:text-white focus:border-[#00aed9] focus:ring-0 outline-none transition-all shadow-inner"
               placeholder="¿Qué unidad estás buscando?"
               value={input}
@@ -103,6 +115,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
             <button
               onClick={handleSend}
               disabled={isTyping || !input.trim()}
+              aria-label="Enviar mensaje"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#173d57] text-white rounded-full flex items-center justify-center hover:bg-[#00aed9] disabled:opacity-30 transition-all shadow-lg"
             >
               <Send size={20} />

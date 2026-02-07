@@ -24,6 +24,7 @@ import B2BBillingDashboard from './B2BBillingDashboard';
 import { EnterpriseStatus } from './EnterpriseStatus';
 import { AdminCarCard } from './AdminCarCard';
 import { MarketingModal } from './MarketingModal';
+import ViralGeneratorModal from '@/features/marketing/components/ViralGeneratorModal';
 
 // Lazy Load Lab to keep Admin bundle light
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
@@ -94,6 +95,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCar, setEditingCar] = useState<CarType | null>(null);
   const [marketingCar, setMarketingCar] = useState<CarType | null>(null);
+  const [viralCar, setViralCar] = useState<CarType | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -568,7 +570,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                             leadCount={leads.filter(l => l.vehicleId === car.id).length}
                             onEdit={(c) => { setEditingCar(c); setIsModalOpen(true); }}
                             onDelete={onDelete}
-                            onPlanContent={() => setMarketingCar(car)}
+                            onPlanContent={() => setViralCar(car)}
                           />
                         ))}
                       </motion.div>
@@ -625,7 +627,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                                 <td className="px-6 py-4 text-right">
                                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
-                                      onClick={() => setMarketingCar(car)}
+                                      onClick={() => setViralCar(car)}
                                       className="p-2 hover:bg-[#00aed9]/10 text-slate-400 hover:text-[#00aed9] rounded-lg transition-all"
                                       title="Marketing"
                                     >
@@ -688,6 +690,14 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
         <MarketingModal
           car={marketingCar}
           onClose={() => setMarketingCar(null)}
+        />
+      )}
+
+      {viralCar && (
+        <ViralGeneratorModal
+          car={viralCar}
+          isOpen={!!viralCar}
+          onClose={() => setViralCar(null)}
         />
       )}
     </div >

@@ -6,6 +6,7 @@
  */
 
 import { getAIResponse } from '@/services/geminiService';
+import { validationAgentService } from '@/services/validationAgentService';
 import { Car } from '@/types/types';
 import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/services/firebaseService';
@@ -161,14 +162,20 @@ export const generateAutoResponse = async (context: MessageContext): Promise<str
     
     INTENCIÓN DETECTADA: ${intent}
     ${Object.keys(entities).length > 0 ? `ENTIDADES: ${JSON.stringify(entities)}` : ''}
+    
+    CTA WHATSAPP: https://wa.me/${(import.meta.env.VITE_TWILIO_PHONE_NUMBER || '17873682880').replace('+', '')}
   `;
 
     try {
-        const response = await getAIResponse(message, inventory, history, systemPrompt);
-        return response;
+        const rawResponse = await getAIResponse(message, inventory, history, systemPrompt);
+
+        // Validation Agent Audit
+        const validation = await validationAgentService.validateResponse(message, rawResponse, inventory);
+
+        return validation.sanitizedResponse;
     } catch (error) {
         console.error('Auto-response error:', error);
-        return 'Disculpa, estoy teniendo problemas técnicos. ¿Puedes llamarnos al 787-368-2880? 📞';
+        return `Disculpa, estoy teniendo problemas técnicos. ¿Puedes llamarnos al ${import.meta.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}? 📞`;
     }
 };
 
@@ -184,22 +191,41 @@ export const sendWhatsAppMessage = async (
     }
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
     try {
-        // TODO: Integrate with Twilio WhatsApp API or WhatsApp Business API
-        // For now, log to Firestore for tracking
+        // SECURITY NOTE: In a real production app, this fetch would go to a secure backend 
+        // (e.g., Firebase Cloud Function) to hide Twilio credentials.
+        // For this prototype, we simulate the call or hit a local proxy.
 
+        const _endpoint = import.meta.env.VITE_API_URL || '/api/send-whatsapp'; // Mock endpoint
+
+        console.log(`[WhatsApp] Sending to ${to}:`, { message, options });
+
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // In a real scenario:
+        /*
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, message, ...options })
+        });
+        if (!response.ok) throw new Error('API Error');
+        */
+
+        // Log to Firestore for audit trail
         const messageDoc = {
             to,
             message,
-            mediaUrl: options?.mediaUrl,
-            template: options?.template,
+            mediaUrl: options?.mediaUrl || null,
+            template: options?.template || null,
             timestamp: new Date(),
             direction: 'outbound' as const,
-            status: 'sent' as const
+            status: 'sent' as const,
+            provider: 'twilio-mock'
         };
 
         const docRef = await addDoc(collection(db, 'whatsapp_messages'), messageDoc);
-
-        console.log('WhatsApp message logged:', messageDoc);
+        console.log('WhatsApp message logged to Firestore:', docRef.id);
 
         return { success: true, messageId: docRef.id };
     } catch (error) {
@@ -331,7 +357,7 @@ export const processMenuSelection = async (
             return '📸 *Evaluación de Trade-In*\n\nPerfecto! Para darte el mejor valor:\n\n1. Envíame fotos de tu auto (exterior e interior)\n2. Dime marca, modelo y año\n3. Millaje aproximado\n\n¿Listo para empezar?';
 
         case '5':
-            return '👤 *Contacto Directo*\n\nPuedes llamar a Richard directamente:\n📞 787-368-2880\n\nO déjame tu nombre y te contactamos en breve.';
+            return `👤 *Contacto Directo*\n\nPuedes llamar a Richard directamente:\n📞 ${import.meta.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}\n\nO déjame tu nombre y te contactamos en breve.`;
 
         default:
             // Use AI for natural language
