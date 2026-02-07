@@ -1,9 +1,13 @@
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Lead } from '@/types/types';
 
-export const generateLeadPDF = (lead: Lead) => {
+export const generateLeadPDF = async (lead: Lead) => {
+    // Dynamic imports to reduce initial bundle size
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+    ]);
+
     const doc = new jsPDF();
 
     // -- Header --
