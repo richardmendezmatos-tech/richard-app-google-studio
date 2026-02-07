@@ -1,25 +1,45 @@
 import React, { useRef, useEffect } from 'react';
-import { useChat } from '@ai-sdk/react';
+import { useCopilotAgent, type Message } from '@/hooks/useCopilotAgent';
 import { Bot, User, Send, ShieldCheck } from 'lucide-react';
 import ProgressiveForm from '../chat/ProgressiveForm';
+import { customerMemoryService } from '@/services/customerMemoryService';
+
+interface LeadInfoFormData {
+  [key: string]: string | number | boolean;
+}
 
 const ChatView: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Vercel AI SDK Hook for Streaming
-  const { messages, input, handleInputChange, handleSubmit, isLoading, addToolResult } = useChat({
-    api: 'https://us-central1-richard-automotive.cloudfunctions.net/chatStream',
+  // Copilot Agent Hook (Replaces useChat)
+  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, addToolResult } = useCopilotAgent('main-chat', {
     initialMessages: [
       {
         id: 'welcome',
         role: 'assistant',
         content: '¡Hola! Soy tu consultor Richard IA. ¿En qué vehículo de Richard Automotive estás interesado hoy?'
       }
-    ],
-    body: {
-      leadId: localStorage.getItem('current_lead_id') || 'temp_lead'
-    }
+    ]
   });
+
+  useEffect(() => {
+    const loadMemoryAndPersonalize = async () => {
+      const leadId = localStorage.getItem('lead_id') || 'guest';
+      const memory = await customerMemoryService.getMemory(leadId);
+
+      if (memory && memory.history.length > 0) {
+        setMessages([
+          {
+            id: 'welcome-back',
+            role: 'assistant',
+            content: `¡Bienvenido de nuevo! Veo que estuviste interesado en ${memory.history.slice(-1)[0]}. ¿Te gustaría continuar donde lo dejamos o ver algo nuevo?`
+          }
+        ]);
+      }
+    };
+
+    loadMemoryAndPersonalize();
+  }, [setMessages]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -50,7 +70,7 @@ const ChatView: React.FC = () => {
           </div>
         )}
 
-        {messages.map((m) => (
+        {messages.map((m: Message) => (
           <div key={m.id} className="flex flex-col space-y-2">
             <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {m.role !== 'user' && (
@@ -59,8 +79,8 @@ const ChatView: React.FC = () => {
                 </div>
               )}
               <div className={`max-w-[85%] rounded-[24px] px-5 py-4 shadow-xl mb-1 ${m.role === 'user'
-                ? 'bg-[#00aed9] text-white rounded-tr-none'
-                : 'bg-[#131f2a] text-slate-100 rounded-tl-none border border-white/5'
+                  ? 'bg-[#00aed9] text-white rounded-tr-none'
+                  : 'bg-[#131f2a] text-slate-100 rounded-tl-none border border-white/5'
                 }`}>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed font-medium">{m.content}</p>
                 {m.role === 'user' && (
@@ -75,7 +95,7 @@ const ChatView: React.FC = () => {
             </div>
 
             {/* toolInvocations for Progressive Profiling */}
-            {(m as any).toolInvocations?.map((toolInvocation: any) => {
+            {m.toolInvocations?.map((toolInvocation) => {
               const { toolName, toolCallId, state, args } = toolInvocation;
 
               if (toolName === 'requestLeadInfo' && state === 'call') {
@@ -83,12 +103,12 @@ const ChatView: React.FC = () => {
                   <div key={toolCallId} className="flex justify-start pl-10 pr-4">
                     <div className="w-full max-w-sm">
                       <ProgressiveForm
-                        type={args.type}
-                        onSubmit={(data) => {
+                        type={args.type as unknown as "trade-in" | "income" | "credit"}
+                        onSubmit={(data: LeadInfoFormData) => {
                           addToolResult({
-                            toolCallId,
-                            result: { status: 'submitted', ...data }
-                          } as any);
+                            callId: toolCallId,
+                            result: data as unknown as Record<string, unknown>
+                          });
                         }}
                       />
                     </div>

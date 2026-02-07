@@ -7,7 +7,31 @@ import { RICHARD_KNOWLEDGE_BASE } from "./knowledgeBase";
 // Helper: Direct Client-Side Call (Restored and Hardened)
 // Helper: Call Vercel Serverless Function (Hides API Key)
 // Helper: Direct Client-Side Call (Restored and Hardened)
-const callGeminiProxy = async (prompt: any, systemInstruction?: string, modelName: string = "gemini-pro", config?: any): Promise<any> => {
+// Types for Gemini
+// We define a loose type compatible with the SDK's expectation for this project's scope
+interface GeminiInlineData {
+  mimeType: string;
+  data: string;
+}
+
+interface GeminiPart {
+  text?: string;
+  inlineData?: GeminiInlineData;
+  [key: string]: unknown; // Allow other properties to satisfy SDK checks if needed
+}
+
+type GeminiPrompt = string | GeminiPart[];
+
+interface GenerationConfig {
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  maxOutputTokens?: number;
+  responseMimeType?: string;
+  [key: string]: unknown;
+}
+
+const callGeminiProxy = async (prompt: GeminiPrompt, systemInstruction?: string, modelName: string = "gemini-pro", config?: GenerationConfig): Promise<string> => {
   try {
     // 1. Try Primary Key
     let apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -27,8 +51,8 @@ const callGeminiProxy = async (prompt: any, systemInstruction?: string, modelNam
     });
 
     try {
-      // Handle special media generation models (simplified inference)
-      const result = await model.generateContent(prompt);
+      // Cast prompt to any to avoid complex SDK type matching for now, as we know the structure is valid for the API
+      const result = await model.generateContent(prompt as any);
       const response = await result.response;
 
       // For standard text models
@@ -36,28 +60,30 @@ const callGeminiProxy = async (prompt: any, systemInstruction?: string, modelNam
         try {
           return response.text();
         } catch {
-          // If text() fails, it might be separate media response, return full response object to handler
-          return response;
+          // If text() fails, it might be separate media response, return details as string
+          return JSON.stringify(response);
         }
       }
-      return response;
-    } catch (innerError: any) {
+      return JSON.stringify(response);
+    } catch (innerError) {
+      const err = innerError as Error;
       // Retry with legacy model if flash fails (common 404 issue) for TEXT ONLY
-      console.warn(`Model ${modelName} failed. Error: ${innerError.message}`);
+      console.warn(`Model ${modelName} failed. Error: ${err.message}`);
       if (modelName === "gemini-1.5-flash" || modelName === "gemini-pro") {
         if (modelName !== "gemini-pro") {
           const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro", systemInstruction });
-          const result = await fallbackModel.generateContent(prompt);
+          const result = await fallbackModel.generateContent(prompt as any);
           return (await result.response).text();
         }
       }
       throw innerError;
     }
-  } catch (error: any) {
-    console.error("CRITICAL AI FAILURE:", error);
+  } catch (error) {
+    const err = error as Error;
+    console.error("CRITICAL AI FAILURE:", err);
     // Determine specific error type for better debugging
-    if (error.message?.includes("404")) console.error(`Model ${modelName} not found. Check if enabled.`);
-    if (error.message?.includes("403")) console.error("API Key permission denied (quota or billing).");
+    if (err.message?.includes("404")) console.error(`Model ${modelName} not found. Check if enabled.`);
+    if (err.message?.includes("403")) console.error("API Key permission denied (quota or billing).");
     throw error;
   }
 };
@@ -239,7 +265,7 @@ export const calculateNeuralMatch = async (userProfile: string, inventory: Car[]
   }
 };
 
-export const compareCars = async (car1: Car, car2: Car): Promise<any> => {
+export const compareCars = async (car1: Car, car2: Car): Promise<Record<string, unknown>> => {
   const prompt = `Compare ${car1.name} vs ${car2.name}. Return JSON: { "winnerId": "...", "reasoning": "...", "categories": [...] }`;
   const text = await callGeminiProxy(prompt, undefined, "gemini-1.5-flash", { responseMimeType: "application/json" });
   return JSON.parse(text);
@@ -253,8 +279,7 @@ export const generateCode = async (prompt: string, instruction?: string): Promis
   return await callGeminiProxy(prompt, instruction, "gemini-1.5-flash");
 };
 
-export const analyzeCarImage = async (base64Image: string): Promise<any> => {
-  // Determine MIME type from base64 header
+export const analyzeImageWithPrompt = async (base64Image: string, promptText: string): Promise<Record<string, unknown>> => {
   const mimeMatch = base64Image.match(/^data:(image\/\w+);base64,/);
   const mimeType = mimeMatch ? mimeMatch[1] : "image/jpeg";
   const cleanBase64 = base64Image.replace(/^data:image\/\w+;base64,/, "");
@@ -263,11 +288,14 @@ export const analyzeCarImage = async (base64Image: string): Promise<any> => {
     inlineData: { data: cleanBase64, mimeType }
   };
 
-  // Note: Our proxy handles { prompt, ... } where prompt can be array
-  const prompt = [{ text: "Analyze this car. Return JSON: { type, keywords: [], description, search_query }" }, imagePart];
+  const prompt = [{ text: promptText }, imagePart];
 
   const text = await callGeminiProxy(prompt, undefined, "gemini-1.5-flash", { responseMimeType: "application/json" });
   return JSON.parse(text);
+};
+
+export const analyzeCarImage = async (base64Image: string): Promise<Record<string, unknown>> => {
+  return analyzeImageWithPrompt(base64Image, "Analyze this car. Return JSON: { type, keywords: [], description, search_query }");
 };
 
 export const generateCarPitch = async (car: Car): Promise<string> => {
@@ -357,16 +385,16 @@ export const generateVideo = async (prompt: string, base64Image?: string, mimeTy
   }
 };
 
-export const connectToVoiceSession = async (_options: any): Promise<any> => {
+export const connectToVoiceSession = async (_options: Record<string, unknown>): Promise<Record<string, unknown>> => {
   // Implementation for Phase 3 integration
   console.log("Connecting to Voice Session with options:", _options);
   return {
     close: () => console.log("Voice session closed"),
-    sendRealtimeInput: (data: any) => console.log("Sending voice data", data)
+    sendRealtimeInput: (data: unknown) => console.log("Sending voice data", data)
   };
 };
 
-export const analyzeTradeInImages = async (images: string[]): Promise<any> => {
+export const analyzeTradeInImages = async (images: string[]): Promise<Record<string, unknown>> => {
   // For simplicity in proxy, we send max 1 image or need to update proxy to handle multiple.
   // Sending first image for now to keep it simple, or update proxy logic.
   // Actually our proxy passes 'prompt' directly to generateContent which supports array of parts.
@@ -375,7 +403,7 @@ export const analyzeTradeInImages = async (images: string[]): Promise<any> => {
     inlineData: { data: b64.replace(/^data:image\/\w+;base64,/, ""), mimeType: "image/jpeg" }
   }));
 
-  const prompt = [
+  const prompt: GeminiPrompt = [
     { text: "Analyze trade-in condition. Return JSON: { condition, defects: [], estimatedValueAdjustment: 0.9, reasoning }" },
     ...imageParts
   ];
@@ -433,5 +461,21 @@ export const generateBlogPost = async (topic: string, tone: 'professional' | 'ca
   } catch (e) {
     console.error("Blog Gen Failed:", e);
     return localFallback(topic, type);
+  }
+};
+
+export const generateEmbedding = async (text: string): Promise<number[]> => {
+  try {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY;
+    if (!apiKey) throw new Error("No API Key for embeddings");
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+    const result = await model.embedContent(text);
+    return result.embedding.values;
+  } catch (error) {
+    console.error("Embedding generation failed:", error);
+    throw error;
   }
 };

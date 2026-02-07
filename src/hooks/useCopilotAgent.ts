@@ -8,8 +8,14 @@ export interface Message {
     id: string;
     role: 'assistant' | 'user' | 'system' | 'data';
     content: string;
-    data?: any;
-    toolInvocations?: any[];
+    data?: Record<string, unknown>;
+    toolInvocations?: Array<{
+        toolName: string;
+        toolCallId: string;
+        args: Record<string, unknown>;
+        state: 'call' | 'result';
+        result?: unknown;
+    }>;
 }
 
 export interface UseCopilotAgentOptions {
@@ -18,15 +24,15 @@ export interface UseCopilotAgentOptions {
     onError?: (error: Error) => void;
 }
 
-interface ToolCallData {
+export interface ToolCallData {
     name: string;
     callId: string;
-    args: any;
+    args: Record<string, unknown>;
 }
 
-interface ToolResultData {
+export interface ToolResultData {
     callId: string;
-    result: any;
+    result: Record<string, unknown>;
 }
 
 export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptions = {}) {
@@ -60,11 +66,11 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     const addToolInvocation = useCallback((toolCall: ToolCallData) => {
         setMessages(prev => {
             const last = prev[prev.length - 1];
-            const invocation = {
+            const invocation: NonNullable<Message['toolInvocations']>[0] = {
                 toolName: toolCall.name,
                 toolCallId: toolCall.callId,
                 args: toolCall.args,
-                state: 'call'
+                state: 'call' as const
             };
 
             if (last && last.role === 'assistant') {
@@ -73,7 +79,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
                     {
                         ...last,
                         toolInvocations: [...(last.toolInvocations || []), invocation]
-                    }
+                    } as Message
                 ];
             }
             return [
@@ -83,24 +89,24 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
                     role: 'assistant',
                     content: '',
                     toolInvocations: [invocation]
-                }
+                } as Message
             ];
         });
     }, []);
 
     const updateToolResult = useCallback((toolResult: ToolResultData) => {
-        setMessages(prev => {
+        setMessages((prev: Message[]) => {
             return prev.map(msg => {
                 if (msg.toolInvocations) {
                     return {
                         ...msg,
                         toolInvocations: msg.toolInvocations.map(inv => {
                             if (inv.toolCallId === toolResult.callId) {
-                                return { ...inv, state: 'result', result: toolResult.result };
+                                return { ...inv, state: 'result' as const, result: toolResult.result };
                             }
                             return inv;
                         })
-                    };
+                    } as Message;
                 }
                 return msg;
             });
@@ -108,10 +114,11 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     }, []);
 
     const handleCopilotEvent = useCallback((event: SessionEvent) => {
+        // cast to any to allow all event types from the SDK without narrowing
         const anyEvent = event as any;
         switch (anyEvent.type) {
             case 'assistant.message_delta':
-                updateLastMessageContent(anyEvent.data.deltaContent || '');
+                updateLastMessageContent(String(anyEvent.data?.deltaContent || ''));
                 break;
 
             case 'assistant.message_done': {
@@ -124,15 +131,15 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
             }
 
             case 'tool.call':
-                addToolInvocation(anyEvent.data as unknown as ToolCallData);
+                addToolInvocation(anyEvent.data as any as ToolCallData);
                 break;
 
             case 'tool.result':
-                updateToolResult(anyEvent.data as unknown as ToolResultData);
+                updateToolResult(anyEvent.data as any as ToolResultData);
                 break;
 
             case 'session.error': {
-                const err = new Error(anyEvent.data.message || 'Session error');
+                const err = new Error(anyEvent.data?.message || 'Session error');
                 setError(err);
                 options.onError?.(err);
                 setIsLoading(false);
@@ -195,14 +202,22 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         }
     }, [sessionId, options]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setInput(e.target.value);
+    };
+
+    const handleSubmit = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
         if (!input.trim() || isLoading) return;
 
         const val = input;
         setInput('');
         append({ role: 'user', content: val });
     };
+
+    const addToolResult = useCallback((data: ToolResultData) => {
+        updateToolResult(data);
+    }, [updateToolResult]);
 
     return {
         messages,
@@ -214,5 +229,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         error,
         append,
         handleSubmit,
+        handleInputChange,
+        addToolResult
     };
 }

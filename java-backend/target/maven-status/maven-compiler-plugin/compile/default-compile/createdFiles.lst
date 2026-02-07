@@ -1,9 +1,0 @@
-com/richard/domain/VehicleRecord.class
-com/richard/domain/LeadState$Converted.class
-com/richard/domain/LeadState.class
-com/richard/domain/LeadState$Lost.class
-com/richard/domain/LeadState$New.class
-com/richard/cache/AntiGravityCache.class
-com/richard/events/LeadTransitionEvent.class
-com/richard/domain/LeadState$Qualified.class
-com/richard/service/DomainLogicProcessor.class
