@@ -7,8 +7,13 @@ export const VisionAppraisalSchema = z.object({
     model: z.string().optional(),
     year: z.number().optional(),
     vin: z.string().optional(),
-    condition: z.string(),
-    damages: z.array(z.string()),
+    condition: z.enum(['excellent', 'good', 'fair', 'poor']),
+    damages: z.array(z.object({
+        area: z.string(),
+        description: z.string(),
+        severity: z.enum(['low', 'medium', 'high'])
+    })),
+    appraisalValue: z.number().optional(),
     confidence: z.number()
 });
 
@@ -29,10 +34,15 @@ export const analyzeVehiclePhoto = ai.defineFlow(
             prompt: [
                 { media: { url: `data:image/jpeg;base64,${input.imageBase64}`, contentType: 'image/jpeg' } },
                 {
-                    text: `Analiza esta foto de un vehículo. 
-                Extrae: Marca, Modelo, Año (si es visible), VIN (si se ve en el dash o puerta), 
-                Condición estética (Excelente, Buena, Regular, Mala) y cualquier daño visible (rayazos, abolladuras).
-                Responde en JSON estructurado.` }
+                    text: `Eres un tasador experto de vehículos en Puerto Rico. 
+                Analiza esta foto y detecta:
+                1. Datos del auto: Marca, modelo, año aproximado.
+                2. VIN/Tablilla: Encuentra el VIN o placa (tablilla) si es visible.
+                3. Estado Estético: Clasifica como 'excellent', 'good', 'fair', o 'poor'.
+                4. Daños Detallados: Lista cada rayazo, abolladura o pieza rota indicando su área (ej. 'parachoques frontal'), descripción y severidad.
+                
+                IMPORTANTE: Responde ÚNICAMENTE en JSON con el esquema: 
+                { "make": "...", "model": "...", "year": 2020, "vin": "...", "condition": "...", "damages": [{ "area": "...", "description": "...", "severity": "..." }] }` }
             ],
             config: { temperature: 0.1 }
         });

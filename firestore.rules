@@ -8,44 +8,29 @@ service cloud.firestore {
       return request.auth != null;
     }
     
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
     function isAdmin() {
-      return isAuthenticated() && 
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isAuthenticated() && getUserData().role == 'admin';
     }
     
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // --- Validation Functions ---
-    
-    function isValidCar() {
-      let car = request.resource.data;
-      return car.price is number && 
-             car.price >= 0 &&
-             car.name is string && 
-             car.dealerId is string && // SaaS Requirement
-             car.type in ['suv', 'sedan', 'pickup', 'luxury', 'sports', 'hybrid', 'electric']; 
-    }
-
-    function isValidLead() {
-      let lead = request.resource.data;
-      return lead.firstName is string && 
-             lead.dealerId is string && // SaaS Requirement
-             (lead.email is string || lead.phone is string);
-    }
-
     // --- Collections ---
 
-    // Car Inventory: Isolated by Dealer
+    // Car Inventory: Publicly readable for marketplace
     match /cars/{carId} {
-      allow read: if true; // Temporary fix to unblock inventory listing
+      allow read: if true; 
       allow create, delete: if isAdmin();
-      allow update: if (isAdmin() && isValidCar()) || 
+      allow update: if (isAdmin()) || 
                     (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'leads_count']));
     }
     
-    // User Profiles: Dealer-scoped (Optional enhancement)
+    // User Profiles
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
@@ -53,57 +38,52 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // Applications (Leads): Strictly isolated by dealer and admin role
+    // Applications (Leads): Isolated by Dealer logic
     match /applications/{appId} {
-      allow create: if isValidLead(); 
-      allow read, update, delete: if isAdmin() && 
-                                    (resource == null || resource.data.dealerId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.dealerId);
-    }
-
-    // CRM Leads (Unified Collection)
-    match /leads/{leadId} {
-      // Public create for Trade-In/WhatsApp/etc forms
-      allow create: if request.resource.data.keys().hasAll(['type', 'name', 'status', 'createdAt']);
-      
-      // Admin only for management
-      allow read, update, delete: if isAdmin();
-    }
-
-    // Secure PII Vault (Full SSN)
-    match /applications_secure/{appId} {
-      // Allow creation when submitting application
       allow create: if true; 
-      
-      // Strict Read: Only specialized admins or specific UID (Richard)
-      allow read: if isAdmin() && 
-                    (request.auth.uid == 'REPLACE_WITH_YOUR_UID' || 
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.superAdmin == true);
-      
-      allow update, delete: if false; // Audit trail preservation
+      allow read, update, delete: if isAdmin() && 
+                                     (resource == null || resource.data.dealerId == getUserData().dealerId);
     }
 
-    // --- Security Logs ---
-    match /audit_logs/{logId} {
+    // CRM Leads
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin() && 
+                                     (resource == null || resource.data.dealerId == getUserData().dealerId);
+    }
+
+    // Customer Memory (Phase 6): Highly Sensitive
+    match /customer_memory/{leadId} {
+      allow read, write: if isAdmin() && 
+                           (resource == null || resource.data.dealerId == getUserData().dealerId);
+    }
+
+    // WhatsApp Sequences (Phase 6): Autopilot Logic
+    match /whatsapp_sequences/{leadId} {
+      allow read, write: if isAdmin() && 
+                           (resource == null || resource.data.dealerId == getUserData().dealerId);
+    }
+
+    // Secure PII Vault (Full SSN/Credit Reports)
+    match /applications_secure/{appId} {
+      allow create: if true; 
+      allow read: if isAdmin() && 
+                    (getUserData().superAdmin == true || getUserData().accessPII == true);
+      allow update, delete: if false; 
+    }
+
+    // Audit Logs
+    match /audit_logs/{id} {
       allow read: if isAdmin();
-      allow create: if isValidLog(); 
+      allow create: if isAuthenticated();
       allow update, delete: if false;
     }
 
+    // Login Security
     match /login_attempts/{attemptId} {
-      // Allow reading by admins to check status
       allow read: if isAdmin();
-      
-      // Allow creation/updates by anyone (to record failed attempts from client)
-      // We validate the schema to prevent abuse
-      allow create, update: if request.resource.data.keys().hasAll(['ip', 'attempts', 'lastAttempt']);
-      
-      // Allow Admin to reset (delete) the record on successful login
+      allow create, update: if true;
       allow delete: if isAdmin();
-    }
-
-    match /subscribers/{id} {
-        allow create: if request.resource.data.email is string && request.resource.data.dealerId is string;
-        allow read, update, delete: if isAdmin();
     }
   }
 }

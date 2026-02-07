@@ -5,6 +5,8 @@ import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 import * as logger from 'firebase-functions/logger';
 import { db } from './services/firebaseAdmin';
+import { customerMemoryService } from './services/customerMemoryService';
+import { simulateLoan } from './services/financeService';
 
 interface Car {
     id: string;
@@ -29,12 +31,17 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
         return;
     }
 
-    const { messages } = req.body;
+    const { messages, leadId } = req.body;
+
+    // --- Phase 6: Memory Retrieval ---
+    const customerMemory = leadId ? await customerMemoryService.getMemory(leadId) : null;
 
     try {
         const result = await streamText({
             model: google('gemini-1.5-flash'),
-            system: SYSTEM_PROMPT,
+            system: `${SYSTEM_PROMPT}
+            MEMORIA DEL CLIENTE: ${JSON.stringify(customerMemory || 'Nuevo Cliente')}
+            Si el cliente ya ha visto ciertos autos, menciónalos para crear cercanía.`,
             messages,
             tools: {
                 checkInventory: tool({
@@ -61,14 +68,16 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                         creditScore: z.enum(['excellent', 'good', 'fair', 'poor']).default('good'),
                     }),
                     execute: async ({ price, downPayment, months, creditScore }: { price: number, downPayment: number, months: number, creditScore: string }) => {
-                        const rates: Record<string, number> = { excellent: 4.9, good: 7.5, fair: 11.9, poor: 18.9 };
-                        const rate = rates[creditScore] || 7.5;
-                        const monthlyRate = rate / 100 / 12;
-                        const principal = price + 495 - downPayment;
-                        if (principal <= 0) return { monthlyPayment: 0 };
-                        const x = Math.pow(1 + monthlyRate, months);
-                        const payment = (principal * x * monthlyRate) / (x - 1);
-                        return { monthlyPayment: Math.round(payment), details: `Interés: ${rate}%` };
+                        // Use the new localized finance service logic
+                        const creditScoreMap: Record<string, number> = { excellent: 750, good: 700, fair: 640, poor: 580 };
+                        const score = creditScoreMap[creditScore] || 700;
+                        const simulations = simulateLoan(price, downPayment, months, score);
+
+                        return {
+                            simulations,
+                            bestOption: simulations[0],
+                            disclaimer: "Sujeto a aprobación de crédito por instituciones locales (Popular/BPPR/Coop)."
+                        };
                     },
                 }),
                 saveLead: tool({
@@ -92,6 +101,31 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                             status: 'new'
                         });
                         return { success: true };
+                    },
+                }),
+                updateMemory: tool({
+                    description: 'Actualiza la memoria del cliente con nuevas preferencias o notas.',
+                    inputSchema: z.object({
+                        leadId: z.string(),
+                        vehicleId: z.string().optional(),
+                        note: z.string(),
+                    }),
+                    execute: async ({ leadId, vehicleId, note }) => {
+                        await customerMemoryService.updateMemory(leadId, vehicleId, note);
+                        return { success: true };
+                    },
+                }),
+                requestLeadInfo: tool({
+                    description: 'Solicita información específica al cliente (ingreso, trade-in, crédito) usando un formulario interactivo.',
+                    inputSchema: z.object({
+                        type: z.enum(['income', 'trade-in', 'credit']),
+                    }),
+                    execute: async ({ type }) => {
+                        return {
+                            status: 'form_requested',
+                            type,
+                            instruction: `Por favor completa el formulario de ${type} para continuar.`
+                        };
                     },
                 }),
             },
