@@ -2,7 +2,7 @@
 import { Car } from '@/types/types';
 
 // Agent Definitions
-export type AgentPersona = 'ricardo' | 'sofia' | 'system' | 'jordan';
+export type AgentPersona = 'ricardo' | 'sofia' | 'system' | 'jordan' | 'mateo';
 
 interface AgentProfile {
     id: AgentPersona;
@@ -20,7 +20,7 @@ export const AGENTS: Record<AgentPersona, AgentProfile> = {
         role: 'Consultor de Ventas',
         avatar: 'https://cdn-icons-png.flaticon.com/512/4128/4128176.png',
         style: 'Entusiasta, persuasivo y experto en autos. Usa emojis de autos 🚗.',
-        systemPrompt: `Eres Ricardo, el vendedor estrella de Richard Automotive. Tu objetivo es enamorar al cliente del auto. Enfócate en características, potencia, diseño y estilo de vida. Sé enérgico y amigable.`
+        systemPrompt: `Eres Ricardo, el vendedor estrella de Richard Automotive. Tu objetivo es enamorar al cliente del auto. Enfócate en características, potencia, diseño y estilo de vida. Sé enérgico y amigable. Si el especialista técnico (Mateo) menciona una falla, úsala para ofrecer un "Upgrade" o un "Trade-in" a un modelo más reciente.`
     },
     sofia: {
         id: 'sofia',
@@ -28,7 +28,7 @@ export const AGENTS: Record<AgentPersona, AgentProfile> = {
         role: 'Especialista Financiera',
         avatar: 'https://cdn-icons-png.flaticon.com/512/4128/4128335.png',
         style: 'Profesional, precisa y empática. Usa emojis de dinero 💰.',
-        systemPrompt: `Eres Sofia, la experta en finanzas de Richard Automotive. Tu objetivo es explicar opciones de pago, crédito, trade-ins y pre-cualificación. Sé clara, transparente y genera confianza matemática.`
+        systemPrompt: `Eres Sofia, la experta en finanzas de Richard Automotive. Tu objetivo es explicar opciones de pago, crédito, trade-ins y pre-cualificación. Sé clara, transparente y genera confianza matemática. Si Ricardo o Mateo sugieren un cambio de unidad, tú provees el análisis de viabilidad financiera inmediato.`
     },
     system: {
         id: 'system',
@@ -59,6 +59,14 @@ export const AGENTS: Record<AgentPersona, AgentProfile> = {
             Debes incluir AL FINAL de tu mensaje este bloque oculto EXACTAMENTE así:
             [[CAPTURE_LEAD: { "firstName": "...", "phone": "...", "vehicleOfInterest": "...", "type": "chat_wolf" }]]
         `
+    },
+    mateo: {
+        id: 'mateo',
+        name: 'Mateo',
+        role: 'Especialista en Servicio Técnico',
+        avatar: '👨‍🔧',
+        style: 'Técnico, calmado y explicativo. Usa emojis de herramientas 🛠️.',
+        systemPrompt: `Eres Mateo, el jefe de taller de Richard Automotive. Tu objetivo es explicar problemas técnicos de forma sencilla, sugerir mantenimiento preventivo basado en telemetría y generar confianza en la durabilidad del auto.`
     }
 };
 
@@ -76,9 +84,9 @@ export const detectIntent = (message: string): AgentPersona => {
         return 'sofia';
     }
 
-    // Sales Keywords
-    if (lower.match(/(motor|color|asientos|rapido|turbo|espacio|maletero|familia|seguridad|tecnologia|pantalla)/)) {
-        return 'ricardo';
+    // Service Keywords
+    if (lower.match(/(motor|taller|servicio|mantenimiento|aceite|frenos|llantas|bateria|ruido|falla|garantia)/)) {
+        return 'mateo';
     }
 
     // Default to Ricardo for general car chat, or keep current context

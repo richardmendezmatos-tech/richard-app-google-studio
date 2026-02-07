@@ -1,0 +1,52 @@
+{
+    "common": {
+        "welcome": "Welcome to Richard Automotive",
+        "dashboard": "Dashboard",
+        "inventory": "Inventory",
+        "admin": "Admin",
+        "aiLab": "AI Lab",
+        "search": "Search...",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "actions": "Actions"
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "email": "Email",
+        "password": "Password"
+    },
+    "dashboard": {
+        "title": "Smart Operations Center",
+        "description": "Real-time monitoring of your fleet and customers.",
+        "activeLeads": "Active Leads",
+        "totalInventory": "Total Inventory",
+        "conversionsToday": "Conversions Today",
+        "systemOnline": "System Online",
+        "uptime": "Uptime",
+        "resetCore": "Reset Core",
+        "globalEvents": "Global Events",
+        "latency": "Core Latency",
+        "memory": "Heap Usage",
+        "activeNodes": "Active Nodes",
+        "architecture": "Active Architecture",
+        "lastAction": "Last System Action",
+        "source": "Source",
+        "systemLog": "System Log"
+    },
+    "sidebar": {
+        "storefront": "Digital Store",
+        "garage": "My Garage",
+        "qualify": "Pre-Qualification",
+        "tradeIn": "Sell my Car",
+        "consultant": "AI Consultant",
+        "blog": "AI Newsroom",
+        "frameworkLab": "Framework Lab",
+        "digitalTwin": "Digital Twin"
+    }
+}

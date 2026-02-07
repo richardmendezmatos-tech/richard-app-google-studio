@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { logout as logoutAction } from '@/store/slices/authSlice';
 import ThemeToggle from './ThemeToggle';
-import { ShoppingBag, Warehouse, FileCheck2, BotMessageSquare, Newspaper, Cpu, User, LogOut, ShieldAlert, FlaskConical, LogIn, Car as CarIcon, User as UserIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ShoppingBag, Warehouse, FileCheck2, BotMessageSquare, Newspaper, Cpu, User, LogOut, ShieldAlert, FlaskConical, LogIn, Car as CarIcon, User as UserIcon, Languages } from 'lucide-react';
 import { ViewMode } from '@/types/types';
 
 interface SidebarProps {
@@ -17,6 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
   const { user } = useSelector((state: RootState) => state.auth);
   const role = user?.role || 'user';
 
@@ -58,18 +60,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
       </div>
 
       <div className="flex-1 px-6 space-y-2 overflow-y-auto custom-scrollbar">
-        <NavButton active={currentMode === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileOpen(false); }} icon={<ShoppingBag size={20} />} label="Tienda Digital" />
-        <NavButton active={currentMode === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileOpen(false); }} icon={<Warehouse size={20} />} label="Mi Garaje" />
-        <NavButton active={currentMode === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileOpen(false); }} icon={<FileCheck2 size={20} />} label="Pre-Cualificación" />
-        <NavButton active={currentMode === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileOpen(false); }} icon={<CarIcon size={20} />} label="Vender mi Auto" />
-        <NavButton active={currentMode === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileOpen(false); }} icon={<BotMessageSquare size={20} />} label="Consultor IA" />
-        <NavButton active={currentMode === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileOpen(false); }} icon={<Newspaper size={20} />} label="AI Newsroom" />
+        <NavButton active={currentMode === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileOpen(false); }} icon={<ShoppingBag size={20} />} label={t('sidebar.storefront')} />
+        <NavButton active={currentMode === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileOpen(false); }} icon={<Warehouse size={20} />} label={t('sidebar.garage')} />
+        <NavButton active={currentMode === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileOpen(false); }} icon={<FileCheck2 size={20} />} label={t('sidebar.qualify')} />
+        <NavButton active={currentMode === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileOpen(false); }} icon={<CarIcon size={20} />} label={t('sidebar.tradeIn')} />
+        <NavButton active={currentMode === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileOpen(false); }} icon={<BotMessageSquare size={20} />} label={t('sidebar.consultant')} />
+        <NavButton active={currentMode === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileOpen(false); }} icon={<Newspaper size={20} />} label={t('sidebar.blog')} />
 
         {role === 'admin' && (
-          <NavButton active={location.pathname === '/framework-lab'} onClick={() => { navigate('/framework-lab'); setIsMobileOpen(false); }} icon={<Cpu size={20} className="text-cyan-400" />} label="Framework Lab" />
+          <NavButton active={location.pathname === '/framework-lab'} onClick={() => { navigate('/framework-lab'); setIsMobileOpen(false); }} icon={<Cpu size={20} className="text-cyan-400" />} label={t('sidebar.frameworkLab')} />
         )}
         {role === 'admin' && (
-          <NavButton active={currentMode === ViewMode.DIGITAL_TWIN} onClick={() => { navigate('/digital-twin'); setIsMobileOpen(false); }} icon={<User size={20} />} label="Gemelo Digital" />
+          <NavButton active={currentMode === ViewMode.DIGITAL_TWIN} onClick={() => { navigate('/digital-twin'); setIsMobileOpen(false); }} icon={<User size={20} />} label={t('sidebar.digitalTwin')} />
         )}
 
         <div className="pt-4 my-2 border-t border-white/5" />
@@ -95,24 +97,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
             </div>
             <div className="grid grid-cols-2 gap-2 mt-2">
               <button onClick={handleLogout} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-red-500/10">
-                <LogOut size={14} /> Salir
+                <LogOut size={14} /> {t('auth.logout')}
               </button>
               {role === 'admin' && (
                 <button onClick={() => navigate('/admin')} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-cyan-500/10">
-                  <ShieldAlert size={14} /> Admin
+                  <ShieldAlert size={14} /> {t('common.admin')}
                 </button>
               )}
             </div>
           </div>
         ) : (
-          <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileOpen(false); }} icon={<LogIn size={20} />} label="Iniciar Sesión" isAction />
+          <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileOpen(false); }} icon={<LogIn size={20} />} label={t('auth.login')} isAction />
         )}
 
 
       </div>
 
-      <div className="p-6 border-t border-white/5 bg-black/10 backdrop-blur-md">
+      <div className="p-6 border-t border-white/5 bg-black/10 backdrop-blur-md flex items-center justify-between gap-4">
         <ThemeToggle />
+        <button
+          onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-[10px] font-black uppercase tracking-widest text-[#00aed9]"
+        >
+          <Languages size={14} />
+          {i18n.language === 'es' ? 'EN' : 'ES'}
+        </button>
       </div>
     </nav>
   );

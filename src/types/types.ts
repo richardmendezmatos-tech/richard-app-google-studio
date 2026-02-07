@@ -4,10 +4,12 @@ export type CarType = 'suv' | 'sedan' | 'luxury' | 'pickup';
 export type UserRole = 'admin' | 'user';
 
 export interface PrivacySettings {
+  essential: boolean;
   analytics: boolean;
   marketing: boolean;
+  aiData: boolean;
   partnerSharing: boolean;
-  lastUpdated?: string;
+  lastUpdated: number;
 }
 
 export interface User {
@@ -129,6 +131,55 @@ export interface Subscriber {
   email: string;
   timestamp?: FirestoreTimestamp | { seconds: number };
 }
+
+export interface MarketProjection {
+  month: number;
+  estimatedValue: number;
+  depreciationPercent: number;
+}
+
+export interface ActuarialReportData {
+  reportId: string;
+  issueDate: string;
+  lead: Lead;
+  marketProjections: MarketProjection[];
+  riskAnalysis: {
+    score: number;
+    rating: 'A+' | 'A' | 'B' | 'C' | 'D';
+    observations: string;
+  };
+  legalDisclaimers: string[];
+}
+
+export interface HealthAlert {
+  id: string;
+  type: 'critical' | 'warning' | 'info';
+  category: 'engine' | 'battery' | 'fuel' | 'tire' | 'service';
+  message: string;
+  timestamp: number;
+}
+
+export interface VehicleHealthStatus {
+  overallStatus: 'healthy' | 'warning' | 'critical';
+  alerts: HealthAlert[];
+  lastCheck: number;
+}
+
+export interface VehicleTelemetry {
+  vehicleId: string;
+  speed: number;
+  rpm: number;
+  fuelLevel: number;
+  batteryVoltage: number;
+  temp: number;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  lastUpdate: number;
+  status: 'active' | 'idle' | 'warning';
+}
+
 
 declare global {
   interface AIStudio {

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { frameworkService, FrameworkState } from '@/services/frameworkService';
+import { useTranslation } from 'react-i18next';
 import { Cpu, RotateCcw, Activity, Zap, Server, Shield, Terminal, Share2, Layers } from 'lucide-react';
 
 const FrameworkDashboard: React.FC = () => {
     const [state, setState] = useState<FrameworkState>(frameworkService.getCurrentState());
+    const { t } = useTranslation();
     const [logs, setLogs] = useState<string[]>([]);
     const [metrics, setMetrics] = useState({ latency: 0, memory: 0, throughput: 0 });
     const logEndRef = useRef<HTMLDivElement>(null);
@@ -39,27 +41,27 @@ const FrameworkDashboard: React.FC = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-2 h-2 bg-cyan-500 rounded-full animate-ping"></div>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">System Online</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">{t('dashboard.systemOnline')}</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter flex items-center gap-4">
                         <Cpu className="text-cyan-500 hidden md:block" size={48} strokeWidth={1} />
                         Core <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Nexus</span>
                     </h1>
                     <p className="text-slate-500 text-sm mt-2 max-w-xl">
-                        Orquestador de alta frecuencia v10.0. Gestionando estado unificado y telemetría en tiempo real.
+                        {t('dashboard.description')}
                     </p>
                 </div>
 
                 <div className="flex gap-4">
                     <div className="text-right hidden md:block">
-                        <div className="text-[10px] uppercase font-bold text-slate-600 tracking-widest">Uptime</div>
+                        <div className="text-[10px] uppercase font-bold text-slate-600 tracking-widest">{t('dashboard.uptime')}</div>
                         <div className="text-xl font-bold text-emerald-500 font-mono">99.99%</div>
                     </div>
                     <button
                         onClick={() => frameworkService.reset('React')}
                         className="px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg uppercase font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                     >
-                        <RotateCcw size={16} /> Reset Core
+                        <RotateCcw size={16} /> {t('dashboard.resetCore')}
                     </button>
                 </div>
             </div>
@@ -67,7 +69,7 @@ const FrameworkDashboard: React.FC = () => {
             {/* REAL-TIME METRICS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <MetricCard
-                    label="Global Events"
+                    label={t('dashboard.globalEvents')}
                     value={state.globalCount.toLocaleString()}
                     icon={Activity}
                     color="text-cyan-400"
@@ -75,7 +77,7 @@ const FrameworkDashboard: React.FC = () => {
                     detail="+12% vs avg"
                 />
                 <MetricCard
-                    label="Core Latency"
+                    label={t('dashboard.latency')}
                     value={`${metrics.latency}ms`}
                     icon={Zap}
                     color="text-amber-400"
@@ -83,7 +85,7 @@ const FrameworkDashboard: React.FC = () => {
                     detail="Optimal Range"
                 />
                 <MetricCard
-                    label="Heap Usage"
+                    label={t('dashboard.memory')}
                     value={`${metrics.memory}%`}
                     icon={Server}
                     color="text-emerald-400"
@@ -91,7 +93,7 @@ const FrameworkDashboard: React.FC = () => {
                     detail="Stable"
                 />
                 <MetricCard
-                    label="Active Nodes"
+                    label={t('dashboard.activeNodes')}
                     value="1"
                     icon={Share2}
                     color="text-purple-400"
@@ -113,7 +115,7 @@ const FrameworkDashboard: React.FC = () => {
                             <div className="flex justify-between items-start mb-10 relative z-10">
                                 <div>
                                     <h3 className="text-2xl font-bold text-white uppercase flex items-center gap-3">
-                                        <Layers className="text-cyan-500" /> Active Architecture
+                                        <Layers className="text-cyan-500" /> {t('dashboard.architecture')}
                                     </h3>
                                     <p className="text-slate-500 text-xs mt-1 uppercase tracking-widest">Visualizing Module Interconnects</p>
                                 </div>
@@ -137,11 +139,11 @@ const FrameworkDashboard: React.FC = () => {
                     {/* LAST ACTION BANNER */}
                     <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-white/5 flex items-center justify-between">
                         <div>
-                            <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-1">Last System Action</div>
+                            <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-1">{t('dashboard.lastAction')}</div>
                             <div className="text-xl md:text-2xl font-bold text-white font-mono truncate max-w-md">{state.lastAction}</div>
                         </div>
                         <div className="px-4 py-2 bg-slate-800 rounded text-xs font-bold text-slate-400 font-mono uppercase">
-                            Source: {state.source}
+                            {t('dashboard.source')}: {state.source}
                         </div>
                     </div>
                 </div>
@@ -152,7 +154,7 @@ const FrameworkDashboard: React.FC = () => {
                     <div className="flex-1 bg-black rounded-3xl border border-white/10 p-6 font-mono text-xs overflow-hidden flex flex-col shadow-2xl shadow-black">
                         <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/10">
                             <Terminal size={14} className="text-emerald-500" />
-                            <span className="text-emerald-500 font-bold uppercase tracking-widest">System Log</span>
+                            <span className="text-emerald-500 font-bold uppercase tracking-widest">{t('dashboard.systemLog')}</span>
                         </div>
                         <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-2 opacity-80" ref={logEndRef}>
                             {logs.map((log, i) => (
