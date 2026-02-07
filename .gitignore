@@ -56,3 +56,5 @@ viva_env/
 *.tmp
 
 *.dmg
+
+.env.keys
