@@ -21,10 +21,31 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       rollupOptions: {
         output: {
-          // Manual chunks removed to prevent split-brain issues with React symbols
+          manualChunks: {
+            // Core React libraries
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+
+            // Heavy 3D libraries (Digital Twin)
+            'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+
+            // Firebase
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+
+            // AI/ML libraries
+            'vendor-ai': ['@google/generative-ai', '@mediapipe/tasks-vision'],
+
+            // Code Sandbox (AI Lab)
+            'vendor-sandpack': ['@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
+
+            // UI libraries
+            'vendor-ui': ['framer-motion', 'lucide-react', '@dnd-kit/core', '@dnd-kit/sortable'],
+
+            // Redux
+            'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'rxjs']
+          }
         }
       },
-      chunkSizeWarningLimit: 1500,
+      chunkSizeWarningLimit: 1000, // Reduced from 1500
     },
     resolve: {
       alias: {
