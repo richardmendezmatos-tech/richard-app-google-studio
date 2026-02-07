@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useVehicleTelemetry, useVehicleHealth } from '@/services/telemetryService';
 import { TelemetrySimulator } from '@/utils/TelemetrySimulator';
-import { Gauge, Thermometer, Fuel, MapPin, Zap, Activity, Radio, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Gauge, Thermometer, Fuel, MapPin, Zap, Activity, Radio, AlertTriangle, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
@@ -48,8 +48,8 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
     );
 
     return (
-        <div className="p-8 bg-slate-50 dark:bg-slate-900/50 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div className="p-4 md:p-8 bg-slate-50 dark:bg-slate-900/50 rounded-3xl md:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10 gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                         <div className="p-2 bg-blue-500 rounded-xl">
@@ -67,19 +67,19 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
                 <div className="flex gap-3">
                     {!simulator ? (
                         <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={startSimulation}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
+                            className="w-full md:w-auto px-6 py-4 md:py-3 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 min-h-[56px] md:min-h-0"
                         >
                             <Zap size={18} /> INITIALIZE SIMULATOR
                         </motion.button>
                     ) : (
                         <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={stopSimulation}
-                            className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-sm hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 flex items-center gap-2"
+                            className="w-full md:w-auto px-6 py-4 md:py-3 bg-red-600 text-white rounded-2xl font-black text-sm hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2 min-h-[56px] md:min-h-0"
                         >
                             <Zap size={18} className="animate-pulse" /> TERMINATE UPLINK
                         </motion.button>

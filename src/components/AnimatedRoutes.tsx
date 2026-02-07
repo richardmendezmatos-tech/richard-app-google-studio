@@ -27,6 +27,7 @@ const KanbanDemo = React.lazy(() => lazyRetry(() => import('@/components/layout/
 const BetaOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/BetaOnboard')));
 const EarlyAdopterOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/EarlyAdopterOnboard')));
 const B2BBillingDashboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/B2BBillingDashboard')));
+const LeadAnalyticsPage = React.lazy(() => lazyRetry(() => import('@/features/leads/components/LeadAnalyticsPage')));
 import ChaosTest from '@/components/layout/ChaosTest';
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
 import { initialInventoryData } from '@/constants/initialInventory';
@@ -186,6 +187,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                     <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
                     <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
                     <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
                     <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
                 </Routes>
             </Suspense>

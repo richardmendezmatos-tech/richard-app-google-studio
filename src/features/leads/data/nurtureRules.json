@@ -1,0 +1,23 @@
+[
+    {
+        "id": "day_1_actuarial",
+        "delayDays": 1,
+        "condition": "!lead.actuarialGenerated",
+        "agent": "sofia",
+        "template": "Hola {name}, soy Sofia. He preparado un reporte actuarial de valor de mercado para {vehicle}. ¿Te gustaría que te lo envíe por aquí?"
+    },
+    {
+        "id": "day_3_test_drive",
+        "delayDays": 3,
+        "condition": "lead.aiScore > 80",
+        "agent": "jordan",
+        "template": "Qué tal {name}, Jordan por aquí. La unidad {vehicle} ha tenido mucho movimiento hoy. Si reservamos tu prueba de manejo para mañana, te aseguro un bono extra. ¿A qué hora pasas?"
+    },
+    {
+        "id": "day_7_check_in",
+        "delayDays": 7,
+        "condition": "true",
+        "agent": "ricardo",
+        "template": "Hola {name}, Richard me pidió que pasara a saludarte. Seguimos con el ojo puesto en esa {vehicle}. ¿Hay alguna duda con el financiamiento que no hayamos aclarado?"
+    }
+]

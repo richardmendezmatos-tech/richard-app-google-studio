@@ -72,26 +72,71 @@ export default defineConfig(({ mode }) => {
         },
       }),
       viteCompression({ algorithm: 'gzip', ext: '.gz' }),
-      ViteImageOptimizer({
+      /* ViteImageOptimizer({
         png: { quality: 80 },
         jpeg: { quality: 80 },
         jpg: { quality: 80 },
         webp: { lossless: true },
-        exclude: ['hero.jpg'], // Corrupted file causing build errors
-      }),
+        exclude: ['hero.jpg', 'hero.avif'], // Corrupted file causing build errors
+      }), */
       visualizer({ filename: 'stats.html' }),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'app-icon.png'],
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'unsplash-images',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'firebase-storage',
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                }
+              }
+            },
+            {
+              urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/api/'),
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                networkTimeoutSeconds: 5,
+                expiration: {
+                  maxEntries: 20
+                },
+                backgroundSync: {
+                  name: 'api-sync',
+                  options: {
+                    maxRetentionTime: 60 * 24 // 24 hours
+                  }
+                }
+              }
+            }
+          ]
         },
         manifest: {
           name: 'Richard Automotive',
           short_name: 'RichardAuto',
+          display: 'standalone',
           theme_color: '#00aed9',
           background_color: '#0f172a',
-          display: 'standalone',
+          description: 'Premium Automotive Sales & Predictive Service OS',
           icons: [
             {
               src: 'app-icon.png',

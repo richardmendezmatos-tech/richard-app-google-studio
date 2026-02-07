@@ -35,6 +35,10 @@ import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { DealerProvider } from '@/contexts/DealerContext';
 import './i18n'; // i18n setup
+import { nativeBridgeService } from '@/services/nativeBridgeService';
+
+// Initialize Native Bridge (Capacitor)
+nativeBridgeService.initialize();
 
 // Initialize Capacitor PWA Elements (Camera, etc.)
 defineCustomElements(window);

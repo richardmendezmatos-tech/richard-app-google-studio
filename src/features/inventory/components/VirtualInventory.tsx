@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { Car } from '@/types/types';
+import { Car, Lead } from '@/types/types';
 import PremiumGlassCard from './storefront/PremiumGlassCard';
 
 interface VirtualInventoryProps {
@@ -9,6 +9,7 @@ interface VirtualInventoryProps {
     isComparing: (carId: string) => boolean;
     isSaved: (carId: string) => boolean;
     onToggleSave: (e: React.MouseEvent, carId: string) => void;
+    customerMemory?: Lead['customerMemory'];
 }
 
 const VirtualInventory: React.FC<VirtualInventoryProps> = ({
@@ -17,9 +18,11 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     onCompare,
     isComparing,
     isSaved,
-    onToggleSave
+    onToggleSave,
+    customerMemory
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement>(null);
     const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 });
 
     // Grid configuration
@@ -61,26 +64,59 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
         return cars.slice(visibleRange.start, visibleRange.end);
     }, [cars, visibleRange]);
 
+    /**
+     * Recommendation Engine (Phase 17)
+     * Checks if a car matches the customer's persisted preferences.
+     */
+    const checkRecommendation = (car: Car): boolean => {
+        if (!customerMemory?.preferences) return false;
+
+        const { models, colors, features } = customerMemory.preferences;
+
+        // 1. Model Match
+        if (models?.some(m => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
+
+        // 2. Color Match
+        // Assuming car object might have a color property in the future or via tags
+        // For now, check if name or description could imply it
+        if (colors?.some(c => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
+
+        // 3. Feature Match
+        if (features?.some(f => car.name.toLowerCase().includes(f.toLowerCase()))) return true;
+
+        // 4. Lifestyle Match
+        const lifestyle = customerMemory.lifestyle?.toLowerCase() || '';
+        if (lifestyle.includes('off-road') && car.name.toLowerCase().includes('4x4')) return true;
+        if (lifestyle.includes('family') && (car.type === 'suv' || car.name.toLowerCase().includes('tucson'))) return true;
+
+        return false;
+    };
+
     const translateY = Math.floor(visibleRange.start / columns) * itemHeight;
+
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.style.height = totalHeight > 0 ? `${totalHeight}px` : 'auto';
+        }
+        if (gridRef.current) {
+            gridRef.current.style.transform = `translateY(${translateY}px)`;
+        }
+    }, [totalHeight, translateY]);
 
     return (
         <div
             ref={containerRef}
             className="relative"
-            style={{ height: totalHeight > 0 ? totalHeight : 'auto' }}
         >
             <div
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
-                style={{
-                    transform: `translateY(${translateY}px)`,
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0
-                }}
+                ref={gridRef}
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0"
             >
                 {visibleCars.map((car) => (
-                    <div key={car.id} style={{ height: itemHeight }}>
+                    <div
+                        key={car.id}
+                        className="h-[450px]"
+                    >
                         <PremiumGlassCard
                             car={car}
                             onSelect={() => onSelectCar(car)}
@@ -88,6 +124,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
                             isComparing={isComparing(car.id)}
                             isSaved={isSaved(car.id)}
                             onToggleSave={(e) => onToggleSave(e, car.id)}
+                            isRecommended={checkRecommendation(car)}
                         />
                     </div>
                 ))}

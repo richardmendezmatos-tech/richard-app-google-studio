@@ -1,26 +1,8 @@
 import { db } from '@/services/firebaseService';
-import { collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, getDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { Lead } from '@/types/types';
 
-export interface Lead {
-    id: string;
-    type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai' | 'chat';
-    status: 'new' | 'contacted' | 'negotiation' | 'sold' | 'lost';
-    name: string;
-    phone?: string;
-    email?: string;
-    carId?: string; // Context: Car ID they were looking at
-    notes?: string;
-    ssn?: string; // Masked version by default
-    createdAt?: Timestamp; // Firestore Timestamp
-    aiAnalysis?: {
-        score: number;
-        category: string;
-        insights: string[];
-        nextAction: string;
-        reasoning: string;
-        unidad_interes: string;
-    };
-}
+export type { Lead };
 
 const LEADS_COLLECTION = 'applications';
 
@@ -42,16 +24,23 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>) =
 };
 
 /**
+ * Updates any field of a lead
+ */
+export const updateLead = async (leadId: string, updates: Partial<Lead>) => {
+    try {
+        const leadRef = doc(db, LEADS_COLLECTION, leadId);
+        await updateDoc(leadRef, updates as { [x: string]: unknown });
+    } catch (error) {
+        console.error("Error updating lead:", error);
+        throw error;
+    }
+};
+
+/**
  * Updates the status of a lead (e.g. dragging card in Kanban)
  */
 export const updateLeadStatus = async (leadId: string, newStatus: Lead['status']) => {
-    try {
-        const leadRef = doc(db, LEADS_COLLECTION, leadId);
-        await updateDoc(leadRef, { status: newStatus });
-    } catch (error) {
-        console.error("Error updating lead status:", error);
-        throw error;
-    }
+    await updateLead(leadId, { status: newStatus });
 };
 
 /**
