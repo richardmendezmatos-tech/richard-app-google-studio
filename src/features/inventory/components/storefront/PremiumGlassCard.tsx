@@ -13,9 +13,10 @@ interface PremiumGlassCardProps {
     isComparing: boolean;
     isSaved: boolean;
     onToggleSave: (e: React.MouseEvent) => void;
+    isRecommended?: boolean;
 }
 
-const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onToggleSave }) => {
+const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onToggleSave, isRecommended }) => {
     const navigate = useNavigate();
     const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
     const cardRef = useRef<HTMLButtonElement>(null);
@@ -58,6 +59,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
 
                 {/* Badges */}
                 <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 items-start">
+                    {isRecommended && (
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(251,191,36,0.4)] border border-white/20 animate-pulse">
+                            Recomendado para ti
+                        </span>
+                    )}
                     {car.badge && (
                         <span className="px-3 py-1.5 bg-[#00aed9]/80 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg border border-white/10">
                             {car.badge}

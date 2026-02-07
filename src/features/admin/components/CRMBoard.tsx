@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, TouchSensor, useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '@/features/leads/services/crmService';
@@ -7,6 +8,8 @@ import { generateActuarialReport } from '@/utils/pdfGenerator';
 import { generateMockActuarialData } from '@/utils/actuarialUtils';
 import { useLeadScoring } from '@/features/leads/hooks/useLeadScoring';
 import { useVehicleHealth } from '@/services/telemetryService';
+import { whatsappService } from '@/services/whatsappService';
+import { orchestrationService } from '@/services/orchestrationService';
 
 const COLUMNS = [
     { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
@@ -55,9 +58,9 @@ const CRMBoard: React.FC = () => {
     };
 
     return (
-        <div className="h-full overflow-x-auto p-6 bg-slate-50 dark:bg-slate-900">
-            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                <MessageCircle className="text-[#00aed9]" /> CRM de Ventas
+        <div className="h-full overflow-x-auto p-4 md:p-6 bg-slate-50 dark:bg-slate-900 scrollbar-hide">
+            <h2 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white mb-4 md:mb-6 flex items-center gap-2">
+                <MessageCircle className="text-[#00aed9]" /> Leads & CRM
             </h2>
 
             <DndContext
@@ -65,7 +68,7 @@ const CRMBoard: React.FC = () => {
                 onDragStart={(event) => setActiveId(event.active.id as string)}
                 onDragEnd={handleDragEnd}
             >
-                <div className="flex gap-6 min-w-max h-[calc(100vh-200px)]">
+                <div className="flex gap-4 md:gap-6 min-w-max md:min-w-0 h-[calc(100vh-180px)] snap-x snap-mandatory">
                     {COLUMNS.map(column => (
                         <Column
                             key={column.id}
@@ -99,9 +102,9 @@ const Column = ({ column, leads }: { column: typeof COLUMNS[0], leads: Lead[] })
     const { setNodeRef } = useDroppable({ id: column.id }); // Helper hook we might need to define or import
 
     return (
-        <div ref={setNodeRef} className="w-80 flex flex-col bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
+        <div ref={setNodeRef} className="w-[85vw] md:w-80 flex flex-col bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 snap-center">
             <div className={`flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 ${column.color.replace('bg-', 'text-')}`}>
-                <h3 className="font-bold uppercase tracking-wider text-sm">{column.title}</h3>
+                <h3 className="font-bold uppercase tracking-wider text-xs md:text-sm">{column.title}</h3>
                 <span className="bg-white dark:bg-slate-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
                     {leads.length}
                 </span>
@@ -119,17 +122,27 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: lead.id,
     });
+    const elementRef = useRef<HTMLDivElement | null>(null);
 
-    const style = {
-        transform: CSS.Translate.toString(transform),
+    // Merge refs
+    const setRef = (node: HTMLDivElement | null) => {
+        setNodeRef(node);
+        elementRef.current = node;
     };
+
+    useLayoutEffect(() => {
+        if (elementRef.current) {
+            const transformVal = transform ? CSS.Translate.toString(transform) : 'none';
+            elementRef.current.style.setProperty('--dnd-transform', transformVal);
+            elementRef.current.style.transform = 'var(--dnd-transform)';
+        }
+    }, [transform]);
 
     if (isDragging) {
         return (
             <div
-                ref={setNodeRef}
+                ref={setRef}
                 className="lead-dragging"
-                style={style}
             >
                 <LeadCard lead={lead} />
             </div>
@@ -138,11 +151,10 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
 
     return (
         <div
-            ref={setNodeRef}
+            ref={setRef}
             {...listeners}
             {...attributes}
             className="lead-static"
-            style={style}
         >
             <LeadCard lead={lead} />
         </div>
@@ -152,10 +164,42 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
 const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
     const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
     const [isRevealing, setIsRevealing] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+    const navigate = useNavigate();
 
     // CRM Insights: Health + Scoring Integration
     const { health } = useVehicleHealth(lead.carId || '');
-    const scoring = useLeadScoring(lead as any, health);
+    const scoring = useLeadScoring(lead, health);
+
+    const handleWhatsAppSend = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!lead.phone) {
+            alert("Este lead no tiene número de teléfono registrado.");
+            return;
+        }
+
+        setIsSending(true);
+        try {
+            // 1. Get Orchestrated Message
+            const orchestration = await orchestrationService.orchestrateLeadFollowUp(lead, health);
+
+            // 2. Send via WhatsApp Service
+            const success = await whatsappService.sendMessage(lead.phone, orchestration.message);
+
+            if (success) {
+                console.log("[CRM] Message sent successfully");
+                // Option: Update lead notes via updateLeadStatus or a specialized log
+            } else {
+                // Fallback to manual link if API fails
+                const link = whatsappService.getFallbackLink(lead.phone, orchestration.message);
+                window.open(link, '_blank');
+            }
+        } catch (error) {
+            console.error("[CRM] Failed to send orchestrated message:", error);
+        } finally {
+            setIsSending(false);
+        }
+    };
 
     const handleReveal = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -258,25 +302,44 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
                 </div>
             )}
 
-            <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+            <div className="flex gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
                 {lead.phone && (
-                    <a href={`tel:${lead.phone}`} aria-label={`Llamar a ${lead.phone}`} onPointerDown={e => e.stopPropagation()} className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100">
-                        <Phone size={14} />
+                    <a href={`tel:${lead.phone}`} aria-label={`Llamar a ${lead.phone}`} onPointerDown={e => e.stopPropagation()} className="p-3 md:p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 flex-1 flex justify-center">
+                        <Phone size={18} className="md:size-4" />
                     </a>
                 )}
-                <a href="#" aria-label="Contactar por WhatsApp" onPointerDown={e => e.stopPropagation()} className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 ml-auto">
-                    <MessageCircle size={14} /> WhatsApp
-                </a>
+                <button
+                    onClick={handleWhatsAppSend}
+                    disabled={isSending}
+                    onPointerDown={e => e.stopPropagation()}
+                    className="p-3 md:p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 flex-[2] flex justify-center items-center gap-2 text-xs font-bold disabled:opacity-50"
+                >
+                    {isSending ? <Loader2 size={18} className="animate-spin" /> : <MessageCircle size={18} className="md:size-4" />}
+                    <span className="hidden md:inline">{isSending ? 'Enviando...' : 'WhatsApp'}</span>
+                </button>
                 <button
                     onPointerDown={e => e.stopPropagation()}
                     onClick={() => {
-                        const data = generateMockActuarialData(lead);
+                        // Ensure timestamp exists for actuarial generator
+                        const compatLead: Lead = {
+                            ...lead,
+                            timestamp: lead.timestamp || lead.createdAt || { seconds: Date.now() / 1000, nanoseconds: 0 }
+                        };
+                        const data = generateMockActuarialData(compatLead);
                         generateActuarialReport(data);
                     }}
-                    className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
+                    className="p-3 md:p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 flex-1 flex justify-center"
                     title="Generar Reporte Actuarial"
                 >
-                    <FileText size={14} />
+                    <FileText size={18} className="md:size-4" />
+                </button>
+                <button
+                    onPointerDown={e => e.stopPropagation()}
+                    onClick={() => navigate(`/admin/analytics/${lead.id}`)}
+                    className="p-3 md:p-2 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100 flex-1 flex justify-center"
+                    title="Ver Análisis de Ciclo de Vida"
+                >
+                    <TrendingUp size={18} className="md:size-4" />
                 </button>
             </div>
         </div>

@@ -1,7 +1,8 @@
 import { rtdb } from './firebaseService';
 import { ref, onValue, set, off, DataSnapshot } from 'firebase/database';
 import { VehicleTelemetry, VehicleHealthStatus, HealthAlert } from '@/types/types';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { nativeBridgeService } from './nativeBridgeService';
 
 const TELEMETRY_PATH = 'telemetry';
 
@@ -132,11 +133,25 @@ export const analyzeVehicleHealth = (telemetry: VehicleTelemetry): VehicleHealth
 
 export const useVehicleHealth = (vehicleId: string) => {
     const { telemetry, loading, error } = useVehicleTelemetry(vehicleId);
+    const lastAlertId = useRef<string | null>(null);
 
     const health = useMemo(() => {
         if (!telemetry) return null;
         return analyzeVehicleHealth(telemetry);
     }, [telemetry]);
+
+    useEffect(() => {
+        if (health) {
+            const criticalAlert = health.alerts.find(a => a.type === 'critical');
+            if (criticalAlert && criticalAlert.id !== lastAlertId.current) {
+                lastAlertId.current = criticalAlert.id;
+                nativeBridgeService.sendLocalNotification(
+                    'ALERTA CRÍTICA: ' + criticalAlert.category.toUpperCase(),
+                    criticalAlert.message
+                );
+            }
+        }
+    }, [health]);
 
     return { health, loading, error };
 };

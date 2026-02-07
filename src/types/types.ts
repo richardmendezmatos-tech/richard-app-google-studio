@@ -101,13 +101,18 @@ export interface FirestoreTimestamp {
 
 export interface Lead {
   id: string;
-  type: 'finance' | 'trade-in' | 'chat' | 'general';
-  status: 'new' | 'contacted' | 'negotiating' | 'sold' | 'lost';
+  type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai' | 'chat' | 'finance' | 'general';
+  status: 'new' | 'contacted' | 'negotiation' | 'sold' | 'lost' | 'negotiating';
+  name?: string; // Legacy 'name' instead of firstName/lastName
   firstName?: string;
   lastName?: string;
   email?: string;
   phone?: string;
-  timestamp: FirestoreTimestamp;
+  ssn?: string;
+  carId?: string;
+  notes?: string;
+  createdAt?: FirestoreTimestamp;
+  timestamp?: FirestoreTimestamp; // Support both for backward compatibility
 
   // Context
   vehicleOfInterest?: string; // Car Name
@@ -119,11 +124,33 @@ export interface Lead {
   // AI Metrics
   aiScore?: number; // 0-100
   aiSummary?: string; // "High intent, good credit"
+  aiAnalysis?: {
+    score: number;
+    category: string;
+    insights: string[];
+    nextAction: string;
+    reasoning: string;
+    unidad_interes: string;
+  };
 
   // Automation Status
   emailSent?: boolean;
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
+
+  // AI Orchestration 2.0: Customer Memory
+  customerMemory?: {
+    preferences?: {
+      models?: string[];
+      colors?: string[];
+      features?: string[];
+      budgetRange?: string;
+    };
+    objections?: string[];
+    lifestyle?: string; // e.g., "Family with 3 kids", "Off-road enthusiast"
+    lastInteractionSummary?: string;
+    historicalContext?: string[];
+  };
 }
 
 export interface Subscriber {
