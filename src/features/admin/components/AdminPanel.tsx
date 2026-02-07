@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useDealer } from '@/contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
 import { Car as CarType, Lead, Subscriber } from '@/types/types';
-import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, LayoutGrid, List, Edit3, Trash2, DollarSign, Clock, TrendingUp } from 'lucide-react';
+import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, LayoutGrid, List, Edit3, Trash2, DollarSign, Clock, TrendingUp, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLeadsOnce, optimizeImage, auth, getSubscribers } from '@/services/firebaseService';
 // import { useSelector } from 'react-redux';
@@ -28,6 +28,7 @@ import ViralGeneratorModal from '@/features/marketing/components/ViralGeneratorM
 
 // Lazy Load Lab to keep Admin bundle light
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
+const VehicleMonitor = React.lazy(() => import('./VehicleMonitor'));
 
 interface Props {
   inventory: CarType[];
@@ -89,7 +90,7 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
   const { currentDealer } = useDealer();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry'>('dashboard');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -265,13 +266,13 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             { id: 'copilot', label: 'Copilot', icon: Zap },
             { id: 'marketing', label: 'Marketing', icon: Sparkles },
             { id: 'security', label: 'Seguridad', icon: ShieldAlert },
-            { id: 'security', label: 'Seguridad', icon: ShieldAlert },
             { id: 'billing', label: 'Facturación', icon: CreditCard },
-            { id: 'lab', label: 'Laboratorio', icon: FlaskConical }
+            { id: 'lab', label: 'Laboratorio', icon: FlaskConical },
+            { id: 'telemetry', label: 'Telemetría', icon: Radio }
           ].map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as 'dashboard' | 'inventory' | 'pipeline' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab')}
+              onClick={() => setActiveTab(tab.id as 'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry')}
               className={`flex-1 md:flex-none px-6 h-[44px] rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-3 transition-all whitespace-nowrap ${activeTab === tab.id
                 ? 'bg-[#00aed9] text-white shadow-lg shadow-[#00aed9]/30'
                 : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
@@ -423,6 +424,12 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             <div className="min-h-[600px]">
               <SalesCopilot />
             </div>
+          )}
+
+          {activeTab === 'telemetry' && (
+            <React.Suspense fallback={<div className="p-20 text-center animate-pulse text-slate-500 font-bold uppercase tracking-widest">Iniciando Puente IoT...</div>}>
+              <VehicleMonitor vehicleId="UNIT-001" />
+            </React.Suspense>
           )}
 
           {activeTab === 'security' && (

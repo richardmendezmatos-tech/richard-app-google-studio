@@ -23,8 +23,7 @@ import TrustBar from './storefront/TrustBar';
 import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from '../../../components/layout/FAQSection';
 import SocialFooter from './storefront/SocialFooter';
-import PremiumGlassCard from './storefront/PremiumGlassCard'; // Premium UI Upgrade
-import { StaggerContainer } from '@/components/common/StaggerContainer';
+import VirtualInventory from './VirtualInventory';
 
 
 
@@ -368,25 +367,17 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 </div>
                             ) : (
                                 <>
-                                    <StaggerContainer
-                                        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
-                                        key={`${filter}-${searchTerm}-${sortOrder}`} // Force re-animation on filter changes
-                                    >
-                                        {displayCars.map((car) => (
-                                            <PremiumGlassCard
-                                                key={car.id}
-                                                car={car}
-                                                onSelect={() => {
-                                                    setSelectedCar(car);
-                                                    analytics.trackCarView(car.id);
-                                                }}
-                                                onCompare={(e) => handleToggleCompare(e, car)}
-                                                isComparing={compareList.some((c: Car) => c.id === car.id)}
-                                                isSaved={savedCars.isSaved(car.id)}
-                                                onToggleSave={(e) => handleToggleSave(e, car.id)}
-                                            />
-                                        ))}
-                                    </StaggerContainer>
+                                    <VirtualInventory
+                                        cars={displayCars as Car[]}
+                                        onSelectCar={(car) => {
+                                            setSelectedCar(car);
+                                            analytics.trackCarView(car.id);
+                                        }}
+                                        onCompare={handleToggleCompare}
+                                        isComparing={(id) => compareList.some((c: Car) => c.id === id)}
+                                        isSaved={(id) => savedCars.isSaved(id)}
+                                        onToggleSave={handleToggleSave}
+                                    />
 
                                     {/* Load More Button */}
                                     {!isSearching && hasNextPage && (

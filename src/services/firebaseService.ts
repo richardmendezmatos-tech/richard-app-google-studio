@@ -26,6 +26,7 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
 import { getPerformance } from "firebase/performance";
+import { getDatabase } from "firebase/database";
 import { firebaseConfig } from "@/services/firebaseConfig";
 
 // Helper for environment checks
@@ -39,6 +40,7 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app, {});
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
+export const rtdb = getDatabase(app);
 
 // Initialize optional services
 let analyticsInstance = null;

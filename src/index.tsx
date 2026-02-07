@@ -34,6 +34,7 @@ import './index.css'; // Premium UI Styles
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { DealerProvider } from '@/contexts/DealerContext';
+import './i18n'; // i18n setup
 
 // Initialize Capacitor PWA Elements (Camera, etc.)
 defineCustomElements(window);

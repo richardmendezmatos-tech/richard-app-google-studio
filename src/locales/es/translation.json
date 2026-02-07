@@ -1,0 +1,52 @@
+{
+    "common": {
+        "welcome": "Bienvenido a Richard Automotive",
+        "dashboard": "Panel de Control",
+        "inventory": "Inventario",
+        "admin": "Administración",
+        "aiLab": "Laboratorio IA",
+        "search": "Buscar...",
+        "loading": "Cargando...",
+        "error": "Error",
+        "success": "Éxito",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "actions": "Acciones"
+    },
+    "auth": {
+        "login": "Iniciar Sesión",
+        "logout": "Cerrar Sesión",
+        "email": "Correo Electrónico",
+        "password": "Contraseña"
+    },
+    "dashboard": {
+        "title": "Centro de Operaciones Inteligentes",
+        "description": "Monitoreo en tiempo real de tu flota y clientes.",
+        "activeLeads": "Prospectos Activos",
+        "totalInventory": "Inventario Total",
+        "conversionsToday": "Conversiones Hoy",
+        "systemOnline": "Sistema en Línea",
+        "uptime": "Tiempo de Actividad",
+        "resetCore": "Reiniciar Núcleo",
+        "globalEvents": "Eventos Globales",
+        "latency": "Latencia del Núcleo",
+        "memory": "Uso de Memoria",
+        "activeNodes": "Nodos Activos",
+        "architecture": "Arquitectura Activa",
+        "lastAction": "Última Acción del Sistema",
+        "source": "Fuente",
+        "systemLog": "Registro del Sistema"
+    },
+    "sidebar": {
+        "storefront": "Tienda Digital",
+        "garage": "Mi Garaje",
+        "qualify": "Pre-Cualificación",
+        "tradeIn": "Vender mi Auto",
+        "consultant": "Consultor IA",
+        "blog": "AI Newsroom",
+        "frameworkLab": "Framework Lab",
+        "digitalTwin": "Gemelo Digital"
+    }
+}

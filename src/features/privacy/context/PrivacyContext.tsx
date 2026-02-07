@@ -14,9 +14,12 @@ interface PrivacyContextType {
 }
 
 const DEFAULT_SETTINGS: PrivacySettings = {
+    essential: true,
     analytics: false,
     marketing: false,
+    aiData: false,
     partnerSharing: false,
+    lastUpdated: Date.now()
 };
 
 export const PrivacyContext = createContext<PrivacyContextType | undefined>(undefined);
@@ -51,10 +54,12 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
                     const userDoc = await getDoc(doc(db, 'users', user.uid));
                     if (userDoc.exists() && userDoc.data().privacySettings) {
                         const dbSettings = userDoc.data().privacySettings as PrivacySettings;
-                        setSettings(dbSettings);
+                        // Ensure essential is always true
+                        const syncedSettings = { ...dbSettings, essential: true };
+                        setSettings(syncedSettings);
                         setHasConsented(true);
                         localStorage.setItem('privacy_consented', 'true');
-                        localStorage.setItem('privacy_settings', JSON.stringify(dbSettings));
+                        localStorage.setItem('privacy_settings', JSON.stringify(syncedSettings));
                     }
                 } catch (error) {
                     console.error("Error fetching privacy settings from Firestore:", error);
@@ -67,7 +72,7 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
     }, [user]);
 
     const updateSettings = async (newSettings: Partial<PrivacySettings>) => {
-        const updated = { ...settings, ...newSettings, lastUpdated: new Date().toISOString() };
+        const updated = { ...settings, ...newSettings, lastUpdated: Date.now() };
         setSettings(updated);
         setHasConsented(true);
 
@@ -89,6 +94,7 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
         await updateSettings({
             analytics: true,
             marketing: true,
+            aiData: true,
             partnerSharing: true,
         });
     };

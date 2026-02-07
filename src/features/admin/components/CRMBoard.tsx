@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, TouchSensor, useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '@/features/leads/services/crmService';
-import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2, Zap } from 'lucide-react';
+import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2, FileText, AlertTriangle, TrendingUp } from 'lucide-react';
+import { generateActuarialReport } from '@/utils/pdfGenerator';
+import { generateMockActuarialData } from '@/utils/actuarialUtils';
+import { useLeadScoring } from '@/features/leads/hooks/useLeadScoring';
+import { useVehicleHealth } from '@/services/telemetryService';
 
 const COLUMNS = [
     { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
@@ -149,6 +153,10 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
     const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
     const [isRevealing, setIsRevealing] = useState(false);
 
+    // CRM Insights: Health + Scoring Integration
+    const { health } = useVehicleHealth(lead.carId || '');
+    const scoring = useLeadScoring(lead as any, health);
+
     const handleReveal = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (revealedSSN) {
@@ -192,25 +200,33 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
 
             <h4 className="font-bold text-slate-700 dark:text-slate-200 leading-tight mb-1">{lead.name}</h4>
 
-            {lead.aiAnalysis && (
+            {(lead.aiAnalysis || scoring.score > 0) && (
                 <div className="mb-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                            <Zap size={12} className={lead.aiAnalysis.score > 70 ? "text-amber-500" : "text-slate-400"} />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">AI Score</span>
+                            <TrendingUp size={12} className={scoring.score > 70 ? "text-[#00aed9]" : "text-slate-400"} />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Dynamic Score</span>
                         </div>
-                        <span className={`text-xs font-black ${lead.aiAnalysis.score > 80 ? 'text-green-500' :
-                            lead.aiAnalysis.score > 50 ? 'text-amber-500' :
+                        <span className={`text-xs font-black ${scoring.priority === 'urgent' ? 'text-red-500' :
+                            scoring.priority === 'high' ? 'text-amber-500' :
                                 'text-slate-400'
                             }`}>
-                            {lead.aiAnalysis.score}/100
+                            {scoring.score}/100
                         </span>
                     </div>
-                    <div className={`px-2 py-1 rounded-md text-[10px] font-bold text-center uppercase border ${lead.aiAnalysis.category === 'HOT' ? 'bg-red-500/10 border-red-500/50 text-red-500' :
-                        lead.aiAnalysis.category === 'WARM' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' :
-                            'bg-slate-500/10 border-slate-500/50 text-slate-500'
-                        }`}>
-                        {lead.aiAnalysis.category}
+
+                    <div className="flex gap-1 flex-wrap">
+                        <div className={`flex-1 px-2 py-1 rounded-md text-[10px] font-bold text-center uppercase border ${scoring.priority === 'urgent' ? 'bg-red-500/10 border-red-500/50 text-red-500 animate-pulse' :
+                            scoring.priority === 'high' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' :
+                                'bg-slate-500/10 border-slate-500/50 text-slate-500'
+                            }`}>
+                            {scoring.priority}
+                        </div>
+                        {health?.overallStatus === 'critical' && (
+                            <div className="px-2 py-1 rounded-md text-[10px] font-bold bg-red-600 text-white flex items-center gap-1 uppercase">
+                                <AlertTriangle size={10} /> MECÁNICA
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -248,11 +264,20 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
                         <Phone size={14} />
                     </a>
                 )}
-                {lead.type === 'whatsapp' && (
-                    <a href="#" aria-label="Contactar por WhatsApp" onPointerDown={e => e.stopPropagation()} className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 ml-auto">
-                        <MessageCircle size={14} /> WhatsApp
-                    </a>
-                )}
+                <a href="#" aria-label="Contactar por WhatsApp" onPointerDown={e => e.stopPropagation()} className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 ml-auto">
+                    <MessageCircle size={14} /> WhatsApp
+                </a>
+                <button
+                    onPointerDown={e => e.stopPropagation()}
+                    onClick={() => {
+                        const data = generateMockActuarialData(lead);
+                        generateActuarialReport(data);
+                    }}
+                    className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
+                    title="Generar Reporte Actuarial"
+                >
+                    <FileText size={14} />
+                </button>
             </div>
         </div>
     );
