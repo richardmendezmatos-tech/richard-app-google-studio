@@ -33,8 +33,15 @@ const CarCard: React.FC<CarCardProps> = ({ car, isSaved, onToggleSave }) => {
     const estimatedMonthly = Math.round(car.price / 72); // Rough 72 month calculation
 
     return (
-        <button
+        <div
             onClick={() => navigate(`/vehicle/${car.id}`)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    navigate(`/vehicle/${car.id}`);
+                }
+            }}
+            role="button"
+            tabIndex={0}
             className="group bg-white dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-[#00aed9]/30 dark:hover:border-[#00aed9]/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
         >
             <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
@@ -109,7 +116,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, isSaved, onToggleSave }) => {
                     </div>
                 </div>
             </div>
-        </button>
+        </div>
     );
 };
 
