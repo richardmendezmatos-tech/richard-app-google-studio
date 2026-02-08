@@ -209,22 +209,22 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                     <input
                                         type="text"
                                         placeholder={visualContext ? `Buscando similares a: ${searchTerm}...` : "Buscar modelo, año o características..."}
-                                        className="w-full pl-16 pr-20 py-4 bg-transparent outline-none text-lg font-semibold dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                                        className="w-full pl-16 pr-32 py-4 bg-transparent outline-none text-lg font-semibold dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600"
                                         value={searchTerm}
                                         onChange={(e) => { setSearchTerm(e.target.value); setVisualContext(null); setSemanticResultIds([]); }}
                                     />
 
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2 z-10">
                                         <button
                                             onClick={() => setIsNeuralMatchOpen(true)}
-                                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-[#00aed9] hover:text-white text-slate-500 rounded-full transition-all text-xs font-bold uppercase tracking-wide border border-transparent hover:border-cyan-400"
+                                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-[#00aed9] hover:text-white text-slate-500 rounded-full transition-all text-xs font-bold uppercase tracking-wide border border-transparent hover:border-cyan-400 btn-glow"
                                             title="Encuentra tu auto ideal por estilo de vida"
                                         >
                                             <BrainCircuit size={16} /> Neural Match
                                         </button>
                                         <button
                                             onClick={() => setIsVisualSearchOpen(true)}
-                                            className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-[#00aed9] hover:text-white text-slate-500 rounded-full transition-all"
+                                            className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-[#00aed9] hover:text-white text-slate-500 rounded-full transition-all btn-glow"
                                             title="Búsqueda Visual por IA"
                                         >
                                             <Camera size={20} />

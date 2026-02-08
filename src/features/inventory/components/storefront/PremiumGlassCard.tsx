@@ -45,11 +45,18 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
     const estimatedMonthly = Math.round(car.price / 72);
 
     return (
-        <button
+        <div
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onClick={() => navigate(`/vehicle/${car.id}`)}
-            className="glass-premium group relative overflow-hidden text-left flex flex-col h-full active:scale-[0.98] transition-all duration-300"
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    navigate(`/vehicle/${car.id}`);
+                }
+            }}
+            role="button"
+            tabIndex={0}
+            className="glass-premium group relative overflow-hidden text-left flex flex-col h-full active:scale-[0.98] transition-all duration-300 cursor-pointer"
         >
             {/* Image Section */}
             <div className="relative aspect-[4/3] overflow-hidden p-8 flex items-center justify-center rounded-t-[24px]">
@@ -129,7 +136,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
                     </div>
                 </div>
             </div>
-        </button>
+        </div>
     );
 };
 

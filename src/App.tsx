@@ -8,7 +8,7 @@ import { AppProviders } from '@/components/providers/AppProviders';
 import { useAppController } from '@/hooks/useAppController';
 import PrivacyBanner from '@/features/privacy/components/PrivacyBanner';
 
-const AppContent: React.FC = () => {
+const RichardAutomotiveApp: React.FC = () => {
   const {
     inventory,
     pendingVisualSearch,
@@ -32,6 +32,8 @@ const AppContent: React.FC = () => {
           handleDelete={handleDelete}
         />
 
+        {/* Global Overlays */}
+        <ComparisonBar />
         <PrivacyBanner />
       </CinemaLayout>
     </BrandErrorBoundary>
@@ -41,8 +43,7 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AppProviders>
-      <AppContent />
-      <ComparisonBar />
+      <RichardAutomotiveApp />
     </AppProviders>
   );
 };

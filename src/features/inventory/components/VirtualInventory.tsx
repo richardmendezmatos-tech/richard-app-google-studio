@@ -1,16 +1,28 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { Car, Lead } from '@/types/types';
-import PremiumGlassCard from './storefront/PremiumGlassCard';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface VirtualInventoryProps {
-    cars: Car[];
-    onSelectCar: (car: Car) => void;
-    onCompare: (e: React.MouseEvent, car: Car) => void;
-    isComparing: (carId: string) => boolean;
-    isSaved: (carId: string) => boolean;
-    onToggleSave: (e: React.MouseEvent, carId: string) => void;
-    customerMemory?: Lead['customerMemory'];
-}
+// Animation Variants
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: "spring",
+            stiffness: 50,
+            damping: 15
+        }
+    }
+};
 
 const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     cars,
@@ -77,8 +89,6 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
         if (models?.some(m => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
 
         // 2. Color Match
-        // Assuming car object might have a color property in the future or via tags
-        // For now, check if name or description could imply it
         if (colors?.some(c => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
 
         // 3. Feature Match
@@ -108,27 +118,34 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
             ref={containerRef}
             className="relative"
         >
-            <div
+            <motion.div
                 ref={gridRef}
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
             >
-                {visibleCars.map((car) => (
-                    <div
-                        key={car.id}
-                        className="h-[450px]"
-                    >
-                        <PremiumGlassCard
-                            car={car}
-                            onSelect={() => onSelectCar(car)}
-                            onCompare={(e) => onCompare(e, car)}
-                            isComparing={isComparing(car.id)}
-                            isSaved={isSaved(car.id)}
-                            onToggleSave={(e) => onToggleSave(e, car.id)}
-                            isRecommended={checkRecommendation(car)}
-                        />
-                    </div>
-                ))}
-            </div>
+                <AnimatePresence mode="popLayout">
+                    {visibleCars.map((car) => (
+                        <motion.div
+                            key={car.id}
+                            className="h-[450px]"
+                            variants={cardVariants}
+                            layout
+                        >
+                            <PremiumGlassCard
+                                car={car}
+                                onSelect={() => onSelectCar(car)}
+                                onCompare={(e) => onCompare(e, car)}
+                                isComparing={isComparing(car.id)}
+                                isSaved={isSaved(car.id)}
+                                onToggleSave={(e) => onToggleSave(e, car.id)}
+                                isRecommended={checkRecommendation(car)}
+                            />
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </motion.div>
             {cars.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center">
                     {/* Placeholder handled by parent */}
