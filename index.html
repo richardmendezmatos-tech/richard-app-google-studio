@@ -31,9 +31,13 @@
     content="Autos seminuevos certificados en Puerto Rico. Financiamiento disponible, trade-in, y la mejor selección de SUVs, sedanes y pickups. IA-powered inventory.">
   <meta name="keywords"
     content="autos seminuevos puerto rico, carros usados san juan, financiamiento autos pr, trade in puerto rico, suv seminuevos, richard automotive, autos certificados pr">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://www.richard-automotive.com" />
+  <link rel="alternate" hrefLang="es-PR" href="https://www.richard-automotive.com" />
+  <link rel="alternate" hrefLang="x-default" href="https://www.richard-automotive.com" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -75,6 +79,36 @@
 
   <!-- Styles migrated to index.css -->
   <!-- <meta name="theme-color" content="#0f172a"> -->
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "AutoDealer",
+          "name": "Richard Automotive",
+          "url": "https://www.richard-automotive.com",
+          "image": "https://www.richard-automotive.com/og-image.png",
+          "telephone": "+1-787-368-2880",
+          "email": "richard@richard-automotive.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "San Juan",
+            "addressRegion": "PR",
+            "addressCountry": "US"
+          },
+          "areaServed": "Puerto Rico"
+        },
+        {
+          "@type": "WebSite",
+          "name": "Richard Automotive",
+          "url": "https://www.richard-automotive.com",
+          "inLanguage": "es-PR"
+        }
+      ]
+    }
+  </script>
+
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 

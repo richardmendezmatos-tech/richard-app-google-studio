@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
 import { UserRole } from '@/types/types';
+import SEO from '@/components/seo/SEO';
 
 type AdminAuthUser = {
   uid: string;
@@ -162,6 +163,13 @@ const AdminLogin: FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#050b14] relative overflow-hidden font-sans selection:bg-[#00aed9]/30">
+      <SEO
+        title="Acceso Administrativo"
+        description="Portal administrativo de Richard Automotive."
+        url="/admin-login"
+        noIndex
+        noFollow
+      />
       <GoogleOneTap onSuccess={() => navigate('/admin')} />
 
       {/* Dynamic Background */}

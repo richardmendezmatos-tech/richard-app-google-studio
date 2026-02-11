@@ -1,9 +1,20 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
 Disallow: /admin-login
+Disallow: /admin/billing
+Disallow: /admin/analytics/
+Disallow: /login
+Disallow: /profile
 Disallow: /garage
 Disallow: /lab
+Disallow: /chaos
+Disallow: /framework-lab
+Disallow: /digital-twin
+Disallow: /kanban-demo
+Disallow: /debug-onboard
+Disallow: /coo-provision
 Disallow: /api/
 
 Sitemap: https://www.richard-automotive.com/sitemap.xml
