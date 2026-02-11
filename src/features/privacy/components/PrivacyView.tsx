@@ -1,12 +1,19 @@
 import React from 'react';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/seo/SEO';
 
 const PrivacyView: React.FC = () => {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6 md:p-12">
+            <SEO
+                title="Aviso de Privacidad"
+                description="Conoce como Richard Automotive protege tu informacion personal y financiera."
+                url="/privacidad"
+                type="website"
+            />
             <div className="max-w-4xl mx-auto">
                 <button
                     onClick={() => navigate(-1)}
