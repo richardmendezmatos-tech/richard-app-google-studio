@@ -38,6 +38,12 @@ import { DealerProvider } from '@/contexts/DealerContext';
 import './i18n'; // i18n setup
 import { nativeBridgeService } from '@/services/nativeBridgeService';
 
+declare global {
+  interface Window {
+    __richardHardRecover?: () => Promise<void>;
+    __appBootReady?: boolean;
+  }
+}
 
 // Initialize Native Bridge (Capacitor)
 console.log('App Version: HookFix - ' + new Date().toISOString());
@@ -60,6 +66,29 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
+
+const hardRecoverClient = async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((registration) => registration.unregister()));
+    }
+
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+    }
+
+    sessionStorage.clear();
+  } catch (recoveryError) {
+    console.warn('[Recovery] Hard recover failed:', recoveryError);
+  } finally {
+    window.location.reload();
+  }
+};
+
+window.__richardHardRecover = hardRecoverClient;
+window.__appBootReady = false;
 
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
 if (sentryDsn) {
@@ -127,6 +156,9 @@ const showError = (msg: string) => {
         <button onclick="window.location.reload(true)" style="width:100%;padding:14px;background:#3b82f6;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s;">
           REINTENTAR CARGA (Re-sync)
         </button>
+        <button onclick="window.__richardHardRecover && window.__richardHardRecover()" style="width:100%;padding:14px;background:#0f766e;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;">
+          REPARAR CACHE Y SERVICE WORKER
+        </button>
         <button onclick="document.getElementById('startup-error-overlay').remove()" style="width:100%;padding:14px;background:transparent;color:#64748b;border:1px solid #334155;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;">
           IGNORAR Y CONTINUAR
         </button>
@@ -164,6 +196,20 @@ window.addEventListener('unhandledrejection', (e) => {
   showError(`Unhandled Promise: ${message}`);
 });
 
+setTimeout(() => {
+  if (!window.__appBootReady && !document.getElementById('startup-error-overlay')) {
+    showError('Startup timeout: la aplicacion no termino de iniciar en 12s. Posible cache/SW inconsistente.');
+  }
+}, 12_000);
+
+const BootReadySignal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  React.useEffect(() => {
+    window.__appBootReady = true;
+  }, []);
+
+  return <>{children}</>;
+};
+
 console.log("🚀 [Index] Booting React Application...");
 try {
   const root = ReactDOM.createRoot(rootElement);
@@ -173,7 +219,9 @@ try {
       <Provider store={store}>
         <DealerProvider>
           <QueryClientProvider client={queryClient}>
-            <App />
+            <BootReadySignal>
+              <App />
+            </BootReadySignal>
           </QueryClientProvider>
         </DealerProvider>
       </Provider>
