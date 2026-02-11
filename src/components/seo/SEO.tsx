@@ -15,7 +15,7 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-    title = "Richard Automotive | 2026 AI Command Center",
+    title = "Richard Automotive | Compra y Vende en PR",
     description = SITE_CONFIG.description,
     image,
     url,
