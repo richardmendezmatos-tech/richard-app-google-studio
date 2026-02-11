@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Home } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const NotFound: React.FC = () => {
     const [seconds, setSeconds] = useState(10);
@@ -67,6 +68,10 @@ const NotFound: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950 relative overflow-hidden">
+            <Helmet>
+                <title>404 | Richard Automotive</title>
+                <meta name="robots" content="noindex,follow" />
+            </Helmet>
             {/* Background Decor */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,_rgba(0,174,217,0.05)_0%,_transparent_40%)]"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,_rgba(139,92,246,0.05)_0%,_transparent_40%)]"></div>

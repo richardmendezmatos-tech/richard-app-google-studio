@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Car, ChevronRight, Loader2 } from 'lucide-react';
 import { addLead } from '@/features/leads/services/crmService';
+import SEO from '@/components/seo/SEO';
 
 type Step = 'identify' | 'details' | 'condition' | 'result';
 
@@ -215,6 +216,12 @@ const TradeInView: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
+            <SEO
+                title="Trade-in | Valor de Tu Auto en Minutos"
+                description="Calcula el valor de tu auto en minutos y recibe una oferta de trade-in en Puerto Rico. Proceso rapido y sin complicaciones."
+                url="/trade-in"
+                type="website"
+            />
             {/* Background Atmosphere */}
             <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#00aed9]/10 to-transparent pointer-events-none" />
 

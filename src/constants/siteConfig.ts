@@ -46,6 +46,6 @@ export const SITE_CONFIG: SiteConfig = {
             'richard automotive',
             'autos certificados pr'
         ],
-        ogImage: '/og-image.jpg'
+        ogImage: '/og-image.png'
     }
 };

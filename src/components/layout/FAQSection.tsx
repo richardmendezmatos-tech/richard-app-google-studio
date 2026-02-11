@@ -16,13 +16,14 @@ const faqData = [
     },
     {
         question: "¿Qué garantía tienen los vehículos usados certificados?",
+        answer: "Todos nuestros vehículos certificados pasan una inspección multipunto y se entregan con garantía limitada. Los detalles varían según el modelo; te mostramos la cobertura exacta antes de comprar."
     }
 ];
 
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqData.map(item => ({
+    "mainEntity": faqData.filter(item => item.question && item.answer).map(item => ({
         "@type": "Question",
         "name": item.question,
         "acceptedAnswer": {

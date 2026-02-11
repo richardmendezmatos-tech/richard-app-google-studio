@@ -1,12 +1,19 @@
 import sgMail from '@sendgrid/mail';
 import { logger } from 'firebase-functions';
 
-// Initialize SendGrid with API key from environment
-if (process.env.SENDGRID_API_KEY) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-} else {
-    logger.warn('⚠️ SENDGRID_API_KEY not set. Email sending will fail.');
-}
+let sendGridInitialized = false;
+
+const ensureSendGridConfigured = () => {
+    if (sendGridInitialized) return;
+
+    const apiKey = process.env.SENDGRID_API_KEY;
+    if (!apiKey) {
+        throw new Error('SendGrid not configured');
+    }
+
+    sgMail.setApiKey(apiKey);
+    sendGridInitialized = true;
+};
 
 export interface SendEmailParams {
     to: string;
@@ -24,9 +31,11 @@ export interface SendEmailParams {
 export const sendTemplateEmail = async (params: SendEmailParams) => {
     const { to, templateId, dynamicData, trackingSettings } = params;
 
-    if (!process.env.SENDGRID_API_KEY) {
+    try {
+        ensureSendGridConfigured();
+    } catch (error) {
         logger.error('Cannot send email: SENDGRID_API_KEY not configured');
-        throw new Error('SendGrid not configured');
+        throw error;
     }
 
     const msg = {
@@ -72,9 +81,11 @@ export const sendPlainEmail = async (
     text: string,
     html?: string
 ) => {
-    if (!process.env.SENDGRID_API_KEY) {
+    try {
+        ensureSendGridConfigured();
+    } catch (error) {
         logger.error('Cannot send email: SENDGRID_API_KEY not configured');
-        throw new Error('SendGrid not configured');
+        throw error;
     }
 
     const msg = {

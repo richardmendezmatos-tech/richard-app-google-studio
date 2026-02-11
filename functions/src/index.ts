@@ -65,6 +65,7 @@ export const generateCarDescription = ai.defineFlow(
 export const generateDescription = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
     cors: true,
+    secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
     memory: "512MiB",
 }, generateCarDescription);
@@ -85,6 +86,7 @@ export const semanticCarSearch = ai.defineFlow(
 export const searchCarsSemantic = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
     cors: true,
+    secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Instant AI search for premium UX
     memory: "512MiB",
 }, semanticCarSearch);
@@ -104,7 +106,11 @@ export const reindexInventory = ai.defineFlow(
     }
 );
 
-export const triggerReindex = onCallGenkit({ authPolicy: (auth) => requireAdmin(auth), cors: true }, reindexInventory);
+export const triggerReindex = onCallGenkit({
+    authPolicy: (auth) => requireAdmin(auth),
+    cors: true,
+    secrets: ["GEMINI_API_KEY"],
+}, reindexInventory);
 
 
 // Import Cloud Functions v2
@@ -726,7 +732,11 @@ export { sendgridWebhook } from './webhooks/sendgridWebhook';
 export { chatStream } from './chatStream';
 
 // --- Phase 6: Voice & WhatsApp Exports ---
-export const processVoiceChunk = onCallGenkit({ authPolicy: (auth) => requireSignedIn(auth), cors: true }, ai.defineFlow(
+export const processVoiceChunk = onCallGenkit({
+    authPolicy: (auth) => requireSignedIn(auth),
+    cors: true,
+    secrets: ["GEMINI_API_KEY"],
+}, ai.defineFlow(
     { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
     async (input) => {
         const { voiceIntelligenceService } = await import('./services/voiceIntelligenceService');
@@ -734,7 +744,11 @@ export const processVoiceChunk = onCallGenkit({ authPolicy: (auth) => requireSig
     }
 ));
 
-export const getLeadMemory = onCallGenkit({ authPolicy: (auth) => requireSignedIn(auth), cors: true }, ai.defineFlow(
+export const getLeadMemory = onCallGenkit({
+    authPolicy: (auth) => requireSignedIn(auth),
+    cors: true,
+    secrets: ["GEMINI_API_KEY"],
+}, ai.defineFlow(
     { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
     async (input) => {
         const { customerMemoryService } = await import('./services/customerMemoryService');
