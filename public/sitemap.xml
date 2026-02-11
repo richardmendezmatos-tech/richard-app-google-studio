@@ -10,13 +10,6 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/trade-in</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
     <loc>https://www.richard-automotive.com/appraisal</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -24,10 +17,10 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/qualify</loc>
+    <loc>https://www.richard-automotive.com/blog</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
@@ -45,17 +38,17 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/blog</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
     <loc>https://www.richard-automotive.com/privacidad</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/qualify</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <url>
@@ -66,17 +59,26 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/vehicle/1O4BHcNV0GLkXdDoHa5M</loc>
+    <loc>https://www.richard-automotive.com/trade-in</loc>
     <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/1O4BHcNV0GLkXdDoHa5M</loc>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769283950817_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=20b9beb7-8ec6-4ea0-9fba-78894db49e35</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/2Yn4FofrCYXoIJgYYoap</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1770237639713_2025-elantra-n-6mt-performance-blue-001_16-9?alt=media&amp;token=6156cd42-75da-4aa1-8bcd-0c43b163b4c1</image:loc></image:image>
   </url>
 
   <url>
@@ -84,6 +86,7 @@
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769230362109_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=3364a582-1464-41e4-b3ec-cb061e989dd9</image:loc></image:image>
   </url>
 
   <url>
@@ -91,27 +94,63 @@
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1647494480572-c2834b6e56ad?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/9WyYWk4RKyy2tkXANjvO</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769272392485_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=b53fa13f-ae58-46db-8c23-f549d8a24f10</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/aQoyfZBSrJ5T5MQlK138</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769287758469_hyundai-kona.jpg?alt=media&amp;token=4d9c1196-dca7-47ad-8df3-976512e78ff8</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/bDjcm8nm27IUiNhblcaS</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769283070324_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=bd299d34-57e9-4232-ae4b-afb3c515d732</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/BeoBp6PlKlvYRWgfAtjh</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769294922380_hyundai%20elantra%202026.webp?alt=media&amp;token=60a698a5-8bad-4b10-a697-f14c51d83dda</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/cO3dXFwfJFv6jnGFz0Fm</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/dRToYbsGPHQezCaYq3vm</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769281185746_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=a19ccf14-6850-4d18-a995-dc4f431cb1ab</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/HfNJG2CnyYxpkfFmx14t</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769295434010_TUCSON2026.JPG?alt=media&amp;token=459c688a-e00b-45c9-8210-b7dfbd8d19b6</image:loc></image:image>
   </url>
 
   <url>
@@ -119,20 +158,15 @@
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/JU1CjCz8MS7axSGf3Z2t</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-02-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/KMXauSGEzEJiPdaQGztK</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1770420270194_2025-elantra-n-6mt-performance-blue-001_16-9?alt=media&amp;token=4d3e7951-482a-4967-af3a-211e59038914</image:loc></image:image>
   </url>
 
   <url>
@@ -143,10 +177,26 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/vehicle/KxUZVORIXMABFfFgT6f1</loc>
-    <lastmod>2026-02-11</lastmod>
+    <loc>https://www.richard-automotive.com/vehicle/kgLuZu6KfrKUcwePx3aV</loc>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/KMXauSGEzEJiPdaQGztK</loc>
+    <lastmod>2026-02-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1770235183956_2025-elantra-n-6mt-performance-blue-001_16-9?alt=media&amp;token=e0496e1a-9340-48be-ad5c-192be729fc6a</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/KxUZVORIXMABFfFgT6f1</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769285438500_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=bca4950e-4aaa-4933-95b9-2232a05625f2</image:loc></image:image>
   </url>
 
   <url>
@@ -154,20 +204,63 @@
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1631522858632-1b157bd752e2?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/mzo5Zz1dXVE3l0sdHowM</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769284349596_Copia%20de%20_F2A3290.jpg?alt=media&amp;token=051ad80c-90b8-414a-9c79-bd4cf4e5883f</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/ol32lTq3r4KO20kKuXRM</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769286570217_Copia%20de%20_F2A3290.jpg?alt=media&amp;token=150bfa56-18f9-4115-aea6-c16e91af4612</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/P40gCgADytE4Bg7PIXst</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-02-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/pe064f1qOGa87iOjScWw</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769286757945_Copia%20de%20_F2A3290.jpg?alt=media&amp;token=3851dbca-e734-4a65-ae26-86dbec0839f4</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/QiTFaSaRvOPpv7S8pmDL</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769282943476_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=3fcfbb47-0f3b-48c0-b983-c49bdb828a28</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/rkFMS7LpvpaxO95Doky1</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/vehicle/sjLg1BOgZEktnzUC5nqp</loc>
+    <lastmod>2026-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769283418081_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=d8a8e9df-c4e9-49a2-a289-2989e3be7358</image:loc></image:image>
   </url>
 
   <url>
@@ -182,90 +275,23 @@
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://images.unsplash.com/photo-1609520505218-7421da3b3d80?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/YjiesC1MYJLKfhYPbfaF</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769286896437_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=819ac5f1-9122-49f9-9455-31d564196917</image:loc></image:image>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/vehicle/ZlV0ZFLs1tbxbdwohH6i</loc>
-    <lastmod>2026-02-11</lastmod>
+    <lastmod>2026-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/aQoyfZBSrJ5T5MQlK138</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/bDjcm8nm27IUiNhblcaS</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/cO3dXFwfJFv6jnGFz0Fm</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/dRToYbsGPHQezCaYq3vm</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/kgLuZu6KfrKUcwePx3aV</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/mzo5Zz1dXVE3l0sdHowM</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/ol32lTq3r4KO20kKuXRM</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/pe064f1qOGa87iOjScWw</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/rkFMS7LpvpaxO95Doky1</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/vehicle/sjLg1BOgZEktnzUC5nqp</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <image:image><image:loc>https://firebasestorage.googleapis.com/v0/b/richard-automotive.firebasestorage.app/o/inventory%2F1769284121987_2026-kona-ice-se-fwd-ecotronic-gray-pearl-centered-browse-hero_Browse.webp?alt=media&amp;token=6007724f-9cea-4bfc-b869-dc8f5e6d05d7</image:loc></image:image>
   </url>
 
 </urlset>
