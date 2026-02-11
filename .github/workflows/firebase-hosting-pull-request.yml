@@ -6,6 +6,8 @@ name: Deploy to Firebase Hosting on PR
 concurrency:
   group: firebase-hosting-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
+env:
+  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 jobs:
   build_and_preview:
     timeout-minutes: 60
@@ -34,3 +36,9 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RICHARD_AUTOMOTIVE }}'
           projectId: richard-automotive
+      - name: Notify Discord on preview failure
+        if: failure() && env.DISCORD_WEBHOOK_URL != ''
+        run: |
+          curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"🚨 PR preview deploy failed in ${GITHUB_REPOSITORY} (#${{ github.event.pull_request.number }}). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\"}"

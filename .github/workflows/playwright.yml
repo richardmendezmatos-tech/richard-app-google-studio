@@ -10,6 +10,8 @@ concurrency:
 permissions:
   contents: read
   pull-requests: write
+env:
+  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 jobs:
   smoke:
     timeout-minutes: 20
@@ -50,6 +52,12 @@ jobs:
             issue_number: context.issue.number,
             body
           });
+    - name: Notify Discord on smoke failure
+      if: failure() && env.DISCORD_WEBHOOK_URL != ''
+      run: |
+        curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -d "{\"content\":\"🚨 Boot smoke failed in ${GITHUB_REPOSITORY} (${GITHUB_REF_NAME}). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\"}"
 
   test:
     needs: smoke
