@@ -1,4 +1,4 @@
-import { Lead } from '@/features/leads/services/crmService';
+import { Lead } from '@/app/adapters/leads/crmGateway';
 import { VehicleHealthStatus } from '@/types/types';
 import { calculateLeadScore, ScoringResult } from './leadScoringService';
 import { AGENTS, AgentPersona } from './agentSystem';

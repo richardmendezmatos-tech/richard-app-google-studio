@@ -1,5 +1,3 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence, browserLocalPersistence, getRedirectResult as firebaseGetRedirectResult, type Auth } from "firebase/auth";
 import {
   collection,
   addDoc,
@@ -8,93 +6,67 @@ import {
   limit,
   getDocs,
   serverTimestamp,
-  getFirestore,
   doc,
   setDoc
 } from 'firebase/firestore/lite';
-import { firebaseConfig } from "@/services/firebaseConfig";
+import {
+  app,
+  auth,
+  db,
+  isBrowser,
+  getRedirectResult
+} from '@/infra/firebase/client';
+import {
+  getAnalyticsService,
+  getPerformanceService,
+  getStorageService,
+  getFunctionsService,
+  getRealtimeDbService
+} from '@/infra/firebase/optionalServices';
 export { optimizeImage, AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
-
-// Helper for environment checks
-const isBrowser = typeof window !== 'undefined';
-
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-
-// Initialize Services with proper exports
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-
-// Lazy-loaded optional services
-let analyticsPromise: Promise<unknown | null> | null = null;
-let performancePromise: Promise<unknown | null> | null = null;
-let storagePromise: Promise<unknown> | null = null;
-let functionsPromise: Promise<unknown> | null = null;
-let realtimeDbPromise: Promise<unknown> | null = null;
+export {
+  app,
+  auth,
+  db,
+  getRedirectResult,
+  getAnalyticsService,
+  getPerformanceService,
+  getStorageService,
+  getFunctionsService,
+  getRealtimeDbService
+};
 
 type InventoryRecord = { id: string; name?: string } & Record<string, unknown>;
 type LeadRecord = { id: string } & Record<string, unknown>;
 type SubscriberRecord = { id: string } & Record<string, unknown>;
 
-if (isBrowser) {
-  try {
-    // Auth Persistence
-    setPersistence(auth, browserLocalPersistence).catch(console.error);
-  } catch (e) {
-    console.warn("Firebase optional services failed to initialize:", e);
-  }
-}
-
-export const getAnalyticsService = async () => {
-  if (!isBrowser) return null;
-  if (!analyticsPromise) {
-    analyticsPromise = import('firebase/analytics')
-      .then(async ({ getAnalytics, isSupported }) => {
-        const supported = await isSupported().catch(() => false);
-        return supported ? getAnalytics(app) : null;
-      })
-      .catch(() => null);
-  }
-  return analyticsPromise;
-};
-
-export const getPerformanceService = async () => {
-  if (!isBrowser) return null;
-  if (!performancePromise) {
-    performancePromise = import('firebase/performance')
-      .then(({ getPerformance }) => getPerformance(app))
-      .catch(() => null);
-  }
-  return performancePromise;
-};
-
-export const getStorageService = async () => {
-  if (!storagePromise) {
-    storagePromise = import('firebase/storage').then(({ getStorage }) => getStorage(app));
-  }
-  return storagePromise;
-};
-
-export const getFunctionsService = async () => {
-  if (!functionsPromise) {
-    functionsPromise = import('firebase/functions').then(({ getFunctions }) => getFunctions(app));
-  }
-  return functionsPromise;
-};
-
-export const getRealtimeDbService = async () => {
-  if (!realtimeDbPromise) {
-    realtimeDbPromise = import('firebase/database').then(({ getDatabase }) => getDatabase(app));
-  }
-  return realtimeDbPromise;
-};
-
-// Re-export Auth utilities
-export const getRedirectResult = (authInstance: Auth) => firebaseGetRedirectResult(authInstance);
-
 // Legacy / Backward Compatibility Exports
-export { getPaginatedCars } from '@/features/inventory/services/inventoryService';
-export { addVehicle as addCar, updateVehicle as updateCar, deleteVehicle as deleteCar, incrementCarView } from '@/features/inventory/services/inventoryService';
+// Keep these as lazy wrappers to avoid circular ESM initialization between
+// firebaseService <-> inventoryService in production bundles.
+export const getPaginatedCars = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['getPaginatedCars']>) => {
+  const mod = await import('@/features/inventory/services/inventoryService');
+  return mod.getPaginatedCars(...args);
+};
+
+export const addCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['addVehicle']>) => {
+  const mod = await import('@/features/inventory/services/inventoryService');
+  return mod.addVehicle(...args);
+};
+
+export const updateCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['updateVehicle']>) => {
+  const mod = await import('@/features/inventory/services/inventoryService');
+  return mod.updateVehicle(...args);
+};
+
+export const deleteCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['deleteVehicle']>) => {
+  const mod = await import('@/features/inventory/services/inventoryService');
+  return mod.deleteVehicle(...args);
+};
+
+export const incrementCarView = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['incrementCarView']>) => {
+  const mod = await import('@/features/inventory/services/inventoryService');
+  return mod.incrementCarView(...args);
+};
 
 // --- Application Logic ---
 
