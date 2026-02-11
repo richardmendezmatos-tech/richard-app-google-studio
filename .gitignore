@@ -54,6 +54,7 @@ viva_env/
 *-copy.*
 *.bak
 *.tmp
+output/
 
 *.dmg
 
