@@ -195,7 +195,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
         <>
             <div className="h-full w-full bg-transparent">
                 <SEO
-                    title="Richard Automotive | Autos Seminuevos de Lujo en Puerto Rico"
+                    title="Richard Automotive | Compra y Vende en PR"
                     description="El dealer más tecnológico de Puerto Rico. Encuentra autos certificados, financiamiento flexible, y usa nuestra IA para encontrar tu auto ideal."
                     url="/"
                     type="website"
