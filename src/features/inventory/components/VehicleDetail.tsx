@@ -8,7 +8,7 @@ import { useDealer } from '@/contexts/DealerContext';
 import { logIntentSignal } from '@/services/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import DealBuilder from '@/features/inventory/components/deal/DealBuilder';
-import SEO from '@/features/inventory/components/SEO';
+import SEO from '@/components/seo/SEO';
 import { SITE_CONFIG } from '@/constants/siteConfig';
 import Viewer360 from '@/features/inventory/components/common/Viewer360';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
