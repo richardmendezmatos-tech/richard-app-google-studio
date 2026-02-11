@@ -1,52 +1,33 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Car } from '@/types/types';
-import { getAIResponse } from '@/services/geminiService';
-import { validationAgentService } from '@/services/validationAgentService';
-import { Send, User, Bot, Sparkles } from 'lucide-react';
+import { useCopilotAgent } from '@/hooks/useCopilotAgent';
+import { Send, User, Bot, Sparkles, Loader2 } from 'lucide-react';
 
 interface Props {
   inventory: Car[];
 }
 
-interface Message {
-  role: 'user' | 'bot';
-  text: string;
-}
-
 const AIConsultant: React.FC<Props> = ({ inventory }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: '¡Saludos! Soy Richard IA. ¿En qué puedo ayudarte hoy? ¿Buscas un SUV económico o quizás una pickup para el trabajo?' }
-  ]);
-  const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Use the Copilot Hook for backend communication
+  const { messages, input, setInput, append, isLoading } = useCopilotAgent('consultant-session', {
+    initialMessages: [
+      { id: 'welcome', role: 'assistant', content: '¡Saludos! Soy Richard IA. ¿En qué puedo ayudarte hoy? ¿Buscas un SUV económico o quizás una pickup para el trabajo?' }
+    ]
+  });
+
+  // Auto-scroll on new messages
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages, isTyping]);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
-
-    const userMsg = input.trim();
+    if (!input.trim() || isLoading) return;
+    await append({ role: 'user', content: input.trim() });
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
-    setIsTyping(true);
-
-    try {
-      const rawResponse = await getAIResponse(userMsg, inventory);
-
-      // Validation Agent Audit
-      const validation = await validationAgentService.validateResponse(userMsg, rawResponse, inventory);
-
-      setMessages(prev => [...prev, { role: 'bot', text: validation.sanitizedResponse }]);
-    } catch (error) {
-      console.error("Chat Error:", error);
-      setMessages(prev => [...prev, { role: 'bot', text: 'Lo siento, tuve un problema procesando tu mensaje. ¿Puedes intentarlo de nuevo?' }]);
-    } finally {
-      setIsTyping(false);
-    }
   };
 
   return (
@@ -70,7 +51,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
         </div>
 
         {/* Chat Body */}
-        <div className="flex-1 overflow-y-auto p-8 space-y-8">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -82,18 +63,17 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
                   ? 'bg-slate-800 dark:bg-slate-700 text-white rounded-tr-none'
                   : 'bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700'
                   }`}>
-                  {msg.text}
+                  {msg.content}
                 </div>
               </div>
             </div>
           ))}
-          {isTyping && (
+          {isLoading && (
             <div className="flex justify-start">
               <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-[24px] rounded-tl-none border border-slate-100 dark:border-slate-700">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-[#00aed9] rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-[#00aed9] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                  <div className="w-2 h-2 bg-[#00aed9] rounded-full animate-bounce [animation-delay:-0.5s]" />
+                <div className="flex gap-2 items-center text-slate-400 text-xs font-medium">
+                  <Loader2 className="animate-spin" size={16} />
+                  <span>Procesando solicitud...</span>
                 </div>
               </div>
             </div>
@@ -111,10 +91,11 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              disabled={isLoading}
             />
             <button
               onClick={handleSend}
-              disabled={isTyping || !input.trim()}
+              disabled={isLoading || !input.trim()}
               aria-label="Enviar mensaje"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#173d57] text-white rounded-full flex items-center justify-center hover:bg-[#00aed9] disabled:opacity-30 transition-all shadow-lg"
             >

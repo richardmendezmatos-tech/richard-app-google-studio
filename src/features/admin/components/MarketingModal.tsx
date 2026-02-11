@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from '@/types/types';
 import { generateCarMarketingContent, MarketingContent } from '@/features/leads/services/marketingService';
-import { optimizeImage } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
 import { X, Instagram, Facebook, Video, Copy, Check, Sparkles, Loader2 } from 'lucide-react';
 
 interface Props {

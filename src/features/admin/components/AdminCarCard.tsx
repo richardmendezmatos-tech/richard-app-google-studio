@@ -2,8 +2,7 @@
 import React from 'react';
 import { Car as CarType } from '@/types/types';
 import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { optimizeImage } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
 import { calculatePredictiveDTS } from '@/services/predictionService';
 import { AnimatedCounter } from '@/components/common/AnimatedCounter';
 
@@ -28,12 +27,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
         car.type === 'luxury';
 
     return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="group relative glass-premium overflow-hidden shadow-xl hover-kinetic flex flex-col h-full"
-        >
+        <div className="group relative glass-premium overflow-hidden shadow-xl hover-kinetic flex flex-col h-full route-fade-in">
             {/* Image Section */}
             <div className="relative h-64 overflow-hidden">
                 <img
@@ -141,6 +135,6 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };

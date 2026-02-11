@@ -1,6 +1,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addVehicle, updateVehicle, deleteVehicle, uploadVehicleImages } from '@/features/inventory/services/inventoryService';
+import { addVehicle, updateVehicle, deleteVehicle } from '@/features/inventory/services/inventoryService';
 import { Car } from '@/types/types';
 
 export const useCarMutations = () => {

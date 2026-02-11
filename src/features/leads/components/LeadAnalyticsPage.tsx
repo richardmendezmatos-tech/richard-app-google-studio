@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Lead, getSecureLeadData, subscribeToLeads } from '@/features/leads/services/crmService';
+import { Lead, subscribeToLeads } from '@/features/leads/services/crmService';
 import { LeadLifecycleAnalytics } from './LeadLifecycleAnalytics';
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';
 

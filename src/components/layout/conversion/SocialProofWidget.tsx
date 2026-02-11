@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Users, TrendingUp } from 'lucide-react';
 
 const ACTIVITY_MESSAGES = [
@@ -30,34 +29,26 @@ export const SocialProofWidget: React.FC = () => {
     const currentActivity = ACTIVITY_MESSAGES[currentIndex];
     const Icon = currentActivity.icon;
 
+    if (!isVisible) return null;
+
     return (
-        <AnimatePresence>
-            {isVisible && (
-                <motion.div
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="fixed bottom-24 left-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 max-w-sm z-40 border border-slate-200 dark:border-slate-700"
-                >
-                    <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-[#00aed9] to-cyan-600 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                            <Icon size={18} className="text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-slate-800 dark:text-white leading-snug">
-                                {currentActivity.text}
-                            </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                Hace {currentActivity.time}
-                            </p>
-                        </div>
-                        <div className="flex-shrink-0">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        </div>
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <div className="fixed bottom-24 left-6 z-40 max-w-sm rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl route-fade-in dark:border-slate-700 dark:bg-slate-800">
+            <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#00aed9] to-cyan-600 shadow-lg shadow-cyan-500/20">
+                    <Icon size={18} className="text-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold leading-snug text-slate-800 dark:text-white">
+                        {currentActivity.text}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Hace {currentActivity.time}
+                    </p>
+                </div>
+                <div className="flex-shrink-0">
+                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                </div>
+            </div>
+        </div>
     );
 };

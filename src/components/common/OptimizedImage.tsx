@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { optimizeImage } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
 
 interface OptimizedImageProps {
     src: string;
@@ -38,6 +37,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     const [isLoaded, setIsLoaded] = useState(false);
     const [isInView, setIsInView] = useState(priority);
     const [hasError, setHasError] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -60,7 +60,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
     // Intersection Observer for lazy loading
     useEffect(() => {
-        if (priority || !imgRef.current) return;
+        if (priority || !containerRef.current) return;
 
         observerRef.current = new IntersectionObserver(
             (entries) => {
@@ -77,7 +77,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
             }
         );
 
-        observerRef.current.observe(imgRef.current);
+        observerRef.current.observe(containerRef.current);
 
         return () => {
             observerRef.current?.disconnect();
@@ -97,27 +97,25 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     };
 
     return (
-        <div className={`relative overflow-hidden bg-slate-800/20 ${aspectRatio} ${className}`}>
-            {/* Blurred Placeholder / Loading State */}
-            <AnimatePresence>
-                {!isLoaded && !hasError && (
-                    <motion.div
-                        initial={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-0"
-                    >
-                        {placeholder ? (
-                            <img
-                                src={placeholder}
-                                alt=""
-                                className="w-full h-full object-cover blur-xl scale-110"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-slate-800 animate-pulse" />
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+        <div ref={containerRef} className={`relative overflow-hidden bg-slate-800/20 ${aspectRatio} ${className}`}>
+            {/* Blurred placeholder fades out once the image is loaded */}
+            {!hasError && (
+                <div
+                    className={`absolute inset-0 z-0 transition-opacity duration-500 ${
+                        isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
+                >
+                    {placeholder ? (
+                        <img
+                            src={placeholder}
+                            alt=""
+                            className="w-full h-full object-cover blur-xl scale-110"
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-slate-800 animate-pulse" />
+                    )}
+                </div>
+            )}
 
             {/* Actual Image with AVIF/WebP support */}
             {isInView && (
@@ -131,18 +129,17 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
                     {webpMobile && <source srcSet={webpMobile} type="image/webp" />}
                     {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
 
-                    <motion.img
+                    <img
                         ref={imgRef}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: isLoaded ? 1 : 0 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
                         src={optimizedSrc}
                         alt={alt}
                         loading={priority ? "eager" : loading}
                         decoding="async"
                         onLoad={handleLoad}
                         onError={handleError}
-                        className={`w-full h-full object-cover relative z-10 ${className}`}
+                        className={`relative z-10 h-full w-full object-cover transition-opacity duration-500 ${
+                            isLoaded ? 'opacity-100' : 'opacity-0'
+                        } ${className}`}
                     />
                 </picture>
             )}

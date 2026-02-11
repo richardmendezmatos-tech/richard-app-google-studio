@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { inventoryIngestionService } from '@/services/inventoryIngestionService';
 import { Car } from '@/types/types';
-import { Loader2, Upload, Check, AlertCircle, FileText, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Upload, AlertCircle, FileText, Image as ImageIcon } from 'lucide-react';
 
 interface InventoryUploaderProps {
     onDataExtracted: (data: Partial<Car>) => void;
@@ -13,7 +13,7 @@ export const InventoryUploader: React.FC<InventoryUploaderProps> = ({ onDataExtr
     const [error, setError] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
-    const processFile = async (file: File) => {
+    const processFile = useCallback(async (file: File) => {
         setIsProcessing(true);
         setError(null);
 
@@ -33,17 +33,17 @@ export const InventoryUploader: React.FC<InventoryUploaderProps> = ({ onDataExtr
                 }
             };
             reader.readAsDataURL(file);
-        } catch (err) {
+        } catch {
             setError("Error al leer el archivo");
             setIsProcessing(false);
         }
-    };
+    }, [onDataExtracted]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
             processFile(acceptedFiles[0]);
         }
-    }, []);
+    }, [processFile]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,

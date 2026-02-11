@@ -10,7 +10,6 @@ import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAn
 import DealBuilder from '@/features/inventory/components/deal/DealBuilder';
 import SEO from '@/features/inventory/components/SEO';
 import Viewer360 from '@/features/inventory/components/common/Viewer360';
-import { VehicleSchema } from '@/features/inventory/components/seo/VehicleSchema';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
 import { ProgressRing } from '@/components/common/ProgressRing';
 
@@ -119,35 +118,76 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
         }
     };
 
+    // Helper to parse vehicle details if structured data is missing
+    const nameParts = car.name.split(' ');
+    const year = car.year || parseInt(nameParts[0]) || 2026;
+    const make = nameParts[1] || 'Auto';
+    const model = nameParts.slice(2).join(' ') || car.name;
+
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
             <SEO
                 title={car.name}
-                description={`Compra este ${car.name} 2026 por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
+                description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
                 image={car.img}
                 url={`/vehicle/${car.id}`}
                 type="product"
-                schema={{
-                    "@context": "https://schema.org/",
-                    "@type": "Car",
-                    "name": car.name,
-                    "image": car.img,
-                    "description": `Compra este ${car.name} 2026 en Richard Automotive.`,
-                    "brand": {
-                        "@type": "Brand",
-                        "name": car.name.split(' ')[0]
+                schema={[
+                    {
+                        "@context": "https://schema.org/",
+                        "@type": "Car",
+                        "name": car.name,
+                        "image": car.images && car.images.length > 0 ? car.images : [car.img],
+                        "description": car.description || `Compra este ${car.name} ${year} en Richard Automotive.`,
+                        "brand": {
+                            "@type": "Brand",
+                            "name": make
+                        },
+                        "model": model,
+                        "productionDate": year.toString(),
+                        "bg-modelDate": year.toString(), // Google sometimes looks for modelDate
+                        "bodyType": car.type,
+                        "vehicleConfiguration": car.features?.join(', '),
+                        "offers": {
+                            "@type": "Offer",
+                            "url": `https://richard-automotive.web.app/vehicle/${car.id}`,
+                            "priceCurrency": "USD",
+                            "price": car.price,
+                            "itemCondition": "https://schema.org/NewCondition",
+                            "availability": "https://schema.org/InStock",
+                            "seller": {
+                                "@type": "AutoDealer",
+                                "name": "Richard Automotive"
+                            }
+                        }
                     },
-                    "offers": {
-                        "@type": "Offer",
-                        "url": `https://richard-automotive.web.app/vehicle/${car.id}`,
-                        "priceCurrency": "USD",
-                        "price": car.price,
-                        "itemCondition": "https://schema.org/NewCondition",
-                        "availability": "https://schema.org/InStock"
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        "itemListElement": [
+                            {
+                                "@type": "ListItem",
+                                "position": 1,
+                                "name": "Inicio",
+                                "item": "https://richard-automotive.web.app/"
+                            },
+                            {
+                                "@type": "ListItem",
+                                "position": 2,
+                                "name": "Inventario",
+                                "item": "https://richard-automotive.web.app/inventory"
+                            },
+                            {
+                                "@type": "ListItem",
+                                "position": 3,
+                                "name": car.name,
+                                "item": `https://richard-automotive.web.app/vehicle/${car.id}`
+                            }
+                        ]
                     }
-                }}
+                ]}
             />
-            <VehicleSchema car={car} />
+            {/* VehicleSchema removed to avoid duplicate JSON-LD injection */}
 
             {/* Navigation Bar (Mobile) / Breadcrumb */}
             <div className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 z-40 flex justify-between items-center lg:hidden border-b border-slate-200 dark:border-slate-800">

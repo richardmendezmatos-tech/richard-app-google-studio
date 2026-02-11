@@ -2,13 +2,14 @@ import { db } from './firebaseService';
 import {
     collection,
     addDoc,
+    setDoc,
     query,
     where,
     getDocs,
     doc,
     getDoc,
     serverTimestamp
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 
 export interface Lead {
     id?: string;
@@ -146,7 +147,7 @@ export class LeadService {
     ): Promise<void> {
         try {
             const docRef = doc(db, this.collection, leadId);
-            await addDoc(docRef, { metadata }, { merge: true } as any);
+            await setDoc(docRef, { metadata }, { merge: true });
         } catch (error) {
             console.error('Error updating lead metadata:', error);
             throw error;

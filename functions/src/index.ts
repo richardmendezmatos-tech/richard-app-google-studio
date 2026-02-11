@@ -4,6 +4,8 @@ import * as logger from 'firebase-functions/logger';
 import { db } from './services/firebaseAdmin';
 import { ai } from './services/aiManager';
 import { orchestrateResponse } from './agents/rag-synergy-logic';
+import { requireAdmin, requireSignedIn } from './security/policies';
+import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -61,7 +63,7 @@ export const generateCarDescription = ai.defineFlow(
 );
 
 export const generateDescription = onCallGenkit({
-    authPolicy: () => true, // Allow all for dev/demo purposes
+    authPolicy: (auth) => requireSignedIn(auth),
     cors: true,
     minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
     memory: "512MiB",
@@ -81,7 +83,7 @@ export const semanticCarSearch = ai.defineFlow(
 );
 
 export const searchCarsSemantic = onCallGenkit({
-    authPolicy: () => true,
+    authPolicy: (auth) => requireSignedIn(auth),
     cors: true,
     minInstances: 1, // CTO: Instant AI search for premium UX
     memory: "512MiB",
@@ -102,7 +104,7 @@ export const reindexInventory = ai.defineFlow(
     }
 );
 
-export const triggerReindex = onCallGenkit({ authPolicy: () => true, cors: true }, reindexInventory);
+export const triggerReindex = onCallGenkit({ authPolicy: (auth) => requireAdmin(auth), cors: true }, reindexInventory);
 
 
 // Import Cloud Functions v2
@@ -303,6 +305,41 @@ export const incomingWhatsAppMessage = onRequest(async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
         return;
+    }
+
+    // Optional (recommended) signature verification
+    // Enable enforcement via WEBHOOK_SIGNATURE_ENFORCE=true once configured.
+    try {
+        const enforce = shouldEnforceWebhookSignatures();
+        const twilioAuthToken = String(process.env.TWILIO_AUTH_TOKEN || '').trim();
+        const signature = String(req.get('x-twilio-signature') || '').trim();
+
+        if (twilioAuthToken && signature) {
+            // Twilio validates against the full URL configured in the console.
+            const twilio = (await import('twilio')).default;
+            const url = getRequestUrlForSignature(req);
+            const ok = twilio.validateRequest(twilioAuthToken, signature, url, req.body || {});
+            if (!ok) {
+                logger.warn('Rejected Twilio webhook: invalid signature', { url });
+                res.status(403).send('Forbidden');
+                return;
+            }
+        } else if (enforce) {
+            logger.warn('Rejected Twilio webhook: missing signature config', {
+                hasAuthToken: !!twilioAuthToken,
+                hasSignature: !!signature,
+            });
+            res.status(403).send('Forbidden');
+            return;
+        } else {
+            logger.warn('Twilio webhook signature not verified (set WEBHOOK_SIGNATURE_ENFORCE=true to enforce).');
+        }
+    } catch (e) {
+        logger.warn('Twilio webhook signature verification error', { error: String(e) });
+        if (shouldEnforceWebhookSignatures()) {
+            res.status(403).send('Forbidden');
+            return;
+        }
     }
 
     // Twilio sends form-urlencoded POST requests
@@ -689,7 +726,7 @@ export { sendgridWebhook } from './webhooks/sendgridWebhook';
 export { chatStream } from './chatStream';
 
 // --- Phase 6: Voice & WhatsApp Exports ---
-export const processVoiceChunk = onCallGenkit({ authPolicy: () => true, cors: true }, ai.defineFlow(
+export const processVoiceChunk = onCallGenkit({ authPolicy: (auth) => requireSignedIn(auth), cors: true }, ai.defineFlow(
     { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
     async (input) => {
         const { voiceIntelligenceService } = await import('./services/voiceIntelligenceService');
@@ -697,10 +734,12 @@ export const processVoiceChunk = onCallGenkit({ authPolicy: () => true, cors: tr
     }
 ));
 
-export const getLeadMemory = onCallGenkit({ authPolicy: () => true, cors: true }, ai.defineFlow(
+export const getLeadMemory = onCallGenkit({ authPolicy: (auth) => requireSignedIn(auth), cors: true }, ai.defineFlow(
     { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
     async (input) => {
         const { customerMemoryService } = await import('./services/customerMemoryService');
         return await customerMemoryService.getMemory(input.leadId);
     }
 ));
+// --- Copilot SDK Migration ---
+export { chatWithAgent } from './copilot';

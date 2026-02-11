@@ -1,30 +1,44 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/services/firebaseService';
 import { loginSuccess, logout } from '@/store/slices/authSlice';
-import { isAdminEmail } from '@/features/auth/services/authService';
 
 export const useAuthListener = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                dispatch(loginSuccess({
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
-                    role: isAdminEmail(user.email) ? 'admin' : 'user'
-                }));
-            } else {
-                // User is signed out.
-                dispatch(logout());
-            }
+        let unsubscribe: (() => void) | undefined;
+        let mounted = true;
+
+        (async () => {
+            const [{ auth }, { isAdminEmail }] = await Promise.all([
+                import('@/services/firebaseService'),
+                import('@/features/auth/services/authService'),
+            ]);
+
+            if (!mounted) return;
+
+            unsubscribe = auth.onAuthStateChanged((user) => {
+                if (user) {
+                    dispatch(loginSuccess({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        role: isAdminEmail(user.email) ? 'admin' : 'user'
+                    }));
+                } else {
+                    // User is signed out.
+                    dispatch(logout());
+                }
+            });
+        })().catch((error) => {
+            console.error('Auth listener bootstrap failed:', error);
         });
 
         // Cleanup subscription on unmount
-        return () => unsubscribe();
+        return () => {
+            mounted = false;
+            unsubscribe?.();
+        };
     }, [dispatch]);
 };

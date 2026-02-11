@@ -3,10 +3,34 @@ import * as React from 'react';
 import { useState } from 'react';
 import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential } from '../services/authService';
 import { auth, getRedirectResult } from '@/services/firebaseService';
-import { ArrowRight, Zap, Check, X, Apple, Chrome, Globe, Lock } from 'lucide-react';
+import { ArrowRight, Zap, Apple, Chrome, Globe } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
+
+interface GoogleCredentialResponse {
+  credential: string;
+}
+
+interface GoogleAccountsID {
+  initialize: (options: {
+    client_id: string;
+    callback: (response: GoogleCredentialResponse) => Promise<void>;
+    cancel_on_tap_outside?: boolean;
+  }) => void;
+  prompt: () => void;
+}
+
+interface GoogleGlobal {
+  accounts: {
+    id: GoogleAccountsID;
+  };
+}
+
+interface AuthLikeError {
+  code?: string;
+  message?: string;
+}
 
 const UserLogin: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -27,20 +51,22 @@ const UserLogin: React.FC = () => {
     if (loading || isRegistering) return;
 
     const initializeOneTap = () => {
-      if (!(window as any).google) return;
+      const google = (window as Window & { google?: GoogleGlobal }).google;
+      if (!google) return;
 
-      (window as any).google.accounts.id.initialize({
+      google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: async (response: any) => {
+        callback: async (response: GoogleCredentialResponse) => {
           setLoading(true);
           dispatch(loginStart());
           try {
             const user = await signInWithGoogleCredential(response.credential);
             dispatch(loginSuccess(user));
             navigate(from, { replace: true });
-          } catch (err: any) {
-            setError(getErrorMsg(err));
-            dispatch(loginFailure(getErrorMsg(err)));
+          } catch (err: unknown) {
+            const msg = getErrorMsg(err);
+            setError(msg);
+            dispatch(loginFailure(msg));
           } finally {
             setLoading(false);
           }
@@ -48,13 +74,13 @@ const UserLogin: React.FC = () => {
         cancel_on_tap_outside: false
       });
 
-      (window as any).google.accounts.id.prompt();
+      google.accounts.id.prompt();
     };
 
     // Wait for script to load
     const timer = setTimeout(initializeOneTap, 1500);
     return () => clearTimeout(timer);
-  }, [isRegistering, loading]);
+  }, [dispatch, from, isRegistering, loading, navigate]);
 
   // Handle successful redirect return
   React.useEffect(() => {
@@ -65,12 +91,12 @@ const UserLogin: React.FC = () => {
           dispatch(loginSuccess(result.user));
           navigate(from, { replace: true });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(getErrorMsg(err));
       }
     };
     checkRedirect();
-  }, []);
+  }, [dispatch, from, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +113,7 @@ const UserLogin: React.FC = () => {
       }
       dispatch(loginSuccess(user));
       navigate(from, { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       const msg = getErrorMsg(err);
       setError(msg); // Keep local for now
@@ -110,7 +136,7 @@ const UserLogin: React.FC = () => {
         dispatch(loginSuccess(user));
         navigate(from, { replace: true });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       const msg = getErrorMsg(err);
       setError(msg);
@@ -120,27 +146,24 @@ const UserLogin: React.FC = () => {
     }
   };
 
-  const getErrorMsg = (err: any) => {
+  const getErrorMsg = (err: unknown) => {
+    const authError = err as AuthLikeError;
     console.error("Auth Debug Details:", err); // Critical for remote debugging
-    if (err.message?.includes('ADMIN_PORTAL_ONLY')) {
+    if (authError.message?.includes('ADMIN_PORTAL_ONLY')) {
       return 'Acceso no autorizado en este portal. Use el portal administrativo.';
-    } else if (err.code === 'auth/email-already-in-use') {
+    } else if (authError.code === 'auth/email-already-in-use') {
       return 'Este correo ya está registrado.';
-    } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+    } else if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password') {
       return 'Credenciales incorrectas.';
-    } else if (err.code === 'auth/popup-closed-by-user') {
+    } else if (authError.code === 'auth/popup-closed-by-user') {
       return 'La ventana de inicio de sesión se cerró antes de completar.';
-    } else if (err.code === 'auth/cancelled-popup-request') {
+    } else if (authError.code === 'auth/cancelled-popup-request') {
       return 'Solicitud de inicio de sesión cancelada.';
-    } else if (err.message?.includes('projectconfigservice.getprojectconfig-are-blocked')) {
+    } else if (authError.message?.includes('projectconfigservice.getprojectconfig-are-blocked')) {
       return 'ERROR CRÍTICO: La API de Autenticación está bloqueada en Google Cloud Console. Por favor, habilite el "Identity Toolkit API" para su API Key.';
     } else {
-      return `Error (${err.code || 'unknown'}): ${err.message || 'Intente nuevamente'}`;
+      return `Error (${authError.code || 'unknown'}): ${authError.message || 'Intente nuevamente'}`;
     }
-  };
-  // Kept handleAuthError alias if needed or just replace usages
-  const handleAuthError = (err: any) => {
-    setError(getErrorMsg(err));
   };
 
   return (

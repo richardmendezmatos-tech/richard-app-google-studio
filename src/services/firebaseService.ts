@@ -1,73 +1,96 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, setPersistence, browserLocalPersistence, getRedirectResult as firebaseGetRedirectResult } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence, getRedirectResult as firebaseGetRedirectResult, type Auth } from "firebase/auth";
 import {
   collection,
-  onSnapshot,
   addDoc,
   query,
   where,
-  orderBy,
   limit,
   getDocs,
   serverTimestamp,
-  getAggregateFromServer,
-  getCountFromServer,
-  initializeFirestore,
-  enableMultiTabIndexedDbPersistence,
-  count,
-  sum,
-  average,
+  getFirestore,
   doc,
-  setDoc,
-  writeBatch,
-  increment
-} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFunctions } from "firebase/functions";
-import { getPerformance } from "firebase/performance";
-import { getDatabase } from "firebase/database";
+  setDoc
+} from 'firebase/firestore/lite';
 import { firebaseConfig } from "@/services/firebaseConfig";
+export { optimizeImage, AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
 
 // Helper for environment checks
 const isBrowser = typeof window !== 'undefined';
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Initialize Services with proper exports
 export const auth = getAuth(app);
-export const db = initializeFirestore(app, {});
-export const storage = getStorage(app);
-export const functions = getFunctions(app);
-export const rtdb = getDatabase(app);
+export const db = getFirestore(app);
 
-// Initialize optional services
-let analyticsInstance = null;
-let performanceInstance = null;
+// Lazy-loaded optional services
+let analyticsPromise: Promise<unknown | null> | null = null;
+let performancePromise: Promise<unknown | null> | null = null;
+let storagePromise: Promise<unknown> | null = null;
+let functionsPromise: Promise<unknown> | null = null;
+let realtimeDbPromise: Promise<unknown> | null = null;
+
+type InventoryRecord = { id: string; name?: string } & Record<string, unknown>;
+type LeadRecord = { id: string } & Record<string, unknown>;
+type SubscriberRecord = { id: string } & Record<string, unknown>;
 
 if (isBrowser) {
   try {
-    analyticsInstance = getAnalytics(app);
-    performanceInstance = getPerformance(app);
-
     // Auth Persistence
     setPersistence(auth, browserLocalPersistence).catch(console.error);
-
-    // Firestore Persistence
-    enableMultiTabIndexedDbPersistence(db).catch((err) => {
-      console.warn("Firestore persistence error:", err.code);
-    });
   } catch (e) {
     console.warn("Firebase optional services failed to initialize:", e);
   }
 }
 
-export const analytics = analyticsInstance;
-export const performance = performanceInstance;
+export const getAnalyticsService = async () => {
+  if (!isBrowser) return null;
+  if (!analyticsPromise) {
+    analyticsPromise = import('firebase/analytics')
+      .then(async ({ getAnalytics, isSupported }) => {
+        const supported = await isSupported().catch(() => false);
+        return supported ? getAnalytics(app) : null;
+      })
+      .catch(() => null);
+  }
+  return analyticsPromise;
+};
+
+export const getPerformanceService = async () => {
+  if (!isBrowser) return null;
+  if (!performancePromise) {
+    performancePromise = import('firebase/performance')
+      .then(({ getPerformance }) => getPerformance(app))
+      .catch(() => null);
+  }
+  return performancePromise;
+};
+
+export const getStorageService = async () => {
+  if (!storagePromise) {
+    storagePromise = import('firebase/storage').then(({ getStorage }) => getStorage(app));
+  }
+  return storagePromise;
+};
+
+export const getFunctionsService = async () => {
+  if (!functionsPromise) {
+    functionsPromise = import('firebase/functions').then(({ getFunctions }) => getFunctions(app));
+  }
+  return functionsPromise;
+};
+
+export const getRealtimeDbService = async () => {
+  if (!realtimeDbPromise) {
+    realtimeDbPromise = import('firebase/database').then(({ getDatabase }) => getDatabase(app));
+  }
+  return realtimeDbPromise;
+};
 
 // Re-export Auth utilities
-export const getRedirectResult = (authInstance: any) => firebaseGetRedirectResult(authInstance);
+export const getRedirectResult = (authInstance: Auth) => firebaseGetRedirectResult(authInstance);
 
 // Legacy / Backward Compatibility Exports
 export { getPaginatedCars } from '@/features/inventory/services/inventoryService';
@@ -76,6 +99,8 @@ export { addVehicle as addCar, updateVehicle as updateCar, deleteVehicle as dele
 // --- Application Logic ---
 
 export const uploadImage = async (file: File) => {
+  const storage = await getStorageService();
+  const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const storageRef = ref(storage, `${dealerId}/profiles/${Date.now()}_${file.name}`);
   const snapshot = await uploadBytes(storageRef, file);
@@ -83,18 +108,20 @@ export const uploadImage = async (file: File) => {
 };
 
 export const getInventoryStats = async () => {
-  const coll = collection(db, 'cars');
   try {
-    const countSnapshot = await getCountFromServer(coll);
-    const aggregationSnapshot = await getAggregateFromServer(coll, {
-      totalValue: sum('price'),
-      avgPrice: average('price')
-    });
+    const coll = collection(db, 'cars');
+    const snapshot = await getDocs(coll);
+    const prices = snapshot.docs
+      .map((d) => Number((d.data() as { price?: number }).price || 0))
+      .filter((value) => Number.isFinite(value));
+    const count = snapshot.size;
+    const totalValue = prices.reduce((acc, value) => acc + value, 0);
+    const avgPrice = count > 0 ? totalValue / count : 0;
 
     return {
-      count: countSnapshot.data().count,
-      totalValue: aggregationSnapshot.data().totalValue || 0,
-      avgPrice: aggregationSnapshot.data().avgPrice || 0
+      count,
+      totalValue,
+      avgPrice
     };
   } catch (e) {
     console.error("Aggregation failed:", e);
@@ -102,41 +129,43 @@ export const getInventoryStats = async () => {
   }
 };
 
-export const syncInventory = (callback: (inventory: any[]) => void) => {
+export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId));
+  const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
 
-  return onSnapshot(q, snapshot => {
-    const inventoryList = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    inventoryList.sort((a: any, b: any) => (a.name || '').localeCompare(b.name || ''));
-    callback(inventoryList);
-  }, (error) => {
-    console.error("syncInventory Error:", error);
-  });
+  let cancelled = false;
+  const fetchInventory = async () => {
+    try {
+      const snapshot = await getDocs(q);
+      if (cancelled) return;
+      const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      callback(inventoryList);
+    } catch (error) {
+      console.error("syncInventory Error:", error);
+    }
+  };
+
+  fetchInventory();
+  const intervalId = setInterval(fetchInventory, 10000);
+
+  return () => {
+    cancelled = true;
+    clearInterval(intervalId);
+  };
 };
 
-export const getInventoryOnce = async (): Promise<any[]> => {
+export const getInventoryOnce = async (): Promise<InventoryRecord[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
-// CTO Fix: Antigravity Edge Image Optimization (Next-Gen Performance)
-export const optimizeImage = (url: string, width: number = 800): string => {
-  if (!url) return '';
-  if (url.includes('firebasestorage.googleapis.com')) return url;
-  if (url.includes('images.unsplash.com')) {
-    const baseUrl = url.split('?')[0];
-    return `${baseUrl}?q=80&w=${width}&auto=format&fit=crop`;
-  }
-  return url;
-};
-
-export const submitApplication = async (data: any) => {
+export const submitApplication = async (data: Record<string, unknown>) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const safeData = {
     ...data,
@@ -147,18 +176,32 @@ export const submitApplication = async (data: any) => {
   return await addDoc(collection(db, 'applications'), safeData);
 };
 
-export const AI_LEGAL_DISCLAIMER = "Aviso: Los precios, pagos y disponibilidad generados por IA son estimaciones para fines informativos y no constituyen una oferta formal. Sujeto a cambios sin previo aviso.";
-
-export const syncLeads = (callback: (leads: any[]) => void) => {
+export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId));
-  return onSnapshot(q, snapshot => {
-    const leadsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(leadsList);
-  });
+  const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId), limit(200));
+  let cancelled = false;
+
+  const fetchLeads = async () => {
+    try {
+      const snapshot = await getDocs(q);
+      if (cancelled) return;
+      const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(leadsList);
+    } catch (error) {
+      console.error('syncLeads Error:', error);
+    }
+  };
+
+  fetchLeads();
+  const intervalId = setInterval(fetchLeads, 10000);
+
+  return () => {
+    cancelled = true;
+    clearInterval(intervalId);
+  };
 };
 
-export const getLeadsOnce = async (): Promise<any[]> => {
+export const getLeadsOnce = async (): Promise<LeadRecord[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId));
   const snapshot = await getDocs(q);
@@ -175,12 +218,12 @@ export const subscribeToNewsletter = async (email: string) => {
   await addDoc(collection(db, "subscribers"), { email, dealerId, timestamp: serverTimestamp() });
 };
 
-export const submitSurvey = async (data: any) => {
+export const submitSurvey = async (data: Record<string, unknown>) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   return await addDoc(collection(db, 'surveys'), { ...data, dealerId, timestamp: serverTimestamp() });
 };
 
-export const getSubscribers = async (): Promise<any[]> => {
+export const getSubscribers = async (): Promise<SubscriberRecord[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'subscribers'), where('dealerId', '==', dealerId));
   const snapshot = await getDocs(q);

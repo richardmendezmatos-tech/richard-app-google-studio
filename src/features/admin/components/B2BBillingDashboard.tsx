@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '@/services/firebaseService';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore/lite';
 import { CreditCard, TrendingUp, AlertTriangle, Download, DollarSign, Cpu, Activity, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
+interface UsageLog {
+    dealerId?: string;
+    eventType?: string;
+    count?: number;
+    costEstimate?: number;
+}
 
 const B2BBillingDashboard = () => {
-    const [usageLogs, setUsageLogs] = useState<any[]>([]);
+    const [usageLogs, setUsageLogs] = useState<UsageLog[]>([]);
     const [stats, setStats] = useState({
         totalCost: 0,
         totalEvents: 0,
@@ -13,19 +19,33 @@ const B2BBillingDashboard = () => {
     });
 
     useEffect(() => {
-        const q = query(collection(db, 'usage_logs'), orderBy('timestamp', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const logs = snapshot.docs.map(doc => doc.data());
-            setUsageLogs(logs);
+        let cancelled = false;
+        const loadUsageLogs = async () => {
+            try {
+                const q = query(collection(db, 'usage_logs'), orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                if (cancelled) return;
+                const logs = snapshot.docs.map(doc => doc.data() as UsageLog);
+                setUsageLogs(logs);
 
-            const cost = logs.reduce((sum, log) => sum + (log.costEstimate || 0), 0);
-            setStats(prev => ({
-                ...prev,
-                totalCost: cost,
-                totalEvents: logs.length
-            }));
-        });
-        return () => unsubscribe();
+                const cost = logs.reduce((sum, log) => sum + (log.costEstimate || 0), 0);
+                setStats(prev => ({
+                    ...prev,
+                    totalCost: cost,
+                    totalEvents: logs.length
+                }));
+            } catch (error) {
+                console.error('B2B usage polling error:', error);
+            }
+        };
+
+        loadUsageLogs();
+        const intervalId = setInterval(loadUsageLogs, 15000);
+
+        return () => {
+            cancelled = true;
+            if (intervalId) clearInterval(intervalId);
+        };
     }, []);
 
     return (
@@ -44,12 +64,7 @@ const B2BBillingDashboard = () => {
 
             {/* KPI Executive Summary */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="glass-premium p-8 rounded-[2.5rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-transparent relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500"
-                >
+                <div className="glass-premium p-8 rounded-[2.5rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-transparent relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 route-fade-in">
                     <div className="absolute -right-6 -top-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
                     <TrendingUp className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" size={40} />
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">MRR B2B (Current)</div>
@@ -58,14 +73,9 @@ const B2BBillingDashboard = () => {
                         <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-500 text-[9px] font-black rounded-full uppercase">Target Reached</span>
                         <div className="text-[10px] text-emerald-500 font-bold">↑ 100%</div>
                     </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="glass-premium p-8 rounded-[2.5rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-transparent relative overflow-hidden group hover:border-amber-500/40 transition-all duration-500"
-                >
+                <div className="glass-premium p-8 rounded-[2.5rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-transparent relative overflow-hidden group hover:border-amber-500/40 transition-all duration-500 route-fade-in">
                     <div className="absolute -right-6 -top-6 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all" />
                     <Cpu className="text-amber-500 mb-6 group-hover:scale-110 transition-transform" size={40} />
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Coste IA (Est.)</div>
@@ -74,29 +84,23 @@ const B2BBillingDashboard = () => {
                         <Activity size={12} className="text-amber-500 animate-pulse" />
                         <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{stats.totalEvents} Llamadas</div>
                     </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="glass-premium p-8 rounded-[2.5rem] border border-[#00aed9]/20 bg-gradient-to-br from-[#00aed9]/10 to-transparent relative overflow-hidden group hover:border-[#00aed9]/40 transition-all duration-500"
-                >
+                <div className="glass-premium p-8 rounded-[2.5rem] border border-[#00aed9]/20 bg-gradient-to-br from-[#00aed9]/10 to-transparent relative overflow-hidden group hover:border-[#00aed9]/40 transition-all duration-500 route-fade-in">
                     <div className="absolute -right-6 -top-6 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
                     <DollarSign className="text-[#00aed9] mb-6 group-hover:scale-110 transition-transform" size={40} />
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Margen Operativo</div>
                     <div className="text-5xl font-black text-white tracking-tighter">{((1 - (stats.totalCost / (stats.mrr || 1))) * 100).toFixed(1)}%</div>
                     <div className="mt-4 flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(1 - (stats.totalCost / (stats.mrr || 1))) * 100}%` }}
-                                className="h-full bg-emerald-500"
+                            <div
+                                style={{ width: `${(1 - (stats.totalCost / (stats.mrr || 1))) * 100}%` }}
+                                className="h-full bg-emerald-500 transition-all duration-500"
                             />
                         </div>
                         <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Óptimo</span>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* Detailed Usage Table */}
@@ -124,14 +128,11 @@ const B2BBillingDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            <AnimatePresence mode="popLayout">
-                                {usageLogs.map((log, i) => (
-                                    <motion.tr
+                            {usageLogs.map((log, i) => (
+                                    <tr
                                         key={i}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.05 }}
-                                        className="hover:bg-[#00aed9]/5 transition-all group"
+                                        style={{ animationDelay: `${Math.min(i * 40, 200)}ms` }}
+                                        className="hover:bg-[#00aed9]/5 transition-all group route-fade-in"
                                     >
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-3">
@@ -161,9 +162,8 @@ const B2BBillingDashboard = () => {
                                         <td className="px-8 py-5 text-right font-mono text-sm text-amber-500 font-bold">
                                             -${(log.costEstimate || 0).toFixed(5)}
                                         </td>
-                                    </motion.tr>
+                                    </tr>
                                 ))}
-                            </AnimatePresence>
                             {usageLogs.length === 0 && (
                                 <tr>
                                     <td colSpan={4} className="px-6 py-24 text-center">
@@ -180,11 +180,7 @@ const B2BBillingDashboard = () => {
             </div>
 
             {/* Alert Box */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-6 bg-amber-500/10 border border-amber-500/20 rounded-[2rem] flex items-center gap-6 shadow-xl"
-            >
+            <div className="p-6 bg-amber-500/10 border border-amber-500/20 rounded-[2rem] flex items-center gap-6 shadow-xl route-fade-in">
                 <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
                     <AlertTriangle className="text-amber-500" size={24} />
                 </div>
@@ -194,7 +190,7 @@ const B2BBillingDashboard = () => {
                         Los costos son estimaciones basadas en Gemini 2.0 Flash. Si un dealer supera los <span className="text-amber-500 font-bold">$5.00 USD/mes</span>, se recomienda escalar la cuenta a Tier Enterprise.
                     </p>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/services/supabaseClient';
 import { TrendingDown, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface Gap {
@@ -13,38 +12,44 @@ interface Gap {
 export const GapAnalyticsWidget: React.FC = () => {
     const [gaps, setGaps] = useState<Gap[]>([]);
     const [loading, setLoading] = useState(true);
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-    const fetchGaps = async () => {
+    const fetchGaps = async (signal?: AbortSignal) => {
+        if (!supabaseUrl || !supabaseAnonKey) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
-        const { data, error } = await supabase
-            .from('search_gaps')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(10);
-
-        if (data) setGaps(data);
-        setLoading(false);
+        try {
+            const endpoint = `${supabaseUrl}/rest/v1/search_gaps?select=id,query,detected_intent,created_at&order=created_at.desc&limit=10`;
+            const res = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    apikey: supabaseAnonKey,
+                    Authorization: `Bearer ${supabaseAnonKey}`,
+                    Accept: 'application/json'
+                },
+                signal
+            });
+            if (!res.ok) throw new Error(`Gap fetch failed: ${res.status}`);
+            const data = (await res.json()) as Gap[];
+            setGaps(Array.isArray(data) ? data : []);
+        } catch (error) {
+            if ((error as Error).name !== 'AbortError') {
+                console.error('Gap fetch error:', error);
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        let isMounted = true;
-
-        const fetchGapsAsync = async () => {
-            setLoading(true);
-            const { data } = await supabase
-                .from('search_gaps')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(10);
-
-            if (isMounted) {
-                if (data) setGaps(data);
-                setLoading(false);
-            }
-        };
-
-        fetchGapsAsync();
-        return () => { isMounted = false; };
+        const controller = new AbortController();
+        fetchGaps(controller.signal);
+        return () => controller.abort();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

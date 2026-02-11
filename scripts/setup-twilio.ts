@@ -7,6 +7,7 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
 import * as path from 'path';
+import { execSync } from 'child_process';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -73,11 +74,10 @@ TWILIO_PHONE_NUMBER=${phoneNumber}
 
     // Step 4: Encrypt with dotenvx
     console.log('\n🔐 Encrypting .env with dotenvx...');
-    const { execSync } = require('child_process');
     try {
         execSync('npx dotenvx encrypt', { stdio: 'inherit' });
         console.log('✅ .env encrypted successfully');
-    } catch (error) {
+    } catch {
         console.warn('⚠️  dotenvx encryption failed. Make sure to encrypt manually.');
     }
 

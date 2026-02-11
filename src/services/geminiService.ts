@@ -51,8 +51,7 @@ const callGeminiProxy = async (prompt: GeminiPrompt, systemInstruction?: string,
     });
 
     try {
-      // Cast prompt to any to avoid complex SDK type matching for now, as we know the structure is valid for the API
-      const result = await model.generateContent(prompt as any);
+      const result = await model.generateContent(prompt as unknown as Parameters<typeof model.generateContent>[0]);
       const response = await result.response;
 
       // For standard text models
@@ -72,7 +71,7 @@ const callGeminiProxy = async (prompt: GeminiPrompt, systemInstruction?: string,
       if (modelName === "gemini-1.5-flash" || modelName === "gemini-pro") {
         if (modelName !== "gemini-pro") {
           const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro", systemInstruction });
-          const result = await fallbackModel.generateContent(prompt as any);
+          const result = await fallbackModel.generateContent(prompt as unknown as Parameters<typeof fallbackModel.generateContent>[0]);
           return (await result.response).text();
         }
       }
@@ -236,7 +235,7 @@ export const analyzeGarageSelection = async (cars: Car[]): Promise<string> => {
   const prompt = `Analiza este garaje: ${carList}. TASK: 1. Identify user spending power/lifestyle. 2. Suggest 1 trade-in. OUTPUT: HTML simple (<p>, <ul>).`;
   try {
     return await callGeminiProxy(prompt, undefined, "gemini-1.5-flash");
-  } catch (error) {
+  } catch {
     return "<p>Error de conexión con el asesor IA.</p>";
   }
 };
@@ -318,7 +317,7 @@ export const generateImage = async (prompt: string, referenceImageBase64?: strin
     // Note: callGeminiProxy might need adjustment if it doesn't support array prompts easily,
     // but based on analyzeCarImage it seems to handle arrays.
 
-    let finalPrompt: any = enhancedPrompt;
+    let finalPrompt: GeminiPrompt = enhancedPrompt;
 
     if (referenceImageBase64) {
       const mimeMatch = referenceImageBase64.match(/^data:(image\/\w+);base64,/);

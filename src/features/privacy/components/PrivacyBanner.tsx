@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, X, ChevronRight, Lock, Eye, BarChart3, Zap } from 'lucide-react';
 import { PrivacySettings } from '@/types/types';
 import { getPrivacySettings, savePrivacySettings } from '@/services/privacyService';
@@ -51,108 +50,100 @@ const PrivacyConsent: React.FC = () => {
     if (!isVisible || !settings) return null;
 
     return (
-        <AnimatePresence>
-            <motion.div
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 100, opacity: 0 }}
-                className="fixed bottom-6 left-6 right-6 md:left-auto md:right-10 md:w-[450px] z-[9999]"
-            >
-                <div className="bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-6 overflow-hidden relative group">
-                    {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl -mr-10 -mt-10" />
+        <div className="fixed bottom-6 left-6 right-6 z-[9999] route-fade-in md:left-auto md:right-10 md:w-[450px]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl group">
+                <div className="absolute -mr-10 -mt-10 right-0 top-0 h-32 w-32 rounded-full bg-[#00aed9]/10 blur-3xl" />
 
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2.5 bg-[#00aed9]/20 rounded-xl">
-                                <Shield className="text-[#00aed9]" size={20} />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-black text-white uppercase tracking-tight">Privacidad Richard AI</h3>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">GDPR & Compliance Hub</p>
-                            </div>
-                            <button
-                                onClick={() => setIsVisible(false)}
-                                className="ml-auto text-slate-500 hover:text-white transition-colors"
-                                title="Cerrar banner de privacidad"
-                            >
-                                <X size={20} />
-                            </button>
+                <div className="relative z-10">
+                    <div className="mb-4 flex items-center gap-3">
+                        <div className="rounded-xl bg-[#00aed9]/20 p-2.5">
+                            <Shield className="text-[#00aed9]" size={20} />
                         </div>
-
-                        {!showDetails ? (
-                            <>
-                                <p className="text-sm text-slate-300 leading-relaxed mb-6">
-                                    Utilizamos tecnologías de IA y análisis para mejorar tu experiencia. Tú tienes el control total sobre tus datos.
-                                </p>
-                                <div className="flex flex-col gap-3">
-                                    <button
-                                        onClick={handleAcceptAll}
-                                        className="w-full py-3 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.98]"
-                                    >
-                                        Aceptar Todo
-                                    </button>
-                                    <button
-                                        onClick={() => setShowDetails(true)}
-                                        className="w-full py-3 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl font-black text-xs uppercase tracking-[0.1em] transition-all flex items-center justify-center gap-2"
-                                    >
-                                        Personalizar Preferencias <ChevronRight size={14} />
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                                <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                                    <PrivacyToggle
-                                        icon={Lock}
-                                        title="Esencial"
-                                        description="Necesario para el funcionamiento."
-                                        enabled={true}
-                                        locked={true}
-                                        onToggle={() => { }}
-                                    />
-                                    <PrivacyToggle
-                                        icon={BarChart3}
-                                        title="Analíticas"
-                                        description="Mejora del rendimiento y errores."
-                                        enabled={settings.analytics}
-                                        onToggle={() => toggleSetting('analytics')}
-                                    />
-                                    <PrivacyToggle
-                                        icon={Zap}
-                                        title="IA & Gemelo Digital"
-                                        description="Entrenamiento de modelos con tus datos."
-                                        enabled={settings.aiData}
-                                        onToggle={() => toggleSetting('aiData')}
-                                    />
-                                    <PrivacyToggle
-                                        icon={Eye}
-                                        title="Marketing"
-                                        description="Promociones y ofertas personalizadas."
-                                        enabled={settings.marketing}
-                                        onToggle={() => toggleSetting('marketing')}
-                                    />
-                                </div>
-                                <div className="flex gap-3 pt-2">
-                                    <button
-                                        onClick={() => setShowDetails(false)}
-                                        className="flex-1 py-3 bg-white/5 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-widest hover:text-white transition-colors"
-                                    >
-                                        Volver
-                                    </button>
-                                    <button
-                                        onClick={handleSavePreferences}
-                                        className="flex-[2] py-3 bg-[#00aed9] text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all"
-                                    >
-                                        Guardar Selección
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <div>
+                            <h3 className="text-lg font-black uppercase tracking-tight text-white">Privacidad Richard AI</h3>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">GDPR & Compliance Hub</p>
+                        </div>
+                        <button
+                            onClick={() => setIsVisible(false)}
+                            className="ml-auto text-slate-500 transition-colors hover:text-white"
+                            title="Cerrar banner de privacidad"
+                        >
+                            <X size={20} />
+                        </button>
                     </div>
+
+                    {!showDetails ? (
+                        <>
+                            <p className="mb-6 text-sm leading-relaxed text-slate-300">
+                                Utilizamos tecnologias de IA y analisis para mejorar tu experiencia. Tu tienes el control total sobre tus datos.
+                            </p>
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={handleAcceptAll}
+                                    className="w-full rounded-xl bg-[#00aed9] py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-cyan-500/20 transition-all hover:bg-cyan-500 active:scale-[0.98]"
+                                >
+                                    Aceptar Todo
+                                </button>
+                                <button
+                                    onClick={() => setShowDetails(true)}
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/5 py-3 text-xs font-black uppercase tracking-[0.1em] text-slate-300 transition-all hover:bg-white/10"
+                                >
+                                    Personalizar Preferencias <ChevronRight size={14} />
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="animate-in slide-in-from-right-4 fade-in space-y-4 duration-300">
+                            <div className="custom-scrollbar max-h-[300px] space-y-3 overflow-y-auto pr-2">
+                                <PrivacyToggle
+                                    icon={Lock}
+                                    title="Esencial"
+                                    description="Necesario para el funcionamiento."
+                                    enabled={true}
+                                    locked={true}
+                                    onToggle={() => {}}
+                                />
+                                <PrivacyToggle
+                                    icon={BarChart3}
+                                    title="Analiticas"
+                                    description="Mejora del rendimiento y errores."
+                                    enabled={settings.analytics}
+                                    onToggle={() => toggleSetting('analytics')}
+                                />
+                                <PrivacyToggle
+                                    icon={Zap}
+                                    title="IA & Gemelo Digital"
+                                    description="Entrenamiento de modelos con tus datos."
+                                    enabled={settings.aiData}
+                                    onToggle={() => toggleSetting('aiData')}
+                                />
+                                <PrivacyToggle
+                                    icon={Eye}
+                                    title="Marketing"
+                                    description="Promociones y ofertas personalizadas."
+                                    enabled={settings.marketing}
+                                    onToggle={() => toggleSetting('marketing')}
+                                />
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    onClick={() => setShowDetails(false)}
+                                    className="flex-1 rounded-xl bg-white/5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-white"
+                                >
+                                    Volver
+                                </button>
+                                <button
+                                    onClick={handleSavePreferences}
+                                    className="flex-[2] rounded-xl bg-[#00aed9] py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-cyan-500/20 transition-all active:scale-95"
+                                >
+                                    Guardar Seleccion
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </motion.div>
-        </AnimatePresence>
+            </div>
+        </div>
     );
 };
 

@@ -16,9 +16,8 @@ import {
     QueryDocumentSnapshot,
     setDoc,
     writeBatch
-} from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage, analytics } from '@/services/firebaseService';
+} from 'firebase/firestore/lite';
+import { db, getStorageService, getAnalyticsService } from '@/services/firebaseService';
 import { Car } from '@/types/types';
 
 const CARS_COLLECTION = 'cars';
@@ -150,8 +149,9 @@ export const incrementCarView = async (carId: string) => {
     const carRef = doc(db, CARS_COLLECTION, carId);
     await setDoc(carRef, { views: increment(1) }, { merge: true });
 
+    const analytics = await getAnalyticsService();
     if (typeof window !== 'undefined' && analytics) {
-        const { logEvent } = await import("firebase/analytics");
+        const { logEvent } = await import('firebase/analytics');
         logEvent(analytics, 'view_item', {
             items: [{ item_id: carId }]
         });
@@ -161,6 +161,8 @@ export const incrementCarView = async (carId: string) => {
 // --- Image Management ---
 
 export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
+    const storage = await getStorageService();
+    const { ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage');
     const uploadPromises = files.map(file => {
         const path = `vehicles/${vin}/${Date.now()}_${file.name}`;
         const storageRef = ref(storage, path);

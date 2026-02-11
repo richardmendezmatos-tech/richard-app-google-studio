@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { db } from '@/services/firebaseService';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { ShieldAlert, ShieldCheck, Clock, Monitor, Globe } from 'lucide-react';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore/lite';
+import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
 import { FirestoreTimestamp } from '@/types/types';
 
 interface AuditLog {
@@ -16,36 +16,52 @@ interface AuditLog {
     location: string;
 }
 
+type TimestampLike = FirestoreTimestamp | { toDate: () => Date };
+
+const hasToDate = (value: TimestampLike): value is { toDate: () => Date } =>
+    typeof (value as { toDate?: unknown }).toDate === 'function';
+
 export const AuditLogViewer: React.FC = () => {
     const [logs, setLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const q = query(
-            collection(db, 'audit_logs'),
-            orderBy('timestamp', 'desc'),
-            limit(50)
-        );
+        let cancelled = false;
+        const loadLogs = async () => {
+            try {
+                const q = query(
+                    collection(db, 'audit_logs'),
+                    orderBy('timestamp', 'desc'),
+                    limit(50)
+                );
+                const snapshot = await getDocs(q);
+                if (cancelled) return;
+                const logsData = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as AuditLog[];
+                setLogs(logsData);
+                setLoading(false);
+            } catch (error) {
+                console.error("AuditLog polling error:", error);
+                if (!cancelled) setLoading(false);
+            }
+        };
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const logsData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as AuditLog[];
-            setLogs(logsData);
-            setLoading(false);
-        }, (error) => {
-            console.error("AuditLog onSnapshot error:", error);
-            setLoading(false);
-        });
+        loadLogs();
+        const intervalId = setInterval(loadLogs, 15000);
 
-        return () => unsubscribe();
+        return () => {
+            cancelled = true;
+            if (intervalId) clearInterval(intervalId);
+        };
     }, []);
 
-    const formatDate = (timestamp: FirestoreTimestamp) => {
+    const formatDate = (timestamp: TimestampLike) => {
         if (!timestamp) return 'N/A';
-        // Handle both Firestore Timestamp (toDate) and JS Date/number
-        const date = (timestamp as any).toDate ? (timestamp as any).toDate() : new Date(timestamp as any);
+        const date = hasToDate(timestamp)
+            ? timestamp.toDate()
+            : new Date(timestamp.seconds * 1000);
         return new Intl.DateTimeFormat('es-ES', {
             day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit'
         }).format(date);

@@ -1,9 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { cleanup, render, screen, fireEvent } from '@testing-library/react';
+import { afterEach, describe, it, expect } from 'vitest';
 import ThemeToggle from './ThemeToggle';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 describe('ThemeToggle', () => {
+    afterEach(() => {
+        cleanup();
+    });
+
     it('renders without crashing', () => {
         render(
             <ThemeProvider>

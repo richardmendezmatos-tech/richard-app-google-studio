@@ -1,10 +1,9 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldAlert } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 // --- Lazy Imports ---
-import Storefront from '@/features/inventory/components/Storefront';
+const Storefront = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/Storefront')));
 const AdminPanel = React.lazy(() => lazyRetry(() => import('@/features/admin/components/AdminPanel')));
 const DigitalTwinDashboard = React.lazy(() => lazyRetry(() => import('@/features/digital-twin/components/DigitalTwinDashboard')));
 const AIConsultant = React.lazy(() => lazyRetry(() => import('@/features/ai/components/AIConsultant')));
@@ -28,7 +27,7 @@ const BetaOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/co
 const EarlyAdopterOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/EarlyAdopterOnboard')));
 const B2BBillingDashboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/B2BBillingDashboard')));
 const LeadAnalyticsPage = React.lazy(() => lazyRetry(() => import('@/features/leads/components/LeadAnalyticsPage')));
-import ChaosTest from '@/components/layout/ChaosTest';
+const ChaosTest = React.lazy(() => lazyRetry(() => import('@/components/layout/ChaosTest')));
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
 import { initialInventoryData } from '@/constants/initialInventory';
 import { RootState } from '@/store';
@@ -103,31 +102,6 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
     return <>{children}</>;
 };
 
-// --- Animation Variants ---
-const pageVariants = {
-    initial: {
-        opacity: 0,
-        y: 20,
-        scale: 0.98
-    },
-    in: {
-        opacity: 1,
-        y: 0,
-        scale: 1
-    },
-    out: {
-        opacity: 0,
-        y: -20,
-        scale: 0.98
-    }
-};
-
-const pageTransition: any = {
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.4
-};
-
 interface AnimatedRoutesProps {
     inventory: any[];
     pendingVisualSearch: string | null;
@@ -151,60 +125,51 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
     const navigate = useNavigate();
 
     return (
-        <AnimatePresence mode="wait">
-            <Suspense fallback={<FullScreenLoader />}>
-                <Routes location={location} key={location.pathname}>
-                    <Route path="/" element={
-                        <PageWrapper>
-                            <Storefront
-                                inventory={inventory}
-                                initialVisualSearch={pendingVisualSearch}
-                                onClearVisualSearch={() => setPendingVisualSearch(null)}
-                                onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
-                                onOpenGarage={() => navigate('/garage')}
-                            />
-                        </PageWrapper>
-                    } />
-                    <Route path="/vehicle/:id" element={<PageWrapper><VehicleDetail inventory={inventory} /></PageWrapper>} />
-                    <Route path="/trade-in" element={<PageWrapper><TradeInView /></PageWrapper>} />
-                    <Route path="/appraisal" element={<PageWrapper><AppraisalView /></PageWrapper>} />
-                    <Route path="/compare" element={<PageWrapper><ComparisonView /></PageWrapper>} />
-                    <Route path="/garage" element={<AuthGuard><PageWrapper><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></PageWrapper></AuthGuard>} />
-                    <Route path="/qualify" element={<PageWrapper><PreQualifyView onExit={() => navigate('/')} /></PageWrapper>} />
-                    <Route path="/privacidad" element={<PageWrapper><PrivacyView /></PageWrapper>} />
-                    <Route path="/terminos" element={<PageWrapper><TermsView /></PageWrapper>} />
-                    <Route path="/consultant" element={<PageWrapper><AIConsultant inventory={inventory} /></PageWrapper>} />
-                    <Route path="/blog" element={<PageWrapper><BlogView /></PageWrapper>} />
-                    <Route path="/profile" element={<AuthGuard><PageWrapper><UserProfile /></PageWrapper></AuthGuard>} />
-                    <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
-                    <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
-                    <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
-                    <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
-                    <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
-                    <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
-                    <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
-                    <Route path="/kanban-demo" element={<PageWrapper><KanbanDemo /></PageWrapper>} />
-                    <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
-                    <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
-                    <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
-                    <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
-                    <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-                </Routes>
-            </Suspense>
-        </AnimatePresence>
+        <Suspense fallback={<FullScreenLoader />}>
+            <Routes location={location} key={location.pathname}>
+                <Route path="/" element={
+                    <PageWrapper>
+                        <Storefront
+                            inventory={inventory}
+                            initialVisualSearch={pendingVisualSearch}
+                            onClearVisualSearch={() => setPendingVisualSearch(null)}
+                            onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
+                            onOpenGarage={() => navigate('/garage')}
+                        />
+                    </PageWrapper>
+                } />
+                <Route path="/vehicle/:id" element={<PageWrapper><VehicleDetail inventory={inventory} /></PageWrapper>} />
+                <Route path="/trade-in" element={<PageWrapper><TradeInView /></PageWrapper>} />
+                <Route path="/appraisal" element={<PageWrapper><AppraisalView /></PageWrapper>} />
+                <Route path="/compare" element={<PageWrapper><ComparisonView /></PageWrapper>} />
+                <Route path="/garage" element={<AuthGuard><PageWrapper><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></PageWrapper></AuthGuard>} />
+                <Route path="/qualify" element={<PageWrapper><PreQualifyView onExit={() => navigate('/')} /></PageWrapper>} />
+                <Route path="/privacidad" element={<PageWrapper><PrivacyView /></PageWrapper>} />
+                <Route path="/terminos" element={<PageWrapper><TermsView /></PageWrapper>} />
+                <Route path="/consultant" element={<PageWrapper><AIConsultant inventory={inventory} /></PageWrapper>} />
+                <Route path="/blog" element={<PageWrapper><BlogView /></PageWrapper>} />
+                <Route path="/profile" element={<AuthGuard><PageWrapper><UserProfile /></PageWrapper></AuthGuard>} />
+                <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
+                <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
+                <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+                <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
+                <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
+                <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
+                <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
+                <Route path="/kanban-demo" element={<PageWrapper><KanbanDemo /></PageWrapper>} />
+                <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
+                <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
+                <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
+                <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
+                <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+            </Routes>
+        </Suspense>
     );
 };
 
 // Wrapper for repeated animation logic
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-    <motion.div
-        initial="initial"
-        animate="in"
-        exit="out"
-        variants={pageVariants}
-        transition={pageTransition}
-        className="min-h-full"
-    >
+    <div className="min-h-full route-fade-in">
         {children}
-    </motion.div>
+    </div>
 );

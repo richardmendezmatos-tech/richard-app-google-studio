@@ -11,7 +11,7 @@ export interface ScoringResult {
     priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
-export const calculateLeadScore = (lead: any, health?: VehicleHealthStatus | null): ScoringResult => {
+export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | null): ScoringResult => {
     let score = lead.aiScore || 50;
     const factors: string[] = [];
 

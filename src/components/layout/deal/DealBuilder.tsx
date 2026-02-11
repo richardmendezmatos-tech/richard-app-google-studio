@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateLoan, CreditTier, getCreditTierLabel } from '@/utils/financeCalculator';
-import { DollarSign, Calendar, TrendingUp, CheckCircle, Shield, AlertCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface DealBuilderProps {

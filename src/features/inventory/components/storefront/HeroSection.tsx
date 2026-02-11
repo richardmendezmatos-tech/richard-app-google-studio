@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign } from 'lucide-react';
 import OptimizedImage from '@/components/common/OptimizedImage';
 
@@ -9,131 +9,104 @@ interface HeroSectionProps {
 }
 
 const PSYCHOLOGY_HEADLINES = [
-    { text: "FUTURE READY", sub: "La inteligencia artificial al servicio de tu legado." },
-    { text: "PURE STATUS", sub: "No es solo un auto. Es una declaración de poder." },
-    { text: "SMART MOVE", sub: "Ingeniería financiera para decisiones inteligentes." }
+    { text: 'FIND YOUR EDGE', sub: 'Inventario curado con IA para comprar rápido y con ventaja.' },
+    { text: 'DRIVE WITH SIGNAL', sub: 'Datos, no ruido: precio, estado y financiamiento claro.' },
+    { text: 'UPGRADE INTELLIGENTLY', sub: 'Trade-in y oferta cash con experiencia premium de principio a fin.' }
 ];
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInventory, onSellCar }) => {
     const [headlineIndex, setHeadlineIndex] = useState(0);
 
-    // Rotate headlines every 5 seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            setHeadlineIndex(prev => (prev + 1) % PSYCHOLOGY_HEADLINES.length);
-        }, 5000);
+            setHeadlineIndex((prev) => (prev + 1) % PSYCHOLOGY_HEADLINES.length);
+        }, 6000);
         return () => clearInterval(interval);
     }, []);
 
     const currentHeadline = PSYCHOLOGY_HEADLINES[headlineIndex];
+    const [mainWord, accentWord] = currentHeadline.text.split(' ');
 
     return (
-        <section className="relative h-[95vh] min-h-[800px] w-full flex items-center justify-center overflow-hidden rounded-b-[4rem] lg:rounded-b-[6rem] shadow-2xl shadow-black/80 perspective-1000 group bg-slate-950">
-
-            {/* 1. CINEMATIC VIDEO BACKGROUND (Simulated with CSS & Layers) */}
-            <div className="absolute inset-0 overflow-hidden">
-                {/* Fallback Image / Poster */}
-                <div className="absolute inset-0 transition-transform duration-[30s] ease-linear scale-110 group-hover:scale-125">
-                    {/* Using a high-end dark car texture/image as base */}
-                    <OptimizedImage
-                        src="/hyundai-kona-hero.avif"
-                        alt="Cinematic Background"
-                        className="w-full h-full object-cover opacity-30 blur-sm scale-110"
-                        priority
-                    />
-                </div>
-
-                {/* Aurora Borealis Effect */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/80"></div>
-                <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[100%] bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#0d2232_50%,#00aed9_100%)] opacity-20 blur-[100px] animate-spin-slow duration-[40s]"></div>
-
-                {/* Digital overlay grid - Tron Style */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,174,217,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,217,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [perspective:1000px] [transform-style:preserve-3d] opacity-20"></div>
-
-                {/* CRT Scanline Effect */}
-                <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[size:100%_4px] opacity-10 pointer-events-none z-10"></div>
+        <section className="relative min-h-[84vh] w-full overflow-hidden rounded-b-[3rem] lg:rounded-b-[4rem] bg-[#050d15] border-b border-cyan-400/20">
+            <div className="absolute inset-0">
+                <OptimizedImage
+                    src="/hyundai-kona-hero.avif"
+                    alt="Cinematic Background"
+                    className="h-full w-full object-cover opacity-25 scale-105"
+                    priority
+                />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(49,210,255,0.32),transparent_32%),radial-gradient(circle_at_85%_20%,rgba(20,39,59,0.6),transparent_42%),linear-gradient(180deg,rgba(4,12,20,0.2),rgba(4,12,20,0.92))]" />
+                <div className="absolute inset-0 bg-noise" />
+                <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#050d15] to-transparent" />
             </div>
 
-            {/* 2. MAIN CONTENT LAYER */}
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col items-center text-center space-y-12 pt-20">
-
-                {/* Floating "Live" Badge */}
-                <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full animate-in slide-in-from-top-10 duration-1000 shadow-[0_0_20px_rgba(0,174,217,0.2)]">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/90">
-                        System Status: <span className="text-[#00aed9]">Optimal</span>
+            <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center px-6 pb-20 pt-24 text-center lg:px-12">
+                <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-cyan-300/30 bg-black/35 px-5 py-2 backdrop-blur-md">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-cyan-100/90">
+                        Live Inventory Intelligence
                     </span>
                 </div>
 
-                {/* TITANIC DYNAMIC HEADLINE */}
-                <div className="relative min-h-[200px] flex flex-col items-center justify-center">
-                    <h1 key={currentHeadline.text} className="font-cinematic text-6xl md:text-8xl lg:text-[10rem] text-white leading-[0.8] animate-in zoom-in-90 duration-700 fade-in drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
-                        {currentHeadline.text.split(' ')[0]} <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00aed9] via-cyan-200 to-[#00aed9] bg-[length:200%_auto] animate-gradient-x drop-shadow-[0_0_25px_rgba(0,174,217,0.6)]">
-                            {currentHeadline.text.split(' ')[1]}
-                        </span>
-                        <span className="text-[#00aed9]">.</span>
-                    </h1>
+                <h1
+                    key={currentHeadline.text}
+                    className="font-cinematic animate-in fade-in zoom-in text-[4.2rem] leading-[0.82] text-white sm:text-[5.8rem] md:text-[7.2rem]"
+                >
+                    {mainWord}
+                    <br />
+                    <span className="bg-gradient-to-r from-cyan-200 via-[#31d2ff] to-cyan-300 bg-[length:220%_220%] bg-clip-text text-transparent animate-gradient-x">
+                        {accentWord}
+                    </span>
+                    <span className="text-[#31d2ff]">.</span>
+                </h1>
 
-                    {/* Dynamic Subheadline */}
-                    <p key={currentHeadline.sub} className="text-lg md:text-2xl text-slate-300 max-w-2xl font-light mt-8 animate-in slide-in-from-bottom-4 duration-700 fade-in leading-relaxed text-shadow-sm">
-                        {currentHeadline.sub}
-                    </p>
-                </div>
+                <p
+                    key={currentHeadline.sub}
+                    className="animate-in fade-in mt-6 max-w-3xl text-base font-medium leading-relaxed text-slate-200/90 sm:text-lg md:text-2xl"
+                >
+                    {currentHeadline.sub}
+                </p>
 
-                {/* ACTION OBELISK (The new Control Deck) */}
-                <div className="w-full max-w-5xl mt-12 animate-in slide-in-from-bottom-20 duration-1000 delay-300">
-                    <div className="relative bg-gradient-to-b from-white/10 to-black/40 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-3 shadow-2xl flex flex-col md:flex-row items-center gap-3 group/deck hover:border-white/20 transition-all">
-
-                        {/* Primary Button */}
+                <div className="mt-12 w-full max-w-5xl rounded-[2.2rem] border border-white/10 bg-white/[0.04] p-2 backdrop-blur-2xl shadow-[0_30px_80px_-45px_rgba(0,174,217,0.55)]">
+                    <div className="grid gap-2 md:grid-cols-3">
                         <button
                             onClick={onBrowseInventory}
-                            className="relative flex-1 h-[80px] w-full bg-[#00aed9] hover:bg-[#009ac0] text-white rounded-[2.5rem] flex items-center justify-between px-8 transition-all hover:scale-[1.02] shadow-[0_0_40px_rgba(0,174,217,0.3)] group/btn overflow-hidden btn-glow"
+                            className="btn-glow flex h-20 items-center justify-between rounded-[1.8rem] bg-[#00aed9] px-7 text-white transition-colors hover:bg-[#0098bc]"
                         >
-                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
-                            <div className="flex flex-col items-start gap-1 relative z-10">
-                                <span className="text-[10px] uppercase font-black tracking-widest opacity-80">Explorar Showroom</span>
-                                <span className="text-xl font-black italic tracking-tighter">VER INVENTARIO</span>
+                            <div className="text-left">
+                                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-100">Showroom</p>
+                                <p className="text-lg font-extrabold uppercase tracking-wide">Ver Inventario</p>
                             </div>
-                            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover/btn:rotate-45 transition-transform backdrop-blur-sm">
-                                <ArrowRight size={24} className="text-white" />
+                            <div className="rounded-full bg-white/20 p-3">
+                                <ArrowRight size={20} />
                             </div>
                         </button>
 
-                        {/* Secondary Button: AI Match */}
                         <button
                             onClick={onNeuralMatch}
-                            className="relative flex-1 h-[80px] w-full bg-slate-900/60 hover:bg-slate-800 text-white rounded-[2.5rem] flex items-center justify-between px-8 transition-all hover:scale-[1.02] border border-white/5 group/ai btn-glow"
+                            className="btn-glow flex h-20 items-center justify-between rounded-[1.8rem] border border-cyan-300/20 bg-[#0b1b2a] px-7 text-white hover:bg-[#10263a]"
                         >
-                            <div className="flex flex-col items-start gap-1">
-                                <span className="text-[10px] uppercase font-black tracking-widest text-[#00aed9]">Richard AI</span>
-                                <span className="text-xl font-bold tracking-tight">NEURAL MATCH</span>
+                            <div className="text-left">
+                                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-300">Richard AI</p>
+                                <p className="text-lg font-bold uppercase tracking-wide">Neural Match</p>
                             </div>
-                            <BrainCircuit size={28} className="text-[#00aed9] group-hover/ai:animate-pulse" />
+                            <BrainCircuit size={24} className="text-cyan-300" />
                         </button>
 
-                        {/* Secondary Button: Sell */}
                         <button
                             onClick={onSellCar}
-                            className="relative flex-1 h-[80px] w-full bg-emerald-900/20 hover:bg-emerald-900/40 text-white rounded-[2.5rem] flex items-center justify-between px-8 transition-all hover:scale-[1.02] border border-emerald-500/20 group/sell btn-glow"
+                            className="btn-glow flex h-20 items-center justify-between rounded-[1.8rem] border border-emerald-300/20 bg-emerald-900/20 px-7 text-white hover:bg-emerald-800/30"
                         >
-                            <div className="flex flex-col items-start gap-1">
-                                <span className="text-[10px] uppercase font-black tracking-widest text-emerald-500">¿Vendes tu auto?</span>
-                                <span className="text-xl font-bold tracking-tight">OFERTA CASH</span>
+                            <div className="text-left">
+                                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-300">Trade-in</p>
+                                <p className="text-lg font-bold uppercase tracking-wide">Oferta Cash</p>
                             </div>
-                            <DollarSign size={28} className="text-emerald-500 group-hover/sell:scale-110 transition-transform" />
+                            <DollarSign size={24} className="text-emerald-300" />
                         </button>
                     </div>
                 </div>
-
             </div>
-
-            {/* Cinematic Footer Stripes */}
-            <div className="absolute bottom-0 left-0 w-full h-[200px] bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
-            <div className="absolute bottom-8 w-full text-center animate-bounce duration-[2000ms]">
-                <span className="text-[10px] uppercase tracking-[0.5em] text-white/30 italic">Explore Richard Automotive Experience</span>
-            </div>
-
         </section>
     );
 };

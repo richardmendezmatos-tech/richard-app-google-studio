@@ -1,9 +1,19 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/services/firebaseService';
-import { optimizeImageComplete, validateImageFile } from '@/services/imageOptimizationService';
+import { getStorageService } from '@/services/firebaseService';
+import { validateImageFile, generateBlurPlaceholder } from '@/services/imageOptimizationService';
+import ImageOptimizerWorker from '@/workers/imageOptimizer.worker?worker';
+
+interface WorkerResponse {
+    id: string;
+    success: boolean;
+    data?: {
+        blob: Blob;
+        width: number;
+        height: number;
+    };
+    error?: string;
+}
 
 // Export UploadResult type first
 export interface UploadResult {
@@ -42,6 +52,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     const [isDragging, setIsDragging] = useState(false);
     const [files, setFiles] = useState<UploadingFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const workerRef = useRef<Worker | null>(null);
+
+    useEffect(() => {
+        workerRef.current = new ImageOptimizerWorker();
+        return () => {
+            workerRef.current?.terminate();
+        };
+    }, []);
 
     const log = useCallback((msg: string) => {
         if (onLog) onLog(`[ImgUp] ${msg}`);
@@ -88,20 +106,85 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     idx === i ? { ...f, status: 'optimizing', progress: 10 } : f
                 ));
 
-                // Process image (internally parallel)
-                const optimized = await optimizeImageComplete(uploadFile.file, {
-                    quality: 0.85,
-                    maxWidth: 1600,
-                    generateWebP: true
+                // Process image with Worker
+                const workerPromise = new Promise<{
+                    jpeg: Blob;
+                    width: number;
+                    height: number;
+                }>((resolve, reject) => {
+                    const id = Math.random().toString(36).substring(7);
+
+                    const handleMessage = (e: MessageEvent<WorkerResponse>) => {
+                        if (e.data.id === id) {
+                            workerRef.current?.removeEventListener('message', handleMessage);
+                            if (e.data.success && e.data.data) {
+                                resolve({
+                                    jpeg: e.data.data.blob,
+                                    width: e.data.data.width,
+                                    height: e.data.data.height
+                                });
+                            } else {
+                                reject(new Error(e.data.error || 'Worker error'));
+                            }
+                        }
+                    };
+
+                    workerRef.current?.addEventListener('message', handleMessage);
+                    workerRef.current?.postMessage({
+                        file: uploadFile.file,
+                        id,
+                        options: {
+                            quality: 0.85,
+                            maxWidth: 1600
+                        }
+                    });
                 });
+
+                const [optimizedData, blurPlaceholder, thumbnail] = await Promise.all([
+                    workerPromise,
+                    generateBlurPlaceholder(uploadFile.file),
+                    // Keep thumbnail on main thread for now or move to worker too (simple resize)
+                    new Promise<Blob>(resolve => {
+                        // Simple creating of thumbnail can be done here or in worker. 
+                        // For simplicity and to not overcomplicate worker interface yet, 
+                        // we can re-use worker or just simple canvas here.
+                        // Let's use the worker for thumbnail effectively by sending another message or 
+                        // just downscaling the result. 
+                        // Actually, sticking to main thread for tiny thumbnail is fine for now to save complexity
+                        // but ideally everything should be in worker. 
+                        // Let's use simple canvas for thumbnail on main thread for now as it's fast.
+                        const img = new Image();
+                        img.src = URL.createObjectURL(uploadFile.file);
+                        img.onload = () => {
+                            const cvs = document.createElement('canvas');
+                            const scale = 200 / img.width;
+                            cvs.width = 200;
+                            cvs.height = img.height * scale;
+                            cvs.getContext('2d')?.drawImage(img, 0, 0, cvs.width, cvs.height);
+                            cvs.toBlob(b => resolve(b!), 'image/jpeg', 0.8);
+                        };
+                    })
+                ]);
+
+                const optimized = {
+                    jpeg: optimizedData.jpeg,
+                    webp: undefined, // Worker currently only does JPEG for simplicity in V1
+                    thumbnail: thumbnail,
+                    blurPlaceholder,
+                    savings: {
+                        percentage: ((uploadFile.file.size - optimizedData.jpeg.size) / uploadFile.file.size * 100)
+                    }
+                };
 
                 // Update status to uploading 
                 setFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, status: 'uploading', progress: 30 } : f
+                    idx === i ? { ...f, status: 'uploading', progress: 50 } : f
                 ));
 
                 const timestamp = Date.now();
                 const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
+                const storage = await getStorageService();
+                const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
 
                 // Parallel Upload of ALL versions
                 const uploadTasks: { type: string, ref: import('firebase/storage').StorageReference, task: Promise<string> }[] = [];
@@ -212,7 +295,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     return (
         <div className="space-y-4">
             {/* Drop Zone */}
-            <motion.div
+            <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -224,19 +307,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                         : 'border-slate-700 hover:border-slate-600 bg-slate-900/50'
                     }
         `}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
             >
                 {/* Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/10 to-purple-900/10 pointer-events-none" />
 
                 <div className="relative p-12 flex flex-col items-center justify-center text-center space-y-4">
-                    <motion.div
-                        animate={isDragging ? { scale: 1.2, rotate: 10 } : { scale: 1, rotate: 0 }}
-                        className="p-6 bg-cyan-500/10 rounded-2xl"
-                    >
+                    <div className={`p-6 bg-cyan-500/10 rounded-2xl transition-transform ${isDragging ? 'scale-110 rotate-6' : 'scale-100 rotate-0'}`}>
                         <Upload className="text-cyan-500" size={48} strokeWidth={2} />
-                    </motion.div>
+                    </div>
 
                     <div>
                         <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">
@@ -251,15 +329,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     </div>
 
                     {totalSavings > 0 && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg"
-                        >
+                        <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg route-fade-in">
                             <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest">
                                 💾 Ahorro: {(totalSavings / 1024 / 1024).toFixed(2)} MB
                             </p>
-                        </motion.div>
+                        </div>
                     )}
                 </div>
 
@@ -273,23 +347,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     className="hidden"
                     aria-label="Seleccionar imágenes para subir"
                 />
-            </motion.div>
+            </div>
 
             {/* File List */}
-            <AnimatePresence>
-                {files.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-3"
-                    >
+            {files.length > 0 && (
+                    <div className="space-y-3 route-fade-in">
                         {files.map((file, index) => (
-                            <motion.div
+                            <div
                                 key={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
+                                style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
                                 className="glass-premium p-4 rounded-xl flex items-center gap-4"
                             >
                                 {/* Preview */}
@@ -314,9 +380,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                                     {(file.status === 'optimizing' || file.status === 'uploading') && (
                                         <div className="mt-2">
                                             <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: `${file.progress}%` }}
+                                                <div
+                                                    style={{ width: `${file.progress}%` }}
                                                     className="h-full bg-gradient-to-r from-cyan-500 to-purple-500"
                                                 />
                                             </div>
@@ -370,11 +435,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                                         </button>
                                     )}
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
-            </AnimatePresence>
         </div>
     );
 };

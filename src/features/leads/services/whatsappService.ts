@@ -8,7 +8,7 @@
 import { getAIResponse } from '@/services/geminiService';
 import { validationAgentService } from '@/services/validationAgentService';
 import { Car } from '@/types/types';
-import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore/lite';
 import { db } from '@/services/firebaseService';
 
 export interface WhatsAppMessage {
@@ -194,8 +194,6 @@ export const sendWhatsAppMessage = async (
         // SECURITY NOTE: In a real production app, this fetch would go to a secure backend 
         // (e.g., Firebase Cloud Function) to hide Twilio credentials.
         // For this prototype, we simulate the call or hit a local proxy.
-
-        const _endpoint = import.meta.env.VITE_API_URL || '/api/send-whatsapp'; // Mock endpoint
 
         console.log(`[WhatsApp] Sending to ${to}:`, { message, options });
 

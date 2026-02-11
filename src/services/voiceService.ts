@@ -1,19 +1,46 @@
 
 // Types for Web Speech API
+interface SpeechRecognitionResultLike {
+    transcript: string;
+}
+
+interface SpeechRecognitionEventLike {
+    results: ArrayLike<{
+        isFinal?: boolean;
+        0: SpeechRecognitionResultLike;
+    }>;
+}
+
+interface SpeechRecognitionErrorEventLike {
+    error: string;
+}
+
+interface SpeechRecognitionLike {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    onstart: (() => void) | null;
+    onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+    onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+    onend: (() => void) | null;
+    start: () => void;
+    stop: () => void;
+}
+
 interface IWindow extends Window {
-    webkitSpeechRecognition: any;
-    SpeechRecognition: any;
+    webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+    SpeechRecognition?: new () => SpeechRecognitionLike;
 }
 
 export interface VoiceConfig {
     lang: string;
     onResult: (text: string) => void;
     onEnd: () => void;
-    onError: (error: any) => void;
+    onError: (error: string) => void;
 }
 
 export class VoiceService {
-    private recognition: any;
+    private recognition: SpeechRecognitionLike | null = null;
     private synthesis: SpeechSynthesis;
     private isListening: boolean = false;
     private voice: SpeechSynthesisVoice | null = null;
@@ -78,14 +105,14 @@ export class VoiceService {
             this.statusListeners.forEach(l => l(true));
         };
 
-        this.recognition.onresult = (event: any) => {
+        this.recognition.onresult = (event: SpeechRecognitionEventLike) => {
             const text = event.results[0][0].transcript;
-            const isFinal = event.results[0].isFinal;
+            const isFinal = Boolean(event.results[0].isFinal);
             config.onResult(text);
             this.resultListeners.forEach(l => l(text, isFinal));
         };
 
-        this.recognition.onerror = (event: any) => {
+        this.recognition.onerror = (event: SpeechRecognitionErrorEventLike) => {
             config.onError(event.error);
         };
 

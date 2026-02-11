@@ -1,28 +1,16 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Car } from '@/types/types';
+import PremiumGlassCard from './storefront/PremiumGlassCard';
 
-// Animation Variants
-const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-};
-
-const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            type: "spring",
-            stiffness: 50,
-            damping: 15
-        }
-    }
-};
+interface VirtualInventoryProps {
+    cars: Car[];
+    onSelectCar: (car: Car) => void;
+    onCompare: (e: React.MouseEvent, car: Car) => void;
+    isComparing: (id: string) => boolean;
+    isSaved: (id: string) => boolean;
+    onToggleSave: (e: React.MouseEvent, id: string) => void;
+    customerMemory?: any;
+}
 
 const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     cars,
@@ -86,13 +74,13 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
         const { models, colors, features } = customerMemory.preferences;
 
         // 1. Model Match
-        if (models?.some(m => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
+        if (models?.some((m: string) => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
 
         // 2. Color Match
-        if (colors?.some(c => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
+        if (colors?.some((c: string) => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
 
         // 3. Feature Match
-        if (features?.some(f => car.name.toLowerCase().includes(f.toLowerCase()))) return true;
+        if (features?.some((f: string) => car.name.toLowerCase().includes(f.toLowerCase()))) return true;
 
         // 4. Lifestyle Match
         const lifestyle = customerMemory.lifestyle?.toLowerCase() || '';
@@ -118,34 +106,28 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
             ref={containerRef}
             className="relative"
         >
-            <motion.div
+            <div
                 ref={gridRef}
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0"
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
             >
-                <AnimatePresence mode="popLayout">
-                    {visibleCars.map((car) => (
-                        <motion.div
-                            key={car.id}
-                            className="h-[450px]"
-                            variants={cardVariants}
-                            layout
-                        >
-                            <PremiumGlassCard
-                                car={car}
-                                onSelect={() => onSelectCar(car)}
-                                onCompare={(e) => onCompare(e, car)}
-                                isComparing={isComparing(car.id)}
-                                isSaved={isSaved(car.id)}
-                                onToggleSave={(e) => onToggleSave(e, car.id)}
-                                isRecommended={checkRecommendation(car)}
-                            />
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-            </motion.div>
+                {visibleCars.map((car, index) => (
+                    <div
+                        key={car.id}
+                        className="h-[450px] route-fade-in"
+                        style={{ animationDelay: `${Math.min(index * 45, 240)}ms` }}
+                    >
+                        <PremiumGlassCard
+                            car={car}
+                            onSelect={() => onSelectCar(car)}
+                            onCompare={(e) => onCompare(e, car)}
+                            isComparing={isComparing(car.id)}
+                            isSaved={isSaved(car.id)}
+                            onToggleSave={(e) => onToggleSave(e, car.id)}
+                            isRecommended={checkRecommendation(car)}
+                        />
+                    </div>
+                ))}
+            </div>
             {cars.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center">
                     {/* Placeholder handled by parent */}

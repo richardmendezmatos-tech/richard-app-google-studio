@@ -2,6 +2,7 @@
  * Strategic CEO Engine: Predictive Sales Analytics
  * Heuristic based on price deviation, feature density, and lead momentum.
  */
+import { Car } from '@/types/types';
 
 export interface PredictionResult {
     daysToSale: number;
@@ -10,7 +11,9 @@ export interface PredictionResult {
     recommendation: string;
 }
 
-export const calculatePredictiveDTS = (car: any, leadsCount: number = 0): PredictionResult => {
+type PredictiveCar = Pick<Car, 'price' | 'features' | 'img'>;
+
+export const calculatePredictiveDTS = (car: PredictiveCar, leadsCount: number = 0): PredictionResult => {
     let baseDays = 45; // Industry average for used units
     let score = 50;
 
@@ -67,7 +70,7 @@ export const recordPredictionOutcomes = async (outcome: PredictionOutcome) => {
     // Implementation placeholder for Firestore persistence
     try {
         const { db } = await import('./firebaseService');
-        const { addDoc, collection } = await import('firebase/firestore');
+        const { addDoc, collection } = await import('firebase/firestore/lite');
         await addDoc(collection(db, 'prediction_outcomes'), {
             ...outcome,
             modelVersion: 'dts-v2-heuristic',

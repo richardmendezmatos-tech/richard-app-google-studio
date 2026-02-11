@@ -12,6 +12,18 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const apiKey = env.VITE_FIREBASE_API_KEY || env.API_KEY || "";
 
+  const suppressFirebaseMixedImportWarning = (warning: { message?: string; code?: string }, warn: (warning: unknown) => void) => {
+    const message = warning?.message || '';
+    if (
+      warning?.code === 'PLUGIN_WARNING' &&
+      message.includes('is dynamically imported by') &&
+      message.includes('but also statically imported by')
+    ) {
+      return;
+    }
+    warn(warning);
+  };
+
   return {
     server: {
       host: true,
@@ -20,25 +32,27 @@ export default defineConfig(({ mode }) => {
       target: 'es2022',
       sourcemap: true,
       rollupOptions: {
+        onwarn: suppressFirebaseMixedImportWarning,
         output: {
           manualChunks: {
             // Core React libraries
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-react': ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
 
-            // Heavy 3D libraries (Digital Twin)
-            'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
-
-            // Firebase
-            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+            // Firebase split by capability to avoid loading unused modules at startup
+            'vendor-firebase-core': ['firebase/app'],
+            'vendor-firebase-auth': ['firebase/auth'],
+            'vendor-firebase-firestore-lite': ['firebase/firestore/lite'],
+            'vendor-firebase-storage': ['firebase/storage'],
+            'vendor-firebase-analytics': ['firebase/analytics'],
+            'vendor-firebase-aux': ['firebase/database', 'firebase/functions', 'firebase/performance'],
 
             // AI/ML libraries
             'vendor-ai': ['@google/generative-ai', '@mediapipe/tasks-vision'],
 
-            // Code Sandbox (AI Lab)
-            'vendor-sandpack': ['@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
-
-            // UI libraries
-            'vendor-ui': ['framer-motion', 'lucide-react', '@dnd-kit/core', '@dnd-kit/sortable'],
+            // UI libraries split by capability to avoid over-downloading on first paint
+            'vendor-ui-motion': ['framer-motion'],
+            'vendor-ui-icons': ['lucide-react'],
+            'vendor-ui-dnd': ['@dnd-kit/core', '@dnd-kit/sortable'],
 
             // Redux
             'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'rxjs']
@@ -50,21 +64,21 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        'node:child_process': path.resolve(__dirname, './src/shims-node.ts'),
-        'node:net': path.resolve(__dirname, './src/shims-node.ts'),
-        'child_process': path.resolve(__dirname, './src/shims-node.ts'),
-        'net': path.resolve(__dirname, './src/shims-node.ts'),
       }
     },
     define: {
       'process.env.API_KEY': JSON.stringify(apiKey),
       'global': 'globalThis',
     },
+    test: {
+      environment: 'jsdom',
+      setupFiles: ['./vitest.setup.ts'],
+      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      exclude: ['e2e/**', 'node_modules/**', 'dist/**']
+    },
     plugins: [
       react(),
       nodePolyfills({
-        // Disable the specific polyfills that are conflicting with our custom shims
-        exclude: ['child_process', 'net'],
         globals: {
           Buffer: true,
           global: true,
@@ -75,54 +89,15 @@ export default defineConfig(({ mode }) => {
 
       visualizer({ filename: 'stats.html' }),
       VitePWA({
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.js',
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'app-icon.png'],
-        workbox: {
+        injectManifest: {
+          minify: 'esbuild',
+          sourcemap: false,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-          runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'unsplash-images',
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-                },
-                cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
-            },
-            {
-              urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/i,
-              handler: 'StaleWhileRevalidate',
-              options: {
-                cacheName: 'firebase-storage',
-                expiration: {
-                  maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-                }
-              }
-            },
-            {
-              urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/api/'),
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'api-cache',
-                networkTimeoutSeconds: 5,
-                expiration: {
-                  maxEntries: 20
-                },
-                backgroundSync: {
-                  name: 'api-sync',
-                  options: {
-                    maxRetentionTime: 60 * 24 // 24 hours
-                  }
-                }
-              }
-            }
-          ]
         },
         manifest: {
           name: 'Richard Automotive',

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { voiceService } from '@/services/voiceService';
 import { getAIResponse } from '@/services/geminiService';
 import { validationAgentService } from '@/services/validationAgentService';
-import { motion, AnimatePresence } from 'framer-motion';
 
 // Icons
 const MicIcon = () => (
@@ -26,12 +25,14 @@ const Waveform = () => {
     return (
         <div className="flex items-center gap-1 h-4">
             {bars.map((scale, i) => (
-                <motion.div
+                <div
                     key={i}
-                    className="w-1 bg-white rounded-full"
-                    animate={{ height: [4, randomHeights[i], 4] }}
-                    transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
-                    style={{ height: 4 + scale * 2 }}
+                    className="w-1 bg-white rounded-full animate-pulse"
+                    style={{
+                        height: randomHeights[i],
+                        animationDelay: `${i * 100}ms`,
+                        animationDuration: '700ms'
+                    }}
                 />
             ))}
         </div>
@@ -110,34 +111,25 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
 
     return (
         <div className="fixed bottom-6 right-28 z-[1001]">
-            <AnimatePresence>
-                {state !== 'idle' && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute bottom-16 right-0 bg-black/80 backdrop-blur-md text-white p-3 rounded-xl mb-2 whitespace-nowrap border border-white/10 shadow-2xl"
-                    >
-                        {state === 'listening' && <div className="flex items-center gap-2">Listening... <Waveform /></div>}
-                        {state === 'thinking' && <span className="animate-pulse">Thinking... 🧠</span>}
-                        {state === 'speaking' && <span className="text-cyan-400">Richard is speaking...</span>}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {state !== 'idle' && (
+                <div className="absolute bottom-16 right-0 mb-2 whitespace-nowrap rounded-xl border border-white/10 bg-black/80 p-3 text-white shadow-2xl backdrop-blur-md route-fade-in">
+                    {state === 'listening' && <div className="flex items-center gap-2">Listening... <Waveform /></div>}
+                    {state === 'thinking' && <span className="animate-pulse">Thinking... 🧠</span>}
+                    {state === 'speaking' && <span className="text-cyan-400">Richard is speaking...</span>}
+                </div>
+            )}
 
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+            <button
                 onClick={handleMicClick}
-                className={`p-4 rounded-full shadow-lg border-2 backdrop-blur-md transition-all ${state === 'listening'
+                className={`rounded-full border-2 p-4 shadow-lg backdrop-blur-md transition-all active:scale-95 ${state === 'listening'
                     ? 'bg-red-500/90 border-red-400 animate-pulse'
-                    : 'bg-indigo-600/90 border-indigo-400 hover:bg-indigo-500'
+                    : 'bg-indigo-600/90 border-indigo-400 hover:bg-indigo-500 hover:scale-110'
                     }`}
             >
                 <div className="text-white">
                     {state === 'listening' ? <StopIcon /> : <MicIcon />}
                 </div>
-            </motion.button>
+            </button>
         </div>
     );
 };

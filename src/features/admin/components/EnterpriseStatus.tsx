@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, Server, ShieldCheck, Database, AlertCircle } from 'lucide-react';
+import { Activity, Server, Database } from 'lucide-react';
 import { enterpriseService, SystemHealth } from '@/services/enterpriseService';
 
 export const EnterpriseStatus = () => {
     const [health, setHealth] = useState<SystemHealth | null>(null);
     const [loading, setLoading] = useState(true);
     const [lastPing, setLastPing] = useState<Date | null>(null);
-
-    const checkStatus = async () => {
-        setLoading(true);
-        const result = await enterpriseService.getSystemHealth();
-        setHealth(result);
-        setLastPing(new Date());
-        setLoading(false);
-    };
 
     useEffect(() => {
         let isMounted = true;

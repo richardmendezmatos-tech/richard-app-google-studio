@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateVideo } from '@/services/geminiService';
 import { Clapperboard, UploadCloud, Film, AlertTriangle, KeyRound, Download } from 'lucide-react';
 

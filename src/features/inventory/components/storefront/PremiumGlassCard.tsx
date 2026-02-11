@@ -19,7 +19,7 @@ interface PremiumGlassCardProps {
 const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onToggleSave, isRecommended }) => {
     const navigate = useNavigate();
     const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
-    const cardRef = useRef<HTMLButtonElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
 
     // Check if this specific car is in comparison
     const isComparing = isInComparison(car.id);

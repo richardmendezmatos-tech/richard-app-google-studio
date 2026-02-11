@@ -12,7 +12,7 @@ const mockLeads: Lead[] = [
         lastName: 'Del Pueblo',
         email: 'juan@example.com',
         phone: '555-555-5555',
-        timestamp: { seconds: Date.now() / 1000, nanoseconds: 0 } as any,
+        timestamp: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
         vehicleOfInterest: 'Hyundai Tucson',
         aiScore: 85,
         aiSummary: 'Interesado en financiamiento.'
@@ -24,7 +24,7 @@ const mockLeads: Lead[] = [
         firstName: 'Maria',
         lastName: 'Rivera',
         email: 'maria@example.com',
-        timestamp: { seconds: Date.now() / 1000, nanoseconds: 0 } as any,
+        timestamp: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
         vehicleOfInterest: 'Hyundai Elantra',
         aiScore: 92,
         aiSummary: 'Quiere cambiar su auto actual.'

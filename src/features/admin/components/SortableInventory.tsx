@@ -18,7 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Car } from '@/types/types';
-import { optimizeImage } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
 import { GripVertical, Star } from 'lucide-react';
 
 interface SortableItemProps {
