@@ -1,6 +1,6 @@
 import React, { useState, useContext, Suspense } from 'react';
 import { Car, CarType } from '@/types/types';
-import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench } from 'lucide-react';
+import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench, DollarSign } from 'lucide-react';
 import CarDetailModal from './CarDetailModal';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
@@ -171,6 +171,26 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
         setIsFixing(false);
     };
 
+    const openNeuralMatch = (source: string) => {
+        analytics.trackInteraction('open_neural_match', { source, route: location.pathname });
+        setIsNeuralMatchOpen(true);
+    };
+
+    const openVisualSearch = (source: string) => {
+        analytics.trackInteraction('open_visual_search', { source, route: location.pathname });
+        setIsVisualSearchOpen(true);
+    };
+
+    const openAppraisal = (source: string) => {
+        analytics.trackInteraction('open_appraisal', { source, route: location.pathname });
+        navigate('/appraisal');
+    };
+
+    const jumpToInventory = (source: string) => {
+        analytics.trackInteraction('jump_inventory', { source, route: location.pathname });
+        document.getElementById('inventory-grid')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <>
             <div className="h-full w-full bg-transparent">
@@ -183,24 +203,26 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
                 {/* 1. Hero Section (Full Width) */}
                 <HeroSection
-                    onNeuralMatch={() => setIsNeuralMatchOpen(true)}
-                    onBrowseInventory={() => {
-                        document.getElementById('inventory-grid')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    onSellCar={() => navigate('/appraisal')}
+                    onNeuralMatch={() => openNeuralMatch('hero')}
+                    onBrowseInventory={() => jumpToInventory('hero')}
+                    onSellCar={() => openAppraisal('hero')}
                 />
 
                 {/* Main Content Container */}
-                <div className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-10 lg:px-12">
+                <div className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
 
                     {/* 2. Trust Indicators (Floating Card) */}
-                    <div className="rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
+                    <div className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
                         <TrustBar />
                     </div>
 
                     {/* Search & Filters & Sort */}
                     <div id="inventory-grid" className="scroll-mt-32">
-                        <div className="sticky top-4 z-30 rounded-[2rem] border border-cyan-200/20 bg-[rgba(7,18,30,0.86)] px-4 py-4 shadow-[0_24px_60px_-36px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 md:px-6">
+                        <div className="sticky top-2 z-30 rounded-[1.8rem] border border-cyan-100/20 bg-[linear-gradient(150deg,rgba(7,18,30,0.94),rgba(5,13,22,0.9))] px-4 py-4 shadow-[0_30px_80px_-44px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 sm:rounded-[2.2rem] sm:py-5 md:top-4 md:px-6">
+                            <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+                                <p className="font-tech text-[11px] uppercase tracking-[0.24em] text-cyan-200">Inventario Inteligente</p>
+                                <p className="font-tech text-[10px] uppercase tracking-[0.22em] text-slate-300">{displayCars.length} unidades visibles</p>
+                            </div>
                             <div className="flex flex-col items-center gap-5 lg:flex-row">
 
                                 {/* Search Bar */}
@@ -209,21 +231,21 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                     <input
                                         type="text"
                                         placeholder={visualContext ? `Buscando similares a: ${searchTerm}...` : "Buscar modelo, año o características..."}
-                                        className="w-full rounded-2xl border border-white/10 bg-[#071524]/90 py-4 pl-14 pr-28 text-base font-semibold text-white outline-none placeholder:text-slate-500 focus:border-cyan-300/40"
+                                        className="w-full rounded-2xl border border-white/10 bg-[#06111c]/95 py-4 pl-14 pr-28 text-base font-semibold text-white outline-none placeholder:text-slate-500 transition-all duration-300 focus:border-cyan-300/40 focus:shadow-[0_0_0_4px_rgba(49,210,255,0.12)]"
                                         value={searchTerm}
                                         onChange={(e) => { setSearchTerm(e.target.value); setVisualContext(null); setSemanticResultIds([]); }}
                                     />
 
                                     <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 gap-2">
                                         <button
-                                            onClick={() => setIsNeuralMatchOpen(true)}
-                                            className="btn-glow hidden items-center gap-2 rounded-xl border border-transparent bg-slate-800/90 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-cyan-200 transition-all hover:border-cyan-300/40 hover:bg-[#00aed9] hover:text-white md:flex"
+                                            onClick={() => openNeuralMatch('search_bar')}
+                                            className="btn-glow hidden items-center gap-2 rounded-xl border border-cyan-200/20 bg-slate-800/90 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-cyan-200 transition-all hover:border-cyan-300/40 hover:bg-[#00aed9] hover:text-white md:flex"
                                             title="Encuentra tu auto ideal por estilo de vida"
                                         >
                                             <BrainCircuit size={16} /> Neural Match
                                         </button>
                                         <button
-                                            onClick={() => setIsVisualSearchOpen(true)}
+                                            onClick={() => openVisualSearch('search_bar')}
                                             className="btn-glow rounded-xl bg-slate-800/90 p-3 text-cyan-200 transition-all hover:bg-[#00aed9] hover:text-white"
                                             title="Búsqueda Visual por IA"
                                         >
@@ -233,16 +255,16 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 </div>
 
                                 {/* Filters & Sorting */}
-                                <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto pb-2 lg:w-auto lg:pb-0">
+                                <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto pb-1 lg:w-auto lg:pb-0">
                                     {/* Car Type Filter */}
-                                    <div className="flex gap-2 rounded-full border border-white/10 bg-[#071524] p-1.5">
+                                    <div className="flex gap-2 rounded-full border border-white/10 bg-[#071524] p-1.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)]">
                                         {['all', 'suv', 'sedan', 'pickup'].map((type) => (
                                             <button
                                                 key={type}
                                                 onClick={() => setFilter(type as CarType | 'all')}
                                                 className={`px-5 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${filter === type
                                                     ? 'bg-[#00aed9] text-white shadow-lg shadow-cyan-500/20'
-                                                    : 'text-slate-400 hover:text-slate-100'
+                                                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
                                                     }`}
                                             >
                                                 {type === 'all' ? 'Todos' : type}
@@ -274,11 +296,12 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                         </div>
 
                         {/* Results Banner */}
-                        <div className="mb-6 mt-8 flex items-end justify-between px-2">
+                        <div className="mb-7 mt-6 flex flex-wrap items-end justify-between gap-3 px-2 sm:mt-8">
                             <div>
                                 <h3 className="font-cinematic text-4xl leading-none tracking-[0.08em] text-cyan-100">
                                     {displayCars.length} {isSearching ? 'Resultados' : 'Vehículos'}
                                 </h3>
+                                <p className="font-tech mt-1 text-[11px] uppercase tracking-[0.24em] text-slate-400">Selección activa para Puerto Rico</p>
                                 {savedCars.savedIds.length > 0 && (
                                     <button
                                         onClick={() => onOpenGarage && onOpenGarage()}
@@ -293,7 +316,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 <div className="flex items-center gap-3 rounded-r-xl border-l-4 border-[#00aed9] bg-gradient-to-r from-[#00aed9]/15 to-transparent p-3">
                                     <Sparkles size={16} className="text-[#00aed9]" />
                                     <p className="text-xs text-slate-300">
-                                        <span className="font-bold text-[#00aed9]">:</span> Resultados visuales.
+                                        <span className="font-bold text-[#00aed9]">IA:</span> Resultados visuales activos.
                                     </p>
                                     <button onClick={() => { setVisualContext(null); setSearchTerm(''); setFilter('all'); setSemanticResultIds([]); }} className="ml-2 text-[10px] font-bold underline hover:text-[#00aed9]">Limpiar</button>
                                 </div>
@@ -312,8 +335,9 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 <div className="col-span-full flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-cyan-300/20 bg-[#081726]/85 py-20 text-center animate-in fade-in">
                                     {isSearching ? (
                                         <>
-                                            <p className="text-2xl font-black uppercase tracking-tight text-slate-300">Sin Resultados</p>
-                                            <button onClick={() => { setSearchTerm(''); setFilter('all'); setVisualContext(null); }} className="mt-4 text-[#00aed9] font-bold underline hover:text-cyan-400">Limpiar Filtros</button>
+                                            <p className="font-cinematic text-4xl tracking-[0.06em] text-slate-100">Sin Resultados</p>
+                                            <p className="mt-2 max-w-md text-sm text-slate-400">Prueba cambiar el tipo, limpiar la búsqueda visual o explorar todos los segmentos.</p>
+                                            <button onClick={() => { setSearchTerm(''); setFilter('all'); setVisualContext(null); }} className="mt-5 rounded-full border border-cyan-200/30 px-6 py-2 text-xs font-black uppercase tracking-[0.2em] text-cyan-200 transition-colors hover:bg-cyan-200/10">Limpiar Filtros</button>
                                         </>
                                     ) : (
                                         <>
@@ -385,7 +409,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                             <button
                                                 onClick={() => fetchNextPage()}
                                                 disabled={isFetchingNextPage}
-                                                className="group flex items-center gap-2 rounded-full border border-cyan-300/20 bg-[#081a29] px-8 py-4 font-bold text-cyan-100 shadow-lg shadow-black/30 transition-all hover:border-[#00aed9] hover:bg-[#00aed9] hover:text-white active:scale-95"
+                                                className="group flex items-center gap-2 rounded-full border border-cyan-300/20 bg-[#081a29] px-8 py-4 font-bold text-cyan-100 shadow-lg shadow-black/30 transition-all hover:-translate-y-0.5 hover:border-[#00aed9] hover:bg-[#00aed9] hover:text-white active:scale-95"
                                             >
                                                 {isFetchingNextPage ? (
                                                     <Loader2 className="animate-spin" />
@@ -403,12 +427,42 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
                 </div>
 
-                <FAQSection />
+                <div className="reveal-up content-auto">
+                    <FAQSection />
+                </div>
 
-                <TestimonialsSection />
+                <div className="reveal-up content-auto">
+                    <TestimonialsSection />
+                </div>
 
-                <SocialFooter />
+                <div className="reveal-up content-auto">
+                    <SocialFooter />
+                </div>
             </div >
+
+            {/* Mobile Quick Actions */}
+            <div className="pointer-events-none fixed left-0 right-0 z-40 px-4 bottom-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+                <div className="pointer-events-auto mx-auto grid max-w-md grid-cols-3 gap-2 rounded-2xl border border-cyan-100/20 bg-[rgba(5,12,20,0.9)] p-2 shadow-[0_20px_44px_-24px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
+                    <button
+                        onClick={() => openNeuralMatch('mobile_quick_actions')}
+                        className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-[#0e2a42] text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100"
+                    >
+                        <BrainCircuit size={14} /> Match
+                    </button>
+                    <button
+                        onClick={() => openVisualSearch('mobile_quick_actions')}
+                        className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-[#0b2235] text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100"
+                    >
+                        <Camera size={14} /> Visual
+                    </button>
+                    <button
+                        onClick={() => openAppraisal('mobile_quick_actions')}
+                        className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-emerald-900/60 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100"
+                    >
+                        <DollarSign size={14} /> Cash
+                    </button>
+                </div>
+            </div>
 
             {/* Floating Comparison Bar */}
             {

@@ -90,7 +90,7 @@ export const WhatsAppFloat: React.FC = () => {
     };
 
     return (
-        <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end">
+        <div className="fixed right-4 z-50 flex flex-col items-end bottom-[calc(6.9rem+env(safe-area-inset-bottom))] sm:bottom-24 sm:right-5">
             {isOpen && (
                 <div className="mb-4 w-[320px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl route-fade-in dark:border-slate-800 dark:bg-slate-900">
                         {/* Premium Header */}

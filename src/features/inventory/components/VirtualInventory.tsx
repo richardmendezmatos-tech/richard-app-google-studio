@@ -113,8 +113,8 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
                 {visibleCars.map((car, index) => (
                     <div
                         key={car.id}
-                        className="h-[450px] route-fade-in"
-                        style={{ animationDelay: `${Math.min(index * 45, 240)}ms` }}
+                        className="h-[450px] route-fade-in reveal-up"
+                        style={{ animationDelay: `${Math.min(index * 55, 300)}ms` }}
                     >
                         <PremiumGlassCard
                             car={car}

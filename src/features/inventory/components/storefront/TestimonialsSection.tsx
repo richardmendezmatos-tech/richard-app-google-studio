@@ -32,21 +32,21 @@ const TestimonialsSection: React.FC = () => {
     ];
 
     return (
-        <section className="py-20 relative">
-            <div className="absolute top-0 right-0 p-20 opacity-5 pointer-events-none md:block hidden">
+        <section className="relative overflow-hidden rounded-[32px] border border-cyan-100/15 bg-[linear-gradient(140deg,rgba(6,16,28,0.95),rgba(2,8,14,0.94))] py-16 sm:rounded-[40px] sm:py-20">
+            <div className="pointer-events-none absolute right-0 top-0 hidden p-20 opacity-5 md:block">
                 <Heart size={300} className="text-[#00aed9]" />
             </div>
 
-            <div className="text-center mb-16 space-y-4 relative z-10">
-                <span className="text-[#00aed9] font-black uppercase tracking-widest text-sm">Nuestros Clientes</span>
-                <h2 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
-                    Historias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00aed9] to-cyan-400">Éxito</span>
+            <div className="relative z-10 mb-16 space-y-4 text-center">
+                <span className="font-tech text-sm uppercase tracking-[0.24em] text-cyan-200">Nuestros Clientes</span>
+                <h2 className="font-cinematic text-5xl uppercase tracking-[0.08em] text-slate-50 md:text-6xl">
+                    Historias de <span className="bg-gradient-to-r from-[#00aed9] to-cyan-300 bg-clip-text text-transparent">Éxito</span>
                 </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 relative z-10">
+            <div className="relative z-10 grid grid-cols-1 gap-6 px-4 sm:gap-8 md:grid-cols-3">
                 {testimonials.map((t) => (
-                    <div key={t.id} className="bg-white dark:bg-slate-800/80 p-8 rounded-[30px] border border-slate-100 dark:border-slate-700 relative hover:transform hover:-translate-y-2 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    <div key={t.id} className="group rounded-[30px] border border-white/10 bg-[#081a2b]/80 p-8 shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-200/30">
 
                         <div className="flex gap-1 mb-6 text-amber-400">
                             {[...Array(t.rating)].map((_, i) => (
@@ -54,11 +54,11 @@ const TestimonialsSection: React.FC = () => {
                             ))}
                         </div>
 
-                        <p className="text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-8 relative z-10">
+                        <p className="relative z-10 mb-8 leading-relaxed text-slate-300">
                             "{t.comment}"
                         </p>
 
-                        <div className="flex items-center gap-4 border-t border-slate-100 dark:border-slate-700/50 pt-6">
+                        <div className="flex items-center gap-4 border-t border-white/10 pt-6">
                             <OptimizedImage
                                 src={t.img}
                                 alt={t.name}
@@ -66,8 +66,8 @@ const TestimonialsSection: React.FC = () => {
                                 width={48}
                             />
                             <div>
-                                <h4 className="font-bold text-slate-800 dark:text-white text-sm">{t.name}</h4>
-                                <p className="text-xs text-[#00aed9] font-bold uppercase tracking-wide">{t.role}</p>
+                                <h4 className="text-sm font-bold text-white">{t.name}</h4>
+                                <p className="font-tech text-xs uppercase tracking-[0.16em] text-[#00aed9]">{t.role}</p>
                             </div>
                         </div>
                     </div>

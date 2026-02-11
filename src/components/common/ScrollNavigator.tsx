@@ -84,7 +84,7 @@ export const ScrollNavigator: React.FC = () => {
     };
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-[60] px-10 pb-6 pt-2 pointer-events-none md:px-20 lg:left-[280px]">
+        <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-[60] hidden px-10 pb-6 pt-2 md:block md:px-20 lg:left-[280px]">
             <div
                 ref={navRef}
                 className="max-w-4xl mx-auto relative h-16 flex flex-col items-center justify-center group pointer-events-auto"

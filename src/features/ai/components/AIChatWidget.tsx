@@ -134,7 +134,7 @@ const AIChatWidget: React.FC<Props> = () => {
   const activeAgent = AGENTS[currentPersona];
 
   return (
-    <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-end gap-4 font-sans">
+    <div className="fixed right-4 z-[1000] flex flex-col items-end gap-4 font-sans bottom-[calc(6.9rem+env(safe-area-inset-bottom))] sm:bottom-6 sm:right-6">
       {isOpen && (
         <div className="w-[380px] h-[600px] flex flex-col rounded-[35px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-10 fade-in duration-300 border border-white/20 backdrop-blur-xl bg-white/90 dark:bg-[#0d2232]/90">
 

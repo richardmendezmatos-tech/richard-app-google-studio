@@ -5,18 +5,18 @@ import { SITE_CONFIG } from '@/constants/siteConfig';
 
 const SocialFooter: React.FC = () => {
     return (
-        <footer className="mt-12 py-12 px-8 lg:px-16 rounded-[40px] bg-[#173d57] dark:bg-[#0d2232] text-white relative overflow-hidden group shadow-2xl shadow-cyan-900/10">
+        <footer className="group relative mt-12 overflow-hidden rounded-[40px] border border-cyan-100/15 bg-[linear-gradient(135deg,#10283b,#08111d)] px-8 py-12 text-white shadow-2xl shadow-cyan-900/10 lg:px-16">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
-            <div className="absolute -top-20 -right-20 p-20 opacity-5 pointer-events-none rotate-12 transition-transform duration-[2s] group-hover:rotate-45">
+            <div className="pointer-events-none absolute -right-20 -top-20 rotate-12 p-20 opacity-5 transition-transform duration-[2s] group-hover:rotate-45">
                 <Globe size={400} />
             </div>
 
-            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="relative z-10 flex flex-col items-center justify-between gap-10 md:flex-row">
                 <div className="text-center md:text-left">
-                    <h3 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2 justify-center md:justify-start">
+                    <h3 className="font-cinematic flex items-center justify-center gap-2 text-3xl uppercase tracking-[0.08em] md:justify-start">
                         Richard<span className="text-[#00aed9]">Automotive</span>
                     </h3>
-                    <p className="text-blue-200 text-sm mt-2 max-w-md">
+                    <p className="mt-2 max-w-md text-sm text-slate-300">
                         Redefiniendo la compra de autos en Puerto Rico con Inteligencia Artificial y transparencia total.
                     </p>
                 </div>
@@ -37,7 +37,7 @@ const SocialFooter: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs font-bold text-slate-400 gap-6">
+            <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 text-xs font-bold text-slate-400 md:flex-row">
                 <p>&copy; 2025 Richard Automotive. Todos los derechos reservados.</p>
                 <div className="flex gap-8">
                     <a href="#" className="hover:text-white transition-colors">Política de Privacidad</a>
@@ -54,7 +54,7 @@ const SocialButton = ({ icon, label, href }: { icon: React.ReactNode, label: str
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-12 h-12 bg-white/10 hover:bg-[#00aed9] hover:scale-110 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm group"
+        className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-cyan-200/40 hover:bg-[#00aed9]"
         title={label}
     >
         <span className="text-white group-hover:animate-bounce">{icon}</span>

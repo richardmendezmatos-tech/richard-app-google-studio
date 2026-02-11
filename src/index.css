@@ -12,6 +12,8 @@
   --text-main: #d9e3ef;
   --text-muted: #8aa0b8;
   --ring-focus: #31d2ff;
+  --font-editorial: "Cormorant Garamond", serif;
+  --font-tech: "Sora", sans-serif;
 }
 
 html {
@@ -34,6 +36,17 @@ body {
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.font-editorial {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.font-tech {
+  font-family: var(--font-tech);
+  font-weight: 600;
 }
 
 .bg-noise {
@@ -211,6 +224,17 @@ body {
   }
 }
 
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes gradientX {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -244,6 +268,15 @@ body {
 
 .route-fade-in {
   animation: routeFadeIn 0.36s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal-up {
+  animation: revealUp 650ms cubic-bezier(0.18, 0.89, 0.32, 1.1);
+}
+
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 .glass-morphism {

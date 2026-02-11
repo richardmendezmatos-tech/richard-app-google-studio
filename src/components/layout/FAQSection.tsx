@@ -35,8 +35,10 @@ const schemaData = {
 
 const FAQSection: React.FC = () => {
     return (
-        <section className="py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-            <div className="max-w-4xl mx-auto px-6">
+        <section className="relative overflow-hidden rounded-[32px] border border-cyan-100/15 bg-[linear-gradient(145deg,rgba(7,18,30,0.95),rgba(4,10,18,0.94))] py-16 sm:rounded-[40px] sm:py-20">
+            <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full border border-cyan-200/15" />
+            <div className="pointer-events-none absolute -right-20 bottom-10 h-64 w-64 rounded-full border border-white/10" />
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
                 {/* SEO Schema Injection */}
                 <script
                     type="application/ld+json"
@@ -44,13 +46,13 @@ const FAQSection: React.FC = () => {
                 />
 
                 <div className="text-center mb-16">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00aed9]/10 text-[#00aed9] font-bold text-xs uppercase tracking-widest mb-4">
+                    <span className="font-tech mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-200/30 bg-[#00aed9]/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-cyan-100">
                         <HelpCircle size={14} /> Soporte al Cliente
                     </span>
-                    <h2 className="text-3xl md:text-5xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
+                    <h2 className="font-cinematic text-4xl uppercase tracking-[0.08em] text-slate-50 md:text-6xl">
                         Preguntas Frecuentes
                     </h2>
-                    <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+                    <p className="mx-auto mt-4 max-w-xl text-slate-300">
                         Resolvemos sus dudas sobre el proceso de compra digital más avanzado del mercado.
                     </p>
                 </div>
@@ -59,15 +61,15 @@ const FAQSection: React.FC = () => {
                     {faqData.map((item, index) => (
                         <details
                             key={index}
-                            className="group bg-slate-50 dark:bg-slate-800 rounded-2xl border border-transparent hover:border-[#00aed9] open:border-[#00aed9]/30 transition-all duration-300 overflow-hidden"
+                            className="group overflow-hidden rounded-2xl border border-white/10 bg-[#071524]/65 transition-all duration-300 hover:border-[#00aed9]/50 open:border-[#00aed9]/35 open:bg-[#091a2c]"
                         >
-                            <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-slate-800 dark:text-white font-bold text-lg select-none group-hover:bg-white dark:group-hover:bg-slate-700/50 transition-colors">
+                            <summary className="flex cursor-pointer list-none items-center justify-between p-6 text-lg font-bold text-white transition-colors select-none group-hover:bg-white/5">
                                 <span>{item.question}</span>
                                 <span className="transform group-open:rotate-180 transition-transform duration-300 text-[#00aed9]">
                                     <ChevronDown />
                                 </span>
                             </summary>
-                            <div className="px-6 pb-6 pt-2 text-slate-500 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/50">
+                            <div className="border-t border-white/10 px-6 pb-6 pt-2 leading-relaxed text-slate-300">
                                 {item.answer}
                             </div>
                         </details>
