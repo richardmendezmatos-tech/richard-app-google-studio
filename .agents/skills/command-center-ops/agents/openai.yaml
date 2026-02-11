@@ -1,0 +1,4 @@
+interface:
+  display_name: "Command Center Ops"
+  short_description: "Run local checks and deploy workflows for Richard Automotive."
+  default_prompt: "Use this skill to validate, build, and deploy Richard Automotive Command Center safely."
