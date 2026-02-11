@@ -10,6 +10,16 @@ concurrency:
 permissions:
   contents: read
   pull-requests: write
+env:
+  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+  VITE_FIREBASE_API_KEY: ci-placeholder-key
+  VITE_FIREBASE_AUTH_DOMAIN: ci-placeholder.firebaseapp.com
+  VITE_FIREBASE_PROJECT_ID: ci-placeholder
+  VITE_FIREBASE_STORAGE_BUCKET: ci-placeholder.appspot.com
+  VITE_FIREBASE_MESSAGING_SENDER_ID: "1234567890"
+  VITE_FIREBASE_APP_ID: "1:1234567890:web:abcdef123456"
+  VITE_FIREBASE_MEASUREMENT_ID: G-TEST12345
+  VITE_GEMINI_API_KEY: ci-placeholder-gemini
 jobs:
   smoke:
     timeout-minutes: 20
@@ -50,6 +60,12 @@ jobs:
             issue_number: context.issue.number,
             body
           });
+    - name: Notify Discord on smoke failure
+      if: failure() && env.DISCORD_WEBHOOK_URL != ''
+      run: |
+        curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -d "{\"content\":\"🚨 Boot smoke failed in ${GITHUB_REPOSITORY} (${GITHUB_REF_NAME}). Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\"}"
 
   test:
     needs: smoke

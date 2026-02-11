@@ -43,28 +43,28 @@ type SubscriberRecord = { id: string } & Record<string, unknown>;
 // Legacy / Backward Compatibility Exports
 // Keep these as lazy wrappers to avoid circular ESM initialization between
 // firebaseService <-> inventoryService in production bundles.
-export const getPaginatedCars = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['getPaginatedCars']>) => {
-  const mod = await import('@/features/inventory/services/inventoryService');
+export const getPaginatedCars = async (...args: Parameters<typeof import('@/app/adapters/inventory/inventoryGateway')['getPaginatedCars']>) => {
+  const mod = await import('@/app/adapters/inventory/inventoryGateway');
   return mod.getPaginatedCars(...args);
 };
 
-export const addCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['addVehicle']>) => {
-  const mod = await import('@/features/inventory/services/inventoryService');
+export const addCar = async (...args: Parameters<typeof import('@/app/adapters/inventory/inventoryGateway')['addVehicle']>) => {
+  const mod = await import('@/app/adapters/inventory/inventoryGateway');
   return mod.addVehicle(...args);
 };
 
-export const updateCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['updateVehicle']>) => {
-  const mod = await import('@/features/inventory/services/inventoryService');
+export const updateCar = async (...args: Parameters<typeof import('@/app/adapters/inventory/inventoryGateway')['updateVehicle']>) => {
+  const mod = await import('@/app/adapters/inventory/inventoryGateway');
   return mod.updateVehicle(...args);
 };
 
-export const deleteCar = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['deleteVehicle']>) => {
-  const mod = await import('@/features/inventory/services/inventoryService');
+export const deleteCar = async (...args: Parameters<typeof import('@/app/adapters/inventory/inventoryGateway')['deleteVehicle']>) => {
+  const mod = await import('@/app/adapters/inventory/inventoryGateway');
   return mod.deleteVehicle(...args);
 };
 
-export const incrementCarView = async (...args: Parameters<typeof import('@/features/inventory/services/inventoryService')['incrementCarView']>) => {
-  const mod = await import('@/features/inventory/services/inventoryService');
+export const incrementCarView = async (...args: Parameters<typeof import('@/app/adapters/inventory/inventoryGateway')['incrementCarView']>) => {
+  const mod = await import('@/app/adapters/inventory/inventoryGateway');
   return mod.incrementCarView(...args);
 };
 
