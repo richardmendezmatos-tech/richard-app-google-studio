@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { SITE_CONFIG } from '@/constants/siteConfig';
 
 interface SEOProps {
     title?: string;
@@ -13,13 +14,17 @@ interface SEOProps {
 
 const SEO: React.FC<SEOProps> = ({
     title = "Richard Automotive | 2026 AI Command Center",
-    description = "Don't just buy a car. Upgrade your lifestyle. Access our AI Command Center now.",
-    image = "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop", // Futuristic car default
+    description = SITE_CONFIG.description,
+    image,
     url,
     type = "website",
     schema
 }) => {
-    const siteUrl = "https://richard-automotive.web.app";
+    const siteUrl = SITE_CONFIG.url;
+    const defaultImage = SITE_CONFIG.seo.ogImage.startsWith('http')
+        ? SITE_CONFIG.seo.ogImage
+        : `${siteUrl}${SITE_CONFIG.seo.ogImage}`;
+    const imageUrl = image || defaultImage;
     const currentUrl = url ? `${siteUrl}${url}` : siteUrl;
     const fullTitle = title.includes("Richard Automotive") ? title : `${title} | Richard Automotive`;
 
@@ -28,6 +33,7 @@ const SEO: React.FC<SEOProps> = ({
             {/* Standard Metadata */}
             <title>{fullTitle}</title>
             <meta name="description" content={description} />
+            <meta name="keywords" content={SITE_CONFIG.seo.keywords.join(', ')} />
             <link rel="canonical" href={currentUrl} />
 
             {/* Open Graph / Facebook */}
@@ -35,14 +41,14 @@ const SEO: React.FC<SEOProps> = ({
             <meta property="og:url" content={currentUrl} />
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={description} />
-            <meta property="og:image" content={image} />
+            <meta property="og:image" content={imageUrl} />
 
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:url" content={currentUrl} />
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content={image} />
+            <meta name="twitter:image" content={imageUrl} />
 
             {/* Structured Data (JSON-LD) */}
             {schema && (

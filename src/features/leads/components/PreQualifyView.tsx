@@ -5,6 +5,7 @@ import { useNotification } from '@/contexts/NotificationContext';
 import { submitApplication } from '@/services/firebaseService';
 import { addLead } from '@/features/leads/services/crmService';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
+import SEO from '@/components/seo/SEO';
 
 interface Props {
     onExit: () => void;
@@ -172,6 +173,12 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
 
     return (
         <div className="min-h-screen bg-[#0b1116] text-white flex flex-col font-sans">
+            <SEO
+                title="Pre-calificacion | Financiamiento Rapido"
+                description="Pre-califica en minutos para financiamiento de autos en Puerto Rico. Proceso seguro, rapido y 100% digital."
+                url="/qualify"
+                type="website"
+            />
             {/* Fintech Header */}
             <div className="bg-[#0f1922] border-b border-white/5 p-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
                 <div className="flex items-center gap-4">

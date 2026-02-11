@@ -9,6 +9,7 @@ import { logIntentSignal } from '@/services/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import DealBuilder from '@/features/inventory/components/deal/DealBuilder';
 import SEO from '@/features/inventory/components/SEO';
+import { SITE_CONFIG } from '@/constants/siteConfig';
 import Viewer360 from '@/features/inventory/components/common/Viewer360';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
 import { ProgressRing } from '@/components/common/ProgressRing';
@@ -123,6 +124,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     const year = car.year || parseInt(nameParts[0]) || 2026;
     const make = nameParts[1] || 'Auto';
     const model = nameParts.slice(2).join(' ') || car.name;
+    const siteUrl = SITE_CONFIG.url;
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
@@ -145,15 +147,15 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                         },
                         "model": model,
                         "productionDate": year.toString(),
-                        "bg-modelDate": year.toString(), // Google sometimes looks for modelDate
+                        "modelDate": year.toString(),
                         "bodyType": car.type,
                         "vehicleConfiguration": car.features?.join(', '),
                         "offers": {
                             "@type": "Offer",
-                            "url": `https://richard-automotive.web.app/vehicle/${car.id}`,
+                            "url": `${siteUrl}/vehicle/${car.id}`,
                             "priceCurrency": "USD",
                             "price": car.price,
-                            "itemCondition": "https://schema.org/NewCondition",
+                            "itemCondition": "https://schema.org/UsedCondition",
                             "availability": "https://schema.org/InStock",
                             "seller": {
                                 "@type": "AutoDealer",
@@ -169,19 +171,19 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                                 "@type": "ListItem",
                                 "position": 1,
                                 "name": "Inicio",
-                                "item": "https://richard-automotive.web.app/"
+                                "item": `${siteUrl}/`
                             },
                             {
                                 "@type": "ListItem",
                                 "position": 2,
                                 "name": "Inventario",
-                                "item": "https://richard-automotive.web.app/inventory"
+                                "item": `${siteUrl}/`
                             },
                             {
                                 "@type": "ListItem",
                                 "position": 3,
                                 "name": car.name,
-                                "item": `https://richard-automotive.web.app/vehicle/${car.id}`
+                                "item": `${siteUrl}/vehicle/${car.id}`
                             }
                         ]
                     }
@@ -312,4 +314,3 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 };
 
 export default VehicleDetail;
-

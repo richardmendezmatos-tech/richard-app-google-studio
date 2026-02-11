@@ -87,5 +87,6 @@ export const runSalesEval = ai.defineFlow(
 
 export const triggerEval = onCallGenkit({
     authPolicy: (auth) => requireAdmin(auth), // Admin only
+    secrets: ["GEMINI_API_KEY"],
     timeoutSeconds: 300, // Evals take time
 }, runSalesEval);

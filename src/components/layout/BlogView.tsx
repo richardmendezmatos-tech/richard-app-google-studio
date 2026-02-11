@@ -5,6 +5,7 @@ import { subscribeToNewsletter } from '@/services/firebaseService';
 import { BlogPost } from '@/types/types';
 import { Newspaper, Loader2, Sparkles, Calendar, User, ArrowRight, Share2 } from 'lucide-react';
 import { useNotification } from '@/contexts/NotificationContext';
+import SEO from '@/components/seo/SEO';
 
 const TONE_OPTIONS: Array<'professional' | 'casual' | 'hype'> = ['professional', 'casual', 'hype'];
 const POST_TYPE_OPTIONS: Array<'news' | 'review' | 'guide'> = ['news', 'review', 'guide'];
@@ -94,6 +95,12 @@ const BlogView: React.FC = () => {
 
     return (
         <div className="p-6 lg:p-12 max-w-[1600px] mx-auto min-h-screen space-y-12">
+            <SEO
+                title="Blog | Noticias y Guias Automotrices"
+                description="Noticias, guias y reviews sobre autos seminuevos, tecnologia automotriz y tendencias en Puerto Rico."
+                url="/blog"
+                type="website"
+            />
 
             {/* Header Section */}
             <header className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8 border-b border-slate-200 dark:border-slate-800 pb-8">
