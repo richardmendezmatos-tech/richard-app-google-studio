@@ -1,16 +1,23 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, Suspense, lazy } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
-import { WhatsAppFloat } from '@/features/leads/components/WhatsAppFloat';
-import { VoiceWidget } from '@/features/ai/components/VoiceWidget';
-import AIChatWidget from '@/features/ai/components/AIChatWidget';
 import ReloadPrompt from '@/components/layout/ReloadPrompt';
 import OfflineIndicator from '@/components/layout/OfflineIndicator';
 
-import { ScrollNavigator } from '@/components/common/ScrollNavigator';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useLocation } from 'react-router-dom';
 import { Car } from '@/types';
+
+const AIChatWidget = lazy(() => import('@/features/ai/components/AIChatWidget'));
+const VoiceWidget = lazy(() =>
+    import('@/features/ai/components/VoiceWidget').then((mod) => ({ default: mod.VoiceWidget }))
+);
+const WhatsAppFloat = lazy(() =>
+    import('@/features/leads/components/WhatsAppFloat').then((mod) => ({ default: mod.WhatsAppFloat }))
+);
+const ScrollNavigator = lazy(() =>
+    import('@/components/common/ScrollNavigator').then((mod) => ({ default: mod.ScrollNavigator }))
+);
 
 interface CinemaLayoutProps {
     children: React.ReactNode;
@@ -19,6 +26,7 @@ interface CinemaLayoutProps {
 
 export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showDeferredWidgets, setShowDeferredWidgets] = useState(false);
     const { theme } = useContext(ThemeContext);
     const location = useLocation();
 
@@ -35,17 +43,26 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         if (main) main.scrollTo(0, 0);
     }, [location.pathname]);
 
+    // Defer non-critical floating widgets to reduce initial JS cost.
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            setShowDeferredWidgets(true);
+        }, 1200);
+
+        return () => window.clearTimeout(timeout);
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-900 overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
 
             {/* Mobile Header */}
-            <div className="lg:hidden p-4 bg-[#173d57] text-white flex justify-between items-center shadow-md z-50">
-                <span className="font-black text-xl tracking-tight">RICHARD<span className="text-[#00aed9]">AUTO</span></span>
+            <div className="z-50 flex items-center justify-between border-b border-cyan-300/15 bg-[rgba(7,17,27,0.94)] p-4 text-white shadow-md backdrop-blur-2xl lg:hidden">
+                <span className="font-cinematic text-3xl tracking-[0.14em] text-cyan-200">RICHARD AUTO</span>
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     title="Abrir menú"
                     aria-label="Abrir menú"
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="rounded-lg p-2 transition-colors hover:bg-white/10"
                 >
                     <Menu />
                 </button>
@@ -57,15 +74,19 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
             {/* Main Content Area */}
             <main
                 id="main-content"
-                className="flex-1 relative w-full h-screen overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 scroll-smooth"
+                className="relative h-screen w-full flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth"
             >
                 {/* Global Floating Widgets */}
                 <ReloadPrompt />
                 <OfflineIndicator />
-                <AIChatWidget inventory={inventory} />
-                <VoiceWidget />
-                <WhatsAppFloat />
-                <ScrollNavigator />
+                {showDeferredWidgets && (
+                    <Suspense fallback={null}>
+                        <AIChatWidget inventory={inventory} />
+                        <VoiceWidget />
+                        <WhatsAppFloat />
+                        <ScrollNavigator />
+                    </Suspense>
+                )}
 
                 {/* Dynamic Content */}
                 <div className="relative z-10 min-h-full">

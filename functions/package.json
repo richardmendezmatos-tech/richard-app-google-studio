@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "genkit:start": "GENKIT_ENV=dev npx genkit start"
+    "genkit:start": "GENKIT_ENV=dev npx genkit start",
+    "set-admin-claim": "node scripts/set-admin-claim.cjs"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
     "@genkit-ai/flow": "^0.5.17",
     "@genkit-ai/googleai": "^1.27.0",
     "@genkit-ai/vertexai": "^1.27.0",
+    "@google/generative-ai": "^0.24.1",
     "@sendgrid/mail": "^8.1.6",
     "ai": "^6.0.57",
     "cookie-parser": "^1.4.7",

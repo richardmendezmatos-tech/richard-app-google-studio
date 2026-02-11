@@ -37,7 +37,9 @@ import { DealerProvider } from '@/contexts/DealerContext';
 import './i18n'; // i18n setup
 import { nativeBridgeService } from '@/services/nativeBridgeService';
 
+
 // Initialize Native Bridge (Capacitor)
+console.log('App Version: HookFix - ' + new Date().toISOString());
 nativeBridgeService.initialize();
 
 // Initialize Capacitor PWA Elements (Camera, etc.)

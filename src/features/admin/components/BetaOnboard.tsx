@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
 import { addVehicle as addCar } from '@/features/inventory/services/inventoryService';
+import { CarType } from '@/types/types';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +28,7 @@ const BetaOnboard = () => {
                 {
                     name: 'Elite Cyber-Sedan 2026',
                     price: 85000,
-                    type: 'luxury' as any,
+                    type: 'luxury' as CarType,
                     badge: 'Exclusivo Elite',
                     img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
                     featured: true
@@ -35,7 +36,7 @@ const BetaOnboard = () => {
                 {
                     name: 'Elite SUV-X Phantom',
                     price: 120000,
-                    type: 'suv' as any,
+                    type: 'suv' as CarType,
                     badge: 'Hyper-Limited',
                     img: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
                     featured: true

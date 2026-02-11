@@ -7,6 +7,20 @@ import { Mic, MicOff, Bot, Activity, Wifi } from 'lucide-react';
 
 type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 type Transcription = { id: number; role: 'user' | 'model'; text: string; isFinal: boolean };
+type RealtimeSession = {
+    close: () => void;
+    sendRealtimeInput: (payload: { media: Blob }) => void;
+};
+type ServerContent = {
+    outputTranscription?: { text: string };
+    inputTranscription?: { text: string };
+    turnComplete?: boolean;
+    modelTurn?: {
+        parts?: Array<{
+            inlineData?: { data?: string };
+        }>;
+    };
+};
 
 const VoiceAssistantView: React.FC = () => {
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
@@ -14,7 +28,7 @@ const VoiceAssistantView: React.FC = () => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isListening, setIsListening] = useState(false);
 
-    const sessionPromise = useRef<Promise<any> | null>(null);
+    const sessionPromise = useRef<Promise<RealtimeSession> | null>(null);
     const inputAudioContext = useRef<AudioContext | null>(null);
     const outputAudioContext = useRef<AudioContext | null>(null);
     const inputNode = useRef<ScriptProcessorNode | null>(null);
@@ -54,7 +68,7 @@ const VoiceAssistantView: React.FC = () => {
             try {
                 const session = await sessionPromise.current;
                 session.close();
-            } catch (e) { /* Session already closed */ }
+            } catch { /* Session already closed */ }
             sessionPromise.current = null;
         }
         setConnectionState('disconnected');
@@ -103,7 +117,7 @@ const VoiceAssistantView: React.FC = () => {
                     setConnectionState('error');
                     stopSession();
                 },
-                onclose: (e: CloseEvent) => {
+                onclose: () => {
                     stopSession();
                 },
             });
@@ -115,7 +129,7 @@ const VoiceAssistantView: React.FC = () => {
     };
 
     const handleTranscription = (message: LiveServerMessage) => {
-        const content = message.serverContent as any;
+        const content = message.serverContent as ServerContent | undefined;
         if (content?.outputTranscription) {
             const { text } = content.outputTranscription;
             currentOutputTranscriptionRef.current += text;
@@ -158,7 +172,7 @@ const VoiceAssistantView: React.FC = () => {
     };
 
     const handleAudio = async (message: LiveServerMessage) => {
-        const content = message.serverContent as any;
+        const content = message.serverContent as ServerContent | undefined;
         const audioData = content?.modelTurn?.parts?.[0]?.inlineData?.data;
         if (audioData) {
             setIsSpeaking(true);

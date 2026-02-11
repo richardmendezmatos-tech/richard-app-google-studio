@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Target, MessageSquare, Lightbulb, Zap, TrendingUp, Calendar, AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { subscribeToLeads, Lead } from '@/features/leads/services/crmService';
 import { orchestrationService, OrchestrationAction } from '@/services/orchestrationService';
+import { getAntigravityLeadAction } from '@/services/antigravityCopilotService';
 
 // Note: LiveVoiceInsight removed as it was part of previous mock
 
@@ -23,15 +23,18 @@ const SalesCopilot: React.FC = () => {
     // Effect to run orchestration on leads
     useEffect(() => {
         const runOrchestration = async () => {
-            const newActions: Record<string, OrchestrationAction> = {};
-            for (const lead of leads) {
-                // In a real scenario, we'd fetch health for each or have a bulk hook
-                // For simplicity, we'll simulate the health check context here 
-                // normally orchestrationService handles the logic
-                const action = await orchestrationService.orchestrateLeadFollowUp(lead, null);
-                newActions[lead.id] = action;
-            }
-            setLeadActions(newActions);
+            const entries = await Promise.all(
+                leads.map(async (lead) => {
+                    const agAction = await getAntigravityLeadAction(lead);
+                    if (agAction) return [lead.id, agAction] as const;
+
+                    // Fallback to local orchestration engine
+                    const localAction = await orchestrationService.orchestrateLeadFollowUp(lead, null);
+                    return [lead.id, localAction] as const;
+                })
+            );
+
+            setLeadActions(Object.fromEntries(entries) as Record<string, OrchestrationAction>);
         };
 
         if (leads.length > 0) {
@@ -40,19 +43,12 @@ const SalesCopilot: React.FC = () => {
     }, [leads]);
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden"
-        >
+        <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                 <div className="flex items-center gap-4">
-                    <motion.div
-                        whileHover={{ scale: 1.05, rotate: 5 }}
-                        className="w-12 h-12 bg-gradient-to-br from-[#00aed9] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20"
-                    >
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#00aed9] to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 hover:rotate-3">
                         <Target className="text-white" size={24} />
-                    </motion.div>
+                    </div>
                     <div>
                         <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Sales Copilot AI</h2>
                         <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest text-[#00aed9]">Real-time Negotiation Intelligence</p>
@@ -74,13 +70,10 @@ const SalesCopilot: React.FC = () => {
                     if (!action) return null;
 
                     return (
-                        <motion.div
+                        <div
                             key={lead.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ y: -5, borderColor: 'rgba(0,174,217,0.3)' }}
-                            className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all"
+                            style={{ animationDelay: `${Math.min(index * 60, 240)}ms` }}
+                            className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-[#00aed9]/30"
                         >
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-3">
@@ -120,37 +113,30 @@ const SalesCopilot: React.FC = () => {
                                 </div>
                                 <p className="text-sm text-white font-bold mb-3">{action.suggestedAction}</p>
                                 <div className="p-4 bg-[#0b1116] rounded-xl border border-white/5 italic text-slate-300 text-[11px] leading-relaxed relative">
-                                    <motion.span
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest"
-                                    >
+                                    <span className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest">
                                         Auto-Response Script
-                                    </motion.span>
+                                    </span>
                                     "{action.message}"
                                 </div>
                             </div>
 
                             <div className="flex gap-3">
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
+                                <button
                                     className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border border-white/5"
                                 >
                                     <MessageSquare size={14} /> WhatsApp
-                                </motion.button>
-                                <motion.button
-                                    whileHover={{ backgroundColor: '#00c3f5' }}
-                                    whileTap={{ scale: 0.95 }}
+                                </button>
+                                <button
                                     className="flex-1 bg-[#00aed9] text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20"
                                 >
                                     <Calendar size={14} /> Agendar Cita
-                                </motion.button>
+                                </button>
                             </div>
-                        </motion.div>
+                        </div>
                     );
                 })}
             </div>
-        </motion.div>
+        </div>
     );
 };
 

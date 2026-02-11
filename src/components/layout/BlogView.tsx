@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { generateBlogPost } from '@/services/geminiService';
 import { subscribeToNewsletter } from '@/services/firebaseService';
 import { BlogPost } from '@/types/types';
-import { Newspaper, Loader2, Sparkles, Tag, Calendar, User, ArrowRight, Share2 } from 'lucide-react';
+import { Newspaper, Loader2, Sparkles, Calendar, User, ArrowRight, Share2 } from 'lucide-react';
 import { useNotification } from '@/contexts/NotificationContext';
+
+const TONE_OPTIONS: Array<'professional' | 'casual' | 'hype'> = ['professional', 'casual', 'hype'];
+const POST_TYPE_OPTIONS: Array<'news' | 'review' | 'guide'> = ['news', 'review', 'guide'];
 
 const BlogView: React.FC = () => {
     const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -64,7 +67,7 @@ const BlogView: React.FC = () => {
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
-            } catch (err) {
+            } catch {
                 // Share canceled
             }
         } else {
@@ -115,10 +118,10 @@ const BlogView: React.FC = () => {
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tono Editorial</label>
                             <div className="flex bg-slate-100 dark:bg-slate-900 rounded-xl p-1">
-                                {['professional', 'casual', 'hype'].map(t => (
+                                {TONE_OPTIONS.map(t => (
                                     <button
                                         key={t}
-                                        onClick={() => setTone(t as any)}
+                                        onClick={() => setTone(t)}
                                         className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all ${tone === t ? 'bg-white dark:bg-slate-700 text-[#00aed9] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                     >
                                         {t === 'hype' ? '🔥' : t.slice(0, 4)}
@@ -132,12 +135,14 @@ const BlogView: React.FC = () => {
                             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Formato</label>
                             <select
                                 value={postType}
-                                onChange={(e) => setPostType(e.target.value as any)}
+                                onChange={(e) => setPostType(e.target.value as 'news' | 'review' | 'guide')}
                                 className="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl px-4 py-2.5 text-xs font-bold uppercase text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#00aed9]"
                             >
-                                <option value="news">📰 Noticias</option>
-                                <option value="review">⭐ Review</option>
-                                <option value="guide">📘 Guía</option>
+                                {POST_TYPE_OPTIONS.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option === 'news' ? '📰 Noticias' : option === 'review' ? '⭐ Review' : '📘 Guía'}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -168,7 +173,7 @@ const BlogView: React.FC = () => {
 
                 {/* Featured / Latest Post (Takes up 2 columns) */}
                 <div className="lg:col-span-2 space-y-8">
-                    {displayPosts.map((post, idx) => (
+                    {displayPosts.map((post) => (
                         <article
                             key={post.id}
                             className="group bg-white dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-100 dark:border-slate-700 shadow-xl hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer flex flex-col md:flex-row"

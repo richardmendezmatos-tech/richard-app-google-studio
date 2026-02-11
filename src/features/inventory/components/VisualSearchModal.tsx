@@ -1,6 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { X, UploadCloud, Camera, AlertCircle, ScanLine } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Car } from '@/types/types';
 import { VisualSearchResult } from '@/services/aiService';
 
@@ -63,21 +62,14 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
     if (!isOpen) return null;
 
     return (
-        <AnimatePresence>
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#0d2232]/90 backdrop-blur-xl"
-                onClick={onClose}
+        <div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d2232]/90 p-4 backdrop-blur-xl animate-in fade-in"
+            onClick={onClose}
+        >
+            <div
+                className="relative w-full max-w-lg overflow-hidden rounded-[40px] border border-slate-700 bg-white shadow-2xl animate-in zoom-in-95 dark:bg-slate-900"
+                onClick={e => e.stopPropagation()}
             >
-                <motion.div
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl overflow-hidden border border-slate-700"
-                    onClick={e => e.stopPropagation()}
-                >
                     {/* Header */}
                     <div className="p-8 pb-4">
                         <button
@@ -170,9 +162,8 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                             </div>
                         )}
                     </div>
-                </motion.div>
-            </motion.div>
-        </AnimatePresence>
+            </div>
+        </div>
     );
 };
 

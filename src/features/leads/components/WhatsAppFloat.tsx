@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNotification } from '@/contexts/NotificationContext';
-import { submitApplication } from '@/services/firebaseService';
+import { MessageCircle, X, Sparkles, ChevronRight } from 'lucide-react';
 import { addLead } from '../services/crmService';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
-import { db } from '@/services/firebaseService';
 import { useLocation } from 'react-router-dom';
 import { SITE_CONFIG } from '@/constants/siteConfig';
 import { createInteractiveMenu } from '../services/whatsappService';
@@ -24,7 +20,13 @@ export const WhatsAppFloat: React.FC = () => {
     const { trackEvent } = useMetaPixel();
 
     // Auto-detect vehicle context from URL or State
-    const state = location.state as { vehicle?: any } | null;
+    type VehicleContext = {
+        id?: string;
+        make?: string;
+        model?: string;
+        year?: string | number;
+    };
+    const state = location.state as { vehicle?: VehicleContext } | null;
     const vehicle = state?.vehicle;
 
     // Show preview after 5 seconds on first visit
@@ -89,14 +91,8 @@ export const WhatsAppFloat: React.FC = () => {
 
     return (
         <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end">
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
-                        className="mb-4 w-[320px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
-                    >
+            {isOpen && (
+                <div className="mb-4 w-[320px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl route-fade-in dark:border-slate-800 dark:bg-slate-900">
                         {/* Premium Header */}
                         <div className="bg-gradient-to-br from-[#25D366] to-[#128C7E] p-5">
                             <div className="flex items-center gap-3">
@@ -122,17 +118,16 @@ export const WhatsAppFloat: React.FC = () => {
                         {/* Chat Body */}
                         <div className="p-4 h-[350px] overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-3">
                             {messages.map((msg, i) => (
-                                <motion.div
+                                <div
                                     key={i}
-                                    initial={{ opacity: 0, x: msg.sender === 'bot' ? -10 : 10 }}
-                                    animate={{ opacity: 1, x: 0 }}
                                     className={`max-w-[85%] p-3 rounded-2xl text-xs font-medium leading-relaxed ${msg.sender === 'bot'
                                         ? 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 self-start shadow-sm border border-slate-100 dark:border-slate-700'
                                         : 'bg-[#25D366] text-white self-end shadow-md'
                                         }`}
+                                    style={{ animationDelay: `${Math.min(i * 60, 240)}ms` }}
                                 >
                                     {msg.text}
-                                </motion.div>
+                                </div>
                             ))}
                             {isTyping && (
                                 <div className="bg-white dark:bg-slate-800 p-2 rounded-2xl self-start flex gap-1 shadow-sm border border-slate-100 dark:border-slate-700">
@@ -164,12 +159,11 @@ export const WhatsAppFloat: React.FC = () => {
                                 Abrir Menú Interactivo
                             </button>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                </div>
+            )}
 
             {/* Main Floating Trigger */}
-            <motion.button
+            <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     w-16 h-16 rounded-full shadow-2xl flex items-center justify-center relative
@@ -188,17 +182,13 @@ export const WhatsAppFloat: React.FC = () => {
                         <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-[#25D366] animate-bounce"></span>
                     </div>
                 )}
-            </motion.button>
+            </button>
 
             {/* Hint Tooltip */}
             {!isOpen && !showPreview && (
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="absolute right-20 bg-white dark:bg-slate-800 py-2 px-4 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 whitespace-nowrap hidden md:block"
-                >
+                <div className="absolute right-20 hidden whitespace-nowrap rounded-xl border border-slate-100 bg-white px-4 py-2 shadow-xl route-fade-in dark:border-slate-700 dark:bg-slate-800 md:block">
                     <p className="text-[10px] font-black text-[#128C7E] uppercase tracking-tighter">Hablar con Richard IA</p>
-                </motion.div>
+                </div>
             )}
         </div>
     );

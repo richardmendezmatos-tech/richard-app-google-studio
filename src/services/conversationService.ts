@@ -9,7 +9,7 @@ import {
     getDocs,
     serverTimestamp,
     Timestamp
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 
 export interface ConversationMessage {
     id?: string;

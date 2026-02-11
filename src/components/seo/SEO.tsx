@@ -8,7 +8,7 @@ interface SEOProps {
     image?: string;
     url?: string;
     type?: string;
-    schema?: object; // JSON-LD structured data
+    schema?: object | object[]; // JSON-LD structured data or array of objects
 }
 
 const SEO: React.FC<SEOProps> = ({

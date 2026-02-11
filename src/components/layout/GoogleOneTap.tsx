@@ -9,9 +9,34 @@ interface GoogleOneTapProps {
     onSuccess?: () => void;
 }
 
+interface GoogleCredentialResponse {
+    credential: string;
+}
+
+interface GooglePromptMomentNotification {
+    isNotDisplayed: () => boolean;
+    isSkippedMoment: () => boolean;
+    getNotDisplayedReason: () => string;
+}
+
+interface GoogleAccountsIdApi {
+    initialize: (params: {
+        client_id: string;
+        callback: (response: GoogleCredentialResponse) => void;
+        auto_select: boolean;
+        cancel_on_tap_outside: boolean;
+        use_fedcm_for_prompt: boolean;
+    }) => void;
+    prompt: (cb: (notification: GooglePromptMomentNotification) => void) => void;
+}
+
 declare global {
     interface Window {
-        google: any;
+        google?: {
+            accounts: {
+                id: GoogleAccountsIdApi;
+            };
+        };
     }
 }
 
@@ -36,7 +61,7 @@ const GoogleOneTap: FC<GoogleOneTapProps> = ({
         };
     }, []);
 
-    const handleCredentialResponse = useCallback(async (response: any) => {
+    const handleCredentialResponse = useCallback(async (response: GoogleCredentialResponse) => {
         try {
             console.log('Google Security Token Recibido:', response.credential);
             const credential = GoogleAuthProvider.credential(response.credential);
@@ -68,7 +93,7 @@ const GoogleOneTap: FC<GoogleOneTapProps> = ({
                 use_fedcm_for_prompt: true
             });
 
-            window.google.accounts.id.prompt((notification: any) => {
+            window.google.accounts.id.prompt((notification: GooglePromptMomentNotification) => {
                 if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                     console.log('One Tap skipped/not displayed:', notification.getNotDisplayedReason());
                 }

@@ -1,28 +1,7 @@
-
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { useContext, useState, useEffect, ReactNode } from 'react';
 import { PrivacySettings } from '@/types/types';
-import { AuthContext } from '../../auth/context/AuthContext';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/services/firebaseService';
-
-interface PrivacyContextType {
-    settings: PrivacySettings;
-    updateSettings: (newSettings: Partial<PrivacySettings>) => Promise<void>;
-    hasConsented: boolean;
-    acceptAll: () => Promise<void>;
-    loading: boolean;
-}
-
-const DEFAULT_SETTINGS: PrivacySettings = {
-    essential: true,
-    analytics: false,
-    marketing: false,
-    aiData: false,
-    partnerSharing: false,
-    lastUpdated: Date.now()
-};
-
-export const PrivacyContext = createContext<PrivacyContextType | undefined>(undefined);
+import { AuthContext } from '../../auth/context/AuthContextValue';
+import { DEFAULT_SETTINGS, PrivacyContext } from './PrivacyContextValue';
 
 export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { user } = useContext(AuthContext);
@@ -32,6 +11,8 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // Load initial settings
     useEffect(() => {
+        let mounted = true;
+
         const loadSettings = async () => {
             // 1. Check LocalStorage (for guests or initial state)
             const savedConsent = localStorage.getItem('privacy_consented');
@@ -51,8 +32,12 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
             // 2. If user is logged in, sync with Firestore
             if (user) {
                 try {
+                    const [{ db }, { doc, getDoc }] = await Promise.all([
+                        import('@/services/firebaseService'),
+                        import('firebase/firestore/lite')
+                    ]);
                     const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists() && userDoc.data().privacySettings) {
+                    if (mounted && userDoc.exists() && userDoc.data().privacySettings) {
                         const dbSettings = userDoc.data().privacySettings as PrivacySettings;
                         // Ensure essential is always true
                         const syncedSettings = { ...dbSettings, essential: true };
@@ -65,10 +50,17 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
                     console.error("Error fetching privacy settings from Firestore:", error);
                 }
             }
-            setLoading(false);
+            if (mounted) setLoading(false);
         };
 
-        loadSettings();
+        loadSettings().catch((error) => {
+            console.error("Error loading privacy settings:", error);
+            if (mounted) setLoading(false);
+        });
+
+        return () => {
+            mounted = false;
+        };
     }, [user]);
 
     const updateSettings = async (newSettings: Partial<PrivacySettings>) => {
@@ -81,6 +73,10 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
 
         if (user) {
             try {
+                const [{ db }, { doc, updateDoc }] = await Promise.all([
+                    import('@/services/firebaseService'),
+                    import('firebase/firestore/lite')
+                ]);
                 await updateDoc(doc(db, 'users', user.uid), {
                     privacySettings: updated
                 });
@@ -104,12 +100,4 @@ export const PrivacyProvider: React.FC<{ children: ReactNode }> = ({ children })
             {children}
         </PrivacyContext.Provider>
     );
-};
-
-export const usePrivacy = () => {
-    const context = useContext(PrivacyContext);
-    if (context === undefined) {
-        throw new Error('usePrivacy must be used within a PrivacyProvider');
-    }
-    return context;
 };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Car } from '@/types/types';
-import { optimizeImage } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
 import { ExternalLink, Tag } from 'lucide-react';
 
 interface Props {

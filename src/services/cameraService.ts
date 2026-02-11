@@ -1,5 +1,4 @@
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Capacitor } from '@capacitor/core';
 
 export interface CapturedPhoto {
     blob: Blob;
@@ -30,8 +29,9 @@ export const cameraService = {
                 blob,
                 preview: image.webPath
             };
-        } catch (error: any) {
-            if (error?.message?.includes('User cancelled')) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            if (message.includes('User cancelled')) {
                 return null; // Silent cancel
             }
             console.error("Camera Capture Error:", error);

@@ -3,7 +3,7 @@ import { Car } from '@/types/types';
 import { AGENTS, detectIntent, AgentPersona } from '@/services/agentSystem';
 import { useCopilotAgent } from '@/hooks/useCopilotAgent';
 import { MessageSquare, X, Send, ChevronDown, RefreshCw, Mic, MicOff, ShieldCheck, Calculator } from 'lucide-react';
-import { AI_LEGAL_DISCLAIMER } from '@/services/firebaseService';
+import { AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
 import GenUICarCard from '@/components/layout/chat/GenUICarCard';
 
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';

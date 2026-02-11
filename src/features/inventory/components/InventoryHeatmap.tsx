@@ -1,16 +1,22 @@
 import React from 'react';
 import { Car } from '@/types/types';
-import { Flame, Skull, Ghost, Eye, MessageSquare, TrendingUp, AlertTriangle, Lock, ShieldCheck, Sparkles, ScanLine, BrainCircuit } from 'lucide-react';
+import { Flame, Ghost, TrendingUp, Sparkles, ScanLine, BrainCircuit } from 'lucide-react';
 
 interface Props {
     inventory: Car[];
 }
 
+type HeatmapCar = Car & {
+    views?: number;
+    saves?: number;
+    leads?: number;
+};
+
 export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
     // Analytics Mock: Normally this would come from interaction heatmaps
-    const getHeatLevel = (car: Car) => {
-        const views = (car as any).views || 0;
-        const saves = (car as any).saves || 0;
+    const getHeatLevel = (car: HeatmapCar) => {
+        const views = car.views || 0;
+        const saves = car.saves || 0;
         const score = views + (saves * 5);
 
         if (score > 100) return {
@@ -54,8 +60,9 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {inventory.map(car => {
-                    const heat = getHeatLevel(car);
+                {inventory.map((car) => {
+                    const heatCar = car as HeatmapCar;
+                    const heat = getHeatLevel(heatCar);
                     return (
                         <div
                             key={car.id}
@@ -84,15 +91,15 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
                                     <div className="flex items-center gap-4">
                                         <div className="flex flex-col">
                                             <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">Views</span>
-                                            <span className="text-xs font-black text-white">{(car as any).views || 0}</span>
+                                            <span className="text-xs font-black text-white">{heatCar.views || 0}</span>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">Saves</span>
-                                            <span className="text-xs font-black text-white">{(car as any).saves || 0}</span>
+                                            <span className="text-xs font-black text-white">{heatCar.saves || 0}</span>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">Inquiries</span>
-                                            <span className="text-xs font-black text-white">{(car as any).leads || 0}</span>
+                                            <span className="text-xs font-black text-white">{heatCar.leads || 0}</span>
                                         </div>
                                     </div>
 

@@ -1,6 +1,7 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import * as admin from 'firebase-admin';
+import { shouldEnforceWebhookSignatures, verifySendGridEventWebhook } from '../security/webhooks';
 
 const db = admin.firestore();
 
@@ -21,6 +22,24 @@ export const sendgridWebhook = onRequest(async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
         return;
+    }
+
+    // Optional (recommended) signed event webhook verification.
+    // If SENDGRID_EVENT_WEBHOOK_PUBLIC_KEY is set, we'll verify. You can enforce via WEBHOOK_SIGNATURE_ENFORCE=true.
+    const hasPublicKey = !!String(process.env.SENDGRID_EVENT_WEBHOOK_PUBLIC_KEY || '').trim();
+    if (hasPublicKey) {
+        const ok = verifySendGridEventWebhook(req);
+        if (!ok) {
+            logger.warn('Rejected SendGrid webhook: invalid signature');
+            res.status(403).send('Forbidden');
+            return;
+        }
+    } else if (shouldEnforceWebhookSignatures()) {
+        logger.warn('Rejected SendGrid webhook: missing SENDGRID_EVENT_WEBHOOK_PUBLIC_KEY');
+        res.status(403).send('Forbidden');
+        return;
+    } else {
+        logger.warn('SendGrid webhook signature not verified (missing public key).');
     }
 
     const events: SendGridEvent[] = req.body;

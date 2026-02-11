@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateImage } from '@/services/geminiService';
 import { GeneratedImage } from '@/types/types';
-import { ImageIcon, Download, AlertTriangle, Trash2, GalleryThumbnails, Search, ScanLine } from 'lucide-react';
+import { ImageIcon, Download, AlertTriangle, Trash2, GalleryThumbnails, ScanLine } from 'lucide-react';
 
 const IMAGE_HISTORY_KEY = 'richard_ai_image_history';
 

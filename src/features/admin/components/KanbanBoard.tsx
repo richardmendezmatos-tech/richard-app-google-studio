@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Phone, Mail, Wand2, GripVertical, ShieldCheck } from 'lucide-react';
 import { Lead } from '@/types/types';
@@ -14,11 +14,9 @@ import {
     useSensor,
     useSensors,
     DragStartEvent,
-    DragOverEvent,
     DragEndEvent,
 } from '@dnd-kit/core';
 import {
-    arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
@@ -129,7 +127,17 @@ function SortableLeadItem({ lead, onPrint, userRole }: { lead: Lead, onPrint: ()
 }
 
 // Droppable Column Component
-function KanbanColumn({ id, title, color, glow, leads, onPrint, userRole }: any) {
+interface KanbanColumnProps {
+    id: string;
+    title: string;
+    color: string;
+    glow: string;
+    leads: Lead[];
+    onPrint: (lead: Lead) => void;
+    userRole: UserRole;
+}
+
+function KanbanColumn({ id, title, color, glow, leads, onPrint, userRole }: KanbanColumnProps) {
     const { setNodeRef } = useSortable({ id: id, data: { type: 'Column' } }); // Make column itself a valid drop target logic if needed
 
     return (
@@ -195,20 +203,8 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
         );
     });
 
-    const findContainer = (id: string) => {
-        if (columns.some(col => col.id === id)) return id;
-        const lead = leads.find(l => l.id === id);
-        return lead?.status || 'new';
-    };
-
     const handleDragStart = (event: DragStartEvent) => {
         setActiveId(event.active.id as string);
-    };
-
-    const handleDragOver = (event: DragOverEvent) => {
-        // Since we are not persisting order locally in this basic version, 
-        // visual drag over might be jittery if we tried to reorder state optimistically without backend order support.
-        // For now, we rely on DragOverlay for feedback and handleDrop for the status change.
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -272,7 +268,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
         >
             <div className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar">

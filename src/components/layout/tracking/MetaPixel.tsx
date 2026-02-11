@@ -8,12 +8,12 @@ export const MetaPixel = () => {
 
     useEffect(() => {
         initPixel();
-    }, []);
+    }, [initPixel]);
 
     useEffect(() => {
         // Track PageView on route change
         trackEvent('PageView');
-    }, [location]);
+    }, [location, trackEvent]);
 
     return null;
 };

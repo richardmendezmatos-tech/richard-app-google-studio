@@ -1,6 +1,3 @@
-
-import { Car } from '@/types/types';
-
 // Agent Definitions
 export type AgentPersona = 'ricardo' | 'sofia' | 'system' | 'jordan' | 'mateo';
 

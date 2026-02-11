@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { copilotService, SessionEvent } from '@/services/copilotService';
+import { getAIResponse } from '@/services/geminiService';
+import { getInventoryOnce } from '@/services/firebaseService';
+import { Car } from '@/types/types';
 
 /**
  * Replacement for useChat from 'ai/react' using GitHub Copilot SDK.
@@ -35,64 +37,23 @@ export interface ToolResultData {
     result: Record<string, unknown>;
 }
 
+export interface SessionEvent {
+    type: string;
+    data: unknown;
+}
+
 export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptions = {}) {
+    void sessionId;
     const [messages, setMessages] = useState<Message[]>(options.initialMessages || []);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isReady, setIsReady] = useState(false);
+    const [isReady] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
     const messagesRef = useRef<Message[]>(messages);
     useEffect(() => {
         messagesRef.current = messages;
     }, [messages]);
-
-    const updateLastMessageContent = useCallback((delta: string) => {
-        setMessages(prev => {
-            const last = prev[prev.length - 1];
-            if (last && last.role === 'assistant') {
-                return [
-                    ...prev.slice(0, -1),
-                    { ...last, content: last.content + delta }
-                ];
-            }
-            return [
-                ...prev,
-                { id: Date.now().toString(), role: 'assistant', content: delta }
-            ];
-        });
-    }, []);
-
-    const addToolInvocation = useCallback((toolCall: ToolCallData) => {
-        setMessages(prev => {
-            const last = prev[prev.length - 1];
-            const invocation: NonNullable<Message['toolInvocations']>[0] = {
-                toolName: toolCall.name,
-                toolCallId: toolCall.callId,
-                args: toolCall.args,
-                state: 'call' as const
-            };
-
-            if (last && last.role === 'assistant') {
-                return [
-                    ...prev.slice(0, -1),
-                    {
-                        ...last,
-                        toolInvocations: [...(last.toolInvocations || []), invocation]
-                    } as Message
-                ];
-            }
-            return [
-                ...prev,
-                {
-                    id: Date.now().toString(),
-                    role: 'assistant',
-                    content: '',
-                    toolInvocations: [invocation]
-                } as Message
-            ];
-        });
-    }, []);
 
     const updateToolResult = useCallback((toolResult: ToolResultData) => {
         setMessages((prev: Message[]) => {
@@ -113,73 +74,6 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         });
     }, []);
 
-    const handleCopilotEvent = useCallback((event: SessionEvent) => {
-        // cast to any to allow all event types from the SDK without narrowing
-        const anyEvent = event as any;
-        switch (anyEvent.type) {
-            case 'assistant.message_delta':
-                updateLastMessageContent(String(anyEvent.data?.deltaContent || ''));
-                break;
-
-            case 'assistant.message_done': {
-                const lastMsg = messagesRef.current[messagesRef.current.length - 1];
-                if (lastMsg && lastMsg.role === 'assistant') {
-                    options.onFinish?.(lastMsg);
-                }
-                setIsLoading(false);
-                break;
-            }
-
-            case 'tool.call':
-                addToolInvocation(anyEvent.data as any as ToolCallData);
-                break;
-
-            case 'tool.result':
-                updateToolResult(anyEvent.data as any as ToolResultData);
-                break;
-
-            case 'session.error': {
-                const err = new Error(anyEvent.data?.message || 'Session error');
-                setError(err);
-                options.onError?.(err);
-                setIsLoading(false);
-                break;
-            }
-        }
-    }, [options, updateLastMessageContent, addToolInvocation, updateToolResult]);
-
-    useEffect(() => {
-        let isMounted = true;
-
-        const init = async () => {
-            try {
-                await copilotService.initialize();
-                if (!isMounted) return;
-                await copilotService.createSession(sessionId);
-                if (!isMounted) return;
-                setIsReady(true);
-            } catch (err) {
-                if (!isMounted) return;
-                const errorObj = err instanceof Error ? err : new Error('Failed to initialize');
-                setError(errorObj);
-                options.onError?.(errorObj);
-            }
-        };
-
-        init();
-
-        const cleanup = copilotService.onEvent((event: SessionEvent) => {
-            if (!isMounted) return;
-            handleCopilotEvent(event);
-        });
-
-        return () => {
-            isMounted = false;
-            cleanup();
-            copilotService.closeSession(sessionId);
-        };
-    }, [sessionId, options, handleCopilotEvent]);
-
     const append = useCallback(async (message: Partial<Message>) => {
         const userMsg: Message = {
             id: message.id || Date.now().toString(),
@@ -193,14 +87,33 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         setError(null);
 
         try {
-            await copilotService.sendMessage(sessionId, userMsg.content);
+            const inventory = await getInventoryOnce().catch(() => [] as Car[]);
+            const currentMessages = messagesRef.current;
+            const history = currentMessages
+                .filter((m) => m.role === 'user' || m.role === 'assistant')
+                .map((m) => ({
+                    role: m.role === 'user' ? 'user' as const : 'bot' as const,
+                    text: m.content
+                }));
+            const content = await getAIResponse(userMsg.content, inventory as Car[], history);
+
+            const assistantMsg: Message = {
+                id: Date.now().toString(),
+                role: 'assistant',
+                content
+            };
+
+            setMessages(prev => [...prev, assistantMsg]);
+            options.onFinish?.(assistantMsg);
+            setIsLoading(false);
+
         } catch (err) {
             const errorObj = err instanceof Error ? err : new Error('Failed to send message');
             setError(errorObj);
             options.onError?.(errorObj);
             setIsLoading(false);
         }
-    }, [sessionId, options]);
+    }, [options]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setInput(e.target.value);

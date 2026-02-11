@@ -5,16 +5,21 @@
   <meta charset="UTF-8">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <script>
-    // NUCLEAR CACHE BREAKER v1.0
+    // Manual cache breaker: use only when needed.
     if (window.location.search.includes('clean=true')) {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-      }
-      if ('caches' in window) {
-        caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-      }
-      window.history.replaceState({}, document.title, window.location.pathname);
-      window.location.reload(true);
+      Promise.resolve()
+        .then(() => 'serviceWorker' in navigator
+          ? navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(r => r.unregister())))
+          : null
+        )
+        .then(() => 'caches' in window
+          ? caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))))
+          : null
+        )
+        .finally(() => {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          window.location.reload();
+        });
     }
   </script>
   <meta name="viewport"
@@ -62,9 +67,7 @@
   <link rel="preconnect" href="https://firebasestorage.googleapis.com">
   <link rel="preconnect" href="https://generativelanguage.googleapis.com">
   
-  <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QvGN-0nwGPHDw096.woff2" as="font" type="font/woff2" crossorigin>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap"
     rel="stylesheet">
   <!-- Highlight.js Theme -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">

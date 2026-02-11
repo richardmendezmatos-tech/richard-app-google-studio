@@ -1,5 +1,5 @@
-import { rtdb } from './firebaseService';
-import { ref, onValue, set, off, DataSnapshot } from 'firebase/database';
+import { getRealtimeDbService } from './firebaseService';
+import type { DataSnapshot } from 'firebase/database';
 import { VehicleTelemetry, VehicleHealthStatus, HealthAlert } from '@/types/types';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { nativeBridgeService } from './nativeBridgeService';
@@ -7,6 +7,8 @@ import { nativeBridgeService } from './nativeBridgeService';
 const TELEMETRY_PATH = 'telemetry';
 
 export const updateVehicleTelemetry = async (telemetry: VehicleTelemetry) => {
+    const rtdb = await getRealtimeDbService();
+    const { ref, set } = await import('firebase/database');
     const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${telemetry.vehicleId}`);
     await set(vehicleRef, {
         ...telemetry,
@@ -22,23 +24,37 @@ export const useVehicleTelemetry = (vehicleId: string) => {
     useEffect(() => {
         if (!vehicleId) return;
 
-        const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${vehicleId}`);
+        let unsubscribe: (() => void) | undefined;
 
-        onValue(vehicleRef, (snapshot: DataSnapshot) => {
-            if (snapshot.exists()) {
-                setTelemetry(snapshot.val() as VehicleTelemetry);
-            } else {
-                setTelemetry(null);
+        (async () => {
+            try {
+                const rtdb = await getRealtimeDbService();
+                const { ref, onValue, off } = await import('firebase/database');
+                const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${vehicleId}`);
+
+                onValue(vehicleRef, (snapshot: DataSnapshot) => {
+                    if (snapshot.exists()) {
+                        setTelemetry(snapshot.val() as VehicleTelemetry);
+                    } else {
+                        setTelemetry(null);
+                    }
+                    setLoading(false);
+                }, (err) => {
+                    console.error("Telemetry Sync Error:", err);
+                    setError(err.message);
+                    setLoading(false);
+                });
+
+                unsubscribe = () => off(vehicleRef);
+            } catch (err) {
+                console.error("Telemetry Init Error:", err);
+                setError(err instanceof Error ? err.message : 'Telemetry init failed');
+                setLoading(false);
             }
-            setLoading(false);
-        }, (err) => {
-            console.error("Telemetry Sync Error:", err);
-            setError(err.message);
-            setLoading(false);
-        });
+        })();
 
         return () => {
-            off(vehicleRef);
+            unsubscribe?.();
         };
     }, [vehicleId]);
 

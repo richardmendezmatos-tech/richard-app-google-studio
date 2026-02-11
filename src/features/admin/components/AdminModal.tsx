@@ -68,7 +68,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ car, onClose, onSave, on
             ADICIONAL: Si se incluye una imagen, analiza visualmente el vehículo y menciona detalles específicos que veas (color, rines, estado de la pintura, extras visibles) para hacer la descripción más auténtica.`;
 
             // VISION UPGRADE: Prepare multimodal contents
-            let contents: any[] = [prompt];
+            let contents: unknown[] = [prompt];
 
             if (uploadResults.length > 0) {
                 try {

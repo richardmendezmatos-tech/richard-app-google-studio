@@ -18,12 +18,12 @@ import {
     collection,
     addDoc,
     deleteDoc
-} from "firebase/firestore";
+} from "firebase/firestore/lite";
 import {
     updateProfile,
     updatePassword
 } from "firebase/auth";
-import { auth, db, analytics } from "@/services/firebaseService";
+import { auth, db, getAnalyticsService } from "@/services/firebaseService";
 import { UserRole } from "@/types/types";
 
 // --- Types & Constants ---
@@ -120,7 +120,8 @@ export const logAuthActivity = async (email: string, success: boolean, method: s
         console.warn("Audit logging failed (non-critical):", e);
     }
 
-    if (success && typeof window !== 'undefined' && analytics) {
+    const analytics = success && typeof window !== 'undefined' ? await getAnalyticsService() : null;
+    if (success && analytics) {
         try {
             const { logEvent } = await import("firebase/analytics");
             const eventName = method.includes('login') ? 'login' : (method.includes('signup') ? 'sign_up' : method);
@@ -437,4 +438,3 @@ export const loginWithPasskey = async () => {
         throw new Error("Error iniciando sesión con Passkey: " + errorMessage);
     }
 };
-

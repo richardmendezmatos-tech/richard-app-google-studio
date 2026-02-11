@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
 import { addVehicle as addCar } from '@/features/inventory/services/inventoryService';
+import { CarType } from '@/types/types';
 import { ShieldCheck, TrendingUp, Handshake } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +29,7 @@ const EarlyAdopterOnboard = () => {
                 {
                     name: 'BMW M4 Competition 2024',
                     price: 98000,
-                    type: 'luxury' as any,
+                    type: 'luxury' as CarType,
                     badge: 'Prestige Certified',
                     img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
                     featured: true,

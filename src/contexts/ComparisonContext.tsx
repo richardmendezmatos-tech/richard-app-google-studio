@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { Car } from '../types';
-import { getCookie, setCookie } from '../services/cookieService';
 
 interface ComparisonContextType {
     selectedCars: Car[];

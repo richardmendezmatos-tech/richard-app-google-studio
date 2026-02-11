@@ -1,5 +1,5 @@
 import { db } from './firebaseService';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore/lite';
 import { generateEmbedding } from './geminiService';
 import { vectorStoreService } from './vectorStoreService';
 

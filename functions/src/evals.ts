@@ -3,6 +3,7 @@ import { ai } from './services/aiManager';
 import { chatWithLead } from './index';
 import * as logger from 'firebase-functions/logger';
 import { onCallGenkit } from 'firebase-functions/https';
+import { requireAdmin } from './security/policies';
 
 // --- EVALUATION SUITE ---
 
@@ -85,6 +86,6 @@ export const runSalesEval = ai.defineFlow(
 );
 
 export const triggerEval = onCallGenkit({
-    authPolicy: () => true, // Admin only in prod
+    authPolicy: (auth) => requireAdmin(auth), // Admin only
     timeoutSeconds: 300, // Evals take time
 }, runSalesEval);

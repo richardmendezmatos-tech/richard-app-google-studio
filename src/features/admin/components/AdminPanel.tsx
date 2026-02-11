@@ -1,32 +1,29 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
 import { Car as CarType, Lead, Subscriber } from '@/types/types';
-import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, LayoutGrid, List, Edit3, Trash2, DollarSign, Clock, TrendingUp, Radio } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getLeadsOnce, optimizeImage, auth, getSubscribers } from '@/services/firebaseService';
+import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, Radio } from 'lucide-react';
+import { getLeadsOnce, auth, getSubscribers } from '@/services/firebaseService';
+import { optimizeImage } from '@/services/firebaseShared';
+import { useAntigravity } from '@/hooks/useAntigravity';
 // import { useSelector } from 'react-redux';
 // import { RootState } from '@/store';
-import { calculatePredictiveDTS } from '@/services/predictionService';
 
 import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatmap';
 // import { useReactToPrint } from 'react-to-print'; // Removed
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
 
-// Modular Components
-import CRMBoard from './CRMBoard';
-import SalesCopilot from './SalesCopilot';
-import { AdminModal } from './AdminModal';
-import { AuditLogViewer } from './AuditLogViewer';
-import { GapAnalyticsWidget } from './GapAnalyticsWidget'; // Component 4
-// import { SortableInventory } from './SortableInventory';
-import B2BBillingDashboard from './B2BBillingDashboard';
-import { EnterpriseStatus } from './EnterpriseStatus';
-import { AdminCarCard } from './AdminCarCard';
-import { MarketingModal } from './MarketingModal';
-import ViralGeneratorModal from '@/features/marketing/components/ViralGeneratorModal';
-
-// Lazy Load Lab to keep Admin bundle light
+// Lazy modules loaded by tab/interaction to keep Admin shell lighter
+const CRMBoard = React.lazy(() => import('./CRMBoard'));
+const SalesCopilot = React.lazy(() => import('./SalesCopilot'));
+const AdminModal = React.lazy(() => import('./AdminModal').then((m) => ({ default: m.AdminModal })));
+const AuditLogViewer = React.lazy(() => import('./AuditLogViewer').then((m) => ({ default: m.AuditLogViewer })));
+const GapAnalyticsWidget = React.lazy(() => import('./GapAnalyticsWidget').then((m) => ({ default: m.GapAnalyticsWidget })));
+const B2BBillingDashboard = React.lazy(() => import('./B2BBillingDashboard'));
+const EnterpriseStatus = React.lazy(() => import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })));
+const MarketingModal = React.lazy(() => import('./MarketingModal').then((m) => ({ default: m.MarketingModal })));
+const ViralGeneratorModal = React.lazy(() => import('@/features/marketing/components/ViralGeneratorModal'));
+const AdminInventoryTab = React.lazy(() => import('./AdminInventoryTab'));
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
 const VehicleMonitor = React.lazy(() => import('./VehicleMonitor'));
 
@@ -64,12 +61,7 @@ const CountUp = ({ end, prefix = '', suffix = '', duration = 1500 }: { end: numb
 
 
 const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: React.ElementType, label: string, value: string | React.ReactNode, color: string, subValue?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ scale: 1.02, translateY: -5 }}
-    className="glass-premium p-6 rounded-[2rem] flex items-center gap-5 group cursor-default"
-  >
+  <div className="glass-premium p-6 rounded-[2rem] flex items-center gap-5 group cursor-default route-fade-in hover:-translate-y-1 hover:scale-[1.01] transition-transform">
     <div className={`p-4 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center transition-transform group-hover:rotate-12 duration-500`}>
       <Icon className={color.replace('bg-', 'text-').replace('text-opacity-100', '')} size={32} strokeWidth={2.5} />
     </div>
@@ -83,13 +75,12 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
         </div>
       )}
     </div>
-  </motion.div>
+  </div>
 );
 
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
   const { currentDealer } = useDealer();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry'>('dashboard');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -97,18 +88,6 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   const [editingCar, setEditingCar] = useState<CarType | null>(null);
   const [marketingCar, setMarketingCar] = useState<CarType | null>(null);
   const [viralCar, setViralCar] = useState<CarType | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
-  const totalStats = useMemo(() => {
-    const units = inventory.length;
-    const totalValue = inventory.reduce((acc, car) => acc + (Number(car.price) || 0), 0);
-    const avgAdvantage = inventory.reduce((acc, car) => {
-      const carLeads = leads.filter(l => l.vehicleId === car.id).length;
-      return acc + calculatePredictiveDTS(car, carLeads).advantageScore;
-    }, 0) / (units || 1);
-    return { units, totalValue, avgAdvantage };
-  }, [inventory, leads]);
   const [isInitializing, setIsInitializing] = useState(false);
 
   // Widget States
@@ -116,6 +95,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   const securityScore = 98;
 
   const navigate = useNavigate(); // For Quick Actions
+  const { status: antigravityStatus, refresh: refreshAntigravity } = useAntigravity();
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -139,9 +119,6 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     if (activeTab === 'marketing') {
       getSubscribers().then(setSubscribers).catch(console.error);
     }
-    if (activeTab === 'inventory' && searchInputRef.current) {
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    }
   }, [activeTab]);
 
   /* 
@@ -155,12 +132,6 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     }
   }, []);
   */
-
-
-
-  const filteredInventory = useMemo(() => (inventory || []).filter(c =>
-    (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
-  ), [inventory, searchTerm]);
 
   const handleInitClick = useCallback(async () => {
     if (!onInitializeDb) return;
@@ -196,16 +167,30 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           </div>
 
           <div className="flex items-center gap-4">
-            <EnterpriseStatus />
+            <button
+              type="button"
+              onClick={refreshAntigravity}
+              className={`h-10 rounded-xl border px-4 text-[10px] font-black uppercase tracking-widest transition-all ${
+                antigravityStatus === 'online'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                  : antigravityStatus === 'checking'
+                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                    : antigravityStatus === 'disabled'
+                      ? 'border-slate-600 bg-slate-800 text-slate-300'
+                      : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
+              }`}
+              title="Verificar estado de Antigravity"
+            >
+              AG: {antigravityStatus}
+            </button>
+            <React.Suspense fallback={<div className="h-10 w-40 rounded-xl bg-white/5 animate-pulse" />}>
+              <EnterpriseStatus />
+            </React.Suspense>
           </div>
 
 
           {/* Strategic: Security Copilot Widget */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="hidden xl:flex items-center gap-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-3xl group cursor-default"
-          >
+          <div className="hidden xl:flex items-center gap-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-3xl group cursor-default route-fade-in">
             <div className="relative">
               <ShieldCheck className="text-emerald-500 group-hover:scale-110 transition-transform" size={24} />
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
@@ -230,7 +215,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
               </div>
               <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Latency: 24ms</div>
             </div>
-          </motion.div>
+          </div>
 
           <div className="flex gap-3 w-full md:w-auto">
             {/* Quick Actions for Dashboard */}
@@ -385,7 +370,9 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                 </div>
               </div>
               <div className="lg:col-span-1 h-full space-y-6">
-                <GapAnalyticsWidget />
+                <React.Suspense fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}>
+                  <GapAnalyticsWidget />
+                </React.Suspense>
 
                 {/* Subscribers Widget */}
                 <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-hidden flex flex-col max-h-[400px]">
@@ -416,13 +403,17 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
           {activeTab === 'pipeline' && (
             <div className="h-[calc(100vh-350px)] min-h-[500px]">
-              <CRMBoard />
+              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando CRM...</div>}>
+                <CRMBoard />
+              </React.Suspense>
             </div>
           )}
 
           {activeTab === 'copilot' && (
             <div className="min-h-[600px]">
-              <SalesCopilot />
+              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando Copilot...</div>}>
+                <SalesCopilot />
+              </React.Suspense>
             </div>
           )}
 
@@ -463,14 +454,18 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
               </div>
 
               <div className="min-h-[600px]">
-                <AuditLogViewer />
+                <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}>
+                  <AuditLogViewer />
+                </React.Suspense>
               </div>
             </div>
           )}
 
           {activeTab === 'billing' && (
             <div className="min-h-[600px]">
-              <B2BBillingDashboard />
+              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando facturacion...</div>}>
+                <B2BBillingDashboard />
+              </React.Suspense>
             </div>
           )}
 
@@ -483,196 +478,19 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           )}
 
           {activeTab === 'inventory' && (
-            <div className="flex flex-col gap-8 min-h-[600px]">
-
-              {/* Inventory Dashboard Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                {[
-                  { label: 'Unidades', value: totalStats.units, icon: Package, color: 'text-blue-500' },
-                  { label: 'Valor Total', value: `$${(totalStats.totalValue / 1000000).toFixed(1)}M`, icon: DollarSign, color: 'text-emerald-500' },
-                  { label: 'Advantage Prom.', value: `${totalStats.avgAdvantage.toFixed(1)}%`, icon: TrendingUp, color: 'text-[#00aed9]' },
-                  { label: 'Ventas Proy.', value: '12', icon: Zap, color: 'text-amber-500' }
-                ].map((stat, i) => (
-                  <div key={i} className="glass-premium p-4 flex items-center gap-4 hover-kinetic cursor-default">
-                    <div className={`p-3 rounded-2xl bg-white/5 dark:bg-slate-800 shadow-sm ${stat.color}`}>
-                      <stat.icon size={20} />
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</div>
-                      <div className="text-xl font-black text-slate-800 dark:text-white tracking-tight text-glow">{stat.value}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Main List */}
-              <div className="flex-1 bg-white/5 backdrop-blur-md rounded-[2.5rem] shadow-xl border border-white/10 overflow-hidden flex flex-col">
-                {/* Search & Controls */}
-                <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
-                  <div className="relative w-full md:w-96 group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors" size={20} />
-                    <input
-                      type="text"
-                      placeholder="Buscar vehículo..."
-                      className="w-full pl-12 pr-4 h-[50px] bg-slate-950 border border-white/10 rounded-xl focus:ring-2 focus:ring-[#00aed9] focus:border-transparent outline-none transition-all text-sm font-medium text-white placeholder:text-slate-600"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      ref={searchInputRef}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    {/* View Switcher */}
-                    <div className="flex bg-slate-950 p-1 rounded-xl border border-white/5">
-                      <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-[#00aed9] text-white shadow-lg' : 'text-slate-600 hover:text-slate-400'}`}
-                        title="Cuadrícula"
-                      >
-                        <LayoutGrid size={18} />
-                      </button>
-                      <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-[#00aed9] text-white shadow-lg' : 'text-slate-600 hover:text-slate-400'}`}
-                        title="Lista"
-                      >
-                        <List size={18} />
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => { setEditingCar(null); setIsModalOpen(true); }}
-                      className="px-6 h-[44px] bg-[#00aed9] hover:bg-cyan-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Plus size={18} strokeWidth={3} /> Nueva Unidad
-                    </button>
-
-                    {onInitializeDb && (
-                      <button
-                        onClick={handleInitClick}
-                        disabled={isInitializing}
-                        className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
-                      >
-                        {isInitializing ? "Resetting..." : "Reset DB"}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Grid/List View Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                  <AnimatePresence mode='wait'>
-                    {viewMode === 'grid' ? (
-                      <motion.div
-                        key="grid"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-8"
-                      >
-                        {filteredInventory.map((car) => (
-                          <AdminCarCard
-                            key={car.id}
-                            car={car}
-                            leadCount={leads.filter(l => l.vehicleId === car.id).length}
-                            onEdit={(c) => { setEditingCar(c); setIsModalOpen(true); }}
-                            onDelete={onDelete}
-                            onPlanContent={() => setViralCar(car)}
-                          />
-                        ))}
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="list"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="overflow-x-auto rounded-[32px] border border-white/5"
-                      >
-                        <table className="w-full text-left border-collapse">
-                          <thead>
-                            <tr className="bg-slate-900/80 border-b border-white/5">
-                              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#00aed9]">Unidad</th>
-                              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo / Badge</th>
-                              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Precio</th>
-                              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Advantage</th>
-                              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Sales Velocity</th>
-                              <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {filteredInventory.map((car) => (
-                              <tr key={car.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:scale-105 transition-transform">
-                                      <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="font-bold text-white uppercase tracking-tight">{car.name}</div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div className="flex flex-col">
-                                    <span className="text-xs font-black uppercase text-slate-400">{car.type}</span>
-                                    <span className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">{car.badge || 'No Badge'}</span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 font-black text-white text-glow">
-                                  ${car.price?.toLocaleString()}
-                                </td>
-                                <td className="px-6 py-4">
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-[#00aed9]/10 text-[#00aed9] uppercase tracking-widest border border-[#00aed9]/20">
-                                    +{calculatePredictiveDTS(car, leads.filter(l => l.vehicleId === car.id).length).advantageScore.toFixed(0)}%
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-2">
-                                    <Clock size={12} className="text-slate-500" />
-                                    <span className="text-xs font-bold text-slate-400">14 Días</span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
-                                      onClick={() => setViralCar(car)}
-                                      className="p-2 hover:bg-[#00aed9]/10 text-slate-400 hover:text-[#00aed9] rounded-lg transition-all"
-                                      title="Marketing"
-                                    >
-                                      <Sparkles size={16} />
-                                    </button>
-                                    <button
-                                      onClick={() => { setEditingCar(car); setIsModalOpen(true); }}
-                                      className="p-2 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-all"
-                                      title="Editar"
-                                    >
-                                      <Edit3 size={16} />
-                                    </button>
-                                    <button
-                                      onClick={() => onDelete(car.id)}
-                                      className="p-2 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-all"
-                                      title="Eliminar"
-                                    >
-                                      <Trash2 size={16} />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {filteredInventory.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                      <Package size={64} className="mb-4" />
-                      <p className="font-bold uppercase tracking-widest text-sm text-white">No se encontraron vehículos</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando inventario...</div>}>
+              <AdminInventoryTab
+                inventory={inventory}
+                leads={leads}
+                onDelete={onDelete}
+                onCreateNew={() => { setEditingCar(null); setIsModalOpen(true); }}
+                onEdit={(car) => { setEditingCar(car); setIsModalOpen(true); }}
+                onPlanContent={(car) => setViralCar(car)}
+                onInitializeDb={onInitializeDb}
+                handleInitClick={handleInitClick}
+                isInitializing={isInitializing}
+              />
+            </React.Suspense>
           )}
         </main>
       </div >
@@ -680,32 +498,38 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
       {/* MODAL EDITOR */}
       {
         isModalOpen && (
-          <AdminModal
-            car={editingCar}
-            onClose={() => setIsModalOpen(false)}
-            onPhotoUploaded={handlePhotoUploaded}
-            onSave={async (data: Omit<CarType, 'id'>) => {
-              if (editingCar) await onUpdate({ ...data, id: editingCar.id });
-              else await onAdd(data);
-            }}
-          />
+          <React.Suspense fallback={<div className="fixed inset-0 z-[100] bg-black/60" />}>
+            <AdminModal
+              car={editingCar}
+              onClose={() => setIsModalOpen(false)}
+              onPhotoUploaded={handlePhotoUploaded}
+              onSave={async (data: Omit<CarType, 'id'>) => {
+                if (editingCar) await onUpdate({ ...data, id: editingCar.id });
+                else await onAdd(data);
+              }}
+            />
+          </React.Suspense>
         )
       }
 
       {/* MARKETING MODAL */}
       {marketingCar && (
-        <MarketingModal
-          car={marketingCar}
-          onClose={() => setMarketingCar(null)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[100] bg-black/60" />}>
+          <MarketingModal
+            car={marketingCar}
+            onClose={() => setMarketingCar(null)}
+          />
+        </React.Suspense>
       )}
 
       {viralCar && (
-        <ViralGeneratorModal
-          car={viralCar}
-          isOpen={!!viralCar}
-          onClose={() => setViralCar(null)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[100] bg-black/60" />}>
+          <ViralGeneratorModal
+            car={viralCar}
+            isOpen={!!viralCar}
+            onClose={() => setViralCar(null)}
+          />
+        </React.Suspense>
       )}
     </div >
   );

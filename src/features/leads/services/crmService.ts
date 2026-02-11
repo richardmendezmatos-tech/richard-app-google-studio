@@ -1,5 +1,5 @@
 import { db } from '@/services/firebaseService';
-import { collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, updateDoc, doc, getDoc, getDocs, serverTimestamp } from 'firebase/firestore/lite';
 import { Lead } from '@/types/types';
 
 export type { Lead };
@@ -44,18 +44,31 @@ export const updateLeadStatus = async (leadId: string, newStatus: Lead['status']
 };
 
 /**
- * Real-time listener for leads
+ * Near-real-time poller for leads
  */
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
     const q = query(collection(db, LEADS_COLLECTION), orderBy('createdAt', 'desc'));
+    let cancelled = false;
 
-    return onSnapshot(q, (snapshot) => {
+    const fetchLeads = async () => {
+        const snapshot = await getDocs(q);
+        if (cancelled) return;
         const leads = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         } as Lead));
         callback(leads);
-    });
+    };
+
+    fetchLeads().catch((error) => console.error('Leads polling error:', error));
+    const intervalId = setInterval(() => {
+        fetchLeads().catch((error) => console.error('Leads polling error:', error));
+    }, 10000);
+
+    return () => {
+        cancelled = true;
+        clearInterval(intervalId);
+    };
 };
 /**
  * Fetches sensitive data from the Secure Vault

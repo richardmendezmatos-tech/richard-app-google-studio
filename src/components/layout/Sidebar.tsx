@@ -1,12 +1,25 @@
-
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { logout as logoutAction } from '@/store/slices/authSlice';
 import ThemeToggle from './ThemeToggle';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, Warehouse, FileCheck2, BotMessageSquare, Newspaper, Cpu, User, LogOut, ShieldAlert, FlaskConical, LogIn, Car as CarIcon, User as UserIcon, Languages } from 'lucide-react';
+import {
+  ShoppingBag,
+  Warehouse,
+  FileCheck2,
+  BotMessageSquare,
+  Newspaper,
+  Cpu,
+  User,
+  LogOut,
+  ShieldAlert,
+  LogIn,
+  Car as CarIcon,
+  User as UserIcon,
+  Languages
+} from 'lucide-react';
 import { ViewMode } from '@/types/types';
 
 interface SidebarProps {
@@ -29,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
       dispatch(logoutAction());
       navigate('/');
     } catch (error) {
-      console.error("Logout error", error);
+      console.error('Logout error', error);
     }
   };
 
@@ -51,73 +64,89 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   const currentMode = getCurrentViewMode();
 
   return (
-    <nav className={"fixed inset-y-0 left-0 w-72 bg-[#173d57]/95 dark:bg-[#0d2232]/95 backdrop-blur-2xl border-r border-white/5 text-white flex flex-col shadow-2xl z-40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen pointer-events-auto " + (isMobileOpen ? 'translate-x-0' : '-translate-x-full')}>
-      <div className="p-10 flex justify-between items-center cursor-pointer group" onClick={() => navigate('/')}>
-        <h1 className="text-3xl font-black tracking-tighter leading-none group-hover:scale-105 transition-transform">
-          <span className="text-[#00aed9]">RICHARD</span>
-          <br />AUTOMOTIVE
-        </h1>
+    <nav
+      className={
+        'fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-cyan-300/15 bg-[linear-gradient(180deg,rgba(8,20,33,0.95),rgba(7,17,27,0.95))] text-white shadow-2xl backdrop-blur-2xl transition-transform duration-300 lg:static lg:h-screen lg:translate-x-0 pointer-events-auto ' +
+        (isMobileOpen ? 'translate-x-0' : '-translate-x-full')
+      }
+    >
+      <div className="border-b border-white/5 px-7 py-8">
+        <button className="group text-left" onClick={() => navigate('/')}>
+          <p className="font-cinematic text-5xl leading-[0.82] text-cyan-300 transition-colors group-hover:text-cyan-200">
+            RICHARD
+          </p>
+          <p className="font-cinematic text-3xl tracking-[0.18em] text-slate-200">AUTOMOTIVE</p>
+          <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">Command Center</p>
+        </button>
       </div>
 
-      <div className="flex-1 px-6 space-y-2 overflow-y-auto custom-scrollbar">
-        <NavButton active={currentMode === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileOpen(false); }} icon={<ShoppingBag size={20} />} label={t('sidebar.storefront')} />
-        <NavButton active={currentMode === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileOpen(false); }} icon={<Warehouse size={20} />} label={t('sidebar.garage')} />
-        <NavButton active={currentMode === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileOpen(false); }} icon={<FileCheck2 size={20} />} label={t('sidebar.qualify')} />
-        <NavButton active={currentMode === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileOpen(false); }} icon={<CarIcon size={20} />} label={t('sidebar.tradeIn')} />
-        <NavButton active={currentMode === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileOpen(false); }} icon={<BotMessageSquare size={20} />} label={t('sidebar.consultant')} />
-        <NavButton active={currentMode === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileOpen(false); }} icon={<Newspaper size={20} />} label={t('sidebar.blog')} />
+      <div className="custom-scrollbar flex-1 space-y-2 overflow-y-auto px-4 py-5">
+        <NavButton active={currentMode === ViewMode.STOREFRONT} onClick={() => { navigate('/'); setIsMobileOpen(false); }} icon={<ShoppingBag size={19} />} label={t('sidebar.storefront')} />
+        <NavButton active={currentMode === ViewMode.DIGITAL_GARAGE} onClick={() => { navigate('/garage'); setIsMobileOpen(false); }} icon={<Warehouse size={19} />} label={t('sidebar.garage')} />
+        <NavButton active={currentMode === ViewMode.PRE_QUALIFY} onClick={() => { navigate('/qualify'); setIsMobileOpen(false); }} icon={<FileCheck2 size={19} />} label={t('sidebar.qualify')} />
+        <NavButton active={currentMode === ViewMode.TRADE_IN} onClick={() => { navigate('/trade-in'); setIsMobileOpen(false); }} icon={<CarIcon size={19} />} label={t('sidebar.tradeIn')} />
+        <NavButton active={currentMode === ViewMode.AI_CONSULTANT} onClick={() => { navigate('/consultant'); setIsMobileOpen(false); }} icon={<BotMessageSquare size={19} />} label={t('sidebar.consultant')} />
+        <NavButton active={currentMode === ViewMode.BLOG} onClick={() => { navigate('/blog'); setIsMobileOpen(false); }} icon={<Newspaper size={19} />} label={t('sidebar.blog')} />
 
         {role === 'admin' && (
-          <NavButton active={location.pathname === '/framework-lab'} onClick={() => { navigate('/framework-lab'); setIsMobileOpen(false); }} icon={<Cpu size={20} className="text-cyan-400" />} label={t('sidebar.frameworkLab')} />
+          <NavButton active={location.pathname === '/framework-lab'} onClick={() => { navigate('/framework-lab'); setIsMobileOpen(false); }} icon={<Cpu size={19} />} label={t('sidebar.frameworkLab')} />
         )}
         {role === 'admin' && (
-          <NavButton active={currentMode === ViewMode.DIGITAL_TWIN} onClick={() => { navigate('/digital-twin'); setIsMobileOpen(false); }} icon={<User size={20} />} label={t('sidebar.digitalTwin')} />
+          <NavButton active={currentMode === ViewMode.DIGITAL_TWIN} onClick={() => { navigate('/digital-twin'); setIsMobileOpen(false); }} icon={<User size={19} />} label={t('sidebar.digitalTwin')} />
         )}
 
-        <div className="pt-4 my-2 border-t border-white/5" />
+        <div className="my-3 border-t border-white/10" />
 
-        {/* User Profile Section */}
         {user ? (
-          <div className="p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-inner">
-            <div
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner shadow-black/20">
+            <button
               onClick={() => navigate('/profile')}
-              className="flex items-center gap-3 mb-3 cursor-pointer group hover:bg-white/10 p-2 rounded-xl transition-all"
+              className="group mb-3 flex w-full items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-white/10"
             >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00aed9] to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 text-white">
                 {user.photoURL ? (
-                  <img src={user.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                  <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" />
                 ) : (
                   <UserIcon size={18} />
                 )}
               </div>
-              <div className="overflow-hidden">
-                <p className="text-xs font-black truncate text-white uppercase tracking-tight group-hover:text-[#00aed9] transition-colors">{user.displayName || user.email}</p>
-                <p className="text-[10px] uppercase tracking-widest text-[#00aed9] font-black">{role === 'admin' ? 'Administrador' : 'Editar Perfil'}</p>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-black uppercase tracking-[0.04em] text-white group-hover:text-cyan-200">
+                  {user.displayName || user.email}
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">
+                  {role === 'admin' ? 'Administrador' : 'Editar Perfil'}
+                </p>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <button onClick={handleLogout} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-red-500/10">
-                <LogOut size={14} /> {t('auth.logout')}
+            </button>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 rounded-xl border border-rose-400/20 bg-rose-500/10 p-2.5 text-[10px] font-black uppercase tracking-[0.14em] text-rose-300 transition-colors hover:bg-rose-500/20"
+              >
+                <LogOut size={13} /> {t('auth.logout')}
               </button>
               {role === 'admin' && (
-                <button onClick={() => navigate('/admin')} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 border border-cyan-500/10">
-                  <ShieldAlert size={14} /> {t('common.admin')}
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-cyan-300/20 bg-cyan-500/10 p-2.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-300 transition-colors hover:bg-cyan-500/20"
+                >
+                  <ShieldAlert size={13} /> {t('common.admin')}
                 </button>
               )}
             </div>
           </div>
         ) : (
-          <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileOpen(false); }} icon={<LogIn size={20} />} label={t('auth.login')} isAction />
+          <NavButton active={false} onClick={() => { navigate('/login'); setIsMobileOpen(false); }} icon={<LogIn size={19} />} label={t('auth.login')} isAction />
         )}
-
-
       </div>
 
-      <div className="p-6 border-t border-white/5 bg-black/10 backdrop-blur-md flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/15 px-5 py-4">
         <ThemeToggle />
         <button
           onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-[10px] font-black uppercase tracking-widest text-[#00aed9]"
+          className="flex items-center gap-2 rounded-xl border border-cyan-300/15 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300 transition-colors hover:bg-white/10"
         >
           <Languages size={14} />
           {i18n.language === 'es' ? 'EN' : 'ES'}
@@ -127,25 +156,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, setIsMobileOpen }) => {
   );
 };
 
-const NavButton = ({ active, onClick, icon, label, isAction = false, highlight = false }: any) => {
-  let classes = "w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group relative overflow-hidden ";
+interface NavButtonProps {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  isAction?: boolean;
+}
 
-  if (active) {
-    classes += "bg-[#00aed9] text-white shadow-xl shadow-[#00aed9]/20";
-  } else if (highlight) {
-    classes += "bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-500 border border-amber-500/30 hover:shadow-lg hover:shadow-orange-500/20";
-  } else if (isAction) {
-    classes += "bg-gradient-to-r from-[#00aed9]/10 to-[#00aed9]/5 text-[#00aed9] hover:bg-[#00aed9]/20";
-  } else {
-    classes += "text-slate-400 hover:bg-white/5 hover:text-white";
-  }
+const NavButton: React.FC<NavButtonProps> = ({ active, onClick, icon, label, isAction = false }) => {
+  const base = 'group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200';
+  const stateClass = active
+    ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-[0_12px_25px_-14px_rgba(0,174,217,0.7)]'
+    : isAction
+      ? 'border border-cyan-300/25 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/20'
+      : 'text-slate-300 hover:bg-white/8 hover:text-white';
 
   return (
-    <button onClick={onClick} className={classes}>
-      <div className={`absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${active ? 'hidden' : ''}`} />
+    <button onClick={onClick} className={`${base} ${stateClass}`}>
       <span className="relative z-10">{icon}</span>
-      <span className="relative z-10">{label}</span>
-      {active && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full" />}
+      <span className="relative z-10 text-sm font-bold tracking-wide">{label}</span>
+      {active && <span className="absolute right-2 h-2 w-2 rounded-full bg-white/90" />}
     </button>
   );
 };

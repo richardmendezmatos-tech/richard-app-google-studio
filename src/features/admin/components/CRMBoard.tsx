@@ -10,6 +10,8 @@ import { useLeadScoring } from '@/features/leads/hooks/useLeadScoring';
 import { useVehicleHealth } from '@/services/telemetryService';
 import { whatsappService } from '@/services/whatsappService';
 import { orchestrationService } from '@/services/orchestrationService';
+import { getAntigravityOutreachAction } from '@/services/antigravityOmnichannelService';
+import { sendTransactionalEmail } from '@/services/emailService';
 
 const COLUMNS = [
     { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
@@ -173,8 +175,8 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
 
     const handleWhatsAppSend = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!lead.phone) {
-            alert("Este lead no tiene número de teléfono registrado.");
+        if (!lead.phone && !lead.email) {
+            alert("Este lead no tiene teléfono ni email registrado.");
             return;
         }
 
@@ -182,16 +184,39 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
         try {
             // 1. Get Orchestrated Message
             const orchestration = await orchestrationService.orchestrateLeadFollowUp(lead, health);
+            const antigravityAction = await getAntigravityOutreachAction(lead, {
+                trigger: 'manual_crm',
+                fallbackMessage: orchestration.message,
+                fallbackChannel: lead.phone ? 'whatsapp' : 'email',
+                priority: orchestration.priority
+            });
 
-            // 2. Send via WhatsApp Service
-            const success = await whatsappService.sendMessage(lead.phone, orchestration.message);
+            const channel = antigravityAction?.channel || (lead.phone ? 'whatsapp' : 'email');
+            const finalMessage = antigravityAction?.message || orchestration.message;
+            const finalSubject = antigravityAction?.subject || `Seguimiento de ${lead.name || 'lead'}`;
 
-            if (success) {
-                console.log("[CRM] Message sent successfully");
-                // Option: Update lead notes via updateLeadStatus or a specialized log
-            } else {
-                // Fallback to manual link if API fails
-                const link = whatsappService.getFallbackLink(lead.phone, orchestration.message);
+            // 2. Dispatch through selected channel
+            if (channel === 'email' && lead.email) {
+                const emailSent = await sendTransactionalEmail({
+                    to: lead.email,
+                    subject: finalSubject,
+                    html: `<p>${finalMessage}</p>`
+                });
+
+                if (emailSent) {
+                    console.log("[CRM] Email sent successfully");
+                    return;
+                }
+            }
+
+            if (!lead.phone) {
+                console.warn("[CRM] WhatsApp fallback skipped: missing phone");
+                return;
+            }
+
+            const success = await whatsappService.sendMessage(lead.phone, finalMessage);
+            if (!success) {
+                const link = whatsappService.getFallbackLink(lead.phone, finalMessage);
                 window.open(link, '_blank');
             }
         } catch (error) {

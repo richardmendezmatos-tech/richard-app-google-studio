@@ -4,8 +4,6 @@ import {
     Activity,
     Calendar,
     MessageCircle,
-    FileText,
-    AlertTriangle,
     TrendingUp,
     TrendingDown,
     Zap
@@ -16,6 +14,19 @@ import { es } from 'date-fns/locale';
 interface LeadLifecycleAnalyticsProps {
     lead: Lead;
 }
+
+interface DateLike {
+    toDate?: () => Date;
+}
+
+const formatEventDate = (value: unknown): string => {
+    if (!value || typeof value !== 'object') return 'Fecha desconocida';
+    const maybeDate = value as DateLike;
+    if (typeof maybeDate.toDate === 'function') {
+        return format(maybeDate.toDate(), 'PP p', { locale: es });
+    }
+    return 'Fecha desconocida';
+};
 
 export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ lead }) => {
     // Mock timeline events based on lead data
@@ -63,9 +74,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                                 <div className="pt-1">
                                     <p className="font-bold text-slate-700 dark:text-slate-200 text-sm">{event.title}</p>
                                     <p className="text-xs text-slate-400">
-                                        {event.date && (typeof (event.date as any).toDate === 'function'
-                                            ? format((event.date as any).toDate(), 'PP p', { locale: es })
-                                            : 'Fecha desconocida')}
+                                        {formatEventDate(event.date)}
                                     </p>
                                     {event.description && (
                                         <p className="text-xs text-slate-500 mt-1 bg-slate-50 dark:bg-slate-900 p-2 rounded border border-slate-100 dark:border-slate-700">

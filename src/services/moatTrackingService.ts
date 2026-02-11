@@ -1,5 +1,5 @@
 import { db } from './firebaseService';
-import { collection, addDoc, serverTimestamp, increment, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, increment, doc, updateDoc } from 'firebase/firestore/lite';
 
 export interface IntentSignal {
     carId: string;

@@ -1,21 +1,8 @@
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
-import { subscribeToAuthChanges, getUserRole } from '../services/authService';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { User, UserRole } from '@/types/types';
-
-interface AuthContextType {
-  user: User | null;
-  role: UserRole | null;
-  loading: boolean;
-}
-
-// Export context separately to help with Fast Refresh
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  role: null,
-  loading: true,
-});
+import { User as FirebaseUser } from 'firebase/auth';
+import { AuthContext } from './AuthContextValue';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -27,26 +14,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = subscribeToAuthChanges(async (currentUser: FirebaseUser | null) => {
-      if (currentUser) {
-        const userRole = await getUserRole(currentUser.uid);
-        setRole(userRole);
-        setUser({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
-          role: userRole
-        });
-      } else {
+    let mounted = true;
+    let unsubscribe: (() => void) | undefined;
+
+    (async () => {
+      const { subscribeToAuthChanges, getUserRole } = await import('../services/authService');
+      unsubscribe = subscribeToAuthChanges(async (currentUser: FirebaseUser | null) => {
+        if (!mounted) return;
+
+        if (currentUser) {
+          const userRole = await getUserRole(currentUser.uid);
+          if (!mounted) return;
+          setRole(userRole);
+          setUser({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+            role: userRole
+          });
+        } else {
+          setUser(null);
+          setRole(null);
+        }
+        setLoading(false);
+      });
+    })().catch((error) => {
+      console.error('Auth bootstrap failed:', error);
+      if (mounted) {
         setUser(null);
         setRole(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+      unsubscribe?.();
+    };
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import { db } from '@/services/firebaseService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
 
 export interface InteractionEvent {
     userId?: string;

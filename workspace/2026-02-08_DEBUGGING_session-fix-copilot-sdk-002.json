@@ -1,0 +1,22 @@
+{
+    "id": "session-fix-copilot-sdk-002",
+    "timestamp": "2026-02-08T09:30:00-04:00",
+    "category": "DEBUGGING",
+    "status": "COMPLETED",
+    "task": "Fix ReferenceError: process is not defined (Copilot SDK)",
+    "findings": [
+        "The @github/copilot-sdk is Node.js only and cannot run in the browser.",
+        "Attempting to use it in `useCopilotAgent` caused the app to crash on load.",
+        "E2E tests failed because the app wouldn't render.",
+        "Mocking the service resolves the crash but disables AI features until backend is ready."
+    ],
+    "resolution": "Replaced `copilotService.ts` with a browser-safe mock.",
+    "files_modified": [
+        "src/services/copilotService.ts",
+        "e2e/critical-path.spec.ts"
+    ],
+    "next_steps": [
+        "Migrate Copilot SDK logic to Firebase Functions (Backend).",
+        "Re-enable AI features by calling the backend."
+    ]
+}

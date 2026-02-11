@@ -1,5 +1,5 @@
 import { db } from './firebaseService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
 
 export type MonetizableEvent = 'ai_call' | 'lead_capture' | 'doc_processed' | 'onboarding';
 
@@ -7,7 +7,7 @@ interface UsageLog {
     dealerId: string;
     eventType: MonetizableEvent;
     count: number;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     costEstimate?: number; // Estimated internal cost in USD
 }
 

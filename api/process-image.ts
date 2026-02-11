@@ -38,7 +38,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Check if it's a Twilio media URL (requires authentication)
         const isTwilioMedia = imageUrl.includes('twilio.com');
 
-        let fetchOptions: RequestInit = {};
+        const fetchOptions: RequestInit = {};
         if (isTwilioMedia) {
             const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
             const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
@@ -114,10 +114,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // 4. Sanitize and Parse JSON
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        let data;
+        let data: unknown;
         try {
             data = JSON.parse(cleanText);
-        } catch (e) {
+        } catch {
             console.error("JSON Parse Error on AI response:", text);
             // Fallback: return raw text if JSON fails
             return res.status(200).json({ success: true, raw: text, warning: "JSON parse failed" });
@@ -133,16 +133,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Visual Cortex Critical Error:', error);
 
+        const message = error instanceof Error ? error.message : String(error);
         let hint = "Unknown error";
-        if (error.message?.includes("404")) hint = "Model not found. Ensure 'GEMINI_API_KEY' has access to 'gemini-1.5-flash' in Google AI Studio.";
-        if (error.message?.includes("403")) hint = "Permission denied. Check API Key quotas or HTTP Referrer restrictions.";
+        if (message.includes("404")) hint = "Model not found. Ensure 'GEMINI_API_KEY' has access to 'gemini-1.5-flash' in Google AI Studio.";
+        if (message.includes("403")) hint = "Permission denied. Check API Key quotas or HTTP Referrer restrictions.";
 
         return res.status(500).json({
             success: false,
-            error: error.message || 'Internal Server Error',
+            error: message || 'Internal Server Error',
             hint
         });
     }
