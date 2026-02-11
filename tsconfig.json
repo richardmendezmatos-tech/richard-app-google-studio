@@ -31,6 +31,15 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@infra/*": [
+        "src/infra/*"
+      ],
+      "@domain/*": [
+        "src/domain/*"
+      ],
+      "@app/*": [
+        "src/app/*"
       ]
     }
   },

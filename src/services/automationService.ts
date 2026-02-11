@@ -1,8 +1,8 @@
-import { Lead, updateLead } from '@/features/leads/services/crmService';
+import { Lead, updateLead } from '@/app/adapters/leads/crmGateway';
 import { whatsappService } from './whatsappService';
 import { sendTransactionalEmail } from './emailService';
 import { getAntigravityOutreachAction } from './antigravityOmnichannelService';
-import nurtureRules from '@/features/leads/data/nurtureRules.json';
+import nurtureRules from '@/app/adapters/leads/nurtureRules';
 
 /**
  * Automation Service

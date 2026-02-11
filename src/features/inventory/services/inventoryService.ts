@@ -17,7 +17,8 @@ import {
     setDoc,
     writeBatch
 } from 'firebase/firestore/lite';
-import { db, getStorageService, getAnalyticsService } from '@/services/firebaseService';
+import { db } from '@/infra/firebase/client';
+import { getStorageService, getAnalyticsService } from '@/infra/firebase/optionalServices';
 import { Car } from '@/types/types';
 
 const CARS_COLLECTION = 'cars';
