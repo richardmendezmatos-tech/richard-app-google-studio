@@ -44,3 +44,33 @@ Before deployment, confirm:
 - Tests in section 2 pass.
 - Build completes with no errors.
 - Production env includes all required keys for your chosen channels.
+
+## 5) CI/CD Guardrails
+
+- Branch `main` has protection enabled with required check:
+  - `Playwright Tests / smoke`
+- Firebase deploy workflows block publish unless all gates pass:
+  - `npm run lint`
+  - `npm run test`
+  - `npm run test:e2e:smoke`
+  - `npm run build`
+- Optional failure alerting:
+  - Configure repository secret `DISCORD_WEBHOOK_URL` to receive CI/deploy failure notifications.
+
+## 6) Rollback Drill (Safe)
+
+Run the workflow `Rollback Firebase Hosting` with:
+
+- `source_channel=live`
+- `source_site=richard-automotive`
+- `target_site=richard-automotive`
+- `confirm=NO`
+
+Expected result:
+
+- Workflow fails in `missing-confirmation`.
+- No traffic change is applied to production.
+
+To execute a real rollback during incident response:
+
+- Re-run with `confirm=ROLLBACK`.

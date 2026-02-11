@@ -26,9 +26,7 @@ if (typeof window !== 'undefined') {
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import App from '@/App';
 import './index.css'; // Premium UI Styles
 
@@ -49,8 +47,16 @@ declare global {
 console.log('App Version: HookFix - ' + new Date().toISOString());
 nativeBridgeService.initialize();
 
-// Initialize Capacitor PWA Elements (Camera, etc.)
-defineCustomElements(window);
+const initializePwaElements = async () => {
+  try {
+    const pwaElements = await import('@ionic/pwa-elements/loader');
+    pwaElements.defineCustomElements(window);
+  } catch (error) {
+    console.warn('[Bootstrap] PWA elements init skipped:', error);
+  }
+};
+
+void initializePwaElements();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,29 +98,35 @@ window.__appBootReady = false;
 
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
 if (sentryDsn) {
-  Sentry.init({
-    dsn: sentryDsn,
-    environment: import.meta.env.VITE_SENTRY_ENV || import.meta.env.MODE,
-    tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE || '0.1'),
-    beforeSend(event, hint) {
-      const message = String(
-        hint.originalException instanceof Error
-          ? hint.originalException.message
-          : (event.message || '')
-      ).toLowerCase();
+  void import('@sentry/react')
+    .then((Sentry) => {
+      Sentry.init({
+        dsn: sentryDsn,
+        environment: import.meta.env.VITE_SENTRY_ENV || import.meta.env.MODE,
+        tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE || '0.1'),
+        beforeSend(event, hint) {
+          const message = String(
+            hint.originalException instanceof Error
+              ? hint.originalException.message
+              : (event.message || '')
+          ).toLowerCase();
 
-      if (
-        message.includes('firebaseinstallations.googleapis.com') ||
-        message.includes('installations/request-failed') ||
-        message.includes('permission_denied') ||
-        message.includes('firebaseerror: installations')
-      ) {
-        return null;
-      }
+          if (
+            message.includes('firebaseinstallations.googleapis.com') ||
+            message.includes('installations/request-failed') ||
+            message.includes('permission_denied') ||
+            message.includes('firebaseerror: installations')
+          ) {
+            return null;
+          }
 
-      return event;
-    },
-  });
+          return event;
+        },
+      });
+    })
+    .catch((error) => {
+      console.warn('[Bootstrap] Sentry init skipped:', error);
+    });
 }
 
 // Global Error Handler for "Loading" Stuck State
