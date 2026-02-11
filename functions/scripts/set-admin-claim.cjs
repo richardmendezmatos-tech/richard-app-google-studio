@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 /**
  * One-time utility to set a Firebase Auth custom claim:
  *   admin=true
@@ -54,7 +53,6 @@ async function main() {
     process.env.GOOGLE_APPLICATION_CREDENTIALS ||
     path.join(__dirname, "..", "serviceAccountKey.json");
 
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const admin = require("firebase-admin");
 
   if (admin.apps.length === 0) {
@@ -88,4 +86,3 @@ main().catch((err) => {
   console.error(err?.stack || String(err));
   process.exit(1);
 });
-
