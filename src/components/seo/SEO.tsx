@@ -24,7 +24,9 @@ const SEO: React.FC<SEOProps> = ({
     const defaultImage = SITE_CONFIG.seo.ogImage.startsWith('http')
         ? SITE_CONFIG.seo.ogImage
         : `${siteUrl}${SITE_CONFIG.seo.ogImage}`;
-    const imageUrl = image || defaultImage;
+    const imageUrl = image
+        ? (image.startsWith('http') ? image : `${siteUrl}${image}`)
+        : defaultImage;
     const currentUrl = url ? `${siteUrl}${url}` : siteUrl;
     const fullTitle = title.includes("Richard Automotive") ? title : `${title} | Richard Automotive`;
 

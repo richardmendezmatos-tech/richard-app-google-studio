@@ -4,7 +4,7 @@
   "version": "1.0.3",
   "type": "module",
   "engines": {
-    "node": ">=18.0.0"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "dotenvx run -- vite",
@@ -22,7 +22,8 @@
     "deploy:firebase:indexes": "firebase use richard-automotive && firebase deploy --only firestore:indexes",
     "deploy:firebase:functions": "firebase use richard-automotive && firebase deploy --only functions",
     "deploy:firebase:full": "firebase use richard-automotive && firebase deploy",
-    "optimize": "node scripts/optimize-assets.js"
+    "optimize": "node scripts/optimize-assets.js",
+    "sitemap:generate": "tsx scripts/generate-sitemap.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",
