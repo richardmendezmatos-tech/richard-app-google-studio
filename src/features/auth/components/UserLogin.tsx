@@ -7,6 +7,7 @@ import { ArrowRight, Zap, Apple, Chrome, Globe } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
+import SEO from '@/components/seo/SEO';
 
 interface GoogleCredentialResponse {
   credential: string;
@@ -168,6 +169,12 @@ const UserLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-900">
+      <SEO
+        title="Iniciar Sesion"
+        description="Acceso a cuenta para gestionar garaje digital y ofertas personalizadas."
+        url="/login"
+        noIndex
+      />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00aed9]/10 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]"></div>
