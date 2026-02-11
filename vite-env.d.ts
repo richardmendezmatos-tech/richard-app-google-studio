@@ -11,6 +11,9 @@ interface ImportMetaEnv {
     readonly VITE_ANTIGRAVITY_OUTREACH_ACTION_PATH?: string
     readonly VITE_RESEND_API_KEY?: string
     readonly VITE_RESEND_FROM_EMAIL?: string
+    readonly VITE_SENTRY_DSN?: string
+    readonly VITE_SENTRY_ENV?: string
+    readonly VITE_SENTRY_TRACES_SAMPLE_RATE?: string
 }
 
 interface ImportMeta {

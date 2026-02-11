@@ -26,6 +26,7 @@ if (typeof window !== 'undefined') {
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import App from '@/App';
@@ -58,6 +59,33 @@ const queryClient = new QueryClient({
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
+}
+
+const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    environment: import.meta.env.VITE_SENTRY_ENV || import.meta.env.MODE,
+    tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE || '0.1'),
+    beforeSend(event, hint) {
+      const message = String(
+        hint.originalException instanceof Error
+          ? hint.originalException.message
+          : (event.message || '')
+      ).toLowerCase();
+
+      if (
+        message.includes('firebaseinstallations.googleapis.com') ||
+        message.includes('installations/request-failed') ||
+        message.includes('permission_denied') ||
+        message.includes('firebaseerror: installations')
+      ) {
+        return null;
+      }
+
+      return event;
+    },
+  });
 }
 
 // Global Error Handler for "Loading" Stuck State
