@@ -3,6 +3,7 @@ import { useComparison } from '@/contexts/ComparisonContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
+import SEO from '@/components/seo/SEO';
 
 const ComparisonView: React.FC = () => {
     const { selectedCars, removeCarFromCompare, clearComparison } = useComparison();
@@ -56,6 +57,12 @@ const ComparisonView: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#0d2232] text-white relative">
+            <SEO
+                title="Comparar Autos | VS Inteligente"
+                description="Compara autos lado a lado y toma decisiones con datos, precio y valor real en Puerto Rico."
+                url="/compare"
+                type="website"
+            />
             <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
 
             <header className="p-8 relative z-10 flex justify-between items-center">
