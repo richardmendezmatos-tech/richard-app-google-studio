@@ -1,0 +1,64 @@
+name: Rollback Firebase Hosting
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_channel:
+        description: "Source channel to clone from (e.g. live, pr-123)"
+        required: true
+        default: "live"
+      source_site:
+        description: "Source hosting site id"
+        required: true
+        default: "richard-automotive"
+      target_site:
+        description: "Target hosting site id"
+        required: true
+        default: "richard-automotive"
+      confirm:
+        description: "Type ROLLBACK to execute"
+        required: true
+        default: "NO"
+
+concurrency:
+  group: firebase-hosting-live
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    if: ${{ github.event.inputs.confirm == 'ROLLBACK' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Firebase service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RICHARD_AUTOMOTIVE }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Rollback hosting by cloning channel to live
+        run: |
+          npx firebase-tools hosting:clone \
+            "${{ github.event.inputs.source_site }}:${{ github.event.inputs.source_channel }}" \
+            "${{ github.event.inputs.target_site }}:live" \
+            --project richard-automotive
+
+  missing-confirmation:
+    if: ${{ github.event.inputs.confirm != 'ROLLBACK' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail when confirmation is missing
+        run: |
+          echo "Rollback skipped. Set confirm=ROLLBACK to execute."
+          exit 1
