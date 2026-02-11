@@ -110,7 +110,7 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
     if (!isSupported) return null;
 
     return (
-        <div className="fixed bottom-6 right-28 z-[1001]">
+        <div className="fixed right-24 z-[1001] bottom-[calc(6.9rem+env(safe-area-inset-bottom))] sm:bottom-6 sm:right-28">
             {state !== 'idle' && (
                 <div className="absolute bottom-16 right-0 mb-2 whitespace-nowrap rounded-xl border border-white/10 bg-black/80 p-3 text-white shadow-2xl backdrop-blur-md route-fade-in">
                     {state === 'listening' && <div className="flex items-center gap-2">Listening... <Waveform /></div>}

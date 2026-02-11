@@ -4,13 +4,13 @@ import { ShieldCheck, Zap, Globe } from 'lucide-react';
 
 const TrustBar: React.FC = () => {
     return (
-        <section className="py-12 border-t border-slate-200 dark:border-slate-800">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <section className="py-8 md:py-10">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
                 <TrustItem
                     icon={<ShieldCheck size={24} />}
                     title="Certificación 150 Puntos"
                     desc="Cada auto pasa una inspección rigurosa antes de ser listado."
-                    color="blue"
+                    color="steel"
                 />
                 <TrustItem
                     icon={<Zap size={24} />}
@@ -22,28 +22,28 @@ const TrustBar: React.FC = () => {
                     icon={<Globe size={24} />}
                     title="Entrega o Recogido"
                     desc="Tú eliges: te lo llevamos a casa o vienes a nuestro centro."
-                    color="purple"
+                    color="emerald"
                 />
             </div>
         </section>
     );
 };
 
-const TrustItem = ({ icon, title, desc, color }: { icon: React.ReactNode, title: string, desc: string, color: 'blue' | 'cyan' | 'purple' }) => {
+const TrustItem = ({ icon, title, desc, color }: { icon: React.ReactNode, title: string, desc: string, color: 'steel' | 'cyan' | 'emerald' }) => {
     const colorClasses = {
-        blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-500',
-        cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-[#00aed9]',
-        purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-500'
+        steel: 'bg-slate-200/20 text-slate-200 border border-white/10',
+        cyan: 'bg-cyan-500/20 text-[#4fe4ff] border border-cyan-200/30',
+        emerald: 'bg-emerald-500/15 text-emerald-200 border border-emerald-200/30'
     };
 
     return (
-        <div className="flex items-start gap-4 p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-default">
+        <div className="group flex cursor-default items-start gap-4 rounded-3xl border border-white/10 bg-[linear-gradient(155deg,rgba(12,26,39,0.75),rgba(7,16,28,0.8))] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-200/30">
             <div className={`p-3 rounded-2xl ${colorClasses[color]}`}>
                 {icon}
             </div>
             <div>
-                <h4 className="font-bold text-slate-800 dark:text-white">{title}</h4>
-                <p className="text-sm text-slate-500 mt-1 leading-relaxed">{desc}</p>
+                <h4 className="font-tech text-xs uppercase tracking-[0.16em] text-white">{title}</h4>
+                <p className="mt-2 text-sm leading-relaxed text-slate-300">{desc}</p>
             </div>
         </div>
     );
