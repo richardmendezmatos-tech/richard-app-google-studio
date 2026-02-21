@@ -96,38 +96,7 @@ const hardRecoverClient = async () => {
 window.__richardHardRecover = hardRecoverClient;
 window.__appBootReady = false;
 
-const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
-if (sentryDsn) {
-  void import('@sentry/react')
-    .then((Sentry) => {
-      Sentry.init({
-        dsn: sentryDsn,
-        environment: import.meta.env.VITE_SENTRY_ENV || import.meta.env.MODE,
-        tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE || '0.1'),
-        beforeSend(event, hint) {
-          const message = String(
-            hint.originalException instanceof Error
-              ? hint.originalException.message
-              : (event.message || '')
-          ).toLowerCase();
 
-          if (
-            message.includes('firebaseinstallations.googleapis.com') ||
-            message.includes('installations/request-failed') ||
-            message.includes('permission_denied') ||
-            message.includes('firebaseerror: installations')
-          ) {
-            return null;
-          }
-
-          return event;
-        },
-      });
-    })
-    .catch((error) => {
-      console.warn('[Bootstrap] Sentry init skipped:', error);
-    });
-}
 
 // Global Error Handler for "Loading" Stuck State
 // Global Error Handler for "Loading" Stuck State
