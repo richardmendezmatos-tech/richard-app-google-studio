@@ -173,7 +173,11 @@ const NavButton: React.FC<NavButtonProps> = ({ active, onClick, icon, label, isA
       : 'text-slate-300 hover:bg-white/8 hover:text-white';
 
   return (
-    <button onClick={onClick} className={`${base} ${stateClass}`}>
+    <button
+      onClick={onClick}
+      className={`${base} ${stateClass}`}
+      aria-current={active ? 'page' : undefined}
+    >
       <span className="relative z-10">{icon}</span>
       <span className="relative z-10 text-sm font-bold tracking-wide">{label}</span>
       {active && <span className="absolute right-2 h-2 w-2 rounded-full bg-white/90" />}

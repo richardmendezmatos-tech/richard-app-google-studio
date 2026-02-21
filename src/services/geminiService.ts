@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Blob as GeminiBlob } from "@google/genai";
 import { Car, BlogPost } from "@/types/types";
 import { logUsageEvent } from "./billingService";
 import { RICHARD_KNOWLEDGE_BASE } from "./knowledgeBase";
@@ -384,12 +385,29 @@ export const generateVideo = async (prompt: string, base64Image?: string, mimeTy
   }
 };
 
-export const connectToVoiceSession = async (_options: Record<string, unknown>): Promise<Record<string, unknown>> => {
+export interface VoiceSessionOptions {
+  onopen?: () => void;
+  onmessage?: (message: any) => void;
+  onerror?: (error: any) => void;
+  onclose?: () => void;
+}
+
+export interface VoiceSession {
+  close: () => void;
+  sendRealtimeInput: (payload: { media: GeminiBlob }) => void;
+}
+
+export const connectToVoiceSession = async (options: VoiceSessionOptions): Promise<VoiceSession> => {
   // Implementation for Phase 3 integration
-  console.log("Connecting to Voice Session with options:", _options);
+  console.log("Connecting to Voice Session with options:", options);
   return {
-    close: () => console.log("Voice session closed"),
-    sendRealtimeInput: (data: unknown) => console.log("Sending voice data", data)
+    close: () => {
+      console.log("Voice session closed");
+      options.onclose?.();
+    },
+    sendRealtimeInput: (data: unknown) => {
+      console.log("Sending voice data", data);
+    }
   };
 };
 
@@ -500,7 +518,7 @@ export const generateContextualResponse = async (
     const semanticContext = await customerMemoryService.getRelevantContext(leadId, userMessage);
 
     // 3. Format inventory
-    const inventoryList = inventoryContext.slice(0, 5).map(car => 
+    const inventoryList = inventoryContext.slice(0, 5).map(car =>
       `- ${car.name}: $${(car.price || 0).toLocaleString()} ${car.badge ? `[${car.badge}]` : ''}`
     ).join('\n');
 

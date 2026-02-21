@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { timeline, stagger } from 'animejs';
+import * as anime from 'animejs';
 
 const AnimeDemo: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -8,7 +8,7 @@ const AnimeDemo: React.FC = () => {
 
     useEffect(() => {
         // Create a timeline for the demonstration (AnimeJS v4 syntax)
-        const tl = timeline({
+        const tl = new (anime as any).Timeline({
             defaults: {
                 easing: 'easeOutExpo',
                 duration: 750,
@@ -16,24 +16,24 @@ const AnimeDemo: React.FC = () => {
             loop: true
         });
 
-        tl.add(boxRef.current, {
+        tl.add(boxRef.current as any, {
             translateX: 250,
             rotate: '1turn',
             backgroundColor: '#3b82f6', // blue-500
             borderRadius: ['0%', '50%'],
         })
-            .add(textRef.current, {
+            .add(textRef.current as any, {
                 opacity: [0, 1],
                 translateY: [-20, 0],
-                delay: stagger(100)
+                delay: anime.stagger(100)
             }, '-=500')
-            .add(boxRef.current, {
+            .add(boxRef.current as any, {
                 translateX: 0,
                 rotate: '0turn',
                 backgroundColor: '#ef4444', // red-500
                 borderRadius: ['50%', '0%'],
             })
-            .add(textRef.current, {
+            .add(textRef.current as any, {
                 opacity: [1, 0],
                 translateY: [0, 20],
             }, '-=500');

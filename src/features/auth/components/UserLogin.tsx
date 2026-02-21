@@ -1,12 +1,13 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential } from '../services/authService';
+import { signUpWithEmail, signInWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential, normalizeUser } from '../services/authService';
 import { auth, getRedirectResult } from '@/services/firebaseService';
 import { ArrowRight, Zap, Apple, Chrome, Globe } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
+import { AppUser } from '@/types/types';
 import SEO from '@/components/seo/SEO';
 
 interface GoogleCredentialResponse {
@@ -61,8 +62,8 @@ const UserLogin: React.FC = () => {
           setLoading(true);
           dispatch(loginStart());
           try {
-            const user = await signInWithGoogleCredential(response.credential);
-            dispatch(loginSuccess(user));
+            const appUser = await signInWithGoogleCredential(response.credential);
+            dispatch(loginSuccess(appUser));
             navigate(from, { replace: true });
           } catch (err: unknown) {
             const msg = getErrorMsg(err);
@@ -89,7 +90,7 @@ const UserLogin: React.FC = () => {
       try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
-          dispatch(loginSuccess(result.user));
+          dispatch(loginSuccess(normalizeUser(result.user) as any));
           navigate(from, { replace: true });
         }
       } catch (err: unknown) {
@@ -106,13 +107,10 @@ const UserLogin: React.FC = () => {
     dispatch(loginStart());
 
     try {
-      let user;
-      if (isRegistering) {
-        user = await signUpWithEmail(email, password);
-      } else {
-        user = await signInWithEmail(email, password);
-      }
-      dispatch(loginSuccess(user));
+      const appUser = isRegistering
+        ? await signUpWithEmail(email, password)
+        : await signInWithEmail(email, password);
+      dispatch(loginSuccess(appUser));
       navigate(from, { replace: true });
     } catch (err: unknown) {
       console.error(err);
@@ -134,7 +132,7 @@ const UserLogin: React.FC = () => {
       if (provider === 'facebook') user = await signInWithFacebook();
 
       if (user) {
-        dispatch(loginSuccess(user));
+        dispatch(loginSuccess(normalizeUser(user) as any));
         navigate(from, { replace: true });
       }
     } catch (err: unknown) {

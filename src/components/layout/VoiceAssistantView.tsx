@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { connectToVoiceSession } from '@/services/geminiService';
-import { LiveServerMessage } from '@google/genai';
+import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
 import { decode, decodeAudioData, createBlob } from '@/utils/audioUtils';
 import { Mic, MicOff, Bot, Activity, Wifi } from 'lucide-react';
 
@@ -9,7 +9,7 @@ type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 type Transcription = { id: number; role: 'user' | 'model'; text: string; isFinal: boolean };
 type RealtimeSession = {
     close: () => void;
-    sendRealtimeInput: (payload: { media: Blob }) => void;
+    sendRealtimeInput: (payload: { media: GeminiBlob }) => void;
 };
 type ServerContent = {
     outputTranscription?: { text: string };
@@ -243,7 +243,6 @@ const VoiceAssistantView: React.FC = () => {
                 <div
                     ref={scrollRef}
                     className="h-48 overflow-y-auto space-y-4 px-4 mask-gradient-y scroll-smooth"
-                    style={{ maskImage: 'linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)' }}
                 >
                     {transcriptions.length === 0 && connectionState === 'connected' && (
                         <p className="text-center text-slate-500 animate-pulse mt-20">Esperando entrada de voz...</p>
