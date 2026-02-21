@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "vitalos-data-connect"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "vitalos_clinical_db"
+      cloudSql:
+        instanceId: "vitalos-data-connect-fdc"
+        # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./example"]

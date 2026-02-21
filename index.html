@@ -28,9 +28,9 @@
 
   <!-- SEO & Social Sharing -->
   <meta name="description"
-    content="Autos seminuevos certificados en Puerto Rico. Financiamiento disponible, trade-in, y la mejor selección de SUVs, sedanes y pickups. IA-powered inventory.">
+    content="Richard Automotive: Los mejores autos seminuevos certificados en Puerto Rico. Financiamiento experto, trade-ins valorados al máximo y entrega inmediata en San Juan.">
   <meta name="keywords"
-    content="autos seminuevos puerto rico, carros usados san juan, financiamiento autos pr, trade in puerto rico, suv seminuevos, richard automotive, autos certificados pr">
+    content="autos usados puerto rico, carros seminuevos san juan, financiamiento de autos pr, comprar carro usado pr, dealer de autos puerto rico, richard automotive, inventario autos pr">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 
@@ -42,19 +42,19 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.richard-automotive.com">
-  <meta property="og:title" content="Richard Automotive | Autos Seminuevos Certificados">
+  <meta property="og:title" content="Richard Automotive | Autos Seminuevos de Lujo en PR">
   <meta property="og:description"
-    content="La mejor selección de autos seminuevos en Puerto Rico. Financiamiento disponible, trade-in y entrega inmediata.">
-  <meta property="og:image" content="https://www.richard-automotive.com/og-image.png">
+    content="Experimenta el estándar de oro en la compra de autos. Richard Automotive ofrece una selección curada con financiamiento a tu medida.">
+  <meta property="og:image" content="https://www.richard-automotive.com/assets/ra-hero-optimized.png">
   <meta property="og:locale" content="es_PR">
   <meta property="og:site_name" content="Richard Automotive">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://www.richard-automotive.com">
-  <meta name="twitter:title" content="Richard Automotive | Autos Seminuevos Certificados">
-  <meta name="twitter:description" content="La mejor selección de autos seminuevos en Puerto Rico">
-  <meta name="twitter:image" content="https://www.richard-automotive.com/og-image.png">
+  <meta name="twitter:title" content="Richard Automotive | La Excelencia Automotriz en Puerto Rico">
+  <meta name="twitter:description" content="Autos certificados, financiamiento proactivo y atención premium.">
+  <meta name="twitter:image" content="https://www.richard-automotive.com/assets/ra-hero-optimized.png">
 
   <!-- PWA & Mobile -->
   <!-- Manifiesto inyectado automáticamente por vite-plugin-pwa -->
@@ -67,12 +67,18 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://www.googletagmanager.com">
-  <link rel="preconnect" href="https://firebasestorage.googleapis.com">
-  <link rel="preconnect" href="https://generativelanguage.googleapis.com">
-  
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&family=Sora:wght@500;600;700&display=swap"
-    rel="stylesheet">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+  <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&family=Sora:wght@500;600;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet">
+  </noscript>
   <!-- Highlight.js Theme -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <!-- Styles migrated to index.css -->
@@ -88,22 +94,41 @@
           "@type": "AutoDealer",
           "name": "Richard Automotive",
           "url": "https://www.richard-automotive.com",
-          "image": "https://www.richard-automotive.com/og-image.png",
+          "image": "https://www.richard-automotive.com/assets/ra-hero-optimized.png",
           "telephone": "+1-787-368-2880",
           "email": "richard@richard-automotive.com",
+          "priceRange": "$$$",
+          "openingHours": "Mo-Sa 09:00-18:00",
           "address": {
             "@type": "PostalAddress",
+            "streetAddress": "Ave. Roosevelt #123",
             "addressLocality": "San Juan",
             "addressRegion": "PR",
+            "postalCode": "00920",
             "addressCountry": "US"
           },
-          "areaServed": "Puerto Rico"
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 18.4326,
+            "longitude": -66.0717
+          },
+          "areaServed": "Puerto Rico",
+          "sameAs": [
+            "https://www.facebook.com/richardautomotive",
+            "https://www.instagram.com/richardautomotive",
+            "https://www.linkedin.com/in/richardmendezmatos"
+          ]
         },
         {
           "@type": "WebSite",
           "name": "Richard Automotive",
           "url": "https://www.richard-automotive.com",
-          "inLanguage": "es-PR"
+          "inLanguage": "es-PR",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.richard-automotive.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
         }
       ]
     }

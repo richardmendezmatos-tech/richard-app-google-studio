@@ -12,12 +12,11 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const apiKey = env.VITE_FIREBASE_API_KEY || env.API_KEY || "";
 
-  const suppressFirebaseMixedImportWarning = (warning: { message?: string; code?: string }, warn: (warning: unknown) => void) => {
-    const message = warning?.message || '';
+  const suppressFirebaseMixedImportWarning = (warning: any, warn: any) => {
     if (
-      warning?.code === 'PLUGIN_WARNING' &&
-      message.includes('is dynamically imported by') &&
-      message.includes('but also statically imported by')
+      warning.code === 'PLUGIN_WARNING' &&
+      warning.message.includes('is dynamically imported by') &&
+      warning.message.includes('but also statically imported by')
     ) {
       return;
     }
@@ -35,27 +34,13 @@ export default defineConfig(({ mode }) => {
         onwarn: suppressFirebaseMixedImportWarning,
         output: {
           manualChunks: {
-            // Core React libraries
-            'vendor-react': ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
-
-            // Firebase split by capability to avoid loading unused modules at startup
-            'vendor-firebase-core': ['firebase/app'],
-            'vendor-firebase-auth': ['firebase/auth'],
-            'vendor-firebase-firestore-lite': ['firebase/firestore/lite'],
-            'vendor-firebase-storage': ['firebase/storage'],
-            'vendor-firebase-analytics': ['firebase/analytics'],
-            'vendor-firebase-aux': ['firebase/database', 'firebase/functions', 'firebase/performance'],
-
-            // AI/ML libraries
-            'vendor-ai': ['@google/generative-ai', '@mediapipe/tasks-vision'],
-
-            // UI libraries split by capability to avoid over-downloading on first paint
-            'vendor-ui-motion': ['framer-motion'],
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-framer': ['framer-motion'],
             'vendor-ui-icons': ['lucide-react'],
-            'vendor-ui-dnd': ['@dnd-kit/core', '@dnd-kit/sortable'],
-
-            // Redux
-            'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'rxjs']
+            'vendor-firebase-auth': ['firebase/auth'],
+            'vendor-firebase-db': ['firebase/firestore/lite', 'firebase/firestore'],
+            'vendor-ai': ['@google/generative-ai'],
+            'vendor-utils': ['@reduxjs/toolkit', 'react-redux', 'rxjs']
           }
         }
       },

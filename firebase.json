@@ -64,5 +64,13 @@
   },
   "extensions": {
     "storage-resize-images": "firebase/storage-resize-images@0.3.0"
+  },
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
   }
 }
