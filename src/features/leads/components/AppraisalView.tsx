@@ -10,7 +10,7 @@ import { analyzeTradeInImages } from '@/services/geminiService';
 
 const AppraisalView: React.FC = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState<'contact' | 'info' | 'photos' | 'scan' | 'offer'>('contact');
+    const [step, setStep] = useState<'contact' | 'info' | 'photos' | 'scan' | 'offer'>('info');
     const [contactInfo, setContactInfo] = useState({
         name: '',
         phone: ''
@@ -79,12 +79,12 @@ const AppraisalView: React.FC = () => {
                 type: 'trade-in',
                 name: contactInfo.name,
                 phone: contactInfo.phone,
-                notes: `Appraisal Express Capture - Started appraisal flow`
+                notes: `Appraisal Express Capture - Lead submitted info to unlock offer`
             });
         } catch (e) {
             console.error("CRM Express fail:", e);
         }
-        setStep('info');
+        setStep('offer');
     };
 
     const totalPhotos = 4;
@@ -180,8 +180,8 @@ const AppraisalView: React.FC = () => {
                             <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
                                 <Sparkles className="text-emerald-500" size={40} />
                             </div>
-                            <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">¿Cuánto vale tu auto?</h2>
-                            <p className="text-slate-500 text-sm mt-2">Tasación gratuita impulsada por IA en segundos. Empecemos por lo básico.</p>
+                            <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">¡Análisis Completo!</h2>
+                            <p className="text-slate-500 text-sm mt-2">Dinos a dónde enviar el reporte de IA y desbloquea tu oferta final.</p>
                         </div>
 
                         <div className="space-y-4">
@@ -214,11 +214,11 @@ const AppraisalView: React.FC = () => {
                             onClick={handleExpressCapture}
                             className="w-full py-5 bg-[#0d2232] text-white rounded-2xl font-bold uppercase tracking-widest shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 group"
                         >
-                            Ver mi Valorización <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                            Ver mi Oferta Revelada <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
                         <p className="text-[10px] text-slate-400 text-center uppercase tracking-widest leading-relaxed">
-                            Al continuar, aceptas que Richard Automotive te contacte para tu oferta. <br /> Sin spam. Tu privacidad es prioridad.
+                            Al continuar, aceptas que Richard Automotive te contacte con tu oferta. <br /> Cero spam. Privacidad 100% garantizada.
                         </p>
                     </motion.div>
                 );
@@ -406,7 +406,7 @@ const AppraisalView: React.FC = () => {
                                 {offerReady ? 'Análisis Completado' : scanStage || 'Iniciando Escáner...'}
                             </h3>
                             <p className="text-sm text-slate-500">
-                                {offerReady ? 'Generando tu oferta final...' : 'Nuestra IA está detectando daños y condiciones.'}
+                                {offerReady ? 'Análisis exitoso. Listo para revelar.' : 'Nuestra IA está detectando daños y condiciones.'}
                             </p>
                         </div>
 
@@ -420,10 +420,10 @@ const AppraisalView: React.FC = () => {
                             <motion.button
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                onClick={() => setStep('offer')}
+                                onClick={() => setStep('contact')}
                                 className="px-8 py-4 bg-emerald-500 text-white rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-emerald-500/30 hover:scale-105 transition-transform"
                             >
-                                Ver Oferta
+                                Desbloquear Oferta
                             </motion.button>
                         )}
                     </motion.div>
