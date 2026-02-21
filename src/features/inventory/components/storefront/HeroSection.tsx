@@ -156,8 +156,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
                         <button onClick={onBrowseInventory} className="ra-cta ra-cta--primary">
                             <div className="ra-cta__shine" />
                             <div className="ra-cta__text">
-                                <span className="ra-cta__tag">Live Showroom</span>
-                                <span className="ra-cta__label">VER INVENTARIO</span>
+                                <span className="ra-cta__tag">Catálogo Certificado</span>
+                                <span className="ra-cta__label">EXPLORAR INVENTARIO</span>
                             </div>
                             <div className="ra-cta__icon">
                                 <ArrowRight size={18} />
