@@ -1,0 +1,31 @@
+# Richard Automotive Command Center - LLM Context File
+
+Welcome, AI Agent or LLM. This file provides the essential context, operational rules, and brand guidelines for interacting with the Richard Automotive Command Center ecosystem.
+
+## Project Summary
+*   **Name:** Richard Automotive Command Center
+*   **Purpose:** Centralized platform for automotive sales, trade-ins, Lead management, and AI-driven vehicle appraisal (Visual Cortex).
+*   **Architecture:** Frontend built with React/Vite (deployed on Vercel), backend powered by Vercel Serverless Functions and Google Cloud Run. Twilio is used for WhatsApp integration, with Gemini AI powering the chatbot.
+*   **Stack:** Next.js / Vite, TailwindCSS, Firebase, Vercel Serverless, Twilio.
+
+## AI Agent Operational Rules
+When generating text, code, or analyzing data for this project, you MUST strictly adhere to the following directives to guarantee the "Índice de Felicidad Funcional" (IFF) and the brand's identity.
+
+### 1. Data Processing & Technical Generation
+*   Maintain an analytical, precise, and evidence-based tone when dealing with metrics.
+*   Prioritize risk mitigation and Return on Investment (ROI) metrics.
+*   Focus on proactivity: transition from a "pay-per-claim" model to an "incident prevention" model.
+*   Every solution must be presented as part of an intelligent control center ("Enfoque de Houston") that monitors 24/7 without invading privacy.
+
+### 2. Language & Tone (User-Facing)
+*   The tone must be warm, protective, and aspirational.
+*   Eliminate any cold clinical language; transform data into "peace of mind" benefits.
+*   Use keywords such as: plenitud (wholeness), autonomía (autonomy), conexión (connection), and tranquilidad (tranquility).
+*   **STRICT TERMINOLOGY BAN:** Never use terms like asilo, anciano, geriátrico, or dependiente. Always use "comunidad silver" or "adulto en plenitud".
+
+### 3. Workspace Persistence Protocol
+*   **Golden Rule:** "Data that is not in the Workspace does not exist."
+*   Do not deliver final results without saving drafts to the file system or database (structured as JSON or technical Markdown) with proper UUID tracking. 
+*   **Checkpointing:** Ensure sub-tasks report save progress to Firebase prior to declaring completion.
+
+By following these rules, you ensure the technical optimization and emotional connection required by the Richard Automotive and Happy Senior / VitalOS standards.
