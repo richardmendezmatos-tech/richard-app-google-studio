@@ -1,6 +1,6 @@
-import React, { useState, useContext, Suspense } from 'react';
+import React, { useState, useContext, Suspense, useMemo } from 'react';
 import { Car, CarType } from '@/types/types';
-import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench, DollarSign } from 'lucide-react';
+import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench, DollarSign, Activity, LineChart, ScanSearch } from 'lucide-react';
 import CarDetailModal from './CarDetailModal';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
@@ -22,6 +22,7 @@ import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from '../../../components/layout/FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import VirtualInventory from './VirtualInventory';
+import { AuthoritySection } from '../../marketing/components/AuthoritySection';
 
 const VisualSearchModal = React.lazy(() => import('./VisualSearchModal'));
 
@@ -142,6 +143,19 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
     // Final list to display
     const displayCars = isSearching ? filteredAndSorted : serverCars;
+    const marketPulse = useMemo(() => {
+        const source = displayCars.length > 0 ? displayCars : inventory;
+        if (!source.length) {
+            return { avgPrice: 0, premiumUnits: 0, compactUnits: 0 };
+        }
+
+        const totalPrice = source.reduce((acc, car) => acc + (car.price || 0), 0);
+        return {
+            avgPrice: Math.round(totalPrice / source.length),
+            premiumUnits: source.filter((car) => car.price >= 40000).length,
+            compactUnits: source.filter((car) => car.price < 25000).length
+        };
+    }, [displayCars, inventory]);
 
     // Loading State handling for initial load (server mode only)
     const isLoadingInitial = !isSearching && status === 'pending';
@@ -211,9 +225,31 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                 {/* Main Content Container */}
                 <div className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
 
-                    {/* 2. Trust Indicators (Floating Card) */}
                     <div className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
                         <TrustBar />
+                    </div>
+
+                    <AuthoritySection />
+
+                    <div className="reveal-up grid gap-4 md:grid-cols-3">
+                        <PulseCard
+                            icon={<Activity size={18} />}
+                            label="Valor en el Mercado"
+                            value={`$${marketPulse.avgPrice.toLocaleString('en-US')}`}
+                            tone="cyan"
+                        />
+                        <PulseCard
+                            icon={<LineChart size={18} />}
+                            label="Selección de Lujo"
+                            value={`${marketPulse.premiumUnits} unidades`}
+                            tone="slate"
+                        />
+                        <PulseCard
+                            icon={<ScanSearch size={18} />}
+                            label="Oportunidades de Compra"
+                            value={`${marketPulse.compactUnits} unidades`}
+                            tone="emerald"
+                        />
                     </div>
 
                     {/* Search & Filters & Sort */}
@@ -548,6 +584,24 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
             {/* Social Proof Widget */}
             <SocialProofWidget />
         </>
+    );
+};
+
+const PulseCard = ({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: 'cyan' | 'slate' | 'emerald' }) => {
+    const toneStyles = {
+        cyan: 'border-cyan-300/25 bg-cyan-500/10 text-cyan-100',
+        slate: 'border-slate-300/20 bg-slate-500/10 text-slate-100',
+        emerald: 'border-emerald-300/25 bg-emerald-500/10 text-emerald-100'
+    };
+
+    return (
+        <div className={`rounded-3xl border p-5 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.95)] ${toneStyles[tone]}`}>
+            <div className="mb-3 inline-flex rounded-xl border border-white/20 bg-black/20 p-2.5">
+                {icon}
+            </div>
+            <p className="font-tech text-[10px] uppercase tracking-[0.2em] opacity-90">{label}</p>
+            <p className="mt-2 font-cinematic text-3xl tracking-[0.06em]">{value}</p>
+        </div>
     );
 };
 
