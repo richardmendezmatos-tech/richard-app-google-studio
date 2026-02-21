@@ -223,15 +223,17 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                 />
 
                 {/* Main Content Container */}
-                <div className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
+                <main className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
 
-                    <div className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
+                    <section aria-label="Nuestra Confianza" className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
                         <TrustBar />
-                    </div>
+                    </section>
 
-                    <AuthoritySection />
+                    <section aria-label="Autoridad y Respaldo">
+                        <AuthoritySection />
+                    </section>
 
-                    <div className="reveal-up grid gap-4 md:grid-cols-3">
+                    <section aria-label="Pulso del Mercado" className="reveal-up grid gap-4 md:grid-cols-3">
                         <PulseCard
                             icon={<Activity size={18} />}
                             label="Valor en el Mercado"
@@ -250,10 +252,10 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                             value={`${marketPulse.compactUnits} unidades`}
                             tone="emerald"
                         />
-                    </div>
+                    </section>
 
                     {/* Search & Filters & Sort */}
-                    <div id="inventory-grid" className="scroll-mt-32">
+                    <section id="inventory-grid" aria-labelledby="inventory-heading" className="scroll-mt-32">
                         <div className="sticky top-2 z-30 rounded-[1.8rem] border border-cyan-100/20 bg-[linear-gradient(150deg,rgba(7,18,30,0.94),rgba(5,13,22,0.9))] px-4 py-4 shadow-[0_30px_80px_-44px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 sm:rounded-[2.2rem] sm:py-5 md:top-4 md:px-6">
                             <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
                                 <p className="font-tech text-[11px] uppercase tracking-[0.24em] text-cyan-200">Inventario Inteligente</p>
@@ -334,9 +336,9 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                         {/* Results Banner */}
                         <div className="mb-7 mt-6 flex flex-wrap items-end justify-between gap-3 px-2 sm:mt-8">
                             <div>
-                                <h3 className="font-cinematic text-4xl leading-none tracking-[0.08em] text-cyan-100">
+                                <h2 id="inventory-heading" className="font-cinematic text-4xl leading-none tracking-[0.08em] text-cyan-100">
                                     {displayCars.length} {isSearching ? 'Resultados' : 'Vehículos'}
-                                </h3>
+                                </h2>
                                 <p className="font-tech mt-1 text-[11px] uppercase tracking-[0.24em] text-slate-400">Selección activa para Puerto Rico</p>
                                 {savedCars.savedIds.length > 0 && (
                                     <button
@@ -459,21 +461,21 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 </>
                             )}
                         </div>
-                    </div>
+                    </section>
 
-                </div>
+                </main>
 
-                <div className="reveal-up content-auto">
+                <section aria-label="Preguntas Frecuentes" className="reveal-up content-auto">
                     <FAQSection />
-                </div>
+                </section>
 
-                <div className="reveal-up content-auto">
+                <section aria-label="Testimonios" className="reveal-up content-auto">
                     <TestimonialsSection />
-                </div>
+                </section>
 
-                <div className="reveal-up content-auto">
+                <footer aria-label="Pie de página social" className="reveal-up content-auto">
                     <SocialFooter />
-                </div>
+                </footer>
             </div >
 
             {/* Mobile Quick Actions */}

@@ -133,10 +133,11 @@ const DraggableLead = ({ lead }: { lead: Lead }) => {
     };
 
     useLayoutEffect(() => {
-        if (elementRef.current) {
+        const el = elementRef.current;
+        if (el) {
             const transformVal = transform ? CSS.Translate.toString(transform) : 'none';
-            elementRef.current.style.setProperty('--dnd-transform', transformVal);
-            elementRef.current.style.transform = 'var(--dnd-transform)';
+            (el as HTMLElement).style.setProperty('--dnd-transform', transformVal || '');
+            (el as HTMLElement).style.transform = 'var(--dnd-transform)';
         }
     }, [transform]);
 
@@ -184,11 +185,16 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
         try {
             // 1. Get Orchestrated Message
             const orchestration = await orchestrationService.orchestrateLeadFollowUp(lead, health);
+
+            const mappedPriority = (orchestration.priority === 'low' || orchestration.priority === 'medium')
+                ? 'normal'
+                : orchestration.priority as 'high' | 'urgent';
+
             const antigravityAction = await getAntigravityOutreachAction(lead, {
                 trigger: 'manual_crm',
                 fallbackMessage: orchestration.message,
                 fallbackChannel: lead.phone ? 'whatsapp' : 'email',
-                priority: orchestration.priority
+                priority: mappedPriority
             });
 
             const channel = antigravityAction?.channel || (lead.phone ? 'whatsapp' : 'email');

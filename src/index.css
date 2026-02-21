@@ -180,12 +180,23 @@ body {
 
 .scrollbar-hide {
   -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+@supports (scrollbar-width: none) {
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
 }
 
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 174, 217, 0.65) transparent;
+  overflow-y: auto;
+}
+
+@supports (scrollbar-width: thin) {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 174, 217, 0.65) transparent;
+  }
 }
 
 .custom-scrollbar::-webkit-scrollbar {

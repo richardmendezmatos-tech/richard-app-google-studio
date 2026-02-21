@@ -16,19 +16,19 @@ const ProgressiveForm: React.FC<ProgressiveFormProps> = ({ type, onSubmit }) => 
 
     const config = {
         income: {
-            title: 'Ingreso Mensual Estimado',
+            title: 'TU CAPACIDAD MENSUAL',
             placeholder: 'Ej. 3500',
             icon: <DollarSign size={18} />,
             label: 'Ingresos'
         },
         'trade-in': {
-            title: 'Auto que deseas entregar',
+            title: 'VALORAMOS TU AUTO ACTUAL',
             placeholder: 'Ej. Toyota Corolla 2020',
             icon: <Car size={18} />,
             label: 'Vehículo actual'
         },
         credit: {
-            title: 'Empirica (Credit Score)',
+            title: 'TU SCORE DE CRÉDITO (EMPÍRICA)',
             placeholder: 'Ej. 720',
             icon: <User size={18} />,
             label: 'Crédito'

@@ -1,4 +1,4 @@
-import { User } from '@/types/types';
+import { AppUser } from '@/types/types';
 
 export type PresenceStatus = 'online' | 'busy' | 'offline' | 'away';
 
@@ -32,7 +32,7 @@ class PresenceService {
         }
     }
 
-    public setMyStatus(user: User, status: PresenceStatus, currentPath?: string) {
+    public setMyStatus(user: AppUser, status: PresenceStatus, currentPath?: string) {
         if (!user.uid) return;
 
         const presence: AgentPresence = {

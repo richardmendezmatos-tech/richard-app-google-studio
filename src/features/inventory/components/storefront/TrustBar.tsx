@@ -1,10 +1,17 @@
 
 import React from 'react';
-import { ShieldCheck, Zap, Globe } from 'lucide-react';
+import { ShieldCheck, Zap, Globe, BadgeCheck } from 'lucide-react';
 
 const TrustBar: React.FC = () => {
     return (
-        <section className="py-8 md:py-10">
+        <section className="py-6 md:py-8">
+            <div className="mb-5 flex items-center justify-between">
+                <p className="font-tech text-[11px] uppercase tracking-[0.24em] text-cyan-100">Trust Protocol</p>
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/30 bg-emerald-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-200">
+                    <BadgeCheck size={12} />
+                    Verified Dealer
+                </span>
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
                 <TrustItem
                     icon={<ShieldCheck size={24} />}
@@ -37,7 +44,7 @@ const TrustItem = ({ icon, title, desc, color }: { icon: React.ReactNode, title:
     };
 
     return (
-        <div className="group flex cursor-default items-start gap-4 rounded-3xl border border-white/10 bg-[linear-gradient(155deg,rgba(12,26,39,0.75),rgba(7,16,28,0.8))] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-200/30">
+        <div className="group flex cursor-default items-start gap-4 rounded-3xl border border-white/10 bg-[linear-gradient(155deg,rgba(12,26,39,0.75),rgba(7,16,28,0.8))] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-200/30 hover:shadow-[0_22px_38px_-24px_rgba(0,174,217,0.65)]">
             <div className={`p-3 rounded-2xl ${colorClasses[color]}`}>
                 {icon}
             </div>

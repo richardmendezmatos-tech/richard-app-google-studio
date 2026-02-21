@@ -6,6 +6,8 @@ import { ai } from './services/aiManager';
 import { orchestrateResponse } from './agents/rag-synergy-logic';
 import { requireAdmin, requireSignedIn } from './security/policies';
 import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
+import { logFlowExecution } from './services/persistenceService';
+import { InventoryMatchingService } from './services/inventoryMatchingService';
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -215,9 +217,23 @@ export const chatWithLead = ai.defineFlow(
             leadId: input.leadId
         });
 
+        // Automate Persistence Protocol (Richard Automotive Standard)
+        await logFlowExecution('chatWithLead', input, result.response);
+
         return result.response;
     }
 );
+
+// --- Richard Automotive Sentinel ---
+import { raSentinelFlow } from './services/raSentinel';
+export { raSentinelFlow };
+
+export const raSentinel = onCallGenkit({
+    authPolicy: (auth) => requireSignedIn(auth),
+    cors: true,
+    secrets: ["GEMINI_API_KEY"],
+    minInstances: 1,
+}, raSentinelFlow);
 
 // --- Phase 4: Smart Garage & Predictive Retention ---
 
@@ -416,6 +432,9 @@ export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
     try {
         const { updateCarEmbedding } = await import('./services/vectorService');
         await updateCarEmbedding(event.params.carId, data);
+
+        // Proactive Matching Motor (Richard Automotive Command Center)
+        await InventoryMatchingService.matchInventoryToLeads(event.params.carId, data);
     } catch (e) {
         logger.error(`Error indexing car ${event.params.carId}:`, e);
     }

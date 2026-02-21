@@ -47,6 +47,7 @@ const AppraisalView: React.FC = () => {
         condition: string;
         defects: string[];
         reasoning: string;
+        estimatedValueAdjustment: number;
     } | null>(null);
 
     const [offerAmount, setOfferAmount] = useState({ min: 0, max: 0 });
@@ -136,7 +137,13 @@ const AppraisalView: React.FC = () => {
             // Artificial minimum delay for "Scanner" VFX
             const minDelay = new Promise(resolve => setTimeout(resolve, 3500));
 
-            const [urls, analysis] = await Promise.all([uploadTask, aiTask, minDelay]);
+            const [urls, analysisData] = await Promise.all([uploadTask, aiTask, minDelay]);
+            const analysis = analysisData as {
+                condition: string;
+                defects: string[];
+                reasoning: string;
+                estimatedValueAdjustment: number;
+            };
 
             setUploadedUrls(urls);
             setAiAnalysis(analysis);

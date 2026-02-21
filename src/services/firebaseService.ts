@@ -16,6 +16,7 @@ import {
   isBrowser,
   getRedirectResult
 } from '@/infra/firebase/client';
+import { Car, Lead, Subscriber } from '@/types/types';
 import {
   getAnalyticsService,
   getPerformanceService,
@@ -36,9 +37,10 @@ export {
   getRealtimeDbService
 };
 
-type InventoryRecord = { id: string; name?: string } & Record<string, unknown>;
-type LeadRecord = { id: string } & Record<string, unknown>;
-type SubscriberRecord = { id: string } & Record<string, unknown>;
+// Internal record types for document data before casting
+type InventoryRecord = Car;
+type LeadRecord = Lead;
+type SubscriberRecord = Subscriber;
 
 // Legacy / Backward Compatibility Exports
 // Keep these as lazy wrappers to avoid circular ESM initialization between
@@ -113,7 +115,7 @@ export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) 
       const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      } as InventoryRecord));
       inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       callback(inventoryList);
     } catch (error) {
@@ -130,11 +132,11 @@ export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) 
   };
 };
 
-export const getInventoryOnce = async (): Promise<InventoryRecord[]> => {
+export const getInventoryOnce = async (): Promise<Car[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Car));
 };
 
 export const submitApplication = async (data: Record<string, unknown>) => {
@@ -157,7 +159,7 @@ export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
     try {
       const snapshot = await getDocs(q);
       if (cancelled) return;
-      const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LeadRecord));
       callback(leadsList);
     } catch (error) {
       console.error('syncLeads Error:', error);
@@ -173,11 +175,11 @@ export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
   };
 };
 
-export const getLeadsOnce = async (): Promise<LeadRecord[]> => {
+export const getLeadsOnce = async (): Promise<Lead[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
 };
 
 export const updateLeadStatus = async (leadId: string, newStatus: string) => {
@@ -199,5 +201,5 @@ export const getSubscribers = async (): Promise<SubscriberRecord[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const q = query(collection(db, 'subscribers'), where('dealerId', '==', dealerId));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SubscriberRecord));
 };

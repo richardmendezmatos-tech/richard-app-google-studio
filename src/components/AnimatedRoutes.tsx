@@ -2,22 +2,51 @@ import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Car } from '@/types';
+
 // --- Lazy Imports ---
-const Storefront = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/Storefront')));
-const AdminPanel = React.lazy(() => lazyRetry(() => import('@/features/admin/components/AdminPanel')));
+interface StorefrontProps {
+    inventory: Car[];
+    initialVisualSearch: string | null;
+    onClearVisualSearch: () => void;
+    onMagicFix?: () => Promise<void>;
+    onOpenGarage: () => void;
+}
+const Storefront = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/Storefront'))) as unknown as React.ComponentType<StorefrontProps>;
+interface AdminPanelProps {
+    inventory: Car[];
+    onUpdate: (car: Car) => Promise<void>;
+    onAdd: (car: Omit<Car, "id">) => Promise<void>;
+    onDelete: (id: string) => void;
+    onInitializeDb: () => Promise<void>;
+}
+const AdminPanel = React.lazy(() => lazyRetry(() => import('@/features/admin/components/AdminPanel'))) as unknown as React.ComponentType<AdminPanelProps>;
 const DigitalTwinDashboard = React.lazy(() => lazyRetry(() => import('@/features/digital-twin/components/DigitalTwinDashboard')));
-const AIConsultant = React.lazy(() => lazyRetry(() => import('@/features/ai/components/AIConsultant')));
+interface AIConsultantProps {
+    inventory: Car[];
+}
+const AIConsultant = React.lazy(() => lazyRetry(() => import('@/features/ai/components/AIConsultant'))) as unknown as React.ComponentType<AIConsultantProps>;
 const AILabView = React.lazy(() => lazyRetry(() => import('@/features/ai/components/AILabView')));
 const UserLogin = React.lazy(() => lazyRetry(() => import('@/features/auth/components/UserLogin')));
-const VehicleDetail = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/VehicleDetail')));
+interface VehicleDetailProps {
+    inventory: Car[];
+}
+const VehicleDetail = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/VehicleDetail'))) as unknown as React.ComponentType<VehicleDetailProps>;
 const TradeInView = React.lazy(() => lazyRetry(() => import('@/features/leads/components/TradeInView')));
 const AppraisalView = React.lazy(() => lazyRetry(() => import('@/features/leads/components/AppraisalView')));
 const ComparisonView = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/ComparisonView')));
 const AdminLogin = React.lazy(() => lazyRetry(() => import('@/features/auth/components/AdminLogin')));
 const BlogView = React.lazy(() => lazyRetry(() => import('@/components/layout/BlogView')));
 const UserProfile = React.lazy(() => lazyRetry(() => import('@/components/layout/UserProfile')));
-const DigitalGarage = React.lazy(() => lazyRetry(() => import('@/components/layout/DigitalGarage')));
-const PreQualifyView = React.lazy(() => lazyRetry(() => import('@/features/leads/components/PreQualifyView')));
+interface DigitalGarageProps {
+    inventory: Car[];
+    onExit: () => void;
+}
+const DigitalGarage = React.lazy(() => lazyRetry(() => import('@/components/layout/DigitalGarage'))) as unknown as React.ComponentType<DigitalGarageProps>;
+interface PreQualifyViewProps {
+    onExit: () => void;
+}
+const PreQualifyView = React.lazy(() => lazyRetry(() => import('@/features/leads/components/PreQualifyView'))) as unknown as React.ComponentType<PreQualifyViewProps>;
 const PrivacyView = React.lazy(() => lazyRetry(() => import('@/features/privacy/components/PrivacyView')));
 const TermsView = React.lazy(() => lazyRetry(() => import('@/components/layout/TermsView')));
 const NotFound = React.lazy(() => lazyRetry(() => import('@/components/layout/NotFound')));
@@ -103,7 +132,7 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
 };
 
 interface AnimatedRoutesProps {
-    inventory: any[];
+    inventory: Car[];
     pendingVisualSearch: string | null;
     setPendingVisualSearch: (val: string | null) => void;
     handleMagicFix: () => Promise<void>;
