@@ -1,0 +1,84 @@
+# .dockerignore — Richard Automotive v2026.1
+# Excluir archivos innecesarios del contexto de build → reduce tiempo de upload ~80%
+
+# ── Dependencias (se reinstalan en el builder) ────────────────────────────────
+node_modules
+.pnp
+.pnp.js
+
+# ── Control de versiones ───────────────────────────────────────────────────────
+.git
+.gitignore
+.github
+
+# ── Build output (se regenera) ────────────────────────────────────────────────
+dist
+build
+out
+.next
+
+# ── Variables de entorno (sensibles — nunca en imagen) ───────────────────────
+.env
+.env.*
+.env.keys
+.env.local
+.env.production
+.env.production.example
+.env.example
+
+# ── Plataformas móviles (no necesarias para imagen web) ───────────────────────
+android
+ios
+*.dmg
+
+# ── Tests y QA (no van a producción) ─────────────────────────────────────────
+e2e
+test-results
+playwright-report
+coverage
+vitest.setup.ts
+playwright.config.ts
+*.test.ts
+*.spec.ts
+
+# ── Logs y archivos temporales ────────────────────────────────────────────────
+*.log
+build_debug*.log
+build_final.log
+npm-debug.log*
+
+# ── IDEs y editores ───────────────────────────────────────────────────────────
+.vscode
+.cursor
+.idea
+*.swp
+*.swo
+
+# ── Documentación y scripts de desarrollo ─────────────────────────────────────
+docs
+README.md
+DEPLOYMENT.md
+PRO_SETUP.md
+AI_IDENTITY_MANUAL.md
+
+# ── Firebase emulators y configuración local ──────────────────────────────────
+.firebase
+firebase-export-*/
+serviceAccountKey.json
+
+# ── Python / backend auxiliar ─────────────────────────────────────────────────
+__pycache__
+*.pyc
+.venv
+viva_env
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+.DS_Store
+*.old
+*.bak
+*.tmp
+output
+stats.html
+workspace
+scripts
+bruno
