@@ -1,0 +1,44 @@
+# cloudbuild.yaml — Richard Automotive v2026.1
+# FinOps: Kaniko build con caché de capas para reducir tiempo y costo ~60%
+#
+# Estimado de ahorro:
+#   - Sin caché: ~8 min build × $0.003/min = ~$0.024 por build
+#   - Con caché: ~2 min build × $0.003/min = ~$0.006 por build
+#   - Ahorro: ~75% en tiempo + costo en builds subsecuentes
+#
+# Para activar: conecta tu repo en Cloud Build y este archivo se usa automáticamente.
+
+steps:
+  # ── Paso 1: Build con Kaniko (caché en GCS) ─────────────────────────────────
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    id: 'kaniko-build'
+    args:
+      - '--dockerfile=Dockerfile'
+      - '--context=dir://.'
+      - '--destination=gcr.io/$PROJECT_ID/richard-automotive:$COMMIT_SHA'
+      - '--destination=gcr.io/$PROJECT_ID/richard-automotive:latest'
+      - '--cache=true'
+      - '--cache-ttl=48h'
+      - '--cache-repo=gcr.io/$PROJECT_ID/richard-automotive/cache'
+      - '--compressed-caching=false'
+      - '--snapshot-mode=redo'
+    env:
+      - 'DOCKER_BUILDKIT=1'
+
+# ── Imágenes a publicar ────────────────────────────────────────────────────────
+images:
+  - 'gcr.io/$PROJECT_ID/richard-automotive:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/richard-automotive:latest'
+
+# ── Opciones de build ──────────────────────────────────────────────────────────
+options:
+  machineType: 'E2_MEDIUM'        # Balance costo/velocidad (1 vCPU, 4 GB RAM)
+  diskSizeGb: 20
+  logging: CLOUD_LOGGING_ONLY     # Reduce costos de Logging vs LEGACY
+
+# ── Timeouts ──────────────────────────────────────────────────────────────────
+timeout: '1200s'                  # 20 min máximo
+
+# ── Substitutions (overrideable en Cloud Build UI) ────────────────────────────
+substitutions:
+  _ENVIRONMENT: 'production'
