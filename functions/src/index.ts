@@ -470,7 +470,7 @@ export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
 
 export const onNewApplication = onDocumentCreated({
     document: 'applications/{applicationId}',
-    secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"],
+    secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "VITE_META_PIXEL_ID", "META_ACCESS_TOKEN"],
 }, async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
@@ -529,6 +529,15 @@ export const onNewApplication = onDocumentCreated({
                 await sendTwilioMessage(data.phone, smsBody);
                 logger.info(`Welcome SMS sent to: ${data.phone}`);
             }
+
+            // Send Event to Meta (Conversions API) with SHA256 Advanced Matching
+            try {
+                const { sendMetaLeadEvent } = await import('./services/metaCapiService');
+                await sendMetaLeadEvent(data.email, data.phone, data);
+            } catch (metaError) {
+                logger.error("Failed to send Meta CAPI Lead event", metaError);
+            }
+
 
         } catch (emailError) {
             logger.error("Failed to send email", emailError);
@@ -790,3 +799,13 @@ export const getLeadMemory = onCallGenkit({
 ));
 // --- Copilot SDK Migration ---
 export { chatWithAgent } from './copilot';
+
+// --- Market Intel Cron Job ---
+export const dailyMarketScraper = onSchedule({
+    schedule: 'every day 02:00',
+    timeZone: 'America/Puerto_Rico',
+    timeoutSeconds: 300,
+}, async () => {
+    const { runMarketIntelScraper } = await import('./services/marketIntelService');
+    await runMarketIntelScraper();
+});
