@@ -1,0 +1,38 @@
+/* Styles for AppraisalView.tsx */
+
+.appraisal-progress-container {
+    height: 4px;
+    width: 100%;
+    background-color: rgba(226, 232, 240, 0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.appraisal-progress-bar {
+    height: 100%;
+    width: var(--progress, 0%);
+    transition: width 0.5s ease-in-out, background-color 0.5s ease;
+}
+
+/* We'll use a dynamic class or a small style override for width since it's highly dynamic */
+.progress-filled {
+    background-color: #10b981;
+    /* emerald-500 */
+}
+
+.progress-active {
+    background-color: #00aed9;
+    /* brand blue */
+}
+
+/* AI Scan Animations */
+.scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #00aed9;
+    box-shadow: 0 0 15px #00aed9, 0 0 5px #fff;
+    z-index: 10;
+}

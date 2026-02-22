@@ -15,9 +15,6 @@ const VoiceWidget = lazy(() =>
 const WhatsAppFloat = lazy(() =>
     import('@/features/leads/components/WhatsAppFloat').then((mod) => ({ default: mod.WhatsAppFloat }))
 );
-const ScrollNavigator = lazy(() =>
-    import('@/components/common/ScrollNavigator').then((mod) => ({ default: mod.ScrollNavigator }))
-);
 
 interface CinemaLayoutProps {
     children: React.ReactNode;
@@ -84,7 +81,6 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
                         <AIChatWidget inventory={inventory} />
                         <VoiceWidget />
                         <WhatsAppFloat />
-                        <ScrollNavigator />
                     </Suspense>
                 )}
 
