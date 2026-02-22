@@ -1,48 +1,45 @@
-@layer components {
+/* Glassmorphism base */
+.glass-card {
+    @apply backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-white/40 dark:border-slate-800/60 shadow-2xl;
+}
 
-    /* Glassmorphism base */
-    .glass-card {
-        @apply backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-white/40 dark:border-slate-800/60 shadow-2xl;
-    }
+/* Premium Heading */
+.newsroom-title {
+    @apply font-black tracking-tighter uppercase leading-none;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+}
 
-    /* Premium Heading */
-    .newsroom-title {
-        @apply font-black tracking-tighter uppercase leading-none;
-        font-size: clamp(2.5rem, 8vw, 5rem);
-    }
+/* Cyber Glow effect */
+.cyber-glow {
+    @apply relative overflow-hidden;
+}
 
-    /* Cyber Glow effect */
-    .cyber-glow {
-        @apply relative overflow-hidden;
-    }
+.cyber-glow::after {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none;
+    background: radial-gradient(circle at center, rgba(0, 174, 217, 0.15) 0%, transparent 70%);
+}
 
-    .cyber-glow::after {
-        content: '';
-        @apply absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none;
-        background: radial-gradient(circle at center, rgba(0, 174, 217, 0.15) 0%, transparent 70%);
-    }
+.cyber-glow:hover::after {
+    @apply opacity-100;
+}
 
-    .cyber-glow:hover::after {
-        @apply opacity-100;
-    }
+/* Segmented Control Animation */
+.segmented-control-active {
+    @apply absolute inset-0 bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-all duration-300;
+}
 
-    /* Segmented Control Animation */
-    .segmented-control-active {
-        @apply absolute inset-0 bg-white dark:bg-slate-700 rounded-lg shadow-sm transition-all duration-300;
-    }
+/* Immersive Reading Scrollbar */
+.immersive-modal::-webkit-scrollbar {
+    width: 6px;
+}
 
-    /* Immersive Reading Scrollbar */
-    .immersive-modal::-webkit-scrollbar {
-        width: 6px;
-    }
+.immersive-modal::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
 
-    .immersive-modal::-webkit-scrollbar-track {
-        @apply bg-transparent;
-    }
-
-    .immersive-modal::-webkit-scrollbar-thumb {
-        @apply bg-slate-200 dark:bg-slate-800 rounded-full;
-    }
+.immersive-modal::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 dark:bg-slate-800 rounded-full;
 }
 
 /* Gradient Text Utilities */
