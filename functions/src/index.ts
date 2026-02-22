@@ -9,6 +9,12 @@ import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './sec
 import { logFlowExecution } from './services/persistenceService';
 import { InventoryMatchingService } from './services/inventoryMatchingService';
 
+const ALLOWED_ORIGINS = [
+    "https://richard-automotive.vercel.app",
+    "https://richard-automotive-dev.web.app",
+    "http://localhost:5173"
+];
+
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
     {
@@ -66,7 +72,7 @@ export const generateCarDescription = ai.defineFlow(
 
 export const generateDescription = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
     memory: "512MiB",
@@ -87,7 +93,7 @@ export const semanticCarSearch = ai.defineFlow(
 
 export const searchCarsSemantic = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Instant AI search for premium UX
     memory: "512MiB",
@@ -110,7 +116,7 @@ export const reindexInventory = ai.defineFlow(
 
 export const triggerReindex = onCallGenkit({
     authPolicy: (auth) => requireAdmin(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, reindexInventory);
 
@@ -230,7 +236,7 @@ export { raSentinelFlow };
 
 export const raSentinel = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1,
 }, raSentinelFlow);
@@ -323,7 +329,7 @@ export const transcribeAudio = ai.defineFlow(
 import { onRequest } from 'firebase-functions/v2/https';
 
 // Generic Webhook for WhatsApp (compatible with Twilio payload)
-export const incomingWhatsAppMessage = onRequest(async (req, res) => {
+export const incomingWhatsAppMessage = onRequest({ secrets: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"] }, async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
         return;
@@ -464,7 +470,7 @@ export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
 
 export const onNewApplication = onDocumentCreated({
     document: 'applications/{applicationId}',
-    secrets: ["SENDGRID_API_KEY"],
+    secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"],
 }, async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
@@ -514,6 +520,14 @@ export const onNewApplication = onDocumentCreated({
                     html: getWelcomeEmailTemplate(data)
                 });
                 logger.info(`Welcome email sent to: ${data.email}`);
+            }
+
+            // Send Automated Welcome SMS to Client
+            if (data.phone) {
+                const { sendTwilioMessage } = await import('./services/twilioService');
+                const smsBody = `Hola ${data.firstName}, recibimos tu solicitud para el vehículo de tu interés. Nuestro equipo en Richard Automotive te contactará pronto.`;
+                await sendTwilioMessage(data.phone, smsBody);
+                logger.info(`Welcome SMS sent to: ${data.phone}`);
             }
 
         } catch (emailError) {
@@ -753,7 +767,7 @@ export { chatStream } from './chatStream';
 // --- Phase 6: Voice & WhatsApp Exports ---
 export const processVoiceChunk = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
@@ -765,7 +779,7 @@ export const processVoiceChunk = onCallGenkit({
 
 export const getLeadMemory = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
