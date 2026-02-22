@@ -196,9 +196,11 @@ const AIChatWidget: React.FC<Props> = () => {
 
                   if (state === 'result') {
                     if (toolName === 'search_inventory') {
-                      return <GenUICarCard key={toolCallId} cars={toolInvocation.result.vehicles || []} />;
+                      const result = toolInvocation.result as { vehicles?: Car[] };
+                      return <GenUICarCard key={toolCallId} cars={result.vehicles || []} />;
                     }
                     if (toolName === 'calculate_financing') {
+                      const result = toolInvocation.result as { monthlyPayment: string; details: string };
                       return (
                         <div key={toolCallId} className="flex justify-start">
                           <div className="bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3">
@@ -207,8 +209,8 @@ const AIChatWidget: React.FC<Props> = () => {
                             </div>
                             <div>
                               <div className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Pago Estimado</div>
-                              <div className="text-xl font-black text-emerald-700 dark:text-white">${toolInvocation.result.monthlyPayment}/mo</div>
-                              <div className="text-[9px] text-emerald-600/70 dark:text-emerald-400/70">{toolInvocation.result.details}</div>
+                              <div className="text-xl font-black text-emerald-700 dark:text-white">${result.monthlyPayment}/mo</div>
+                              <div className="text-[9px] text-emerald-600/70 dark:text-emerald-400/70">{result.details}</div>
                             </div>
                           </div>
                         </div>

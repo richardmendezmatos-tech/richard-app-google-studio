@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --brand-cyan: #00aed9;
-  --brand-cyan-strong: #0098bc;
-  --brand-ink: #07111b;
-  --brand-navy: #0d2232;
-  --brand-surface: #101f2e;
-  --brand-paper: #e9eef5;
-  --text-main: #d9e3ef;
-  --text-muted: #8aa0b8;
-  --ring-focus: #31d2ff;
+  --brand-cyan: #00e5ff;
+  --brand-cyan-strong: #00b8cc;
+  --brand-ink: #02060a;
+  --brand-navy: #051421;
+  --brand-surface: #0a1929;
+  --brand-paper: #f0f4f8;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --ring-focus: #00e5ff;
   --font-editorial: "Cormorant Garamond", serif;
   --font-tech: "Sora", sans-serif;
 }
@@ -26,10 +26,12 @@ body {
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   background:
-    radial-gradient(circle at 10% -10%, rgba(0, 174, 217, 0.25), transparent 35%),
-    radial-gradient(circle at 90% 20%, rgba(35, 75, 110, 0.35), transparent 38%),
-    linear-gradient(155deg, #04090f 0%, #081625 45%, #0d2232 100%);
+    radial-gradient(circle at 0% 0%, rgba(0, 229, 255, 0.15), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(35, 75, 110, 0.25), transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(0, 229, 255, 0.05), transparent 60%),
+    linear-gradient(165deg, #02060a 0%, #051421 50%, #0a1929 100%);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .font-cinematic {
@@ -67,17 +69,17 @@ body {
 
 .glass-premium {
   position: relative;
-  border-radius: 30px;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.05), transparent 55%),
-    linear-gradient(155deg, rgba(16, 31, 46, 0.7), rgba(7, 17, 27, 0.75));
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+    radial-gradient(1000px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%),
+    linear-gradient(155deg, rgba(10, 25, 41, 0.8), rgba(2, 6, 10, 0.85));
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
   box-shadow:
-    0 24px 48px -24px rgba(0, 0, 0, 0.9),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .glass-premium::after {
@@ -99,10 +101,44 @@ body {
 }
 
 .glass-premium:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px) scale(1.02);
   box-shadow:
-    0 20px 50px -20px rgba(0, 174, 217, 0.3),
-    0 0 0 1px rgba(0, 174, 217, 0.2);
+    0 35px 70px -15px rgba(0, 229, 255, 0.2),
+    0 0 0 1px rgba(0, 229, 255, 0.3);
+  border-color: rgba(0, 229, 255, 0.4);
+}
+
+.btn-premium {
+  @apply relative overflow-hidden inline-flex items-center justify-center rounded-xl px-8 py-3 font-semibold text-white transition-all duration-300;
+  background: linear-gradient(135deg, var(--brand-cyan), var(--brand-cyan-strong));
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.45);
+  filter: brightness(1.1);
+}
+
+.btn-premium::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 .text-glow {
@@ -144,12 +180,23 @@ body {
 
 .scrollbar-hide {
   -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+@supports (scrollbar-width: none) {
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
 }
 
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 174, 217, 0.65) transparent;
+  overflow-y: auto;
+}
+
+@supports (scrollbar-width: thin) {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 174, 217, 0.65) transparent;
+  }
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -187,8 +234,13 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoomIn {
@@ -196,6 +248,7 @@ body {
     transform: scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -207,6 +260,7 @@ body {
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -218,6 +272,7 @@ body {
     opacity: 0;
     transform: translateY(14px) scale(0.99);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -229,6 +284,7 @@ body {
     opacity: 0;
     transform: translateY(18px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -236,14 +292,27 @@ body {
 }
 
 @keyframes gradientX {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-gradient-x {
@@ -272,6 +341,12 @@ body {
 
 .reveal-up {
   animation: revealUp 650ms cubic-bezier(0.18, 0.89, 0.32, 1.1);
+}
+
+.animate-fade-in-up {
+  animation: revealUp 0.3s ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+  opacity: 0;
 }
 
 .content-auto {
@@ -340,15 +415,48 @@ body {
   filter: blur(4px);
 }
 
-.cinematic-layer {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.glass-sentinel {
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  background:
+    linear-gradient(135deg, rgba(8, 18, 30, 0.85), rgba(13, 34, 50, 0.9));
+  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(25px);
+  box-shadow:
+    0 20px 40px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.glass-sentinel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+.motion-proactive {
+  animation: proactivePulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes proactivePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(0.99);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

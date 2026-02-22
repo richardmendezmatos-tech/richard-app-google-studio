@@ -8,6 +8,7 @@ import { User as FirebaseUser } from 'firebase/auth';
 import { uploadImage } from '@/services/firebaseService';
 import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2 } from 'lucide-react';
 import { useNotification } from '@/contexts/NotificationContext';
+import SEO from '@/components/seo/SEO';
 
 const UserProfile: React.FC = () => {
     const { user } = useContext(AuthContext);
@@ -81,6 +82,12 @@ const UserProfile: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 lg:p-12 flex flex-col items-center">
+            <SEO
+                title="Mi Perfil"
+                description="Panel privado de usuario para gestionar cuenta y seguridad."
+                url="/profile"
+                noIndex
+            />
 
             <div className="max-w-4xl w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 

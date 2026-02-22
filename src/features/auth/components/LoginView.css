@@ -1,0 +1,192 @@
+/* Premium Login UI - Neural Auth Gateway */
+
+/* Glass Card - uses native CSS to avoid @apply parsing issues with rgba() */
+.glass-login-card {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.2);
+}
+
+.dark .glass-login-card {
+    background-color: rgba(15, 23, 42, 0.75);
+    border-color: rgba(30, 41, 59, 0.6);
+}
+
+/* Neural Background Glow */
+.neural-glow-bg {
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    background: radial-gradient(circle at center, rgba(0, 174, 217, 0.08) 0%, transparent 70%);
+    animation: neural-pulse 15s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes neural-pulse {
+    0% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.1) translate(2%, 2%);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1) translate(-2%, -2%);
+        opacity: 0.5;
+    }
+}
+
+/* Gradient Text */
+.text-gradient-premium {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(135deg, #1e293b, #475569, #1e293b);
+}
+
+.dark .text-gradient-premium {
+    background-image: linear-gradient(135deg, #ffffff, #94a3b8, #ffffff);
+}
+
+/* Premium Input */
+.input-premium {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background-color: rgba(241, 245, 249, 0.5);
+    color: #1e293b;
+}
+
+.dark .input-premium {
+    background-color: rgba(15, 23, 42, 0.5);
+    color: #f1f5f9;
+}
+
+.input-premium:focus {
+    background-color: #ffffff;
+    border-color: rgba(0, 174, 217, 0.35);
+    box-shadow: 0 0 20px rgba(0, 174, 217, 0.12);
+}
+
+.dark .input-premium:focus {
+    background-color: #0f172a;
+}
+
+/* Social Buttons */
+.social-btn-premium {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.social-btn-premium:active {
+    transform: scale(0.98);
+}
+
+.google-btn-premium {
+    background-color: #ffffff;
+    border-color: #e2e8f0;
+    color: #334155;
+}
+
+.dark .google-btn-premium {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.google-btn-premium:hover {
+    box-shadow: 0 8px 20px rgba(0, 174, 217, 0.12);
+    border-color: rgba(0, 174, 217, 0.25);
+}
+
+/* Primary CTA Button */
+.primary-btn-premium {
+    width: 100%;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    font-weight: 900;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    background: linear-gradient(135deg, #00aed9 0%, #0073a8 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px -8px rgba(0, 174, 217, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.primary-btn-premium:hover {
+    box-shadow: 0 20px 32px -12px rgba(0, 174, 217, 0.55);
+    transform: translateY(-2px);
+}
+
+.primary-btn-premium:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.primary-btn-premium:disabled {
+    opacity: 0.7;
+    cursor: wait;
+    transform: none;
+}
+
+/* Divider */
+.auth-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: #94a3b8;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex-grow: 1;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark .auth-divider::before,
+.dark .auth-divider::after {
+    border-color: #1e293b;
+}
+
+.auth-divider::before {
+    margin-right: 1rem;
+}
+
+.auth-divider::after {
+    margin-left: 1rem;
+}

@@ -6,6 +6,14 @@ import { ai } from './services/aiManager';
 import { orchestrateResponse } from './agents/rag-synergy-logic';
 import { requireAdmin, requireSignedIn } from './security/policies';
 import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
+import { logFlowExecution } from './services/persistenceService';
+import { InventoryMatchingService } from './services/inventoryMatchingService';
+
+const ALLOWED_ORIGINS = [
+    "https://richard-automotive.vercel.app",
+    "https://richard-automotive-dev.web.app",
+    "http://localhost:5173"
+];
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -64,7 +72,7 @@ export const generateCarDescription = ai.defineFlow(
 
 export const generateDescription = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
     memory: "512MiB",
@@ -85,7 +93,7 @@ export const semanticCarSearch = ai.defineFlow(
 
 export const searchCarsSemantic = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Instant AI search for premium UX
     memory: "512MiB",
@@ -108,7 +116,7 @@ export const reindexInventory = ai.defineFlow(
 
 export const triggerReindex = onCallGenkit({
     authPolicy: (auth) => requireAdmin(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, reindexInventory);
 
@@ -215,9 +223,23 @@ export const chatWithLead = ai.defineFlow(
             leadId: input.leadId
         });
 
+        // Automate Persistence Protocol (Richard Automotive Standard)
+        await logFlowExecution('chatWithLead', input, result.response);
+
         return result.response;
     }
 );
+
+// --- Richard Automotive Sentinel ---
+import { raSentinelFlow } from './services/raSentinel';
+export { raSentinelFlow };
+
+export const raSentinel = onCallGenkit({
+    authPolicy: (auth) => requireSignedIn(auth),
+    cors: ALLOWED_ORIGINS,
+    secrets: ["GEMINI_API_KEY"],
+    minInstances: 1,
+}, raSentinelFlow);
 
 // --- Phase 4: Smart Garage & Predictive Retention ---
 
@@ -307,7 +329,7 @@ export const transcribeAudio = ai.defineFlow(
 import { onRequest } from 'firebase-functions/v2/https';
 
 // Generic Webhook for WhatsApp (compatible with Twilio payload)
-export const incomingWhatsAppMessage = onRequest(async (req, res) => {
+export const incomingWhatsAppMessage = onRequest({ secrets: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"] }, async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
         return;
@@ -416,6 +438,9 @@ export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
     try {
         const { updateCarEmbedding } = await import('./services/vectorService');
         await updateCarEmbedding(event.params.carId, data);
+
+        // Proactive Matching Motor (Richard Automotive Command Center)
+        await InventoryMatchingService.matchInventoryToLeads(event.params.carId, data);
     } catch (e) {
         logger.error(`Error indexing car ${event.params.carId}:`, e);
     }
@@ -445,7 +470,7 @@ export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
 
 export const onNewApplication = onDocumentCreated({
     document: 'applications/{applicationId}',
-    secrets: ["SENDGRID_API_KEY"],
+    secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "VITE_META_PIXEL_ID", "META_ACCESS_TOKEN"],
 }, async (event) => {
     const snapshot = event.data;
     if (!snapshot) {
@@ -496,6 +521,23 @@ export const onNewApplication = onDocumentCreated({
                 });
                 logger.info(`Welcome email sent to: ${data.email}`);
             }
+
+            // Send Automated Welcome SMS to Client
+            if (data.phone) {
+                const { sendTwilioMessage } = await import('./services/twilioService');
+                const smsBody = `Hola ${data.firstName}, recibimos tu solicitud para el vehículo de tu interés. Nuestro equipo en Richard Automotive te contactará pronto.`;
+                await sendTwilioMessage(data.phone, smsBody);
+                logger.info(`Welcome SMS sent to: ${data.phone}`);
+            }
+
+            // Send Event to Meta (Conversions API) with SHA256 Advanced Matching
+            try {
+                const { sendMetaLeadEvent } = await import('./services/metaCapiService');
+                await sendMetaLeadEvent(data.email, data.phone, data);
+            } catch (metaError) {
+                logger.error("Failed to send Meta CAPI Lead event", metaError);
+            }
+
 
         } catch (emailError) {
             logger.error("Failed to send email", emailError);
@@ -734,7 +776,7 @@ export { chatStream } from './chatStream';
 // --- Phase 6: Voice & WhatsApp Exports ---
 export const processVoiceChunk = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
@@ -746,7 +788,7 @@ export const processVoiceChunk = onCallGenkit({
 
 export const getLeadMemory = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
@@ -757,3 +799,13 @@ export const getLeadMemory = onCallGenkit({
 ));
 // --- Copilot SDK Migration ---
 export { chatWithAgent } from './copilot';
+
+// --- Market Intel Cron Job ---
+export const dailyMarketScraper = onSchedule({
+    schedule: 'every day 02:00',
+    timeZone: 'America/Puerto_Rico',
+    timeoutSeconds: 300,
+}, async () => {
+    const { runMarketIntelScraper } = await import('./services/marketIntelService');
+    await runMarketIntelScraper();
+});

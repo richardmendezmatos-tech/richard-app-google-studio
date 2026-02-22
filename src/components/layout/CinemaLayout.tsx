@@ -6,7 +6,7 @@ import OfflineIndicator from '@/components/layout/OfflineIndicator';
 
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useLocation } from 'react-router-dom';
-import { Car } from '@/types';
+import { Car } from '@/types/types';
 
 const AIChatWidget = lazy(() => import('@/features/ai/components/AIChatWidget'));
 const VoiceWidget = lazy(() =>
@@ -14,9 +14,6 @@ const VoiceWidget = lazy(() =>
 );
 const WhatsAppFloat = lazy(() =>
     import('@/features/leads/components/WhatsAppFloat').then((mod) => ({ default: mod.WhatsAppFloat }))
-);
-const ScrollNavigator = lazy(() =>
-    import('@/components/common/ScrollNavigator').then((mod) => ({ default: mod.ScrollNavigator }))
 );
 
 interface CinemaLayoutProps {
@@ -53,11 +50,11 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
     }, []);
 
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-900 overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-slate-950 overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
 
-            {/* Mobile Header */}
-            <div className="z-50 flex items-center justify-between border-b border-cyan-300/15 bg-[rgba(7,17,27,0.94)] p-4 text-white shadow-md backdrop-blur-2xl lg:hidden">
-                <span className="font-cinematic text-3xl tracking-[0.14em] text-cyan-200">RICHARD AUTO</span>
+            {/* Premium Glass Mobile Header */}
+            <header className="z-50 flex items-center justify-between border-b border-white/5 bg-slate-950/80 p-4 text-white shadow-2xl backdrop-blur-3xl lg:hidden">
+                <span className="font-cinematic text-3xl tracking-[0.16em] text-cyan-400 text-glow">RICHARD AUTO</span>
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     title="Abrir menú"
@@ -66,7 +63,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
                 >
                     <Menu />
                 </button>
-            </div>
+            </header>
 
             {/* Main Sidebar Component */}
             <Sidebar isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
@@ -84,7 +81,6 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
                         <AIChatWidget inventory={inventory} />
                         <VoiceWidget />
                         <WhatsAppFloat />
-                        <ScrollNavigator />
                     </Suspense>
                 )}
 

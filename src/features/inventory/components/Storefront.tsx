@@ -1,6 +1,6 @@
-import React, { useState, useContext, Suspense } from 'react';
+import React, { useState, useContext, Suspense, useMemo } from 'react';
 import { Car, CarType } from '@/types/types';
-import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench, DollarSign } from 'lucide-react';
+import { Search, Heart, X, Loader2, Sparkles, BrainCircuit, Camera, ArrowUpDown, DatabaseZap, Wrench, DollarSign, Activity, LineChart, ScanSearch } from 'lucide-react';
 import CarDetailModal from './CarDetailModal';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
@@ -22,6 +22,7 @@ import TestimonialsSection from './storefront/TestimonialsSection';
 import FAQSection from '../../../components/layout/FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import VirtualInventory from './VirtualInventory';
+import { AuthoritySection } from '../../marketing/components/AuthoritySection';
 
 const VisualSearchModal = React.lazy(() => import('./VisualSearchModal'));
 
@@ -142,6 +143,19 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
     // Final list to display
     const displayCars = isSearching ? filteredAndSorted : serverCars;
+    const marketPulse = useMemo(() => {
+        const source = displayCars.length > 0 ? displayCars : inventory;
+        if (!source.length) {
+            return { avgPrice: 0, premiumUnits: 0, compactUnits: 0 };
+        }
+
+        const totalPrice = source.reduce((acc, car) => acc + (car.price || 0), 0);
+        return {
+            avgPrice: Math.round(totalPrice / source.length),
+            premiumUnits: source.filter((car) => car.price >= 40000).length,
+            compactUnits: source.filter((car) => car.price < 25000).length
+        };
+    }, [displayCars, inventory]);
 
     // Loading State handling for initial load (server mode only)
     const isLoadingInitial = !isSearching && status === 'pending';
@@ -195,7 +209,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
         <>
             <div className="h-full w-full bg-transparent">
                 <SEO
-                    title="Richard Automotive | Autos Seminuevos de Lujo en Puerto Rico"
+                    title="Richard Automotive | Compra y Vende en PR"
                     description="El dealer más tecnológico de Puerto Rico. Encuentra autos certificados, financiamiento flexible, y usa nuestra IA para encontrar tu auto ideal."
                     url="/"
                     type="website"
@@ -209,15 +223,37 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                 />
 
                 {/* Main Content Container */}
-                <div className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
+                <main className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
 
-                    {/* 2. Trust Indicators (Floating Card) */}
-                    <div className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
-                        <TrustBar />
-                    </div>
+
+
+                    <section aria-label="Autoridad y Respaldo">
+                        <AuthoritySection />
+                    </section>
+
+                    <section aria-label="Pulso del Mercado" className="reveal-up grid gap-4 md:grid-cols-3">
+                        <PulseCard
+                            icon={<Activity size={18} />}
+                            label="Valor en el Mercado"
+                            value={`$${marketPulse.avgPrice.toLocaleString('en-US')}`}
+                            tone="cyan"
+                        />
+                        <PulseCard
+                            icon={<LineChart size={18} />}
+                            label="Selección de Lujo"
+                            value={`${marketPulse.premiumUnits} unidades`}
+                            tone="slate"
+                        />
+                        <PulseCard
+                            icon={<ScanSearch size={18} />}
+                            label="Oportunidades de Compra"
+                            value={`${marketPulse.compactUnits} unidades`}
+                            tone="emerald"
+                        />
+                    </section>
 
                     {/* Search & Filters & Sort */}
-                    <div id="inventory-grid" className="scroll-mt-32">
+                    <section id="inventory-grid" aria-labelledby="inventory-heading" className="scroll-mt-32">
                         <div className="sticky top-2 z-30 rounded-[1.8rem] border border-cyan-100/20 bg-[linear-gradient(150deg,rgba(7,18,30,0.94),rgba(5,13,22,0.9))] px-4 py-4 shadow-[0_30px_80px_-44px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 sm:rounded-[2.2rem] sm:py-5 md:top-4 md:px-6">
                             <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
                                 <p className="font-tech text-[11px] uppercase tracking-[0.24em] text-cyan-200">Inventario Inteligente</p>
@@ -298,9 +334,9 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                         {/* Results Banner */}
                         <div className="mb-7 mt-6 flex flex-wrap items-end justify-between gap-3 px-2 sm:mt-8">
                             <div>
-                                <h3 className="font-cinematic text-4xl leading-none tracking-[0.08em] text-cyan-100">
+                                <h2 id="inventory-heading" className="font-cinematic text-4xl leading-none tracking-[0.08em] text-cyan-100">
                                     {displayCars.length} {isSearching ? 'Resultados' : 'Vehículos'}
-                                </h3>
+                                </h2>
                                 <p className="font-tech mt-1 text-[11px] uppercase tracking-[0.24em] text-slate-400">Selección activa para Puerto Rico</p>
                                 {savedCars.savedIds.length > 0 && (
                                     <button
@@ -423,21 +459,26 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
                                 </>
                             )}
                         </div>
-                    </div>
+                    </section>
 
-                </div>
 
-                <div className="reveal-up content-auto">
+                    <section aria-label="Nuestra Confianza" className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8">
+                        <TrustBar />
+                    </section>
+
+                </main>
+
+                <section aria-label="Preguntas Frecuentes" className="reveal-up content-auto">
                     <FAQSection />
-                </div>
+                </section>
 
-                <div className="reveal-up content-auto">
+                <section aria-label="Testimonios" className="reveal-up content-auto">
                     <TestimonialsSection />
-                </div>
+                </section>
 
-                <div className="reveal-up content-auto">
+                <footer aria-label="Pie de página social" className="reveal-up content-auto">
                     <SocialFooter />
-                </div>
+                </footer>
             </div >
 
             {/* Mobile Quick Actions */}
@@ -548,6 +589,24 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
             {/* Social Proof Widget */}
             <SocialProofWidget />
         </>
+    );
+};
+
+const PulseCard = ({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: 'cyan' | 'slate' | 'emerald' }) => {
+    const toneStyles = {
+        cyan: 'border-cyan-300/25 bg-cyan-500/10 text-cyan-100',
+        slate: 'border-slate-300/20 bg-slate-500/10 text-slate-100',
+        emerald: 'border-emerald-300/25 bg-emerald-500/10 text-emerald-100'
+    };
+
+    return (
+        <div className={`rounded-3xl border p-5 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.95)] ${toneStyles[tone]}`}>
+            <div className="mb-3 inline-flex rounded-xl border border-white/20 bg-black/20 p-2.5">
+                {icon}
+            </div>
+            <p className="font-tech text-[10px] uppercase tracking-[0.2em] opacity-90">{label}</p>
+            <p className="mt-2 font-cinematic text-3xl tracking-[0.06em]">{value}</p>
+        </div>
     );
 };
 

@@ -1,3 +1,11 @@
+/**
+ * ScrollNavigator — Richard Automotive
+ * @source src/components/common (canonical)
+ *
+ * Nota: Esta es la versión canónica con `hidden md:block` para ocultar en mobile.
+ * La copia en src/features/inventory/components/common/ es un re-export de aquí.
+ */
+
 import React, { useEffect, useState, useRef, useCallback, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -47,8 +55,6 @@ export const ScrollNavigator: React.FC = () => {
         const onWheel = (e: WheelEvent) => {
             if (e.deltaY !== 0) {
                 container.scrollLeft += e.deltaY;
-                // Previene el scroll vertical por defecto del navegador si es necesario
-                // e.preventDefault(); 
             }
         };
 
@@ -84,6 +90,7 @@ export const ScrollNavigator: React.FC = () => {
     };
 
     return (
+        // `hidden md:block` → se oculta en mobile, visible en desktop
         <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-[60] hidden px-10 pb-6 pt-2 md:block md:px-20 lg:left-[280px]">
             <div
                 ref={navRef}

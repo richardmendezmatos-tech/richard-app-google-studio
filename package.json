@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "dotenvx run -- vite",
+    "bun:dev": "bun x dotenvx run -- vite",
     "build": "dotenvx run -- vite build",
+    "bun:build": "bun x dotenvx run -- vite build",
     "build:gh-pages": "dotenvx run -- vite build --base=/richard-app-google-studio/ && cp temp_404.html dist/404.html",
     "deploy:gh-pages": "npm run build:gh-pages && gh-pages -d dist",
     "deploy:vercel": "dotenvx run -- npx vercel --prod",
@@ -24,7 +26,9 @@
     "deploy:firebase:functions": "firebase use richard-automotive && firebase deploy --only functions",
     "deploy:firebase:full": "firebase use richard-automotive && firebase deploy",
     "optimize": "node scripts/optimize-assets.js",
-    "sitemap:generate": "tsx scripts/generate-sitemap.ts"
+    "sitemap:generate": "tsx scripts/generate-sitemap.ts",
+    "commit": "cz",
+    "prepare": "husky"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",
@@ -38,6 +42,8 @@
     "@capacitor/local-notifications": "^8.0.0",
     "@capacitor/preferences": "^8.0.0",
     "@capacitor/push-notifications": "^8.0.0",
+    "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
+    "@dataconnect/generated": "file:src/dataconnect-generated",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -47,7 +53,6 @@
     "@ionic/pwa-elements": "^3.3.0",
     "@mediapipe/tasks-vision": "^0.10.32",
     "@reduxjs/toolkit": "^2.11.2",
-    "@sentry/react": "^10.38.0",
     "@supabase/supabase-js": "^2.95.3",
     "@tanstack/react-query": "^5.90.19",
     "@types/canvas-confetti": "^1.9.0",
@@ -77,16 +82,26 @@
     "sharp": "^0.34.5",
     "twilio": "^5.12.1"
   },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.2",
+    "@commitlint/config-conventional": "^20.4.2",
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@types/jspdf": "^1.3.3",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.16",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -95,6 +110,7 @@
     "firebase-tools": "^15.1.0",
     "gh-pages": "^6.3.0",
     "globals": "^17.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "node-fetch": "^3.3.2",
     "patch-package": "^8.0.1",

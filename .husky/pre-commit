@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+# .husky/pre-commit — Richard Automotive v2026.1
+# Runs lint + unit tests before every commit.
+# Aborts the commit if either fails.
+
+echo "🔍 [PRE-COMMIT] Running linter..."
+npm run lint
+LINT_EXIT=$?
+
+if [ $LINT_EXIT -ne 0 ]; then
+  echo "❌ [PRE-COMMIT] Lint failed. Fix errors before committing."
+  exit 1
+fi
+
+echo "🧪 [PRE-COMMIT] Running unit tests..."
+npm test
+TEST_EXIT=$?
+
+if [ $TEST_EXIT -ne 0 ]; then
+  echo "❌ [PRE-COMMIT] Tests failed. All tests must pass before committing."
+  exit 1
+fi
+
+echo "✅ [PRE-COMMIT] Lint and tests passed. Proceeding with commit."

@@ -5,7 +5,7 @@ import { SITE_CONFIG } from '@/constants/siteConfig';
 
 const SocialFooter: React.FC = () => {
     return (
-        <footer className="group relative mt-12 overflow-hidden rounded-[40px] border border-cyan-100/15 bg-[linear-gradient(135deg,#10283b,#08111d)] px-8 py-12 text-white shadow-2xl shadow-cyan-900/10 lg:px-16">
+        <footer aria-label="Contacto y Redes Sociales" className="group relative mt-12 overflow-hidden rounded-[40px] border border-cyan-100/15 bg-[linear-gradient(135deg,#10283b,#08111d)] px-8 py-12 text-white shadow-2xl shadow-cyan-900/10 lg:px-16">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
             <div className="pointer-events-none absolute -right-20 -top-20 rotate-12 p-20 opacity-5 transition-transform duration-[2s] group-hover:rotate-45">
                 <Globe size={400} />
@@ -13,9 +13,9 @@ const SocialFooter: React.FC = () => {
 
             <div className="relative z-10 flex flex-col items-center justify-between gap-10 md:flex-row">
                 <div className="text-center md:text-left">
-                    <h3 className="font-cinematic flex items-center justify-center gap-2 text-3xl uppercase tracking-[0.08em] md:justify-start">
+                    <h2 className="font-cinematic flex items-center justify-center gap-2 text-3xl uppercase tracking-[0.08em] md:justify-start">
                         Richard<span className="text-[#00aed9]">Automotive</span>
-                    </h3>
+                    </h2>
                     <p className="mt-2 max-w-md text-sm text-slate-300">
                         Redefiniendo la compra de autos en Puerto Rico con Inteligencia Artificial y transparencia total.
                     </p>

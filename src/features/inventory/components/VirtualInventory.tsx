@@ -111,10 +111,11 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0"
             >
                 {visibleCars.map((car, index) => (
-                    <div
+                    <article
                         key={car.id}
                         className="h-[450px] route-fade-in reveal-up"
                         style={{ animationDelay: `${Math.min(index * 55, 300)}ms` }}
+                        aria-labelledby={`car-title-${car.id}`}
                     >
                         <PremiumGlassCard
                             car={car}
@@ -125,7 +126,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
                             onToggleSave={(e) => onToggleSave(e, car.id)}
                             isRecommended={checkRecommendation(car)}
                         />
-                    </div>
+                    </article>
                 ))}
             </div>
             {cars.length === 0 && (

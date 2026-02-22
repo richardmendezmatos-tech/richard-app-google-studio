@@ -24,7 +24,7 @@ import {
     updatePassword
 } from "firebase/auth";
 import { auth, db, getAnalyticsService } from "@/services/firebaseService";
-import { UserRole } from "@/types/types";
+import { UserRole, AppUser } from "@/types/types";
 
 // --- Types & Constants ---
 const AUDIT_LOGS_COLLECTION = 'audit_logs';
@@ -55,15 +55,15 @@ export const isAdminEmail = (email: string | null): boolean => {
     return adminEmails.includes(lowerEmail) || lowerEmail.includes('admin_vip') || lowerEmail.endsWith('@richard-automotive.com');
 };
 
-const normalizeUser = (user: User, roleOverride?: string) => {
-    const role = roleOverride || (isAdminEmail(user.email) ? 'admin' : 'user');
+export const normalizeUser = (user: User, roleOverride?: UserRole) => {
+    const role: UserRole = roleOverride || (isAdminEmail(user.email) ? 'admin' : 'user');
     return {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
         role: role
-    };
+    } as AppUser;
 };
 
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
@@ -138,7 +138,7 @@ export async function signUpWithEmail(email: string, password: string) {
         const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
         await createUserProfile(userCredential.user, role);
         await logAuthActivity(email, true, 'signup_email');
-        return userCredential.user;
+        return normalizeUser(userCredential.user, role);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         const errorCode = (error as { code?: string }).code;
@@ -153,7 +153,7 @@ export async function signInWithEmail(email: string, password: string) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         await logAuthActivity(email, true, 'login_email');
-        return userCredential.user;
+        return normalizeUser(userCredential.user);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         await logAuthActivity(email, false, 'login_email', errorMsg);
@@ -190,7 +190,7 @@ export async function signInWithGoogleCredential(credentialString: string) {
         const result = await signInWithCredential(auth, credential);
         await createUserProfile(result.user, 'user');
         await logAuthActivity(result.user.email || 'unknown', true, 'login_google_onetap');
-        return result.user;
+        return normalizeUser(result.user);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         await logAuthActivity('unknown', false, 'login_google_onetap', errorMsg);
@@ -293,7 +293,8 @@ export const updateUserPassword = async (user: User, newPassword: string) => {
  * Advanced Admin Login with Rate Limiting, Role Check, and 2FA Simulation
  * RESILIENCE UPDATE: "Fail-Open" for aux services (Logging/RateLimits)
  */
-export const loginAdmin = async (email: string, password: string) => {
+export const loginAdmin = async (email: string, password: string, twoFactorCode?: string) => {
+    console.log("2FA Challenge (Simulation):", twoFactorCode);
     // 1. Parallel IO with Fail-Safe IP
     let ip = 'unknown';
     try {

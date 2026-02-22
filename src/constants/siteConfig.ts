@@ -18,6 +18,7 @@ export interface SiteConfig {
     seo: {
         keywords: string[];
         ogImage: string;
+        locale: string;
     };
 }
 
@@ -46,6 +47,7 @@ export const SITE_CONFIG: SiteConfig = {
             'richard automotive',
             'autos certificados pr'
         ],
-        ogImage: '/og-image.png'
+        ogImage: '/og-image.png',
+        locale: 'es_PR'
     }
 };
