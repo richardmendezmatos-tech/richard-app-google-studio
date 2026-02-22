@@ -89,13 +89,6 @@ const AppraisalView: React.FC = () => {
 
     const totalPhotos = 4;
     const progress = (uploadedCount / totalPhotos) * 100;
-    const progressRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (progressRef.current) {
-            progressRef.current.style.width = `${progress}%`;
-        }
-    }, [progress]);
 
     // Helper: File to Base64
     const fileToBase64 = (file: File): Promise<string> => {
@@ -307,8 +300,8 @@ const AppraisalView: React.FC = () => {
 
                         {/* Progress Bar */}
                         <div
-                            ref={progressRef}
                             className={`h-full transition-all duration-500 ${uploadedCount === 4 ? 'bg-emerald-500' : 'bg-[#00aed9]'}`}
+                            style={{ width: `${progress}%` }}
                         ></div>
 
                         <div className="grid grid-cols-2 gap-4">
