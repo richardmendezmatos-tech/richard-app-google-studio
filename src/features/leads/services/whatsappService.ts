@@ -384,3 +384,11 @@ export const trackWhatsAppConversion = async (
         console.error('Track conversion error:', error);
     }
 };
+
+/**
+ * Get Fallback WA Link
+ */
+export const getFallbackLink = (phone: string, message: string): string => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+};

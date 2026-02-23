@@ -29,3 +29,12 @@ export {
     processMenuSelection,
     trackWhatsAppConversion,
 } from '../features/leads/services/whatsappService';
+
+import * as whatsappMethods from '../features/leads/services/whatsappService';
+
+export const whatsappService = {
+    sendMessage: whatsappMethods.sendWhatsAppMessage,
+    getFallbackLink: whatsappMethods.getFallbackLink,
+    renderTemplate: whatsappMethods.renderTemplate,
+    detectIntent: whatsappMethods.detectIntent,
+};
