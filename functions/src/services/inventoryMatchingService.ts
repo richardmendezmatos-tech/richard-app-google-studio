@@ -1,17 +1,13 @@
-import { db } from './firebaseAdmin';
+import { MatchResult, Car } from '../domain/entities';
+import { InventoryMatcher } from '../application/use-cases/InventoryMatcher';
+import { FirestoreLeadRepository } from '../infrastructure/repositories/FirestoreLeadRepository';
 import * as logger from 'firebase-functions/logger';
 import { logFlowExecution } from './persistenceService';
-
-export interface MatchResult {
-    leadId: string;
-    leadName: string;
-    matchScore: number;
-    reason: string;
-}
 
 /**
  * Service to proactively match new inventory units with potential leads.
  * Part of the Richard Automotive Command Center.
+ * [REFAC] Using Clean Architecture Use Case & Repository.
  */
 export class InventoryMatchingService {
 
@@ -19,46 +15,17 @@ export class InventoryMatchingService {
      * Finds potential matches for a new car and "notifies" the system/agent.
      */
     static async matchInventoryToLeads(carId: string, carData: any): Promise<MatchResult[]> {
-        logger.info(`🔍 Proactive Matching: Looking for candidates for ${carData.name} (${carId})...`);
+        logger.info(`🔍 Proactive Matching [CLEAN]: Looking for candidates for ${carData.name} (${carId})...`);
 
         try {
-            // For now, let's fetch HOT leads from Firestore to find potential buyers
-            const hotLeadsSnapshot = await db.collection('applications')
-                .where('category', '==', 'HOT')
-                .limit(10)
-                .get();
+            // 1. Initialize Clean Architecture Components
+            const leadRepository = new FirestoreLeadRepository();
+            const matcher = new InventoryMatcher(leadRepository);
 
-            const matches: MatchResult[] = [];
+            // 2. Execute Use Case
+            const matches = await matcher.execute(carId, carData as Car);
 
-            for (const doc of hotLeadsSnapshot.docs) {
-                const lead = doc.data();
-
-                // Simple matching logic: Check if lead's preferred type or brand matches
-                // In a more advanced version, we'd use vector embeddings of lead preferences
-                let matchScore = 0;
-                let reason = "";
-
-                if (lead.preferredType === carData.type) {
-                    matchScore += 40;
-                    reason += `Busca un ${carData.type}. `;
-                }
-
-                if (lead.budget >= (carData.price * 0.9)) {
-                    matchScore += 30;
-                    reason += `Presupuesto compatible. `;
-                }
-
-                if (matchScore >= 40) {
-                    matches.push({
-                        leadId: doc.id,
-                        leadName: lead.fullName || "Cliente Anónimo",
-                        matchScore,
-                        reason: reason.trim()
-                    });
-                }
-            }
-
-            // 2. Log result for Command Center Dashboard
+            // 3. Log result for Command Center Dashboard
             const output = {
                 carId,
                 carName: carData.name,

@@ -126,7 +126,7 @@ import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/fire
 import { sendNotificationEmail } from './services/emailService';
 
 // --- New Lead Notification & Analysis ---
-import { calculateLeadScore } from './lead-scoring/lead-scoring-logic';
+import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
 
 // Define a Flow for Lead Analysis
 export const analyzeLead = ai.defineFlow(
@@ -171,7 +171,8 @@ export const analyzeLead = ai.defineFlow(
             }
         }
 
-        const scoringResult = calculateLeadScore(input);
+        // Using Clean Architecture Use Case
+        const scoringResult = ScoreCalculator.execute(input);
 
         return {
             ...scoringResult,
@@ -434,7 +435,7 @@ export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
     const data = event.data?.data();
     if (!data) return;
 
-    logger.info(`Indexing new car: ${event.params.carId}`);
+    logger.info(`Indexing new car [CLEAN]: ${event.params.carId}`);
     try {
         const { updateCarEmbedding } = await import('./services/vectorService');
         await updateCarEmbedding(event.params.carId, data);
