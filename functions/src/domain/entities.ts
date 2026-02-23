@@ -20,8 +20,39 @@ export interface Lead {
     location?: string;
     category?: 'HOT' | 'WARM' | 'COLD';
     status?: string;
-    aiAnalysis?: any;
-    timestamp?: Date;
+    responded?: boolean;
+    documentsSent?: boolean;
+    dealClosed?: boolean;
+    appointmentCompleted?: boolean;
+    timestamp?: any;
+    vehicleOfInterest?: string;
+    aiAnalysis?: {
+        score: number;
+        insights: string[];
+        nudgeSent?: boolean;
+        requestedConsultation?: boolean;
+        preferredType?: string;
+        budget?: number;
+    };
+    emailSequence?: {
+        welcome1SentAt?: any;
+        welcome2SentAt?: any;
+        welcome3SentAt?: any;
+        welcome4SentAt?: any;
+        reengagement1SentAt?: any;
+        reengagement2SentAt?: any;
+        reengagement3SentAt?: any;
+        postAppointment1SentAt?: any;
+        postAppointment2SentAt?: any;
+        postAppointment3SentAt?: any;
+        emailsSent?: number;
+        lastEmailSentAt?: any;
+        lastError?: {
+            message: string;
+            timestamp: any;
+            emailType: string;
+        };
+    };
 }
 
 export interface Car {

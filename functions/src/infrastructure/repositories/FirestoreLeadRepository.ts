@@ -1,6 +1,7 @@
 import { db } from '../../services/firebaseAdmin';
 import { LeadRepository } from '../../domain/repositories/LeadRepository';
 import { Lead } from '../../domain/entities';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export class FirestoreLeadRepository implements LeadRepository {
     async getById(id: string): Promise<Lead | null> {
@@ -18,7 +19,47 @@ export class FirestoreLeadRepository implements LeadRepository {
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
     }
 
+    async getStaleLeads(days: number, limit: number): Promise<Lead[]> {
+        const threshold = new Date();
+        threshold.setDate(threshold.getDate() - days);
+
+        const snapshot = await db.collection('applications')
+            .where('status', '==', 'new')
+            .where('timestamp', '<=', Timestamp.fromDate(threshold))
+            .limit(limit)
+            .get();
+
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+    }
+
+    async getLeadsByVehicleId(vehicleId: string): Promise<Lead[]> {
+        const snapshot = await db.collection('applications')
+            .where('vehicleId', '==', vehicleId)
+            .get();
+
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+    }
+
     async update(id: string, data: Partial<Lead>): Promise<void> {
         await db.collection('applications').doc(id).update(data);
+    }
+
+    async create(data: Lead): Promise<string> {
+        const docRef = await db.collection('applications').add(data);
+        return docRef.id;
+    }
+
+    async getLeadsByEmailSequenceStatus(
+        field: string,
+        value: any,
+        operator: '<=' | '==' | '!=' | '>=',
+        limit: number
+    ): Promise<Lead[]> {
+        const snapshot = await db.collection('leads')
+            .where(field, operator, value)
+            .limit(limit)
+            .get();
+
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
     }
 }

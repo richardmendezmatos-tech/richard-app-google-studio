@@ -1,4 +1,4 @@
-import { SendGridEmailRepository } from '../infrastructure/email/SendGridEmailRepository';
+import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
 import { SendNotification } from '../application/use-cases/SendNotification';
 import { logger } from 'firebase-functions';
 
