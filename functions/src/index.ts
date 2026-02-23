@@ -1,24 +1,31 @@
 import { z } from 'genkit';
 import { onCallGenkit } from 'firebase-functions/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
-import { db } from './services/firebaseAdmin';
 import { ai } from './services/aiManager';
 import { orchestrateResponse } from './agents/rag-synergy-logic';
 import { requireAdmin, requireSignedIn } from './security/policies';
 import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
 import { logFlowExecution } from './services/persistenceService';
+// import { sendNotificationEmail } from './services/emailService';
 import { InventoryMatchingService } from './services/inventoryMatchingService';
 import { FirestoreLeadRepository } from './infrastructure/repositories/FirestoreLeadRepository';
 import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
 import { FirestoreLogRepository } from './infrastructure/repositories/FirestoreLogRepository';
 import { FirestoreChatRepository } from './infrastructure/repositories/FirestoreChatRepository';
 import { SendGridEmailRepository } from './infrastructure/repositories/SendGridEmailRepository';
+import { TwilioSMSRepository } from './infrastructure/repositories/TwilioSMSRepository';
+import { MetaCapiRepository } from './infrastructure/repositories/MetaCapiRepository';
+import { ReindexInventory } from './application/use-cases/ReindexInventory';
+import { AnalyzeLead } from './application/use-cases/AnalyzeLead';
+import { NudgeStaleLeads } from './application/use-cases/NudgeStaleLeads';
 import { CleanAuditLogs } from './application/use-cases/CleanAuditLogs';
 import { NotifyPriceDrop } from './application/use-cases/NotifyPriceDrop';
 import { NotifyLeadStatusChange } from './application/use-cases/NotifyLeadStatusChange';
-import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
 import { GenkitAgentOrchestrator } from './infrastructure/repositories/GenkitAgentOrchestrator';
 import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
+import { ProcessNewLeadApplication } from './application/use-cases/ProcessNewLeadApplication';
 import { Lead } from './domain/entities';
 
 // Infrastructure Instantiation (Singleton-like)
@@ -26,11 +33,14 @@ const leadRepository = new FirestoreLeadRepository();
 const inventoryRepository = new FirestoreInventoryRepository();
 const logRepository = new FirestoreLogRepository();
 const emailRepository = new SendGridEmailRepository();
+const smsRepository = new TwilioSMSRepository();
+const metaRepository = new MetaCapiRepository();
 const chatRepository = new FirestoreChatRepository();
 const aiOrchestrator = new GenkitAgentOrchestrator();
 
 // Use Cases
 const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepository, leadRepository, aiOrchestrator, inventoryRepository);
+const leadAppProcessor = new ProcessNewLeadApplication(leadRepository, emailRepository, smsRepository, metaRepository);
 
 const ALLOWED_ORIGINS = [
     "https://richard-automotive.vercel.app",
@@ -125,14 +135,11 @@ export const searchCarsSemantic = onCallGenkit({
 export const reindexInventory = ai.defineFlow(
     { name: 'reindexInventory', inputSchema: z.void(), outputSchema: z.string() },
     async () => {
-        const { db } = await import('./services/firebaseAdmin');
         const { updateCarEmbedding } = await import('./services/vectorService');
-        const snapshot = await db.collection('cars').get();
-        let count = 0;
-        for (const doc of snapshot.docs) {
-            await updateCarEmbedding(doc.id, doc.data());
-            count++;
-        }
+        const useCase = new ReindexInventory(inventoryRepository);
+        const count = await useCase.execute(async (id, data) => {
+            await updateCarEmbedding(id, data);
+        });
         return `Re-indexed ${count} cars.`;
     }
 );
@@ -144,9 +151,6 @@ export const triggerReindex = onCallGenkit({
 }, reindexInventory);
 
 
-// Import Cloud Functions v2
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { sendNotificationEmail } from './services/emailService';
 
 // Initialized above
 
@@ -175,31 +179,8 @@ export const analyzeLead = ai.defineFlow(
         })
     },
     async (input) => {
-        // RAG-Lite: Fetch Vehicle Context
-        let vehicleContext = "No vehicle specified.";
-        let unidad_interes = input.vehicleId || "General";
-
-        if (input.vehicleId) {
-            try {
-                const carDoc = await db.collection('cars').doc(input.vehicleId).get();
-                if (carDoc.exists) {
-                    const car = carDoc.data();
-                    unidad_interes = `${car?.year} ${car?.make} ${car?.model}`;
-                    vehicleContext = `Vehicle: ${unidad_interes}, Price: $${car?.price}, Mileage: ${car?.mileage}`;
-                    console.log(`Analyzing lead with vehicle context: ${vehicleContext}`);
-                }
-            } catch (e) {
-                console.error("Error fetching vehicle context:", e);
-            }
-        }
-
-        // Using Clean Architecture Use Case
-        const scoringResult = ScoreCalculator.execute(input);
-
-        return {
-            ...scoringResult,
-            unidad_interes
-        };
+        const useCase = new AnalyzeLead(inventoryRepository);
+        return await useCase.execute(input);
     }
 );
 
@@ -302,8 +283,7 @@ export const getUserGarage = ai.defineFlow(
         outputSchema: z.array(z.any())
     },
     async (input) => {
-        const snapshot = await db.collection('users').doc(input.userId).collection('garage').get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return await leadRepository.getGarageByUserId(input.userId);
     }
 );
 
@@ -316,8 +296,7 @@ export const multiAgentSync = ai.defineFlow(
         outputSchema: z.any()
     },
     async (input) => {
-        const leadDoc = await db.collection('applications').doc(input.leadId).get();
-        const leadData = leadDoc.data();
+        const leadData = await leadRepository.getById(input.leadId);
 
         return await orchestrateResponse({
             message: input.message,
@@ -462,149 +441,36 @@ export const onNewApplication = onDocumentCreated({
     secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "VITE_META_PIXEL_ID", "META_ACCESS_TOKEN"],
 }, async (event) => {
     const snapshot = event.data;
-    if (!snapshot) {
-        return;
-    }
+    if (!snapshot) return;
 
-    const data = snapshot.data();
+    const data = snapshot.data() as Lead;
     const appId = event.params.applicationId;
 
-    logger.info(`[NEW LEAD]Application received: ${appId}`, { email: data.email });
+    logger.info(`[NIVEL 12] Processing New Lead: ${appId}`, { email: data.email });
 
     try {
-        // Run AI Analysis
-        // Note: We intentionally call the flow directly here since we are in the same runtime.
-        const analysis = await analyzeLead({
-            monthlyIncome: data.monthlyIncome || "0",
-            timeAtJob: data.timeAtJob || "Unspecified",
-            jobTitle: data.jobTitle || "Unspecified",
-            employer: data.employer || "Unspecified"
+        await leadAppProcessor.execute({
+            id: appId,
+            data: data
         });
-
-        // Send Real Email to Admin
-        try {
-            await sendNotificationEmail({
-                to: 'richardmendezmatos@gmail.com',
-                subject: `New Lead - ${data.firstName} ${data.lastName} (Score: ${analysis.score})`,
-                html: `
-                    <h2>New Lead Received</h2>
-                    <p><strong>Applicant:</strong> ${data.firstName} ${data.lastName}</p>
-                    <p><strong>Phone:</strong> ${data.phone}</p>
-                    <p><strong>Email:</strong> ${data.email}</p>
-                    <hr>
-                    <h3>AI Analysis</h3>
-                    <p><strong>Score:</strong> ${analysis.score}/100 (${analysis.category})</p>
-                    <p><strong>Interés:</strong> ${analysis.unidad_interes}</p>
-                    <p><strong>Resumen:</strong> ${analysis.reasoning}</p>
-                    <p><strong>Siguiente Paso:</strong> ${analysis.nextAction}</p>
-                `
-            });
-
-            // Send Automated Welcome Email to Client
-            if (data.email) {
-                const { getWelcomeEmailTemplate } = await import('./emailTemplates');
-                await sendNotificationEmail({
-                    to: data.email,
-                    subject: `🚗 Recibimos tu solicitud para: ${data.vehicleOfInterest || 'Richard Automotive'}`,
-                    html: getWelcomeEmailTemplate(data)
-                });
-                logger.info(`Welcome email sent to: ${data.email}`);
-            }
-
-            // Send Automated Welcome SMS to Client
-            if (data.phone) {
-                const { sendTwilioMessage } = await import('./services/twilioService');
-                const smsBody = `Hola ${data.firstName}, recibimos tu solicitud para el vehículo de tu interés. Nuestro equipo en Richard Automotive te contactará pronto.`;
-                await sendTwilioMessage(data.phone, smsBody);
-                logger.info(`Welcome SMS sent to: ${data.phone}`);
-            }
-
-            // Send Event to Meta (Conversions API) with SHA256 Advanced Matching
-            try {
-                const { sendMetaLeadEvent } = await import('./services/metaCapiService');
-                await sendMetaLeadEvent(data.email, data.phone, data);
-            } catch (metaError) {
-                logger.error("Failed to send Meta CAPI Lead event", metaError);
-            }
-
-
-        } catch (emailError) {
-            logger.error("Failed to send email", emailError);
-        }
-
-        await snapshot.ref.update({
-            aiAnalysis: analysis,
-            status: analysis.score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
-            emailSent: true,
-            lastContacted: new Date()
-        });
-
+        logger.info(`[NIVEL 12] Lead ${appId} processed successfully via Use Case.`);
     } catch (err) {
-        logger.error("Error analyzing lead", err);
+        logger.error(`[NIVEL 12] Error processing lead ${appId}`, err);
     }
 });
 
 // --- Scheduled Marketing Automation ---
 
-import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { Timestamp } from 'firebase-admin/firestore';
-
 export const checkStaleLeads = onSchedule({
     schedule: 'every day 09:00',
     secrets: ["SENDGRID_API_KEY"],
 }, async () => {
-    logger.info("Running Stale Lead Check...");
-
-    // 3 Days ago
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    logger.info("Checking for stale leads (Agnostic Flow)...");
 
     try {
-        const leadsRef = db.collection('applications');
-        const snapshot = await leadsRef
-            .where('status', '==', 'new')
-            .where('timestamp', '<=', Timestamp.fromDate(threeDaysAgo))
-            // .where('nudgeSent', '!=', true) // Requires index or separate query
-            .limit(50)
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No stale leads found.");
-            return;
-        }
-
-        const { getNudgeEmailTemplate } = await import('./emailTemplates');
-
-        let emailCount = 0;
-        const batch = db.batch();
-
-        for (const doc of snapshot.docs) {
-            const lead = doc.data();
-
-            // Client-side filtering if index is missing/complex
-            if (lead.nudgeSent || !lead.email) continue;
-
-            try {
-                await sendNotificationEmail({
-                    to: lead.email,
-                    subject: `¿Sigues buscando auto, ${lead.firstName}? 🤔`,
-                    html: getNudgeEmailTemplate(lead)
-                });
-
-                batch.update(doc.ref, {
-                    nudgeSent: true,
-                    lastContacted: new Date(),
-                    aiSummary: lead.aiSummary + " [Auto-Nudge Sent]"
-                });
-                emailCount++;
-            } catch (e) {
-                logger.error(`Failed to nudge lead ${doc.id}`, e);
-            }
-        }
-
-        await batch.commit();
-        logger.info(`Nudge campaign completed. Emailed ${emailCount} leads.`);
-
+        const useCase = new NudgeStaleLeads(leadRepository, emailRepository);
+        const nudgeCount = await useCase.execute();
+        logger.info(`Nudge campaign completed. Emailed ${nudgeCount} leads.`);
     } catch (error) {
         logger.error("Error in checkStaleLeads", error);
     }

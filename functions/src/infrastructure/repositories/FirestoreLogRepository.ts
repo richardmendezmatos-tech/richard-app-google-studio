@@ -9,10 +9,7 @@ export class FirestoreLogRepository implements LogRepository {
 
         const snapshot = await db.collection('audit_logs')
             .where('timestamp', '<=', Timestamp.fromDate(threshold))
-            .limit(500)
             .get();
-
-        if (snapshot.empty) return 0;
 
         const batch = db.batch();
         snapshot.docs.forEach(doc => batch.delete(doc.ref));
@@ -25,7 +22,9 @@ export class FirestoreLogRepository implements LogRepository {
         await db.collection('audit_logs').add({
             action,
             metadata,
-            timestamp: Timestamp.now()
+            timestamp: FieldValue.serverTimestamp()
         });
     }
 }
+
+import { FieldValue } from 'firebase-admin/firestore';

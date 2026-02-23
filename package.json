@@ -28,7 +28,8 @@
     "optimize": "node scripts/optimize-assets.js",
     "sitemap:generate": "tsx scripts/generate-sitemap.ts",
     "commit": "cz",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sync:notebook": "npx -y @dotenvx/dotenvx run -- tsx scripts/sync-to-notebook.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",

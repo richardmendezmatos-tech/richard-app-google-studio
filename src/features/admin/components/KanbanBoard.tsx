@@ -25,6 +25,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { createPortal } from 'react-dom';
+import { useMouseGlow } from '@/hooks/useMouseGlow';
 
 interface LeadCardProps {
     lead: Lead;
@@ -34,7 +35,7 @@ interface LeadCardProps {
 }
 
 export const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay }) => (
-    <div className={`bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 rounded-[24px] border border-slate-100 dark:border-white/5 group transition-all duration-300 relative ${isOverlay ? 'shadow-2xl scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-[#00aed9]' : 'shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-[#00aed9] hover:-translate-y-1'}`}>
+    <div className={`glass-premium p-5 rounded-[24px] group transition-all duration-300 relative ${isOverlay ? 'shadow-2xl scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-[#00aed9]' : 'shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-[#00aed9] hover:-translate-y-1 hover-kinetic'}`}>
 
         {/* Drag Handle (Visual only, whole card is draggable in this implementation) */}
         {!isOverlay && (
@@ -117,11 +118,10 @@ function SortableLeadItem({ lead, onPrint, userRole }: { lead: Lead, onPrint: ()
     const style = {
         transform: CSS.Translate.toString(transform),
         transition,
-        opacity: isDragging ? 0.3 : 1,
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-4 touch-none">
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'}`}>
             <LeadCard lead={lead} onPrint={onPrint} userRole={userRole} />
         </div>
     );
@@ -179,6 +179,7 @@ interface KanbanBoardProps {
 
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRole, searchTerm = '' }) => {
     const { addNotification } = useNotification();
+    const { containerRef } = useMouseGlow();
     const columns = [
         { id: 'new', title: 'Nuevos', color: 'bg-[#00aed9]', glow: 'shadow-[#00aed9]/20' },
         { id: 'contacted', title: 'Contactados', color: 'bg-amber-500', glow: 'shadow-amber-500/20' },
@@ -272,7 +273,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar">
+            <div ref={containerRef as any} className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar bg-noise">
                 {columns.map(col => (
                     <KanbanColumn
                         key={col.id}

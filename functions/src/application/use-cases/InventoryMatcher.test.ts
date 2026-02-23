@@ -19,10 +19,11 @@ class MockLeadRepository implements LeadRepository {
 
     async getStaleLeads(days: number, limit: number): Promise<Lead[]> { return []; }
 
-    async update(id: string, data: Partial<Lead>): Promise<void> { }
+    async updateLead(id: string, data: Partial<Lead>): Promise<void> { }
     async create(data: Lead): Promise<string> { return 'new-id'; }
     async getLeadsByVehicleId(vehicleId: string): Promise<Lead[]> { return []; }
     async getLeadsByEmailSequenceStatus(): Promise<Lead[]> { return []; }
+    async getGarageByUserId(): Promise<any[]> { return []; }
 }
 
 describe('InventoryMatcher', () => {

@@ -1,7 +1,9 @@
 import { GetLeads } from '../../application/use-cases/GetLeads';
 import { GetInventory } from '../../application/use-cases/GetInventory';
+import { GetHoustonTelemetry } from '../../application/use-cases/GetHoustonTelemetry';
 import { FirestoreLeadRepository } from '../repositories/FirestoreLeadRepository';
 import { FirestoreInventoryRepository } from '../repositories/FirestoreInventoryRepository';
+import { FirestoreHoustonRepository } from '../repositories/FirestoreHoustonRepository';
 import { FirestoreApplicationRepository } from '../repositories/FirestoreApplicationRepository';
 import { FirestoreStorageRepository } from '../repositories/FirestoreStorageRepository';
 import { FirestoreUserRepository } from '../repositories/FirestoreUserRepository';
@@ -19,10 +21,12 @@ class DIContainer {
     private userRepository = new FirestoreUserRepository();
     private subscriberRepository = new FirestoreSubscriberRepository();
     private surveyRepository = new FirestoreSurveyRepository();
+    private houstonRepository = new FirestoreHoustonRepository();
 
     // Use Cases
     private getLeadsUseCase = new GetLeads(this.leadRepository);
     private getInventoryUseCase = new GetInventory(this.inventoryRepository);
+    private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
 
     private constructor() { }
 
@@ -63,6 +67,10 @@ class DIContainer {
 
     public getSurveyRepository() {
         return this.surveyRepository;
+    }
+
+    public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
+        return this.getHoustonTelemetryUseCase;
     }
 }
 

@@ -17,7 +17,7 @@ export class SendLeadEmailSequence {
             html: `<p>Hola ${lead.firstName}, bienvenido.</p>`
         });
 
-        await this.leadRepo.update(lead.id, {
+        await this.leadRepo.updateLead(lead.id, {
             emailSequence: {
                 ...lead.emailSequence,
                 welcome1SentAt: new Date(),
@@ -35,7 +35,7 @@ export class SendLeadEmailSequence {
             html: `<p>Gracias por la visita, ${lead.firstName}.</p>`
         });
 
-        await this.leadRepo.update(lead.id, {
+        await this.leadRepo.updateLead(lead.id, {
             emailSequence: {
                 ...lead.emailSequence,
                 postAppointment1SentAt: new Date(),

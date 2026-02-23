@@ -5,7 +5,7 @@ export interface LeadRepository {
     getHotLeads(limit: number): Promise<Lead[]>;
     getStaleLeads(days: number, limit: number): Promise<Lead[]>;
     getLeadsByVehicleId(vehicleId: string): Promise<Lead[]>;
-    update(id: string, data: Partial<Lead>): Promise<void>;
+    updateLead(id: string, data: Partial<Lead>): Promise<void>;
     create(data: Lead): Promise<string>;
     getLeadsByEmailSequenceStatus(
         field: string,
@@ -13,4 +13,5 @@ export interface LeadRepository {
         operator: '<=' | '==' | '!=' | '>=',
         limit: number
     ): Promise<Lead[]>;
+    getGarageByUserId(userId: string): Promise<any[]>;
 }

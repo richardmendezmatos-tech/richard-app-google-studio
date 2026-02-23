@@ -40,7 +40,7 @@ export class FirestoreLeadRepository implements LeadRepository {
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
     }
 
-    async update(id: string, data: Partial<Lead>): Promise<void> {
+    async updateLead(id: string, data: Partial<Lead>): Promise<void> {
         await db.collection('applications').doc(id).update(data);
     }
 
@@ -61,5 +61,10 @@ export class FirestoreLeadRepository implements LeadRepository {
             .get();
 
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+    }
+
+    async getGarageByUserId(userId: string): Promise<any[]> {
+        const snapshot = await db.collection('users').doc(userId).collection('garage').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 }
