@@ -1,8 +1,17 @@
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
-import * as admin from 'firebase-admin';
-import { sendWelcomeEmail1 } from '../services/emailService';
+import { SendLeadEmailSequence } from '../application/use-cases/SendLeadEmailSequence';
+import { Lead } from '../domain/entities';
+import { FirestoreLeadRepository } from '../infrastructure/repositories/FirestoreLeadRepository';
+import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
 
+// In Triggers, we can instantiate local repositories if not sharing a global state
+const leadRepository = new FirestoreLeadRepository();
+const emailRepository = new SendGridEmailRepository();
+
+/**
+ * Trigger: Send welcome email immediately when a new lead is created
+ */
 /**
  * Trigger: Send welcome email immediately when a new lead is created
  */
@@ -13,58 +22,19 @@ export const onLeadCreated = onDocumentCreated({
     const snapshot = event.data;
     if (!snapshot) return;
 
-    const lead = snapshot.data();
-    const leadId = event.params.leadId;
-
-    logger.info(`New lead created: ${leadId}`, {
-        nombre: lead.nombre,
-        hasEmail: !!lead.email,
-    });
-
-    // Only send if email is provided
-    if (!lead.email) {
-        logger.info('Lead created without email, skipping welcome email', {
-            leadId,
-            nombre: lead.nombre,
-        });
-        return;
-    }
-
     try {
-        // Send welcome email 1
-        await sendWelcomeEmail1({
-            nombre: lead.nombre,
-            telefono: lead.telefono,
-            email: lead.email,
-            tipo_vehiculo: lead.tipo_vehiculo,
-        });
-
-        // Update lead with email sent timestamp
-        await snapshot.ref.update({
-            'emailSequence.welcome1SentAt': admin.firestore.FieldValue.serverTimestamp(),
-            'emailSequence.lastEmailSentAt': admin.firestore.FieldValue.serverTimestamp(),
-            'emailSequence.emailsSent': admin.firestore.FieldValue.increment(1),
-        });
-
-        logger.info(`✅ Welcome email 1 sent to ${lead.email}`, { leadId });
+        const lead = { id: event.params.leadId, ...snapshot.data() } as Lead;
+        const useCase = new SendLeadEmailSequence(leadRepository, emailRepository);
+        await useCase.sendWelcome(lead);
+        logger.info(`✅ Welcome email sequence initiated for ${event.params.leadId}`);
     } catch (error: any) {
-        logger.error('❌ Error sending welcome email:', {
-            leadId,
-            email: lead.email,
-            error: error.message,
-        });
-
-        // Log error in Firestore for debugging
-        await snapshot.ref.update({
-            'emailSequence.lastError': {
-                message: error.message,
-                timestamp: admin.firestore.FieldValue.serverTimestamp(),
-                emailType: 'welcome1',
-            },
-        });
+        logger.error('❌ Error in onLeadCreated trigger:', error);
     }
 });
 
+/**
+ * Trigger: Send post-appointment email when appointment is marked as completed
+ */
 /**
  * Trigger: Send post-appointment email when appointment is marked as completed
  */
@@ -74,50 +44,20 @@ export const onAppointmentCompleted = onDocumentUpdated({
 }, async (event) => {
     const before = event.data?.before.data();
     const after = event.data?.after.data();
-    const leadId = event.params.leadId;
 
     if (!before || !after) return;
 
-    // Check if appointment was just completed (assumed field appointmentCompleted)
+    // Check if appointment was just completed
     const wasCompleted = !before.appointmentCompleted && after.appointmentCompleted;
 
-    if (!wasCompleted) {
-        return;
-    }
-
-    if (!after.email) {
-        logger.info('Appointment completed but no email, skipping post-appointment email', {
-            leadId,
-        });
-        return;
-    }
-
-    try {
-        const { sendPostAppointmentEmail1 } = await import('../services/emailService');
-
-        await sendPostAppointmentEmail1({
-            nombre: after.nombre,
-            telefono: after.telefono,
-            email: after.email,
-            vehiculo: after.vehiculo || after.tipo_vehiculo,
-            presupuesto: after.presupuesto,
-            pago_mensual: after.pago_mensual,
-            proximo_paso: after.proximo_paso,
-            documento_adicional: after.documento_adicional,
-        });
-
-        // Update lead with email sent timestamp
-        await event.data?.after.ref.update({
-            'emailSequence.postAppointment1SentAt': admin.firestore.FieldValue.serverTimestamp(),
-            'emailSequence.lastEmailSentAt': admin.firestore.FieldValue.serverTimestamp(),
-            'emailSequence.emailsSent': admin.firestore.FieldValue.increment(1),
-        });
-
-        logger.info(`✅ Post-appointment email 1 sent to ${after.email}`, { leadId });
-    } catch (error: any) {
-        logger.error('❌ Error sending post-appointment email:', {
-            leadId,
-            error: error.message,
-        });
+    if (wasCompleted) {
+        try {
+            const lead = { id: event.params.leadId, ...after } as Lead;
+            const useCase = new SendLeadEmailSequence(leadRepository, emailRepository);
+            await useCase.sendAppointmentFollowUp(lead);
+            logger.info(`✅ Appointment follow-up sequence initiated for ${event.params.leadId}`);
+        } catch (error: any) {
+            logger.error('❌ Error in onAppointmentCompleted trigger:', error);
+        }
     }
 });

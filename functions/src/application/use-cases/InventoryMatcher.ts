@@ -24,7 +24,7 @@ export class InventoryMatcher {
                 reason += `Busca un ${carData.type}. `;
             }
 
-            if (lead.aiAnalysis?.budget >= (carData.price * 0.9)) {
+            if (lead.aiAnalysis?.budget && lead.aiAnalysis.budget >= (carData.price * 0.9)) {
                 matchScore += 30;
                 reason += `Presupuesto compatible. `;
             }

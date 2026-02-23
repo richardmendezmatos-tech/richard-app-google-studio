@@ -17,9 +17,12 @@ class MockLeadRepository implements LeadRepository {
         return this.leads.filter(l => l.category === 'HOT').slice(0, limit);
     }
 
-    async save(lead: Lead): Promise<void> { }
+    async getStaleLeads(days: number, limit: number): Promise<Lead[]> { return []; }
 
     async update(id: string, data: Partial<Lead>): Promise<void> { }
+    async create(data: Lead): Promise<string> { return 'new-id'; }
+    async getLeadsByVehicleId(vehicleId: string): Promise<Lead[]> { return []; }
+    async getLeadsByEmailSequenceStatus(): Promise<Lead[]> { return []; }
 }
 
 describe('InventoryMatcher', () => {
@@ -41,6 +44,8 @@ describe('InventoryMatcher', () => {
             category: 'HOT',
             monthlyIncome: '5000',
             aiAnalysis: {
+                score: 80,
+                insights: ['Test'],
                 preferredType: 'Sedan',
                 budget: 30000
             }
@@ -74,6 +79,8 @@ describe('InventoryMatcher', () => {
             email: 'richard@example.com',
             category: 'HOT',
             aiAnalysis: {
+                score: 80,
+                insights: ['Test'],
                 preferredType: 'Pickup',
                 budget: 10000
             }

@@ -8,6 +8,29 @@ import { requireAdmin, requireSignedIn } from './security/policies';
 import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
 import { logFlowExecution } from './services/persistenceService';
 import { InventoryMatchingService } from './services/inventoryMatchingService';
+import { FirestoreLeadRepository } from './infrastructure/repositories/FirestoreLeadRepository';
+import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
+import { FirestoreLogRepository } from './infrastructure/repositories/FirestoreLogRepository';
+import { FirestoreChatRepository } from './infrastructure/repositories/FirestoreChatRepository';
+import { SendGridEmailRepository } from './infrastructure/repositories/SendGridEmailRepository';
+import { CleanAuditLogs } from './application/use-cases/CleanAuditLogs';
+import { NotifyPriceDrop } from './application/use-cases/NotifyPriceDrop';
+import { NotifyLeadStatusChange } from './application/use-cases/NotifyLeadStatusChange';
+import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
+import { GenkitAgentOrchestrator } from './infrastructure/repositories/GenkitAgentOrchestrator';
+import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
+import { Lead } from './domain/entities';
+
+// Infrastructure Instantiation (Singleton-like)
+const leadRepository = new FirestoreLeadRepository();
+const inventoryRepository = new FirestoreInventoryRepository();
+const logRepository = new FirestoreLogRepository();
+const emailRepository = new SendGridEmailRepository();
+const chatRepository = new FirestoreChatRepository();
+const aiOrchestrator = new GenkitAgentOrchestrator();
+
+// Use Cases
+const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepository, leadRepository, aiOrchestrator, inventoryRepository);
 
 const ALLOWED_ORIGINS = [
     "https://richard-automotive.vercel.app",
@@ -125,22 +148,7 @@ export const triggerReindex = onCallGenkit({
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { sendNotificationEmail } from './services/emailService';
 
-// --- New Lead Notification & Analysis ---
-import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
-import { FirestoreLeadRepository } from './infrastructure/repositories/FirestoreLeadRepository';
-import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
-import { FirestoreChatRepository } from './infrastructure/repositories/FirestoreChatRepository';
-import { GenkitAgentOrchestrator } from './infrastructure/repositories/GenkitAgentOrchestrator';
-import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
-
-// Initialize Infrastructure
-const leadRepo = new FirestoreLeadRepository();
-const inventoryRepo = new FirestoreInventoryRepository();
-const chatRepo = new FirestoreChatRepository();
-const aiOrchestrator = new GenkitAgentOrchestrator();
-
-// Initialize Use Cases
-const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepo, leadRepo, aiOrchestrator, inventoryRepo);
+// Initialized above
 
 // Define a Flow for Lead Analysis
 export const analyzeLead = ai.defineFlow(
@@ -215,14 +223,14 @@ export const chatWithLead = ai.defineFlow(
         // Fetch Lead Context if leadId is provided (Agnostic via Repository)
         let leadContext = {};
         if (input.leadId) {
-            const leadData = await leadRepo.getById(input.leadId);
+            const leadData = await leadRepository.getById(input.leadId);
             leadContext = leadData || {};
         }
 
         // Fetch Vehicle Context (Agnostic via Repository)
         let vehicleContext = null;
         if (input.vehicleId) {
-            vehicleContext = await inventoryRepo.getById(input.vehicleId);
+            vehicleContext = await inventoryRepository.getById(input.vehicleId);
         }
 
         const result = await aiOrchestrator.orchestrate({
@@ -604,29 +612,12 @@ export const checkStaleLeads = onSchedule({
 
 export const cleanupOldLogs = onSchedule('every sunday 00:00', async () => {
     logger.info("Running Log Cleanup...");
-    // 30 Days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
     try {
-        const logsRef = db.collection('audit_logs');
-        const snapshot = await logsRef
-            .where('timestamp', '<=', Timestamp.fromDate(thirtyDaysAgo))
-            .limit(500) // Batch limit
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No old logs to clean.");
-            return;
-        }
-
-        const batch = db.batch();
-        snapshot.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-
-        logger.info(`Deleted ${snapshot.size} old logs.`);
+        const useCase = new CleanAuditLogs(logRepository);
+        const deletedCount = await useCase.execute(30);
+        logger.info(`Log Cleanup complete. Deleted ${deletedCount} logs.`);
     } catch (error) {
-        logger.error("Error cleaning logs", error);
+        logger.error("Error in cleanupOldLogs", error);
     }
 });
 
@@ -642,44 +633,18 @@ export const onVehicleUpdate = onDocumentUpdated({
 
     // Check for Price Drop
     if (after.price < before.price) {
-        const carId = event.params.carId;
-        const oldPrice = Number(before.price);
-        const newPrice = Number(after.price);
-
-        logger.info(`Price Drop Detected for ${carId}: ${oldPrice} -> ${newPrice}`);
-
-        // Find interested leads
-        const leadsRef = db.collection('applications');
-        const snapshot = await leadsRef
-            .where('vehicleId', '==', carId)
-            // Optional: Filter by status to avoid emailing sold leads
-            // .where('status', 'in', ['new', 'contacted', 'negotiating']) 
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No leads interested in this vehicle.");
-            return;
+        try {
+            const useCase = new NotifyPriceDrop(leadRepository, emailRepository);
+            await useCase.execute(
+                event.params.carId,
+                Number(before.price),
+                Number(after.price),
+                after.name || after.model
+            );
+            logger.info(`Price Drop Alert executed for ${event.params.carId}`);
+        } catch (error) {
+            logger.error(`Error in onVehicleUpdate price drop alert`, error);
         }
-
-        const { getPriceDropEmailTemplate } = await import('./emailTemplates');
-        let emailCount = 0;
-
-        for (const doc of snapshot.docs) {
-            const lead = doc.data();
-            if (!lead.email) continue;
-
-            try {
-                await sendNotificationEmail({
-                    to: lead.email,
-                    subject: `🚨 ¡Bajó de Precio! ${lead.vehicleOfInterest || 'El auto que te gusta'}`,
-                    html: getPriceDropEmailTemplate(lead, oldPrice, newPrice)
-                });
-                emailCount++;
-            } catch (e) {
-                logger.error(`Failed to send price drop alert to ${lead.email}`, e);
-            }
-        }
-        logger.info(`Price Drop Alert sent to ${emailCount} leads.`);
     }
 });
 
@@ -692,37 +657,15 @@ export const onLeadStatusChange = onDocumentUpdated({
 
     if (!before || !after) return;
 
-    const oldStatus = before.status;
-    const newStatus = after.status;
-
     // Only react if status CHANGED
-    if (oldStatus === newStatus) return;
-
-    logger.info(`Lead Status Changed: ${oldStatus} -> ${newStatus} for ${event.params.leadId}`);
-
-    const lead = after;
-    if (!lead.email) return;
-
-    const { getContactedEmailTemplate, getSoldEmailTemplate } = await import('./emailTemplates');
+    if (before.status === after.status) return;
 
     try {
-        if (newStatus === 'contacted' && oldStatus === 'new') {
-            await sendNotificationEmail({
-                to: lead.email,
-                subject: `📋 Actualización: Estamos revisando tu solicitud`,
-                html: getContactedEmailTemplate(lead)
-            });
-            logger.info(`Contacted email sent to ${lead.email}`);
-        } else if (newStatus === 'sold') {
-            await sendNotificationEmail({
-                to: lead.email,
-                subject: `🎉 ¡Felicidades por tu nuevo auto!`,
-                html: getSoldEmailTemplate(lead)
-            });
-            logger.info(`Sold email sent to ${lead.email}`);
-        }
-    } catch (e) {
-        logger.error(`Failed to send status update email to ${lead.email}`, e);
+        const useCase = new NotifyLeadStatusChange(emailRepository);
+        await useCase.execute(after as Lead, before.status, after.status);
+        logger.info(`Lead Status Change notification executed for ${event.params.leadId}`);
+    } catch (error) {
+        logger.error(`Error in onLeadStatusChange`, error);
     }
 });
 
