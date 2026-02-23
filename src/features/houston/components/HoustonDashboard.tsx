@@ -11,7 +11,7 @@ import {
     Radio
 } from 'lucide-react';
 import { container } from '@/infra/di/container';
-import { HoustonTelemetry } from '@/domain/entities';
+import { HoustonTelemetry, OutreachOpportunity } from '@/domain/entities';
 import { useMouseGlow } from '@/hooks/useMouseGlow';
 
 /**
@@ -20,15 +20,21 @@ import { useMouseGlow } from '@/hooks/useMouseGlow';
  */
 const HoustonDashboard: React.FC = () => {
     const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
+    const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
     const { containerRef } = useMouseGlow();
     const getHoustonTelemetry = useMemo(() => container.getGetHoustonTelemetryUseCase(), []);
+    const identifyOutreachOpportunities = useMemo(() => container.getIdentifyOutreachOpportunitiesUseCase(), []);
 
     useEffect(() => {
         const unsubscribe = getHoustonTelemetry.subscribe((data) => {
             setTelemetry(data);
         });
+
+        // Initialize opportunities
+        identifyOutreachOpportunities.execute(80).then(setOpportunities);
+
         return () => unsubscribe();
-    }, [getHoustonTelemetry]);
+    }, [getHoustonTelemetry, identifyOutreachOpportunities]);
 
     if (!telemetry) return (
         <div className="h-screen bg-slate-950 flex items-center justify-center">
@@ -101,11 +107,11 @@ const HoustonDashboard: React.FC = () => {
                             {[...Array(20)].map((_, i) => (
                                 <div
                                     key={i}
-                                    className="bg-cyan-500/30 w-full rounded-t-sm animate-pulse"
+                                    className="bg-cyan-500/30 w-full rounded-t-sm animate-pulse telemetry-bar"
                                     style={{
-                                        height: `var(--h, ${20 + (i % 5) * 15 + Math.sin(i * 0.5) * 10}%)`,
-                                        animationDelay: `${i * 0.1}s`
-                                    }}
+                                        ['--h' as string]: `${20 + (i % 5) * 15 + Math.sin(i * 0.5) * 10}%`,
+                                        ['--d' as string]: `${i * 0.1}s`
+                                    } as React.CSSProperties}
                                 />
                             ))}
                         </div>
@@ -136,7 +142,7 @@ const HoustonDashboard: React.FC = () => {
 
                 {/* Right Panel / System Insights */}
                 <div className="xl:col-span-1 space-y-6">
-                    <div className="glass-sentinel p-8 border border-white/5 h-full">
+                    <div className="glass-sentinel p-8 border border-white/5 h-fit mb-6">
                         <AlertCircle className="text-amber-500 mb-6" size={32} />
                         <h3 className="text-xl font-black text-white uppercase mb-4 tracking-tighter">System Insights</h3>
                         <ul className="space-y-6 text-xs text-slate-400">
@@ -148,11 +154,64 @@ const HoustonDashboard: React.FC = () => {
                                 <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1.5 shrink-0" />
                                 <p><span className="text-white font-bold">Autonomy Threshold</span> alcanzado. VitalOS ha completado 12 retracciones sin intervención humana.</p>
                             </li>
-                            <li className="flex gap-3">
-                                <div className="w-1 h-1 bg-cyan-500 rounded-full mt-1.5 shrink-0" />
-                                <p><span className="text-white font-bold">NotebookLM Sync</span> detectado. Nueva base de conocimiento de inventario procesada.</p>
-                            </li>
                         </ul>
+                    </div>
+
+                    {/* Nivel 14: Predictive Projections */}
+                    <div className="glass-premium p-8 border border-cyan-500/20 bg-cyan-500/5 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-2">
+                            <Zap size={16} className="text-cyan-500 animate-pulse" />
+                        </div>
+                        <h3 className="text-sm font-black text-cyan-400 uppercase mb-6 tracking-widest flex items-center gap-2">
+                            <Activity size={14} /> Holo-Forecast
+                        </h3>
+
+                        <div className="space-y-6">
+                            <div>
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Probabilidad de Cierre (Mes)</span>
+                                    <span className="text-lg font-black text-white">78%</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-cyan-500 w-[78%] shadow-[0_0_10px_#00aed9]" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-3 bg-white/5 border border-white/5 rounded-xl">
+                                    <p className="text-[8px] text-slate-500 uppercase font-bold mb-1">Leads Hot (Proj)</p>
+                                    <p className="text-xl font-black text-emerald-500">+12</p>
+                                </div>
+                                <div className="p-3 bg-white/5 border border-white/5 rounded-xl">
+                                    <p className="text-[8px] text-slate-500 uppercase font-bold mb-1">ROI Est (IA)</p>
+                                    <p className="text-xl font-black text-cyan-500">2.4x</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 space-y-3">
+                            {opportunities.length > 0 ? (
+                                opportunities.map((opp, idx) => (
+                                    <div key={idx} className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5 animate-in fade-in slide-in-from-right duration-500 telemetry-bar" style={{ '--d': `${idx * 150}ms` } as React.CSSProperties}>
+                                        <p className="text-[9px] text-slate-400 italic font-medium leading-relaxed">
+                                            <span className="text-cyan-500 font-bold mr-1">🦅 Outreach Opportunity:</span>
+                                            {opp.reason}
+                                        </p>
+                                        <div className="mt-2 flex justify-between items-center">
+                                            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">Action: {opp.suggestedAction}</span>
+                                            <span className="text-[8px] font-black text-cyan-500 uppercase tracking-tighter">Est ROI: {opp.potentialRoi}x</span>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5">
+                                    <p className="text-[9px] text-slate-400 italic font-medium leading-relaxed">
+                                        <span className="text-cyan-500 font-bold mr-1">🦅 Nudge Suggestion:</span>
+                                        Escaneando oportunidades de prospección soberana...
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </main>

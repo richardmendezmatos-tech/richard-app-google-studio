@@ -138,6 +138,16 @@ export interface Lead {
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
 
+  // Nivel 14: Predictive Scaling
+  predictiveScore?: number;
+  behavioralMetrics?: {
+    timeOnSite?: number;
+    inventoryViews?: number;
+    highValueInteractions?: number;
+    lastActive?: number;
+    intentTrajectory?: 'improving' | 'stable' | 'declining';
+  };
+
   // AI Orchestration 2.0: Customer Memory
   customerMemory?: {
     preferences?: {
