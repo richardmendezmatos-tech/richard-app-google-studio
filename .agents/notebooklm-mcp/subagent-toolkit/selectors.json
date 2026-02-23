@@ -1,0 +1,14 @@
+{
+    "notebooklm": {
+        "addSourceBtn": ".add-source-button",
+        "copiedTextOption": "button.drop-zone-icon-button",
+        "pasteTextarea": ".copied-text-input-textarea",
+        "insertBtn": "button.mat-mdc-unelevated-button",
+        "sourceItemMoreBtn": ".source-item-more-button",
+        "menuItem": "[role=\"menuitem\"]",
+        "renameOptionText": "Cambiar nombre de la fuente",
+        "deleteOptionText": "Quitar fuente",
+        "insertBtnText": "Insertar",
+        "copiedTextOptionText": "Texto copiado"
+    }
+}

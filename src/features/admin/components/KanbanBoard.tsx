@@ -78,6 +78,24 @@ export const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isO
                 <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 line-clamp-2 relative z-10" title={lead.aiSummary}>
                     {lead.aiSummary}
                 </p>
+
+                {/* Nivel 14: Predictive Probability Bar */}
+                {lead.predictiveScore !== undefined && (
+                    <div className="mt-3 pt-3 border-t border-[#00aed9]/10 relative z-10">
+                        <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-[8px] font-black uppercase tracking-wider text-slate-400">Probabilidad de Cierre</span>
+                            <span className={`text-[9px] font-black ${lead.predictiveScore > 80 ? 'text-emerald-500' : lead.predictiveScore > 50 ? 'text-amber-500' : 'text-red-500'}`}>
+                                {lead.predictiveScore}%
+                            </span>
+                        </div>
+                        <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full transition-all duration-1000 predictive-bar-width ${lead.predictiveScore > 80 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : lead.predictiveScore > 50 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                style={{ '--p-width': `${lead.predictiveScore}%` } as React.CSSProperties}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         )}
 
@@ -116,12 +134,12 @@ function SortableLeadItem({ lead, onPrint, userRole }: { lead: Lead, onPrint: ()
     } = useSortable({ id: lead.id, data: { lead } });
 
     const style = {
-        transform: CSS.Translate.toString(transform),
-        transition,
-    };
+        '--translate': CSS.Translate.toString(transform),
+        '--transition': transition,
+    } as React.CSSProperties;
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'}`}>
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 dnd-sortable ${isDragging ? 'opacity-30' : 'opacity-100'}`}>
             <LeadCard lead={lead} onPrint={onPrint} userRole={userRole} />
         </div>
     );

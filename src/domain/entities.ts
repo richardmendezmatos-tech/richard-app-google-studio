@@ -35,6 +35,14 @@ export interface Lead {
         preferredType?: string;
         budget?: number;
     };
+    predictiveScore?: number;
+    behavioralMetrics?: {
+        timeOnSite?: number;
+        inventoryViews?: number;
+        highValueInteractions?: number;
+        lastActive?: number;
+        intentTrajectory?: 'improving' | 'stable' | 'declining';
+    };
 }
 
 export interface Car {
@@ -95,4 +103,32 @@ export interface HoustonTelemetry {
         message: string;
         source: string;
     }>;
+}
+
+export interface PredictiveInsight {
+    leadId: string;
+    score: number;
+    confidence: number;
+    factors: string[];
+    predictedAction: string;
+    timestamp: number;
+}
+
+export interface OutreachOpportunity {
+    leadId: string;
+    opportunityScale: number; // 0-100
+    reason: string;
+    suggestedAction: string;
+    potentialRoi: number;
+    expiresAt: number;
+}
+
+export interface MarginAdjustment {
+    leadId: string;
+    inventoryId: string;
+    basePrice: number;
+    adjustedPrice: number;
+    allowedDiscount: number;
+    reason: string;
+    confidenceScore: number;
 }
