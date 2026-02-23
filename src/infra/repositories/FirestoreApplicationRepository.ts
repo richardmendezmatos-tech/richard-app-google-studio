@@ -1,0 +1,21 @@
+import { db } from '@/infra/firebase/client';
+import { collection, addDoc, query, where, limit, getDocs } from 'firebase/firestore/lite';
+
+export class FirestoreApplicationRepository {
+    async submitApplication(data: Record<string, unknown>, dealerId: string): Promise<string> {
+        const safeData = {
+            ...data,
+            dealerId,
+            timestamp: new Date(),
+            status: 'new'
+        };
+        const docRef = await addDoc(collection(db, 'applications'), safeData);
+        return docRef.id;
+    }
+
+    async getApplications(dealerId: string, limitCount: number = 200) {
+        const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId), limit(limitCount));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+}

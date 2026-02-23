@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Phone, Mail, Wand2, GripVertical, ShieldCheck } from 'lucide-react';
 import { Lead } from '@/types/types';
-import { updateLeadStatus } from '@/services/firebaseService';
+import { container } from '@/infra/di/container';
+import { useNotification } from '@/contexts/NotificationContext';
 import { maskEmail, maskPhone, maskName, UserRole } from '@/utils/privacyUtils';
 import {
     DndContext,
@@ -177,6 +178,7 @@ interface KanbanBoardProps {
 }
 
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRole, searchTerm = '' }) => {
+    const { addNotification } = useNotification();
     const columns = [
         { id: 'new', title: 'Nuevos', color: 'bg-[#00aed9]', glow: 'shadow-[#00aed9]/20' },
         { id: 'contacted', title: 'Contactados', color: 'bg-amber-500', glow: 'shadow-amber-500/20' },
@@ -207,7 +209,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
         setActiveId(event.active.id as string);
     };
 
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
 
         if (!over) {
@@ -236,7 +238,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
 
         if (activeLead && newStatus && activeLead.status !== newStatus) {
             // Optimistic update could happen here, but we rely on firebase listener for now to be safe
-            updateLeadStatus(activeLeadId, newStatus);
+            await container.getLeadRepository().updateLead(activeLeadId, { status: newStatus as any });
 
             if (newStatus === 'sold') {
                 confetti({
@@ -245,9 +247,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, onPrint, userRo
                     origin: { y: 0.6 },
                     colors: ['#10B981', '#34D399', '#059669', '#FFD700']
                 });
-                showToast(`¡Vehículovendido! Felicitaciones a ${activeLead.firstName}`, 'success');
+                addNotification('success', `¡Vehículo vendido! Felicitaciones a ${activeLead.firstName}`);
             } else {
-                showToast(`Lead movido a ${columns.find(c => c.id === newStatus)?.title || newStatus}`, 'info');
+                addNotification('info', `Lead movido a ${columns.find(c => c.id === newStatus)?.title || newStatus}`);
             }
         }
 

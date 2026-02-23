@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadImage } from '@/services/firebaseService';
+import { container } from '@/infra/di/container';
 
 export interface PhotoState {
     [key: string]: File | null;
@@ -19,7 +19,7 @@ export const usePhotoUploader = (initialPhotos: PhotoState = {}) => {
         setError(null);
         try {
             const uploadPromises = Object.values(photos).map(async (file) => {
-                if (file) return await uploadImage(file);
+                if (file) return await container.getStorageRepository().uploadImage(file);
                 return null;
             });
 
