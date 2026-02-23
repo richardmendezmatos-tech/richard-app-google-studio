@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
 import { useNavigate } from 'react-router-dom';
+import { container } from '../../../infra/di/container';
 import { Car as CarType, Lead, Subscriber } from '@/types/types';
 import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, Radio } from 'lucide-react';
 import { getLeadsOnce, auth, getSubscribers } from '@/services/firebaseService';
@@ -9,6 +10,8 @@ import { useAntigravity } from '@/hooks/useAntigravity';
 // import { useSelector } from 'react-redux';
 // import { RootState } from '@/store';
 
+import { GetLeads } from '../../../application/use-cases/GetLeads';
+import { FirestoreLeadRepository } from '../../../infra/repositories/FirestoreLeadRepository';
 import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatmap';
 // import { useReactToPrint } from 'react-to-print'; // Removed
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
@@ -99,12 +102,14 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const updatedLeads = await getLeadsOnce();
-      setLeads(updatedLeads);
+      const dealerId = currentDealer.id || 'richard-automotive';
+      const useCase = container.getGetLeadsUseCase();
+      const updatedLeads = await useCase.execute(dealerId);
+      setLeads(updatedLeads as any);
     } catch (e) {
       console.error("Leads Fetch Error:", e);
     }
-  }, []);
+  }, [currentDealer.id]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -170,15 +175,14 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             <button
               type="button"
               onClick={refreshAntigravity}
-              className={`h-10 rounded-xl border px-4 text-[10px] font-black uppercase tracking-widest transition-all ${
-                antigravityStatus === 'online'
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-                  : antigravityStatus === 'checking'
-                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
-                    : antigravityStatus === 'disabled'
-                      ? 'border-slate-600 bg-slate-800 text-slate-300'
-                      : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
-              }`}
+              className={`h-10 rounded-xl border px-4 text-[10px] font-black uppercase tracking-widest transition-all ${antigravityStatus === 'online'
+                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                : antigravityStatus === 'checking'
+                  ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                  : antigravityStatus === 'disabled'
+                    ? 'border-slate-600 bg-slate-800 text-slate-300'
+                    : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
+                }`}
               title="Verificar estado de Antigravity"
             >
               AG: {antigravityStatus}
