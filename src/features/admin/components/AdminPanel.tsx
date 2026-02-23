@@ -13,6 +13,7 @@ import { useAntigravity } from '@/hooks/useAntigravity';
 import { GetLeads } from '../../../application/use-cases/GetLeads';
 import { FirestoreLeadRepository } from '../../../infra/repositories/FirestoreLeadRepository';
 import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatmap';
+import { useMouseGlow } from '@/hooks/useMouseGlow';
 // import { useReactToPrint } from 'react-to-print'; // Removed
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
 
@@ -99,6 +100,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
   const navigate = useNavigate(); // For Quick Actions
   const { status: antigravityStatus, refresh: refreshAntigravity } = useAntigravity();
+  const { containerRef } = useMouseGlow();
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -152,7 +154,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   }, [fetchDashboardData]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden">
+    <div ref={containerRef as any} className="min-h-screen bg-slate-950 text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden bg-noise">
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none" />
       <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none" />
@@ -190,13 +192,21 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             <React.Suspense fallback={<div className="h-10 w-40 rounded-xl bg-white/5 animate-pulse" />}>
               <EnterpriseStatus />
             </React.Suspense>
+
+            {/* Houston Navigation */}
+            <button
+              onClick={() => navigate('/admin/houston')}
+              className="h-10 px-6 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-500/20 transition-all flex items-center gap-2 group"
+            >
+              <Radio size={14} className="group-hover:animate-pulse" /> Houston Terminal
+            </button>
           </div>
 
 
           {/* Strategic: Security Copilot Widget */}
-          <div className="hidden xl:flex items-center gap-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-3xl group cursor-default route-fade-in">
+          <div className="hidden xl:flex items-center gap-4 px-6 py-3 glass-premium border border-white/10 rounded-2xl backdrop-blur-3xl group cursor-default route-fade-in hover-kinetic">
             <div className="relative">
-              <ShieldCheck className="text-emerald-500 group-hover:scale-110 transition-transform" size={24} />
+              <ShieldCheck className="text-emerald-500 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500" size={24} />
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
             </div>
             <div>
@@ -312,27 +322,27 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
               {/* QUICK ACCESS GRID */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Digital Twin Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0d2232] to-[#081520] border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer" onClick={() => navigate('/digital-twin')}>
+                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/digital-twin')}>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
-                  <UserIcon className="text-[#00aed9] mb-4" size={40} />
+                  <UserIcon className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
                   <h3 className="text-2xl font-black text-white uppercase mb-2">Gemelo Digital</h3>
                   <p className="text-slate-400 text-sm mb-6">Crea contenido de marketing viral con tu avatar IA.</p>
                   <span className="text-xs font-bold text-[#00aed9] uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ingresar <div className="w-4 h-[1px] bg-[#00aed9]" /></span>
                 </div>
 
                 {/* Framework Lab Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#1a1225] to-[#0f0a15] border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer" onClick={() => navigate('/framework-lab')}>
+                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/framework-lab')}>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
-                  <Server className="text-purple-500 mb-4" size={40} />
+                  <Server className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
                   <h3 className="text-2xl font-black text-white uppercase mb-2">Framework Lab</h3>
                   <p className="text-slate-400 text-sm mb-6">Gestiona integraciones experimentales (Svelte, Astro).</p>
                   <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Configurar <div className="w-4 h-[1px] bg-purple-500" /></span>
                 </div>
 
                 {/* Analytics Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0f1f18] to-[#050f0a] border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer" onClick={() => setActiveTab('analytics')}>
+                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => setActiveTab('analytics')}>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
-                  <BarChart3 className="text-emerald-500 mb-4" size={40} />
+                  <BarChart3 className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
                   <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>
                   <p className="text-slate-400 text-sm mb-6">Mapa de calor de inventario y tendencias.</p>
                   <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ver Datos <div className="w-4 h-[1px] bg-emerald-500" /></span>

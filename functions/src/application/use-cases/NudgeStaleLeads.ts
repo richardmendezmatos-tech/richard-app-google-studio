@@ -21,7 +21,7 @@ export class NudgeStaleLeads {
                     html: `<p>Hola ${lead.firstName}, queremos ayudarte...</p>`
                 });
 
-                await this.leadRepo.update(lead.id, {
+                await this.leadRepo.updateLead(lead.id, {
                     aiAnalysis: {
                         ...lead.aiAnalysis,
                         score: lead.aiAnalysis?.score || 0,

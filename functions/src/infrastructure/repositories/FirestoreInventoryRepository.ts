@@ -10,6 +10,11 @@ export class FirestoreInventoryRepository implements InventoryRepository {
         return { id: doc.id, ...doc.data() } as Car;
     }
 
+    async getAll(): Promise<Car[]> {
+        const snapshot = await db.collection('cars').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Car));
+    }
+
     async updateEmbedding(id: string, embedding: number[]): Promise<void> {
         await db.collection('cars').doc(id).update({
             embedding: FieldValue.vector(embedding),
