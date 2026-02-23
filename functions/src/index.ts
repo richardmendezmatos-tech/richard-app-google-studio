@@ -127,6 +127,20 @@ import { sendNotificationEmail } from './services/emailService';
 
 // --- New Lead Notification & Analysis ---
 import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
+import { FirestoreLeadRepository } from './infrastructure/repositories/FirestoreLeadRepository';
+import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
+import { FirestoreChatRepository } from './infrastructure/repositories/FirestoreChatRepository';
+import { GenkitAgentOrchestrator } from './infrastructure/repositories/GenkitAgentOrchestrator';
+import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
+
+// Initialize Infrastructure
+const leadRepo = new FirestoreLeadRepository();
+const inventoryRepo = new FirestoreInventoryRepository();
+const chatRepo = new FirestoreChatRepository();
+const aiOrchestrator = new GenkitAgentOrchestrator();
+
+// Initialize Use Cases
+const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepo, leadRepo, aiOrchestrator, inventoryRepo);
 
 // Define a Flow for Lead Analysis
 export const analyzeLead = ai.defineFlow(
@@ -198,25 +212,20 @@ export const chatWithLead = ai.defineFlow(
         outputSchema: z.string()
     },
     async (input) => {
-        // Fetch Lead Context if leadId is provided
+        // Fetch Lead Context if leadId is provided (Agnostic via Repository)
         let leadContext = {};
         if (input.leadId) {
-            const leadDoc = await db.collection('applications').doc(input.leadId).get();
-            if (leadDoc.exists) {
-                leadContext = leadDoc.data() || {};
-            }
+            const leadData = await leadRepo.getById(input.leadId);
+            leadContext = leadData || {};
         }
 
-        // Fetch Vehicle Context
+        // Fetch Vehicle Context (Agnostic via Repository)
         let vehicleContext = null;
         if (input.vehicleId) {
-            const carDoc = await db.collection('cars').doc(input.vehicleId).get();
-            if (carDoc.exists) {
-                vehicleContext = carDoc.data();
-            }
+            vehicleContext = await inventoryRepo.getById(input.vehicleId);
         }
 
-        const result = await orchestrateResponse({
+        const result = await aiOrchestrator.orchestrate({
             message: input.message,
             history: input.history || [],
             leadContext,
@@ -377,40 +386,11 @@ export const incomingWhatsAppMessage = onRequest({ secrets: ["TWILIO_ACCOUNT_SID
     logger.info(`WhatsApp Message from ${From}: ${Body}`);
 
     try {
-        const chatId = From.replace(/\D/g, ''); // Use numbers only for ID
-        const chatRef = db.collection('chats').doc(chatId);
-        const chatDoc = await chatRef.get();
-
-        let localHistory: { role: 'user' | 'model'; content: string }[] = [];
-
-        if (chatDoc.exists) {
-            const data = chatDoc.data();
-            if (data?.messages) {
-                // Keep last 10 messages for context window
-                localHistory = (data.messages as { role: 'user' | 'model', content: string }[]).slice(-10).map((m) => ({
-                    role: m.role,
-                    content: m.content
-                }));
-            }
-        }
-
-        const replyText = await chatWithLead({
-            history: localHistory,
-            message: Body || "Hola",
-            vehicleId: VehicleId,
-            leadId: chatId
+        const replyText = await whatsAppProcessor.execute({
+            from: From,
+            body: Body || "Hola",
+            vehicleId: VehicleId
         });
-
-        // Save new interaction to history
-        await chatRef.set({
-            messages: [
-                ...(chatDoc.exists ? chatDoc.data()?.messages || [] : []),
-                { role: 'user', content: Body || '', timestamp: new Date() },
-                { role: 'model', content: replyText, timestamp: new Date() }
-            ],
-            lastUpdated: new Date(),
-            phone: From
-        }, { merge: true });
 
         // Use Twilio Service to generate TwiML XML
         const { createTwiMLReply } = await import('./services/twilioService');
