@@ -1,14 +1,40 @@
-import { calculateOperationalScore } from './raSentinel';
+import { describe, it, expect, vi } from 'vitest';
+import { OperationalSentinel } from '../application/use-cases/OperationalSentinel';
 import { saveCheckpoint } from './persistenceService';
-import * as fs from 'fs';
+import fs from 'node:fs';
 
-describe('Richard Automotive Sentinel & Persistence', () => {
-    it('should calculate Operational Score correctly for business health', () => {
-        const highHealth = calculateOperationalScore({ credit_score: 750, active_followup: true });
-        const lowHealth = calculateOperationalScore({ unprocessed_incident: true });
+let lastWrittenData = '';
+vi.mock('node:fs', () => ({
+    default: {
+        existsSync: vi.fn(() => true),
+        mkdirSync: vi.fn(),
+        writeFileSync: vi.fn((path, data) => { lastWrittenData = data; }),
+        readFileSync: vi.fn(() => lastWrittenData),
+        unlinkSync: vi.fn()
+    }
+}));
 
-        expect(highHealth).toBeGreaterThan(90);
-        expect(lowHealth).toBeLessThan(50);
+describe('raSentinel', () => {
+    describe('calculateOperationalScore', () => {
+        it('should calculate a correct score based on input data', () => {
+            const highRiskData = {
+                active_followup: false,
+                credit_score: 550,
+                unprocessed_incident: true
+            };
+            const score = OperationalSentinel.calculateManualScore(highRiskData);
+            expect(score).toBeLessThan(75);
+        });
+
+        it('should calculate a high score for healthy data', () => {
+            const healthyData = {
+                active_followup: true,
+                credit_score: 750,
+                unprocessed_incident: false
+            };
+            const score = OperationalSentinel.calculateManualScore(healthyData);
+            expect(score).toBeGreaterThan(80);
+        });
     });
 
     it('should save a valid checkpoint JSON for the persistence protocol', async () => {

@@ -15,7 +15,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "genkit:start": "GENKIT_ENV=dev npx genkit start",
-    "test": "jest",
+    "test": "vitest run",
     "set-admin-claim": "node scripts/set-admin-claim.cjs"
   },
   "keywords": [],
