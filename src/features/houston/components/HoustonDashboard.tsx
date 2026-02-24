@@ -233,7 +233,7 @@ const HoustonDashboard: React.FC = () => {
                         <div className="mt-8 space-y-3">
                             {opportunities.length > 0 ? (
                                 opportunities.map((opp, idx) => (
-                                    <div key={idx} className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5 animate-in fade-in slide-in-from-right duration-500 telemetry-bar" style={{ '--d': `${idx * 150}ms` } as React.CSSProperties}>
+                                    <div key={idx} className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5 animate-in fade-in slide-in-from-right duration-500 telemetry-bar delay-var" style={{ '--d': `${idx * 150}ms` } as React.CSSProperties}>
                                         <p className="text-[9px] text-slate-400 italic font-medium leading-relaxed">
                                             <span className="text-cyan-500 font-bold mr-1">🦅 Outreach Opportunity:</span>
                                             {opp.reason}

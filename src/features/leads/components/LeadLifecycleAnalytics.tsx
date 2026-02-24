@@ -6,7 +6,10 @@ import {
     MessageCircle,
     TrendingUp,
     TrendingDown,
-    Zap
+    Zap,
+    Clock,
+    Database,
+    Infinity as InfinityIcon
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -102,7 +105,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                             label="Verificación de Identidad"
                             impact="positive"
                             value={+20}
-                            active={!!lead.ssn}
+                            active={!!lead.ssn_encrypted || (!!lead.ssn && lead.ssn !== '[ENCRYPTED]')}
                         />
                         <ScoreDriver
                             label="Múltiples Visitas Web"
@@ -116,6 +119,61 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                             value={-15}
                             active={false} // Demo state
                         />
+                    </div>
+                </div>
+            </div>
+
+            {/* Continuum Memory System (CMS) Visualization */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-slate-500 text-xs uppercase tracking-wider mb-6 flex items-center justify-between">
+                    <span>Continuum Memory System (Nested Learning)</span>
+                    <span className="text-[10px] bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full border border-blue-100">RA-CMS Paradigm</span>
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* L1: Reactive */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-1">
+                            <Zap size={10} className="text-amber-500 animate-pulse" />
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Clock size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L1: Reactivo</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Atención Inmediata</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Interacciones en tiempo real y clicks recientes vinculados al inventario.</p>
+                        <div className="mt-3 flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-green-500"></div>
+                            <span className="text-[9px] font-mono text-green-600 uppercase">Live Context Active</span>
+                        </div>
+                    </div>
+
+                    {/* L2: Contextual */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Database size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L2: Contextual</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Patrones de Interés</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Análisis de tendencias semanales. Preferencia detectada: {lead.customerMemory?.preferences?.models?.[0] || 'SUV'}.</p>
+                        <div className="mt-3 bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+                            <div className="bg-blue-500 h-full w-[65%]"></div>
+                        </div>
+                    </div>
+
+                    {/* L3: Evolutivo */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-2">
+                            <InfinityIcon size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L3: Evolutivo</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Ciclo de Vida</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Oportunidad de Trade-in detectada según historial de propiedad (2-3 años).</p>
+                        <div className="mt-3 flex gap-1">
+                            {[1, 2, 3, 4, 5].map(i => (
+                                <div key={i} className={`h-1 flex-1 rounded-full ${i <= 2 ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

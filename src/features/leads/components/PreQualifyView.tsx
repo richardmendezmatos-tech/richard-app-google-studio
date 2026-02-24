@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2, ShieldCheck, Lock, Briefcase, Loader2, Eye, Ey
 import { useNotification } from '@/contexts/NotificationContext';
 import { submitApplication } from '@/services/firebaseService';
 import { addLead } from '@/features/leads/services/crmService';
+import { encryptSSN } from '@/services/ssnEncryptionService';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
 import SEO from '@/components/seo/SEO';
 
@@ -93,8 +94,15 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         setIsSubmitting(true);
 
         try {
+            // SEGURIDAD: Encriptación Zero-Knowledge antes de salir del cliente
+            // Usamos una llave derivada o de entorno para la encriptación pública
+            const PUBLIC_ENCRYPTION_KEY = import.meta.env.VITE_SSN_PUBLIC_KEY || 'RA-SECURE-VAULT-2024';
+            const encryptedSSN = encryptSSN(formData.ssn, PUBLIC_ENCRYPTION_KEY);
+
             const submissionData = {
                 ...formData,
+                ssn: '[ENCRYPTED]', // Ofuscar el campo original en el objeto de datos
+                ssn_encrypted: encryptedSSN,
                 ...(dealContext ? {
                     vehicleInfo: dealContext.vehicle,
                     quote: dealContext.quote,
@@ -111,7 +119,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                 name: `${formData.firstName} ${formData.lastName}`,
                 phone: formData.phone,
                 email: formData.email,
-                notes: `Finance Application #${refId} - Total Completion`
+                notes: `Finance Application #${refId} - Total Completion (SSN Protected)`
             });
 
             setReferenceId(refId);

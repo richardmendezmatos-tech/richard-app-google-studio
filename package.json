@@ -62,6 +62,7 @@
     "animejs": "^4.3.5",
     "axios": "^1.13.4",
     "canvas-confetti": "^1.9.4",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "firebase": "^10.8.0",
     "framer-motion": "^12.4.1",
