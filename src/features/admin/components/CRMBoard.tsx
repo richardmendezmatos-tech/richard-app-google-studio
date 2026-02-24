@@ -201,7 +201,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
                     {/* Pulsing Dot Tracer */}
                     <div
-                        className="absolute top-[calc(100%-1.5rem)] h-1 w-1 bg-white rounded-full shadow-[0_0_8px_white] animate-ping opacity-70 heatmap-dot"
+                        className="absolute top-1/2 -translate-y-1/2 w-1.5 h-4 bg-white rounded-full shadow-[0_0_8px_white] transition-all duration-500 border border-primary/20 heatmap-dot"
                         style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
                     />
                 </div>
@@ -248,9 +248,13 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
 const SortableLeadItem = ({ lead, userRole }: { lead: Lead, userRole: UserRole }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: lead.id, data: { lead } });
-    const style = { transform: CSS.Translate.toString(transform), transition };
+    const style = {
+        '--translate': CSS.Translate.toString(transform),
+        '--transition': transition
+    } as React.CSSProperties;
+
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'}`}>
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} dnd-sortable`}>
             <LeadCard lead={lead} onPrint={() => { }} userRole={userRole} />
         </div>
     );
@@ -287,7 +291,7 @@ const CRMBoard: React.FC = () => {
 
         const activeLeadId = active.id as string;
         const overId = over.id as string;
-        const newStatus = COLUMNS.some(col => col.id === overId) ? overId : leads.find(l => l.id === overId)?.status;
+        const newStatus = COLUMNS.some(col => col.id === overId) ? overId : leads.find(l => l.id === activeLeadId)?.status;
 
         if (newStatus && activeLeadId && leads.find(l => l.id === activeLeadId)?.status !== newStatus) {
             await updateLeadStatus(activeLeadId, newStatus as any);

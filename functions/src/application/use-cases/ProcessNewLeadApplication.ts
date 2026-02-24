@@ -3,6 +3,7 @@ import { ScoreCalculator } from './ScoreCalculator';
 import { EmailRepository } from '../../domain/repositories/EmailRepository';
 import { SMSRepository } from '../../domain/repositories/SMSRepository';
 import { MetaRepository } from '../../domain/repositories/MetaRepository';
+import { WhatsAppRepository } from '../../domain/repositories/WhatsAppRepository';
 import { Lead } from '../../domain/entities';
 
 export interface LeadApplicationInput {
@@ -15,7 +16,8 @@ export class ProcessNewLeadApplication {
         private leadRepo: LeadRepository,
         private emailRepo: EmailRepository,
         private smsRepo: SMSRepository,
-        private metaRepo: MetaRepository
+        private metaRepo: MetaRepository,
+        private whatsAppRepo: WhatsAppRepository
     ) { }
 
     async execute(input: LeadApplicationInput): Promise<void> {
@@ -63,6 +65,13 @@ export class ProcessNewLeadApplication {
         // Welcome SMS
         if (lead.phone) {
             await this.smsRepo.send(lead.phone, `Hola ${lead.firstName}, recibimos tu solicitud en Richard Automotive. pronto te contactaremos.`);
+        }
+
+        // 4. Phase 20: WhatsApp Business Automation (The Sales Booster)
+        if (lead.phone && analysis.score >= 85) {
+            const waMessage = `¡Hola ${lead.firstName}! Soy Richard de Richard Automotive. 🦅🚀 Vi tu interés en un vehículo de nuestro inventario y tu perfil califica para una atención prioritaria. ¿Te gustaría que te envíe un video personalizado o coordinemos una prueba de manejo hoy mismo?`;
+            await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
+            console.log(`[WhatsApp Automation] Sent proactive nudge to high-priority lead: ${appId}`);
         }
 
         // Meta CAPI Event

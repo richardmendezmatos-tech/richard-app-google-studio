@@ -19,4 +19,5 @@ export interface WhatsAppRepository {
     getSequence(leadId: string): Promise<WhatsAppSequence | null>;
     saveSequence(sequence: WhatsAppSequence): Promise<void>;
     updateStage(leadId: string, stage: WhatsAppStage): Promise<void>;
+    sendMessage(to: string, message: string): Promise<boolean>;
 }

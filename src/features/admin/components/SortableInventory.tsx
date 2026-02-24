@@ -36,17 +36,17 @@ const SortableCarCard: React.FC<SortableItemProps> = ({ car }) => {
     } = useSortable({ id: car.id });
 
     const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        zIndex: isDragging ? 50 : 0,
-        opacity: isDragging ? 0.5 : 1,
-    };
+        '--translate': CSS.Transform.toString(transform),
+        '--transition': transition,
+        '--drag-opacity': isDragging ? 0.5 : 1,
+        '--drag-z-index': isDragging ? 50 : 0
+    } as React.CSSProperties;
 
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className="bg-slate-900 border border-white/10 rounded-2xl p-4 flex gap-4 items-center group"
+            className="bg-slate-900 border border-white/10 rounded-2xl p-4 flex gap-4 items-center group dnd-sortable"
         >
             <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-[#00aed9]">
                 <GripVertical size={20} />

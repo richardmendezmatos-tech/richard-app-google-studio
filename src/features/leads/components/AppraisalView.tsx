@@ -7,6 +7,7 @@ import SEO from '@/components/seo/SEO';
 import { submitApplication } from '@/services/firebaseService';
 import { usePhotoUploader } from '@/hooks/usePhotoUploader';
 import { analyzeTradeInImages } from '@/services/geminiService';
+import { getAppraisalBaseValue } from '@/constants/appraisalBases';
 
 // Import local styles to remove inline dependencies
 import './AppraisalView.css';
@@ -148,11 +149,15 @@ const PhotoStep = React.memo(({ photos, onUpload, progress, count, onNext }: any
             </span>
         </div>
 
-        {/* Improved Progress Bar with dynamic variable */}
-        <div className="appraisal-progress-container">
+        <div className="appraisal-progress-container h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-6">
             <div
-                className={`appraisal-progress-bar ${count === 4 ? 'progress-filled' : 'progress-active'}`}
-                style={{ '--progress': `${progress}%` } as React.CSSProperties}
+                className={`h-full transition-all duration-500 ${count === 4 ? 'bg-emerald-500 progress-filled' : 'bg-[#00aed9] progress-active'
+                    } ${count === 0 ? 'w-0' :
+                        count === 1 ? 'w-1/4' :
+                            count === 2 ? 'w-1/2' :
+                                count === 3 ? 'w-3/4' :
+                                    'w-full'
+                    }`}
             ></div>
         </div>
 
@@ -423,7 +428,7 @@ const AppraisalView: React.FC = () => {
             setUploadedUrls(urls);
             setAiAnalysis(analysis);
 
-            const baseValue = 15000;
+            const baseValue = getAppraisalBaseValue(Number(vehicleInfo.year), vehicleInfo.make);
             setOfferAmount({
                 min: Math.round(baseValue * (analysis as any).estimatedValueAdjustment),
                 max: Math.round((baseValue + 2500) * (analysis as any).estimatedValueAdjustment)

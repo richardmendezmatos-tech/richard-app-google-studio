@@ -17,6 +17,7 @@ import { FirestoreChatRepository } from './infrastructure/repositories/Firestore
 import { SendGridEmailRepository } from './infrastructure/repositories/SendGridEmailRepository';
 import { TwilioSMSRepository } from './infrastructure/repositories/TwilioSMSRepository';
 import { MetaCapiRepository } from './infrastructure/repositories/MetaCapiRepository';
+import { TwilioWhatsAppRepository } from './infrastructure/repositories/TwilioWhatsAppRepository';
 import { ReindexInventory } from './application/use-cases/ReindexInventory';
 import { AnalyzeLead } from './application/use-cases/AnalyzeLead';
 import { NudgeStaleLeads } from './application/use-cases/NudgeStaleLeads';
@@ -36,11 +37,12 @@ const emailRepository = new SendGridEmailRepository();
 const smsRepository = new TwilioSMSRepository();
 const metaRepository = new MetaCapiRepository();
 const chatRepository = new FirestoreChatRepository();
+const whatsAppRepository = new TwilioWhatsAppRepository();
 const aiOrchestrator = new GenkitAgentOrchestrator();
 
 // Use Cases
 const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepository, leadRepository, aiOrchestrator, inventoryRepository);
-const leadAppProcessor = new ProcessNewLeadApplication(leadRepository, emailRepository, smsRepository, metaRepository);
+const leadAppProcessor = new ProcessNewLeadApplication(leadRepository, emailRepository, smsRepository, metaRepository, whatsAppRepository);
 
 const ALLOWED_ORIGINS = [
     "https://richard-automotive.vercel.app",
