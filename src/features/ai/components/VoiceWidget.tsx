@@ -27,12 +27,11 @@ const Waveform = () => {
             {bars.map((scale, i) => (
                 <div
                     key={i}
-                    className="w-1 bg-white rounded-full animate-pulse"
+                    className="w-1 bg-white rounded-full animate-pulse audio-bar-height"
                     style={{
-                        height: randomHeights[i],
-                        animationDelay: `${i * 100}ms`,
-                        animationDuration: '700ms'
-                    }}
+                        '--bar-height': `${randomHeights[i]}px`,
+                        '--delay': `${i * 100}ms`
+                    } as React.CSSProperties}
                 />
             ))}
         </div>

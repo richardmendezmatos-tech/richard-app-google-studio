@@ -94,8 +94,8 @@ const B2BBillingDashboard = () => {
                     <div className="mt-4 flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div
-                                style={{ width: `${(1 - (stats.totalCost / (stats.mrr || 1))) * 100}%` }}
-                                className="h-full bg-emerald-500 transition-all duration-500"
+                                style={{ '--progress-width': `${(1 - (stats.totalCost / (stats.mrr || 1))) * 100}%` } as React.CSSProperties}
+                                className="h-full bg-emerald-500 transition-all duration-500 progress-bar-width"
                             />
                         </div>
                         <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Óptimo</span>
@@ -129,41 +129,41 @@ const B2BBillingDashboard = () => {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {usageLogs.map((log, i) => (
-                                    <tr
-                                        key={i}
-                                        style={{ animationDelay: `${Math.min(i * 40, 200)}ms` }}
-                                        className="hover:bg-[#00aed9]/5 transition-all group route-fade-in"
-                                    >
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-[#00aed9] border border-white/5">
-                                                    {log.dealerId?.substring(0, 2).toUpperCase() || 'PA'}
-                                                </div>
-                                                <span className="font-bold text-slate-300 text-sm tracking-tight">{log.dealerId}</span>
+                                <tr
+                                    key={i}
+                                    style={{ '--d': `${Math.min(i * 40, 200)}ms` } as React.CSSProperties}
+                                    className="hover:bg-[#00aed9]/5 transition-all group route-fade-in delay-var"
+                                >
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-[#00aed9] border border-white/5">
+                                                {log.dealerId?.substring(0, 2).toUpperCase() || 'PA'}
                                             </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="space-y-1">
-                                                <span className="px-3 py-1 bg-[#00aed9]/10 rounded-full text-[9px] font-black text-[#00aed9] uppercase tracking-widest border border-[#00aed9]/20">
-                                                    {log.eventType}
-                                                </span>
-                                                <div className="flex items-center gap-1.5 text-slate-500">
-                                                    <Clock size={10} />
-                                                    <span className="text-[9px] font-bold uppercase tracking-tight">Recién Procesado</span>
-                                                </div>
+                                            <span className="font-bold text-slate-300 text-sm tracking-tight">{log.dealerId}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="space-y-1">
+                                            <span className="px-3 py-1 bg-[#00aed9]/10 rounded-full text-[9px] font-black text-[#00aed9] uppercase tracking-widest border border-[#00aed9]/20">
+                                                {log.eventType}
+                                            </span>
+                                            <div className="flex items-center gap-1.5 text-slate-500">
+                                                <Clock size={10} />
+                                                <span className="text-[9px] font-bold uppercase tracking-tight">Recién Procesado</span>
                                             </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                                <span className="text-xs text-slate-300 font-mono">{log.count?.toFixed(0) || 0} <span className="text-slate-600">units</span></span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5 text-right font-mono text-sm text-amber-500 font-bold">
-                                            -${(log.costEstimate || 0).toFixed(5)}
-                                        </td>
-                                    </tr>
-                                ))}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                            <span className="text-xs text-slate-300 font-mono">{log.count?.toFixed(0) || 0} <span className="text-slate-600">units</span></span>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5 text-right font-mono text-sm text-amber-500 font-bold">
+                                        -${(log.costEstimate || 0).toFixed(5)}
+                                    </td>
+                                </tr>
+                            ))}
                             {usageLogs.length === 0 && (
                                 <tr>
                                     <td colSpan={4} className="px-6 py-24 text-center">

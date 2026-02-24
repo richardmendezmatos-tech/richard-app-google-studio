@@ -144,35 +144,35 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {health?.alerts && health.alerts.length > 0 ? (
-                                    health.alerts.map((alert, index) => (
-                                        <div
-                                            key={alert.id}
-                                            style={{ animationDelay: `${Math.min(index * 45, 180)}ms` }}
-                                            className={`p-4 rounded-2xl border flex gap-4 items-start route-fade-in ${alert.type === 'critical' ? 'bg-red-500/5 border-red-500/20' : 'bg-amber-500/5 border-amber-500/20'}`}
-                                        >
-                                            <div className={`p-2 rounded-lg mt-0.5 ${alert.type === 'critical' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'}`}>
-                                                <AlertTriangle size={14} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-tight">{alert.category}</span>
-                                                    <span className="text-[10px] text-slate-400 font-medium">{new Date(alert.timestamp).toLocaleTimeString()}</span>
-                                                </div>
-                                                <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
-                                                    {alert.message}
-                                                </p>
-                                            </div>
+                                health.alerts.map((alert, index) => (
+                                    <div
+                                        key={alert.id}
+                                        style={{ '--d': `${Math.min(index * 45, 180)}ms` } as React.CSSProperties}
+                                        className={`p-4 rounded-2xl border flex gap-4 items-start route-fade-in delay-var ${alert.type === 'critical' ? 'bg-red-500/5 border-red-500/20' : 'bg-amber-500/5 border-amber-500/20'}`}
+                                    >
+                                        <div className={`p-2 rounded-lg mt-0.5 ${alert.type === 'critical' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'}`}>
+                                            <AlertTriangle size={14} />
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="col-span-full py-8 text-center bg-emerald-500/5 border border-dashed border-emerald-500/20 rounded-2xl">
-                                        <div className="p-3 bg-emerald-500 text-white rounded-full w-fit mx-auto mb-3">
-                                            <CheckCircle size={24} />
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-[10px] font-black uppercase text-slate-400 tracking-tight">{alert.category}</span>
+                                                <span className="text-[10px] text-slate-400 font-medium">{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                                            </div>
+                                            <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                                                {alert.message}
+                                            </p>
                                         </div>
-                                        <p className="text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Sistemas Operando con Normalidad</p>
-                                        <p className="text-[10px] text-slate-400 font-bold mt-1">No se detectan anomalías predictivas en los componentes core.</p>
                                     </div>
-                                )}
+                                ))
+                            ) : (
+                                <div className="col-span-full py-8 text-center bg-emerald-500/5 border border-dashed border-emerald-500/20 rounded-2xl">
+                                    <div className="p-3 bg-emerald-500 text-white rounded-full w-fit mx-auto mb-3">
+                                        <CheckCircle size={24} />
+                                    </div>
+                                    <p className="text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Sistemas Operando con Normalidad</p>
+                                    <p className="text-[10px] text-slate-400 font-bold mt-1">No se detectan anomalías predictivas en los componentes core.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -194,9 +194,10 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
                                 {/* Moving Crosshair */}
                                 <div
                                     style={{
-                                        transform: `translate(${(telemetry.location.lng + 69.9312) * 1000000 % 100 - 50}px, ${(telemetry.location.lat - 18.4861) * 1000000 % 100 - 50}px)`
-                                    }}
-                                    className="relative flex items-center justify-center transition-transform duration-500"
+                                        '--translate-x': `${(telemetry.location.lng + 69.9312) * 1000000 % 100 - 50}px`,
+                                        '--translate-y': `${(telemetry.location.lat - 18.4861) * 1000000 % 100 - 50}px`
+                                    } as React.CSSProperties}
+                                    className="relative flex items-center justify-center transition-transform duration-500 [transform:translate(var(--translate-x),var(--translate-y))]"
                                 >
                                     <div className="absolute w-12 h-12 border border-blue-500/30 rounded-full animate-ping" />
                                     <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white dark:border-slate-900 shadow-lg" />
@@ -247,8 +248,8 @@ const StatCard = ({ icon, label, value, unit, color, percentage }: { icon: React
         </div>
         <div className="w-full h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full mt-4 overflow-hidden">
             <div
-                style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
-                className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(var(--tw-color-${color}-500-rgb),0.5)]`}
+                style={{ '--progress-width': `${Math.min(100, Math.max(0, percentage))}%` } as React.CSSProperties}
+                className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(var(--tw-color-${color}-500-rgb),0.5)] progress-bar-width`}
             />
         </div>
     </div>

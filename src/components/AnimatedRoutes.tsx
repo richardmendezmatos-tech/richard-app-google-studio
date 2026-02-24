@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Car } from '@/types';
 
 // --- Lazy Imports ---
@@ -165,53 +166,61 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
 
     return (
         <Suspense fallback={<FullScreenLoader />}>
-            <Routes location={location} key={location.pathname}>
-                <Route path="/" element={
-                    <PageWrapper>
-                        <Storefront
-                            inventory={inventory}
-                            initialVisualSearch={pendingVisualSearch}
-                            onClearVisualSearch={() => setPendingVisualSearch(null)}
-                            onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
-                            onOpenGarage={() => navigate('/garage')}
-                        />
-                    </PageWrapper>
-                } />
-                <Route path="/vehicle/:id" element={<PageWrapper><VehicleDetail inventory={inventory} /></PageWrapper>} />
-                <Route path="/trade-in" element={<PageWrapper><TradeInView /></PageWrapper>} />
-                <Route path="/appraisal" element={<PageWrapper><AppraisalView /></PageWrapper>} />
-                <Route path="/compare" element={<PageWrapper><ComparisonView /></PageWrapper>} />
-                <Route path="/garage" element={<AuthGuard><PageWrapper><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></PageWrapper></AuthGuard>} />
-                <Route path="/qualify" element={<PageWrapper><PreQualifyView onExit={() => navigate('/')} /></PageWrapper>} />
-                <Route path="/privacidad" element={<PageWrapper><PrivacyView /></PageWrapper>} />
-                <Route path="/terminos" element={<PageWrapper><TermsView /></PageWrapper>} />
-                <Route path="/consultant" element={<PageWrapper><AIConsultant inventory={inventory} /></PageWrapper>} />
-                <Route path="/blog" element={<PageWrapper><BlogView /></PageWrapper>} />
-                <Route path="/profile" element={<AuthGuard><PageWrapper><UserProfile /></PageWrapper></AuthGuard>} />
-                <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
-                <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
-                <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
-                <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
-                <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
-                <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
-                <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
-                <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
-                <Route path="/admin/houston" element={<AdminGuard><PageWrapper><HoustonDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/admin/voice" element={<AdminGuard><PageWrapper><VoiceAssistantView /></PageWrapper></AdminGuard>} />
-                <Route path="/e2e-framework" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/e2e-kanban" element={<AdminGuard><PageWrapper><CRMBoard onUpdate={handleUpdate} onDelete={handleDelete} /></PageWrapper></AdminGuard>} />
-                <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-            </Routes>
+            <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={
+                        <PageWrapper>
+                            <Storefront
+                                inventory={inventory}
+                                initialVisualSearch={pendingVisualSearch}
+                                onClearVisualSearch={() => setPendingVisualSearch(null)}
+                                onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
+                                onOpenGarage={() => navigate('/garage')}
+                            />
+                        </PageWrapper>
+                    } />
+                    <Route path="/vehicle/:id" element={<PageWrapper><VehicleDetail inventory={inventory} /></PageWrapper>} />
+                    <Route path="/trade-in" element={<PageWrapper><TradeInView /></PageWrapper>} />
+                    <Route path="/appraisal" element={<PageWrapper><AppraisalView /></PageWrapper>} />
+                    <Route path="/compare" element={<PageWrapper><ComparisonView /></PageWrapper>} />
+                    <Route path="/garage" element={<AuthGuard><PageWrapper><DigitalGarage inventory={inventory} onExit={() => navigate('/')} /></PageWrapper></AuthGuard>} />
+                    <Route path="/qualify" element={<PageWrapper><PreQualifyView onExit={() => navigate('/')} /></PageWrapper>} />
+                    <Route path="/privacidad" element={<PageWrapper><PrivacyView /></PageWrapper>} />
+                    <Route path="/terminos" element={<PageWrapper><TermsView /></PageWrapper>} />
+                    <Route path="/consultant" element={<PageWrapper><AIConsultant inventory={inventory} /></PageWrapper>} />
+                    <Route path="/blog" element={<PageWrapper><BlogView /></PageWrapper>} />
+                    <Route path="/profile" element={<AuthGuard><PageWrapper><UserProfile /></PageWrapper></AuthGuard>} />
+                    <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
+                    <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
+                    <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
+                    <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
+                    <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
+                    <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
+                    <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
+                    <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
+                    <Route path="/admin/houston" element={<AdminGuard><PageWrapper><HoustonDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/admin/voice" element={<AdminGuard><PageWrapper><VoiceAssistantView /></PageWrapper></AdminGuard>} />
+                    <Route path="/e2e-framework" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
+                    <Route path="/e2e-kanban" element={<AdminGuard><PageWrapper><CRMBoard onUpdate={handleUpdate} onDelete={handleDelete} /></PageWrapper></AdminGuard>} />
+                    <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+                </Routes>
+            </AnimatePresence>
         </Suspense>
     );
 };
 
 // Wrapper for repeated animation logic
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-full route-fade-in">
+    <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="min-h-full"
+    >
         {children}
-    </div>
+    </motion.div>
 );
