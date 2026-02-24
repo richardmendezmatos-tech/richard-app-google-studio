@@ -13,7 +13,11 @@ type SitemapEntry = {
   changefreq: 'daily' | 'weekly' | 'monthly' | 'yearly';
   priority: number;
   lastmod?: string;
-  images?: string[];
+  images?: Array<{
+    url: string;
+    title?: string;
+    caption?: string;
+  }>;
 };
 
 const staticUrls = [
@@ -80,6 +84,9 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
   const snapshot = await admin.firestore().collection('cars').get();
   return snapshot.docs.map((doc) => {
     const data = doc.data() as {
+      make: string;
+      model: string;
+      year: number;
       img?: string;
       images?: string[];
       updatedAt?: unknown;
@@ -90,7 +97,11 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
       [data.img, ...(data.images || [])]
         .map((image) => normalizeImageUrl(image))
         .filter((image): image is string => Boolean(image))
-    )];
+    )].map(url => ({
+      url,
+      title: `${data.year} ${data.make} ${data.model}`,
+      caption: `Comprar ${data.make} ${data.model} ${data.year} en Richard Automotive - Autos seminuevos certificados en Puerto Rico.`
+    }));
 
     return {
       loc: `${baseUrl}/vehicle/${doc.id}`,
@@ -110,12 +121,12 @@ const dedupeByLoc = (entries: SitemapEntry[]) => {
   return [...map.values()].sort((a, b) => a.loc.localeCompare(b.loc));
 };
 
-const buildXml = (urls: SitemapEntry[]) => {
+const buildXml = (urls: any[]) => {
   const entries = urls
     .map((item) => {
       const imageTags = (item.images || [])
         .slice(0, 10)
-        .map((image) => `\n    <image:image><image:loc>${escapeXml(image)}</image:loc></image:image>`)
+        .map((image: any) => `\n    <image:image>\n      <image:loc>${escapeXml(image.url || image)}</image:loc>\n      ${image.title ? `<image:title>${escapeXml(image.title)}</image:title>` : ''}\n      ${image.caption ? `<image:caption>${escapeXml(image.caption)}</image:caption>` : ''}\n    </image:image>`)
         .join('');
 
       return `  <url>\n    <loc>${escapeXml(item.loc)}</loc>\n    <lastmod>${item.lastmod || today}</lastmod>\n    <changefreq>${item.changefreq}</changefreq>\n    <priority>${item.priority.toFixed(1)}</priority>${imageTags}\n  </url>`;

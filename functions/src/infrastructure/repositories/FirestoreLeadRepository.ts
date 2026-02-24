@@ -55,9 +55,19 @@ export class FirestoreLeadRepository implements LeadRepository {
         operator: '<=' | '==' | '!=' | '>=',
         limit: number
     ): Promise<Lead[]> {
+        // --- Security Hardening: NoSQL Injection Prevention ---
+        const safeField = String(field);
+        const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 500);
+
+        // Operator Whitelist
+        const validOperators: admin.firestore.WhereFilterOp[] = ['<=', '==', '!=', '>=', '<', '>'];
+        const safeOperator = validOperators.includes(operator as admin.firestore.WhereFilterOp)
+            ? (operator as admin.firestore.WhereFilterOp)
+            : '==';
+
         const snapshot = await db.collection('leads')
-            .where(field, operator, value)
-            .limit(limit)
+            .where(safeField, safeOperator, value)
+            .limit(safeLimit)
             .get();
 
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));

@@ -27,10 +27,10 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(({
     return (
         <div
             style={style}
-            className="flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-[80px]"
+            className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-20 ${style ? 'dnd-sortable' : ''}`}
         >
             {/* Unidad */}
-            <div className="flex-1 flex items-center gap-4 min-w-[300px]">
+            <div className="flex-1 flex items-center gap-4 min-w-board-column-lg">
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:scale-105 transition-transform flex-shrink-0">
                     <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-full h-full object-cover" />
                 </div>
@@ -41,25 +41,25 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(({
             </div>
 
             {/* Tipo / Badge */}
-            <div className="w-[200px] flex flex-col justify-center">
+            <div className="w-board-column-md flex flex-col justify-center">
                 <span className="text-xs font-black uppercase text-slate-400">{car.type}</span>
                 <span className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">{car.badge || 'No Badge'}</span>
             </div>
 
             {/* Precio */}
-            <div className="w-[150px] font-black text-white text-glow flex items-center">
+            <div className="w-board-column-sm font-black text-white text-glow flex items-center">
                 ${car.price?.toLocaleString()}
             </div>
 
             {/* Advantage */}
-            <div className="w-[150px] flex items-center">
+            <div className="w-board-column-sm flex items-center">
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-[#00aed9]/10 text-[#00aed9] uppercase tracking-widest border border-[#00aed9]/20">
                     +{predictiveStats.advantageScore.toFixed(0)}%
                 </span>
             </div>
 
             {/* Sales Velocity */}
-            <div className="w-[150px] flex items-center gap-2">
+            <div className="w-board-column-sm flex items-center gap-2">
                 <Clock size={12} className="text-slate-500" />
                 <span className="text-xs font-bold text-slate-400">14 Días</span>
             </div>

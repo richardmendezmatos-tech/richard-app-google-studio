@@ -368,7 +368,22 @@ export const incomingWhatsAppMessage = onRequest({ secrets: ["TWILIO_ACCOUNT_SID
     }
 
     // Twilio sends form-urlencoded POST requests
-    const { Body, From, VehicleId } = req.body;
+    // Security Hardening: Validate schema and force string casting to prevent object-injection
+    const WhatsAppPayloadSchema = z.object({
+        Body: z.preprocess((val) => String(val || ""), z.string()),
+        From: z.preprocess((val) => String(val || ""), z.string()),
+        VehicleId: z.preprocess((val) => (val ? String(val) : undefined), z.string().optional()),
+    });
+
+    const validation = WhatsAppPayloadSchema.safeParse(req.body);
+
+    if (!validation.success) {
+        logger.warn('Rejected WhatsApp webhook: Invalid payload schema', { errors: validation.error.format() });
+        res.status(400).send('Bad Request');
+        return;
+    }
+
+    const { Body, From, VehicleId } = validation.data;
 
     logger.info(`WhatsApp Message from ${From}: ${Body}`);
 

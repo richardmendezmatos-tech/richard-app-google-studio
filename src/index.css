@@ -115,6 +115,23 @@ body {
   width: var(--p-width) !important;
 }
 
+.inventory-scroll-container {
+  height: var(--total-height) !important;
+  position: relative;
+}
+
+.inventory-visible-window {
+  transform: translateY(var(--offset-y)) !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.delay-var {
+  animation-delay: var(--d) !important;
+}
+
 .glass-premium:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow:

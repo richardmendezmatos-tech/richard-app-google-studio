@@ -44,26 +44,109 @@ export const updateLeadStatus = async (leadId: string, newStatus: Lead['status']
 };
 
 /**
- * Near-real-time poller for leads
+ * CONTINUUM MEMORY SYSTEM (CMS) - Nested Frequency Updates
+ */
+
+/**
+ * L1: Reactive Memory Update (High Frequency)
+ * Triggered by real-time interactions
+ */
+export const updateLeadL1Memory = async (leadId: string, l1Data: Partial<NonNullable<Lead['customerMemory']>['l1_reactive']>) => {
+    const leadRef = doc(db, LEADS_COLLECTION, leadId);
+    const snapshot = await getDoc(leadRef);
+    if (!snapshot.exists()) return;
+
+    const lead = snapshot.data() as Lead;
+    const currentMemory = lead.customerMemory || {};
+
+    await updateDoc(leadRef, {
+        "customerMemory.l1_reactive": {
+            ...(currentMemory.l1_reactive || {}),
+            ...l1Data,
+            activeContext: true
+        }
+    });
+};
+
+/**
+ * L2: Contextual Memory Update (Medium Frequency)
+ * Triggered by daily analysis or significant behavior shifts
+ */
+export const updateLeadL2Memory = async (leadId: string, l2Data: Partial<NonNullable<Lead['customerMemory']>['l2_contextual']>) => {
+    const leadRef = doc(db, LEADS_COLLECTION, leadId);
+    const snapshot = await getDoc(leadRef);
+    if (!snapshot.exists()) return;
+
+    const lead = snapshot.data() as Lead;
+    const currentMemory = lead.customerMemory || {};
+
+    await updateDoc(leadRef, {
+        "customerMemory.l2_contextual": {
+            ...(currentMemory.l2_contextual || {}),
+            ...l2Data
+        }
+    });
+};
+
+/**
+ * L3: Evolutivo Memory Update (Low Frequency)
+ * Triggered by milestone events or monthly reviews
+ */
+export const updateLeadL3Memory = async (leadId: string, l3Data: Partial<NonNullable<Lead['customerMemory']>['l3_evolutivo']>) => {
+    const leadRef = doc(db, LEADS_COLLECTION, leadId);
+    const snapshot = await getDoc(leadRef);
+    if (!snapshot.exists()) return;
+
+    const lead = snapshot.data() as Lead;
+    const currentMemory = lead.customerMemory || {};
+
+    await updateDoc(leadRef, {
+        "customerMemory.l3_evolutivo": {
+            ...(currentMemory.l3_evolutivo || {}),
+            ...l3Data
+        }
+    });
+};
+
+/**
+ * Near-real-time poller for leads - Aggregates from standard and secure collections
  */
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
-    const q = query(collection(db, LEADS_COLLECTION), orderBy('createdAt', 'desc'));
     let cancelled = false;
-
-    const fetchLeads = async () => {
-        const snapshot = await getDocs(q);
-        if (cancelled) return;
-        const leads = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        } as Lead));
-        callback(leads);
+    const leadsMap: Record<string, Lead[]> = {
+        applications: [],
+        solicitudes: []
     };
 
-    fetchLeads().catch((error) => console.error('Leads polling error:', error));
-    const intervalId = setInterval(() => {
-        fetchLeads().catch((error) => console.error('Leads polling error:', error));
-    }, 10000);
+    const fetchAll = async () => {
+        try {
+            const qApps = query(collection(db, 'applications'), orderBy('createdAt', 'desc'));
+            const qSols = query(collection(db, 'solicitudes_credito'), orderBy('createdAt', 'desc'));
+
+            const [snapApps, snapSols] = await Promise.all([
+                getDocs(qApps),
+                getDocs(qSols)
+            ]);
+
+            if (cancelled) return;
+
+            const apps = snapApps.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+            const sols = snapSols.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+
+            const combined = [...apps, ...sols].sort((a, b) => {
+                const dateA = a.createdAt?.seconds || 0;
+                const dateB = b.createdAt?.seconds || 0;
+                return dateB - dateA;
+            });
+
+            callback(combined);
+        } catch (error) {
+            console.error('Error fetching combined leads:', error);
+        }
+    };
+
+    fetchAll();
+    const intervalId = setInterval(fetchAll, 10000);
 
     return () => {
         cancelled = true;

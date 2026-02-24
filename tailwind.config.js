@@ -18,8 +18,14 @@ export default {
                     foreground: "#ffffff"
                 }
             },
-            fontFamily: {
-                sans: ['Montserrat', 'sans-serif']
+            spacing: {
+                'board-header': '50px',
+                'board-column-lg': '300px',
+                'board-column-md': '200px',
+                'board-column-sm': '150px',
+            },
+            height: {
+                'board-header': '50px',
             }
         }
     },

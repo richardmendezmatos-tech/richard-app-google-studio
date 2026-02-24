@@ -81,6 +81,13 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Solicitudes de Crédito (Phase 16: Zero-Knowledge SSN)
+    match /solicitudes_credito/{docId} {
+      allow create: if true; 
+      allow read: if isAdmin();
+      allow update, delete: if false; 
+    }
+
     // Login Security
     match /login_attempts/{attemptId} {
       allow read: if isAdmin();

@@ -39,6 +39,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { createPortal } from 'react-dom';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '@/features/leads/services/crmService';
+import { decryptSSN } from '@/services/ssnEncryptionService';
 import { useNotification } from '@/contexts/NotificationContext';
 import { maskEmail, maskPhone, maskName, UserRole } from '@/utils/privacyUtils';
 import { useMouseGlow } from '@/hooks/useMouseGlow';
@@ -72,6 +73,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
     const [isSending, setIsSending] = useState(false);
     const navigate = useNavigate();
     const { health } = useVehicleHealth(lead.carId || '');
+    const { addNotification } = useNotification();
     const scoring = useLeadScoring(lead, health);
 
     const handleWhatsAppSend = async (e: React.MouseEvent) => {
@@ -107,12 +109,29 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
     const handleReveal = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (revealedSSN) { setRevealedSSN(null); return; }
+
+        // 1. Caso: Encriptación Zero-Knowledge (Local)
+        if (lead.ssn_encrypted) {
+            const masterKey = window.prompt("Ingresa la Master Key para desencriptar este SSN:");
+            if (!masterKey) return;
+
+            const decrypted = decryptSSN(lead.ssn_encrypted, masterKey);
+            if (decrypted === 'DECRYPTION_ERROR') {
+                addNotification('error', 'Llave incorrecta. No se pudo desencriptar.');
+            } else {
+                setRevealedSSN(decrypted);
+            }
+            return;
+        }
+
+        // 2. Caso: Legacy (Bóveda Segura)
         setIsRevealing(true);
         try {
             const data = await getSecureLeadData(lead.id);
             if (data?.ssn) setRevealedSSN(data.ssn);
         } catch (error) {
             console.error(error);
+            addNotification('error', 'Acceso denegado a la bóveda.');
         } finally {
             setIsRevealing(false);
         }
@@ -147,11 +166,11 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
             {/* AI Scoring Section - Premium Predictive Gauge */}
             {(lead.aiAnalysis || scoring.score > 0) && (
-                <div className="mb-4 p-4 bg-gradient-to-br from-[#00aed9]/5 to-purple-500/5 rounded-[22px] border border-[#00aed9]/10 shadow-inner relative overflow-hidden group/gauge">
+                <div className="mb-4 p-4 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
                     <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-2">
-                            <div className="p-1 px-1.5 bg-[#00aed9]/10 rounded-md">
-                                <Wand2 size={10} className="text-[#00aed9] animate-pulse" />
+                            <div className="p-1 px-1.5 bg-primary/10 rounded-md">
+                                <Wand2 size={10} className="text-primary animate-pulse" />
                             </div>
                             <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400">Probabilidad Predictiva</span>
                         </div>
@@ -197,7 +216,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
                         </button>
                     )}
                     {lead.email && (
-                        <a href={`mailto:${lead.email}`} className="p-2.5 bg-[#00aed9]/10 text-[#00aed9] rounded-xl hover:bg-[#00aed9]/20 transition-colors">
+                        <a href={`mailto:${lead.email}`} className="p-2.5 bg-[#00aed9]/10 text-[#00aed9] rounded-xl hover:bg-[#00aed9]/20 transition-colors" title={`Enviar email a ${lead.email}`}>
                             <Mail size={14} />
                         </a>
                     )}
@@ -213,10 +232,13 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
-                    {lead.ssn && (
-                        <button onPointerDown={e => e.stopPropagation()} onClick={handleReveal} className="p-2 text-slate-400 hover:text-amber-500 transition-colors">
-                            {isRevealing ? <Loader2 size={12} className="animate-spin" /> : revealedSSN ? <EyeOff size={12} /> : <Eye size={12} />}
-                        </button>
+                    {(lead.ssn_encrypted || lead.ssn) && (
+                        <div className="flex items-center gap-2">
+                            {revealedSSN && <span className="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">{revealedSSN}</span>}
+                            <button onPointerDown={e => e.stopPropagation()} onClick={handleReveal} className="p-2 text-slate-400 hover:text-amber-500 transition-colors" title="Ver SSN Segura">
+                                {isRevealing ? <Loader2 size={12} className="animate-spin" /> : revealedSSN ? <EyeOff size={12} /> : <Eye size={12} />}
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

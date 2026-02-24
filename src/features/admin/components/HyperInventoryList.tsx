@@ -76,12 +76,12 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
             onScroll={handleScroll}
         >
             {/* HEADER (Sticky) */}
-            <div className="sticky top-0 z-20 flex items-center bg-slate-900/95 backdrop-blur-md border-b border-white/5 px-6 h-[50px]">
-                <div className="flex-1 text-[10px] font-black uppercase tracking-widest text-[#00aed9] min-w-[300px]">Unidad</div>
-                <div className="w-[200px] text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo / Badge</div>
-                <div className="w-[150px] text-[10px] font-black uppercase tracking-widest text-slate-400">Precio</div>
-                <div className="w-[150px] text-[10px] font-black uppercase tracking-widest text-slate-400">Advantage</div>
-                <div className="w-[150px] text-[10px] font-black uppercase tracking-widest text-slate-400">Sales Velocity</div>
+            <div className="sticky top-0 z-20 flex items-center bg-slate-900/95 backdrop-blur-md border-b border-white/5 px-6 h-board-header">
+                <div className="flex-1 text-[10px] font-black uppercase tracking-widest text-[#00aed9] min-w-board-column-lg">Unidad</div>
+                <div className="w-board-column-md text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo / Badge</div>
+                <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">Precio</div>
+                <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">Advantage</div>
+                <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">Sales Velocity</div>
                 <div className="flex-1 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Acciones</div>
             </div>
 
