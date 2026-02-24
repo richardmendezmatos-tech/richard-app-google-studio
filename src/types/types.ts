@@ -139,6 +139,11 @@ export interface Lead {
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
 
+  // Phase 21: Marketing Intelligence
+  acquisitionCost?: number; // In USD
+  source?: 'facebook' | 'google' | 'direct' | 'referral' | 'instagram' | string;
+  sourceCampaign?: string;
+
   // Nivel 14: Predictive Scaling
   predictiveScore?: number;
   behavioralMetrics?: {

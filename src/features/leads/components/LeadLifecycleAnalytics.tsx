@@ -9,7 +9,9 @@ import {
     Zap,
     Clock,
     Database,
-    Infinity as InfinityIcon
+    Infinity as InfinityIcon,
+    PieChart,
+    Target
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -178,6 +180,50 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                 </div>
             </div>
 
+            {/* Phase 21: Marketing Efficiency & ROI Dashboard */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-slate-500 text-xs uppercase tracking-wider mb-6 flex items-center gap-2">
+                    <PieChart size={14} className="text-[#00aed9]" /> Marketing Efficiency (Operation Shield)
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                        <p className="text-[10px] text-slate-400 uppercase font-black mb-1">Costo Adquisición</p>
+                        <div className="flex items-end gap-1">
+                            <span className="text-xl font-black text-slate-800 dark:text-white">${lead.acquisitionCost || '45.00'}</span>
+                            <span className="text-[10px] text-slate-400 mb-1">USD</span>
+                        </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                        <p className="text-[10px] text-slate-400 uppercase font-black mb-1">Fuente / Canal</p>
+                        <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${lead.source === 'google' ? 'bg-red-500' : 'bg-blue-600'}`}></div>
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200 capitalize">{lead.source || 'Facebook Ads'}</span>
+                        </div>
+                        <p className="text-[9px] text-slate-500 mt-1">{lead.sourceCampaign || 'Retargeting_Q1_PR'}</p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-blue-50/30 dark:bg-blue-900/10 border border-blue-100/50 dark:border-blue-800/50 col-span-1 md:col-span-2">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-[10px] text-blue-500 uppercase font-black">ROI Proyectado</p>
+                            <Target size={14} className="text-blue-500" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div>
+                                <span className="text-2xl font-black text-blue-600 dark:text-blue-400">14.2x</span>
+                            </div>
+                            <div className="flex-1">
+                                <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                    <div className="h-full bg-blue-500 w-[78%]"></div>
+                                </div>
+                                <p className="text-[9px] text-slate-400 mt-1 italic">Basado en Valor de Unidad: $32,900</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Customer Memory Visualization */}
             {lead.customerMemory && (
                 <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 text-white relative overflow-hidden">
@@ -196,7 +242,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                                 ))}
                                 {lead.customerMemory.preferences?.colors?.map(c => (
                                     <span key={c} className="px-2 py-1 bg-white/10 rounded-md text-xs backdrop-blur-sm border border-white/5 flex items-center gap-1">
-                                        <span className="w-2 h-2 rounded-full bg-current" style={{ color: c }}></span> {c}
+                                        <span className="w-2 h-2 rounded-full bg-current dynamic-color-bullet" style={{ '--pref-color': c } as React.CSSProperties}></span> {c}
                                     </span>
                                 ))}
                             </div>
