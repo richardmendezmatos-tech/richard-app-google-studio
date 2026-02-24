@@ -1,232 +1,104 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, TouchSensor, useDraggable, useDroppable } from '@dnd-kit/core';
+import confetti from 'canvas-confetti';
+import {
+    Phone,
+    Mail,
+    Wand2,
+    GripVertical,
+    ShieldCheck,
+    MessageCircle,
+    Clock,
+    Car,
+    ShieldAlert,
+    Eye,
+    EyeOff,
+    Loader2,
+    FileText,
+    AlertTriangle,
+    TrendingUp
+} from 'lucide-react';
+import {
+    DndContext,
+    DragOverlay,
+    closestCorners,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragStartEvent,
+    DragEndEvent,
+    TouchSensor
+} from '@dnd-kit/core';
+import {
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { createPortal } from 'react-dom';
 import { Lead, subscribeToLeads, updateLeadStatus, getSecureLeadData } from '@/features/leads/services/crmService';
-import { Phone, MessageCircle, Clock, Car, ShieldAlert, Eye, EyeOff, Loader2, FileText, AlertTriangle, TrendingUp } from 'lucide-react';
-import { generateActuarialReport } from '@/utils/pdfGenerator';
-import { generateMockActuarialData } from '@/utils/actuarialUtils';
+import { useNotification } from '@/contexts/NotificationContext';
+import { maskEmail, maskPhone, maskName, UserRole } from '@/utils/privacyUtils';
+import { useMouseGlow } from '@/hooks/useMouseGlow';
 import { useLeadScoring } from '@/features/leads/hooks/useLeadScoring';
 import { useVehicleHealth } from '@/services/telemetryService';
 import { whatsappService } from '@/services/whatsappService';
 import { orchestrationService } from '@/services/orchestrationService';
 import { getAntigravityOutreachAction } from '@/services/antigravityOmnichannelService';
 import { sendTransactionalEmail } from '@/services/emailService';
+import { generateActuarialReport } from '@/utils/pdfGenerator';
+import { generateMockActuarialData } from '@/utils/actuarialUtils';
 
 const COLUMNS = [
-    { id: 'new', title: 'Nuevos', color: 'bg-blue-500' },
-    { id: 'contacted', title: 'Contactados', color: 'bg-yellow-500' },
-    { id: 'negotiation', title: 'Negociación', color: 'bg-purple-500' },
-    { id: 'sold', title: 'Vendidos', color: 'bg-green-500' },
-    { id: 'lost', title: 'Perdidos', color: 'bg-red-500' }
+    { id: 'new', title: 'Nuevos', color: 'bg-[#00aed9]', glow: 'shadow-[#00aed9]/20' },
+    { id: 'contacted', title: 'Contactados', color: 'bg-amber-500', glow: 'shadow-amber-500/20' },
+    { id: 'negotiation', title: 'Negociando', color: 'bg-purple-500', glow: 'shadow-purple-500/20' },
+    { id: 'sold', title: 'Vendidos', color: 'bg-emerald-500', glow: 'shadow-emerald-500/20' },
+    { id: 'lost', title: 'Perdidos', color: 'bg-red-500', glow: 'shadow-red-500/20' }
 ];
 
-const CRMBoard: React.FC = () => {
-    const [leads, setLeads] = useState<Lead[]>([]);
-    const [activeId, setActiveId] = useState<string | null>(null);
+interface LeadCardProps {
+    lead: Lead;
+    onPrint: () => void;
+    userRole: UserRole;
+    isOverlay?: boolean;
+}
 
-    useEffect(() => {
-        const unsubscribe = subscribeToLeads((data) => {
-            setLeads(data);
-        });
-        return () => unsubscribe();
-    }, []);
-
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-        useSensor(TouchSensor)
-    );
-
-
-    const handleDragEnd = async (event: DragEndEvent) => {
-        const { active, over } = event;
-
-        if (over && active.id !== over.id) {
-            // Find the lead
-            const leadId = active.id as string;
-            // The "over" id should be the column id (or a card in that column, simplified to column here)
-            // We need to implement Droppable columns properly.
-            // For this basic version, we assume dropping ON a column container.
-
-            const newStatus = over.id as Lead['status'];
-
-            if (COLUMNS.some(c => c.id === newStatus)) {
-                // Optimistic update
-                setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
-                await updateLeadStatus(leadId, newStatus);
-            }
-        }
-        setActiveId(null);
-    };
-
-    return (
-        <div className="h-full overflow-x-auto p-4 md:p-6 bg-slate-50 dark:bg-slate-900 scrollbar-hide">
-            <h2 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white mb-4 md:mb-6 flex items-center gap-2">
-                <MessageCircle className="text-[#00aed9]" /> Leads & CRM
-            </h2>
-
-            <DndContext
-                sensors={sensors}
-                onDragStart={(event) => setActiveId(event.active.id as string)}
-                onDragEnd={handleDragEnd}
-            >
-                <div className="flex gap-4 md:gap-6 min-w-max md:min-w-0 h-[calc(100vh-180px)] snap-x snap-mandatory">
-                    {COLUMNS.map(column => (
-                        <Column
-                            key={column.id}
-                            column={column}
-                            leads={leads.filter(l => l.status === column.id)}
-                        />
-                    ))}
-                </div>
-                {/* The following lines are syntactically incorrect JSX and cannot be placed directly here.
-                    If this was intended to be part of a switch statement or a function, it needs to be
-                    placed within a JavaScript block, not directly in JSX.
-                    For the purpose of fulfilling the request as literally as possible while maintaining
-                    syntactic correctness, these lines are commented out.
-                    case 'tool.call':
-                    addToolInvocation(anyEvent.data as any as ToolCallData);
-                    break;
-                */}
-                <DragOverlay>
-                    {activeId ? (
-                        <LeadCard lead={leads.find(l => l.id === activeId)!} isOverlay />
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
-        </div>
-    );
-};
-
-// --- Subcomponents ---
-
-const Column = ({ column, leads }: { column: typeof COLUMNS[0], leads: Lead[] }) => {
-    const { setNodeRef } = useDroppable({ id: column.id }); // Helper hook we might need to define or import
-
-    return (
-        <div ref={setNodeRef} className="w-[85vw] md:w-80 flex flex-col bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 snap-center">
-            <div className={`flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 ${column.color.replace('bg-', 'text-')}`}>
-                <h3 className="font-bold uppercase tracking-wider text-xs md:text-sm">{column.title}</h3>
-                <span className="bg-white dark:bg-slate-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
-                    {leads.length}
-                </span>
-            </div>
-            <div className="flex-1 overflow-y-auto space-y-3 scrollbar-hide">
-                {leads.map(lead => (
-                    <DraggableLead key={lead.id} lead={lead} />
-                ))}
-            </div>
-        </div>
-    );
-};
-
-const DraggableLead = ({ lead }: { lead: Lead }) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-        id: lead.id,
-    });
-    const elementRef = useRef<HTMLDivElement | null>(null);
-
-    // Merge refs
-    const setRef = (node: HTMLDivElement | null) => {
-        setNodeRef(node);
-        elementRef.current = node;
-    };
-
-    useLayoutEffect(() => {
-        const el = elementRef.current;
-        if (el) {
-            const transformVal = transform ? CSS.Translate.toString(transform) : 'none';
-            (el as HTMLElement).style.setProperty('--dnd-transform', transformVal || '');
-            (el as HTMLElement).style.transform = 'var(--dnd-transform)';
-        }
-    }, [transform]);
-
-    if (isDragging) {
-        return (
-            <div
-                ref={setRef}
-                className="lead-dragging"
-            >
-                <LeadCard lead={lead} />
-            </div>
-        );
-    }
-
-    return (
-        <div
-            ref={setRef}
-            {...listeners}
-            {...attributes}
-            className="lead-static"
-        >
-            <LeadCard lead={lead} />
-        </div>
-    );
-};
-
-const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
+const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay }) => {
     const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
     const [isRevealing, setIsRevealing] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const navigate = useNavigate();
-
-    // CRM Insights: Health + Scoring Integration
     const { health } = useVehicleHealth(lead.carId || '');
     const scoring = useLeadScoring(lead, health);
 
     const handleWhatsAppSend = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!lead.phone && !lead.email) {
-            alert("Este lead no tiene teléfono ni email registrado.");
-            return;
-        }
-
+        if (!lead.phone && !lead.email) return;
         setIsSending(true);
         try {
-            // 1. Get Orchestrated Message
             const orchestration = await orchestrationService.orchestrateLeadFollowUp(lead, health);
-
-            const mappedPriority = (orchestration.priority === 'low' || orchestration.priority === 'medium')
-                ? 'normal'
-                : orchestration.priority as 'high' | 'urgent';
-
+            const mappedPriority = (orchestration.priority === 'low' || orchestration.priority === 'medium') ? 'normal' : orchestration.priority as 'high' | 'urgent';
             const antigravityAction = await getAntigravityOutreachAction(lead, {
                 trigger: 'manual_crm',
                 fallbackMessage: orchestration.message,
                 fallbackChannel: lead.phone ? 'whatsapp' : 'email',
                 priority: mappedPriority
             });
-
             const channel = antigravityAction?.channel || (lead.phone ? 'whatsapp' : 'email');
             const finalMessage = antigravityAction?.message || orchestration.message;
             const finalSubject = antigravityAction?.subject || `Seguimiento de ${lead.name || 'lead'}`;
 
-            // 2. Dispatch through selected channel
             if (channel === 'email' && lead.email) {
-                const emailSent = await sendTransactionalEmail({
-                    to: lead.email,
-                    subject: finalSubject,
-                    html: `<p>${finalMessage}</p>`
-                });
-
-                if (emailSent) {
-                    console.log("[CRM] Email sent successfully");
-                    return;
-                }
-            }
-
-            if (!lead.phone) {
-                console.warn("[CRM] WhatsApp fallback skipped: missing phone");
-                return;
-            }
-
-            const success = await whatsappService.sendMessage(lead.phone, finalMessage);
-            if (!success) {
-                const link = whatsappService.getFallbackLink(lead.phone, finalMessage);
-                window.open(link, '_blank');
+                await sendTransactionalEmail({ to: lead.email, subject: finalSubject, html: `<p>${finalMessage}</p>` });
+            } else if (lead.phone) {
+                const success = await whatsappService.sendMessage(lead.phone, finalMessage);
+                if (!success) window.open(whatsappService.getFallbackLink(lead.phone, finalMessage), '_blank');
             }
         } catch (error) {
-            console.error("[CRM] Failed to send orchestrated message:", error);
+            console.error("[CRM] Outreach Error:", error);
         } finally {
             setIsSending(false);
         }
@@ -234,149 +106,204 @@ const LeadCard = ({ lead, isOverlay }: { lead: Lead, isOverlay?: boolean }) => {
 
     const handleReveal = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (revealedSSN) {
-            setRevealedSSN(null);
-            return;
-        }
-
+        if (revealedSSN) { setRevealedSSN(null); return; }
         setIsRevealing(true);
         try {
             const data = await getSecureLeadData(lead.id);
-            if (data && data.ssn) {
-                setRevealedSSN(data.ssn);
-            }
-        } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "Error desconocido";
-            alert(message);
+            if (data?.ssn) setRevealedSSN(data.ssn);
+        } catch (error) {
+            console.error(error);
         } finally {
             setIsRevealing(false);
         }
     };
 
     return (
-        <div
-            className={`bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${isOverlay ? 'shadow-2xl rotate-2 scale-105' : ''
-                }`}
-        >
-            <div className="flex justify-between items-start mb-2">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase ${lead.type === 'whatsapp' ? 'bg-green-100 text-green-700' :
-                    lead.type === 'visual_ai' ? 'bg-purple-100 text-purple-700' :
-                        'bg-blue-100 text-blue-700'
-                    }`}>
-                    {lead.type}
+        <div className={`glass-premium p-5 rounded-[24px] group transition-all duration-300 relative ${isOverlay ? 'shadow-2xl scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-[#00aed9]' : 'shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-[#00aed9] hover:-translate-y-1 hover-kinetic'}`}>
+            {!isOverlay && (
+                <div className="absolute top-5 right-5 text-slate-300 dark:text-slate-600">
+                    <GripVertical size={16} />
+                </div>
+            )}
+
+            <div className="flex justify-between mb-3 pr-6">
+                <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${lead.type === 'trade-in' ? 'bg-purple-100 text-purple-600' : lead.type === 'finance' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-[#00aed9]'}`}>
+                    {lead.type || 'Standard'}
                 </span>
                 <span className="text-[10px] text-slate-400 flex items-center gap-1">
                     <Clock size={10} />
-                    {lead.createdAt
-                        ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString()
-                        : 'Reciente'}
+                    {lead.createdAt?.seconds ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString() : 'Reciente'}
                 </span>
             </div>
 
-            <h4 className="font-bold text-slate-700 dark:text-slate-200 leading-tight mb-1">{lead.name}</h4>
+            <div className="font-black text-slate-800 dark:text-white text-md mb-1 tracking-tight pr-4 flex items-center gap-2">
+                {maskName(lead.name || `${lead.firstName} ${lead.lastName}`, userRole)}
+                {userRole !== 'admin' && <span title="Protección PII Activa"><ShieldCheck size={12} className="text-emerald-500 opacity-50" /></span>}
+            </div>
 
+            <div className="text-xs font-medium text-slate-400 truncate mb-4">
+                {lead.vehicleOfInterest || lead.message || 'Sin detalles'}
+            </div>
+
+            {/* AI Scoring Section - Premium Predictive Gauge */}
             {(lead.aiAnalysis || scoring.score > 0) && (
-                <div className="mb-3 flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                            <TrendingUp size={12} className={scoring.score > 70 ? "text-[#00aed9]" : "text-slate-400"} />
-                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Dynamic Score</span>
-                        </div>
-                        <span className={`text-xs font-black ${scoring.priority === 'urgent' ? 'text-red-500' :
-                            scoring.priority === 'high' ? 'text-amber-500' :
-                                'text-slate-400'
-                            }`}>
-                            {scoring.score}/100
-                        </span>
-                    </div>
-
-                    <div className="flex gap-1 flex-wrap">
-                        <div className={`flex-1 px-2 py-1 rounded-md text-[10px] font-bold text-center uppercase border ${scoring.priority === 'urgent' ? 'bg-red-500/10 border-red-500/50 text-red-500 animate-pulse' :
-                            scoring.priority === 'high' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' :
-                                'bg-slate-500/10 border-slate-500/50 text-slate-500'
-                            }`}>
-                            {scoring.priority}
-                        </div>
-                        {health?.overallStatus === 'critical' && (
-                            <div className="px-2 py-1 rounded-md text-[10px] font-bold bg-red-600 text-white flex items-center gap-1 uppercase">
-                                <AlertTriangle size={10} /> MECÁNICA
+                <div className="mb-4 p-4 bg-gradient-to-br from-[#00aed9]/5 to-purple-500/5 rounded-[22px] border border-[#00aed9]/10 shadow-inner relative overflow-hidden group/gauge">
+                    <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center gap-2">
+                            <div className="p-1 px-1.5 bg-[#00aed9]/10 rounded-md">
+                                <Wand2 size={10} className="text-[#00aed9] animate-pulse" />
                             </div>
-                        )}
+                            <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400">Probabilidad Predictiva</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <span className={`text-[11px] font-black tracking-tighter ${scoring.score > 80 ? 'text-emerald-500' : scoring.score > 50 ? 'text-amber-500' : 'text-rose-500'}`}>
+                                {scoring.score}%
+                            </span>
+                            <span className="text-[7px] font-bold uppercase text-slate-400 tracking-widest leading-none">Confianza IA</span>
+                        </div>
                     </div>
+
+                    {typeof lead.aiAnalysis === 'string' && (
+                        <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mb-3 italic">
+                            "{lead.aiAnalysis}"
+                        </p>
+                    )}
+
+                    {/* Premium Progress Track */}
+                    <div className="relative h-1.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden">
+                        <div
+                            className={`h-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) predictive-bar-width ${scoring.score > 80 ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]' :
+                                scoring.score > 50 ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]' :
+                                    'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                                }`}
+                            style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
+                        />
+                    </div>
+
+                    {/* Pulsing Dot Tracer */}
+                    <div
+                        className="absolute top-[calc(100%-1.5rem)] h-1 w-1 bg-white rounded-full shadow-[0_0_8px_white] animate-ping opacity-70 heatmap-dot"
+                        style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
+                    />
                 </div>
             )}
 
-            {lead.carId && (
-                <div className="flex items-center gap-1 text-xs text-slate-500 mb-2 bg-slate-50 dark:bg-slate-700/50 p-1.5 rounded-lg">
-                    <Car size={12} />
-                    <span className="truncate">Unidad #{lead.carId}</span>
-                </div>
-            )}
-
-            {lead.ssn && (
-                <div className="mt-2 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <ShieldAlert size={12} className="text-amber-500" />
-                        <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">
-                            {revealedSSN || lead.ssn}
-                        </span>
-                    </div>
-                    <button
-                        onPointerDown={e => e.stopPropagation()}
-                        onClick={handleReveal}
-                        disabled={isRevealing}
-                        className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
-                        title="Revelar SSN"
-                    >
-                        {isRevealing ? <Loader2 size={12} className="animate-spin" /> : revealedSSN ? <EyeOff size={12} /> : <Eye size={12} />}
+            {/* Business Actions */}
+            <div className="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-white/5">
+                <div className="flex gap-2" onPointerDown={e => e.stopPropagation()}>
+                    {lead.phone && (
+                        <button onClick={handleWhatsAppSend} disabled={isSending} className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 transition-colors">
+                            {isSending ? <Loader2 size={14} className="animate-spin" /> : <MessageCircle size={14} />}
+                        </button>
+                    )}
+                    {lead.email && (
+                        <a href={`mailto:${lead.email}`} className="p-2.5 bg-[#00aed9]/10 text-[#00aed9] rounded-xl hover:bg-[#00aed9]/20 transition-colors">
+                            <Mail size={14} />
+                        </a>
+                    )}
+                    <button onClick={(e) => { e.stopPropagation(); navigate(`/admin/analytics/${lead.id}`); }} className="p-2.5 bg-purple-500/10 text-purple-500 rounded-xl hover:bg-purple-500/20" title="Analytics">
+                        <TrendingUp size={14} />
+                    </button>
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        const data = generateMockActuarialData(lead as any);
+                        generateActuarialReport(data);
+                    }} className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20" title="Reporte">
+                        <FileText size={14} />
                     </button>
                 </div>
-            )}
-
-            <div className="flex gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                {lead.phone && (
-                    <a href={`tel:${lead.phone}`} aria-label={`Llamar a ${lead.phone}`} onPointerDown={e => e.stopPropagation()} className="p-3 md:p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 flex-1 flex justify-center">
-                        <Phone size={18} className="md:size-4" />
-                    </a>
-                )}
-                <button
-                    onClick={handleWhatsAppSend}
-                    disabled={isSending}
-                    onPointerDown={e => e.stopPropagation()}
-                    className="p-3 md:p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 flex-[2] flex justify-center items-center gap-2 text-xs font-bold disabled:opacity-50"
-                >
-                    {isSending ? <Loader2 size={18} className="animate-spin" /> : <MessageCircle size={18} className="md:size-4" />}
-                    <span className="hidden md:inline">{isSending ? 'Enviando...' : 'WhatsApp'}</span>
-                </button>
-                <button
-                    onPointerDown={e => e.stopPropagation()}
-                    onClick={() => {
-                        // Ensure timestamp exists for actuarial generator
-                        const compatLead: Lead = {
-                            ...lead,
-                            timestamp: lead.timestamp || lead.createdAt || { seconds: Date.now() / 1000, nanoseconds: 0 }
-                        };
-                        const data = generateMockActuarialData(compatLead);
-                        generateActuarialReport(data);
-                    }}
-                    className="p-3 md:p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 flex-1 flex justify-center"
-                    title="Generar Reporte Actuarial"
-                >
-                    <FileText size={18} className="md:size-4" />
-                </button>
-                <button
-                    onPointerDown={e => e.stopPropagation()}
-                    onClick={() => navigate(`/admin/analytics/${lead.id}`)}
-                    className="p-3 md:p-2 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-100 flex-1 flex justify-center"
-                    title="Ver Análisis de Ciclo de Vida"
-                >
-                    <TrendingUp size={18} className="md:size-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                    {lead.ssn && (
+                        <button onPointerDown={e => e.stopPropagation()} onClick={handleReveal} className="p-2 text-slate-400 hover:text-amber-500 transition-colors">
+                            {isRevealing ? <Loader2 size={12} className="animate-spin" /> : revealedSSN ? <EyeOff size={12} /> : <Eye size={12} />}
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
 
+const SortableLeadItem = ({ lead, userRole }: { lead: Lead, userRole: UserRole }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: lead.id, data: { lead } });
+    const style = { transform: CSS.Translate.toString(transform), transition };
+    return (
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'}`}>
+            <LeadCard lead={lead} onPrint={() => { }} userRole={userRole} />
+        </div>
+    );
+};
 
+const CRMBoard: React.FC = () => {
+    const [leads, setLeads] = useState<Lead[]>([]);
+    const [activeId, setActiveId] = useState<string | null>(null);
+    const { addNotification } = useNotification();
+    const { containerRef } = useMouseGlow();
+    const userRole: UserRole = 'admin'; // Hardcoded for now, should come from context
+
+    useEffect(() => {
+        const unsubscribe = subscribeToLeads(setLeads);
+        return () => unsubscribe();
+    }, []);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(TouchSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    );
+
+    const handleDragEnd = async (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over) { setActiveId(null); return; }
+
+        const activeLeadId = active.id as string;
+        const overId = over.id as string;
+        const newStatus = COLUMNS.some(col => col.id === overId) ? overId : leads.find(l => l.id === overId)?.status;
+
+        if (newStatus && activeLeadId && leads.find(l => l.id === activeLeadId)?.status !== newStatus) {
+            await updateLeadStatus(activeLeadId, newStatus as any);
+            if (newStatus === 'sold') {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                addNotification('success', '¡Vehículo vendido!');
+            }
+        }
+        setActiveId(null);
+    };
+
+    return (
+        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={e => setActiveId(e.active.id as string)} onDragEnd={handleDragEnd}>
+            <div ref={containerRef as any} className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar">
+                {COLUMNS.map(col => {
+                    const colLeads = leads.filter(l => (l.status || 'new') === col.id);
+                    return (
+                        <div key={col.id} className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50">
+                            <div className="flex items-center gap-3 mb-6 px-2">
+                                <div className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-lg`} />
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{col.title}</span>
+                                <span className="ml-auto bg-white/80 dark:bg-slate-800 px-3 py-1 rounded-full text-[10px] font-black">{colLeads.length}</span>
+                            </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-[100px]">
+                                <SortableContext items={colLeads.map(l => l.id)} strategy={verticalListSortingStrategy}>
+                                    {colLeads.map(lead => <SortableLeadItem key={lead.id} lead={lead} userRole={userRole} />)}
+                                </SortableContext>
+                                {colLeads.length === 0 && (
+                                    <div className="h-24 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Vacío</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            {createPortal(
+                <DragOverlay>
+                    {activeId ? <LeadCard lead={leads.find(l => l.id === activeId)!} onPrint={() => { }} userRole={userRole} isOverlay /> : null}
+                </DragOverlay>,
+                document.body
+            )}
+        </DndContext>
+    );
+};
 
 export default CRMBoard;
