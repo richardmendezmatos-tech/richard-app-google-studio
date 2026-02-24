@@ -51,13 +51,13 @@ const PrivacyView = React.lazy(() => lazyRetry(() => import('@/features/privacy/
 const TermsView = React.lazy(() => lazyRetry(() => import('@/components/layout/TermsView')));
 const NotFound = React.lazy(() => lazyRetry(() => import('@/components/layout/NotFound')));
 const FrameworkDashboard = React.lazy(() => lazyRetry(() => import('@/components/layout/FrameworkDashboard')));
-const KanbanDemo = React.lazy(() => lazyRetry(() => import('@/components/layout/KanbanDemo')));
 const BetaOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/BetaOnboard')));
 const EarlyAdopterOnboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/EarlyAdopterOnboard')));
 const B2BBillingDashboard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/B2BBillingDashboard')));
 const LeadAnalyticsPage = React.lazy(() => lazyRetry(() => import('@/features/leads/components/LeadAnalyticsPage')));
 const HoustonDashboard = React.lazy(() => lazyRetry(() => import('@/features/houston/components/HoustonDashboard')));
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/components/layout/ChaosTest')));
+const VoiceAssistantView = React.lazy(() => lazyRetry(() => import('@/components/layout/VoiceAssistantView')));
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
 import { initialInventoryData } from '@/constants/initialInventory';
 import { RootState } from '@/store';
@@ -186,12 +186,12 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                 <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
                 <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
                 <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
-                <Route path="/kanban-demo" element={<PageWrapper><KanbanDemo /></PageWrapper>} />
                 <Route path="/debug-onboard" element={<PageWrapper><BetaOnboard /></PageWrapper>} />
                 <Route path="/coo-provision" element={<PageWrapper><EarlyAdopterOnboard /></PageWrapper>} />
                 <Route path="/admin/billing" element={<AdminGuard><PageWrapper><B2BBillingDashboard /></PageWrapper></AdminGuard>} />
                 <Route path="/admin/analytics/:leadId" element={<AdminGuard><PageWrapper><LeadAnalyticsPage /></PageWrapper></AdminGuard>} />
                 <Route path="/admin/houston" element={<AdminGuard><PageWrapper><HoustonDashboard /></PageWrapper></AdminGuard>} />
+                <Route path="/admin/voice" element={<AdminGuard><PageWrapper><VoiceAssistantView /></PageWrapper></AdminGuard>} />
                 <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
             </Routes>
         </Suspense>

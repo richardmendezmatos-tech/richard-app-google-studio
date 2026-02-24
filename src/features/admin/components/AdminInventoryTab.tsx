@@ -4,6 +4,7 @@ import { Plus, Package, Search, LayoutGrid, List, Sparkles, Edit3, Trash2, Dolla
 import { optimizeImage } from '@/services/firebaseShared';
 import { calculatePredictiveDTS } from '@/services/predictionService';
 import { AdminCarCard } from './AdminCarCard';
+import HyperInventoryList from './HyperInventoryList';
 
 interface AdminInventoryTabProps {
     inventory: CarType[];
@@ -34,6 +35,11 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
     React.useEffect(() => {
         searchInputRef.current?.focus();
+        const voiceFilter = localStorage.getItem('inventory_filter');
+        if (voiceFilter) {
+            setSearchTerm(voiceFilter);
+            localStorage.removeItem('inventory_filter'); // Clear once used
+        }
     }, []);
 
     const filteredInventory = React.useMemo(
@@ -125,103 +131,28 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                    {viewMode === 'grid' ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-8 route-fade-in">
-                            {filteredInventory.map((car) => (
-                                <AdminCarCard
-                                    key={car.id}
-                                    car={car}
-                                    leadCount={leads.filter((l) => l.vehicleId === car.id).length}
-                                    onEdit={onEdit}
-                                    onDelete={onDelete}
-                                    onPlanContent={() => onPlanContent(car)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto rounded-[32px] border border-white/5 route-fade-in">
-                            <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-900/80 border-b border-white/5">
-                                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#00aed9]">Unidad</th>
-                                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo / Badge</th>
-                                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Precio</th>
-                                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Advantage</th>
-                                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Sales Velocity</th>
-                                            <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredInventory.map((car) => (
-                                            <tr key={car.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:scale-105 transition-transform">
-                                                            <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-full h-full object-cover" />
-                                                        </div>
-                                                        <div className="font-bold text-white uppercase tracking-tight">{car.name}</div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-xs font-black uppercase text-slate-400">{car.type}</span>
-                                                        <span className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">{car.badge || 'No Badge'}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 font-black text-white text-glow">
-                                                    ${car.price?.toLocaleString()}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-[#00aed9]/10 text-[#00aed9] uppercase tracking-widest border border-[#00aed9]/20">
-                                                        +{calculatePredictiveDTS(car, leads.filter((l) => l.vehicleId === car.id).length).advantageScore.toFixed(0)}%
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <Clock size={12} className="text-slate-500" />
-                                                        <span className="text-xs font-bold text-slate-400">14 Días</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <button
-                                                            onClick={() => onPlanContent(car)}
-                                                            className="p-2 hover:bg-[#00aed9]/10 text-slate-400 hover:text-[#00aed9] rounded-lg transition-all"
-                                                            title="Marketing"
-                                                        >
-                                                            <Sparkles size={16} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => onEdit(car)}
-                                                            className="p-2 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-all"
-                                                            title="Editar"
-                                                        >
-                                                            <Edit3 size={16} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => onDelete(car.id)}
-                                                            className="p-2 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-all"
-                                                            title="Eliminar"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                            </table>
-                        </div>
-                    )}
-
-                    {filteredInventory.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                            <Package size={64} className="mb-4" />
-                            <p className="font-bold uppercase tracking-widest text-sm text-white">No se encontraron vehículos</p>
-                        </div>
-                    )}
-                </div>
+                {viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-8 route-fade-in p-6">
+                        {filteredInventory.map((car) => (
+                            <AdminCarCard
+                                key={car.id}
+                                car={car}
+                                leadCount={leads.filter((l) => l.vehicleId === car.id).length}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                                onPlanContent={() => onPlanContent(car)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <HyperInventoryList
+                        inventory={filteredInventory}
+                        leads={leads}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        onPlanContent={onPlanContent}
+                    />
+                )}
             </div>
         </div>
     );

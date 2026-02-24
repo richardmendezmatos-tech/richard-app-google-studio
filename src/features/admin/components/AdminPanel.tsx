@@ -25,11 +25,15 @@ const AuditLogViewer = React.lazy(() => import('./AuditLogViewer').then((m) => (
 const GapAnalyticsWidget = React.lazy(() => import('./GapAnalyticsWidget').then((m) => ({ default: m.GapAnalyticsWidget })));
 const B2BBillingDashboard = React.lazy(() => import('./B2BBillingDashboard'));
 const EnterpriseStatus = React.lazy(() => import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })));
-const MarketingModal = React.lazy(() => import('./MarketingModal').then((m) => ({ default: m.MarketingModal })));
+const MarketingCreativeStudio = React.lazy(() => import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })));
 const ViralGeneratorModal = React.lazy(() => import('@/features/marketing/components/ViralGeneratorModal'));
 const AdminInventoryTab = React.lazy(() => import('./AdminInventoryTab'));
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
 const VehicleMonitor = React.lazy(() => import('./VehicleMonitor'));
+const MissionControlWidget = React.lazy(() => import('./MissionControlWidget'));
+const SentinelStatusBar = React.lazy(() => import('./SentinelStatusBar').then(m => ({ default: m.SentinelStatusBar })));
+import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
+import { Suspense } from 'react';
 
 interface Props {
   inventory: CarType[];
@@ -85,7 +89,9 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
   const { currentDealer } = useDealer();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry'>(() => {
+    return (localStorage.getItem('admin_active_tab') as any) || 'dashboard';
+  });
   const [leads, setLeads] = useState<Lead[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,6 +129,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   }, [fetchDashboardData]);
 
   useEffect(() => {
+    localStorage.setItem('admin_active_tab', activeTab);
     if (activeTab === 'marketing') {
       getSubscribers().then(setSubscribers).catch(console.error);
     }
@@ -284,228 +291,234 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
 
         {/* CONTENT AREA */}
         <main className="animate-in fade-in zoom-in-95 duration-300 min-h-[600px]">
+          <BrandErrorBoundary>
 
-          {activeTab === 'dashboard' && (
-            <div className="space-y-8">
-              {/* KPI WIDGETS ROW */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatusWidget
-                  icon={CarFront}
-                  label="Total Inventario"
-                  value={<CountUp end={inventory.length} prefix="" />}
-                  color="bg-blue-500 text-blue-500"
-                  subValue={inventory.length > 0 ? "Actualizado" : "Sin stock"}
-                />
-                <StatusWidget
-                  icon={BarChart3}
-                  label="Leads Activos"
-                  value={<CountUp end={leads.filter(l => l.status === 'new').length} />}
-                  color="bg-emerald-500 text-emerald-500"
-                  subValue="Potenciales hoy"
-                />
-                <StatusWidget
-                  icon={Package}
-                  label="Valor Total"
-                  value={<CountUp end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)} prefix="$" />}
-                  color="bg-purple-500 text-purple-500"
-                  subValue="Estimado"
-                />
-                <StatusWidget
-                  icon={Search}
-                  label="Sistema"
-                  value="100%"
-                  color="bg-amber-500 text-amber-500"
-                  subValue={`v3.0 • ${deviceType}`}
-                />
-              </div>
-
-              {/* QUICK ACCESS GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Digital Twin Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/digital-twin')}>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
-                  <UserIcon className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
-                  <h3 className="text-2xl font-black text-white uppercase mb-2">Gemelo Digital</h3>
-                  <p className="text-slate-400 text-sm mb-6">Crea contenido de marketing viral con tu avatar IA.</p>
-                  <span className="text-xs font-bold text-[#00aed9] uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ingresar <div className="w-4 h-[1px] bg-[#00aed9]" /></span>
-                </div>
-
-                {/* Framework Lab Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/framework-lab')}>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
-                  <Server className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
-                  <h3 className="text-2xl font-black text-white uppercase mb-2">Framework Lab</h3>
-                  <p className="text-slate-400 text-sm mb-6">Gestiona integraciones experimentales (Svelte, Astro).</p>
-                  <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Configurar <div className="w-4 h-[1px] bg-purple-500" /></span>
-                </div>
-
-                {/* Analytics Card */}
-                <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => setActiveTab('analytics')}>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
-                  <BarChart3 className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
-                  <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>
-                  <p className="text-slate-400 text-sm mb-6">Mapa de calor de inventario y tendencias.</p>
-                  <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ver Datos <div className="w-4 h-[1px] bg-emerald-500" /></span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'analytics' && (
-            <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 shadow-xl border border-white/10">
-              <InventoryHeatmap inventory={inventory} />
-            </div>
-          )}
-
-          {activeTab === 'marketing' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
-              <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl space-y-6">
-                <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
-                  <Sparkles size={20} /> Content Engine
-                </div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Estrategia Semántica</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Richard IA utiliza búsqueda semántica para identificar qué modelos de tu inventario tienen más "momentum" basado en las consultas de los usuarios. Selecciona una unidad abajo para generar contenido viral.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {inventory.slice(0, 4).map(car => (
-                    <button
-                      key={car.id}
-                      onClick={() => setMarketingCar(car)}
-                      className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
-                    >
-                      <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" />
-                      <div>
-                        <div className="text-sm font-black text-white uppercase tracking-tight">{car.name}</div>
-                        <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">Planear Post ✨</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="lg:col-span-1 h-full space-y-6">
+            {activeTab === 'dashboard' && (
+              <div className="space-y-8">
                 <React.Suspense fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}>
-                  <GapAnalyticsWidget />
+                  <MissionControlWidget />
                 </React.Suspense>
 
-                {/* Subscribers Widget */}
-                <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-hidden flex flex-col max-h-[400px]">
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                        <UserIcon size={12} /> Newsroom Audience
-                      </div>
-                      <h3 className="text-xl font-black text-white uppercase tracking-tight">Suscriptores</h3>
-                    </div>
-                    <span className="text-2xl font-black text-white">{subscribers.length}</span>
+                {/* KPI WIDGETS ROW */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <StatusWidget
+                    icon={CarFront}
+                    label="Total Inventario"
+                    value={<CountUp end={inventory.length} prefix="" />}
+                    color="bg-blue-500 text-blue-500"
+                    subValue={inventory.length > 0 ? "Actualizado" : "Sin stock"}
+                  />
+                  <StatusWidget
+                    icon={BarChart3}
+                    label="Leads Activos"
+                    value={<CountUp end={leads.filter(l => l.status === 'new').length} />}
+                    color="bg-emerald-500 text-emerald-500"
+                    subValue="Potenciales hoy"
+                  />
+                  <StatusWidget
+                    icon={Package}
+                    label="Valor Total"
+                    value={<CountUp end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)} prefix="$" />}
+                    color="bg-purple-500 text-purple-500"
+                    subValue="Estimado"
+                  />
+                  <StatusWidget
+                    icon={Search}
+                    label="Sistema"
+                    value="100%"
+                    color="bg-amber-500 text-amber-500"
+                    subValue={`v3.0 • ${deviceType}`}
+                  />
+                </div>
+
+                {/* QUICK ACCESS GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Digital Twin Card */}
+                  <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/digital-twin')}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
+                    <UserIcon className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
+                    <h3 className="text-2xl font-black text-white uppercase mb-2">Gemelo Digital</h3>
+                    <p className="text-slate-400 text-sm mb-6">Crea contenido de marketing viral con tu avatar IA.</p>
+                    <span className="text-xs font-bold text-[#00aed9] uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ingresar <div className="w-4 h-[1px] bg-[#00aed9]" /></span>
                   </div>
-                  <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
-                    {subscribers.map((sub, i) => (
-                      <div key={sub.id || i} className="p-3 bg-slate-800/50 rounded-xl border border-white/5 flex flex-col">
-                        <span className="text-xs font-bold text-white">{sub.email}</span>
-                        <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                          {sub.timestamp?.seconds ? new Date(sub.timestamp.seconds * 1000).toLocaleDateString() : 'Reciente'}
-                        </span>
-                      </div>
-                    ))}
-                    {subscribers.length === 0 && <p className="text-xs text-slate-500 p-4 text-center italic">Sin suscriptores aún.</p>}
+
+                  {/* Framework Lab Card */}
+                  <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/framework-lab')}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
+                    <Server className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
+                    <h3 className="text-2xl font-black text-white uppercase mb-2">Framework Lab</h3>
+                    <p className="text-slate-400 text-sm mb-6">Gestiona integraciones experimentales (Svelte, Astro).</p>
+                    <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Configurar <div className="w-4 h-[1px] bg-purple-500" /></span>
+                  </div>
+
+                  {/* Analytics Card */}
+                  <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => setActiveTab('analytics')}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+                    <BarChart3 className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
+                    <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>
+                    <p className="text-slate-400 text-sm mb-6">Mapa de calor de inventario y tendencias.</p>
+                    <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">Ver Datos <div className="w-4 h-[1px] bg-emerald-500" /></span>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {activeTab === 'pipeline' && (
-            <div className="h-[calc(100vh-350px)] min-h-[500px]">
-              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando CRM...</div>}>
-                <CRMBoard />
-              </React.Suspense>
-            </div>
-          )}
+            {activeTab === 'analytics' && (
+              <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 shadow-xl border border-white/10">
+                <InventoryHeatmap inventory={inventory} />
+              </div>
+            )}
 
-          {activeTab === 'copilot' && (
-            <div className="min-h-[600px]">
-              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando Copilot...</div>}>
-                <SalesCopilot />
-              </React.Suspense>
-            </div>
-          )}
-
-          {activeTab === 'telemetry' && (
-            <React.Suspense fallback={<div className="p-20 text-center animate-pulse text-slate-500 font-bold uppercase tracking-widest">Iniciando Puente IoT...</div>}>
-              <VehicleMonitor vehicleId="UNIT-001" />
-            </React.Suspense>
-          )}
-
-          {activeTab === 'security' && (
-            <div className="space-y-6">
-              <div className="bg-white/5 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-bold flex items-center gap-2 text-white">
-                    <Smartphone className="text-[#00aed9]" size={20} />
-                    Acceso Biométrico (Passkeys)
-                  </h3>
-                  <p className="text-slate-400 text-xs md:text-sm mt-1">
-                    Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o TouchID.
+            {activeTab === 'marketing' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
+                <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl space-y-6">
+                  <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
+                    <Sparkles size={20} /> Content Engine
+                  </div>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">Estrategia Semántica</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Richard IA utiliza búsqueda semántica para identificar qué modelos de tu inventario tienen más "momentum" basado en las consultas de los usuarios. Selecciona una unidad abajo para generar contenido viral.
                   </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {inventory.slice(0, 4).map(car => (
+                      <button
+                        key={car.id}
+                        onClick={() => setMarketingCar(car)}
+                        className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
+                      >
+                        <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" />
+                        <div>
+                          <div className="text-sm font-black text-white uppercase tracking-tight">{car.name}</div>
+                          <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">Planear Post ✨</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <button
-                  onClick={async () => {
-                    if (!auth.currentUser) return alert("Debes estar logueado.");
-                    try {
-                      const { registerPasskey } = await import('@/features/auth/services/authService');
-                      await registerPasskey(auth.currentUser);
-                      alert("✅ Dispositivo vinculado exitosamente.");
-                    } catch (err: unknown) {
-                      const error = err as { message: string };
-                      alert("Error: " + error.message);
-                    }
-                  }}
-                  className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
-                >
-                  <Smartphone size={16} /> Vincular Dispositivo
-                </button>
-              </div>
+                <div className="lg:col-span-1 h-full space-y-6">
+                  <React.Suspense fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}>
+                    <GapAnalyticsWidget />
+                  </React.Suspense>
 
-              <div className="min-h-[600px]">
-                <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}>
-                  <AuditLogViewer />
+                  {/* Subscribers Widget */}
+                  <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-hidden flex flex-col max-h-[400px]">
+                    <div className="flex justify-between items-center mb-4">
+                      <div>
+                        <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                          <UserIcon size={12} /> Newsroom Audience
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Suscriptores</h3>
+                      </div>
+                      <span className="text-2xl font-black text-white">{subscribers.length}</span>
+                    </div>
+                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
+                      {subscribers.map((sub, i) => (
+                        <div key={sub.id || i} className="p-3 bg-slate-800/50 rounded-xl border border-white/5 flex flex-col">
+                          <span className="text-xs font-bold text-white">{sub.email}</span>
+                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
+                            {sub.timestamp?.seconds ? new Date(sub.timestamp.seconds * 1000).toLocaleDateString() : 'Reciente'}
+                          </span>
+                        </div>
+                      ))}
+                      {subscribers.length === 0 && <p className="text-xs text-slate-500 p-4 text-center italic">Sin suscriptores aún.</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'pipeline' && (
+              <div className="h-[calc(100vh-350px)] min-h-[500px]">
+                <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando CRM...</div>}>
+                  <CRMBoard />
                 </React.Suspense>
               </div>
-            </div>
-          )}
+            )}
 
-          {activeTab === 'billing' && (
-            <div className="min-h-[600px]">
-              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando facturacion...</div>}>
-                <B2BBillingDashboard />
+            {activeTab === 'copilot' && (
+              <div className="min-h-[600px]">
+                <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando Copilot...</div>}>
+                  <SalesCopilot />
+                </React.Suspense>
+              </div>
+            )}
+
+            {activeTab === 'telemetry' && (
+              <React.Suspense fallback={<div className="p-20 text-center animate-pulse text-slate-500 font-bold uppercase tracking-widest">Iniciando Puente IoT...</div>}>
+                <VehicleMonitor vehicleId="UNIT-001" />
               </React.Suspense>
-            </div>
-          )}
+            )}
 
-          {activeTab === 'lab' && (
-            <div className="min-h-[600px] border border-white/10 rounded-[2rem] overflow-hidden bg-slate-900">
-              <React.Suspense fallback={<div className="p-10 text-center">Cargando Laboratorio...</div>}>
-                <AILabView />
+            {activeTab === 'security' && (
+              <div className="space-y-6">
+                <div className="bg-white/5 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold flex items-center gap-2 text-white">
+                      <Smartphone className="text-[#00aed9]" size={20} />
+                      Acceso Biométrico (Passkeys)
+                    </h3>
+                    <p className="text-slate-400 text-xs md:text-sm mt-1">
+                      Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o TouchID.
+                    </p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!auth.currentUser) return alert("Debes estar logueado.");
+                      try {
+                        const { registerPasskey } = await import('@/features/auth/services/authService');
+                        await registerPasskey(auth.currentUser);
+                        alert("✅ Dispositivo vinculado exitosamente.");
+                      } catch (err: unknown) {
+                        const error = err as { message: string };
+                        alert("Error: " + error.message);
+                      }
+                    }}
+                    className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                  >
+                    <Smartphone size={16} /> Vincular Dispositivo
+                  </button>
+                </div>
+
+                <div className="min-h-[600px]">
+                  <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}>
+                    <AuditLogViewer />
+                  </React.Suspense>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'billing' && (
+              <div className="min-h-[600px]">
+                <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando facturacion...</div>}>
+                  <B2BBillingDashboard />
+                </React.Suspense>
+              </div>
+            )}
+
+            {activeTab === 'lab' && (
+              <div className="min-h-[600px] border border-white/10 rounded-[2rem] overflow-hidden bg-slate-900">
+                <React.Suspense fallback={<div className="p-10 text-center">Cargando Laboratorio...</div>}>
+                  <AILabView />
+                </React.Suspense>
+              </div>
+            )}
+
+            {activeTab === 'inventory' && (
+              <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando inventario...</div>}>
+                <AdminInventoryTab
+                  inventory={inventory}
+                  leads={leads}
+                  onDelete={onDelete}
+                  onCreateNew={() => { setEditingCar(null); setIsModalOpen(true); }}
+                  onEdit={(car) => { setEditingCar(car); setIsModalOpen(true); }}
+                  onPlanContent={(car) => setViralCar(car)}
+                  onInitializeDb={onInitializeDb}
+                  handleInitClick={handleInitClick}
+                  isInitializing={isInitializing}
+                />
               </React.Suspense>
-            </div>
-          )}
-
-          {activeTab === 'inventory' && (
-            <React.Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando inventario...</div>}>
-              <AdminInventoryTab
-                inventory={inventory}
-                leads={leads}
-                onDelete={onDelete}
-                onCreateNew={() => { setEditingCar(null); setIsModalOpen(true); }}
-                onEdit={(car) => { setEditingCar(car); setIsModalOpen(true); }}
-                onPlanContent={(car) => setViralCar(car)}
-                onInitializeDb={onInitializeDb}
-                handleInitClick={handleInitClick}
-                isInitializing={isInitializing}
-              />
-            </React.Suspense>
-          )}
+            )}
+          </BrandErrorBoundary>
         </main>
       </div >
 
@@ -526,10 +539,10 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
         )
       }
 
-      {/* MARKETING MODAL */}
+      {/* MARKETING STUDIO */}
       {marketingCar && (
         <React.Suspense fallback={<div className="fixed inset-0 z-[100] bg-black/60" />}>
-          <MarketingModal
+          <MarketingCreativeStudio
             car={marketingCar}
             onClose={() => setMarketingCar(null)}
           />
@@ -545,6 +558,10 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           />
         </React.Suspense>
       )}
+
+      <Suspense fallback={null}>
+        <SentinelStatusBar />
+      </Suspense>
     </div >
   );
 };

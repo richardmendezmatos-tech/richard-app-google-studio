@@ -8,7 +8,8 @@ import {
     ArrowUpRight,
     AlertCircle,
     Server,
-    Radio
+    Radio,
+    CheckCircle2
 } from 'lucide-react';
 import { container } from '@/infra/di/container';
 import { HoustonTelemetry, OutreachOpportunity } from '@/domain/entities';
@@ -22,6 +23,14 @@ const HoustonDashboard: React.FC = () => {
     const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
     const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
     const { containerRef } = useMouseGlow();
+
+    const heatmapData = React.useMemo(() => {
+        // Use a stable seed for mock data if possible, or just generate once
+        return [...Array(50)].map((_, i) => ({
+            age: (i * 7) % 120, // Deterministic mock age
+            id: `unit-${i}-${Math.abs(Math.sin(i)).toString(36).substring(7)}`
+        }));
+    }, []);
     const getHoustonTelemetry = useMemo(() => container.getGetHoustonTelemetryUseCase(), []);
     const identifyOutreachOpportunities = useMemo(() => container.getIdentifyOutreachOpportunitiesUseCase(), []);
 
@@ -53,7 +62,7 @@ const HoustonDashboard: React.FC = () => {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4 relative z-10">
                 <div>
                     <h1 className="text-4xl font-black text-white tracking-tighter uppercase mb-1 flex items-center gap-3">
-                        <TerminalIcon className="text-cyan-500" /> Houston <span className="text-cyan-500 text-base font-mono tracking-[0.3em] ml-2">v2.0-SENTINEL</span>
+                        <TerminalIcon className="text-cyan-500" /> Houston <span className="text-cyan-500 text-base font-mono tracking-[0.3em] ml-2">RA-SENTINEL v2.0</span>
                     </h1>
                     <div className="flex items-center gap-4 text-[10px] text-slate-500 uppercase tracking-widest font-bold">
                         <span className="flex items-center gap-1"><div className={`w-2 h-2 rounded-full ${telemetry.systemHealth === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} /> Status: {telemetry.systemHealth}</span>
@@ -99,23 +108,55 @@ const HoustonDashboard: React.FC = () => {
 
                 {/* Central Visualizer */}
                 <div className="xl:col-span-2 space-y-6">
-                    <div className="glass-premium h-[400px] border border-white/5 p-8 relative flex flex-col justify-center items-center overflow-hidden">
+                    <div className="glass-premium h-[400px] border border-white/5 p-8 relative flex flex-col justify-start overflow-hidden">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,174,217,0.05)_0%,_transparent_70%)]" />
 
-                        {/* Simulation of Waveform/Data Visualizer */}
-                        <div className="flex items-end gap-1 h-32 w-full max-w-md">
-                            {[...Array(20)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="bg-cyan-500/30 w-full rounded-t-sm animate-pulse telemetry-bar"
-                                    style={{
-                                        ['--h' as string]: `${20 + (i % 5) * 15 + Math.sin(i * 0.5) * 10}%`,
-                                        ['--d' as string]: `${i * 0.1}s`
-                                    } as React.CSSProperties}
-                                />
-                            ))}
+                        <div className="relative z-10 w-full">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" /> Unit Stock Age Heatmap
+                                </h3>
+                                <span className="text-[10px] text-slate-500 font-bold uppercase">Richard IA Scanning...</span>
+                            </div>
+
+                            {/* Heatmap Grid Simulation */}
+                            <div className="grid grid-cols-10 gap-1.5">
+                                {heatmapData.map((item, i) => {
+                                    const { age } = item;
+                                    const color = age > 90 ? 'bg-rose-500' : age > 60 ? 'bg-orange-500' : age > 30 ? 'bg-amber-500' : 'bg-emerald-500';
+                                    const opacity = age > 90 ? 'opacity-100' : age > 60 ? 'opacity-80' : age > 30 ? 'opacity-60' : 'opacity-40';
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`${color} ${opacity} aspect-square rounded-sm border border-white/5 relative group/item cursor-help transition-all hover:scale-125 hover:z-20`}
+                                            title={`Unit RA-${1000 + i}: ${age} days`}
+                                        >
+                                            {age > 90 && (
+                                                <div className="absolute inset-0 bg-white/20 animate-ping rounded-sm" />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="mt-8 grid grid-cols-4 gap-4">
+                                <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                                    <p className="text-[8px] text-slate-500 uppercase font-bold mb-1">Avg Age</p>
+                                    <p className="text-xl font-black text-white">42d</p>
+                                </div>
+                                <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                                    <p className="text-[8px] text-slate-500 uppercase font-bold mb-1">Critical Units</p>
+                                    <p className="text-xl font-black text-rose-500">8</p>
+                                </div>
+                                <div className="lg:col-span-2 p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10 flex items-center gap-3">
+                                    <CheckCircle2 size={16} className="text-emerald-500" />
+                                    <div>
+                                        <p className="text-[8px] text-emerald-500 uppercase font-black">Inventory Efficiency</p>
+                                        <p className="text-[10px] text-white font-bold whitespace-nowrap">Optimizando rotación RA...</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p className="mt-8 text-xs text-cyan-500 uppercase tracking-[0.5em] font-black animate-pulse">Neural Thread Processing...</p>
                     </div>
 
                     {/* Mission Log / Terminal */}
@@ -152,7 +193,7 @@ const HoustonDashboard: React.FC = () => {
                             </li>
                             <li className="flex gap-3">
                                 <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1.5 shrink-0" />
-                                <p><span className="text-white font-bold">Autonomy Threshold</span> alcanzado. VitalOS ha completado 12 retracciones sin intervención humana.</p>
+                                <p><span className="text-white font-bold">Autonomy Threshold</span> alcanzado. Richard IA ha completado 12 retracciones sin intervención humana.</p>
                             </li>
                         </ul>
                     </div>

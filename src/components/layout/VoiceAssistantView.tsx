@@ -1,16 +1,19 @@
-
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { connectToVoiceSession } from '@/services/geminiService';
+import { VoiceCommandService } from '@/services/VoiceCommandService';
 import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
 import { decode, decodeAudioData, createBlob } from '@/utils/audioUtils';
 import { Mic, MicOff, Bot, Activity, Wifi } from 'lucide-react';
 
 type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 type Transcription = { id: number; role: 'user' | 'model'; text: string; isFinal: boolean };
+
 type RealtimeSession = {
     close: () => void;
     sendRealtimeInput: (payload: { media: GeminiBlob }) => void;
 };
+
 type ServerContent = {
     outputTranscription?: { text: string };
     inputTranscription?: { text: string };
@@ -23,6 +26,7 @@ type ServerContent = {
 };
 
 const VoiceAssistantView: React.FC = () => {
+    const navigate = useNavigate();
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -97,7 +101,7 @@ const VoiceAssistantView: React.FC = () => {
                     const source = inputAudioContext.current!.createMediaStreamSource(stream);
                     const scriptProcessor = inputAudioContext.current!.createScriptProcessor(4096, 1, 1);
                     scriptProcessor.onaudioprocess = (event) => {
-                        setIsListening(true); // Technically always listening if connected
+                        setIsListening(true);
                         const inputData = event.inputBuffer.getChannelData(0);
                         const pcmBlob = createBlob(inputData);
                         sessionPromise.current?.then((session) => {
@@ -141,6 +145,8 @@ const VoiceAssistantView: React.FC = () => {
         }
 
         if (content?.turnComplete) {
+            const finalUserText = currentInputTranscriptionRef.current;
+
             setTranscriptions(prev => {
                 if (prev.length === 0) return prev;
                 const last = prev[prev.length - 1];
@@ -151,9 +157,23 @@ const VoiceAssistantView: React.FC = () => {
                 }
                 return prev;
             });
+
+            // Process Voice Command
+            if (finalUserText.trim()) {
+                VoiceCommandService.parseCommand(finalUserText).then(intent => {
+                    if (intent) {
+                        VoiceCommandService.executeAction(intent, {
+                            navigate: (path) => navigate(path),
+                            setTab: (tab) => localStorage.setItem('admin_active_tab', tab),
+                            setSearch: (query) => localStorage.setItem('inventory_filter', query),
+                        });
+                    }
+                });
+            }
+
             currentInputTranscriptionRef.current = '';
             currentOutputTranscriptionRef.current = '';
-            setIsListening(false); // Reset listening state visualization
+            setIsListening(false);
         }
     };
 
@@ -216,12 +236,10 @@ const VoiceAssistantView: React.FC = () => {
             {/* AI Core Visualization */}
             <div className="flex-1 flex items-center justify-center relative z-10 w-full">
                 <div className="relative flex items-center justify-center">
-                    {/* Outer Rings */}
                     <div className={`absolute w-[500px] h-[500px] border border-[#00aed9]/10 rounded-full transition-all duration-1000 ${isSpeaking ? 'scale-110 opacity-50' : 'scale-100 opacity-20'}`} />
                     <div className={`absolute w-[400px] h-[400px] border border-[#00aed9]/20 rounded-full transition-all duration-700 ${isSpeaking ? 'scale-105 opacity-60' : 'scale-100 opacity-30'}`} />
                     <div className={`absolute w-[300px] h-[300px] border border-[#00aed9]/30 rounded-full transition-all duration-500 ${isListening ? 'scale-110 border-green-500/30' : 'scale-100'}`} />
 
-                    {/* Core Orb */}
                     <div
                         className={`w-40 h-40 rounded-full bg-gradient-to-br from-[#00aed9] to-blue-600 flex items-center justify-center shadow-[0_0_80px_rgba(0,174,217,0.4)] transition-all duration-300 z-20
                         ${isSpeaking ? 'animate-[pulse_1s_ease-in-out_infinite] scale-110 shadow-[0_0_120px_rgba(0,174,217,0.8)]' : ''}
@@ -231,7 +249,6 @@ const VoiceAssistantView: React.FC = () => {
                         <Bot size={64} className="text-white drop-shadow-lg" />
                     </div>
 
-                    {/* Connecting particles (Simulated) */}
                     {connectionState === 'connecting' && (
                         <div className="absolute w-48 h-48 border-4 border-t-[#00aed9] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
                     )}
