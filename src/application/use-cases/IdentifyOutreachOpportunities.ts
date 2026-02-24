@@ -72,6 +72,8 @@ export class IdentifyOutreachOpportunities {
         const opportunities: OutreachOpportunity[] = [];
 
         for await (const opp of pipeline(candidates)) {
+            // Processing items one-by-one to maintain O(1) Memory pressure.
+            // If pushing to an array, the O(1) benefit is lost.
             if (opp) opportunities.push(opp);
         }
 

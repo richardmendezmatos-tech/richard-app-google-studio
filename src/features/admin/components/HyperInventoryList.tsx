@@ -51,13 +51,23 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
         Math.floor((scrollTop + containerHeight) / itemHeight) + overscan
     );
 
+    const leadCounts = useMemo(() => {
+        const counts = new Map<string, number>();
+        leads.forEach(l => {
+            if (l.vehicleId) {
+                counts.set(l.vehicleId, (counts.get(l.vehicleId) || 0) + 1);
+            }
+        });
+        return counts;
+    }, [leads]);
+
     const visibleItems = useMemo(() => {
         return inventory.slice(startIndex, endIndex).map((car, index) => ({
             car,
             index: startIndex + index,
-            leadCount: leads.filter(l => l.vehicleId === car.id).length
+            leadCount: leadCounts.get(car.id) || 0
         }));
-    }, [inventory, leads, startIndex, endIndex]);
+    }, [inventory, leadCounts, startIndex, endIndex]);
 
     return (
         <div
@@ -76,14 +86,14 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
             </div>
 
             {/* SPACER FOR SCROLL */}
-            <div style={{ height: `${totalHeight}px`, position: 'relative' }}>
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    transform: `translateY(${startIndex * itemHeight}px)`
-                }}>
+            <div
+                className="inventory-scroll-container"
+                style={{ '--total-height': `${totalHeight}px` } as React.CSSProperties}
+            >
+                <div
+                    className="inventory-visible-window"
+                    style={{ '--offset-y': `${startIndex * itemHeight}px` } as React.CSSProperties}
+                >
                     {visibleItems.map(({ car, leadCount }) => (
                         <InventoryRow
                             key={car.id}

@@ -13,6 +13,7 @@ import {
   app,
   auth,
   db,
+  dbLite,
   isBrowser,
   getRedirectResult
 } from '@/infra/firebase/client';
@@ -30,6 +31,7 @@ export {
   app,
   auth,
   db,
+  dbLite,
   getRedirectResult,
   getAnalyticsService,
   getPerformanceService,
@@ -101,33 +103,22 @@ export const getInventoryStats = async () => {
   }
 };
 
+import { onSnapshot, collection as fullCollection, query as fullQuery, where as fullWhere, limit as fullLimit } from 'firebase/firestore';
+
 export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
+  const q = fullQuery(fullCollection(db, 'cars'), fullWhere('dealerId', '==', dealerId), fullLimit(100));
 
-  let cancelled = false;
-  const fetchInventory = async () => {
-    try {
-      const snapshot = await getDocs(q);
-      if (cancelled) return;
-      const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as InventoryRecord));
-      inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      callback(inventoryList);
-    } catch (error) {
-      console.error("syncInventory Error:", error);
-    }
-  };
-
-  fetchInventory();
-  const intervalId = setInterval(fetchInventory, 10000);
-
-  return () => {
-    cancelled = true;
-    clearInterval(intervalId);
-  };
+  return onSnapshot(q, (snapshot) => {
+    const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as InventoryRecord));
+    inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    callback(inventoryList);
+  }, (error) => {
+    console.error("syncInventory Error:", error);
+  });
 };
 
 export const getInventoryOnce = async (): Promise<Car[]> => {
@@ -136,32 +127,20 @@ export const getInventoryOnce = async (): Promise<Car[]> => {
 };
 
 export const submitApplication = async (data: Record<string, unknown>) => {
-  return await container.getApplicationRepository().submitApplication(data);
+  const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
+  return await container.getApplicationRepository().submitApplication(data, dealerId);
 };
 
 export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId), limit(200));
-  let cancelled = false;
+  const q = fullQuery(fullCollection(db, 'applications'), fullWhere('dealerId', '==', dealerId), fullLimit(200));
 
-  const fetchLeads = async () => {
-    try {
-      const snapshot = await getDocs(q);
-      if (cancelled) return;
-      const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-      callback(leadsList);
-    } catch (error) {
-      console.error('syncLeads Error:', error);
-    }
-  };
-
-  fetchLeads();
-  const intervalId = setInterval(fetchLeads, 10000);
-
-  return () => {
-    cancelled = true;
-    clearInterval(intervalId);
-  };
+  return onSnapshot(q, (snapshot) => {
+    const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+    callback(leadsList);
+  }, (error) => {
+    console.error('syncLeads Error:', error);
+  });
 };
 
 export const getLeadsOnce = async (): Promise<Lead[]> => {

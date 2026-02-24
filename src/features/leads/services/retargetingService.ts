@@ -1,4 +1,4 @@
-import { db } from '@/services/firebaseService';
+import { dbLite } from '@/services/firebaseService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
 
 export interface InteractionEvent {
@@ -10,7 +10,7 @@ export interface InteractionEvent {
 
 export const logBehavioralEvent = async (event: InteractionEvent) => {
     try {
-        const eventsRef = collection(db, 'behavioral_events');
+        const eventsRef = collection(dbLite, 'behavioral_events');
         await addDoc(eventsRef, {
             ...event,
             timestamp: serverTimestamp(),

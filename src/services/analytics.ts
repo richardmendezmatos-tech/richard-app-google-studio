@@ -64,3 +64,13 @@ export const trackSearch = (term: string, count: number) =>
 
 export const trackLogin = (method: string) => analytics.user('login')(method)();
 export const trackSignup = (method: string) => analytics.user('signup')(method)();
+
+// AI-Powered Specialized Trackers
+export const trackNeuralMatch = (lifestyle: string) =>
+    analytics.engagement('neural_match')(lifestyle)();
+
+export const trackVisualSearch = (type: string) =>
+    analytics.engagement('visual_search')(type)();
+
+export const trackInteraction = (action: string, details?: any) =>
+    analytics.engagement('ai_interaction')(action)(undefined);
