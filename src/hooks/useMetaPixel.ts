@@ -12,8 +12,8 @@ interface Fbq {
 
 declare global {
     interface Window {
-        fbq: Fbq;
-        _fbq: Fbq;
+        fbq: any;
+        _fbq: any;
     }
 }
 

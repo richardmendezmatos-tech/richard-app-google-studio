@@ -59,7 +59,7 @@ export const GapAnalyticsWidget: React.FC = () => {
                     <TrendingDown className="text-rose-500" size={20} /> Oportunidades Perdidas
                 </h3>
                 <button
-                    onClick={fetchGaps}
+                    onClick={() => fetchGaps()}
                     title="Refrescar datos"
                     className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
                 >

@@ -5,8 +5,20 @@ import { SITE_CONFIG } from '../src/constants/siteConfig';
 
 const ROOT = process.cwd();
 const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');
-const baseUrl = SITE_CONFIG.url.replace(/\/$/, '');
+const baseUrl = (process.env.SITE_URL || SITE_CONFIG.url).replace(/\/$/, '');
 const today = new Date().toISOString().slice(0, 10);
+
+type SitemapEntry = {
+  loc: string;
+  changefreq: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  priority: number;
+  lastmod?: string;
+  images?: Array<{
+    url: string;
+    title?: string;
+    caption?: string;
+  }>;
+};
 
 const staticUrls = [
   { loc: `${baseUrl}/`, changefreq: 'daily', priority: 1.0 },
@@ -18,7 +30,7 @@ const staticUrls = [
   { loc: `${baseUrl}/blog`, changefreq: 'weekly', priority: 0.7 },
   { loc: `${baseUrl}/privacidad`, changefreq: 'yearly', priority: 0.3 },
   { loc: `${baseUrl}/terminos`, changefreq: 'yearly', priority: 0.3 }
-];
+] satisfies SitemapEntry[];
 
 const escapeXml = (value: string) =>
   value
@@ -36,11 +48,29 @@ const resolveServiceAccountPath = () => {
   return candidates.find((candidate) => fs.existsSync(candidate));
 };
 
-const loadVehicleUrls = async () => {
+const toIsoDate = (value: unknown) => {
+  if (!value || typeof value !== 'object') return today;
+
+  const maybeDate = value as { toDate?: () => Date };
+  if (typeof maybeDate.toDate === 'function') {
+    return maybeDate.toDate().toISOString().slice(0, 10);
+  }
+
+  return today;
+};
+
+const normalizeImageUrl = (value: unknown) => {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (value.startsWith('/')) return `${baseUrl}${value}`;
+  return `${baseUrl}/${value}`;
+};
+
+const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
   const serviceAccountPath = resolveServiceAccountPath();
   if (!serviceAccountPath) {
     console.warn('[sitemap] Service account not found. Skipping vehicle URLs.');
-    return [] as string[];
+    return [];
   }
 
   const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
@@ -52,28 +82,67 @@ const loadVehicleUrls = async () => {
   }
 
   const snapshot = await admin.firestore().collection('cars').get();
-  return snapshot.docs.map((doc) => `${baseUrl}/vehicle/${doc.id}`);
+  return snapshot.docs.map((doc) => {
+    const data = doc.data() as {
+      make: string;
+      model: string;
+      year: number;
+      img?: string;
+      images?: string[];
+      updatedAt?: unknown;
+      createdAt?: unknown;
+    };
+
+    const images = [...new Set(
+      [data.img, ...(data.images || [])]
+        .map((image) => normalizeImageUrl(image))
+        .filter((image): image is string => Boolean(image))
+    )].map(url => ({
+      url,
+      title: `${data.year} ${data.make} ${data.model}`,
+      caption: `Comprar ${data.make} ${data.model} ${data.year} en Richard Automotive - Autos seminuevos certificados en Puerto Rico.`
+    }));
+
+    return {
+      loc: `${baseUrl}/vehicle/${doc.id}`,
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: toIsoDate(data.updatedAt || data.createdAt),
+      images
+    };
+  });
 };
 
-const buildXml = (urls: Array<{ loc: string; changefreq: string; priority: number }>) => {
+const dedupeByLoc = (entries: SitemapEntry[]) => {
+  const map = new Map<string, SitemapEntry>();
+  for (const entry of entries) {
+    map.set(entry.loc, entry);
+  }
+  return [...map.values()].sort((a, b) => a.loc.localeCompare(b.loc));
+};
+
+const buildXml = (urls: any[]) => {
   const entries = urls
-    .map((item) => `  <url>\n    <loc>${escapeXml(item.loc)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${item.changefreq}</changefreq>\n    <priority>${item.priority.toFixed(1)}</priority>\n  </url>`)
+    .map((item) => {
+      const imageTags = (item.images || [])
+        .slice(0, 10)
+        .map((image: any) => `\n    <image:image>\n      <image:loc>${escapeXml(image.url || image)}</image:loc>\n      ${image.title ? `<image:title>${escapeXml(image.title)}</image:title>` : ''}\n      ${image.caption ? `<image:caption>${escapeXml(image.caption)}</image:caption>` : ''}\n    </image:image>`)
+        .join('');
+
+      return `  <url>\n    <loc>${escapeXml(item.loc)}</loc>\n    <lastmod>${item.lastmod || today}</lastmod>\n    <changefreq>${item.changefreq}</changefreq>\n    <priority>${item.priority.toFixed(1)}</priority>${imageTags}\n  </url>`;
+    })
     .join('\n\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n\n${entries}\n\n</urlset>\n`;
 };
 
 const run = async () => {
-  const vehicleUrls = await loadVehicleUrls();
-  const vehicleEntries = vehicleUrls.map((loc) => ({
-    loc,
-    changefreq: 'weekly',
-    priority: 0.7
-  }));
+  const vehicleEntries = await loadVehicleEntries();
+  const urls = dedupeByLoc([...staticUrls, ...vehicleEntries]);
 
-  const xml = buildXml([...staticUrls, ...vehicleEntries]);
+  const xml = buildXml(urls);
   fs.writeFileSync(OUTPUT_PATH, xml, 'utf8');
-  console.log(`[sitemap] Wrote ${OUTPUT_PATH} with ${staticUrls.length + vehicleEntries.length} URLs.`);
+  console.log(`[sitemap] Wrote ${OUTPUT_PATH} with ${urls.length} URLs.`);
 };
 
 run().catch((error) => {

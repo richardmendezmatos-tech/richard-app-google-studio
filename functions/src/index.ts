@@ -1,11 +1,54 @@
 import { z } from 'genkit';
 import { onCallGenkit } from 'firebase-functions/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
-import { db } from './services/firebaseAdmin';
 import { ai } from './services/aiManager';
 import { orchestrateResponse } from './agents/rag-synergy-logic';
 import { requireAdmin, requireSignedIn } from './security/policies';
 import { getRequestUrlForSignature, shouldEnforceWebhookSignatures } from './security/webhooks';
+import { logFlowExecution } from './services/persistenceService';
+// import { sendNotificationEmail } from './services/emailService';
+import { InventoryMatchingService } from './services/inventoryMatchingService';
+import { FirestoreLeadRepository } from './infrastructure/repositories/FirestoreLeadRepository';
+import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
+import { FirestoreLogRepository } from './infrastructure/repositories/FirestoreLogRepository';
+import { FirestoreChatRepository } from './infrastructure/repositories/FirestoreChatRepository';
+import { SendGridEmailRepository } from './infrastructure/repositories/SendGridEmailRepository';
+import { TwilioSMSRepository } from './infrastructure/repositories/TwilioSMSRepository';
+import { MetaCapiRepository } from './infrastructure/repositories/MetaCapiRepository';
+import { TwilioWhatsAppRepository } from './infrastructure/repositories/TwilioWhatsAppRepository';
+import { ReindexInventory } from './application/use-cases/ReindexInventory';
+import { AnalyzeLead } from './application/use-cases/AnalyzeLead';
+import { NudgeStaleLeads } from './application/use-cases/NudgeStaleLeads';
+import { CleanAuditLogs } from './application/use-cases/CleanAuditLogs';
+import { NotifyPriceDrop } from './application/use-cases/NotifyPriceDrop';
+import { NotifyLeadStatusChange } from './application/use-cases/NotifyLeadStatusChange';
+import { GenkitAgentOrchestrator } from './infrastructure/repositories/GenkitAgentOrchestrator';
+import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
+import { ProcessNewLeadApplication } from './application/use-cases/ProcessNewLeadApplication';
+import { Lead } from './domain/entities';
+
+// Infrastructure Instantiation (Singleton-like)
+const leadRepository = new FirestoreLeadRepository();
+const inventoryRepository = new FirestoreInventoryRepository();
+const logRepository = new FirestoreLogRepository();
+const emailRepository = new SendGridEmailRepository();
+const smsRepository = new TwilioSMSRepository();
+const metaRepository = new MetaCapiRepository();
+const chatRepository = new FirestoreChatRepository();
+const whatsAppRepository = new TwilioWhatsAppRepository();
+const aiOrchestrator = new GenkitAgentOrchestrator();
+
+// Use Cases
+const whatsAppProcessor = new ProcessWhatsAppMessage(chatRepository, leadRepository, aiOrchestrator, inventoryRepository);
+const leadAppProcessor = new ProcessNewLeadApplication(leadRepository, emailRepository, smsRepository, metaRepository, whatsAppRepository);
+
+const ALLOWED_ORIGINS = [
+    "https://richard-automotive.vercel.app",
+    "https://richard-automotive-dev.web.app",
+    "http://localhost:5173"
+];
 
 // Define the Flow
 export const generateCarDescription = ai.defineFlow(
@@ -64,7 +107,7 @@ export const generateCarDescription = ai.defineFlow(
 
 export const generateDescription = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Eliminate Cold Start for CEO critical path
     memory: "512MiB",
@@ -85,7 +128,7 @@ export const semanticCarSearch = ai.defineFlow(
 
 export const searchCarsSemantic = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
     minInstances: 1, // CTO: Instant AI search for premium UX
     memory: "512MiB",
@@ -94,31 +137,24 @@ export const searchCarsSemantic = onCallGenkit({
 export const reindexInventory = ai.defineFlow(
     { name: 'reindexInventory', inputSchema: z.void(), outputSchema: z.string() },
     async () => {
-        const { db } = await import('./services/firebaseAdmin');
         const { updateCarEmbedding } = await import('./services/vectorService');
-        const snapshot = await db.collection('cars').get();
-        let count = 0;
-        for (const doc of snapshot.docs) {
-            await updateCarEmbedding(doc.id, doc.data());
-            count++;
-        }
+        const useCase = new ReindexInventory(inventoryRepository);
+        const count = await useCase.execute(async (id, data) => {
+            await updateCarEmbedding(id, data);
+        });
         return `Re-indexed ${count} cars.`;
     }
 );
 
 export const triggerReindex = onCallGenkit({
     authPolicy: (auth) => requireAdmin(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, reindexInventory);
 
 
-// Import Cloud Functions v2
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { sendNotificationEmail } from './services/emailService';
 
-// --- New Lead Notification & Analysis ---
-import { calculateLeadScore } from './lead-scoring/lead-scoring-logic';
+// Initialized above
 
 // Define a Flow for Lead Analysis
 export const analyzeLead = ai.defineFlow(
@@ -145,30 +181,8 @@ export const analyzeLead = ai.defineFlow(
         })
     },
     async (input) => {
-        // RAG-Lite: Fetch Vehicle Context
-        let vehicleContext = "No vehicle specified.";
-        let unidad_interes = input.vehicleId || "General";
-
-        if (input.vehicleId) {
-            try {
-                const carDoc = await db.collection('cars').doc(input.vehicleId).get();
-                if (carDoc.exists) {
-                    const car = carDoc.data();
-                    unidad_interes = `${car?.year} ${car?.make} ${car?.model}`;
-                    vehicleContext = `Vehicle: ${unidad_interes}, Price: $${car?.price}, Mileage: ${car?.mileage}`;
-                    console.log(`Analyzing lead with vehicle context: ${vehicleContext}`);
-                }
-            } catch (e) {
-                console.error("Error fetching vehicle context:", e);
-            }
-        }
-
-        const scoringResult = calculateLeadScore(input);
-
-        return {
-            ...scoringResult,
-            unidad_interes
-        };
+        const useCase = new AnalyzeLead(inventoryRepository);
+        return await useCase.execute(input);
     }
 );
 
@@ -189,25 +203,20 @@ export const chatWithLead = ai.defineFlow(
         outputSchema: z.string()
     },
     async (input) => {
-        // Fetch Lead Context if leadId is provided
+        // Fetch Lead Context if leadId is provided (Agnostic via Repository)
         let leadContext = {};
         if (input.leadId) {
-            const leadDoc = await db.collection('applications').doc(input.leadId).get();
-            if (leadDoc.exists) {
-                leadContext = leadDoc.data() || {};
-            }
+            const leadData = await leadRepository.getById(input.leadId);
+            leadContext = leadData || {};
         }
 
-        // Fetch Vehicle Context
+        // Fetch Vehicle Context (Agnostic via Repository)
         let vehicleContext = null;
         if (input.vehicleId) {
-            const carDoc = await db.collection('cars').doc(input.vehicleId).get();
-            if (carDoc.exists) {
-                vehicleContext = carDoc.data();
-            }
+            vehicleContext = await inventoryRepository.getById(input.vehicleId);
         }
 
-        const result = await orchestrateResponse({
+        const result = await aiOrchestrator.orchestrate({
             message: input.message,
             history: input.history || [],
             leadContext,
@@ -215,9 +224,23 @@ export const chatWithLead = ai.defineFlow(
             leadId: input.leadId
         });
 
+        // Automate Persistence Protocol (Richard Automotive Standard)
+        await logFlowExecution('chatWithLead', input, result.response);
+
         return result.response;
     }
 );
+
+// --- Richard Automotive Sentinel ---
+import { raSentinelFlow } from './services/raSentinel';
+export { raSentinelFlow };
+
+export const raSentinel = onCallGenkit({
+    authPolicy: (auth) => requireSignedIn(auth),
+    cors: ALLOWED_ORIGINS,
+    secrets: ["GEMINI_API_KEY"],
+    minInstances: 1,
+}, raSentinelFlow);
 
 // --- Phase 4: Smart Garage & Predictive Retention ---
 
@@ -262,8 +285,7 @@ export const getUserGarage = ai.defineFlow(
         outputSchema: z.array(z.any())
     },
     async (input) => {
-        const snapshot = await db.collection('users').doc(input.userId).collection('garage').get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return await leadRepository.getGarageByUserId(input.userId);
     }
 );
 
@@ -276,8 +298,7 @@ export const multiAgentSync = ai.defineFlow(
         outputSchema: z.any()
     },
     async (input) => {
-        const leadDoc = await db.collection('applications').doc(input.leadId).get();
-        const leadData = leadDoc.data();
+        const leadData = await leadRepository.getById(input.leadId);
 
         return await orchestrateResponse({
             message: input.message,
@@ -307,7 +328,7 @@ export const transcribeAudio = ai.defineFlow(
 import { onRequest } from 'firebase-functions/v2/https';
 
 // Generic Webhook for WhatsApp (compatible with Twilio payload)
-export const incomingWhatsAppMessage = onRequest(async (req, res) => {
+export const incomingWhatsAppMessage = onRequest({ secrets: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"] }, async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
         return;
@@ -349,45 +370,31 @@ export const incomingWhatsAppMessage = onRequest(async (req, res) => {
     }
 
     // Twilio sends form-urlencoded POST requests
-    const { Body, From, VehicleId } = req.body;
+    // Security Hardening: Validate schema and force string casting to prevent object-injection
+    const WhatsAppPayloadSchema = z.object({
+        Body: z.preprocess((val) => String(val || ""), z.string()),
+        From: z.preprocess((val) => String(val || ""), z.string()),
+        VehicleId: z.preprocess((val) => (val ? String(val) : undefined), z.string().optional()),
+    });
+
+    const validation = WhatsAppPayloadSchema.safeParse(req.body);
+
+    if (!validation.success) {
+        logger.warn('Rejected WhatsApp webhook: Invalid payload schema', { errors: validation.error.format() });
+        res.status(400).send('Bad Request');
+        return;
+    }
+
+    const { Body, From, VehicleId } = validation.data;
 
     logger.info(`WhatsApp Message from ${From}: ${Body}`);
 
     try {
-        const chatId = From.replace(/\D/g, ''); // Use numbers only for ID
-        const chatRef = db.collection('chats').doc(chatId);
-        const chatDoc = await chatRef.get();
-
-        let localHistory: { role: 'user' | 'model'; content: string }[] = [];
-
-        if (chatDoc.exists) {
-            const data = chatDoc.data();
-            if (data?.messages) {
-                // Keep last 10 messages for context window
-                localHistory = (data.messages as { role: 'user' | 'model', content: string }[]).slice(-10).map((m) => ({
-                    role: m.role,
-                    content: m.content
-                }));
-            }
-        }
-
-        const replyText = await chatWithLead({
-            history: localHistory,
-            message: Body || "Hola",
-            vehicleId: VehicleId,
-            leadId: chatId
+        const replyText = await whatsAppProcessor.execute({
+            from: From,
+            body: Body || "Hola",
+            vehicleId: VehicleId
         });
-
-        // Save new interaction to history
-        await chatRef.set({
-            messages: [
-                ...(chatDoc.exists ? chatDoc.data()?.messages || [] : []),
-                { role: 'user', content: Body || '', timestamp: new Date() },
-                { role: 'model', content: replyText, timestamp: new Date() }
-            ],
-            lastUpdated: new Date(),
-            phone: From
-        }, { merge: true });
 
         // Use Twilio Service to generate TwiML XML
         const { createTwiMLReply } = await import('./services/twilioService');
@@ -412,10 +419,13 @@ export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
     const data = event.data?.data();
     if (!data) return;
 
-    logger.info(`Indexing new car: ${event.params.carId}`);
+    logger.info(`Indexing new car [CLEAN]: ${event.params.carId}`);
     try {
         const { updateCarEmbedding } = await import('./services/vectorService');
         await updateCarEmbedding(event.params.carId, data);
+
+        // Proactive Matching Motor (Richard Automotive Command Center)
+        await InventoryMatchingService.matchInventoryToLeads(event.params.carId, data);
     } catch (e) {
         logger.error(`Error indexing car ${event.params.carId}:`, e);
     }
@@ -445,135 +455,39 @@ export const onCarUpdated = onDocumentUpdated('cars/{carId}', async (event) => {
 
 export const onNewApplication = onDocumentCreated({
     document: 'applications/{applicationId}',
-    secrets: ["SENDGRID_API_KEY"],
+    secrets: ["SENDGRID_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "VITE_META_PIXEL_ID", "META_ACCESS_TOKEN"],
 }, async (event) => {
     const snapshot = event.data;
-    if (!snapshot) {
-        return;
-    }
+    if (!snapshot) return;
 
-    const data = snapshot.data();
+    const data = snapshot.data() as Lead;
     const appId = event.params.applicationId;
 
-    logger.info(`[NEW LEAD]Application received: ${appId}`, { email: data.email });
+    logger.info(`[NIVEL 12] Processing New Lead: ${appId}`, { email: data.email });
 
     try {
-        // Run AI Analysis
-        // Note: We intentionally call the flow directly here since we are in the same runtime.
-        const analysis = await analyzeLead({
-            monthlyIncome: data.monthlyIncome || "0",
-            timeAtJob: data.timeAtJob || "Unspecified",
-            jobTitle: data.jobTitle || "Unspecified",
-            employer: data.employer || "Unspecified"
+        await leadAppProcessor.execute({
+            id: appId,
+            data: data
         });
-
-        // Send Real Email to Admin
-        try {
-            await sendNotificationEmail({
-                to: 'richardmendezmatos@gmail.com',
-                subject: `New Lead - ${data.firstName} ${data.lastName} (Score: ${analysis.score})`,
-                html: `
-                    <h2>New Lead Received</h2>
-                    <p><strong>Applicant:</strong> ${data.firstName} ${data.lastName}</p>
-                    <p><strong>Phone:</strong> ${data.phone}</p>
-                    <p><strong>Email:</strong> ${data.email}</p>
-                    <hr>
-                    <h3>AI Analysis</h3>
-                    <p><strong>Score:</strong> ${analysis.score}/100 (${analysis.category})</p>
-                    <p><strong>Interés:</strong> ${analysis.unidad_interes}</p>
-                    <p><strong>Resumen:</strong> ${analysis.reasoning}</p>
-                    <p><strong>Siguiente Paso:</strong> ${analysis.nextAction}</p>
-                `
-            });
-
-            // Send Automated Welcome Email to Client
-            if (data.email) {
-                const { getWelcomeEmailTemplate } = await import('./emailTemplates');
-                await sendNotificationEmail({
-                    to: data.email,
-                    subject: `🚗 Recibimos tu solicitud para: ${data.vehicleOfInterest || 'Richard Automotive'}`,
-                    html: getWelcomeEmailTemplate(data)
-                });
-                logger.info(`Welcome email sent to: ${data.email}`);
-            }
-
-        } catch (emailError) {
-            logger.error("Failed to send email", emailError);
-        }
-
-        await snapshot.ref.update({
-            aiAnalysis: analysis,
-            status: analysis.score > 80 ? 'pre-approved' : 'new', // Use normalized 'new' instead of pending_review
-            emailSent: true,
-            lastContacted: new Date()
-        });
-
+        logger.info(`[NIVEL 12] Lead ${appId} processed successfully via Use Case.`);
     } catch (err) {
-        logger.error("Error analyzing lead", err);
+        logger.error(`[NIVEL 12] Error processing lead ${appId}`, err);
     }
 });
 
 // --- Scheduled Marketing Automation ---
 
-import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { Timestamp } from 'firebase-admin/firestore';
-
 export const checkStaleLeads = onSchedule({
     schedule: 'every day 09:00',
     secrets: ["SENDGRID_API_KEY"],
 }, async () => {
-    logger.info("Running Stale Lead Check...");
-
-    // 3 Days ago
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    logger.info("Checking for stale leads (Agnostic Flow)...");
 
     try {
-        const leadsRef = db.collection('applications');
-        const snapshot = await leadsRef
-            .where('status', '==', 'new')
-            .where('timestamp', '<=', Timestamp.fromDate(threeDaysAgo))
-            // .where('nudgeSent', '!=', true) // Requires index or separate query
-            .limit(50)
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No stale leads found.");
-            return;
-        }
-
-        const { getNudgeEmailTemplate } = await import('./emailTemplates');
-
-        let emailCount = 0;
-        const batch = db.batch();
-
-        for (const doc of snapshot.docs) {
-            const lead = doc.data();
-
-            // Client-side filtering if index is missing/complex
-            if (lead.nudgeSent || !lead.email) continue;
-
-            try {
-                await sendNotificationEmail({
-                    to: lead.email,
-                    subject: `¿Sigues buscando auto, ${lead.firstName}? 🤔`,
-                    html: getNudgeEmailTemplate(lead)
-                });
-
-                batch.update(doc.ref, {
-                    nudgeSent: true,
-                    lastContacted: new Date(),
-                    aiSummary: lead.aiSummary + " [Auto-Nudge Sent]"
-                });
-                emailCount++;
-            } catch (e) {
-                logger.error(`Failed to nudge lead ${doc.id}`, e);
-            }
-        }
-
-        await batch.commit();
-        logger.info(`Nudge campaign completed. Emailed ${emailCount} leads.`);
-
+        const useCase = new NudgeStaleLeads(leadRepository, emailRepository);
+        const nudgeCount = await useCase.execute();
+        logger.info(`Nudge campaign completed. Emailed ${nudgeCount} leads.`);
     } catch (error) {
         logger.error("Error in checkStaleLeads", error);
     }
@@ -581,29 +495,12 @@ export const checkStaleLeads = onSchedule({
 
 export const cleanupOldLogs = onSchedule('every sunday 00:00', async () => {
     logger.info("Running Log Cleanup...");
-    // 30 Days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
     try {
-        const logsRef = db.collection('audit_logs');
-        const snapshot = await logsRef
-            .where('timestamp', '<=', Timestamp.fromDate(thirtyDaysAgo))
-            .limit(500) // Batch limit
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No old logs to clean.");
-            return;
-        }
-
-        const batch = db.batch();
-        snapshot.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-
-        logger.info(`Deleted ${snapshot.size} old logs.`);
+        const useCase = new CleanAuditLogs(logRepository);
+        const deletedCount = await useCase.execute(30);
+        logger.info(`Log Cleanup complete. Deleted ${deletedCount} logs.`);
     } catch (error) {
-        logger.error("Error cleaning logs", error);
+        logger.error("Error in cleanupOldLogs", error);
     }
 });
 
@@ -619,44 +516,18 @@ export const onVehicleUpdate = onDocumentUpdated({
 
     // Check for Price Drop
     if (after.price < before.price) {
-        const carId = event.params.carId;
-        const oldPrice = Number(before.price);
-        const newPrice = Number(after.price);
-
-        logger.info(`Price Drop Detected for ${carId}: ${oldPrice} -> ${newPrice}`);
-
-        // Find interested leads
-        const leadsRef = db.collection('applications');
-        const snapshot = await leadsRef
-            .where('vehicleId', '==', carId)
-            // Optional: Filter by status to avoid emailing sold leads
-            // .where('status', 'in', ['new', 'contacted', 'negotiating']) 
-            .get();
-
-        if (snapshot.empty) {
-            logger.info("No leads interested in this vehicle.");
-            return;
+        try {
+            const useCase = new NotifyPriceDrop(leadRepository, emailRepository);
+            await useCase.execute(
+                event.params.carId,
+                Number(before.price),
+                Number(after.price),
+                after.name || after.model
+            );
+            logger.info(`Price Drop Alert executed for ${event.params.carId}`);
+        } catch (error) {
+            logger.error(`Error in onVehicleUpdate price drop alert`, error);
         }
-
-        const { getPriceDropEmailTemplate } = await import('./emailTemplates');
-        let emailCount = 0;
-
-        for (const doc of snapshot.docs) {
-            const lead = doc.data();
-            if (!lead.email) continue;
-
-            try {
-                await sendNotificationEmail({
-                    to: lead.email,
-                    subject: `🚨 ¡Bajó de Precio! ${lead.vehicleOfInterest || 'El auto que te gusta'}`,
-                    html: getPriceDropEmailTemplate(lead, oldPrice, newPrice)
-                });
-                emailCount++;
-            } catch (e) {
-                logger.error(`Failed to send price drop alert to ${lead.email}`, e);
-            }
-        }
-        logger.info(`Price Drop Alert sent to ${emailCount} leads.`);
     }
 });
 
@@ -669,37 +540,15 @@ export const onLeadStatusChange = onDocumentUpdated({
 
     if (!before || !after) return;
 
-    const oldStatus = before.status;
-    const newStatus = after.status;
-
     // Only react if status CHANGED
-    if (oldStatus === newStatus) return;
-
-    logger.info(`Lead Status Changed: ${oldStatus} -> ${newStatus} for ${event.params.leadId}`);
-
-    const lead = after;
-    if (!lead.email) return;
-
-    const { getContactedEmailTemplate, getSoldEmailTemplate } = await import('./emailTemplates');
+    if (before.status === after.status) return;
 
     try {
-        if (newStatus === 'contacted' && oldStatus === 'new') {
-            await sendNotificationEmail({
-                to: lead.email,
-                subject: `📋 Actualización: Estamos revisando tu solicitud`,
-                html: getContactedEmailTemplate(lead)
-            });
-            logger.info(`Contacted email sent to ${lead.email}`);
-        } else if (newStatus === 'sold') {
-            await sendNotificationEmail({
-                to: lead.email,
-                subject: `🎉 ¡Felicidades por tu nuevo auto!`,
-                html: getSoldEmailTemplate(lead)
-            });
-            logger.info(`Sold email sent to ${lead.email}`);
-        }
-    } catch (e) {
-        logger.error(`Failed to send status update email to ${lead.email}`, e);
+        const useCase = new NotifyLeadStatusChange(emailRepository);
+        await useCase.execute(after as Lead, before.status, after.status);
+        logger.info(`Lead Status Change notification executed for ${event.params.leadId}`);
+    } catch (error) {
+        logger.error(`Error in onLeadStatusChange`, error);
     }
 });
 
@@ -734,7 +583,7 @@ export { chatStream } from './chatStream';
 // --- Phase 6: Voice & WhatsApp Exports ---
 export const processVoiceChunk = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'processVoiceChunk', inputSchema: z.object({ leadId: z.string(), text: z.string() }), outputSchema: z.void() },
@@ -746,7 +595,7 @@ export const processVoiceChunk = onCallGenkit({
 
 export const getLeadMemory = onCallGenkit({
     authPolicy: (auth) => requireSignedIn(auth),
-    cors: true,
+    cors: ALLOWED_ORIGINS,
     secrets: ["GEMINI_API_KEY"],
 }, ai.defineFlow(
     { name: 'getLeadMemory', inputSchema: z.object({ leadId: z.string() }), outputSchema: z.any() },
@@ -757,3 +606,13 @@ export const getLeadMemory = onCallGenkit({
 ));
 // --- Copilot SDK Migration ---
 export { chatWithAgent } from './copilot';
+
+// --- Market Intel Cron Job ---
+export const dailyMarketScraper = onSchedule({
+    schedule: 'every day 02:00',
+    timeZone: 'America/Puerto_Rico',
+    timeoutSeconds: 300,
+}, async () => {
+    const { runMarketIntelScraper } = await import('./services/marketIntelService');
+    await runMarketIntelScraper();
+});

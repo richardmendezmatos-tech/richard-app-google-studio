@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import { User, UserRole } from '@/types/types';
+import { AppUser, UserRole } from '@/types/types';
 import { User as FirebaseUser } from 'firebase/auth';
 import { AuthContext } from './AuthContextValue';
 
@@ -9,7 +9,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [role, setRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
 

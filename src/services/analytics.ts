@@ -1,69 +1,76 @@
 import ReactGA from 'react-ga4';
 
-let isInitialized = false;
+/**
+ * Analytics Service Factory
+ * Uses Closures to encapsulate initialization state and Currying for event composition.
+ */
+const createAnalyticsService = () => {
+    let isInitialized = false;
 
-export const initGA = (measurementId: string = 'G-XXXXXXXXXX') => {
-    if (!isInitialized && typeof window !== 'undefined') {
-        ReactGA.initialize(measurementId);
-        isInitialized = true;
-        console.log('[Analytics] Google Analytics 4 initialized');
-    }
+    const init = (measurementId: string = 'G-XXXXXXXXXX') => {
+        if (!isInitialized && typeof window !== 'undefined') {
+            ReactGA.initialize(measurementId);
+            isInitialized = true;
+            console.log('[Analytics] GA4 initialized via Closure Engine');
+        }
+    };
+
+    /**
+     * Curried Track Event
+     * Signature: trackEvent(category)(action)(label)(value)
+     */
+    const trackEvent = (category: string) => (action: string) => (label?: string) => (value?: number) => {
+        if (isInitialized) {
+            ReactGA.event({ category, action, label, value });
+        }
+    };
+
+    const trackPageView = (path: string) => {
+        if (isInitialized) {
+            ReactGA.send({ hitType: 'pageview', page: path });
+        }
+    };
+
+    return {
+        init,
+        trackPageView,
+        // Domain specific trackers using partial application
+        engagement: trackEvent('Engagement'),
+        conversion: trackEvent('Conversion'),
+        user: trackEvent('User'),
+    };
 };
 
-export const trackPageView = (path: string) => {
-    if (isInitialized) {
-        ReactGA.send({ hitType: 'pageview', page: path });
-    }
-};
+export const analytics = createAnalyticsService();
 
-export const trackEvent = (category: string, action: string, label?: string, value?: number) => {
-    if (isInitialized) {
-        ReactGA.event({
-            category,
-            action,
-            label,
-            value
-        });
-    }
-};
+// Legacy compatibility exports (mapped to the new functional engine)
+export const initGA = analytics.init;
+export const trackPageView = analytics.trackPageView;
+export const trackEvent = (cat: string, act: string, lab?: string, val?: number) =>
+    analytics.engagement(act)(lab)(val); // Simplified for legacy bridging
 
-// Custom event trackers
-export const trackCarView = (carId: string, carName: string, price: number) => {
-    trackEvent('Engagement', 'view_car', `${carId}-${carName}`, price);
-};
+// Specialized Trackers using Currying/Partial Application
+export const trackCarView = (id: string, name: string, price: number) =>
+    analytics.engagement('view_car')(`${id}-${name}`)(price);
 
-export const trackAddToGarage = (carId: string, carName: string) => {
-    trackEvent('Conversion', 'add_to_garage', `${carId}-${carName}`);
-};
+export const trackAddToGarage = (id: string, name: string) =>
+    analytics.conversion('add_to_garage')(`${id}-${name}`)();
 
-export const trackWhatsAppClick = (carId: string, carName: string) => {
-    trackEvent('Conversion', 'whatsapp_click', `${carId}-${carName}`);
-};
+export const trackWhatsAppClick = (id: string, name: string) =>
+    analytics.conversion('whatsapp_click')(`${id}-${name}`)();
 
-export const trackCompareAdd = (carId: string, carName: string) => {
-    trackEvent('Engagement', 'add_to_compare', `${carId}-${carName}`);
-};
+export const trackSearch = (term: string, count: number) =>
+    analytics.engagement('search')(term)(count);
 
-export const trackSearch = (searchTerm: string, resultsCount: number) => {
-    trackEvent('Engagement', 'search', searchTerm, resultsCount);
-};
+export const trackLogin = (method: string) => analytics.user('login')(method)();
+export const trackSignup = (method: string) => analytics.user('signup')(method)();
 
-export const trackVisualSearch = (analysisType: string) => {
-    trackEvent('Engagement', 'visual_search', analysisType);
-};
+// AI-Powered Specialized Trackers
+export const trackNeuralMatch = (lifestyle: string) =>
+    analytics.engagement('neural_match')(lifestyle)();
 
-export const trackNeuralMatch = (lifestyle: string) => {
-    trackEvent('Engagement', 'neural_match', lifestyle);
-};
+export const trackVisualSearch = (type: string) =>
+    analytics.engagement('visual_search')(type)();
 
-export const trackFilterChange = (filterType: string, filterValue: string) => {
-    trackEvent('Engagement', 'filter_change', `${filterType}:${filterValue}`);
-};
-
-export const trackLogin = (method: string) => {
-    trackEvent('User', 'login', method);
-};
-
-export const trackSignup = (method: string) => {
-    trackEvent('User', 'signup', method);
-};
+export const trackInteraction = (action: string, details?: any) =>
+    analytics.engagement('ai_interaction')(action)(undefined);

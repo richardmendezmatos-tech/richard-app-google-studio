@@ -77,6 +77,10 @@ class OrchestrationService {
      * Simple heuristic-based extraction of user preferences from message context.
      * In a real system, this would use a dedicated LLM call (Gemini).
      */
+    /**
+     * AI Orchestration 2.0: Higher-Order Recursive Preference Extraction
+     * Replaces manual iteration with a recursive search through hierarchical keywords.
+     */
     extractLeadPreferences(lead: Lead, message: string): Lead['customerMemory'] {
         const memory = lead.customerMemory || {
             preferences: { models: [], colors: [], features: [] },
@@ -85,24 +89,36 @@ class OrchestrationService {
 
         const lowerMsg = message.toLowerCase();
 
-        // Heuristic: Car models
+        // 1. Recursive Logic for Keywords
         const modelKeywords = ['tucson', 'tacoma', 'civic', 'corolla', 'rav4', 'f150', 'mustang'];
-        modelKeywords.forEach(model => {
-            if (lowerMsg.includes(model) && !memory.preferences?.models?.includes(model)) {
-                memory.preferences = {
-                    ...memory.preferences,
-                    models: [...(memory.preferences?.models || []), model]
-                };
-            }
-        });
 
-        // Heuristic: Lifestyle
-        if (lowerMsg.includes('familia') || lowerMsg.includes('hijos')) {
-            memory.lifestyle = 'Family-oriented';
-        } else if (lowerMsg.includes('trabajo') || lowerMsg.includes('carga')) {
-            memory.lifestyle = 'Professional/Work';
-        } else if (lowerMsg.includes('monte') || lowerMsg.includes('4x4')) {
-            memory.lifestyle = 'Off-road enthusiast';
+        const extractRecursive = (keywords: string[], found: string[] = []): string[] => {
+            if (keywords.length === 0) return found;
+            const [current, ...rest] = keywords;
+            const isMatch = lowerMsg.includes(current) && !found.includes(current);
+            return extractRecursive(rest, isMatch ? [...found, current] : found);
+        };
+
+        const newModels = extractRecursive(modelKeywords, memory.preferences?.models || []);
+
+        memory.preferences = {
+            ...memory.preferences,
+            models: newModels
+        };
+
+        // 2. Functional Personality Matcher
+        const LIFESTYLE_MAP: Record<string, string> = {
+            'familia': 'Family-oriented',
+            'hijos': 'Family-oriented',
+            'trabajo': 'Professional/Work',
+            'carga': 'Professional/Work',
+            'monte': 'Off-road enthusiast',
+            '4x4': 'Off-road enthusiast'
+        };
+
+        const detectLifestyle = Object.keys(LIFESTYLE_MAP).find(key => lowerMsg.includes(key));
+        if (detectLifestyle) {
+            memory.lifestyle = LIFESTYLE_MAP[detectLifestyle];
         }
 
         memory.lastInteractionSummary = `Interés detectado en el mensaje: "${message.substring(0, 50)}..."`;

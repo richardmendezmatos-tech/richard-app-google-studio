@@ -85,13 +85,19 @@ validate_target() {
 
 main() {
   validate_target
-  require_cmd npm
-
-  run_cmd "npm run lint"
-  if [[ "$SKIP_TESTS" == "false" ]]; then
-    run_cmd "npm run test"
+  
+  # Auto-detect Bun for performance
+  local PKG_MANAGER="npm"
+  if command -v bun >/dev/null 2>&1 && { [[ -f "bun.lockb" ]] || [[ -f "bun.lock" ]]; }; then
+    PKG_MANAGER="bun run"
+    echo "⚡ Bun detected! Using Bun for faster execution."
   fi
-  run_cmd "npm run build"
+
+  run_cmd "$PKG_MANAGER lint"
+  if [[ "$SKIP_TESTS" == "false" ]]; then
+    run_cmd "$PKG_MANAGER test"
+  fi
+  run_cmd "$PKG_MANAGER build"
 
   case "$TARGET" in
     none)

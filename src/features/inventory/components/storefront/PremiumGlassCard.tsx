@@ -112,7 +112,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
                         <span className="font-tech text-[10px] uppercase tracking-[0.2em] text-[#00aed9]">{car.type}</span>
                         <div className="h-px w-8 bg-[#00aed9]/50"></div>
                     </div>
-                    <h3 className="font-cinematic text-[2rem] tracking-[0.04em] text-white transition-colors group-hover:text-[#00aed9] line-clamp-1 drop-shadow-md text-glow">{car.name}</h3>
+                    <h3 id={`car-title-${car.id}`} className="font-cinematic text-[2rem] tracking-[0.04em] text-white transition-colors group-hover:text-[#00aed9] line-clamp-1 drop-shadow-md text-glow">{car.name}</h3>
                 </div>
 
                 {/* Specs */}

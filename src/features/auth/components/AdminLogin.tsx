@@ -10,15 +10,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
-import { UserRole } from '@/types/types';
+import { AppUser, UserRole } from '@/types/types';
+import { normalizeUser } from '../services/authService';
+import SEO from '@/components/seo/SEO';
 
-type AdminAuthUser = {
-  uid: string;
-  email: string | null;
-  role: UserRole;
-  displayName?: string | null;
-  photoURL?: string | null;
-};
+// Using global User type
 
 const AdminLogin: FC = () => {
   const [email, setEmail] = useState('');
@@ -78,7 +74,7 @@ const AdminLogin: FC = () => {
     dispatch(loginStart());
 
     try {
-      const user = await loginAdmin(email, password, twoFactorCode || '123456') as AdminAuthUser;
+      const user = await loginAdmin(email, password, twoFactorCode || '123456') as AppUser;
       dispatch(loginSuccess(user));
       navigate('/admin');
     } catch (err: unknown) {
@@ -114,7 +110,8 @@ const AdminLogin: FC = () => {
           const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
           const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
-          dispatch(loginSuccess({ uid: 'dev-admin', email: devEmail, role: 'admin' }));
+          const normalized = normalizeUser(auth.currentUser!, 'admin');
+          dispatch(loginSuccess(normalized));
           navigate('/admin');
         } else {
           throw new Error("Passkey backend verification not implemented for production.");
@@ -147,7 +144,8 @@ const AdminLogin: FC = () => {
       const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
 
       await signInWithEmailAndPassword(auth, devEmail, devPass);
-      dispatch(loginSuccess({ uid: 'dev-admin', email: devEmail, role: 'admin' }));
+      const normalized = normalizeUser(auth.currentUser!, 'admin');
+      dispatch(loginSuccess(normalized));
       navigate('/admin');
     } catch (err: unknown) {
       console.error('Quick Access Error:', err);
@@ -162,6 +160,13 @@ const AdminLogin: FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#050b14] relative overflow-hidden font-sans selection:bg-[#00aed9]/30">
+      <SEO
+        title="Acceso Administrativo"
+        description="Portal administrativo de Richard Automotive."
+        url="/admin-login"
+        noIndex
+        noFollow
+      />
       <GoogleOneTap onSuccess={() => navigate('/admin')} />
 
       {/* Dynamic Background */}

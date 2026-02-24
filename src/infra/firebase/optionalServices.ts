@@ -1,10 +1,18 @@
 import { app, isBrowser } from '@/infra/firebase/client';
 
-let analyticsPromise: Promise<unknown | null> | null = null;
-let performancePromise: Promise<unknown | null> | null = null;
-let storagePromise: Promise<unknown> | null = null;
-let functionsPromise: Promise<unknown> | null = null;
-let realtimeDbPromise: Promise<unknown> | null = null;
+import type { Analytics } from 'firebase/analytics';
+import type { FirebasePerformance } from 'firebase/performance';
+import type { FirebaseStorage } from 'firebase/storage';
+import type { Functions } from 'firebase/functions';
+import type { Database } from 'firebase/database';
+import type { Messaging } from 'firebase/messaging';
+
+let analyticsPromise: Promise<Analytics | null> | null = null;
+let performancePromise: Promise<FirebasePerformance | null> | null = null;
+let storagePromise: Promise<FirebaseStorage> | null = null;
+let functionsPromise: Promise<Functions> | null = null;
+let realtimeDbPromise: Promise<Database> | null = null;
+let messagingPromise: Promise<Messaging | null> | null = null;
 
 export const getAnalyticsService = async () => {
   if (!isBrowser) return null;
@@ -48,4 +56,17 @@ export const getRealtimeDbService = async () => {
     realtimeDbPromise = import('firebase/database').then(({ getDatabase }) => getDatabase(app));
   }
   return realtimeDbPromise;
+};
+
+export const getMessagingService = async () => {
+  if (!isBrowser) return null;
+  if (!messagingPromise) {
+    messagingPromise = import('firebase/messaging')
+      .then(async ({ getMessaging, isSupported }) => {
+        const supported = await isSupported().catch(() => false);
+        return supported ? getMessaging(app) : null;
+      })
+      .catch(() => null);
+  }
+  return messagingPromise;
 };

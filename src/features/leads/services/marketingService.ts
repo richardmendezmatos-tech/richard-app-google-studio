@@ -6,6 +6,7 @@ export interface MarketingContent {
     instagram: string;
     facebook: string;
     tiktokScript: string;
+    posterPrompt?: string;
 }
 
 const determineSalesAngle = (car: Car): string => {
@@ -67,11 +68,19 @@ export const generateCarMarketingContent = async (car: Car, locale: 'es' | 'en' 
            - [3-10s] EL VALOR: 3 cortes rápidos mostrando lo mejor del auto (interior, rines, tecnología).
            - [10-15s] EL CIERRE: "Si quieres manejarlo, comenta 'YO' ahora mismo".
         
+        4. POSTER PROMPT (Instrucciones para Generador de Imágenes AI):
+           - Describe una escena cinematográfica de alta gama donde el auto luzca espectacular.
+           - Especifica iluminación (ej. 'golden hour', 'cyberpunk neon', 'studio lighting').
+           - Incluye instrucciones para que el auto se vea reluciente y deseable.
+           - NO incluyas texto en la imagen, solo la descripción visual.
+           - Estilo: Fotografía publicitaria profesional de automotriz.
+        
         FORMATO DE SALIDA (JSON PURO):
         {
             "instagram": "texto...",
             "facebook": "texto...",
-            "tiktokScript": "texto..."
+            "tiktokScript": "texto...",
+            "posterPrompt": "descripción visual para IA..."
         }
     `;
 

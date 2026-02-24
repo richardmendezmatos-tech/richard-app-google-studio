@@ -13,7 +13,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAuthenticated() && getUserData().role == 'admin';
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin';
     }
     
     function isOwner(userId) {
@@ -77,6 +79,13 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow create: if isAuthenticated();
       allow update, delete: if false;
+    }
+
+    // Solicitudes de Crédito (Phase 16: Zero-Knowledge SSN)
+    match /solicitudes_credito/{docId} {
+      allow create: if true; 
+      allow read: if isAdmin();
+      allow update, delete: if false; 
     }
 
     // Login Security

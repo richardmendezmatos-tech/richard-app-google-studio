@@ -12,7 +12,7 @@ export interface PrivacySettings {
   lastUpdated: number;
 }
 
-export interface User {
+export interface AppUser {
   uid: string;
   email: string | null;
   displayName?: string | null;
@@ -109,6 +109,7 @@ export interface Lead {
   email?: string;
   phone?: string;
   ssn?: string;
+  ssn_encrypted?: string;
   carId?: string;
   notes?: string;
   createdAt?: FirestoreTimestamp;
@@ -138,8 +139,39 @@ export interface Lead {
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
 
-  // AI Orchestration 2.0: Customer Memory
+  // Phase 21: Marketing Intelligence
+  acquisitionCost?: number; // In USD
+  source?: 'facebook' | 'google' | 'direct' | 'referral' | 'instagram' | string;
+  sourceCampaign?: string;
+
+  // Nivel 14: Predictive Scaling
+  predictiveScore?: number;
+  behavioralMetrics?: {
+    timeOnSite?: number;
+    inventoryViews?: number;
+    highValueInteractions?: number;
+    lastActive?: number;
+    intentTrajectory?: 'improving' | 'stable' | 'declining';
+  };
+
+  // Continuum Memory System (CMS) - Nested Learning
   customerMemory?: {
+    l1_reactive?: {
+      lastClick?: string;
+      currentTopic?: string;
+      activeContext: boolean;
+    };
+    l2_contextual?: {
+      interestPatterns: string[];
+      intentScore: number;
+      detectedPreferences: Record<string, string>;
+    };
+    l3_evolutivo?: {
+      lifecycleStage: 'discovery' | 'consideration' | 'decision' | 'trade-in' | 'loyal';
+      historicalInsights: string[];
+      nextMilestone?: string;
+    };
+    // Legacy support
     preferences?: {
       models?: string[];
       colors?: string[];
@@ -147,7 +179,7 @@ export interface Lead {
       budgetRange?: string;
     };
     objections?: string[];
-    lifestyle?: string; // e.g., "Family with 3 kids", "Off-road enthusiast"
+    lifestyle?: string;
     lastInteractionSummary?: string;
     historicalContext?: string[];
   };

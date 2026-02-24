@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# .husky/commit-msg — Richard Automotive v2026.1
+# Validates commit message against Conventional Commits standard.
+
+npx --no -- commitlint --edit "$1"

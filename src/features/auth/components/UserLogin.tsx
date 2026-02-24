@@ -1,12 +1,15 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential } from '../services/authService';
+import { signUpWithEmail, signInWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential, normalizeUser } from '../services/authService';
 import { auth, getRedirectResult } from '@/services/firebaseService';
-import { ArrowRight, Zap, Apple, Chrome, Globe } from 'lucide-react';
+import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
+import SEO from '@/components/seo/SEO';
+import { motion, AnimatePresence } from 'framer-motion';
+import './LoginView.css';
 
 interface GoogleCredentialResponse {
   credential: string;
@@ -47,7 +50,6 @@ const UserLogin: React.FC = () => {
 
   // --- Google One Tap Integration ---
   React.useEffect(() => {
-    // Only show One Tap if not already loading and not on mobile (popups often fail)
     if (loading || isRegistering) return;
 
     const initializeOneTap = () => {
@@ -60,8 +62,8 @@ const UserLogin: React.FC = () => {
           setLoading(true);
           dispatch(loginStart());
           try {
-            const user = await signInWithGoogleCredential(response.credential);
-            dispatch(loginSuccess(user));
+            const appUser = await signInWithGoogleCredential(response.credential);
+            dispatch(loginSuccess(appUser));
             navigate(from, { replace: true });
           } catch (err: unknown) {
             const msg = getErrorMsg(err);
@@ -77,7 +79,6 @@ const UserLogin: React.FC = () => {
       google.accounts.id.prompt();
     };
 
-    // Wait for script to load
     const timer = setTimeout(initializeOneTap, 1500);
     return () => clearTimeout(timer);
   }, [dispatch, from, isRegistering, loading, navigate]);
@@ -88,7 +89,7 @@ const UserLogin: React.FC = () => {
       try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
-          dispatch(loginSuccess(result.user));
+          dispatch(loginSuccess(normalizeUser(result.user) as any));
           navigate(from, { replace: true });
         }
       } catch (err: unknown) {
@@ -105,18 +106,14 @@ const UserLogin: React.FC = () => {
     dispatch(loginStart());
 
     try {
-      let user;
-      if (isRegistering) {
-        user = await signUpWithEmail(email, password);
-      } else {
-        user = await signInWithEmail(email, password);
-      }
-      dispatch(loginSuccess(user));
+      const appUser = isRegistering
+        ? await signUpWithEmail(email, password)
+        : await signInWithEmail(email, password);
+      dispatch(loginSuccess(appUser));
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      console.error(err);
       const msg = getErrorMsg(err);
-      setError(msg); // Keep local for now
+      setError(msg);
       dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
@@ -133,11 +130,10 @@ const UserLogin: React.FC = () => {
       if (provider === 'facebook') user = await signInWithFacebook();
 
       if (user) {
-        dispatch(loginSuccess(user));
+        dispatch(loginSuccess(normalizeUser(user) as any));
         navigate(from, { replace: true });
       }
     } catch (err: unknown) {
-      console.error(err);
       const msg = getErrorMsg(err);
       setError(msg);
       dispatch(loginFailure(msg));
@@ -148,7 +144,6 @@ const UserLogin: React.FC = () => {
 
   const getErrorMsg = (err: unknown) => {
     const authError = err as AuthLikeError;
-    console.error("Auth Debug Details:", err); // Critical for remote debugging
     if (authError.message?.includes('ADMIN_PORTAL_ONLY')) {
       return 'Acceso no autorizado en este portal. Use el portal administrativo.';
     } else if (authError.code === 'auth/email-already-in-use') {
@@ -156,102 +151,146 @@ const UserLogin: React.FC = () => {
     } else if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password') {
       return 'Credenciales incorrectas.';
     } else if (authError.code === 'auth/popup-closed-by-user') {
-      return 'La ventana de inicio de sesión se cerró antes de completar.';
-    } else if (authError.code === 'auth/cancelled-popup-request') {
-      return 'Solicitud de inicio de sesión cancelada.';
-    } else if (authError.message?.includes('projectconfigservice.getprojectconfig-are-blocked')) {
-      return 'ERROR CRÍTICO: La API de Autenticación está bloqueada en Google Cloud Console. Por favor, habilite el "Identity Toolkit API" para su API Key.';
+      return 'La ventana de inicio de sesión se cerró.';
     } else {
       return `Error (${authError.code || 'unknown'}): ${authError.message || 'Intente nuevamente'}`;
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-900">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00aed9]/10 rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]"></div>
-      </div>
+    <div className="min-h-screen relative flex items-center justify-center p-6 bg-[#0a1118] overflow-hidden">
+      <SEO
+        title="Iniciar Sesion"
+        description="Portal de acceso premium de Richard Automotive."
+        url="/login"
+        noIndex
+      />
 
-      <div className="relative w-full max-w-[480px] bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/20 dark:border-slate-700 rounded-[40px] shadow-2xl overflow-hidden">
-        <div className="pt-12 pb-8 px-10 text-center relative">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-lg bg-[#00aed9]/10 text-[#00aed9]">
-            <Zap size={32} />
-          </div>
-          <h2 className="text-3xl font-black tracking-tighter uppercase mb-2 text-slate-800 dark:text-white">
-            {isRegistering ? 'Crear Cuenta' : 'Bienvenido'}
+      {/* Neural Background Elements */}
+      <div className="neural-glow-bg" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative w-full max-w-[460px] glass-login-card rounded-[48px] overflow-hidden"
+      >
+        <div className="pt-12 pb-6 px-10 text-center relative">
+          <motion.div
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white"
+          >
+            <Zap size={40} className="drop-shadow-lg" />
+          </motion.div>
+
+          <h2 className="text-4xl font-black tracking-tighter uppercase mb-3 text-gradient-premium">
+            {isRegistering ? 'Crear Perfil' : 'Bienvenido'}
           </h2>
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            Gestiona tu garaje digital y recibe ofertas personalizadas.
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500 mb-8">
+            Richard <span className="text-cyan-500 italic">Automotive</span> Command Center
           </p>
         </div>
 
-        {!isRegistering && (
-          <div className="px-10 pb-6 space-y-3">
-            <button
-              onClick={() => handleSocialLogin('google')}
-              className="w-full social-button bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:shadow-lg hover:shadow-cyan-500/10 transition-all active:scale-95"
-            >
-              <Chrome size={20} className="text-[#4285F4]" />
-              <span className="font-bold">Continuar con Google</span>
-            </button>
+        <div className="px-10 pb-4 space-y-3">
+          <AnimatePresence mode="wait">
+            {!isRegistering && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="space-y-3"
+              >
+                <button
+                  onClick={() => handleSocialLogin('google')}
+                  className="social-btn-premium google-btn-premium"
+                >
+                  <Chrome size={20} className="text-[#4285F4]" />
+                  <span>Continuar con Google</span>
+                </button>
 
-            <button
-              onClick={() => handleSocialLogin('facebook')}
-              className="w-full social-button bg-[#1877F2] text-white hover:bg-[#166fe5] shadow-lg shadow-[#1877F2]/20 transition-all active:scale-95"
-            >
-              <Globe size={20} />
-              <span className="font-bold">Continuar con Facebook</span>
-            </button>
+                <button
+                  onClick={() => handleSocialLogin('facebook')}
+                  className="social-btn-premium bg-[#1877F2] text-white border-transparent hover:bg-[#166fe5]"
+                >
+                  <Globe size={20} />
+                  <span>Continuar con Facebook</span>
+                </button>
 
-            <button className="w-full social-button bg-black text-white hover:bg-slate-900 transition-all active:scale-95">
-              <Apple size={20} />
-              <span className="font-bold">Continuar con Apple</span>
-            </button>
+                <div className="auth-divider">Neural Auth Gateway</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-            <div className="divider">O usa tu email</div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-4">
+        <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-5">
           <div className="space-y-4">
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="correo@ejemplo.com" className="form-input" />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Contraseña" className="form-input" />
+            <div className="relative group">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                placeholder="CORREO ELECTRÓNICO"
+                className="input-premium pl-12"
+              />
+            </div>
+
+            <div className="relative group">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="input-premium pl-12"
+              />
+            </div>
           </div>
 
-          {error && <div className="error-box">{error}</div>}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 rounded-2xl text-[11px] font-bold flex items-center gap-3 bg-red-500/10 text-red-400 border border-red-500/20"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <button type="submit" disabled={loading} className="w-full primary-button">
-            {loading ? <div className="loader" /> : <>{isRegistering ? 'Registrar' : 'Ingresar'} <ArrowRight size={18} /></>}
+          <button type="submit" disabled={loading} className="primary-btn-premium group">
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <span className="relative z-10">{isRegistering ? 'Inicializar Registro' : 'Acceder al Sistema'}</span>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </button>
 
-          <div className="text-center mt-4">
-            <button type="button" onClick={() => setIsRegistering(!isRegistering)} className="toggle-button">
-              {isRegistering ? '¿Ya tienes cuenta? Entrar' : '¿No tienes cuenta? Regístrate'}
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setIsRegistering(!isRegistering)}
+              className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-cyan-400 transition-colors"
+            >
+              {isRegistering ? '¿Ya estás registrado? Iniciar Sesión' : '¿Nuevo en el centro? Solicitar Acceso'}
             </button>
           </div>
         </form>
-        <div className="py-4 text-center border-t bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700">
-          <Link to="/" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-            Volver a la Tienda
+
+        <div className="py-6 text-center border-t border-white/10 bg-slate-900/40">
+          <Link to="/" className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/60 hover:text-cyan-400 transition-all hover:tracking-[0.5em]">
+            Volver a la Terminal
           </Link>
         </div>
-      </div>
-      <style>{`
-        .social-button { padding: 1rem; border-radius: 1rem; font-weight: bold; font-size: 0.875rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-        .divider { position: relative; display: flex; padding: 1rem 0; align-items: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; font-weight: bold; }
-        .divider::before, .divider::after { content: ''; flex-grow: 1; border-top: 1px solid #e2e8f0; } .dark .divider::before, .dark .divider::after { border-color: #334155; }
-        .divider::before { margin-right: 1rem; } .divider::after { margin-left: 1rem; }
-        .form-input { width: 100%; padding: 1rem; border-radius: 1rem; font-weight: bold; outline: none; transition: all 0.2s; border: 2px solid transparent; background-color: #f1f5f9; }
-        .dark .form-input { background-color: rgba(30, 41, 59, 0.5); color: white; }
-        .form-input:focus { background-color: white; border-color: rgba(0, 174, 217, 0.3); } .dark .form-input:focus { background-color: #1e293b; }
-        .error-box { padding: 1rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 0.75rem; background-color: #fff1f2; color: #f43f5e; border: 1px solid #fecdd3; }
-        .primary-button { width: 100%; padding: 1.25rem; border-radius: 1rem; font-weight: 900; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.2em; box-shadow: 0 10px 15px -3px rgba(0, 174, 217, 0.3), 0 4px 6px -4px rgba(0, 174, 217, 0.3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: linear-gradient(135deg, #00aed9 0%, #007fa1 100%); color: white; }
-        .primary-button:active { transform: scale(0.95); } .primary-button:disabled { opacity: 0.7; cursor: wait; }
-        .loader { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; }
-        .toggle-button { color: #94a3b8; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; } .toggle-button:hover { color: #00aed9; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
+      </motion.div>
     </div>
   );
 };

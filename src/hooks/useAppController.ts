@@ -8,6 +8,7 @@ import { useCarMutations } from '@/features/inventory/hooks/useCarMutations';
 import { startGeofenceMonitoring } from '@/services/geofenceService';
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
 import { initialInventoryData } from '@/constants/initialInventory';
+import { requestNotificationPermission, onForegroundMessage } from '@/services/notificationService';
 
 export const useAppController = () => {
     console.log("🌟 [AppController] Initializing...");
@@ -26,15 +27,22 @@ export const useAppController = () => {
 
     // Lifecycle: Global Services
     useEffect(() => {
-
         startGeofenceMonitoring();
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (const registration of registrations) registration.unregister();
+        // Phase 22: Push Notifications
+        const setupNotifications = async () => {
+            const token = await requestNotificationPermission();
+            if (token) {
+                addNotification('success', '🔔 Notificaciones activadas.');
+            }
+
+            onForegroundMessage((payload) => {
+                addNotification('info', `📢 ${payload.notification?.title || 'Nueva Alerta'}: ${payload.notification?.body || ''}`);
             });
-        }
-    }, []);
+        };
+
+        setupNotifications();
+    }, [addNotification]);
 
     // Handlers
     const handleMagicFix = useCallback(async () => {

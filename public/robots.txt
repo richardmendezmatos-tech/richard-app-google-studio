@@ -1,9 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /admin-login
-Disallow: /garage
-Disallow: /lab
+Disallow: /admin/
 Disallow: /api/
 
 Sitemap: https://www.richard-automotive.com/sitemap.xml

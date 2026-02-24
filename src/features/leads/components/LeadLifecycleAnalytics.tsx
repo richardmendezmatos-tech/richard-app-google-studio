@@ -6,7 +6,12 @@ import {
     MessageCircle,
     TrendingUp,
     TrendingDown,
-    Zap
+    Zap,
+    Clock,
+    Database,
+    Infinity as InfinityIcon,
+    PieChart,
+    Target
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -102,7 +107,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                             label="Verificación de Identidad"
                             impact="positive"
                             value={+20}
-                            active={!!lead.ssn}
+                            active={!!lead.ssn_encrypted || (!!lead.ssn && lead.ssn !== '[ENCRYPTED]')}
                         />
                         <ScoreDriver
                             label="Múltiples Visitas Web"
@@ -116,6 +121,105 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                             value={-15}
                             active={false} // Demo state
                         />
+                    </div>
+                </div>
+            </div>
+
+            {/* Continuum Memory System (CMS) Visualization */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-slate-500 text-xs uppercase tracking-wider mb-6 flex items-center justify-between">
+                    <span>Continuum Memory System (Nested Learning)</span>
+                    <span className="text-[10px] bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full border border-blue-100">RA-CMS Paradigm</span>
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* L1: Reactive */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-1">
+                            <Zap size={10} className="text-amber-500 animate-pulse" />
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Clock size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L1: Reactivo</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Atención Inmediata</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Interacciones en tiempo real y clicks recientes vinculados al inventario.</p>
+                        <div className="mt-3 flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-green-500"></div>
+                            <span className="text-[9px] font-mono text-green-600 uppercase">Live Context Active</span>
+                        </div>
+                    </div>
+
+                    {/* L2: Contextual */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Database size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L2: Contextual</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Patrones de Interés</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Análisis de tendencias semanales. Preferencia detectada: {lead.customerMemory?.preferences?.models?.[0] || 'SUV'}.</p>
+                        <div className="mt-3 bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+                            <div className="bg-blue-500 h-full w-[65%]"></div>
+                        </div>
+                    </div>
+
+                    {/* L3: Evolutivo */}
+                    <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
+                        <div className="flex items-center gap-2 mb-2">
+                            <InfinityIcon size={14} className="text-slate-400" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400">L3: Evolutivo</span>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Ciclo de Vida</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Oportunidad de Trade-in detectada según historial de propiedad (2-3 años).</p>
+                        <div className="mt-3 flex gap-1">
+                            {[1, 2, 3, 4, 5].map(i => (
+                                <div key={i} className={`h-1 flex-1 rounded-full ${i <= 2 ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Phase 21: Marketing Efficiency & ROI Dashboard */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-slate-500 text-xs uppercase tracking-wider mb-6 flex items-center gap-2">
+                    <PieChart size={14} className="text-[#00aed9]" /> Marketing Efficiency (Operation Shield)
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                        <p className="text-[10px] text-slate-400 uppercase font-black mb-1">Costo Adquisición</p>
+                        <div className="flex items-end gap-1">
+                            <span className="text-xl font-black text-slate-800 dark:text-white">${lead.acquisitionCost || '45.00'}</span>
+                            <span className="text-[10px] text-slate-400 mb-1">USD</span>
+                        </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                        <p className="text-[10px] text-slate-400 uppercase font-black mb-1">Fuente / Canal</p>
+                        <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${lead.source === 'google' ? 'bg-red-500' : 'bg-blue-600'}`}></div>
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200 capitalize">{lead.source || 'Facebook Ads'}</span>
+                        </div>
+                        <p className="text-[9px] text-slate-500 mt-1">{lead.sourceCampaign || 'Retargeting_Q1_PR'}</p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-blue-50/30 dark:bg-blue-900/10 border border-blue-100/50 dark:border-blue-800/50 col-span-1 md:col-span-2">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-[10px] text-blue-500 uppercase font-black">ROI Proyectado</p>
+                            <Target size={14} className="text-blue-500" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div>
+                                <span className="text-2xl font-black text-blue-600 dark:text-blue-400">14.2x</span>
+                            </div>
+                            <div className="flex-1">
+                                <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                    <div className="h-full bg-blue-500 w-[78%]"></div>
+                                </div>
+                                <p className="text-[9px] text-slate-400 mt-1 italic">Basado en Valor de Unidad: $32,900</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,7 +242,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
                                 ))}
                                 {lead.customerMemory.preferences?.colors?.map(c => (
                                     <span key={c} className="px-2 py-1 bg-white/10 rounded-md text-xs backdrop-blur-sm border border-white/5 flex items-center gap-1">
-                                        <span className="w-2 h-2 rounded-full bg-current" style={{ color: c }}></span> {c}
+                                        <span className="w-2 h-2 rounded-full bg-current dynamic-color-bullet" style={{ '--pref-color': c } as React.CSSProperties}></span> {c}
                                     </span>
                                 ))}
                             </div>

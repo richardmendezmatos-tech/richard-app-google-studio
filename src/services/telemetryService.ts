@@ -147,14 +147,24 @@ export const analyzeVehicleHealth = (telemetry: VehicleTelemetry): VehicleHealth
     };
 };
 
+import { useTelemetry } from '@/contexts/TelemetryContext';
+
 export const useVehicleHealth = (vehicleId: string) => {
-    const { telemetry, loading, error } = useVehicleTelemetry(vehicleId);
+    const { telemetryMap, subscribeToVehicle, unsubscribeFromVehicle } = useTelemetry();
     const lastAlertId = useRef<string | null>(null);
 
     const health = useMemo(() => {
-        if (!telemetry) return null;
-        return analyzeVehicleHealth(telemetry);
-    }, [telemetry]);
+        return telemetryMap[vehicleId] || null;
+    }, [telemetryMap, vehicleId]);
+
+    useEffect(() => {
+        if (!vehicleId) return;
+
+        subscribeToVehicle(vehicleId);
+        return () => {
+            unsubscribeFromVehicle(vehicleId);
+        };
+    }, [vehicleId, subscribeToVehicle, unsubscribeFromVehicle]);
 
     useEffect(() => {
         if (health) {
@@ -169,5 +179,5 @@ export const useVehicleHealth = (vehicleId: string) => {
         }
     }, [health]);
 
-    return { health, loading, error };
+    return { health, loading: !health, error: null };
 };

@@ -9,22 +9,13 @@ import {
     signInWithRedirect,
     signInWithCredential,
     sendSignInLinkToEmail,
+    updateProfile,
+    updatePassword,
     User
 } from "firebase/auth";
-import {
-    doc,
-    setDoc,
-    getDoc,
-    collection,
-    addDoc,
-    deleteDoc
-} from "firebase/firestore/lite";
-import {
-    updateProfile,
-    updatePassword
-} from "firebase/auth";
-import { auth, db, getAnalyticsService } from "@/services/firebaseService";
-import { UserRole } from "@/types/types";
+import { container } from "@/infra/di/container";
+import { UserRole, AppUser } from "@/domain/entities";
+import { auth, getAnalyticsService } from "@/services/firebaseService";
 
 // --- Types & Constants ---
 const AUDIT_LOGS_COLLECTION = 'audit_logs';
@@ -55,46 +46,38 @@ export const isAdminEmail = (email: string | null): boolean => {
     return adminEmails.includes(lowerEmail) || lowerEmail.includes('admin_vip') || lowerEmail.endsWith('@richard-automotive.com');
 };
 
-const normalizeUser = (user: User, roleOverride?: string) => {
-    const role = roleOverride || (isAdminEmail(user.email) ? 'admin' : 'user');
+export const normalizeUser = (user: User, roleOverride?: UserRole) => {
+    const role: UserRole = roleOverride || (isAdminEmail(user.email) ? 'admin' : 'user');
     return {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
         role: role
-    };
+    } as AppUser;
 };
 
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userRepo = container.getUserRepository();
+    const existing = await userRepo.getUserProfile(user.uid);
     const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
     const currentDealerName = localStorage.getItem('current_dealer_name') || 'Richard Automotive';
 
-    if (!userDoc.exists()) {
-        await setDoc(doc(db, 'users', user.uid), {
+    if (!existing) {
+        await userRepo.saveUserProfile(user.uid, {
             email: user.email,
             displayName: user.displayName,
             photoURL: user.photoURL,
             role,
             dealerId: currentDealerId,
-            dealerName: currentDealerName, // Contextual tracking
+            dealerName: currentDealerName,
             createdAt: new Date()
         });
     }
 };
 
 export const getUserRole = async (uid: string): Promise<UserRole> => {
-    try {
-        const userDoc = await getDoc(doc(db, 'users', uid));
-        if (userDoc.exists()) {
-            return userDoc.data().role as UserRole;
-        }
-        return 'user';
-    } catch (e) {
-        console.error("Error fetching role:", e);
-        return 'user';
-    }
+    return await container.getUserRepository().getUserRole(uid);
 };
 
 // --- Audit & Security ---
@@ -106,14 +89,13 @@ export const logAuthActivity = async (email: string, success: boolean, method: s
     const device = navigator.userAgent;
 
     try {
-        await addDoc(collection(db, AUDIT_LOGS_COLLECTION), {
+        await container.getUserRepository().logActivity({
             email,
             ip,
             device,
-            method, // 'password', 'google', 'admin_2fa'
+            method,
             success,
             details: details || '',
-            timestamp: new Date(),
             location: window.location.pathname
         });
     } catch (e) {
@@ -138,7 +120,7 @@ export async function signUpWithEmail(email: string, password: string) {
         const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
         await createUserProfile(userCredential.user, role);
         await logAuthActivity(email, true, 'signup_email');
-        return userCredential.user;
+        return normalizeUser(userCredential.user, role);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         const errorCode = (error as { code?: string }).code;
@@ -153,7 +135,7 @@ export async function signInWithEmail(email: string, password: string) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         await logAuthActivity(email, true, 'login_email');
-        return userCredential.user;
+        return normalizeUser(userCredential.user);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         await logAuthActivity(email, false, 'login_email', errorMsg);
@@ -190,7 +172,7 @@ export async function signInWithGoogleCredential(credentialString: string) {
         const result = await signInWithCredential(auth, credential);
         await createUserProfile(result.user, 'user');
         await logAuthActivity(result.user.email || 'unknown', true, 'login_google_onetap');
-        return result.user;
+        return normalizeUser(result.user);
     } catch (error: unknown) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         await logAuthActivity('unknown', false, 'login_google_onetap', errorMsg);
@@ -267,7 +249,7 @@ export const validateGhostKey = async (key: string) => {
 export const updateUserProfile = async (user: User, data: { displayName?: string; photoURL?: string }) => {
     try {
         await updateProfile(user, data);
-        await setDoc(doc(db, 'users', user.uid), data, { merge: true });
+        await container.getUserRepository().saveUserProfile(user.uid, data);
         await logAuthActivity(user.email || 'unknown', true, 'profile_update');
     } catch (error: unknown) {
         const errorMessage = (error as { message?: string }).message;
@@ -293,7 +275,8 @@ export const updateUserPassword = async (user: User, newPassword: string) => {
  * Advanced Admin Login with Rate Limiting, Role Check, and 2FA Simulation
  * RESILIENCE UPDATE: "Fail-Open" for aux services (Logging/RateLimits)
  */
-export const loginAdmin = async (email: string, password: string) => {
+export const loginAdmin = async (email: string, password: string, twoFactorCode?: string) => {
+    console.log("2FA Challenge (Simulation):", twoFactorCode);
     // 1. Parallel IO with Fail-Safe IP
     let ip = 'unknown';
     try {
@@ -317,20 +300,18 @@ export const loginAdmin = async (email: string, password: string) => {
         const sanitizedEmail = (email || 'anon').replace(/[@.]/g, '_');
         const sanitizedIP = (ip || '0_0_0_0').replace(/[.:]/g, '_');
         const attemptId = `${sanitizedEmail}_${sanitizedIP}`;
-        const rateLimitRef = doc(db, RATE_LIMITS_COLLECTION, attemptId);
 
-        const rateLimitDoc = await getDoc(rateLimitRef);
+        const userRepo = container.getUserRepository();
+        const profile = await userRepo.getUserProfile(authResult.user.uid);
 
-        // Only enforce if we strictly matched a block record
-        if (rateLimitDoc.exists()) {
-            // Reset logic check...
+        if (profile?.isBlocked) {
+            throw new Error("Su cuenta ha sido bloqueada temporalmente por seguridad.");
         }
 
-        // Clear rate limits on success
-        if (rateLimitDoc.exists()) {
-            await deleteDoc(rateLimitRef);
-        }
+        // Limpiar intentos previos si existen
+        await userRepo.deleteRateLimit(attemptId);
     } catch (e) {
+        if (e instanceof Error && e.message.includes("bloqueada")) throw e;
         console.warn("Non-Critical Auth Logic skipped due to DB error:", e);
     }
 
@@ -389,11 +370,9 @@ export const registerPasskey = async (user: User) => {
 
         // 5. Save Credential ID
         if (credential) {
-            await setDoc(doc(db, 'users', user.uid, 'credentials', credential.id), {
-                credentialId: credential.id,
-                type: 'passkey',
-                createdAt: new Date(),
-                userAgent: navigator.userAgent
+            await container.getUserRepository().saveUserProfile(user.uid, {
+                passkeyEnabled: true,
+                passkeyId: credential.id
             });
             await logAuthActivity(user.email || 'unknown', true, 'passkey_registered');
             return credential;

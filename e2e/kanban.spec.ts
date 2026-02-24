@@ -3,19 +3,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Kanban Board Tests', () => {
     test.beforeEach(async ({ page }) => {
-        // Mock authentication if strictly required, but for now assuming public/dev access or default route
-        await page.goto('/kanban-demo'); // Using demo route for E2E stability
+        await page.addInitScript(() => {
+            window.localStorage.setItem('e2e_bypass', 'true');
+        });
+        await page.goto('/e2e-kanban');
     });
 
     test('should display Kanban columns', async ({ page }) => {
-        // Navigate to Leads/Kanban view if necessary. 
-        // Assuming it's visible on the main dashboard for this test or we need to click a tab.
-        // Let's assume there is a way to see it. If RichardAIControl is there, maybe the board is below.
-
-        // Wait for board to load
-        await expect(page.getByText('Nuevos', { exact: true })).toBeVisible();
-        await expect(page.getByText('Contactados')).toBeVisible();
-        await expect(page.getByText('Ventas Cerradas')).toBeVisible();
+        // Wait for board to load and columns to be visible
+        await expect(page.getByRole('heading', { name: 'Nuevos' })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: 'Contactados' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Ventas Cerradas' })).toBeVisible();
     });
 
     test('should render lead cards with Glassmorphism', async ({ page }) => {

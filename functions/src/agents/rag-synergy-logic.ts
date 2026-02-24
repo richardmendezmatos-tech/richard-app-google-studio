@@ -99,43 +99,80 @@ export async function orchestrateResponse(input: {
         config: { temperature: 0 },
     });
 
+    // --- STEP 3b: VALIDATION PROCESSING ---
     let finalResponse = synthesisResult.text;
-    let audit = { passed: true, feedback: "" };
+    let audit = { passed: true, feedback: '' };
     let negotiationStrategy: string | null = null;
 
     try {
-        const auditData = JSON.parse(validationResult.text);
+        const auditRaw = validationResult.text.trim().replace(/```json|```/g, '');
+        const auditData = JSON.parse(auditRaw);
         audit = { passed: auditData.passed, feedback: auditData.feedback };
+
         if (!auditData.passed && auditData.correctedResponse) {
-            // 4. STEP: Negotiation & Finance Analysis
+            // Negotiation & Finance Analysis
             let financeData: LoanSimulation[] | null = null;
-            if (input.message.toLowerCase().includes('pago') || input.message.toLowerCase().includes('mensual') || input.message.toLowerCase().includes('pronto')) {
-                // Mocking credit score for demo, in real life it would come from input/CRM
+            const lowerMsg = input.message.toLowerCase();
+            if (lowerMsg.includes('pago') || lowerMsg.includes('mensual') || lowerMsg.includes('pronto')) {
                 financeData = simulateLoan(35000, 2000, 72, 720);
             }
 
             const negotiationAnalysis = await ai.generate({
-                prompt: `Review this user request: "${input.message}". 
+                prompt: `Review this user request: "${input.message}".
                 If there is an objection (price, interest, trade-in), suggest a psychological rebuttal using PAS or AIDA.
-                Context: The user is looking at finance options: ${JSON.stringify(financeData)}.
-                Return a negotiation strategy name or null.`,
+                Finance context: ${JSON.stringify(financeData)}.
+                Return ONLY a negotiation strategy name or null.`,
                 config: { temperature: 0.1 }
             });
             negotiationStrategy = negotiationAnalysis.text.trim() === 'null' ? null : negotiationAnalysis.text.trim();
-
             finalResponse = auditData.correctedResponse;
-            logger.warn("Validation FAILED - Using corrected response", { feedback: auditData.feedback });
+            logger.warn('Validation FAILED — using corrected response', { feedback: auditData.feedback });
         }
     } catch (e) {
-        logger.error("Failed to parse validation JSON", { error: e, raw: validationResult.text });
+        logger.error('Failed to parse validation JSON', { error: e, raw: validationResult.text });
+    }
+
+    // --- STEP 4: SENTIMENT + INTENT ANALYSIS ---
+    const analysisResult = await ai.generate({
+        prompt: `Eres un analizador de CRM especializado en ventas de autos.
+        Mensaje del cliente: "${input.message}"
+        Historial reciente: ${JSON.stringify(input.history.slice(-4))}
+
+        Clasifica y retorna SOLO JSON válido (sin markdown):
+        {
+            "sentiment": "positive" | "neutral" | "negative" | "frustrated" | "excited",
+            "intent": "inquiry" | "consultation" | "purchase_ready" | "objection" | "trade_in" | "financing" | "test_drive" | "exit",
+            "urgency": "low" | "medium" | "high",
+            "buyerStage": "awareness" | "consideration" | "decision" | "post_sale"
+        }`,
+        config: { temperature: 0 }
+    });
+
+    let sentiment = 'neutral';
+    let intent = 'consultation';
+    let urgency = 'medium';
+    let buyerStage = 'consideration';
+
+    try {
+        const raw = analysisResult.text.trim().replace(/```json|```/g, '');
+        const parsed = JSON.parse(raw);
+        sentiment = parsed.sentiment ?? sentiment;
+        intent = parsed.intent ?? intent;
+        urgency = parsed.urgency ?? urgency;
+        buyerStage = parsed.buyerStage ?? buyerStage;
+        logger.info('Sentiment & Intent', { sentiment, intent, urgency, buyerStage });
+    } catch (e) {
+        logger.warn('Failed to parse sentiment/intent JSON, using defaults', { raw: analysisResult.text });
     }
 
     return {
         response: finalResponse,
         metadata: {
             stage: input.history && input.history.length > 0 ? "ongoing" : "initial",
-            sentiment: "neutral", // TODO: Real sentiment analysis
-            intent: "consultation", // TODO: Real intent classification
+            sentiment,
+            intent,
+            urgency,
+            buyerStage,
             negotiationStrategy: negotiationStrategy || undefined,
             validationAudit: audit
         }

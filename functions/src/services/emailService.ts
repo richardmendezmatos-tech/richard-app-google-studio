@@ -1,5 +1,9 @@
-import { sendTemplateEmail, sendPlainEmail } from './sendgridService';
+import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
+import { SendNotification } from '../application/use-cases/SendNotification';
 import { logger } from 'firebase-functions';
+
+const emailRepo = new SendGridEmailRepository();
+const notifier = new SendNotification(emailRepo);
 
 export interface EmailPayload {
     to: string;
@@ -11,7 +15,11 @@ export interface EmailPayload {
  * Legacy support for existing admin notifications
  */
 export const sendNotificationEmail = async (payload: EmailPayload) => {
-    return sendPlainEmail(payload.to, payload.subject, payload.html, payload.html);
+    return notifier.execute({
+        to: payload.to,
+        subject: payload.subject,
+        html: payload.html
+    });
 };
 
 export interface LeadEmailData {
@@ -44,6 +52,9 @@ const sendTemplateOrFallback = async ({
 }) => {
     const resolvedTemplateId = String(templateId || '').trim();
     if (resolvedTemplateId) {
+        // Note: Direct service call for templates is still allowed for now, 
+        // to be refactored into the Repository later.
+        const { sendTemplateEmail } = await import('./sendgridService');
         return sendTemplateEmail({
             to,
             templateId: resolvedTemplateId,
@@ -52,7 +63,12 @@ const sendTemplateOrFallback = async ({
     }
 
     logger.warn('Template ID missing, sending fallback plain email', { to, subject });
-    return sendPlainEmail(to, subject, html, html);
+    return notifier.execute({
+        to,
+        subject,
+        html,
+        text: html
+    });
 };
 
 // ============================================

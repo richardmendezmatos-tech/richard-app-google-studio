@@ -14,6 +14,7 @@ export interface ScoringResult {
 export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | null): ScoringResult => {
     let score = lead.aiScore || 50;
     const factors: string[] = [];
+    const memory = lead.customerMemory;
 
     // 1. Vehicle Health Urgency (The Core IoT Insight)
     if (health) {
@@ -26,8 +27,29 @@ export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | nu
         }
     }
 
-    // 2. Lead Type Logic
-    if (lead.type === 'trade-in') {
+    // 2. Continuum Memory System (CMS) - Adaptive Logic
+    if (memory) {
+        // L1: Reactive (Surpresa de comportamento imediato)
+        if (memory.l1_reactive?.activeContext) {
+            score += 12;
+            factors.push('Foco Activo: Interacción Real-time (+12)');
+        }
+
+        // L2: Contextual (Patrones de Intención)
+        if (memory.l2_contextual?.intentScore && memory.l2_contextual.intentScore > 70) {
+            score += 15;
+            factors.push('Contexto L2: Alta Intención Detectada (+15)');
+        }
+
+        // L3: Evolutivo (Ciclo de Vida)
+        if (memory.l3_evolutivo?.lifecycleStage === 'decision' || memory.l3_evolutivo?.lifecycleStage === 'trade-in') {
+            score += 20;
+            factors.push('Fase L3: Punto de Decisión/Trade-in (+20)');
+        }
+    }
+
+    // 3. Lead Type Logic (Legacy/Complementary)
+    if (lead.type === 'trade-in' && !memory?.l3_evolutivo) {
         score += 10;
         factors.push('Interés en Trade-In (+10)');
     } else if (lead.type === 'finance') {
@@ -35,7 +57,7 @@ export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | nu
         factors.push('Solicitud de Financiamiento (+8)');
     }
 
-    // 3. Status Weighting
+    // 4. Status Weighting
     if (lead.status === 'new') {
         score += 5;
         factors.push('Nuevo Prospecto (+5)');
@@ -46,7 +68,12 @@ export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | nu
 
     // Determine Priority Level
     let priority: ScoringResult['priority'] = 'low';
-    if (score >= 90 || (health?.overallStatus === 'critical')) priority = 'urgent';
+
+    // Self-Modifying Priority Thresholds
+    const isHighPriorityCycle = memory?.l3_evolutivo?.lifecycleStage === 'decision';
+    const urgentThreshold = isHighPriorityCycle ? 85 : 90;
+
+    if (score >= urgentThreshold || (health?.overallStatus === 'critical')) priority = 'urgent';
     else if (score >= 70) priority = 'high';
     else if (score >= 40) priority = 'medium';
 

@@ -144,8 +144,8 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
             try {
                 const analysis = await analyzeCarImage(base64);
-                const query = analysis.search_query || analysis.description || analysis.keywords?.join(' ');
-                if (query) {
+                const query = analysis.search_query || analysis.description || (Array.isArray(analysis.keywords) ? analysis.keywords.join(' ') : String(analysis.keywords || ''));
+                if (query && typeof query === 'string' && query !== '[object Object]') {
                     setProfile(query);
                     analytics.trackVisualSearch('neural_match_upload');
                     // Trigger auto-scan after short delay

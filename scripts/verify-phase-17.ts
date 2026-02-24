@@ -13,8 +13,9 @@ async function verify() {
 
         const mockLead: Lead = {
             id: 'test-lead-1',
+            type: 'general', // valid LeadType
             name: 'Test Lead',
-            createdAt: new Date(),
+            createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 } as any,
             status: 'new',
             customerMemory: {
                 lifestyle: 'off-road adventure',

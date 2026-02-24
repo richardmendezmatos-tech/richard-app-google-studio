@@ -45,7 +45,7 @@ const FrameworkDashboard: React.FC = () => {
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter flex items-center gap-4">
                         <Cpu className="text-cyan-500 hidden md:block" size={48} strokeWidth={1} />
-                        Core <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Nexus</span>
+                        Multi-Framework <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Core</span>
                     </h1>
                     <p className="text-slate-500 text-sm mt-2 max-w-xl">
                         {t('dashboard.description')}
@@ -69,7 +69,7 @@ const FrameworkDashboard: React.FC = () => {
             {/* REAL-TIME METRICS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <MetricCard
-                    label={t('dashboard.globalEvents')}
+                    label="Total Framework Interaction"
                     value={state.globalCount.toLocaleString()}
                     icon={Activity}
                     color="text-cyan-400"
@@ -125,13 +125,11 @@ const FrameworkDashboard: React.FC = () => {
                             </div>
 
                             {/* Architecture Diagram Visualization */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
-                                <ModuleCard title="React Core" status="Active" ping={metrics.latency} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                                <ModuleCard title="React Host Connected" status="Active" ping={metrics.latency} />
                                 <ModuleCard title="State Bus" status="Active" ping={2} />
-                                <ModuleCard title="Auth Gate" status="Idle" ping={0} />
-                                <ModuleCard title="Data Layer" status="Active" ping={metrics.latency + 5} />
-                                <ModuleCard title="AI Engine" status="Standby" ping={0} />
                                 <ModuleCard title="Telemetry" status="Active" ping={metrics.latency} />
+                                <ModuleCard title="Cloud Sync" status="Active" ping={metrics.latency + 10} />
                             </div>
                         </div>
                     </div>

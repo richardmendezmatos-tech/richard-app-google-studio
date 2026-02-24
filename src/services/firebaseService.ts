@@ -5,6 +5,7 @@ import {
   where,
   limit,
   getDocs,
+  getDoc,
   serverTimestamp,
   doc,
   setDoc
@@ -13,9 +14,11 @@ import {
   app,
   auth,
   db,
+  dbLite,
   isBrowser,
   getRedirectResult
 } from '@/infra/firebase/client';
+import { Car, Lead, Subscriber } from '@/types/types';
 import {
   getAnalyticsService,
   getPerformanceService,
@@ -23,11 +26,13 @@ import {
   getFunctionsService,
   getRealtimeDbService
 } from '@/infra/firebase/optionalServices';
+import { FirestoreLeadRepository } from '@/infra/repositories/FirestoreLeadRepository';
 export { optimizeImage, AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
 export {
   app,
   auth,
   db,
+  dbLite,
   getRedirectResult,
   getAnalyticsService,
   getPerformanceService,
@@ -36,9 +41,10 @@ export {
   getRealtimeDbService
 };
 
-type InventoryRecord = { id: string; name?: string } & Record<string, unknown>;
-type LeadRecord = { id: string } & Record<string, unknown>;
-type SubscriberRecord = { id: string } & Record<string, unknown>;
+// Internal record types for document data before casting
+type InventoryRecord = Car;
+type LeadRecord = Lead;
+type SubscriberRecord = Subscriber;
 
 // Legacy / Backward Compatibility Exports
 // Keep these as lazy wrappers to avoid circular ESM initialization between
@@ -70,134 +76,93 @@ export const incrementCarView = async (...args: Parameters<typeof import('@/app/
 
 // --- Application Logic ---
 
+import { container } from '@/infra/di/container';
+
+// --- Application Logic (Delegated to Repositories via DI) ---
+
 export const uploadImage = async (file: File) => {
-  const storage = await getStorageService();
-  const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
-  const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const storageRef = ref(storage, `${dealerId}/profiles/${Date.now()}_${file.name}`);
-  const snapshot = await uploadBytes(storageRef, file);
-  return await getDownloadURL(snapshot.ref);
+  return await container.getStorageRepository().uploadImage(file);
 };
 
 export const getInventoryStats = async () => {
+  // OPTIMIZACIÓN LEAN: Usar documento de metadatos para evitar escaneo de 10k documentos
   try {
-    const coll = collection(db, 'cars');
-    const snapshot = await getDocs(coll);
-    const prices = snapshot.docs
-      .map((d) => Number((d.data() as { price?: number }).price || 0))
-      .filter((value) => Number.isFinite(value));
-    const count = snapshot.size;
-    const totalValue = prices.reduce((acc, value) => acc + value, 0);
-    const avgPrice = count > 0 ? totalValue / count : 0;
+    const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
+    const statsRef = doc(db, 'metadata', `inventory_${dealerId}`);
+    const statsSnap = await getDoc(statsRef);
 
-    return {
-      count,
-      totalValue,
-      avgPrice
-    };
+    if (statsSnap.exists()) {
+      return statsSnap.data() as { count: number, totalValue: number, avgPrice: number };
+    }
+
+    // Fallback si no existe el metadato (una sola vez)
+    const coll = collection(db, 'cars');
+    const q = query(coll, where('dealerId', '==', dealerId), limit(1)); // Solo para ver si hay algo
+    const snapshot = await getDocs(q);
+    return { count: snapshot.size, totalValue: 0, avgPrice: 0 };
   } catch (e) {
     console.error("Aggregation failed:", e);
     return { count: 0, totalValue: 0, avgPrice: 0 };
   }
 };
 
+import { onSnapshot, collection as fullCollection, query as fullQuery, where as fullWhere, limit as fullLimit } from 'firebase/firestore';
+
 export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
+  const q = fullQuery(fullCollection(db, 'cars'), fullWhere('dealerId', '==', dealerId), fullLimit(100));
 
-  let cancelled = false;
-  const fetchInventory = async () => {
-    try {
-      const snapshot = await getDocs(q);
-      if (cancelled) return;
-      const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      callback(inventoryList);
-    } catch (error) {
-      console.error("syncInventory Error:", error);
-    }
-  };
-
-  fetchInventory();
-  const intervalId = setInterval(fetchInventory, 10000);
-
-  return () => {
-    cancelled = true;
-    clearInterval(intervalId);
-  };
+  return onSnapshot(q, (snapshot) => {
+    const inventoryList: InventoryRecord[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as InventoryRecord));
+    inventoryList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    callback(inventoryList);
+  }, (error) => {
+    console.error("syncInventory Error:", error);
+  });
 };
 
-export const getInventoryOnce = async (): Promise<InventoryRecord[]> => {
+export const getInventoryOnce = async (): Promise<Car[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'cars'), where('dealerId', '==', dealerId), limit(100));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return await container.getGetInventoryUseCase().execute(dealerId);
 };
 
 export const submitApplication = async (data: Record<string, unknown>) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const safeData = {
-    ...data,
-    dealerId,
-    timestamp: new Date(),
-    status: 'new'
-  };
-  return await addDoc(collection(db, 'applications'), safeData);
+  return await container.getApplicationRepository().submitApplication(data, dealerId);
 };
 
 export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId), limit(200));
-  let cancelled = false;
+  const q = fullQuery(fullCollection(db, 'applications'), fullWhere('dealerId', '==', dealerId), fullLimit(200));
 
-  const fetchLeads = async () => {
-    try {
-      const snapshot = await getDocs(q);
-      if (cancelled) return;
-      const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(leadsList);
-    } catch (error) {
-      console.error('syncLeads Error:', error);
-    }
-  };
-
-  fetchLeads();
-  const intervalId = setInterval(fetchLeads, 10000);
-
-  return () => {
-    cancelled = true;
-    clearInterval(intervalId);
-  };
+  return onSnapshot(q, (snapshot) => {
+    const leadsList: LeadRecord[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+    callback(leadsList);
+  }, (error) => {
+    console.error('syncLeads Error:', error);
+  });
 };
 
-export const getLeadsOnce = async (): Promise<LeadRecord[]> => {
+export const getLeadsOnce = async (): Promise<Lead[]> => {
   const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'applications'), where('dealerId', '==', dealerId));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return await container.getGetLeadsUseCase().execute(dealerId, 200);
 };
 
 export const updateLeadStatus = async (leadId: string, newStatus: string) => {
-  const leadRef = doc(db, 'applications', leadId);
-  await setDoc(leadRef, { status: newStatus }, { merge: true });
+  await container.getLeadRepository().updateLead(leadId, { status: newStatus as any });
 };
 
 export const subscribeToNewsletter = async (email: string) => {
-  const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  await addDoc(collection(db, "subscribers"), { email, dealerId, timestamp: serverTimestamp() });
+  await container.getSubscriberRepository().subscribe(email);
 };
 
 export const submitSurvey = async (data: Record<string, unknown>) => {
-  const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  return await addDoc(collection(db, 'surveys'), { ...data, dealerId, timestamp: serverTimestamp() });
+  await container.getSurveyRepository().submitSurvey(data);
 };
 
 export const getSubscribers = async (): Promise<SubscriberRecord[]> => {
-  const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const q = query(collection(db, 'subscribers'), where('dealerId', '==', dealerId));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return await container.getSubscriberRepository().getSubscribers() as SubscriberRecord[];
 };

@@ -1,5 +1,8 @@
 # MANUAL DE IDENTIDAD Y OPERACIÓN - RICHARD AUTOMOTIVE AI
 
+> [!CAUTION]
+> **REGLA DE ORO DE MARCA:** Este proyecto es EXCLUSIVAMENTE para Richard Automotive. Queda prohibida la integración o mención de VitalOS, Happy Senior o cualquier término ajeno al mercado automotriz de Puerto Rico.
+
 ## 1. IDENTIDAD Y PERSONA
 
 **Nombre:** Richard Automotive AI (Asistente Virtual)
@@ -189,7 +192,8 @@ El asistente tiene acceso a skills especializados para maximizar conversión y p
 
 ### Welcome Series (Post-Lead Capture)
 
-- Email 1: Bienvenida + confirmación (inmediato)
+* Email 1: Bienvenida + confirmación (inmediato)
+
 * Email 2: Presentación + credenciales (Día 1)
 * Email 3: Caso de éxito similar (Día 3)
 * Email 4: Recordatorio + urgencia suave (Día 5)
@@ -198,7 +202,8 @@ El asistente tiene acceso a skills especializados para maximizar conversión y p
 
 ### Re-Engagement Series (Leads Inactivos)
 
-- Email 1: Check-in amigable (30 días inactividad)
+* Email 1: Check-in amigable (30 días inactividad)
+
 * Email 2: Incentivo especial (Día 3)
 * Email 3: Última oportunidad (Día 7)
 
@@ -206,13 +211,15 @@ El asistente tiene acceso a skills especializados para maximizar conversión y p
 
 ### Post-Appointment Series
 
-- Email 1: Agradecimiento + próximos pasos (inmediato)
+* Email 1: Agradecimiento + próximos pasos (inmediato)
+
 * Email 2: Recordatorio de documentos (Día 1)
 * Email 3: Follow-up si no cierra (Día 7)
 
 **Objetivo:** Mantener momentum y cerrar ventas
 
 **Métricas objetivo:**
+
 * Open rate: >35%
 * Click rate: >8%
 * Conversion to appointment: >10%
@@ -234,18 +241,21 @@ El asistente tiene acceso a skills especializados para maximizar conversión y p
 3. Email (opcional)
 
 **Información adicional capturada progresivamente en conversación:**
+
 * Tipo de vehículo
 * Presupuesto mensual
 * Score de crédito (indirecto)
 * Timeline de compra
 
 **Principios aplicados:**
+
 * **Every Field Has a Cost:** Cada campo reduce conversión 10-25%
 * **Mobile-First:** Touch targets 44px+, auto-format de teléfono
 * **Inline Validation:** Validar mientras escribe, no solo al enviar
 * **Trust Elements:** "Respuesta en 5 min", "Sin compromiso", "100% confidencial"
 
 **Impacto esperado:**
+
 * Form completion rate: 15-20% → 40-50% (+150%)
 * Tiempo de captura: 90 seg → 25 seg (-72%)
 * Mobile completion: 10-15% → 35-45% (+200%)
@@ -270,7 +280,8 @@ El asistente tiene acceso a skills especializados para maximizar conversión y p
 
 ### Categorías de Leads
 
-- **🔥 Hot Lead (70-100):** Llamar INMEDIATAMENTE (<5 min)
+* **🔥 Hot Lead (70-100):** Llamar INMEDIATAMENTE (<5 min)
+
 * **🟡 Warm Lead (40-69):** Email sequence + llamada en 24h
 * **🔵 Cold Lead (0-39):** Nurture sequence largo plazo
 
@@ -292,11 +303,13 @@ export const calculateLeadScore = functions.firestore
 ```
 
 **Notificaciones automáticas:**
+
 * Hot leads: WhatsApp + SMS inmediato
 * Warm leads: Email diario con resumen
 * Cold leads: Reporte semanal
 
 **Métricas objetivo:**
+
 * Precisión de hot leads: >60% conversion
 * Tiempo de respuesta a hot: <5 min
 * False positives: <20%

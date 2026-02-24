@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Car } from '@/types/types';
 import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
@@ -8,7 +9,7 @@ import { useDealer } from '@/contexts/DealerContext';
 import { logIntentSignal } from '@/services/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import DealBuilder from '@/features/inventory/components/deal/DealBuilder';
-import SEO from '@/features/inventory/components/SEO';
+import SEO from '@/components/seo/SEO';
 import { SITE_CONFIG } from '@/constants/siteConfig';
 import Viewer360 from '@/features/inventory/components/common/Viewer360';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
@@ -23,8 +24,6 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     const navigate = useNavigate();
     const { currentDealer } = useDealer();
     const [engagedTime, setEngagedTime] = useState(0);
-    const [aiPitch, setAiPitch] = useState<string | null>(null);
-    const [loadingPitch, setLoadingPitch] = useState(false);
     const { trackEvent } = useMetaPixel();
     const analytics = useInventoryAnalytics();
 
@@ -73,28 +72,27 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
     };
 
     // Generate AI Pitch on load
-    useEffect(() => {
-        if (!car || aiPitch || loadingPitch) return;
+    const { data: aiPitchData, isLoading: loadingPitch } = useQuery({
+        queryKey: ['carPitch', car?.id],
+        queryFn: async () => {
+            if (!car) throw new Error("No vehicle found");
+            return await generateCarPitch(car);
+        },
+        enabled: !!car,
+        staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours to prevent unnecessary Gemini API calls
+    });
+    const aiPitch = aiPitchData || null;
 
-        let isMounted = true;
-
-        const fetchPitch = async () => {
-            setLoadingPitch(true);
-            try {
-                const text = await generateCarPitch(car);
-                if (isMounted) setAiPitch(text);
-            } catch (err: unknown) {
-                if (isMounted) setAiPitch(`Error: ${err instanceof Error ? err.message : String(err)}`);
-            } finally {
-
-                if (isMounted) setLoadingPitch(false);
-            }
-        };
-
-        fetchPitch();
-
-        return () => { isMounted = false; };
-    }, [car, aiPitch, loadingPitch]);
+    // Helper to parse vehicle details if structured data is missing
+    const { year, make, model } = React.useMemo(() => {
+        if (!car) return { year: 2026, make: 'Auto', model: 'Auto' };
+        const parts = car.name.split(' ');
+        const parsedYear = car.year || parseInt(parts[0]) || 2026;
+        const parsedMake = parts[1] || 'Auto';
+        const parsedModel = parts.slice(2).join(' ') || car.name;
+        return { year: parsedYear, make: parsedMake, model: parsedModel };
+    }, [car]);
+    const siteUrl = SITE_CONFIG.url;
 
     if (!car) {
         return (
@@ -118,13 +116,6 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             alert('Enlace copiado al portapapeles');
         }
     };
-
-    // Helper to parse vehicle details if structured data is missing
-    const nameParts = car.name.split(' ');
-    const year = car.year || parseInt(nameParts[0]) || 2026;
-    const make = nameParts[1] || 'Auto';
-    const model = nameParts.slice(2).join(' ') || car.name;
-    const siteUrl = SITE_CONFIG.url;
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
