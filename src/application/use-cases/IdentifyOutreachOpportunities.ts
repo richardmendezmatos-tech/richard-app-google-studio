@@ -12,38 +12,47 @@ export class IdentifyOutreachOpportunities {
         // 1. Get high probability leads
         const candidates = await this.predictiveRepo.getHighProbabilityLeads(threshold);
 
-        // 2. Filter by business logic (e.g., status is 'new' or 'contacted' but stalled)
-        const opportunities: OutreachOpportunity[] = [];
+        // 2. Filter and Map by business logic
+        return candidates
+            .filter(lead => this.isStalled(lead))
+            .map(lead => ({
+                leadId: lead.id,
+                opportunityScale: lead.predictiveScore || 0,
+                reason: `High probability lead (${lead.predictiveScore}%) showing signs of stagnation in phase: ${lead.status}`,
+                suggestedAction: this.determineAction(lead),
+                potentialRoi: this.estimateRoi(lead),
+                expiresAt: Date.now() + (1000 * 60 * 60 * 24), // 24h validity
+                actionType: this.determineActionType(lead),
+                whatsappPayload: lead.phone ? {
+                    phone: lead.phone,
+                    message: this.generateMessage(lead)
+                } : undefined
+            }));
 
-        for (const lead of candidates) {
-            if (this.isStalled(lead)) {
-                opportunities.push({
-                    leadId: lead.id,
-                    opportunityScale: lead.predictiveScore || 0,
-                    reason: `High probability lead (${lead.predictiveScore}%) showing signs of stagnation in phase: ${lead.status}`,
-                    suggestedAction: this.determineAction(lead),
-                    potentialRoi: this.estimateRoi(lead),
-                    expiresAt: Date.now() + (1000 * 60 * 60 * 24) // 24h validity
-                });
-            }
-        }
-
-        return opportunities;
     }
 
     private isStalled(lead: Lead): boolean {
-        // Simple heuristic for now: status is not 'sold' or 'lost' and hasn't had contact for a bit
-        // In a real scenario, we'd check behavioralMetrics.lastActive vs now
         return lead.status !== 'sold' && lead.status !== 'lost';
     }
 
     private determineAction(lead: Lead): string {
-        if (lead.predictiveScore && lead.predictiveScore > 90) return 'AGGRESSIVE_CLOSING_NUDGE';
-        return 'SOFT_REENGAGEMENT_NUDGE';
+        if (lead.predictiveScore && lead.predictiveScore > 90) return 'Cierre Agresivo';
+        return 'Re-engager Suave';
+    }
+
+    private determineActionType(lead: Lead): 'whatsapp' | 'strategy' {
+        return lead.phone ? 'whatsapp' : 'strategy';
+    }
+
+    private generateMessage(lead: Lead): string {
+        const score = lead.predictiveScore || 0;
+        if (score > 90) {
+            return `¡Hola ${lead.firstName}! 👋 Soy Richard de Richard Automotive. He visto que tienes mucho interés en el inventario. Tengo una oferta exclusiva para cerrar hoy mismo. ¿Hablamos?`;
+        }
+        return `Hola ${lead.firstName}, ¿cómo vas con tu búsqueda de auto? 🚗 Sigo a tu disposición para cualquier duda.`;
     }
 
     private estimateRoi(lead: Lead): number {
-        // Placeholder estimation
         return (lead.predictiveScore || 0) * 10;
     }
 }

@@ -60,6 +60,7 @@ export interface Car {
     fuelType?: string;
     images?: string[];
     description?: string;
+    createdAt?: number; // Timestamp for inventory age calculation
 }
 
 export type UserRole = 'admin' | 'user' | 'agent' | 'ghost';
