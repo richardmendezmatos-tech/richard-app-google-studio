@@ -5,6 +5,7 @@ import {
   where,
   limit,
   getDocs,
+  getDoc,
   serverTimestamp,
   doc,
   setDoc
@@ -84,19 +85,21 @@ export const uploadImage = async (file: File) => {
 };
 
 export const getInventoryStats = async () => {
-  // Logic remains here for now as it's an aggregation across a collection,
-  // but we should eventually move it to InventoryRepository.
+  // OPTIMIZACIÓN LEAN: Usar documento de metadatos para evitar escaneo de 10k documentos
   try {
-    const coll = collection(db, 'cars');
-    const snapshot = await getDocs(coll);
-    const prices = snapshot.docs
-      .map((d) => Number((d.data() as { price?: number }).price || 0))
-      .filter((value) => Number.isFinite(value));
-    const count = snapshot.size;
-    const totalValue = prices.reduce((acc, value) => acc + value, 0);
-    const avgPrice = count > 0 ? totalValue / count : 0;
+    const dealerId = (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
+    const statsRef = doc(db, 'metadata', `inventory_${dealerId}`);
+    const statsSnap = await getDoc(statsRef);
 
-    return { count, totalValue, avgPrice };
+    if (statsSnap.exists()) {
+      return statsSnap.data() as { count: number, totalValue: number, avgPrice: number };
+    }
+
+    // Fallback si no existe el metadato (una sola vez)
+    const coll = collection(db, 'cars');
+    const q = query(coll, where('dealerId', '==', dealerId), limit(1)); // Solo para ver si hay algo
+    const snapshot = await getDocs(q);
+    return { count: snapshot.size, totalValue: 0, avgPrice: 0 };
   } catch (e) {
     console.error("Aggregation failed:", e);
     return { count: 0, totalValue: 0, avgPrice: 0 };
