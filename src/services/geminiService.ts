@@ -32,7 +32,7 @@ interface GenerationConfig {
   [key: string]: unknown;
 }
 
-const callGeminiProxy = async (prompt: GeminiPrompt, systemInstruction?: string, modelName: string = "gemini-pro", config?: GenerationConfig): Promise<string> => {
+const callGeminiProxy = async (prompt: GeminiPrompt, systemInstruction?: string, modelName: string = "gemini-2.0-flash", config?: GenerationConfig): Promise<string> => {
   try {
     // 1. Try Primary Key
     let apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -210,7 +210,7 @@ export const getAIResponse = async (
     const timeout = new Promise<string>((_, reject) => setTimeout(() => reject(new Error("Timeout")), 8000));
 
     const apiCall = async () => {
-      const text = await callGeminiProxy(userPrompt, systemInstruction, "gemini-1.5-flash");
+      const text = await callGeminiProxy(userPrompt, systemInstruction, "gemini-2.0-flash");
 
       // Async Logging
       logUsageEvent({
@@ -338,7 +338,7 @@ export const generateImage = async (prompt: string, referenceImageBase64?: strin
 
     // Using NanoBanana (Gemini 2.5 Flash Image)
     // Note: The SDK typically returns base64 in parts for images
-    const response = await callGeminiProxy(finalPrompt, undefined, "gemini-2.5-flash-image");
+    const response = await callGeminiProxy(finalPrompt, undefined, "gemini-2.0-flash");
 
     // Attempt to extract image URL or Base64 from opaque response
     // Logic depends on exact SDK behavior for this model, assuming valid response object if text() failed
