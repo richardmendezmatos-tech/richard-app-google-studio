@@ -122,6 +122,11 @@ export interface OutreachOpportunity {
     suggestedAction: string;
     potentialRoi: number;
     expiresAt: number;
+    actionType: 'whatsapp' | 'strategy';
+    whatsappPayload?: {
+        phone: string;
+        message: string;
+    };
 }
 
 export interface MarginAdjustment {
