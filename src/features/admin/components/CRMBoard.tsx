@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import {
@@ -252,6 +252,13 @@ const CRMBoard: React.FC = () => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
+    const groupedLeads = useMemo(() => {
+        return COLUMNS.reduce((acc, col) => {
+            acc[col.id] = leads.filter(l => (l.status || 'new') === col.id);
+            return acc;
+        }, {} as Record<string, Lead[]>);
+    }, [leads]);
+
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
         if (!over) { setActiveId(null); return; }
@@ -274,7 +281,7 @@ const CRMBoard: React.FC = () => {
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={e => setActiveId(e.active.id as string)} onDragEnd={handleDragEnd}>
             <div ref={containerRef as any} className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar">
                 {COLUMNS.map(col => {
-                    const colLeads = leads.filter(l => (l.status || 'new') === col.id);
+                    const colLeads = groupedLeads[col.id] || [];
                     return (
                         <div key={col.id} className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50">
                             <div className="flex items-center gap-3 mb-6 px-2">

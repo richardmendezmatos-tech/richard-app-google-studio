@@ -20,6 +20,7 @@ const MOCK_AGENTS: AgentPresence[] = [
 class PresenceService {
     private presences: Map<string, AgentPresence> = new Map();
     private subscribers: ((presences: AgentPresence[]) => void)[] = [];
+    private intervalId: any = null;
     private currentUser: AgentPresence | null = null;
 
     constructor() {
@@ -28,7 +29,19 @@ class PresenceService {
 
         // Simulate activity periodically
         if (typeof window !== 'undefined') {
-            setInterval(() => this.simulateActivity(), 30000);
+            this.startSimulation();
+        }
+    }
+
+    private startSimulation() {
+        if (this.intervalId) clearInterval(this.intervalId);
+        this.intervalId = setInterval(() => this.simulateActivity(), 30000);
+    }
+
+    public stopSimulation() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
         }
     }
 

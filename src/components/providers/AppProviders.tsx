@@ -8,6 +8,7 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import { PrivacyProvider } from '@/features/privacy/context/PrivacyContext';
 import { initGA } from '@/services/analytics';
 import { MetaPixel } from '@/components/layout/tracking/MetaPixel';
+import { TelemetryProvider } from '@/contexts/TelemetryContext';
 
 // --- Router Logic ---
 const SmartRouter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -38,10 +39,12 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
                     <NotificationProvider>
                         <PrivacyProvider>
                             <ComparisonProvider>
-                                <SmartRouter>
-                                    <MetaPixel />
-                                    {children}
-                                </SmartRouter>
+                                <TelemetryProvider>
+                                    <SmartRouter>
+                                        <MetaPixel />
+                                        {children}
+                                    </SmartRouter>
+                                </TelemetryProvider>
                             </ComparisonProvider>
                         </PrivacyProvider>
                     </NotificationProvider>
