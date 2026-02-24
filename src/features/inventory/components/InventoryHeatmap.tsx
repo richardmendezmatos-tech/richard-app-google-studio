@@ -114,8 +114,7 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
                             </div>
 
                             {/* Decorative Grid Pattern */}
-                            <div className="absolute inset-0 opacity-10 pointer-events-none"
-                                style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
+                            <div className="absolute inset-0 opacity-10 pointer-events-none bg-grid-dots"></div>
                         </div>
                     );
                 })}

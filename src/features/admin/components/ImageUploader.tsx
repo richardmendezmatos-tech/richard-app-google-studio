@@ -351,94 +351,94 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
             {/* File List */}
             {files.length > 0 && (
-                    <div className="space-y-3 route-fade-in">
-                        {files.map((file, index) => (
-                            <div
-                                key={index}
-                                style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
-                                className="glass-premium p-4 rounded-xl flex items-center gap-4"
-                            >
-                                {/* Preview */}
-                                <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
-                                    <img
-                                        src={file.preview}
-                                        alt="Preview"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold text-white truncate">
-                                        {file.file.name}
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                        {(file.file.size / 1024 / 1024).toFixed(2)} MB
-                                    </p>
-
-                                    {/* Progress Bar */}
-                                    {(file.status === 'optimizing' || file.status === 'uploading') && (
-                                        <div className="mt-2">
-                                            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                                <div
-                                                    style={{ width: `${file.progress}%` }}
-                                                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500"
-                                                />
-                                            </div>
-                                            <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">
-                                                {file.status === 'optimizing' ? 'Optimizando...' : 'Subiendo...'}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Error */}
-                                    {file.status === 'error' && (
-                                        <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                                            <AlertCircle size={12} />
-                                            {file.error}
-                                        </p>
-                                    )}
-
-                                    {/* Success */}
-                                    {file.status === 'complete' && file.result && (
-                                        <p className="text-xs text-emerald-500 mt-1 flex items-center gap-1">
-                                            <CheckCircle size={12} />
-                                            Optimizado: {((file.result.originalSize - file.result.optimizedSize) / 1024 / 1024).toFixed(2)} MB ahorrados
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Status Icon */}
-                                <div className="flex-shrink-0">
-                                    {file.status === 'pending' && (
-                                        <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
-                                            <ImageIcon size={16} className="text-slate-500" />
-                                        </div>
-                                    )}
-                                    {(file.status === 'optimizing' || file.status === 'uploading') && (
-                                        <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
-                                            <Loader2 size={16} className="text-cyan-500 animate-spin" />
-                                        </div>
-                                    )}
-                                    {file.status === 'complete' && (
-                                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                                            <CheckCircle size={16} className="text-emerald-500" />
-                                        </div>
-                                    )}
-                                    {file.status === 'error' && (
-                                        <button
-                                            onClick={() => removeFile(index)}
-                                            aria-label="Eliminar imagen"
-                                            className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors"
-                                        >
-                                            <X size={16} className="text-red-500" />
-                                        </button>
-                                    )}
-                                </div>
+                <div className="space-y-3 route-fade-in">
+                    {files.map((file, index) => (
+                        <div
+                            key={index}
+                            className="glass-premium p-4 rounded-xl flex items-center gap-4 delay-var"
+                            style={{ '--d': `${Math.min(index * 45, 220)}ms` } as React.CSSProperties}
+                        >
+                            {/* Preview */}
+                            <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
+                                <img
+                                    src={file.preview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
-                        ))}
-                    </div>
-                )}
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-white truncate">
+                                    {file.file.name}
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                    {(file.file.size / 1024 / 1024).toFixed(2)} MB
+                                </p>
+
+                                {/* Progress Bar */}
+                                {(file.status === 'optimizing' || file.status === 'uploading') && (
+                                    <div className="mt-2">
+                                        <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                            <div
+                                                style={{ '--progress-width': `${file.progress}%` } as React.CSSProperties}
+                                                className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 progress-bar-width"
+                                            />
+                                        </div>
+                                        <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">
+                                            {file.status === 'optimizing' ? 'Optimizando...' : 'Subiendo...'}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Error */}
+                                {file.status === 'error' && (
+                                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                                        <AlertCircle size={12} />
+                                        {file.error}
+                                    </p>
+                                )}
+
+                                {/* Success */}
+                                {file.status === 'complete' && file.result && (
+                                    <p className="text-xs text-emerald-500 mt-1 flex items-center gap-1">
+                                        <CheckCircle size={12} />
+                                        Optimizado: {((file.result.originalSize - file.result.optimizedSize) / 1024 / 1024).toFixed(2)} MB ahorrados
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Status Icon */}
+                            <div className="flex-shrink-0">
+                                {file.status === 'pending' && (
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                                        <ImageIcon size={16} className="text-slate-500" />
+                                    </div>
+                                )}
+                                {(file.status === 'optimizing' || file.status === 'uploading') && (
+                                    <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                                        <Loader2 size={16} className="text-cyan-500 animate-spin" />
+                                    </div>
+                                )}
+                                {file.status === 'complete' && (
+                                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                                        <CheckCircle size={16} className="text-emerald-500" />
+                                    </div>
+                                )}
+                                {file.status === 'error' && (
+                                    <button
+                                        onClick={() => removeFile(index)}
+                                        aria-label="Eliminar imagen"
+                                        className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors"
+                                    >
+                                        <X size={16} className="text-red-500" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

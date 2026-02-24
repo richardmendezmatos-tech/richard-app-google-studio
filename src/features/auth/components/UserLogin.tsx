@@ -169,7 +169,7 @@ const UserLogin: React.FC = () => {
       {/* Neural Background Elements */}
       <div className="neural-glow-bg" />
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-var" style={{ '--d': '2s' } as React.CSSProperties} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

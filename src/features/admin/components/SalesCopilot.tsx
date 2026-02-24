@@ -72,8 +72,8 @@ const SalesCopilot: React.FC = () => {
                     return (
                         <div
                             key={lead.id}
-                            style={{ animationDelay: `${Math.min(index * 60, 240)}ms` }}
-                            className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-[#00aed9]/30"
+                            style={{ '--d': `${Math.min(index * 60, 240)}ms` } as React.CSSProperties}
+                            className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-[#00aed9]/30 delay-var"
                         >
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-3">

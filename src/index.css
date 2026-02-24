@@ -139,6 +139,20 @@ body {
   animation-delay: var(--d) !important;
 }
 
+.bg-grid-dots {
+  background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.progress-bar-width {
+  width: var(--progress-width) !important;
+}
+
+.audio-bar-height {
+  height: var(--bar-height) !important;
+  animation-delay: var(--delay) !important;
+}
+
 .glass-premium:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow:

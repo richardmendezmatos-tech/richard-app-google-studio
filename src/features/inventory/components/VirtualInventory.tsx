@@ -92,29 +92,31 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
 
     const translateY = Math.floor(visibleRange.start / columns) * itemHeight;
 
-    useEffect(() => {
-        if (containerRef.current) {
-            containerRef.current.style.height = totalHeight > 0 ? `${totalHeight}px` : 'auto';
-        }
-        if (gridRef.current) {
-            gridRef.current.style.transform = `translateY(${translateY}px)`;
-        }
-    }, [totalHeight, translateY]);
+    // Style management via CSS variables to avoid direct DOM manipulation and hardcoded inline styles
+    const containerStyle = {
+        '--total-height': totalHeight > 0 ? `${totalHeight}px` : 'auto'
+    } as React.CSSProperties;
+
+    const gridStyle = {
+        '--offset-y': `${translateY}px`
+    } as React.CSSProperties;
 
     return (
         <div
             ref={containerRef}
-            className="relative"
+            className="relative inventory-scroll-container"
+            style={containerStyle}
         >
             <div
                 ref={gridRef}
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0"
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0 inventory-visible-window"
+                style={gridStyle}
             >
                 {visibleCars.map((car, index) => (
                     <article
                         key={car.id}
-                        className="h-[450px] route-fade-in reveal-up"
-                        style={{ animationDelay: `${Math.min(index * 55, 300)}ms` }}
+                        style={{ '--d': `${Math.min(index * 55, 300)}ms` } as React.CSSProperties}
+                        className="h-[450px] route-fade-in reveal-up delay-var"
                         aria-labelledby={`car-title-${car.id}`}
                     >
                         <PremiumGlassCard

@@ -26,7 +26,12 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(({
 
     return (
         <div
-            style={style}
+            style={style ? {
+                '--translate': (style as any).transform,
+                '--transition': (style as any).transition,
+                '--drag-opacity': (style as any).opacity,
+                '--drag-z-index': (style as any).zIndex
+            } as React.CSSProperties : undefined}
             className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-20 ${style ? 'dnd-sortable' : ''}`}
         >
             {/* Unidad */}
