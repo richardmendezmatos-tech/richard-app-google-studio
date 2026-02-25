@@ -99,7 +99,7 @@ const callGeminiProxy = async (
   prompt: GeminiPrompt,
   systemInstruction?: string,
   modelName: string = "gemini-2.0-flash",
-  config?: GenerationConfig,
+  config: GenerationConfig = { temperature: 0.1 },
   inventory?: Car[]
 ): Promise<string> => {
   try {

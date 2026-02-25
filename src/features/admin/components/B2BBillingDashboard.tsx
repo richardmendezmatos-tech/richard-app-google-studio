@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '@/services/firebaseService';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore/lite';
+import { getUsageLogs, UsageLog } from '@/services/billingService';
 import { CreditCard, TrendingUp, AlertTriangle, Download, DollarSign, Cpu, Activity, Clock } from 'lucide-react';
-
-interface UsageLog {
-    dealerId?: string;
-    eventType?: string;
-    count?: number;
-    costEstimate?: number;
-}
 
 const B2BBillingDashboard = () => {
     const [usageLogs, setUsageLogs] = useState<UsageLog[]>([]);
@@ -19,13 +11,14 @@ const B2BBillingDashboard = () => {
     });
 
     useEffect(() => {
-        let cancelled = false;
+        let suspended = false;
+        const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+
         const loadUsageLogs = async () => {
             try {
-                const q = query(collection(db, 'usage_logs'), orderBy('timestamp', 'desc'));
-                const snapshot = await getDocs(q);
-                if (cancelled) return;
-                const logs = snapshot.docs.map(doc => doc.data() as UsageLog);
+                const logs = await getUsageLogs(dealerId, 50);
+                if (suspended) return;
+
                 setUsageLogs(logs);
 
                 const cost = logs.reduce((sum, log) => sum + (log.costEstimate || 0), 0);
@@ -43,7 +36,7 @@ const B2BBillingDashboard = () => {
         const intervalId = setInterval(loadUsageLogs, 15000);
 
         return () => {
-            cancelled = true;
+            suspended = true;
             if (intervalId) clearInterval(intervalId);
         };
     }, []);
