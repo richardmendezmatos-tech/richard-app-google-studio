@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDealer } from '@/contexts/DealerContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { container } from '../../../infra/di/container';
 import { Car as CarType, Lead, Subscriber } from '@/types/types';
 import { Plus, BarChart3, Package, Search, DatabaseZap, Smartphone, Monitor, Server, CarFront, ShieldAlert, Sparkles, User as UserIcon, CreditCard, ShieldCheck, Zap, Scale, FlaskConical, Radio } from 'lucide-react';
@@ -89,9 +89,21 @@ const StatusWidget = ({ icon: Icon, label, value, color, subValue }: { icon: Rea
 // --- MAIN COMPONENT ---
 const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onInitializeDb }) => {
   const { currentDealer } = useDealer();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry'>(() => {
-    return (localStorage.getItem('admin_active_tab') as any) || 'dashboard';
-  });
+  const location = useLocation();
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.endsWith('/inventory')) return 'inventory';
+    if (path.endsWith('/pipeline')) return 'pipeline';
+    if (path.endsWith('/marketing')) return 'marketing';
+    if (path.endsWith('/analytics')) return 'analytics';
+    if (path.endsWith('/copilot')) return 'copilot';
+    if (path.endsWith('/security')) return 'security';
+    if (path.endsWith('/billing')) return 'billing';
+    if (path.endsWith('/lab')) return 'lab';
+    if (path.endsWith('/telemetry')) return 'telemetry';
+    return 'dashboard';
+  };
+  const activeTab = getActiveTab();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -129,7 +141,6 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
   }, [fetchDashboardData]);
 
   useEffect(() => {
-    localStorage.setItem('admin_active_tab', activeTab);
     if (activeTab === 'marketing') {
       getSubscribers().then(setSubscribers).catch(console.error);
     }
@@ -264,30 +275,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
           </div>
         </header >
 
-        <div className="flex p-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-inner w-full md:w-fit overflow-x-auto gap-1">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: Monitor },
-            { id: 'inventory', label: 'Inventario', icon: Package },
-            { id: 'pipeline', label: 'CRM Leads', icon: BarChart3 },
-            { id: 'copilot', label: 'Copilot', icon: Zap },
-            { id: 'marketing', label: 'Marketing', icon: Sparkles },
-            { id: 'security', label: 'Seguridad', icon: ShieldAlert },
-            { id: 'billing', label: 'Facturación', icon: CreditCard },
-            { id: 'lab', label: 'Laboratorio', icon: FlaskConical },
-            { id: 'telemetry', label: 'Telemetría', icon: Radio }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as 'dashboard' | 'inventory' | 'pipeline' | 'copilot' | 'analytics' | 'security' | 'marketing' | 'billing' | 'lab' | 'telemetry')}
-              className={`flex-1 md:flex-none px-6 h-[44px] rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-3 transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-[#00aed9] text-white shadow-lg shadow-[#00aed9]/30'
-                : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
-                }`}
-            >
-              <tab.icon size={16} strokeWidth={2.5} /> {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* Navigation moved to Sidebar (Nivel 13 Restoration) */}
 
         {/* CONTENT AREA */}
         <main className="animate-in fade-in zoom-in-95 duration-300 min-h-[600px]">
@@ -352,7 +340,7 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                   </div>
 
                   {/* Analytics Card */}
-                  <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => setActiveTab('analytics')}>
+                  <div className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic" onClick={() => navigate('/admin/analytics')}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
                     <BarChart3 className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500" size={40} />
                     <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>

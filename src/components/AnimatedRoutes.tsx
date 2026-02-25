@@ -195,7 +195,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                     <Route path="/lab" element={<AuthGuard><PageWrapper><AILabView /></PageWrapper></AuthGuard>} />
                     <Route path="/login" element={<PageWrapper><UserLogin /></PageWrapper>} />
                     <Route path="/admin-login" element={<PageWrapper><AdminLogin /></PageWrapper>} />
-                    <Route path="/admin" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
+                    <Route path="/admin/*" element={<AdminGuard><PageWrapper><AdminPanel inventory={inventory} onUpdate={handleUpdate} onAdd={handleAdd} onDelete={handleDelete} onInitializeDb={() => uploadInitialInventory(initialInventoryData)} /></PageWrapper></AdminGuard>} />
                     <Route path="/chaos" element={<PageWrapper><ChaosTest /></PageWrapper>} />
                     <Route path="/framework-lab" element={<AdminGuard><PageWrapper><FrameworkDashboard /></PageWrapper></AdminGuard>} />
                     <Route path="/digital-twin" element={<AdminGuard><PageWrapper><DigitalTwinDashboard /></PageWrapper></AdminGuard>} />
