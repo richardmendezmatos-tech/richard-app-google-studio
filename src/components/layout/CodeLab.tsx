@@ -58,7 +58,7 @@ const CodeLab: React.FC = () => {
     setAnalysis('');
 
     const prompt = `Mode: ${mode.toUpperCase()}\n\nPlease process the following code:\n\n\`\`\`\n${code}\n\`\`\``;
-    const instruction = `You are a world-class senior software engineer. Based on the mode provided, analyze the code. If optimizing, provide the improved version and explain why. If debugging, find issues. If explaining, break down the logic step-by-step. Format your response in Markdown with code blocks using correct language tags.`;
+    const instruction = `You are a world-class expert software engineer. Based on the mode provided, analyze the code. If optimizing, provide the improved version and explain why. If debugging, find issues. If explaining, break down the logic step-by-step. Format your response in Markdown with code blocks using correct language tags.`;
 
     const result = await generateCode(prompt, instruction);
     setAnalysis(simpleMarkdownToHtml(result));
