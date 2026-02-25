@@ -1,5 +1,5 @@
 import * as logger from 'firebase-functions/logger';
-import { LeadLifecycleManager } from '../application/use-cases/LeadLifecycleManager';
+import { LeadLifecycleManager } from '../application/use-cases';
 import { FirestoreCRMRepository } from '../infrastructure/crm/FirestoreCRMRepository';
 
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'negotiating' | 'sold' | 'lost';
@@ -28,8 +28,12 @@ export class LeadLifecycleService {
         const result = await this.manager.processTransition({
             leadId,
             ...newState
-        });
+        } as any); // Cast temporal por discrepancia de tipos en la migración
 
-        return result.message;
+        if (result.isFailure()) {
+            throw result.error;
+        }
+
+        return result.value.message;
     }
 }

@@ -1,4 +1,4 @@
-import { WhatsAppRepository, WhatsAppSequence, WhatsAppStage } from '../../domain/repositories/WhatsAppRepository';
+import { WhatsAppRepository, WhatsAppSequence, WhatsAppStage } from '../../domain/repositories';
 import { db } from '../../services/firebaseAdmin';
 import * as admin from 'firebase-admin';
 

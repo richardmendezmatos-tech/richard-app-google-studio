@@ -1,8 +1,8 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as logger from 'firebase-functions/logger';
-import { AutomateEmailSequences } from '../application/use-cases/AutomateEmailSequences';
-import { FirestoreLeadRepository } from '../infrastructure/repositories/FirestoreLeadRepository';
-import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
+import { AutomateEmailSequences } from '../application/use-cases';
+import { FirestoreLeadRepository } from '../infrastructure/persistence/firestore/FirestoreLeadRepository';
+import { SendGridEmailRepository } from '../infrastructure/messaging/SendGridEmailRepository';
 
 const leadRepository = new FirestoreLeadRepository();
 const emailRepository = new SendGridEmailRepository();
@@ -23,5 +23,21 @@ export const processEmailQueue = onSchedule({
         logger.info('✅ Email automation executed successfully via Use Case');
     } catch (error: any) {
         logger.error('❌ Error in Email Automation Scheduler:', error);
+    }
+});
+
+export const checkStaleLeads = onSchedule({
+    schedule: 'every day 09:00',
+    secrets: ["SENDGRID_API_KEY"],
+}, async () => {
+    logger.info("Checking for stale leads (Agnostic Flow)...");
+
+    try {
+        const { NudgeStaleLeads } = await import('../application/use-cases');
+        const useCase = new NudgeStaleLeads(leadRepository, emailRepository);
+        const nudgeCount = await useCase.execute();
+        logger.info(`Nudge campaign completed. Emailed ${nudgeCount} leads.`);
+    } catch (error) {
+        logger.error("Error in checkStaleLeads", error);
     }
 });

@@ -7,6 +7,7 @@ import * as logger from 'firebase-functions/logger';
 import { db } from './services/firebaseAdmin';
 import { customerMemoryService } from './services/customerMemoryService';
 import { simulateLoan } from './services/financeService';
+import { classificationFlow } from './services/classificationService';
 
 interface Car {
     id: string;
@@ -32,6 +33,17 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
     }
 
     const { messages, leadId } = req.body;
+    const lastMessage = messages[messages.length - 1]?.content || '';
+
+    // --- Phase HOA: Intent Middleware (Semantic) ---
+    const intent = await classificationFlow(lastMessage);
+    const isFinanceQuery = intent === 'FINANCE_QUERY';
+
+    const financeContext = isFinanceQuery ? `
+    [BLOQUE DE SEGURIDAD F&I]
+    - Tasas base: Popular (6.95%), BPPR (7.25%), COOP (5.95%).
+    - REGLA: Nunca garantices estos números. Son estimados.
+    - REGLA: Siempre menciona "Sujeto a aprobación de crédito".` : '';
 
     // --- Phase 6: Memory Retrieval ---
     const customerMemory = leadId ? await customerMemoryService.getMemory(leadId) : null;
@@ -40,6 +52,7 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
         const result = await streamText({
             model: google('gemini-1.5-flash'),
             system: `${SYSTEM_PROMPT}
+            ${financeContext}
             MEMORIA DEL CLIENTE: ${JSON.stringify(customerMemory || 'Nuevo Cliente')}
             Si el cliente ya ha visto ciertos autos, menciónalos para crear cercanía.`,
             messages,
@@ -71,7 +84,7 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
                         // Use the new localized finance service logic
                         const creditScoreMap: Record<string, number> = { excellent: 750, good: 700, fair: 640, poor: 580 };
                         const score = creditScoreMap[creditScore] || 700;
-                        const simulations = simulateLoan(price, downPayment, months, score);
+                        const simulations = await simulateLoan(price, downPayment, months, score);
 
                         return {
                             simulations,

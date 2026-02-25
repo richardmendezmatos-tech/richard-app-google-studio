@@ -1,6 +1,6 @@
 import { z } from 'genkit';
 import { ai } from './services/aiManager';
-import { chatWithLead } from './index';
+import { chatWithLeadFlow } from './index';
 import * as logger from 'firebase-functions/logger';
 import { onCallGenkit } from 'firebase-functions/https';
 import { requireAdmin } from './security/policies';
@@ -39,7 +39,7 @@ export const runSalesEval = ai.defineFlow(
             logger.info(`Running Test: ${test.name}`);
 
             // 1. Run the Agent
-            const agentResponse = await chatWithLead({
+            const agentResponse = await chatWithLeadFlow({
                 history: [],
                 message: test.input
             });

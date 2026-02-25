@@ -2,6 +2,7 @@
  * Finance Service for Richard Automotive
  * Specialized for Puerto Rico Local Banks (Popular, BPPR, Coops)
  */
+import { getMarketInsight } from './marketIntelService';
 
 export interface LoanSimulation {
     bankName: string;
@@ -13,6 +14,11 @@ export interface LoanSimulation {
     monthlyPayment: number;
     totalInterest: number;
     estimatedCreditTier: 'excellent' | 'good' | 'fair' | 'poor';
+    marketComparison?: {
+        averagePrice: number;
+        lowestPrice: number;
+        savingsVsAverage: number;
+    };
 }
 
 export const BANK_TERMS = {
@@ -22,13 +28,20 @@ export const BANK_TERMS = {
     'COOP': { baseApr: 5.95, maxTerm: 72 } // Local Credit Unions usually have better rates
 };
 
-export function simulateLoan(
+export async function simulateLoan(
     price: number,
     downPayment: number,
     term: number,
-    creditScore: number
-): LoanSimulation[] {
+    creditScore: number,
+    vehicleInfo?: { make: string, model: string }
+): Promise<LoanSimulation[]> {
     const loanAmount = price - downPayment;
+
+    // --- MARKET INTEL INJECTION ---
+    let marketData = null;
+    if (vehicleInfo) {
+        marketData = await getMarketInsight(vehicleInfo.make, vehicleInfo.model);
+    }
     const tiers = {
         'excellent': 750,
         'good': 700,
@@ -48,7 +61,7 @@ export function simulateLoan(
         'poor': 8.0
     };
 
-    return Object.entries(BANK_TERMS).map(([bank, config]) => {
+    const simulations = Object.entries(BANK_TERMS).map(([bank, config]) => {
         const finalApr = config.baseApr + adjustments[tier];
         const monthlyRate = finalApr / 100 / 12;
         const payment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1);
@@ -62,7 +75,20 @@ export function simulateLoan(
             apr: finalApr,
             monthlyPayment: Number(payment.toFixed(2)),
             totalInterest: Number((payment * term - loanAmount).toFixed(2)),
-            estimatedCreditTier: tier
+            estimatedCreditTier: tier,
+            marketComparison: marketData ? {
+                averagePrice: marketData.averagePrice,
+                lowestPrice: marketData.lowestPrice,
+                savingsVsAverage: marketData.averagePrice - price
+            } : undefined,
+            legalDisclaimer: "Estimado sujeto a aprobación de crédito. Tasas varían por institución."
         };
+    });
+
+    // --- HOA Phase 3: Priority Logic ---
+    return simulations.sort((a, b) => {
+        if (tier === 'excellent' && a.bankName === 'Popular') return -1;
+        if ((tier === 'fair' || tier === 'good') && a.bankName === 'COOP') return -1;
+        return a.monthlyPayment - b.monthlyPayment;
     });
 }

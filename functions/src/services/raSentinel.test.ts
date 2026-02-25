@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { OperationalSentinel } from '../application/use-cases/OperationalSentinel';
+import { OperationalSentinel } from '../application/use-cases';
 import { saveCheckpoint } from './persistenceService';
 import fs from 'node:fs';
 

@@ -1,4 +1,4 @@
-import { CRMRepository, LeadTransition } from '../../domain/repositories/CRMRepository';
+import { CRMRepository, LeadTransition } from '../../domain/repositories';
 import { db } from '../../services/firebaseAdmin';
 import * as admin from 'firebase-admin';
 
