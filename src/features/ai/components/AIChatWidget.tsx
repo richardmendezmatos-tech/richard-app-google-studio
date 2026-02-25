@@ -7,6 +7,10 @@ import { AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
 import GenUICarCard from '@/components/layout/chat/GenUICarCard';
 
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
+import { ChatflowOrchestrator } from '@/domain/chatbot/orchestrator';
+import { ChatbotGatewayAdapter } from '@/adapters/chatbotGatewayAdapter';
+import { OutputSanitizer } from '@/adapters/outputSanitizer';
+import { ChatOrchestrationState } from '@/domain/chatbot/entities';
 
 interface Props {
   inventory: Car[];
@@ -26,6 +30,15 @@ const AIChatWidget: React.FC<Props> = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showDebug, setShowDebug] = useState(false);
 
+  // Clean Architecture Hooks/State
+  const orchestratorRef = useRef(new ChatflowOrchestrator());
+  const [orchestrationState, setOrchestrationState] = useState<ChatOrchestrationState>({
+    currentAgentId: 'ricardo',
+    activeFlow: 'General',
+    dataCollected: { hasVehicleId: false, hasFinancialProfile: false, hasContactInfo: false },
+    fallbackCount: 0
+  });
+
   // Copilot SDK Hook
   const { messages, input, setInput, append, isLoading, setMessages } = useCopilotAgent('main-chat-session', {
     initialMessages: [
@@ -34,9 +47,18 @@ const AIChatWidget: React.FC<Props> = () => {
     onFinish: (message) => {
       const lastUserMsg = messages.slice().reverse().find(m => m.role === 'user');
       if (lastUserMsg) {
-        const detected = detectIntent(lastUserMsg.content);
-        setCurrentPersona(detected);
+        // APPLY CLEAN ORCHESTRATION
+        const currentLead = ChatbotGatewayAdapter.toImmutableLead({ id: 'current-session', aiScore: 50, type: 'chat' } as any);
+        const newState = orchestratorRef.current.nextState(currentLead, orchestrationState, lastUserMsg.content);
+        setOrchestrationState(newState);
+        setCurrentPersona(newState.currentAgentId as AgentPersona);
       }
+
+      // APPLY OUTPUT SANITIZATION
+      if (message.content) {
+        message.content = OutputSanitizer.sanitize(message.content);
+      }
+
       if (autoSpeakRef.current && message.content) {
         speakText(message.content);
         autoSpeakRef.current = false;

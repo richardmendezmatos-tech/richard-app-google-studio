@@ -1,14 +1,15 @@
 import { db } from './firebaseService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { collection, addDoc, serverTimestamp, query, where, orderBy, limit, getDocs } from 'firebase/firestore/lite';
 
 export type MonetizableEvent = 'ai_call' | 'lead_capture' | 'doc_processed' | 'onboarding';
 
-interface UsageLog {
+export interface UsageLog {
     dealerId: string;
     eventType: MonetizableEvent;
     count: number;
     metadata?: Record<string, unknown>;
     costEstimate?: number; // Estimated internal cost in USD
+    timestamp?: any;
 }
 
 export const logUsageEvent = async (event: UsageLog) => {
@@ -20,6 +21,23 @@ export const logUsageEvent = async (event: UsageLog) => {
         });
     } catch (err) {
         console.error("Billing Log Error:", err);
+    }
+};
+
+export const getUsageLogs = async (dealerId: string, limitCount: number = 50): Promise<UsageLog[]> => {
+    try {
+        const usageRef = collection(db, 'usage_logs');
+        const q = query(
+            usageRef,
+            where('dealerId', '==', dealerId),
+            orderBy('timestamp', 'desc'),
+            limit(limitCount)
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => doc.data() as UsageLog);
+    } catch (err) {
+        console.error("Fetch Usage Logs Error:", err);
+        return [];
     }
 };
 
