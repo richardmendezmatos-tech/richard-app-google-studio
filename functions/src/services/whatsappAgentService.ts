@@ -1,6 +1,6 @@
 import { customerMemoryService } from './customerMemoryService';
 import { appointmentService } from './appointmentService';
-import { WhatsAppAgent } from '../application/use-cases/WhatsAppAgent';
+import { WhatsAppAgent } from '../application/use-cases';
 import { FirestoreWhatsAppRepository } from '../infrastructure/whatsapp/FirestoreWhatsAppRepository';
 
 /**

@@ -91,3 +91,21 @@ export const runMarketIntelScraper = async () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
 };
+
+export const getMarketInsight = async (make: string, model: string): Promise<MarketSnapshot | null> => {
+    const db = admin.firestore();
+    try {
+        const snapshot = await db.collection('marketInsights')
+            .where('make', '==', make)
+            .where('model', '==', model)
+            .orderBy('timestamp', 'desc')
+            .limit(1)
+            .get();
+
+        if (snapshot.empty) return null;
+        return snapshot.docs[0].data() as MarketSnapshot;
+    } catch (error) {
+        logger.error(`Error retrieving market insight for ${make} ${model}:`, error);
+        return null;
+    }
+};
