@@ -58,6 +58,7 @@ const B2BBillingDashboard = React.lazy(() => lazyRetry(() => import('@/features/
 const LeadAnalyticsPage = React.lazy(() => lazyRetry(() => import('@/features/leads/components/LeadAnalyticsPage')));
 const HoustonDashboard = React.lazy(() => lazyRetry(() => import('@/features/houston/components/HoustonDashboard')));
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/components/layout/ChaosTest')));
+const LocalClusterView = React.lazy(() => lazyRetry(() => import('@/features/inventory/components/storefront/LocalClusterView')));
 const VoiceAssistantView = React.lazy(() => lazyRetry(() => import('@/components/layout/VoiceAssistantView')));
 const CRMBoard = React.lazy(() => lazyRetry(() => import('@/features/admin/components/CRMBoard'))) as unknown as React.ComponentType<any>;
 import { uploadInitialInventory } from '@/features/inventory/services/inventoryService';
@@ -180,6 +181,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                         </PageWrapper>
                     } />
                     <Route path="/vehicle/:id" element={<PageWrapper><VehicleDetail inventory={inventory} /></PageWrapper>} />
+                    <Route path="/comprar/:location/:category?" element={<PageWrapper><LocalClusterView inventory={inventory} /></PageWrapper>} />
                     <Route path="/trade-in" element={<PageWrapper><TradeInView /></PageWrapper>} />
                     <Route path="/appraisal" element={<PageWrapper><AppraisalView /></PageWrapper>} />
                     <Route path="/compare" element={<PageWrapper><ComparisonView /></PageWrapper>} />

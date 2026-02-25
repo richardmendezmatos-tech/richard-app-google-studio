@@ -84,7 +84,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
             {/* ── Background ── */}
             <div className="ra-hero__bg">
                 <OptimizedImage
-                    src="/hyundai-kona-hero.avif"
+                    src="https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=2400&auto=format&fit=crop"
                     alt="Richard Automotive Hero"
                     className="ra-hero__img"
                     priority

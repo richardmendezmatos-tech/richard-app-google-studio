@@ -17,7 +17,7 @@ import {
     setDoc,
     writeBatch
 } from 'firebase/firestore/lite';
-import { db } from '@/infra/firebase/client';
+import { dbLite as db } from '@/infra/firebase/client';
 import { getStorageService, getAnalyticsService } from '@/infra/firebase/optionalServices';
 import { Car } from '@/types/types';
 
@@ -133,12 +133,21 @@ export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
     const batch = writeBatch(db);
 
     inventory.forEach(car => {
-        const newCarRef = doc(collection(db, CARS_COLLECTION));
-        batch.set(newCarRef, {
+        // Create an idempotent ID: brand-model-year slug
+        const idSlug = car.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+
+        const carRef = doc(db, CARS_COLLECTION, idSlug);
+        batch.set(carRef, {
             ...car,
             dealerId: currentDealerId,
+            updatedAt: serverTimestamp(),
+            // Only set createdAt if it doesn't exist (handled by set with merge if needed, 
+            // but for initial seeding we want to ensure we don't duplicate)
             createdAt: serverTimestamp()
-        });
+        }, { merge: true });
     });
 
     await batch.commit();

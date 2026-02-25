@@ -16,7 +16,7 @@ interface PremiumGlassCardProps {
     isRecommended?: boolean;
 }
 
-const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onToggleSave, isRecommended }) => {
+const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, onSelect, isSaved, onToggleSave, isRecommended }) => {
     const navigate = useNavigate();
     const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
     const cardRef = useRef<HTMLDivElement>(null);
@@ -48,10 +48,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({ car, isSaved, onTog
         <div
             ref={cardRef}
             onMouseMove={handleMouseMove}
-            onClick={() => navigate(`/vehicle/${car.id}`)}
+            onClick={() => onSelect ? onSelect() : navigate(`/vehicle/${car.id}`)}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                    navigate(`/vehicle/${car.id}`);
+                    if (onSelect) onSelect();
+                    else navigate(`/vehicle/${car.id}`);
                 }
             }}
             role="button"
