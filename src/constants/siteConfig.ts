@@ -35,7 +35,7 @@ export const SITE_CONFIG: SiteConfig = {
         phone: '+1 (787) 368-2880',
         whatsapp: '17873682880',
         email: 'richard@richard-automotive.com',
-        address: 'San Juan, Puerto Rico',
+        address: 'Bayamón, Puerto Rico',
     },
     seo: {
         keywords: [

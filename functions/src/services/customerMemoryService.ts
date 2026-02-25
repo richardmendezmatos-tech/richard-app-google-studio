@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { db } from './firebaseAdmin';
 
 export interface CustomerPreference {
     brands: string[];
@@ -19,7 +20,7 @@ export interface CustomerMemory {
  * Service to manage long-term customer memory and preferences.
  */
 export class CustomerMemoryService {
-    private db = admin.firestore();
+    private db = db;
     private collection = 'customer_memory';
 
     /**

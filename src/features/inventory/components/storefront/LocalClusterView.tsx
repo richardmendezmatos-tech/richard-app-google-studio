@@ -68,6 +68,7 @@ const LocalClusterView: React.FC<LocalClusterViewProps> = ({ inventory }) => {
 
                         <h2 className="font-cinematic text-5xl tracking-[0.04em] text-white">
                             {normalizedCategory === 'all' ? 'Inventario' : normalizedCategory.toUpperCase()} <span className="text-cyan-400">en {normalizedLocation}</span>
+                            <span className="ml-4 inline-block px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded text-[10px] font-tech text-cyan-400 align-middle">CLUSTER ACTIVE</span>
                         </h2>
 
                         <p className="max-w-2xl text-lg text-slate-400">
