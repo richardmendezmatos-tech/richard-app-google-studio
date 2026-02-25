@@ -33,4 +33,18 @@ export class FirestoreUserRepository {
     async deleteRateLimit(id: string): Promise<void> {
         await deleteDoc(doc(db, 'login_attempts', id));
     }
+
+    async getUserByPasskeyId(passkeyId: string): Promise<AppUser | null> {
+        const { query, collection, where, getDocs, limit } = await import('firebase/firestore/lite');
+        const q = query(
+            collection(db, 'users'),
+            where('passkeyId', '==', passkeyId),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return null;
+
+        const docData = querySnapshot.docs[0].data();
+        return { uid: querySnapshot.docs[0].id, ...docData } as AppUser;
+    }
 }
