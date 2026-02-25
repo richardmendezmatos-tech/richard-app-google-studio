@@ -23,6 +23,12 @@ interface CinemaLayoutProps {
 
 export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('sidebar_collapsed') === 'true';
+        }
+        return false;
+    });
     const [showDeferredWidgets, setShowDeferredWidgets] = useState(false);
     const { theme } = useContext(ThemeContext);
     const location = useLocation();
@@ -49,6 +55,11 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         return () => window.clearTimeout(timeout);
     }, []);
 
+    // Sidebar Persistence
+    useEffect(() => {
+        localStorage.setItem('sidebar_collapsed', String(isSidebarCollapsed));
+    }, [isSidebarCollapsed]);
+
     return (
         <div className="min-h-screen flex flex-col lg:flex-row bg-slate-950 overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
 
@@ -66,12 +77,17 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
             </header>
 
             {/* Main Sidebar Component */}
-            <Sidebar isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
+            <Sidebar
+                isMobileOpen={isMobileMenuOpen}
+                setIsMobileOpen={setIsMobileMenuOpen}
+                isCollapsed={isSidebarCollapsed}
+                onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            />
 
             {/* Main Content Area */}
             <main
                 id="main-content"
-                className="relative h-screen w-full flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth"
+                className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
             >
                 {/* Global Floating Widgets */}
                 <ReloadPrompt />
