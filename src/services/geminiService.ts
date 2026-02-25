@@ -210,6 +210,17 @@ export const getAIResponse = async (
   `;
 
   try {
+    // PHASE 11: Intelligence Router
+    const { localAIService } = await import('./localAIService');
+    const isLocalAvailable = await localAIService.isAvailable();
+    const isSensitive = localAIService.isSensitive(userPrompt);
+
+    // If sensitive and local is available, prioritize Local AI for privacy
+    if (isSensitive && isLocalAvailable) {
+      console.log("🛡️ Routing sensitive query to Local AI Brain.");
+      return await localAIService.generateText(userPrompt, systemInstruction);
+    }
+
     // 8s Timeout managed by Promise.race on client for UX
     const timeout = new Promise<string>((_, reject) => setTimeout(() => reject(new Error("Timeout")), 8000));
 
@@ -230,7 +241,18 @@ export const getAIResponse = async (
 
     return await Promise.race([apiCall(), timeout]);
   } catch (error) {
-    console.warn("Gemini Chat Error:", error);
+    console.warn("Gemini Chat Error, attempting local fallback:", error);
+
+    // Final fallback attempt with Local AI if Gemini fails
+    try {
+      const { localAIService } = await import('./localAIService');
+      if (await localAIService.isAvailable()) {
+        return await localAIService.generateText(userPrompt, systemInstruction);
+      }
+    } catch (localError) {
+      console.error("Local AI Fallback also failed:", localError);
+    }
+
     return getFallbackResponse(userPrompt);
   }
 };
