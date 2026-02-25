@@ -1,7 +1,7 @@
 import { db } from '../../services/firebaseAdmin';
 import { LeadRepository } from '../../domain/repositories/LeadRepository';
 import { Lead } from '../../domain/entities';
-import { Timestamp } from 'firebase-admin/firestore';
+import { Timestamp, WhereFilterOp } from 'firebase-admin/firestore';
 
 export class FirestoreLeadRepository implements LeadRepository {
     async getById(id: string): Promise<Lead | null> {
@@ -60,9 +60,9 @@ export class FirestoreLeadRepository implements LeadRepository {
         const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 500);
 
         // Operator Whitelist
-        const validOperators: admin.firestore.WhereFilterOp[] = ['<=', '==', '!=', '>=', '<', '>'];
-        const safeOperator = validOperators.includes(operator as admin.firestore.WhereFilterOp)
-            ? (operator as admin.firestore.WhereFilterOp)
+        const validOperators: WhereFilterOp[] = ['<=', '==', '!=', '>=', '<', '>'];
+        const safeOperator = validOperators.includes(operator as WhereFilterOp)
+            ? (operator as WhereFilterOp)
             : '==';
 
         const snapshot = await db.collection('leads')

@@ -18,6 +18,10 @@ class MockWhatsAppRepository implements WhatsAppRepository {
             this.sequences[leadId].currentStage = stage;
         }
     }
+
+    async sendMessage(to: string, message: string): Promise<boolean> {
+        return true;
+    }
 }
 
 describe('WhatsAppAgent', () => {

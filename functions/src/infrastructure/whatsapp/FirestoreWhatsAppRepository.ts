@@ -38,4 +38,10 @@ export class FirestoreWhatsAppRepository implements WhatsAppRepository {
             lastInteraction: admin.firestore.Timestamp.now()
         });
     }
+
+    async sendMessage(to: string, message: string): Promise<boolean> {
+        console.log(`[WhatsApp] Sending message to ${to}: ${message}`);
+        // Integration with 360dialog or Twilio would go here
+        return true;
+    }
 }

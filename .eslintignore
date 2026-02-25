@@ -1,9 +1,0 @@
-dist
-node_modules
-.agents
-.agent
-playwright-report
-test-results
-coverage
-*.config.js
-*.d.ts

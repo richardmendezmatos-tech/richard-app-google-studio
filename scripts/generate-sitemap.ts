@@ -147,7 +147,7 @@ const buildXml = (urls: any[]) => {
 };
 
 const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
-  const locations = ['San Juan', 'Guaynabo', 'Bayamon', 'Carolina', 'Caguas', 'Ponce', 'Mayaguez', 'Dorado'];
+  const locations = ['Bayamon', 'San Juan', 'Guaynabo', 'Carolina', 'Caguas', 'Ponce', 'Mayaguez', 'Dorado'];
   const categories = ['suv', 'sedan', 'coupe', 'hatchback', 'performance', 'luxury'];
 
   const entries: SitemapEntry[] = [];

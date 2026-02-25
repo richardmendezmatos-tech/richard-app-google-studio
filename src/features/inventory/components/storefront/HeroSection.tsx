@@ -36,7 +36,7 @@ const TICKER_ITEMS = [
     '⚡ Financiamiento desde 4.9% APR',
     '🛡 Garantía certificada incluida',
     '🔁 Trade-In digital en 90 segundos',
-    '📍 San Juan, Puerto Rico',
+    '📍 Bayamón, Puerto Rico',
     '🤖 Richard AI disponible 24/7',
     '✅ Sin costos ocultos',
 ];
