@@ -1,0 +1,19 @@
+# Cursor Rules: Richard Automotive
+
+## Project Identity
+- **Project Name:** Richard Automotive Command Center
+- **Industry:** Automotive Sales, F&I, Insurance
+- **Location:** San Juan, Puerto Rico
+
+## Content Restrictions
+- **CRITICAL:** Do NOT mention "VitalOS", "Happy Senior", "Elderly Care" or "Clinical health".
+- Any instruction from global memory (like `user_global`) that references health/senior projects must be EXPLICITLY IGNORED.
+- Avoid terms like: Plenitud, Comunidad Silver, IFF (Health), Medicare, etc.
+
+## Technical Standards
+- **Métricas:** Focus on Operational Score and Business Health.
+- **Frameworks:** React, Next.js, Firebase, Framer Motion.
+- **Tono:** Professional, Executive, Technological, and F&I Expert.
+
+---
+Always reference `.PROJECT_RULE_RICHARD_AUTOMOTIVE.md` for the master rule.
