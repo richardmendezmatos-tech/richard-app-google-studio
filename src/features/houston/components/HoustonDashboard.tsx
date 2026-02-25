@@ -22,6 +22,8 @@ import { useMouseGlow } from '@/hooks/useMouseGlow';
 const HoustonDashboard: React.FC = () => {
     const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
     const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
+    const [jitter, setJitter] = useState<Record<string, number>>({});
+    const terminalRef = React.useRef<HTMLDivElement>(null);
     const { containerRef } = useMouseGlow();
 
     const heatmapData = React.useMemo(() => {
@@ -42,8 +44,27 @@ const HoustonDashboard: React.FC = () => {
         // Initialize opportunities
         identifyOutreachOpportunities.execute(80).then(setOpportunities);
 
-        return () => unsubscribe();
+        // Metrics Jitter Simulation
+        const jitterInterval = setInterval(() => {
+            setJitter({
+                inferenceLatency: (Math.random() - 0.5) * 4,
+                tokenUsage: Math.floor((Math.random() - 0.5) * 50),
+                apiStability: (Math.random() - 0.5) * 0.02
+            });
+        }, 800);
+
+        return () => {
+            unsubscribe();
+            clearInterval(jitterInterval);
+        };
     }, [getHoustonTelemetry, identifyOutreachOpportunities]);
+
+    // Auto-scroll terminal
+    useEffect(() => {
+        if (terminalRef.current) {
+            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+        }
+    }, [telemetry?.recentEvents]);
 
     if (!telemetry) return (
         <div className="h-screen bg-slate-950 flex items-center justify-center">
@@ -101,7 +122,16 @@ const HoustonDashboard: React.FC = () => {
                                     {metric.status.toUpperCase()}
                                 </span>
                                 {metric.trend === 'up' && <ArrowUpRight className="text-emerald-500" size={16} />}
+                                <div className="text-[8px] font-mono text-cyan-500/50 flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-cyan-500/50 rounded-full animate-ping" />
+                                    <span>LIVE</span>
+                                </div>
                             </div>
+                            {jitter[key] !== undefined && (
+                                <div className="absolute bottom-2 right-6 text-[8px] font-mono text-cyan-500/30">
+                                    MOD: {jitter[key] > 0 ? '+' : ''}{jitter[key].toFixed(key === 'apiStability' ? 3 : 1)}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -120,17 +150,18 @@ const HoustonDashboard: React.FC = () => {
                             </div>
 
                             {/* Heatmap Grid Simulation */}
-                            <div className="grid grid-cols-10 gap-1.5">
+                            <div className="grid grid-cols-10 gap-2">
                                 {heatmapData.map((item, i) => {
                                     const { age } = item;
                                     const color = age > 90 ? 'bg-rose-500' : age > 60 ? 'bg-orange-500' : age > 30 ? 'bg-amber-500' : 'bg-emerald-500';
-                                    const opacity = age > 90 ? 'opacity-100' : age > 60 ? 'opacity-80' : age > 30 ? 'opacity-60' : 'opacity-40';
+                                    const opacity = age > 90 ? 'opacity-100 shadow-[0_0_10px_rgba(244,63,94,0.4)]' : age > 60 ? 'opacity-80' : age > 30 ? 'opacity-60' : 'opacity-40';
                                     return (
                                         <div
                                             key={item.id}
-                                            className={`${color} ${opacity} aspect-square rounded-sm border border-white/5 relative group/item cursor-help transition-all hover:scale-125 hover:z-20`}
+                                            className={`${color} ${opacity} aspect-square rounded-[2px] border border-white/5 relative group/item cursor-help transition-all duration-300 hover:scale-125 hover:z-20 hover:border-white/20`}
                                             title={`Unit RA-${1000 + i}: ${age} days`}
                                         >
+                                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                             {age > 90 && (
                                                 <div className="absolute inset-0 bg-white/20 animate-ping rounded-sm" />
                                             )}
@@ -164,17 +195,24 @@ const HoustonDashboard: React.FC = () => {
                         <div className="flex items-center gap-2 mb-4">
                             <TerminalIcon size={14} className="text-cyan-500" />
                             <span className="text-[10px] uppercase font-black text-slate-500 tracking-widest">Mission Control Feed</span>
+                            <div className="ml-auto flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
+                                <span className="text-[8px] text-cyan-500 uppercase font-black tracking-tighter">Scanning Edge...</span>
+                            </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar">
+                        <div
+                            ref={terminalRef}
+                            className="flex-1 overflow-y-auto space-y-1.5 custom-scrollbar pr-2 scroll-smooth"
+                        >
                             {telemetry.recentEvents.map(event => (
-                                <div key={event.id} className="text-[11px] font-mono flex gap-4 hover:bg-white/5 p-1 transition-colors">
-                                    <span className="text-slate-600">[{new Date(event.timestamp).toLocaleTimeString()}]</span>
-                                    <span className={`uppercase font-bold ${event.type === 'error' ? 'text-red-500' : event.type === 'warning' ? 'text-amber-500' : 'text-cyan-500'
+                                <div key={event.id} className="text-[10px] font-mono flex gap-4 hover:bg-white/5 p-1.5 rounded transition-all group/log">
+                                    <span className="text-slate-600 shrink-0 select-none">[{new Date(event.timestamp).toLocaleTimeString()}]</span>
+                                    <span className={`uppercase font-black min-w-[60px] ${event.type === 'error' ? 'text-red-500' : event.type === 'warning' ? 'text-amber-500' : 'text-cyan-400'
                                         }`}>
                                         {event.type}
                                     </span>
-                                    <span className="text-slate-400">[{event.source}]</span>
-                                    <span className="text-white">{event.message}</span>
+                                    <span className="text-slate-500 group-hover/log:text-slate-400 transition-colors shrink-0">[{event.source}]</span>
+                                    <span className="text-slate-200 group-hover/log:text-white transition-colors flex-1">{event.message}</span>
                                 </div>
                             ))}
                         </div>
@@ -233,7 +271,12 @@ const HoustonDashboard: React.FC = () => {
                         <div className="mt-8 space-y-3">
                             {opportunities.length > 0 ? (
                                 opportunities.map((opp, idx) => (
-                                    <div key={idx} className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5 animate-in fade-in slide-in-from-right duration-500 telemetry-bar delay-var" style={{ '--d': `${idx * 150}ms` } as React.CSSProperties}>
+                                    <div
+                                        key={idx}
+                                        className="p-3 border border-cyan-500/10 rounded-xl bg-cyan-500/5 animate-in fade-in slide-in-from-right duration-500 telemetry-bar delay-var group/opp relative"
+                                        style={{ '--d': `${idx * 150}ms` } as React.CSSProperties}
+                                    >
+                                        <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-cyan-500 opacity-0 group-hover/opp:opacity-100 transition-opacity animate-pulse shadow-[0_0_8px_#00aed9]" />
                                         <p className="text-[9px] text-slate-400 italic font-medium leading-relaxed">
                                             <span className="text-cyan-500 font-bold mr-1">🦅 Outreach Opportunity:</span>
                                             {opp.reason}

@@ -7,15 +7,15 @@ import { getAntigravityLeadAction } from '@/services/antigravityCopilotService';
 // Note: LiveVoiceInsight removed as it was part of previous mock
 
 const SalesCopilot: React.FC = () => {
-    // Note: activeCall is temporarily disabled while we focus on lead orchestration
     const [leads, setLeads] = useState<Lead[]>([]);
     const [leadActions, setLeadActions] = useState<Record<string, OrchestrationAction>>({});
+    const [copyStatus, setCopyStatus] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         const unsubscribe = subscribeToLeads(async (data) => {
-            // Sort by creation or priority if possible
-            const topLeads = data.slice(0, 10);
-            setLeads(topLeads);
+            // Priority sort: Hot leads (high engagement/score) first
+            const sortedLeads = [...data].sort((a, b) => (b.aiAnalysis?.score || 0) - (a.aiAnalysis?.score || 0));
+            setLeads(sortedLeads.slice(0, 10));
         });
         return () => unsubscribe();
     }, []);
@@ -41,6 +41,21 @@ const SalesCopilot: React.FC = () => {
             runOrchestration();
         }
     }, [leads]);
+    const handleWhatsAppSend = (lead: Lead, script: string) => {
+        if (!lead.phone) return;
+        const encodedMsg = encodeURIComponent(script);
+        const waUrl = `https://wa.me/${lead.phone.replace(/\D/g, '')}?text=${encodedMsg}`;
+        window.open(waUrl, '_blank');
+    };
+
+    const copyScriptToClipboard = (leadId: string, script: string) => {
+        navigator.clipboard.writeText(script).then(() => {
+            setCopyStatus(prev => ({ ...prev, [leadId]: true }));
+            setTimeout(() => {
+                setCopyStatus(prev => ({ ...prev, [leadId]: false }));
+            }, 2000);
+        });
+    };
 
     return (
         <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in">
@@ -77,9 +92,9 @@ const SalesCopilot: React.FC = () => {
                         >
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs ${action.priority === 'urgent' ? 'bg-red-500/10 text-red-500 animate-pulse' :
-                                        action.priority === 'high' ? 'bg-amber-500/10 text-amber-500' :
-                                            'bg-blue-500/10 text-blue-500'
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs border ${action.priority === 'urgent' ? 'bg-red-500/10 text-red-500 border-red-500/30 animate-pulse' :
+                                        action.priority === 'high' ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' :
+                                            'bg-cyan-500/10 text-cyan-500 border-cyan-500/30'
                                         }`}>
                                         {lead.aiAnalysis?.score || '!!'}
                                     </div>
@@ -111,25 +126,34 @@ const SalesCopilot: React.FC = () => {
                                     <Lightbulb size={14} />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Estrategia Sugerida</span>
                                 </div>
-                                <p className="text-sm text-white font-bold mb-3">{action.suggestedAction}</p>
-                                <div className="p-4 bg-[#0b1116] rounded-xl border border-white/5 italic text-slate-300 text-[11px] leading-relaxed relative">
-                                    <span className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest">
-                                        Auto-Response Script
+                                <p className="text-sm text-white font-bold mb-3 leading-tight">{action.suggestedAction}</p>
+                                <div className="p-4 bg-[#0b1116] rounded-xl border border-white/5 italic text-slate-300 text-[11px] leading-relaxed relative group/script">
+                                    <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover/script:opacity-100 transition-opacity" />
+                                    <span className="relative z-10 block">"{action.message}"</span>
+                                    <span className="absolute -top-2 left-3 bg-[#131f2a] px-2 text-[8px] text-[#00aed9] font-black uppercase tracking-widest z-20">
+                                        AI Suggested Script
                                     </span>
-                                    "{action.message}"
                                 </div>
                             </div>
 
                             <div className="flex gap-3">
                                 <button
-                                    className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border border-white/5"
+                                    onClick={() => handleWhatsAppSend(lead, action.message)}
+                                    disabled={!lead.phone}
+                                    className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border border-white/5 disabled:opacity-30 disabled:cursor-not-allowed group/wa"
                                 >
-                                    <MessageSquare size={14} /> WhatsApp
+                                    <MessageSquare size={14} className="group-hover/wa:text-[#25D366] transition-colors" />
+                                    {lead.phone ? 'WhatsApp' : 'No Phone'}
                                 </button>
                                 <button
-                                    className="flex-1 bg-[#00aed9] text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20"
+                                    onClick={() => copyScriptToClipboard(lead.id, action.message)}
+                                    className={`flex-1 font-bold h-12 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] uppercase tracking-widest border ${copyStatus[lead.id]
+                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
+                                            : 'bg-white/5 border-white/5 text-white hover:bg-white/10'
+                                        }`}
                                 >
-                                    <Calendar size={14} /> Agendar Cita
+                                    <Zap size={14} className={copyStatus[lead.id] ? 'animate-bounce' : ''} />
+                                    {copyStatus[lead.id] ? 'Copiado!' : 'Copiar Script'}
                                 </button>
                             </div>
                         </div>

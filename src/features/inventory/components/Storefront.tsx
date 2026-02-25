@@ -143,6 +143,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
     // Final list to display
     const displayCars = isSearching ? filteredAndSorted : serverCars;
+
     const marketPulse = useMemo(() => {
         const source = displayCars.length > 0 ? displayCars : inventory;
         if (!source.length) {

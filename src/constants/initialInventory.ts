@@ -1,5 +1,5 @@
 
-import { Car } from '@/types/types';
+import { Car } from '../types/types.ts';
 
 export const initialInventoryData: Omit<Car, 'id'>[] = [
     {
@@ -7,7 +7,7 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
         price: 39500,
         type: 'suv',
         badge: 'Rediseñado',
-        img: 'https://images.unsplash.com/photo-1695221971766-3d778d910dc7?q=80&w=1200&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1200&auto=format&fit=crop', // Accurate Tucson model
         featured: true,
     },
     {
@@ -15,7 +15,7 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
         price: 28900,
         type: 'sedan',
         badge: 'Deportivo',
-        img: 'https://images.unsplash.com/photo-1609520505218-7421da3b3d80?q=80&w=1200&auto=format&fit=crop', // White Sedan
+        img: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=1200&auto=format&fit=crop', // Sleek Elantra look
         featured: true,
     },
     {
@@ -23,7 +23,7 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
         price: 24500,
         type: 'suv',
         badge: 'Compacto',
-        img: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&w=1200&auto=format&fit=crop', // Compact SUV vibe
+        img: 'https://images.unsplash.com/photo-1672820415487-c534a8ee22ff?q=80&w=1200&auto=format&fit=crop', // Compact SUV vibe
         featured: false,
     },
     {
@@ -31,7 +31,7 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
         price: 44200,
         type: 'suv',
         badge: 'Más Espacio',
-        img: 'https://images.unsplash.com/photo-1631522858632-1b157bd752e2?q=80&w=1200&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1646728502468-06d9c7b3c2c2?q=80&w=1200&auto=format&fit=crop', // Modern Santa Fe
         featured: true,
     },
     {
@@ -39,7 +39,15 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
         price: 58900,
         type: 'luxury',
         badge: 'Flagship',
-        img: 'https://images.unsplash.com/photo-1647494480572-c2834b6e56ad?q=80&w=1200&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=1200&auto=format&fit=crop', // Premium SUV
         featured: true,
     },
+    {
+        name: 'Hyundai Kona 2026',
+        price: 34500,
+        type: 'suv',
+        badge: 'Electrizante',
+        img: 'https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=1200&auto=format&fit=crop', // Verified Kona model
+        featured: false,
+    }
 ];

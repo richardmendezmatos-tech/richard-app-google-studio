@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import admin from 'firebase-admin';
-import { SITE_CONFIG } from '../src/constants/siteConfig';
+import { SITE_CONFIG } from '../src/constants/siteConfig.ts';
 
 const ROOT = process.cwd();
 const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');
@@ -84,14 +84,24 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
   const snapshot = await admin.firestore().collection('cars').get();
   return snapshot.docs.map((doc) => {
     const data = doc.data() as {
-      make: string;
-      model: string;
-      year: number;
+      name?: string;
+      make?: string;
+      model?: string;
+      year?: number;
       img?: string;
       images?: string[];
-      updatedAt?: unknown;
-      createdAt?: unknown;
+      updatedAt?: any;
+      createdAt?: any;
+      price?: number;
     };
+
+    // Use name if make/model are missing
+    const vehicleName = data.name || `${data.year || ''} ${data.make || ''} ${data.model || ''}`.trim() || 'Vehículo';
+
+    // Dynamic Priority: Newer inventory gets higher visibility
+    const createdDate = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+    const daysOld = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+    const priority = daysOld < 7 ? 0.9 : daysOld < 30 ? 0.8 : 0.7;
 
     const images = [...new Set(
       [data.img, ...(data.images || [])]
@@ -99,14 +109,14 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
         .filter((image): image is string => Boolean(image))
     )].map(url => ({
       url,
-      title: `${data.year} ${data.make} ${data.model}`,
-      caption: `Comprar ${data.make} ${data.model} ${data.year} en Richard Automotive - Autos seminuevos certificados en Puerto Rico.`
+      title: `${vehicleName} - Richard Automotive`,
+      caption: `Detalles de ${vehicleName}. Calidad certificada y transparencia total en Puerto Rico.`
     }));
 
     return {
       loc: `${baseUrl}/vehicle/${doc.id}`,
-      changefreq: 'weekly',
-      priority: 0.7,
+      changefreq: 'daily',
+      priority,
       lastmod: toIsoDate(data.updatedAt || data.createdAt),
       images
     };
@@ -136,9 +146,41 @@ const buildXml = (urls: any[]) => {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n\n${entries}\n\n</urlset>\n`;
 };
 
+const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
+  const locations = ['San Juan', 'Guaynabo', 'Bayamon', 'Carolina', 'Caguas', 'Ponce', 'Mayaguez', 'Dorado'];
+  const categories = ['suv', 'sedan', 'coupe', 'hatchback', 'performance', 'luxury'];
+
+  const entries: SitemapEntry[] = [];
+
+  for (const location of locations) {
+    const locSlug = location.toLowerCase().replace(/\s+/g, '-');
+
+    // Base location URL
+    entries.push({
+      loc: `${baseUrl}/comprar/${locSlug}`,
+      changefreq: 'weekly',
+      priority: 0.8,
+      lastmod: today
+    });
+
+    // Category specific location URLs
+    for (const cat of categories) {
+      entries.push({
+        loc: `${baseUrl}/comprar/${locSlug}/${cat}`,
+        changefreq: 'weekly',
+        priority: 0.7,
+        lastmod: today
+      });
+    }
+  }
+
+  return entries;
+};
+
 const run = async () => {
   const vehicleEntries = await loadVehicleEntries();
-  const urls = dedupeByLoc([...staticUrls, ...vehicleEntries]);
+  const clusterEntries = await loadClusterEntries();
+  const urls = dedupeByLoc([...staticUrls, ...vehicleEntries, ...clusterEntries]);
 
   const xml = buildXml(urls);
   fs.writeFileSync(OUTPUT_PATH, xml, 'utf8');

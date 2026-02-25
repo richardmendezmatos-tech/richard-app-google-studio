@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { animate } from 'animejs';
+import React, { useEffect, useMemo } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 
 interface AnimatedCounterProps {
     value: number;
@@ -11,32 +11,30 @@ interface AnimatedCounterProps {
 
 export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     value,
-    duration = 2000,
+    duration = 2, // framer-motion animate uses seconds by default
     format = 'number',
     className = '',
     delay = 0
 }) => {
-    const [displayValue, setDisplayValue] = useState(0);
-    const counterRef = useRef({ val: 0 });
+    const motionValue = useMotionValue(0);
+    const springValue = useSpring(motionValue, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.01
+    });
 
     useEffect(() => {
-        const animation = animate(counterRef.current, {
-            val: value,
+        // Force the motion value to the current value
+        const controls = animate(motionValue, value, {
             duration: duration,
             delay: delay,
-            easing: 'easeOutExpo',
-            update: () => {
-                setDisplayValue(counterRef.current.val);
-            }
+            ease: "easeOut"
         });
+        return () => controls.stop();
+    }, [value, duration, delay, motionValue]);
 
-        return () => {
-            animation.pause();
-        };
-    }, [value, duration, delay]);
-
-    const formattedValue = () => {
-        const rounded = Math.round(displayValue);
+    const displayValue = useTransform(springValue, (latest) => {
+        const rounded = Math.round(latest);
         if (format === 'currency') {
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
@@ -48,9 +46,9 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
             return `${rounded}%`;
         }
         return rounded.toLocaleString();
-    };
+    });
 
-    return <span className={className}>{formattedValue()}</span>;
+    return <motion.span className={className}>{displayValue}</motion.span>;
 };
 
 export default AnimatedCounter;
