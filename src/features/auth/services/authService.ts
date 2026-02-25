@@ -393,7 +393,7 @@ export const loginWithPasskey = async () => {
         const challenge = new Uint8Array(32);
         window.crypto.getRandomValues(challenge);
 
-        // Request Assertion
+        // 1. Request Assertion from Authenticator
         const credential = await navigator.credentials.get({
             publicKey: {
                 challenge,
@@ -403,17 +403,33 @@ export const loginWithPasskey = async () => {
         }) as PublicKeyCredential;
 
         if (credential) {
-            // MOAT: Security Fingerprinting
-            await logAuthActivity(auth.currentUser?.email || 'passkey_user', true, 'passkey_login_success', `Device: ${credential.id}`);
-            return credential;
+            // 2. Correlation: Find associated user by passkeyId
+            const userRepo = container.getUserRepository();
+            const userData = await userRepo.getUserByPasskeyId(credential.id);
+
+            if (!userData || !userData.email) {
+                throw new Error("Dispositivo no reconocido. Por favor, vincula tu dispositivo primero.");
+            }
+
+            // 3. Log Intent
+            await logAuthActivity(userData.email, true, 'passkey_verification_success', `Device ID: ${credential.id}`);
+
+            return {
+                credential,
+                email: userData.email,
+                uid: userData.uid
+            };
         }
     } catch (err: unknown) {
         const errorName = (err as { name?: string }).name;
         const errorMessage = (err as { message?: string }).message;
-        if (errorName !== 'NotAllowedError') { // Don't log normal user back-out
-            console.error("Passkey Login Error:", err);
-            await logAuthActivity('unknown', false, 'passkey_login_failed', errorMessage);
+
+        if (errorName === 'NotAllowedError') {
+            throw new Error("Operación biométrica cancelada por el usuario.");
         }
+
+        console.error("Passkey Login Error:", err);
+        await logAuthActivity('unknown', false, 'passkey_login_failed', errorMessage);
         throw new Error("Error iniciando sesión con Passkey: " + errorMessage);
     }
 };
