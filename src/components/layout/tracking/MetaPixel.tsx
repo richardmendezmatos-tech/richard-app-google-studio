@@ -3,17 +3,17 @@ import { useMetaPixel } from '@/hooks/useMetaPixel';
 import { useLocation } from 'react-router-dom';
 
 export const MetaPixel = () => {
-    const { initPixel, trackEvent } = useMetaPixel();
-    const location = useLocation();
+  const { initPixel, trackEvent } = useMetaPixel();
+  const location = useLocation();
 
-    useEffect(() => {
-        initPixel();
-    }, [initPixel]);
+  useEffect(() => {
+    initPixel();
+  }, [initPixel]);
 
-    useEffect(() => {
-        // Track PageView on route change
-        trackEvent('PageView');
-    }, [location, trackEvent]);
+  useEffect(() => {
+    // Track PageView on route change
+    trackEvent('PageView');
+  }, [location, trackEvent]);
 
-    return null;
+  return null;
 };

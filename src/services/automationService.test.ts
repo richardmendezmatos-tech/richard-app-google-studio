@@ -5,30 +5,30 @@ const {
   updateLeadMock,
   sendWhatsAppMock,
   sendTransactionalEmailMock,
-  getAntigravityOutreachActionMock
+  getAntigravityOutreachActionMock,
 } = vi.hoisted(() => ({
   updateLeadMock: vi.fn(),
   sendWhatsAppMock: vi.fn(),
   sendTransactionalEmailMock: vi.fn(),
-  getAntigravityOutreachActionMock: vi.fn()
+  getAntigravityOutreachActionMock: vi.fn(),
 }));
 
 vi.mock('@/features/leads/services/crmService', () => ({
-  updateLead: updateLeadMock
+  updateLead: updateLeadMock,
 }));
 
 vi.mock('./whatsappService', () => ({
   whatsappService: {
-    sendMessage: sendWhatsAppMock
-  }
+    sendMessage: sendWhatsAppMock,
+  },
 }));
 
 vi.mock('./emailService', () => ({
-  sendTransactionalEmail: sendTransactionalEmailMock
+  sendTransactionalEmail: sendTransactionalEmailMock,
 }));
 
 vi.mock('./antigravityOmnichannelService', () => ({
-  getAntigravityOutreachAction: getAntigravityOutreachActionMock
+  getAntigravityOutreachAction: getAntigravityOutreachActionMock,
 }));
 
 import { automationService } from './automationService';
@@ -43,7 +43,7 @@ const baseLead: Lead = {
   email: 'carlos@example.com',
   phone: '17875551212',
   vehicleOfInterest: 'Hyundai Elantra',
-  createdAt: { seconds: Math.floor((NOW - 2 * 24 * 60 * 60 * 1000) / 1000), nanoseconds: 0 }
+  createdAt: { seconds: Math.floor((NOW - 2 * 24 * 60 * 60 * 1000) / 1000), nanoseconds: 0 },
 };
 
 describe('automationService.processLeadNurturing', () => {
@@ -56,7 +56,7 @@ describe('automationService.processLeadNurturing', () => {
     getAntigravityOutreachActionMock.mockResolvedValue({
       channel: 'email',
       message: 'Mensaje por email',
-      subject: 'Asunto IA'
+      subject: 'Asunto IA',
     });
     sendTransactionalEmailMock.mockResolvedValue(true);
 
@@ -70,8 +70,8 @@ describe('automationService.processLeadNurturing', () => {
       expect.objectContaining({
         nurture_day_1_actuarial: true,
         emailSent: true,
-        nudgeSent: false
-      })
+        nudgeSent: false,
+      }),
     );
   });
 
@@ -79,7 +79,7 @@ describe('automationService.processLeadNurturing', () => {
     getAntigravityOutreachActionMock.mockResolvedValue({
       channel: 'email',
       message: 'Intento por email primero',
-      subject: 'Asunto IA'
+      subject: 'Asunto IA',
     });
     sendTransactionalEmailMock.mockResolvedValue(false);
     sendWhatsAppMock.mockResolvedValue(true);
@@ -93,8 +93,8 @@ describe('automationService.processLeadNurturing', () => {
       expect.objectContaining({
         nurture_day_1_actuarial: true,
         emailSent: false,
-        nudgeSent: true
-      })
+        nudgeSent: true,
+      }),
     );
   });
 
@@ -104,7 +104,7 @@ describe('automationService.processLeadNurturing', () => {
       ...baseLead,
       id: 'lead-no-channels',
       email: undefined,
-      phone: undefined
+      phone: undefined,
     };
 
     await automationService.processLeadNurturing(leadWithoutContacts);

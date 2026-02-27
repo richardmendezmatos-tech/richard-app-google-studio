@@ -5,16 +5,16 @@ import { logUsageEvent, getUsageLogs, MonetizableEvent } from './billingService'
 // For this specific task, we will simulate a verify by checking if the exports exist and types match
 
 describe('BillingService', () => {
-    it('should have logUsageEvent defined', () => {
-        expect(logUsageEvent).toBeDefined();
-    });
+  it('should have logUsageEvent defined', () => {
+    expect(logUsageEvent).toBeDefined();
+  });
 
-    it('should have getUsageLogs defined', () => {
-        expect(getUsageLogs).toBeDefined();
-    });
+  it('should have getUsageLogs defined', () => {
+    expect(getUsageLogs).toBeDefined();
+  });
 
-    it('should allow valid monetizable events', () => {
-        const events: MonetizableEvent[] = ['ai_call', 'lead_capture', 'doc_processed', 'onboarding'];
-        expect(events.length).toBe(4);
-    });
+  it('should allow valid monetizable events', () => {
+    const events: MonetizableEvent[] = ['ai_call', 'lead_capture', 'doc_processed', 'onboarding'];
+    expect(events.length).toBe(4);
+  });
 });

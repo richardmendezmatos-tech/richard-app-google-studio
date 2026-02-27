@@ -29,6 +29,7 @@
     "sitemap:generate": "tsx scripts/generate-sitemap.ts",
     "commit": "cz",
     "prepare": "husky",
+    "format": "npx prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\" \"README.md\"",
     "sync:notebook": "npx -y @dotenvx/dotenvx run -- tsx scripts/sync-to-notebook.ts"
   },
   "dependencies": {

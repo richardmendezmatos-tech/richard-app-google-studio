@@ -3,25 +3,17 @@ if (typeof window !== 'undefined') {
   const originalError = console.error;
   console.error = function (...args: any[]) {
     const msg = args.join(' ');
-    if (msg.includes('firebaseinstallations.googleapis.com') ||
+    if (
+      msg.includes('firebaseinstallations.googleapis.com') ||
       msg.includes('installations/request-failed') ||
       msg.includes('PERMISSION_DENIED') ||
-      msg.includes('FirebaseError: Installations')) {
+      msg.includes('FirebaseError: Installations')
+    ) {
       console.warn('[Firebase] Installations API error suppressed (API key restriction)');
       return;
     }
     originalError.apply(console, args);
   };
-
-  window.addEventListener('unhandledrejection', function (event) {
-    const msg = (event.reason?.message || event.reason?.toString() || '');
-    if (msg.includes('firebaseinstallations.googleapis.com') ||
-      msg.includes('installations/request-failed') ||
-      msg.includes('PERMISSION_DENIED')) {
-      console.warn('[Firebase] Installations promise rejection suppressed');
-      event.preventDefault();
-    }
-  });
 }
 
 import React from 'react';
@@ -70,7 +62,7 @@ const queryClient = new QueryClient({
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+  throw new Error('Could not find root element to mount to');
 }
 
 const hardRecoverClient = async () => {
@@ -96,61 +88,133 @@ const hardRecoverClient = async () => {
 window.__richardHardRecover = hardRecoverClient;
 window.__appBootReady = false;
 
-
-
-// Global Error Handler for "Loading" Stuck State
 // Global Error Handler for "Loading" Stuck State
 const showError = (msg: string) => {
   const lowerMsg = msg.toLowerCase();
 
-  // CORE UI SILENCE: Never show red screen for these keywords
-  // Added permission_denied and firebaseinstallations for more robust matching
-  const suppressed = [
-    'firebase', 'installations', '403', 'denied', 'analytics',
-    'perf', 'messaging', 'storage', 'auth', 'app-check', 'appcheck',
-    'permission_denied', 'firebaseinstallations', 'firestore'
+  // CORE UI SILENCE: Only suppress the specific installations 403 noise
+  const suppressedKeywords = [
+    'firebaseinstallations',
+    'installations/request-failed',
+    'permission_denied',
   ];
-
-  if (suppressed.some(k => lowerMsg.includes(k))) {
-    console.warn("⚠️ [Bootstrap] Noise suppressed:", msg);
+  if (suppressedKeywords.some((k) => lowerMsg.includes(k))) {
+    console.warn('⚠️ [Bootstrap] Noise suppressed:', msg);
     return;
   }
 
   // Prevent duplicate overlays
   if (document.getElementById('startup-error-overlay')) return;
 
-  const errDiv = document.createElement('div');
-  errDiv.id = 'startup-error-overlay';
-  errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0b1120;color:#94a3b8;z-index:999999;padding:40px;font-size:16px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+  const errOverlay = document.createElement('div');
+  errOverlay.id = 'startup-error-overlay';
+  Object.assign(errOverlay.style, {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    background: '#0b1120',
+    color: '#94a3b8',
+    zIndex: '999999',
+    padding: '40px',
+    fontSize: '16px',
+    overflow: 'auto',
+    fontFamily: 'ui-monospace, monospace',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  });
 
-  errDiv.innerHTML = `
-    <div style="max-width:600px;width:100%;background:#1e293b;padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-      <div style="font-size:40px;margin-bottom:20px;">🛡️</div>
-      <h1 style="color:white;font-size:24px;margin-bottom:12px;font-weight:900;letter-spacing:-0.025em;">Richard Automotive OS</h1>
-      <p style="color:#94a3b8;margin-bottom:24px;line-height:1.6;">Se detectó una anomalía en el arranque del sistema. Esto suele ocurrir por restricciones de red o caché antigua.</p>
-      
-      <div style="background:#0f172a;padding:15px;border-radius:12px;border:1px solid #334155;color:#f87171;font-size:12px;white-space:pre-wrap;margin-bottom:30px;max-height:150px;overflow:auto;">
-        ${msg}
-      </div>
+  const card = document.createElement('div');
+  Object.assign(card.style, {
+    maxWidth: '600px',
+    width: '100%',
+    background: '#1e293b',
+    padding: '40px',
+    borderRadius: '24px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+  });
 
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <button onclick="window.location.reload(true)" style="width:100%;padding:14px;background:#3b82f6;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s;">
-          REINTENTAR CARGA (Re-sync)
-        </button>
-        <button onclick="window.__richardHardRecover && window.__richardHardRecover()" style="width:100%;padding:14px;background:#0f766e;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;">
-          REPARAR CACHE Y SERVICE WORKER
-        </button>
-        <button onclick="document.getElementById('startup-error-overlay').remove()" style="width:100%;padding:14px;background:transparent;color:#64748b;border:1px solid #334155;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;">
-          IGNORAR Y CONTINUAR
-        </button>
-      </div>
-      
-      <div style="margin-top:25px;font-size:10px;color:#475569;text-align:center;letter-spacing:0.1em;">
-        VERSION: 1.0.3-BLINDADO | RELIABILITY LAYER
-      </div>
-    </div>
-  `;
-  document.body.appendChild(errDiv);
+  const icon = document.createElement('div');
+  icon.style.fontSize = '40px';
+  icon.style.marginBottom = '20px';
+  icon.textContent = '🛡️';
+
+  const title = document.createElement('h1');
+  Object.assign(title.style, {
+    color: 'white',
+    fontSize: '24px',
+    marginBottom: '12px',
+    fontWeight: '900',
+    letterSpacing: '-0.025em',
+  });
+  title.textContent = 'Richard Automotive OS';
+
+  const desc = document.createElement('p');
+  Object.assign(desc.style, {
+    color: '#94a3b8',
+    marginBottom: '24px',
+    lineHeight: '1.6',
+  });
+  desc.textContent =
+    'Se detectó una anomalía en el arranque del sistema. Esto suele ocurrir por restricciones de red o caché antigua.';
+
+  const logBox = document.createElement('div');
+  Object.assign(logBox.style, {
+    background: '#0f172a',
+    padding: '15px',
+    borderRadius: '12px',
+    border: '1px solid #334155',
+    color: '#f87171',
+    fontSize: '12px',
+    whiteSpace: 'pre-wrap',
+    marginBottom: '30px',
+    maxHeight: '150px',
+    overflow: 'auto',
+  });
+  logBox.textContent = msg; // SAFE: textContent avoids XSS
+
+  const btnContainer = document.createElement('div');
+  Object.assign(btnContainer.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  });
+
+  const createBtn = (text: string, bg: string, onClick: () => void) => {
+    const btn = document.createElement('button');
+    Object.assign(btn.style, {
+      width: '100%',
+      padding: '14px',
+      background: bg,
+      color: 'white',
+      border: 'none',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      fontWeight: '700',
+      fontSize: '14px',
+    });
+    btn.textContent = text;
+    btn.onclick = onClick;
+    return btn;
+  };
+
+  btnContainer.appendChild(
+    createBtn('REINTENTAR CARGA (Re-sync)', '#3b82f6', () => window.location.reload()),
+  );
+  btnContainer.appendChild(
+    createBtn('REPARAR CACHE Y SERVICE WORKER', '#0f766e', () => window.__richardHardRecover?.()),
+  );
+  btnContainer.appendChild(
+    createBtn('IGNORAR Y CONTINUAR', 'transparent', () => errOverlay.remove()),
+  );
+
+  card.append(icon, title, desc, logBox, btnContainer);
+  errOverlay.appendChild(card);
+  document.body.appendChild(errOverlay);
 };
 
 window.onerror = (msg, url, line, col, error) => {
@@ -160,26 +224,35 @@ window.onerror = (msg, url, line, col, error) => {
 
 window.addEventListener('unhandledrejection', (e) => {
   const reason = e.reason;
-  // Robust serialization for Firebase Error objects which might not stringify well
-  let message = "";
-  if (reason instanceof Error) {
-    message = reason.message;
-  } else if (typeof reason === 'object' && reason !== null) {
-    try {
-      message = JSON.stringify(reason);
-    } catch {
-      message = String(reason);
-    }
-  } else {
-    message = String(reason);
+  const msg = reason?.message || reason?.toString() || '';
+
+  // Consolidate suppression and error reporting
+  if (msg.includes('firebaseinstallations') || msg.includes('PERMISSION_DENIED')) {
+    console.warn('[Firebase] Promise rejection suppressed (API Restriction)');
+    return;
   }
 
-  showError(`Unhandled Promise: ${message}`);
+  let fullMessage = '';
+  if (reason instanceof Error) {
+    fullMessage = reason.message;
+  } else if (typeof reason === 'object' && reason !== null) {
+    try {
+      fullMessage = JSON.stringify(reason);
+    } catch {
+      fullMessage = String(reason);
+    }
+  } else {
+    fullMessage = String(reason);
+  }
+
+  showError(`Unhandled Promise: ${fullMessage}`);
 });
 
 setTimeout(() => {
   if (!window.__appBootReady && !document.getElementById('startup-error-overlay')) {
-    showError('Startup timeout: la aplicacion no termino de iniciar en 12s. Posible cache/SW inconsistente.');
+    showError(
+      'Startup timeout: la aplicacion no termino de iniciar en 12s. Posible cache/SW inconsistente.',
+    );
   }
 }, 12_000);
 
@@ -191,10 +264,10 @@ const BootReadySignal: React.FC<{ children: React.ReactNode }> = ({ children }) 
   return <>{children}</>;
 };
 
-console.log("🚀 [Index] Booting React Application...");
+console.log('🚀 [Index] Booting React Application...');
 try {
   const root = ReactDOM.createRoot(rootElement);
-  console.log("✅ [Index] Root created, rendering...");
+  console.log('✅ [Index] Root created, rendering...');
   root.render(
     <React.StrictMode>
       <Provider store={store}>
@@ -206,7 +279,7 @@ try {
           </QueryClientProvider>
         </DealerProvider>
       </Provider>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 } catch (e: unknown) {
   const err = e instanceof Error ? e : new Error(String(e));

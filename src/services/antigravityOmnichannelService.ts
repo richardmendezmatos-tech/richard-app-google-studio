@@ -30,35 +30,32 @@ const normalizeChannel = (value: string | undefined): OutreachChannel | null => 
 
 export const getAntigravityOutreachAction = async (
   lead: Lead,
-  context: OutreachRequestContext
+  context: OutreachRequestContext,
 ): Promise<AntigravityOutreachAction | null> => {
   const cfg = getAntigravityConfig();
   if (!cfg.apiUrl) return null;
 
   try {
-    const response = await antigravityFetch<AntigravityOutreachResponse>(
-      cfg.outreachActionPath,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lead: {
-            id: lead.id,
-            name: lead.name,
-            firstName: lead.firstName,
-            lastName: lead.lastName,
-            email: lead.email,
-            phone: lead.phone,
-            status: lead.status,
-            type: lead.type,
-            aiScore: lead.aiScore ?? lead.aiAnalysis?.score ?? 0,
-            vehicleOfInterest: lead.vehicleOfInterest,
-            vehicleId: lead.vehicleId
-          },
-          context
-        })
-      }
-    );
+    const response = await antigravityFetch<AntigravityOutreachResponse>(cfg.outreachActionPath, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lead: {
+          id: lead.id,
+          name: lead.name,
+          firstName: lead.firstName,
+          lastName: lead.lastName,
+          email: lead.email,
+          phone: lead.phone,
+          status: lead.status,
+          type: lead.type,
+          aiScore: lead.aiScore ?? lead.aiAnalysis?.score ?? 0,
+          vehicleOfInterest: lead.vehicleOfInterest,
+          vehicleId: lead.vehicleId,
+        },
+        context,
+      }),
+    });
 
     const action = response?.action;
     if (!action) return null;
@@ -71,7 +68,7 @@ export const getAntigravityOutreachAction = async (
       message: action.message || context.fallbackMessage,
       subject: action.subject,
       reasoning: action.reasoning,
-      shouldSend: action.shouldSend
+      shouldSend: action.shouldSend,
     };
   } catch (error) {
     console.warn('Antigravity outreach action fallback:', error);

@@ -1,8 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { generateImage } from '@/services/geminiService';
 import { GeneratedImage } from '@/types/types';
-import { ImageIcon, Download, AlertTriangle, Trash2, GalleryThumbnails, ScanLine } from 'lucide-react';
+import {
+  ImageIcon,
+  Download,
+  AlertTriangle,
+  Trash2,
+  GalleryThumbnails,
+  ScanLine,
+} from 'lucide-react';
 
 const IMAGE_HISTORY_KEY = 'richard_ai_image_history';
 
@@ -18,7 +24,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
       const savedImages = localStorage.getItem(IMAGE_HISTORY_KEY);
       return savedImages ? JSON.parse(savedImages) : [];
     } catch (error) {
-      console.error("Error al cargar el historial de imágenes:", error);
+      console.error('Error al cargar el historial de imágenes:', error);
       return [];
     }
   });
@@ -28,7 +34,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
     try {
       localStorage.setItem(IMAGE_HISTORY_KEY, JSON.stringify(images));
     } catch (error) {
-      console.error("Error al guardar el historial de imágenes:", error);
+      console.error('Error al guardar el historial de imágenes:', error);
     }
   }, [images]);
 
@@ -42,12 +48,12 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
       const imageUrl = await generateImage(prompt);
       // Las fechas de JSON necesitan ser reconstituidas a objetos Date
       const newImage: GeneratedImage = { url: imageUrl, prompt, timestamp: new Date() };
-      setImages(prev => [newImage, ...prev]);
+      setImages((prev) => [newImage, ...prev]);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Ocurrió un error inesperado.");
+        setError('Ocurrió un error inesperado.');
       }
     } finally {
       setLoading(false);
@@ -124,7 +130,10 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
         )}
 
         {images.map((img, idx) => (
-          <div key={idx} className="group relative bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl hover:shadow-cyan-500/10 transition-all animate-in fade-in zoom-in">
+          <div
+            key={idx}
+            className="group relative bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl hover:shadow-cyan-500/10 transition-all animate-in fade-in zoom-in"
+          >
             <img src={img.url} alt={img.prompt} className="w-full aspect-square object-cover" />
 
             {/* Overlay Actions */}

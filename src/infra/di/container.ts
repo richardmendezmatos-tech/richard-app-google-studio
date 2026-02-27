@@ -16,90 +16,97 @@ import { FirestorePredictiveRepository } from '../repositories/FirestorePredicti
 import { PredictiveScoringEngine } from '../services/PredictiveScoringEngine';
 
 class DIContainer {
-    private static instance: DIContainer;
+  private static instance: DIContainer;
 
-    // Repositories
-    private leadRepository = new FirestoreLeadRepository();
-    private inventoryRepository = new FirestoreInventoryRepository();
-    private applicationRepository = new FirestoreApplicationRepository();
-    private storageRepository = new FirestoreStorageRepository();
-    private userRepository = new FirestoreUserRepository();
-    private subscriberRepository = new FirestoreSubscriberRepository();
-    private surveyRepository = new FirestoreSurveyRepository();
-    private houstonRepository = new FirestoreHoustonRepository();
-    private predictiveRepository = new FirestorePredictiveRepository();
+  // Repositories
+  private leadRepository = new FirestoreLeadRepository();
+  private inventoryRepository = new FirestoreInventoryRepository();
+  private applicationRepository = new FirestoreApplicationRepository();
+  private storageRepository = new FirestoreStorageRepository();
+  private userRepository = new FirestoreUserRepository();
+  private subscriberRepository = new FirestoreSubscriberRepository();
+  private surveyRepository = new FirestoreSurveyRepository();
+  private houstonRepository = new FirestoreHoustonRepository();
+  private predictiveRepository = new FirestorePredictiveRepository();
 
-    // Services
-    private scoringEngine = new PredictiveScoringEngine();
+  // Services
+  private scoringEngine = new PredictiveScoringEngine();
 
-    // Use Cases
-    private getLeadsUseCase = new GetLeads(this.leadRepository);
-    private getInventoryUseCase = new GetInventory(this.inventoryRepository);
-    private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
-    private calculatePredictiveScoreUseCase = new CalculatePredictiveScore(this.predictiveRepository, this.leadRepository, this.scoringEngine);
-    private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(this.predictiveRepository, this.leadRepository);
-    private calculateDynamicMarginUseCase = new CalculateDynamicMargin();
+  // Use Cases
+  private getLeadsUseCase = new GetLeads(this.leadRepository);
+  private getInventoryUseCase = new GetInventory(this.inventoryRepository);
+  private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
+  private calculatePredictiveScoreUseCase = new CalculatePredictiveScore(
+    this.predictiveRepository,
+    this.leadRepository,
+    this.scoringEngine,
+  );
+  private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(
+    this.predictiveRepository,
+    this.leadRepository,
+  );
+  private calculateDynamicMarginUseCase = new CalculateDynamicMargin();
 
-    private constructor() { }
+  private constructor() {}
 
-    public static getInstance(): DIContainer {
-        if (!DIContainer.instance) {
-            DIContainer.instance = new DIContainer();
-        }
-        return DIContainer.instance;
+  public static getInstance(): DIContainer {
+    if (!DIContainer.instance) {
+      DIContainer.instance = new DIContainer();
     }
+    return DIContainer.instance;
+  }
 
-    public getGetLeadsUseCase(): GetLeads {
-        return this.getLeadsUseCase;
-    }
+  public getGetLeadsUseCase(): GetLeads {
+    return this.getLeadsUseCase;
+  }
 
-    public getGetInventoryUseCase(): GetInventory {
-        return this.getInventoryUseCase;
-    }
+  public getGetInventoryUseCase(): GetInventory {
+    return this.getInventoryUseCase;
+  }
 
-    public getLeadRepository() {
-        return this.leadRepository;
-    }
+  public getLeadRepository() {
+    return this.leadRepository;
+  }
 
-    public getApplicationRepository() {
-        return this.applicationRepository;
-    }
+  public getApplicationRepository() {
+    return this.applicationRepository;
+  }
 
-    public getStorageRepository() {
-        return this.storageRepository;
-    }
+  public getStorageRepository() {
+    return this.storageRepository;
+  }
 
-    public getUserRepository() {
-        return this.userRepository;
-    }
+  public getUserRepository() {
+    return this.userRepository;
+  }
 
-    public getSubscriberRepository() {
-        return this.subscriberRepository;
-    }
+  public getSubscriberRepository() {
+    return this.subscriberRepository;
+  }
 
-    public getSurveyRepository() {
-        return this.surveyRepository;
-    }
+  public getSurveyRepository() {
+    return this.surveyRepository;
+  }
 
-    public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
-        return this.getHoustonTelemetryUseCase;
-    }
+  public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
+    return this.getHoustonTelemetryUseCase;
+  }
 
-    public getCalculatePredictiveScoreUseCase(): CalculatePredictiveScore {
-        return this.calculatePredictiveScoreUseCase;
-    }
+  public getCalculatePredictiveScoreUseCase(): CalculatePredictiveScore {
+    return this.calculatePredictiveScoreUseCase;
+  }
 
-    public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {
-        return this.identifyOutreachOpportunitiesUseCase;
-    }
+  public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {
+    return this.identifyOutreachOpportunitiesUseCase;
+  }
 
-    public getCalculateDynamicMarginUseCase(): CalculateDynamicMargin {
-        return this.calculateDynamicMarginUseCase;
-    }
+  public getCalculateDynamicMarginUseCase(): CalculateDynamicMargin {
+    return this.calculateDynamicMarginUseCase;
+  }
 
-    public getPredictiveRepository() {
-        return this.predictiveRepository;
-    }
+  public getPredictiveRepository() {
+    return this.predictiveRepository;
+  }
 }
 
 export const container = DIContainer.getInstance();

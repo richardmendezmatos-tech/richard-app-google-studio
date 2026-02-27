@@ -3,219 +3,239 @@ import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide
 import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface HeroSectionProps {
-    onNeuralMatch: () => void;
-    onBrowseInventory: () => void;
-    onSellCar: () => void;
+  onNeuralMatch: () => void;
+  onBrowseInventory: () => void;
+  onSellCar: () => void;
 }
 
 const HEADLINES = [
-    {
-        eyebrow: 'Showroom en Vivo',
-        line1: 'CONDUCE',
-        line2: 'LO MEJOR',
-        accent: 'DE PR',
-        sub: 'Inventario curado con IA. Financiamiento inteligente. El estándar de oro en movilidad.',
-    },
-    {
-        eyebrow: 'Colección Curada',
-        line1: 'SEÑAL',
-        line2: 'SOBRE',
-        accent: 'RUIDO',
-        sub: 'Precio, estado y contexto en una lectura rápida para comprar con ventaja real.',
-    },
-    {
-        eyebrow: 'Trade‑In Elite',
-        line1: 'MEJORA',
-        line2: 'SIN',
-        accent: 'FRICCIÓN',
-        sub: 'Valora tu vehículo, compara y cierra en una experiencia premium de principio a fin.',
-    },
+  {
+    eyebrow: 'Showroom en Vivo',
+    line1: 'CONDUCE',
+    line2: 'LO MEJOR',
+    accent: 'DE PR',
+    sub: 'Inventario curado con IA. Financiamiento inteligente. El estándar de oro en movilidad.',
+  },
+  {
+    eyebrow: 'Colección Curada',
+    line1: 'SEÑAL',
+    line2: 'SOBRE',
+    accent: 'RUIDO',
+    sub: 'Precio, estado y contexto en una lectura rápida para comprar con ventaja real.',
+  },
+  {
+    eyebrow: 'Trade‑In Elite',
+    line1: 'MEJORA',
+    line2: 'SIN',
+    accent: 'FRICCIÓN',
+    sub: 'Valora tu vehículo, compara y cierra en una experiencia premium de principio a fin.',
+  },
 ];
 
 const TICKER_ITEMS = [
-    '⚡ Financiamiento desde 4.9% APR',
-    '🛡 Garantía certificada incluida',
-    '🔁 Trade-In digital en 90 segundos',
-    '📍 Bayamón, Puerto Rico',
-    '🤖 Richard AI disponible 24/7',
-    '✅ Sin costos ocultos',
+  '⚡ Financiamiento desde 4.9% APR',
+  '🛡 Garantía certificada incluida',
+  '🔁 Trade-In digital en 90 segundos',
+  '📍 Bayamón, Puerto Rico',
+  '🤖 Richard AI disponible 24/7',
+  '✅ Sin costos ocultos',
 ];
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInventory, onSellCar }) => {
-    const [idx, setIdx] = useState(0);
-    const [visible, setVisible] = useState(true);
-    const [tickerPos, setTickerPos] = useState(0);
-    const tickerRef = useRef<HTMLDivElement>(null);
-    const animFrameRef = useRef<number>(0);
+const HeroSection: React.FC<HeroSectionProps> = ({
+  onNeuralMatch,
+  onBrowseInventory,
+  onSellCar,
+}) => {
+  const [idx, setIdx] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const [tickerPos, setTickerPos] = useState(0);
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number>(0);
 
-    /* ── Headline carousel ── */
-    useEffect(() => {
-        const iv = setInterval(() => {
-            setVisible(false);
-            setTimeout(() => {
-                setIdx(p => (p + 1) % HEADLINES.length);
-                setVisible(true);
-            }, 450);
-        }, 6500);
-        return () => clearInterval(iv);
-    }, []);
+  /* ── Headline carousel ── */
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIdx((p) => (p + 1) % HEADLINES.length);
+        setVisible(true);
+      }, 450);
+    }, 6500);
+    return () => clearInterval(iv);
+  }, []);
 
-    /* ── Continuous ticker ── */
-    useEffect(() => {
-        let pos = 0;
-        const speed = 0.45;
-        const step = () => {
-            if (tickerRef.current) {
-                const w = tickerRef.current.scrollWidth / 2;
-                pos -= speed;
-                if (pos <= -w) pos = 0;
-                tickerRef.current.style.transform = `translateX(${pos}px)`;
-            }
-            animFrameRef.current = requestAnimationFrame(step);
-        };
-        animFrameRef.current = requestAnimationFrame(step);
-        return () => cancelAnimationFrame(animFrameRef.current);
-    }, []);
+  /* ── Continuous ticker ── */
+  useEffect(() => {
+    let pos = 0;
+    const speed = 0.45;
+    const step = () => {
+      if (tickerRef.current) {
+        const w = tickerRef.current.scrollWidth / 2;
+        pos -= speed;
+        if (pos <= -w) pos = 0;
+        tickerRef.current.style.transform = `translateX(${pos}px)`;
+      }
+      animFrameRef.current = requestAnimationFrame(step);
+    };
+    animFrameRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, []);
 
-    const h = HEADLINES[idx];
+  const h = HEADLINES[idx];
 
-    return (
-        <section className="ra-hero">
-            {/* ── Background ── */}
-            <div className="ra-hero__bg">
-                <OptimizedImage
-                    src="https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=2400&auto=format&fit=crop"
-                    alt="Richard Automotive Hero"
-                    className="ra-hero__img"
-                    priority
-                />
-                <div className="ra-hero__overlay" />
-                <div className="ra-hero__vignette" />
+  return (
+    <section className="ra-hero">
+      {/* ── Background ── */}
+      <div className="ra-hero__bg">
+        <OptimizedImage
+          src="https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=2400&auto=format&fit=crop"
+          alt="Richard Automotive Hero"
+          className="ra-hero__img"
+          priority
+        />
+        <div className="ra-hero__overlay" />
+        <div className="ra-hero__vignette" />
 
-                {/* Decorative grid lines */}
-                <div className="ra-hero__grid-line ra-hero__grid-line--v1" />
-                <div className="ra-hero__grid-line ra-hero__grid-line--v2" />
-                <div className="ra-hero__grid-line ra-hero__grid-line--h1" />
+        {/* Decorative grid lines */}
+        <div className="ra-hero__grid-line ra-hero__grid-line--v1" />
+        <div className="ra-hero__grid-line ra-hero__grid-line--v2" />
+        <div className="ra-hero__grid-line ra-hero__grid-line--h1" />
 
-                {/* Glowing orbs */}
-                <div className="ra-hero__orb ra-hero__orb--tl" />
-                <div className="ra-hero__orb ra-hero__orb--br" />
+        {/* Glowing orbs */}
+        <div className="ra-hero__orb ra-hero__orb--tl" />
+        <div className="ra-hero__orb ra-hero__orb--br" />
 
-                {/* Animated speed lines */}
-                <div className="ra-hero__speedlines">
-                    {[...Array(8)].map((_, i) => (
-                        <div key={i} className="ra-hero__speedline" style={{ '--delay': `${i * 0.4}s`, '--top': `${10 + i * 10}%` } as React.CSSProperties} />
-                    ))}
-                </div>
+        {/* Animated speed lines */}
+        <div className="ra-hero__speedlines">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="ra-hero__speedline"
+              style={
+                { '--delay': `${i * 0.4}s`, '--top': `${10 + i * 10}%` } as React.CSSProperties
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <div className="ra-hero__content">
+        {/* Left: Typography */}
+        <div className="ra-hero__left">
+          {/* Live badge */}
+          <div className="ra-hero__badge">
+            <span className="ra-hero__badge-dot" />
+            <span>LIVE SHOWROOM</span>
+            <span className="ra-hero__badge-sep">·</span>
+            <span className="ra-hero__badge-eyebrow">{h.eyebrow}</span>
+          </div>
+
+          {/* Headline */}
+          <div
+            className={`ra-hero__headline ${visible ? 'ra-hero__headline--in' : 'ra-hero__headline--out'}`}
+          >
+            <span className="ra-hero__line ra-hero__line--1">{h.line1}</span>
+            <span className="ra-hero__line ra-hero__line--2">{h.line2}</span>
+            <span className="ra-hero__line ra-hero__line--accent">{h.accent}</span>
+          </div>
+
+          <p className={`ra-hero__sub ${visible ? 'ra-hero__sub--in' : 'ra-hero__sub--out'}`}>
+            {h.sub}
+          </p>
+
+          {/* Trust pills */}
+          <div className="ra-hero__pills">
+            <span className="ra-hero__pill">
+              <Shield size={11} /> Certified
+            </span>
+            <span className="ra-hero__pill">
+              <Clock size={11} /> Aprobación Rápida
+            </span>
+            <span className="ra-hero__pill">
+              <Zap size={11} /> 0 Costo Oculto
+            </span>
+          </div>
+        </div>
+
+        {/* Right: CTA panel */}
+        <div className="ra-hero__right">
+          <div className="ra-hero__panel">
+            {/* Panel header */}
+            <div className="ra-hero__panel-header">
+              <div className="ra-hero__panel-status">
+                <span className="ra-hero__panel-dot" />
+                <span>Sistema Activo</span>
+              </div>
+              <span className="ra-hero__panel-label">Richard IA</span>
             </div>
 
-            {/* ── Main content ── */}
-            <div className="ra-hero__content">
-                {/* Left: Typography */}
-                <div className="ra-hero__left">
-                    {/* Live badge */}
-                    <div className="ra-hero__badge">
-                        <span className="ra-hero__badge-dot" />
-                        <span>LIVE SHOWROOM</span>
-                        <span className="ra-hero__badge-sep">·</span>
-                        <span className="ra-hero__badge-eyebrow">{h.eyebrow}</span>
-                    </div>
+            {/* CTA buttons */}
+            <button onClick={onBrowseInventory} className="ra-cta ra-cta--primary">
+              <div className="ra-cta__shine" />
+              <div className="ra-cta__text">
+                <span className="ra-cta__tag">Catálogo Certificado</span>
+                <span className="ra-cta__label">EXPLORAR INVENTARIO</span>
+              </div>
+              <div className="ra-cta__icon">
+                <ArrowRight size={18} />
+              </div>
+            </button>
 
-                    {/* Headline */}
-                    <div className={`ra-hero__headline ${visible ? 'ra-hero__headline--in' : 'ra-hero__headline--out'}`}>
-                        <span className="ra-hero__line ra-hero__line--1">{h.line1}</span>
-                        <span className="ra-hero__line ra-hero__line--2">{h.line2}</span>
-                        <span className="ra-hero__line ra-hero__line--accent">{h.accent}</span>
-                    </div>
+            <button onClick={onNeuralMatch} className="ra-cta ra-cta--secondary">
+              <div className="ra-cta__text">
+                <span className="ra-cta__tag">Inteligencia Artificial</span>
+                <span className="ra-cta__label">NEURAL MATCH</span>
+              </div>
+              <div className="ra-cta__icon ra-cta__icon--cyan">
+                <BrainCircuit size={18} />
+              </div>
+            </button>
 
-                    <p className={`ra-hero__sub ${visible ? 'ra-hero__sub--in' : 'ra-hero__sub--out'}`}>
-                        {h.sub}
-                    </p>
+            <button onClick={onSellCar} className="ra-cta ra-cta--tertiary">
+              <div className="ra-cta__text">
+                <span className="ra-cta__tag">Trade‑In / Vender</span>
+                <span className="ra-cta__label">TASAR MI AUTO</span>
+              </div>
+              <div className="ra-cta__icon ra-cta__icon--green">
+                <DollarSign size={18} />
+              </div>
+            </button>
 
-                    {/* Trust pills */}
-                    <div className="ra-hero__pills">
-                        <span className="ra-hero__pill"><Shield size={11} /> Certified</span>
-                        <span className="ra-hero__pill"><Clock size={11} /> Aprobación Rápida</span>
-                        <span className="ra-hero__pill"><Zap size={11} /> 0 Costo Oculto</span>
-                    </div>
-                </div>
-
-                {/* Right: CTA panel */}
-                <div className="ra-hero__right">
-                    <div className="ra-hero__panel">
-                        {/* Panel header */}
-                        <div className="ra-hero__panel-header">
-                            <div className="ra-hero__panel-status">
-                                <span className="ra-hero__panel-dot" />
-                                <span>Sistema Activo</span>
-                            </div>
-                            <span className="ra-hero__panel-label">Richard IA</span>
-                        </div>
-
-                        {/* CTA buttons */}
-                        <button onClick={onBrowseInventory} className="ra-cta ra-cta--primary">
-                            <div className="ra-cta__shine" />
-                            <div className="ra-cta__text">
-                                <span className="ra-cta__tag">Catálogo Certificado</span>
-                                <span className="ra-cta__label">EXPLORAR INVENTARIO</span>
-                            </div>
-                            <div className="ra-cta__icon">
-                                <ArrowRight size={18} />
-                            </div>
-                        </button>
-
-                        <button onClick={onNeuralMatch} className="ra-cta ra-cta--secondary">
-                            <div className="ra-cta__text">
-                                <span className="ra-cta__tag">Inteligencia Artificial</span>
-                                <span className="ra-cta__label">NEURAL MATCH</span>
-                            </div>
-                            <div className="ra-cta__icon ra-cta__icon--cyan">
-                                <BrainCircuit size={18} />
-                            </div>
-                        </button>
-
-                        <button onClick={onSellCar} className="ra-cta ra-cta--tertiary">
-                            <div className="ra-cta__text">
-                                <span className="ra-cta__tag">Trade‑In / Vender</span>
-                                <span className="ra-cta__label">TASAR MI AUTO</span>
-                            </div>
-                            <div className="ra-cta__icon ra-cta__icon--green">
-                                <DollarSign size={18} />
-                            </div>
-                        </button>
-
-                        {/* Stat bar */}
-                        <div className="ra-hero__stats">
-                            <div className="ra-hero__stat">
-                                <span className="ra-hero__stat-num">240+</span>
-                                <span className="ra-hero__stat-lbl">Unidades</span>
-                            </div>
-                            <div className="ra-hero__stat-div" />
-                            <div className="ra-hero__stat">
-                                <span className="ra-hero__stat-num">98%</span>
-                                <span className="ra-hero__stat-lbl">Aprobados</span>
-                            </div>
-                            <div className="ra-hero__stat-div" />
-                            <div className="ra-hero__stat">
-                                <span className="ra-hero__stat-num">24/7</span>
-                                <span className="ra-hero__stat-lbl">IA Activa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            {/* Stat bar */}
+            <div className="ra-hero__stats">
+              <div className="ra-hero__stat">
+                <span className="ra-hero__stat-num">240+</span>
+                <span className="ra-hero__stat-lbl">Unidades</span>
+              </div>
+              <div className="ra-hero__stat-div" />
+              <div className="ra-hero__stat">
+                <span className="ra-hero__stat-num">98%</span>
+                <span className="ra-hero__stat-lbl">Aprobados</span>
+              </div>
+              <div className="ra-hero__stat-div" />
+              <div className="ra-hero__stat">
+                <span className="ra-hero__stat-num">24/7</span>
+                <span className="ra-hero__stat-lbl">IA Activa</span>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* ── Bottom ticker ── */}
-            <div className="ra-hero__ticker-wrap" aria-hidden>
-                <div className="ra-hero__ticker-inner" ref={tickerRef}>
-                    {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-                        <span key={i} className="ra-hero__ticker-item">{item}</span>
-                    ))}
-                </div>
-            </div>
+      {/* ── Bottom ticker ── */}
+      <div className="ra-hero__ticker-wrap" aria-hidden>
+        <div className="ra-hero__ticker-inner" ref={tickerRef}>
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+            <span key={i} className="ra-hero__ticker-item">
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
 
-            {/* ── Embedded styles ── */}
-            <style>{`
+      {/* ── Embedded styles ── */}
+      <style>{`
                 /* === HERO SECTION === */
                 .ra-hero {
                     position: relative;
@@ -591,8 +611,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNeuralMatch, onBrowseInvent
                 }
                 .ra-hero__ticker-item:nth-child(odd) { color: rgba(0,210,255,0.55); }
             `}</style>
-        </section>
-    );
+    </section>
+  );
 };
 
 export default HeroSection;

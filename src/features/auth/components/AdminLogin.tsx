@@ -1,7 +1,17 @@
-
 import { useState, useCallback, useEffect, FC, FormEvent } from 'react';
 import { loginAdmin, loginWithPasskey } from '../services/authService';
-import { ShieldAlert, Lock, ArrowRight, ShieldCheck, Mail, Eye, EyeOff, ScanFace, Command, Cpu } from 'lucide-react';
+import {
+  ShieldAlert,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
+  Mail,
+  Eye,
+  EyeOff,
+  ScanFace,
+  Command,
+  Cpu,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/services/firebaseService';
@@ -26,23 +36,28 @@ const AdminLogin: FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleGhostLogin = useCallback(async (key: string) => {
-    setLoading(true);
-    setError("Activando Protocolo Ghost de CTO...");
-    try {
-      const { validateGhostKey } = await import('../services/authService');
-      const user = await validateGhostKey(key);
-      dispatch(loginSuccess({
-        ...user,
-        role: user.role as UserRole
-      }));
-      navigate('/admin');
-    } catch {
-      setError("Llave Maestra Rechazada.");
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, navigate]);
+  const handleGhostLogin = useCallback(
+    async (key: string) => {
+      setLoading(true);
+      setError('Activando Protocolo Ghost de CTO...');
+      try {
+        const { validateGhostKey } = await import('../services/authService');
+        const user = await validateGhostKey(key);
+        dispatch(
+          loginSuccess({
+            ...user,
+            role: user.role as UserRole,
+          }),
+        );
+        navigate('/admin');
+      } catch {
+        setError('Llave Maestra Rechazada.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dispatch, navigate],
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -53,15 +68,15 @@ const AdminLogin: FC = () => {
   }, [handleGhostLogin]);
 
   const handleMagicLink = async () => {
-    if (!email) return setError("Ingresa tu email primero");
+    if (!email) return setError('Ingresa tu email primero');
     setLoading(true);
     try {
       const { sendMagicLink } = await import('../services/authService');
       await sendMagicLink(email);
-      setError("✨ Enlace enviado a tu correo. Revisa tu bandeja.");
+      setError('✨ Enlace enviado a tu correo. Revisa tu bandeja.');
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Unknown error";
-      setError("Error: " + errorMsg);
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      setError('Error: ' + errorMsg);
     } finally {
       setLoading(false);
     }
@@ -74,7 +89,7 @@ const AdminLogin: FC = () => {
     dispatch(loginStart());
 
     try {
-      const user = await loginAdmin(email, password, twoFactorCode || '123456') as AppUser;
+      const user = (await loginAdmin(email, password, twoFactorCode || '123456')) as AppUser;
       dispatch(loginSuccess(user));
       navigate('/admin');
     } catch (err: unknown) {
@@ -107,7 +122,7 @@ const AdminLogin: FC = () => {
       if (result) {
         // MOAT: Secure Device Correlation Success
         if (import.meta.env.DEV) {
-          console.log("Passkey verified (DEV override):", result.credential);
+          console.log('Passkey verified (DEV override):', result.credential);
           const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
           const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
@@ -115,26 +130,30 @@ const AdminLogin: FC = () => {
           // PROD: Magic Link / Custom Token fallback based on Passkey Success
           // For now, we correlate the email and use it to complete the session
           // In a full WebAuthn backend, we'd exchange the credential for a Firebase Custom Token
-          const profile = await loginAdmin(result.email, "PASSKEY_SECURED_SESSION"); // Simulation of secure session init
-          dispatch(loginSuccess({
-            ...profile,
-            role: profile.role as UserRole
-          }));
+          const profile = await loginAdmin(result.email, 'PASSKEY_SECURED_SESSION'); // Simulation of secure session init
+          dispatch(
+            loginSuccess({
+              ...profile,
+              role: profile.role as UserRole,
+            }),
+          );
           navigate('/admin');
           return;
         }
 
         const normalized = normalizeUser(auth.currentUser!, 'admin');
-        dispatch(loginSuccess({
-          ...normalized,
-          role: normalized.role as UserRole
-        }));
+        dispatch(
+          loginSuccess({
+            ...normalized,
+            role: normalized.role as UserRole,
+          }),
+        );
         navigate('/admin');
       }
     } catch (err: unknown) {
-      console.error("Passkey Failed:", err);
+      console.error('Passkey Failed:', err);
       const error = err as { message?: string };
-      const msg = error.message || "No se pudo verificar la identidad biométrica.";
+      const msg = error.message || 'No se pudo verificar la identidad biométrica.';
       setError(msg);
       dispatch(loginFailure(msg));
     } finally {
@@ -144,7 +163,7 @@ const AdminLogin: FC = () => {
 
   const handleDevQuickAccess = async () => {
     if (!import.meta.env.DEV) {
-      setError("⛔️ Acceso rápido deshabilitado en Producción.");
+      setError('⛔️ Acceso rápido deshabilitado en Producción.');
       return;
     }
     setLoading(true);
@@ -159,15 +178,19 @@ const AdminLogin: FC = () => {
 
       await signInWithEmailAndPassword(auth, devEmail, devPass);
       const normalized = normalizeUser(auth.currentUser!, 'admin');
-      dispatch(loginSuccess({
-        ...normalized,
-        role: normalized.role as UserRole
-      }));
+      dispatch(
+        loginSuccess({
+          ...normalized,
+          role: normalized.role as UserRole,
+        }),
+      );
       navigate('/admin');
     } catch (err: unknown) {
       console.error('Quick Access Error:', err);
       const error = err as { code?: string; message: string };
-      const msg = 'Error: ' + (error.code || error.message || 'Verifica que el usuario admin@richard.com existe');
+      const msg =
+        'Error: ' +
+        (error.code || error.message || 'Verifica que el usuario admin@richard.com existe');
       setError(msg);
       dispatch(loginFailure(msg));
     } finally {
@@ -196,12 +219,11 @@ const AdminLogin: FC = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
         className="w-full max-w-[440px] relative z-10"
       >
         {/* Main Card */}
         <div className="glass-premium overflow-hidden">
-
           {/* Header */}
           <div className="relative p-8 pb-6 text-center border-b border-white/5">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00aed9] to-transparent opacity-60"></div>
@@ -209,7 +231,7 @@ const AdminLogin: FC = () => {
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
+              transition={{ delay: 0.2, type: 'spring' }}
               className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00aed9]/20 to-indigo-500/10 border border-[#00aed9]/20 mb-4 shadow-[0_0_30px_-5px_rgba(0,174,217,0.3)]"
             >
               <Command className="text-[#00aed9]" size={32} strokeWidth={1.5} />
@@ -226,11 +248,12 @@ const AdminLogin: FC = () => {
           {/* Body */}
           <div className="p-8 pt-6">
             <form onSubmit={handleLogin} className="space-y-6">
-
               {/* Inputs */}
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Work Email</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                    Work Email
+                  </label>
                   <div className="relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors">
                       <Mail size={18} strokeWidth={1.5} />
@@ -247,13 +270,15 @@ const AdminLogin: FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Password</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                    Password
+                  </label>
                   <div className="relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00aed9] transition-colors">
                       <Lock size={18} strokeWidth={1.5} />
                     </div>
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-11 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-white/5 transition-all"
@@ -265,7 +290,11 @@ const AdminLogin: FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors focus:outline-none"
                     >
-                      {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
+                      {showPassword ? (
+                        <EyeOff size={18} strokeWidth={1.5} />
+                      ) : (
+                        <Eye size={18} strokeWidth={1.5} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -300,7 +329,13 @@ const AdminLogin: FC = () => {
                     {loading ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
-                      <>Authenticate <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" /></>
+                      <>
+                        Authenticate{' '}
+                        <ArrowRight
+                          size={14}
+                          className="group-hover:translate-x-1 transition-transform"
+                        />
+                      </>
                     )}
                   </span>
                 </button>
@@ -312,7 +347,10 @@ const AdminLogin: FC = () => {
                     disabled={loading}
                     className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
                   >
-                    <ScanFace size={16} className="text-purple-400 group-hover:scale-110 transition-transform" />
+                    <ScanFace
+                      size={16}
+                      className="text-purple-400 group-hover:scale-110 transition-transform"
+                    />
                     Biometric
                   </button>
                   <button
@@ -321,7 +359,10 @@ const AdminLogin: FC = () => {
                     disabled={loading}
                     className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
                   >
-                    <Cpu size={16} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                    <Cpu
+                      size={16}
+                      className="text-emerald-400 group-hover:scale-110 transition-transform"
+                    />
                     Magic Link
                   </button>
                 </div>
@@ -330,7 +371,10 @@ const AdminLogin: FC = () => {
 
             <div className="mt-8 text-center">
               <button className="text-[10px] font-medium text-slate-500 hover:text-[#00aed9] transition-colors">
-                Locked Out? <span className="underline decoration-slate-700 underline-offset-4 hover:decoration-[#00aed9]">Contact System Admin</span>
+                Locked Out?{' '}
+                <span className="underline decoration-slate-700 underline-offset-4 hover:decoration-[#00aed9]">
+                  Contact System Admin
+                </span>
               </button>
             </div>
           </div>
@@ -348,10 +392,8 @@ const AdminLogin: FC = () => {
               </button>
             </div>
           )}
-
         </div>
       </motion.div>
-
     </div>
   );
 };

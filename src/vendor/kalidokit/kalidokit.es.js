@@ -1,10 +1,10 @@
 /**
  * @kalidokit v1.1.5
  * Blendshape and kinematics calculator for Mediapipe/Tensorflow.js Face, Eyes, Pose, and Finger tracking models.
- * 
+ *
  * @license
  * Copyright (c) 2020-2021 yeemachine
- * SPDX-License-Idntifier: MIT 
+ * SPDX-License-Idntifier: MIT
  * https://github.com/yeemachine/kalidokit#readme
  */
 const clamp = (val, min, max) => {
@@ -17,7 +17,7 @@ const RestingDefault = {
   Face: {
     eye: {
       l: 1,
-      r: 1
+      r: 1,
     },
     mouth: {
       x: 0,
@@ -27,8 +27,8 @@ const RestingDefault = {
         E: 0,
         I: 0,
         O: 0,
-        U: 0
-      }
+        U: 0,
+      },
     },
     head: {
       x: 0,
@@ -39,258 +39,258 @@ const RestingDefault = {
       position: {
         x: 0.5,
         y: 0.5,
-        z: 0
-      }
+        z: 0,
+      },
     },
     brow: 0,
     pupil: {
       x: 0,
-      y: 0
-    }
+      y: 0,
+    },
   },
   Pose: {
     RightUpperArm: {
       x: 0,
       y: 0,
-      z: -1.25
+      z: -1.25,
     },
     LeftUpperArm: {
       x: 0,
       y: 0,
-      z: 1.25
+      z: 1.25,
     },
     RightLowerArm: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     LeftLowerArm: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     LeftUpperLeg: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     RightUpperLeg: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     RightLowerLeg: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     LeftLowerLeg: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     LeftHand: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     RightHand: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     Spine: {
       x: 0,
       y: 0,
-      z: 0
+      z: 0,
     },
     Hips: {
       position: {
         x: 0,
         y: 0,
-        z: 0
+        z: 0,
       },
       rotation: {
         x: 0,
         y: 0,
-        z: 0
-      }
-    }
+        z: 0,
+      },
+    },
   },
   RightHand: {
     RightWrist: {
       x: -0.13,
       y: -0.07,
-      z: -1.04
+      z: -1.04,
     },
     RightRingProximal: {
       x: 0,
       y: 0,
-      z: -0.13
+      z: -0.13,
     },
     RightRingIntermediate: {
       x: 0,
       y: 0,
-      z: -0.4
+      z: -0.4,
     },
     RightRingDistal: {
       x: 0,
       y: 0,
-      z: -0.04
+      z: -0.04,
     },
     RightIndexProximal: {
       x: 0,
       y: 0,
-      z: -0.24
+      z: -0.24,
     },
     RightIndexIntermediate: {
       x: 0,
       y: 0,
-      z: -0.25
+      z: -0.25,
     },
     RightIndexDistal: {
       x: 0,
       y: 0,
-      z: -0.06
+      z: -0.06,
     },
     RightMiddleProximal: {
       x: 0,
       y: 0,
-      z: -0.09
+      z: -0.09,
     },
     RightMiddleIntermediate: {
       x: 0,
       y: 0,
-      z: -0.44
+      z: -0.44,
     },
     RightMiddleDistal: {
       x: 0,
       y: 0,
-      z: -0.06
+      z: -0.06,
     },
     RightThumbProximal: {
       x: -0.23,
       y: -0.33,
-      z: -0.12
+      z: -0.12,
     },
     RightThumbIntermediate: {
       x: -0.2,
       y: -0.199,
-      z: -0.0139
+      z: -0.0139,
     },
     RightThumbDistal: {
       x: -0.2,
       y: 2e-3,
-      z: 0.15
+      z: 0.15,
     },
     RightLittleProximal: {
       x: 0,
       y: 0,
-      z: -0.09
+      z: -0.09,
     },
     RightLittleIntermediate: {
       x: 0,
       y: 0,
-      z: -0.225
+      z: -0.225,
     },
     RightLittleDistal: {
       x: 0,
       y: 0,
-      z: -0.1
-    }
+      z: -0.1,
+    },
   },
   LeftHand: {
     LeftWrist: {
       x: -0.13,
       y: -0.07,
-      z: -1.04
+      z: -1.04,
     },
     LeftRingProximal: {
       x: 0,
       y: 0,
-      z: 0.13
+      z: 0.13,
     },
     LeftRingIntermediate: {
       x: 0,
       y: 0,
-      z: 0.4
+      z: 0.4,
     },
     LeftRingDistal: {
       x: 0,
       y: 0,
-      z: 0.049
+      z: 0.049,
     },
     LeftIndexProximal: {
       x: 0,
       y: 0,
-      z: 0.24
+      z: 0.24,
     },
     LeftIndexIntermediate: {
       x: 0,
       y: 0,
-      z: 0.25
+      z: 0.25,
     },
     LeftIndexDistal: {
       x: 0,
       y: 0,
-      z: 0.06
+      z: 0.06,
     },
     LeftMiddleProximal: {
       x: 0,
       y: 0,
-      z: 0.09
+      z: 0.09,
     },
     LeftMiddleIntermediate: {
       x: 0,
       y: 0,
-      z: 0.44
+      z: 0.44,
     },
     LeftMiddleDistal: {
       x: 0,
       y: 0,
-      z: 0.066
+      z: 0.066,
     },
     LeftThumbProximal: {
       x: -0.23,
       y: 0.33,
-      z: 0.12
+      z: 0.12,
     },
     LeftThumbIntermediate: {
       x: -0.2,
       y: 0.25,
-      z: 0.05
+      z: 0.05,
     },
     LeftThumbDistal: {
       x: -0.2,
       y: 0.17,
-      z: -0.06
+      z: -0.06,
     },
     LeftLittleProximal: {
       x: 0,
       y: 0,
-      z: 0.17
+      z: 0.17,
     },
     LeftLittleIntermediate: {
       x: 0,
       y: 0,
-      z: 0.4
+      z: 0.4,
     },
     LeftLittleDistal: {
       x: 0,
       y: 0,
-      z: 0.1
-    }
-  }
+      z: 0.1,
+    },
+  },
 };
 var helpers = /* @__PURE__ */ Object.freeze({
   __proto__: null,
-  [Symbol.toStringTag]: "Module",
+  [Symbol.toStringTag]: 'Module',
   clamp,
   remap,
-  RestingDefault
+  RestingDefault,
 });
-const RIGHT = "Right";
-const LEFT = "Left";
+const RIGHT = 'Right';
+const LEFT = 'Left';
 const PI = Math.PI;
 const TWO_PI = Math.PI * 2;
 class Vector {
@@ -302,7 +302,7 @@ class Vector {
       this.z = (_c = a[2]) != null ? _c : 0;
       return;
     }
-    if (!!a && typeof a === "object") {
+    if (!!a && typeof a === 'object') {
       this.x = (_d = a.x) != null ? _d : 0;
       this.y = (_e = a.y) != null ? _e : 0;
       this.z = (_f = a.z) != null ? _f : 0;
@@ -316,28 +316,20 @@ class Vector {
     return new Vector(-this.x, -this.y, -this.z);
   }
   add(v) {
-    if (v instanceof Vector)
-      return new Vector(this.x + v.x, this.y + v.y, this.z + v.z);
-    else
-      return new Vector(this.x + v, this.y + v, this.z + v);
+    if (v instanceof Vector) return new Vector(this.x + v.x, this.y + v.y, this.z + v.z);
+    else return new Vector(this.x + v, this.y + v, this.z + v);
   }
   subtract(v) {
-    if (v instanceof Vector)
-      return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
-    else
-      return new Vector(this.x - v, this.y - v, this.z - v);
+    if (v instanceof Vector) return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+    else return new Vector(this.x - v, this.y - v, this.z - v);
   }
   multiply(v) {
-    if (v instanceof Vector)
-      return new Vector(this.x * v.x, this.y * v.y, this.z * v.z);
-    else
-      return new Vector(this.x * v, this.y * v, this.z * v);
+    if (v instanceof Vector) return new Vector(this.x * v.x, this.y * v.y, this.z * v.z);
+    else return new Vector(this.x * v, this.y * v, this.z * v);
   }
   divide(v) {
-    if (v instanceof Vector)
-      return new Vector(this.x / v.x, this.y / v.y, this.z / v.z);
-    else
-      return new Vector(this.x / v, this.y / v, this.z / v);
+    if (v instanceof Vector) return new Vector(this.x / v.x, this.y / v.y, this.z / v.z);
+    else return new Vector(this.x / v, this.y / v, this.z / v);
   }
   equals(v) {
     return this.x == v.x && this.y == v.y && this.z == v.z;
@@ -346,16 +338,21 @@ class Vector {
     return this.x * v.x + this.y * v.y + this.z * v.z;
   }
   cross(v) {
-    return new Vector(this.y * v.z - this.z * v.y, this.z * v.x - this.x * v.z, this.x * v.y - this.y * v.x);
+    return new Vector(
+      this.y * v.z - this.z * v.y,
+      this.z * v.x - this.x * v.z,
+      this.x * v.y - this.y * v.x,
+    );
   }
   length() {
     return Math.sqrt(this.dot(this));
   }
   distance(v, d = 3) {
-    if (d === 2)
-      return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
+    if (d === 2) return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
     else
-      return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2) + Math.pow(this.z - v.z, 2));
+      return Math.sqrt(
+        Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2) + Math.pow(this.z - v.z, 2),
+      );
   }
   lerp(v, fraction) {
     return v.subtract(this).multiply(fraction).add(this);
@@ -369,10 +366,10 @@ class Vector {
   max() {
     return Math.max(Math.max(this.x, this.y), this.z);
   }
-  toSphericalCoords(axisMap = { x: "x", y: "y", z: "z" }) {
+  toSphericalCoords(axisMap = { x: 'x', y: 'y', z: 'z' }) {
     return {
       theta: Math.atan2(this[axisMap.y], this[axisMap.x]),
-      phi: Math.acos(this[axisMap.z] / this.length())
+      phi: Math.acos(this[axisMap.z] / this.length()),
     };
   }
   angleTo(a) {
@@ -458,7 +455,11 @@ class Vector {
     return b;
   }
   static fromAngles(theta, phi) {
-    return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
+    return new Vector(
+      Math.cos(theta) * Math.cos(phi),
+      Math.sin(phi),
+      Math.sin(theta) * Math.cos(phi),
+    );
   }
   static randomDirection() {
     return Vector.fromAngles(Math.random() * TWO_PI, Math.asin(Math.random() * 2 - 1));
@@ -486,10 +487,8 @@ class Vector {
     return a.angleTo(b);
   }
   static distance(a, b, d) {
-    if (d === 2)
-      return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-    else
-      return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
+    if (d === 2) return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    else return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
   }
   static toDegrees(a) {
     return a * (180 / PI);
@@ -517,14 +516,26 @@ class Vector {
   }
   static findRotation(a, b, normalize = true) {
     if (normalize) {
-      return new Vector(Vector.normalizeRadians(Vector.find2DAngle(a.z, a.x, b.z, b.x)), Vector.normalizeRadians(Vector.find2DAngle(a.z, a.y, b.z, b.y)), Vector.normalizeRadians(Vector.find2DAngle(a.x, a.y, b.x, b.y)));
+      return new Vector(
+        Vector.normalizeRadians(Vector.find2DAngle(a.z, a.x, b.z, b.x)),
+        Vector.normalizeRadians(Vector.find2DAngle(a.z, a.y, b.z, b.y)),
+        Vector.normalizeRadians(Vector.find2DAngle(a.x, a.y, b.x, b.y)),
+      );
     } else {
-      return new Vector(Vector.find2DAngle(a.z, a.x, b.z, b.x), Vector.find2DAngle(a.z, a.y, b.z, b.y), Vector.find2DAngle(a.x, a.y, b.x, b.y));
+      return new Vector(
+        Vector.find2DAngle(a.z, a.x, b.z, b.x),
+        Vector.find2DAngle(a.z, a.y, b.z, b.y),
+        Vector.find2DAngle(a.x, a.y, b.x, b.y),
+      );
     }
   }
   static rollPitchYaw(a, b, c) {
     if (!c) {
-      return new Vector(Vector.normalizeAngle(Vector.find2DAngle(a.z, a.y, b.z, b.y)), Vector.normalizeAngle(Vector.find2DAngle(a.z, a.x, b.z, b.x)), Vector.normalizeAngle(Vector.find2DAngle(a.x, a.y, b.x, b.y)));
+      return new Vector(
+        Vector.normalizeAngle(Vector.find2DAngle(a.z, a.y, b.z, b.y)),
+        Vector.normalizeAngle(Vector.find2DAngle(a.z, a.x, b.z, b.x)),
+        Vector.normalizeAngle(Vector.find2DAngle(a.x, a.y, b.x, b.y)),
+      );
     }
     const qb = b.subtract(a);
     const qc = c.subtract(a);
@@ -535,7 +546,11 @@ class Vector {
     const beta = Math.asin(unitZ.x) || 0;
     const alpha = Math.atan2(-unitZ.y, unitZ.z) || 0;
     const gamma = Math.atan2(-unitY.x, unitX.x) || 0;
-    return new Vector(Vector.normalizeAngle(alpha), Vector.normalizeAngle(beta), Vector.normalizeAngle(gamma));
+    return new Vector(
+      Vector.normalizeAngle(alpha),
+      Vector.normalizeAngle(beta),
+      Vector.normalizeAngle(gamma),
+    );
   }
   static angleBetween3DCoords(a, b, c) {
     if (!(a instanceof Vector)) {
@@ -567,10 +582,10 @@ class Vector {
     const phi = phi1 - phi2;
     return {
       theta: Vector.normalizeAngle(theta),
-      phi: Vector.normalizeAngle(phi)
+      phi: Vector.normalizeAngle(phi),
     };
   }
-  static getSphericalCoords(a, b, axisMap = { x: "x", y: "y", z: "z" }) {
+  static getSphericalCoords(a, b, axisMap = { x: 'x', y: 'y', z: 'z' }) {
     if (!(a instanceof Vector)) {
       a = new Vector(a);
       b = new Vector(b);
@@ -580,49 +595,55 @@ class Vector {
     const { theta, phi } = v1norm.toSphericalCoords(axisMap);
     return {
       theta: Vector.normalizeAngle(-theta),
-      phi: Vector.normalizeAngle(PI / 2 - phi)
+      phi: Vector.normalizeAngle(PI / 2 - phi),
     };
   }
 }
 const calcArms = (lm) => {
   const UpperArm = {
     r: Vector.findRotation(lm[11], lm[13]),
-    l: Vector.findRotation(lm[12], lm[14])
+    l: Vector.findRotation(lm[12], lm[14]),
   };
   UpperArm.r.y = Vector.angleBetween3DCoords(lm[12], lm[11], lm[13]);
   UpperArm.l.y = Vector.angleBetween3DCoords(lm[11], lm[12], lm[14]);
   const LowerArm = {
     r: Vector.findRotation(lm[13], lm[15]),
-    l: Vector.findRotation(lm[14], lm[16])
+    l: Vector.findRotation(lm[14], lm[16]),
   };
   LowerArm.r.y = Vector.angleBetween3DCoords(lm[11], lm[13], lm[15]);
   LowerArm.l.y = Vector.angleBetween3DCoords(lm[12], lm[14], lm[16]);
   LowerArm.r.z = clamp(LowerArm.r.z, -2.14, 0);
   LowerArm.l.z = clamp(LowerArm.l.z, -2.14, 0);
   const Hand = {
-    r: Vector.findRotation(Vector.fromArray(lm[15]), Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5)),
-    l: Vector.findRotation(Vector.fromArray(lm[16]), Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5))
+    r: Vector.findRotation(
+      Vector.fromArray(lm[15]),
+      Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5),
+    ),
+    l: Vector.findRotation(
+      Vector.fromArray(lm[16]),
+      Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5),
+    ),
   };
   const rightArmRig = rigArm(UpperArm.r, LowerArm.r, Hand.r, RIGHT);
   const leftArmRig = rigArm(UpperArm.l, LowerArm.l, Hand.l, LEFT);
   return {
     UpperArm: {
       r: rightArmRig.UpperArm,
-      l: leftArmRig.UpperArm
+      l: leftArmRig.UpperArm,
     },
     LowerArm: {
       r: rightArmRig.LowerArm,
-      l: leftArmRig.LowerArm
+      l: leftArmRig.LowerArm,
     },
     Hand: {
       r: rightArmRig.Hand,
-      l: leftArmRig.Hand
+      l: leftArmRig.Hand,
     },
     Unscaled: {
       UpperArm,
       LowerArm,
-      Hand
-    }
+      Hand,
+    },
   };
 };
 const rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
@@ -642,7 +663,7 @@ const rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
   return {
     UpperArm,
     LowerArm,
-    Hand
+    Hand,
   };
 };
 const calcHips = (lm3d, lm2d) => {
@@ -657,13 +678,13 @@ const calcHips = (lm3d, lm2d) => {
     position: {
       x: clamp(hipCenter2d.x - 0.4, -1, 1),
       y: 0,
-      z: clamp(spineLength - 1, -2, 0)
-    }
+      z: clamp(spineLength - 1, -2, 0),
+    },
   };
   hips.worldPosition = {
     x: hips.position.x,
     y: 0,
-    z: hips.position.z * Math.pow(hips.position.z * -2, 2)
+    z: hips.position.z * Math.pow(hips.position.z * -2, 2),
   };
   hips.worldPosition.x *= hips.worldPosition.z;
   hips.rotation = Vector.rollPitchYaw(lm3d[23], lm3d[24]);
@@ -707,23 +728,23 @@ const rigHips = (hips, spine) => {
   spine.z *= PI;
   return {
     Hips: hips,
-    Spine: spine
+    Spine: spine,
   };
 };
 class Euler {
   constructor(a, b, c, rotationOrder) {
     var _a, _b, _c, _d;
-    if (!!a && typeof a === "object") {
+    if (!!a && typeof a === 'object') {
       this.x = (_a = a.x) != null ? _a : 0;
       this.y = (_b = a.y) != null ? _b : 0;
       this.z = (_c = a.z) != null ? _c : 0;
-      this.rotationOrder = (_d = a.rotationOrder) != null ? _d : "XYZ";
+      this.rotationOrder = (_d = a.rotationOrder) != null ? _d : 'XYZ';
       return;
     }
     this.x = a != null ? a : 0;
     this.y = b != null ? b : 0;
     this.z = c != null ? c : 0;
-    this.rotationOrder = rotationOrder != null ? rotationOrder : "XYZ";
+    this.rotationOrder = rotationOrder != null ? rotationOrder : 'XYZ';
   }
   multiply(v) {
     return new Euler(this.x * v, this.y * v, this.z * v, this.rotationOrder);
@@ -731,62 +752,70 @@ class Euler {
 }
 const offsets = {
   upperLeg: {
-    z: 0.1
-  }
+    z: 0.1,
+  },
 };
 const calcLegs = (lm) => {
-  const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], { x: "y", y: "z", z: "x" });
-  const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], { x: "y", y: "z", z: "x" });
+  const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], {
+    x: 'y',
+    y: 'z',
+    z: 'x',
+  });
+  const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], {
+    x: 'y',
+    y: 'z',
+    z: 'x',
+  });
   const rightLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[23], lm[25], lm[27], {
-    x: "y",
-    y: "z",
-    z: "x"
+    x: 'y',
+    y: 'z',
+    z: 'x',
   });
   const leftLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[24], lm[26], lm[28], {
-    x: "y",
-    y: "z",
-    z: "x"
+    x: 'y',
+    y: 'z',
+    z: 'x',
   });
   const hipRotation = Vector.findRotation(lm[23], lm[24]);
   const UpperLeg = {
     r: new Vector({
       x: rightUpperLegSphericalCoords.theta,
       y: rightLowerLegSphericalCoords.phi,
-      z: rightUpperLegSphericalCoords.phi - hipRotation.z
+      z: rightUpperLegSphericalCoords.phi - hipRotation.z,
     }),
     l: new Vector({
       x: leftUpperLegSphericalCoords.theta,
       y: leftLowerLegSphericalCoords.phi,
-      z: leftUpperLegSphericalCoords.phi - hipRotation.z
-    })
+      z: leftUpperLegSphericalCoords.phi - hipRotation.z,
+    }),
   };
   const LowerLeg = {
     r: new Vector({
       x: -Math.abs(rightLowerLegSphericalCoords.theta),
       y: 0,
-      z: 0
+      z: 0,
     }),
     l: new Vector({
       x: -Math.abs(leftLowerLegSphericalCoords.theta),
       y: 0,
-      z: 0
-    })
+      z: 0,
+    }),
   };
   const rightLegRig = rigLeg(UpperLeg.r, LowerLeg.r, RIGHT);
   const leftLegRig = rigLeg(UpperLeg.l, LowerLeg.l, LEFT);
   return {
     UpperLeg: {
       r: rightLegRig.UpperLeg,
-      l: leftLegRig.UpperLeg
+      l: leftLegRig.UpperLeg,
     },
     LowerLeg: {
       r: rightLegRig.LowerLeg,
-      l: leftLegRig.LowerLeg
+      l: leftLegRig.LowerLeg,
     },
     Unscaled: {
       UpperLeg,
-      LowerLeg
-    }
+      LowerLeg,
+    },
   };
 };
 const rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
@@ -795,33 +824,37 @@ const rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
     x: clamp(UpperLeg.x, 0, 0.5) * PI,
     y: clamp(UpperLeg.y, -0.25, 0.25) * PI,
     z: clamp(UpperLeg.z, -0.5, 0.5) * PI + invert * offsets.upperLeg.z,
-    rotationOrder: "XYZ"
+    rotationOrder: 'XYZ',
   });
   const rigedLowerLeg = new Euler({
     x: LowerLeg.x * PI,
     y: LowerLeg.y * PI,
-    z: LowerLeg.z * PI
+    z: LowerLeg.z * PI,
   });
   return {
     UpperLeg: rigedUpperLeg,
-    LowerLeg: rigedLowerLeg
+    LowerLeg: rigedLowerLeg,
   };
 };
 class PoseSolver {
-  static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
+  static solve(
+    lm3d,
+    lm2d,
+    { runtime = 'mediapipe', video = null, imageSize = null, enableLegs = true } = {},
+  ) {
     var _a, _b, _c, _d;
     if (!lm3d && !lm2d) {
-      console.error("Need both World Pose and Pose Landmarks");
+      console.error('Need both World Pose and Pose Landmarks');
       return;
     }
     if (video) {
-      const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      const videoEl = typeof video === 'string' ? document.querySelector(video) : video;
       imageSize = {
         width: videoEl.videoWidth,
-        height: videoEl.videoHeight
+        height: videoEl.videoHeight,
       };
     }
-    if (runtime === "tfjs" && imageSize) {
+    if (runtime === 'tfjs' && imageSize) {
       for (const e of lm3d) {
         e.visibility = e.score;
       }
@@ -835,14 +868,28 @@ class PoseSolver {
     const Arms = calcArms(lm3d);
     const Hips = calcHips(lm3d, lm2d);
     const Legs = enableLegs ? calcLegs(lm3d) : null;
-    const rightHandOffscreen = lm3d[15].y > 0.1 || ((_a = lm3d[15].visibility) != null ? _a : 0) < 0.23 || 0.995 < lm2d[15].y;
-    const leftHandOffscreen = lm3d[16].y > 0.1 || ((_b = lm3d[16].visibility) != null ? _b : 0) < 0.23 || 0.995 < lm2d[16].y;
-    const leftFootOffscreen = lm3d[23].y > 0.1 || ((_c = lm3d[23].visibility) != null ? _c : 0) < 0.63 || Hips.Hips.position.z > -0.4;
-    const rightFootOffscreen = lm3d[24].y > 0.1 || ((_d = lm3d[24].visibility) != null ? _d : 0) < 0.63 || Hips.Hips.position.z > -0.4;
+    const rightHandOffscreen =
+      lm3d[15].y > 0.1 ||
+      ((_a = lm3d[15].visibility) != null ? _a : 0) < 0.23 ||
+      0.995 < lm2d[15].y;
+    const leftHandOffscreen =
+      lm3d[16].y > 0.1 ||
+      ((_b = lm3d[16].visibility) != null ? _b : 0) < 0.23 ||
+      0.995 < lm2d[16].y;
+    const leftFootOffscreen =
+      lm3d[23].y > 0.1 ||
+      ((_c = lm3d[23].visibility) != null ? _c : 0) < 0.63 ||
+      Hips.Hips.position.z > -0.4;
+    const rightFootOffscreen =
+      lm3d[24].y > 0.1 ||
+      ((_d = lm3d[24].visibility) != null ? _d : 0) < 0.63 ||
+      Hips.Hips.position.z > -0.4;
     Arms.UpperArm.l = Arms.UpperArm.l.multiply(leftHandOffscreen ? 0 : 1);
     Arms.UpperArm.l.z = leftHandOffscreen ? RestingDefault.Pose.LeftUpperArm.z : Arms.UpperArm.l.z;
     Arms.UpperArm.r = Arms.UpperArm.r.multiply(rightHandOffscreen ? 0 : 1);
-    Arms.UpperArm.r.z = rightHandOffscreen ? RestingDefault.Pose.RightUpperArm.z : Arms.UpperArm.r.z;
+    Arms.UpperArm.r.z = rightHandOffscreen
+      ? RestingDefault.Pose.RightUpperArm.z
+      : Arms.UpperArm.r.z;
     Arms.LowerArm.l = Arms.LowerArm.l.multiply(leftHandOffscreen ? 0 : 1);
     Arms.LowerArm.r = Arms.LowerArm.r.multiply(rightHandOffscreen ? 0 : 1);
     Arms.Hand.l = Arms.Hand.l.multiply(leftHandOffscreen ? 0 : 1);
@@ -865,7 +912,7 @@ class PoseSolver {
       LeftUpperLeg: Legs ? Legs.UpperLeg.l : RestingDefault.Pose.LeftUpperLeg,
       LeftLowerLeg: Legs ? Legs.LowerLeg.l : RestingDefault.Pose.LeftLowerLeg,
       Hips: Hips.Hips,
-      Spine: Hips.Spine
+      Spine: Hips.Spine,
     };
   }
 }
@@ -875,64 +922,136 @@ PoseSolver.calcLegs = calcLegs;
 class HandSolver {
   static solve(lm, side = RIGHT) {
     if (!lm) {
-      console.error("Need Hand Landmarks");
+      console.error('Need Hand Landmarks');
       return;
     }
     const palm = [
       new Vector(lm[0]),
       new Vector(lm[side === RIGHT ? 17 : 5]),
-      new Vector(lm[side === RIGHT ? 5 : 17])
+      new Vector(lm[side === RIGHT ? 5 : 17]),
     ];
     const handRotation = Vector.rollPitchYaw(palm[0], palm[1], palm[2]);
     handRotation.y = handRotation.z;
     handRotation.y -= side === LEFT ? 0.4 : 0.4;
     let hand = {};
-    hand[side + "Wrist"] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
-    hand[side + "RingProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]) };
-    hand[side + "RingIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]) };
-    hand[side + "RingDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]) };
-    hand[side + "IndexProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]) };
-    hand[side + "IndexIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]) };
-    hand[side + "IndexDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]) };
-    hand[side + "MiddleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]) };
-    hand[side + "MiddleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]) };
-    hand[side + "MiddleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]) };
-    hand[side + "ThumbProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]) };
-    hand[side + "ThumbIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]) };
-    hand[side + "ThumbDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]) };
-    hand[side + "LittleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]) };
-    hand[side + "LittleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]) };
-    hand[side + "LittleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]) };
+    hand[side + 'Wrist'] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
+    hand[side + 'RingProximal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]),
+    };
+    hand[side + 'RingIntermediate'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]),
+    };
+    hand[side + 'RingDistal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]),
+    };
+    hand[side + 'IndexProximal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]),
+    };
+    hand[side + 'IndexIntermediate'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]),
+    };
+    hand[side + 'IndexDistal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]),
+    };
+    hand[side + 'MiddleProximal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]),
+    };
+    hand[side + 'MiddleIntermediate'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]),
+    };
+    hand[side + 'MiddleDistal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]),
+    };
+    hand[side + 'ThumbProximal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]),
+    };
+    hand[side + 'ThumbIntermediate'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]),
+    };
+    hand[side + 'ThumbDistal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]),
+    };
+    hand[side + 'LittleProximal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]),
+    };
+    hand[side + 'LittleIntermediate'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]),
+    };
+    hand[side + 'LittleDistal'] = {
+      x: 0,
+      y: 0,
+      z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]),
+    };
     hand = rigFingers(hand, side);
     return hand;
   }
 }
 const rigFingers = (hand, side = RIGHT) => {
   const invert = side === RIGHT ? 1 : -1;
-  const digits = ["Ring", "Index", "Little", "Thumb", "Middle"];
-  const segments = ["Proximal", "Intermediate", "Distal"];
-  hand[side + "Wrist"].x = clamp(hand[side + "Wrist"].x * 2 * invert, -0.3, 0.3);
-  hand[side + "Wrist"].y = clamp(hand[side + "Wrist"].y * 2.3, side === RIGHT ? -1.2 : -0.6, side === RIGHT ? 0.6 : 1.6);
-  hand[side + "Wrist"].z = hand[side + "Wrist"].z * -2.3 * invert;
+  const digits = ['Ring', 'Index', 'Little', 'Thumb', 'Middle'];
+  const segments = ['Proximal', 'Intermediate', 'Distal'];
+  hand[side + 'Wrist'].x = clamp(hand[side + 'Wrist'].x * 2 * invert, -0.3, 0.3);
+  hand[side + 'Wrist'].y = clamp(
+    hand[side + 'Wrist'].y * 2.3,
+    side === RIGHT ? -1.2 : -0.6,
+    side === RIGHT ? 0.6 : 1.6,
+  );
+  hand[side + 'Wrist'].z = hand[side + 'Wrist'].z * -2.3 * invert;
   digits.forEach((e) => {
     segments.forEach((j) => {
       const trackedFinger = hand[side + e + j];
-      if (e === "Thumb") {
+      if (e === 'Thumb') {
         const dampener = {
-          x: j === "Proximal" ? 2.2 : j === "Intermediate" ? 0 : 0,
-          y: j === "Proximal" ? 2.2 : j === "Intermediate" ? 0.7 : 1,
-          z: j === "Proximal" ? 0.5 : j === "Intermediate" ? 0.5 : 0.5
+          x: j === 'Proximal' ? 2.2 : j === 'Intermediate' ? 0 : 0,
+          y: j === 'Proximal' ? 2.2 : j === 'Intermediate' ? 0.7 : 1,
+          z: j === 'Proximal' ? 0.5 : j === 'Intermediate' ? 0.5 : 0.5,
         };
         const startPos = {
-          x: j === "Proximal" ? 1.2 : j === "Distal" ? -0.2 : -0.2,
-          y: j === "Proximal" ? 1.1 * invert : j === "Distal" ? 0.1 * invert : 0.1 * invert,
-          z: j === "Proximal" ? 0.2 * invert : j === "Distal" ? 0.2 * invert : 0.2 * invert
+          x: j === 'Proximal' ? 1.2 : j === 'Distal' ? -0.2 : -0.2,
+          y: j === 'Proximal' ? 1.1 * invert : j === 'Distal' ? 0.1 * invert : 0.1 * invert,
+          z: j === 'Proximal' ? 0.2 * invert : j === 'Distal' ? 0.2 * invert : 0.2 * invert,
         };
         const newThumb = { x: 0, y: 0, z: 0 };
-        if (j === "Proximal") {
-          newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, side === RIGHT ? -0.6 : -0.3, side === RIGHT ? 0.3 : 0.6);
+        if (j === 'Proximal') {
+          newThumb.z = clamp(
+            startPos.z + trackedFinger.z * -PI * dampener.z * invert,
+            side === RIGHT ? -0.6 : -0.3,
+            side === RIGHT ? 0.3 : 0.6,
+          );
           newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -0.6, 0.3);
-          newThumb.y = clamp(startPos.y + trackedFinger.z * -PI * dampener.y * invert, side === RIGHT ? -1 : -0.3, side === RIGHT ? 0.3 : 1);
+          newThumb.y = clamp(
+            startPos.y + trackedFinger.z * -PI * dampener.y * invert,
+            side === RIGHT ? -1 : -0.3,
+            side === RIGHT ? 0.3 : 1,
+          );
         } else {
           newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, -2, 2);
           newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -2, 2);
@@ -942,7 +1061,11 @@ const rigFingers = (hand, side = RIGHT) => {
         trackedFinger.y = newThumb.y;
         trackedFinger.z = newThumb.z;
       } else {
-        trackedFinger.z = clamp(trackedFinger.z * -PI * invert, side === RIGHT ? -PI : 0, side === RIGHT ? 0 : PI);
+        trackedFinger.z = clamp(
+          trackedFinger.z * -PI * invert,
+          side === RIGHT ? -PI : 0,
+          side === RIGHT ? 0 : PI,
+        );
       }
     });
   });
@@ -956,7 +1079,7 @@ const createEulerPlane = (lm) => {
   const p3mid = p3.lerp(p4, 0.5);
   return {
     vector: [p1, p2, p3mid],
-    points: [p1, p2, p3, p4]
+    points: [p1, p2, p3, p4],
   };
 };
 const calcHead = (lm) => {
@@ -977,41 +1100,59 @@ const calcHead = (lm) => {
     normalized: {
       y: rotate.y,
       x: rotate.x,
-      z: rotate.z
+      z: rotate.z,
     },
     degrees: {
       y: rotate.y * 180,
       x: rotate.x * 180,
-      z: rotate.z * 180
-    }
+      z: rotate.z * 180,
+    },
   };
 };
 const points = {
   eye: {
     [LEFT]: [130, 133, 160, 159, 158, 144, 145, 153],
-    [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380]
+    [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380],
   },
   brow: {
     [LEFT]: [35, 244, 63, 105, 66, 229, 230, 231],
-    [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451]
+    [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451],
   },
   pupil: {
     [LEFT]: [468, 469, 470, 471, 472],
-    [RIGHT]: [473, 474, 475, 476, 477]
-  }
+    [RIGHT]: [473, 474, 475, 476, 477],
+  },
 };
 const getEyeOpen = (lm, side = LEFT, { high = 0.85, low = 0.55 } = {}) => {
   const eyePoints = points.eye[side];
-  const eyeDistance = eyeLidRatio(lm[eyePoints[0]], lm[eyePoints[1]], lm[eyePoints[2]], lm[eyePoints[3]], lm[eyePoints[4]], lm[eyePoints[5]], lm[eyePoints[6]], lm[eyePoints[7]]);
+  const eyeDistance = eyeLidRatio(
+    lm[eyePoints[0]],
+    lm[eyePoints[1]],
+    lm[eyePoints[2]],
+    lm[eyePoints[3]],
+    lm[eyePoints[4]],
+    lm[eyePoints[5]],
+    lm[eyePoints[6]],
+    lm[eyePoints[7]],
+  );
   const maxRatio = 0.285;
   const ratio = clamp(eyeDistance / maxRatio, 0, 2);
   const eyeOpenRatio = remap(ratio, low, high);
   return {
     norm: eyeOpenRatio,
-    raw: ratio
+    raw: ratio,
   };
 };
-const eyeLidRatio = (eyeOuterCorner, eyeInnerCorner, eyeOuterUpperLid, eyeMidUpperLid, eyeInnerUpperLid, eyeOuterLowerLid, eyeMidLowerLid, eyeInnerLowerLid) => {
+const eyeLidRatio = (
+  eyeOuterCorner,
+  eyeInnerCorner,
+  eyeOuterUpperLid,
+  eyeMidUpperLid,
+  eyeInnerUpperLid,
+  eyeOuterLowerLid,
+  eyeMidLowerLid,
+  eyeInnerLowerLid,
+) => {
   eyeOuterCorner = new Vector(eyeOuterCorner);
   eyeInnerCorner = new Vector(eyeInnerCorner);
   eyeOuterUpperLid = new Vector(eyeOuterUpperLid);
@@ -1042,10 +1183,7 @@ const pupilPos = (lm, side = LEFT) => {
   ratioY *= 4;
   return { x: ratioX, y: ratioY };
 };
-const stabilizeBlink = (eye, headY, {
-  enableWink = true,
-  maxRot = 0.5
-} = {}) => {
+const stabilizeBlink = (eye, headY, { enableWink = true, maxRot = 0.5 } = {}) => {
   eye.r = clamp(eye.r, 0, 1);
   eye.l = clamp(eye.l, 0, 1);
   const blinkDiff = Math.abs(eye.l - eye.r);
@@ -1059,25 +1197,32 @@ const stabilizeBlink = (eye, headY, {
     return { l: eye.l, r: eye.l };
   }
   return {
-    l: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.l : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05),
-    r: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.r : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05)
+    l:
+      blinkDiff >= blinkThresh && !isClosing && !isOpen
+        ? eye.l
+        : eye.r > eye.l
+          ? Vector.lerp(eye.r, eye.l, 0.95)
+          : Vector.lerp(eye.r, eye.l, 0.05),
+    r:
+      blinkDiff >= blinkThresh && !isClosing && !isOpen
+        ? eye.r
+        : eye.r > eye.l
+          ? Vector.lerp(eye.r, eye.l, 0.95)
+          : Vector.lerp(eye.r, eye.l, 0.05),
   };
 };
-const calcEyes = (lm, {
-  high = 0.85,
-  low = 0.55
-} = {}) => {
+const calcEyes = (lm, { high = 0.85, low = 0.55 } = {}) => {
   if (lm.length !== 478) {
     return {
       l: 1,
-      r: 1
+      r: 1,
     };
   }
   const leftEyeLid = getEyeOpen(lm, LEFT, { high, low });
   const rightEyeLid = getEyeOpen(lm, RIGHT, { high, low });
   return {
     l: leftEyeLid.norm || 0,
-    r: rightEyeLid.norm || 0
+    r: rightEyeLid.norm || 0,
   };
 };
 const calcPupils = (lm) => {
@@ -1088,13 +1233,22 @@ const calcPupils = (lm) => {
     const pupilR = pupilPos(lm, RIGHT);
     return {
       x: (pupilL.x + pupilR.x) * 0.5 || 0,
-      y: (pupilL.y + pupilR.y) * 0.5 || 0
+      y: (pupilL.y + pupilR.y) * 0.5 || 0,
     };
   }
 };
 const getBrowRaise = (lm, side = LEFT) => {
   const browPoints = points.brow[side];
-  const browDistance = eyeLidRatio(lm[browPoints[0]], lm[browPoints[1]], lm[browPoints[2]], lm[browPoints[3]], lm[browPoints[4]], lm[browPoints[5]], lm[browPoints[6]], lm[browPoints[7]]);
+  const browDistance = eyeLidRatio(
+    lm[browPoints[0]],
+    lm[browPoints[1]],
+    lm[browPoints[2]],
+    lm[browPoints[3]],
+    lm[browPoints[4]],
+    lm[browPoints[5]],
+    lm[browPoints[6]],
+    lm[browPoints[7]],
+  );
   const maxBrowRatio = 1.15;
   const browHigh = 0.125;
   const browLow = 0.07;
@@ -1144,30 +1298,33 @@ const calcMouth = (lm) => {
       E: ratioE || 0,
       I: ratioI || 0,
       O: ratioO || 0,
-      U: ratioU || 0
-    }
+      U: ratioU || 0,
+    },
   };
 };
 class FaceSolver {
-  static solve(lm, {
-    runtime = "tfjs",
-    video = null,
-    imageSize = null,
-    smoothBlink = false,
-    blinkSettings = []
-  } = {}) {
+  static solve(
+    lm,
+    {
+      runtime = 'tfjs',
+      video = null,
+      imageSize = null,
+      smoothBlink = false,
+      blinkSettings = [],
+    } = {},
+  ) {
     if (!lm) {
-      console.error("Need Face Landmarks");
+      console.error('Need Face Landmarks');
       return;
     }
     if (video) {
-      const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      const videoEl = typeof video === 'string' ? document.querySelector(video) : video;
       imageSize = {
         width: videoEl.videoWidth,
-        height: videoEl.videoHeight
+        height: videoEl.videoHeight,
       };
     }
-    if (runtime === "mediapipe" && imageSize) {
+    if (runtime === 'mediapipe' && imageSize) {
       for (const e of lm) {
         e.x *= imageSize.width;
         e.y *= imageSize.height;
@@ -1176,10 +1333,11 @@ class FaceSolver {
     }
     const getHead = calcHead(lm);
     const getMouth = calcMouth(lm);
-    blinkSettings = blinkSettings.length > 0 ? blinkSettings : runtime === "tfjs" ? [0.55, 0.85] : [0.35, 0.5];
+    blinkSettings =
+      blinkSettings.length > 0 ? blinkSettings : runtime === 'tfjs' ? [0.55, 0.85] : [0.35, 0.5];
     let getEye = calcEyes(lm, {
       high: blinkSettings[1],
-      low: blinkSettings[0]
+      low: blinkSettings[0],
     });
     if (smoothBlink) {
       getEye = stabilizeBlink(getEye, getHead.y);
@@ -1191,10 +1349,33 @@ class FaceSolver {
       eye: getEye,
       brow: getBrow,
       pupil: getPupils,
-      mouth: getMouth
+      mouth: getMouth,
     };
   }
 }
 FaceSolver.stabilizeBlink = stabilizeBlink;
 const __fakeValueExport__ = null;
-export { __fakeValueExport__ as AxisMap, __fakeValueExport__ as EulerRotation, FaceSolver as Face, HandSolver as Hand, __fakeValueExport__ as HandKeys, __fakeValueExport__ as IFaceSolveOptions, __fakeValueExport__ as IHips, __fakeValueExport__ as IPoseSolveOptions, __fakeValueExport__ as ISolveOptions, __fakeValueExport__ as LR, PoseSolver as Pose, __fakeValueExport__ as Results, __fakeValueExport__ as RotationOrder, __fakeValueExport__ as Side, __fakeValueExport__ as TFVectorPose, __fakeValueExport__ as TFace, __fakeValueExport__ as THand, __fakeValueExport__ as THandUnsafe, __fakeValueExport__ as TPose, helpers as Utils, Vector, __fakeValueExport__ as XYZ };
+export {
+  __fakeValueExport__ as AxisMap,
+  __fakeValueExport__ as EulerRotation,
+  FaceSolver as Face,
+  HandSolver as Hand,
+  __fakeValueExport__ as HandKeys,
+  __fakeValueExport__ as IFaceSolveOptions,
+  __fakeValueExport__ as IHips,
+  __fakeValueExport__ as IPoseSolveOptions,
+  __fakeValueExport__ as ISolveOptions,
+  __fakeValueExport__ as LR,
+  PoseSolver as Pose,
+  __fakeValueExport__ as Results,
+  __fakeValueExport__ as RotationOrder,
+  __fakeValueExport__ as Side,
+  __fakeValueExport__ as TFVectorPose,
+  __fakeValueExport__ as TFace,
+  __fakeValueExport__ as THand,
+  __fakeValueExport__ as THandUnsafe,
+  __fakeValueExport__ as TPose,
+  helpers as Utils,
+  Vector,
+  __fakeValueExport__ as XYZ,
+};

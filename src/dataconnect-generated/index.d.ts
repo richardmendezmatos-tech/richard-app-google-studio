@@ -1,4 +1,11 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import {
+  ConnectorConfig,
+  DataConnect,
+  QueryRef,
+  QueryPromise,
+  MutationRef,
+  MutationPromise,
+} from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -6,9 +13,6 @@ export type TimestampString = string;
 export type UUIDString = string;
 export type Int64String = string;
 export type DateString = string;
-
-
-
 
 export interface AddReviewData {
   review_upsert: Review_Key;
@@ -49,15 +53,15 @@ export interface GetMovieByIdData {
       releaseYear?: number | null;
       description?: string | null;
     };
-      reviews: ({
-        reviewText?: string | null;
-        reviewDate: DateString;
-        rating?: number | null;
-        user: {
-          id: string;
-          username: string;
-        } & User_Key;
-      })[];
+    reviews: {
+      reviewText?: string | null;
+      reviewDate: DateString;
+      rating?: number | null;
+      user: {
+        id: string;
+        username: string;
+      } & User_Key;
+    }[];
   } & Movie_Key;
 }
 
@@ -78,7 +82,7 @@ export interface ListUserReviewsData {
   user?: {
     id: string;
     username: string;
-    reviews: ({
+    reviews: {
       rating?: number | null;
       reviewDate: DateString;
       reviewText?: string | null;
@@ -86,7 +90,7 @@ export interface ListUserReviewsData {
         id: UUIDString;
         title: string;
       } & Movie_Key;
-    })[];
+    }[];
   } & User_Key;
 }
 
@@ -149,8 +153,13 @@ interface CreateMovieRef {
 }
 export const createMovieRef: CreateMovieRef;
 
-export function createMovie(vars: CreateMovieVariables): MutationPromise<CreateMovieData, CreateMovieVariables>;
-export function createMovie(dc: DataConnect, vars: CreateMovieVariables): MutationPromise<CreateMovieData, CreateMovieVariables>;
+export function createMovie(
+  vars: CreateMovieVariables,
+): MutationPromise<CreateMovieData, CreateMovieVariables>;
+export function createMovie(
+  dc: DataConnect,
+  vars: CreateMovieVariables,
+): MutationPromise<CreateMovieData, CreateMovieVariables>;
 
 interface UpsertUserRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -161,8 +170,13 @@ interface UpsertUserRef {
 }
 export const upsertUserRef: UpsertUserRef;
 
-export function upsertUser(vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
-export function upsertUser(dc: DataConnect, vars: UpsertUserVariables): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(
+  vars: UpsertUserVariables,
+): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function upsertUser(
+  dc: DataConnect,
+  vars: UpsertUserVariables,
+): MutationPromise<UpsertUserData, UpsertUserVariables>;
 
 interface AddReviewRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -173,20 +187,33 @@ interface AddReviewRef {
 }
 export const addReviewRef: AddReviewRef;
 
-export function addReview(vars: AddReviewVariables): MutationPromise<AddReviewData, AddReviewVariables>;
-export function addReview(dc: DataConnect, vars: AddReviewVariables): MutationPromise<AddReviewData, AddReviewVariables>;
+export function addReview(
+  vars: AddReviewVariables,
+): MutationPromise<AddReviewData, AddReviewVariables>;
+export function addReview(
+  dc: DataConnect,
+  vars: AddReviewVariables,
+): MutationPromise<AddReviewData, AddReviewVariables>;
 
 interface DeleteReviewRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: DeleteReviewVariables): MutationRef<DeleteReviewData, DeleteReviewVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: DeleteReviewVariables): MutationRef<DeleteReviewData, DeleteReviewVariables>;
+  (
+    dc: DataConnect,
+    vars: DeleteReviewVariables,
+  ): MutationRef<DeleteReviewData, DeleteReviewVariables>;
   operationName: string;
 }
 export const deleteReviewRef: DeleteReviewRef;
 
-export function deleteReview(vars: DeleteReviewVariables): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
-export function deleteReview(dc: DataConnect, vars: DeleteReviewVariables): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
+export function deleteReview(
+  vars: DeleteReviewVariables,
+): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
+export function deleteReview(
+  dc: DataConnect,
+  vars: DeleteReviewVariables,
+): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
 
 interface ListMoviesRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -233,8 +260,13 @@ interface GetMovieByIdRef {
 }
 export const getMovieByIdRef: GetMovieByIdRef;
 
-export function getMovieById(vars: GetMovieByIdVariables): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
-export function getMovieById(dc: DataConnect, vars: GetMovieByIdVariables): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
+export function getMovieById(
+  vars: GetMovieByIdVariables,
+): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
+export function getMovieById(
+  dc: DataConnect,
+  vars: GetMovieByIdVariables,
+): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
 
 interface SearchMovieRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -245,6 +277,10 @@ interface SearchMovieRef {
 }
 export const searchMovieRef: SearchMovieRef;
 
-export function searchMovie(vars?: SearchMovieVariables): QueryPromise<SearchMovieData, SearchMovieVariables>;
-export function searchMovie(dc: DataConnect, vars?: SearchMovieVariables): QueryPromise<SearchMovieData, SearchMovieVariables>;
-
+export function searchMovie(
+  vars?: SearchMovieVariables,
+): QueryPromise<SearchMovieData, SearchMovieVariables>;
+export function searchMovie(
+  dc: DataConnect,
+  vars?: SearchMovieVariables,
+): QueryPromise<SearchMovieData, SearchMovieVariables>;

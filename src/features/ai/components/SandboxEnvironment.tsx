@@ -1,16 +1,17 @@
 import React from 'react';
 
 interface SandboxEnvironmentProps {
-    files?: Record<string, string>;
-    template?: "vite-react" | "react";
+  files?: Record<string, string>;
+  template?: 'vite-react' | 'react';
 }
 
 const SandboxEnvironment: React.FC<SandboxEnvironmentProps> = ({
-    files = {},
-    template = "vite-react"
+  files = {},
+  template = 'vite-react',
 }) => {
-    const sandboxFiles = React.useMemo<Record<string, string>>(() => ({
-        "App.tsx": `import React, { useState, useEffect } from "react";
+  const sandboxFiles = React.useMemo<Record<string, string>>(
+    () => ({
+      'App.tsx': `import React, { useState, useEffect } from "react";
 
 const useVehicleTelemetry = () => {
     const [data, setData] = useState({ rpm: 900, temp: 88, battery: 100, boost: 12 });
@@ -87,20 +88,24 @@ export default function App() {
     </div>
   );
 }`,
-        ...files
-    }), [files]);
+      ...files,
+    }),
+    [files],
+  );
 
-    const [activeFile, setActiveFile] = React.useState<string>(Object.keys(sandboxFiles)[0] || "App.tsx");
-    const [code, setCode] = React.useState<string>(sandboxFiles[activeFile] || "");
+  const [activeFile, setActiveFile] = React.useState<string>(
+    Object.keys(sandboxFiles)[0] || 'App.tsx',
+  );
+  const [code, setCode] = React.useState<string>(sandboxFiles[activeFile] || '');
 
-    React.useEffect(() => {
-        setCode(sandboxFiles[activeFile] || "");
-    }, [activeFile, sandboxFiles]);
+  React.useEffect(() => {
+    setCode(sandboxFiles[activeFile] || '');
+  }, [activeFile, sandboxFiles]);
 
-    const safeCode = React.useMemo(() => code.replace(/<\/script/gi, '<\\/script'), [code]);
+  const safeCode = React.useMemo(() => code.replace(/<\/script/gi, '<\\/script'), [code]);
 
-    const srcDoc = React.useMemo(() => {
-        const reactSandbox = `
+  const srcDoc = React.useMemo(() => {
+    const reactSandbox = `
 <!doctype html>
 <html>
   <head>
@@ -133,7 +138,7 @@ export default function App() {
   </body>
 </html>`;
 
-        const vanillaSandbox = `
+    const vanillaSandbox = `
 <!doctype html>
 <html>
   <head>
@@ -152,43 +157,45 @@ export default function App() {
   </body>
 </html>`;
 
-        return template === "react" || template === "vite-react" ? reactSandbox : vanillaSandbox;
-    }, [safeCode, template]);
+    return template === 'react' || template === 'vite-react' ? reactSandbox : vanillaSandbox;
+  }, [safeCode, template]);
 
-    return (
-        <div className="w-full h-[600px] border border-white/10 rounded-xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-2">
-            <div className="h-full flex flex-col bg-[#040810] border-r border-white/10">
-                <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-                    <div className="flex gap-2">
-                        {Object.keys(sandboxFiles).map((fileName) => (
-                            <button
-                                key={fileName}
-                                onClick={() => setActiveFile(fileName)}
-                                className={`px-3 py-1 rounded-md text-[11px] font-bold ${activeFile === fileName ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-400/20' : 'text-slate-400 hover:text-slate-200'}`}
-                            >
-                                {fileName}
-                            </button>
-                        ))}
-                    </div>
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Light Sandbox</span>
-                </div>
-                <textarea
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    className="h-full w-full resize-none bg-[#040810] p-4 font-mono text-[12px] text-slate-200 outline-none"
-                    spellCheck={false}
-                />
-            </div>
-            <div className="h-full bg-black">
-                <iframe
-                    title="live-sandbox-preview"
-                    sandbox="allow-scripts allow-same-origin"
-                    className="h-full w-full border-0"
-                    srcDoc={srcDoc}
-                />
-            </div>
+  return (
+    <div className="w-full h-[600px] border border-white/10 rounded-xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-2">
+      <div className="h-full flex flex-col bg-[#040810] border-r border-white/10">
+        <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+          <div className="flex gap-2">
+            {Object.keys(sandboxFiles).map((fileName) => (
+              <button
+                key={fileName}
+                onClick={() => setActiveFile(fileName)}
+                className={`px-3 py-1 rounded-md text-[11px] font-bold ${activeFile === fileName ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-400/20' : 'text-slate-400 hover:text-slate-200'}`}
+              >
+                {fileName}
+              </button>
+            ))}
+          </div>
+          <span className="text-[10px] uppercase tracking-widest text-slate-500">
+            Light Sandbox
+          </span>
         </div>
-    );
+        <textarea
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          className="h-full w-full resize-none bg-[#040810] p-4 font-mono text-[12px] text-slate-200 outline-none"
+          spellCheck={false}
+        />
+      </div>
+      <div className="h-full bg-black">
+        <iframe
+          title="live-sandbox-preview"
+          sandbox="allow-scripts allow-same-origin"
+          className="h-full w-full border-0"
+          srcDoc={srcDoc}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default SandboxEnvironment;

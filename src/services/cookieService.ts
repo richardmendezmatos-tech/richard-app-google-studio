@@ -1,22 +1,21 @@
-
 /**
  * Servicio de gestión de Cookies para Richard Automotive.
  * Permite persistir datos del usuario de forma segura.
  */
 
 export const setCookie = (name: string, value: string, days: number) => {
-  let expires = "";
+  let expires = '';
   if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toUTCString();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = '; expires=' + date.toUTCString();
   }
   // SameSite=Lax y Secure aseguran que la cookie se maneje correctamente en navegadores modernos
-  document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
+  document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax; Secure';
 };
 
 export const getCookie = (name: string): string | null => {
-  const nameEQ = name + "=";
+  const nameEQ = name + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
@@ -35,8 +34,8 @@ export const eraseCookie = (name: string) => {
  * Útil para saber si es un usuario recurrente.
  */
 export const trackUserVisit = () => {
-    const visits = getCookie('richard_visits');
-    const newCount = visits ? parseInt(visits) + 1 : 1;
-    setCookie('richard_visits', newCount.toString(), 365);
-    return newCount;
+  const visits = getCookie('richard_visits');
+  const newCount = visits ? parseInt(visits) + 1 : 1;
+  setCookie('richard_visits', newCount.toString(), 365);
+  return newCount;
 };

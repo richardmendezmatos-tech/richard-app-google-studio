@@ -1,4 +1,3 @@
-
 import React, { useContext } from 'react';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { Sun, Moon } from 'lucide-react';

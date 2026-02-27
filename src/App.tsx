@@ -16,7 +16,7 @@ const RichardAutomotiveApp: React.FC = () => {
     handleMagicFix,
     handleAdd,
     handleUpdate,
-    handleDelete
+    handleDelete,
   } = useAppController();
 
   return (

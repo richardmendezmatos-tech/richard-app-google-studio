@@ -1,45 +1,69 @@
-import CryptoJS from 'crypto-js';
-
 /**
- * Servicio de Encriptación de SSN (Client-Side)
- * 
- * Este servicio implementa una arquitectura Zero-Knowledge.
- * El SSN se encripta en el navegador del cliente antes de ser enviado a Firestore.
+ * Servicio de Encriptación de SSN (Client-Side) - Versión Hardened (AES-GCM)
+ *
+ * Este servicio implementa Encriptación Simétrica Autenticada (AES-GCM)
+ * utilizando la Web Crypto API nativa para garantizar integridad y privacidad.
  */
 
-// NOTA DE SEGURIDAD: La llave maestra DEBE ser solicitada al admin 
-// en su panel y NUNCA guardarse en código duro o localStorage persistente.
-export const encryptSSN = (ssn: string, masterKey: string): string => {
-    if (!ssn || !masterKey) {
-        throw new Error("SSN y MasterKey son obligatorios para la encriptación.");
-    }
+// Helper to derive a stable CryptoKey from the MasterKey string
+async function deriveKey(masterKey: string): Promise<CryptoKey> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(masterKey);
+  // Use SHA-256 to ensure a 256-bit key regardless of masterKey length
+  const hash = await window.crypto.subtle.digest('SHA-256', keyData);
 
-    // Limpiar SSN de guiones o espacios para normalizar antes de encriptar
-    const cleanSSN = ssn.replace(/[^0-9]/g, '');
+  return await window.crypto.subtle.importKey('raw', hash, { name: 'AES-GCM' }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
+}
 
-    if (cleanSSN.length !== 9) {
-        console.warn("SSN inválido detectado. Asegúrate de que tenga 9 dígitos.");
-    }
+/**
+ * Encriptación Autenticada AES-GCM (256-bit)
+ */
+export const encryptSSN = async (ssn: string, masterKey: string): Promise<string> => {
+  if (!ssn || !masterKey) {
+    throw new Error('SSN y MasterKey son obligatorios.');
+  }
 
-    // Encriptación AES-256
-    const encrypted = CryptoJS.AES.encrypt(cleanSSN, masterKey).toString();
+  const cleanSSN = ssn.replace(/[^0-9]/g, '');
+  const encoder = new TextEncoder();
+  const data = encoder.encode(cleanSSN);
 
-    return encrypted;
+  const key = await deriveKey(masterKey);
+  const iv = window.crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV for GCM
+
+  const encryptedContent = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
+
+  // Combine IV + Encrypted Data and encode as Base64 for storage
+  const combined = new Uint8Array(iv.length + encryptedContent.byteLength);
+  combined.set(iv);
+  combined.set(new Uint8Array(encryptedContent), iv.length);
+
+  return btoa(String.fromCharCode(...combined));
 };
 
 /**
- * Desencriptación (Solo en panel de Admin)
+ * Desencriptación Autenticada (Solo en panel de Admin)
  */
-export const decryptSSN = (encryptedSSN: string, masterKey: string): string => {
-    try {
-        const bytes = CryptoJS.AES.decrypt(encryptedSSN, masterKey);
-        const originalText = bytes.toString(CryptoJS.enc.Utf8);
+export const decryptSSN = async (base64Data: string, masterKey: string): Promise<string> => {
+  try {
+    const combined = new Uint8Array(
+      atob(base64Data)
+        .split('')
+        .map((c) => c.charCodeAt(0)),
+    );
 
-        if (!originalText) throw new Error("Llave incorrecta o dato corrupto.");
+    const iv = combined.slice(0, 12);
+    const data = combined.slice(12);
 
-        return originalText;
-    } catch (error) {
-        console.error("Fallo al desencriptar SSN:", error);
-        return "DECRYPTION_ERROR";
-    }
+    const key = await deriveKey(masterKey);
+
+    const decrypted = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+
+    return new TextDecoder().decode(decrypted);
+  } catch (error) {
+    console.error('Fallo al desencriptar SSN (AES-GCM):', error);
+    return 'DECRYPTION_ERROR';
+  }
 };

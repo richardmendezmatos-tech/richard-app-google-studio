@@ -6,91 +6,123 @@ import { Lead, VehicleHealthStatus } from '@/types/types';
  */
 
 export interface ScoringResult {
-    score: number;
-    factors: string[];
-    priority: 'low' | 'medium' | 'high' | 'urgent';
+  score: number;
+  factors: string[];
+  priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
-export const calculateLeadScore = (lead: Lead, health?: VehicleHealthStatus | null): ScoringResult => {
-    let score = lead.aiScore || 50;
-    const factors: string[] = [];
-    const memory = lead.customerMemory;
+export const calculateLeadScore = (
+  lead: Lead,
+  health?: VehicleHealthStatus | null,
+): ScoringResult => {
+  let score = lead.aiScore || 50;
+  const factors: string[] = [];
+  const memory = lead.customerMemory;
 
-    // 1. Vehicle Health Urgency (The Core IoT Insight)
-    if (health) {
-        if (health.overallStatus === 'critical') {
-            score += 35;
-            factors.push('Urgencia Mecánica Crítica (+35)');
-        } else if (health.overallStatus === 'warning') {
-            score += 15;
-            factors.push('Aviso Preventivo de Salud (+15)');
-        }
+  // 1. Vehicle Health Urgency (The Core IoT Insight)
+  if (health) {
+    if (health.overallStatus === 'critical') {
+      score += 35;
+      factors.push('Urgencia Mecánica Crítica (+35)');
+    } else if (health.overallStatus === 'warning') {
+      score += 15;
+      factors.push('Aviso Preventivo de Salud (+15)');
+    }
+  }
+
+  // 2. Continuum Memory System (CMS) - Adaptive Logic
+  if (memory) {
+    // L1: Reactive (Surpresa de comportamento imediato)
+    if (memory.l1_reactive?.activeContext) {
+      score += 12;
+      factors.push('Foco Activo: Interacción Real-time (+12)');
     }
 
-    // 2. Continuum Memory System (CMS) - Adaptive Logic
-    if (memory) {
-        // L1: Reactive (Surpresa de comportamento imediato)
-        if (memory.l1_reactive?.activeContext) {
-            score += 12;
-            factors.push('Foco Activo: Interacción Real-time (+12)');
-        }
-
-        // L2: Contextual (Patrones de Intención)
-        if (memory.l2_contextual?.intentScore && memory.l2_contextual.intentScore > 70) {
-            score += 15;
-            factors.push('Contexto L2: Alta Intención Detectada (+15)');
-        }
-
-        // L3: Evolutivo (Ciclo de Vida)
-        if (memory.l3_evolutivo?.lifecycleStage === 'decision' || memory.l3_evolutivo?.lifecycleStage === 'trade-in') {
-            score += 20;
-            factors.push('Fase L3: Punto de Decisión/Trade-in (+20)');
-        }
+    // L2: Contextual (Patrones de Intención)
+    if (memory.l2_contextual?.intentScore && memory.l2_contextual.intentScore > 70) {
+      score += 15;
+      factors.push('Contexto L2: Alta Intención Detectada (+15)');
     }
 
-    // 3. Lead Type Logic (Legacy/Complementary)
-    if (lead.type === 'trade-in' && !memory?.l3_evolutivo) {
-        score += 10;
-        factors.push('Interés en Trade-In (+10)');
-    } else if (lead.type === 'finance') {
-        score += 8;
-        factors.push('Solicitud de Financiamiento (+8)');
+    // L3: Evolutivo (Ciclo de Vida)
+    if (
+      memory.l3_evolutivo?.lifecycleStage === 'decision' ||
+      memory.l3_evolutivo?.lifecycleStage === 'trade-in'
+    ) {
+      score += 20;
+      factors.push('Fase L3: Punto de Decisión/Trade-in (+20)');
     }
+  }
 
-    // 4. Status Weighting
-    if (lead.status === 'new') {
-        score += 5;
-        factors.push('Nuevo Prospecto (+5)');
-    }
+  // 3. Lead Type Logic (Legacy/Complementary)
+  if (lead.type === 'trade-in' && !memory?.l3_evolutivo) {
+    score += 10;
+    factors.push('Interés en Trade-In (+10)');
+  } else if (lead.type === 'finance') {
+    score += 8;
+    factors.push('Solicitud de Financiamiento (+8)');
+  }
 
-    // Cap at 100
-    score = Math.min(100, Math.max(0, score));
+  // 4. Status Weighting
+  if (lead.status === 'new') {
+    score += 5;
+    factors.push('Nuevo Prospecto (+5)');
+  }
 
-    // Determine Priority Level
-    let priority: ScoringResult['priority'] = 'low';
+  // Cap at 100
+  score = Math.min(100, Math.max(0, score));
 
-    // Self-Modifying Priority Thresholds
-    const isHighPriorityCycle = memory?.l3_evolutivo?.lifecycleStage === 'decision';
-    const urgentThreshold = isHighPriorityCycle ? 85 : 90;
+  // Determine Priority Level
+  let priority: ScoringResult['priority'] = 'low';
 
-    if (score >= urgentThreshold || (health?.overallStatus === 'critical')) priority = 'urgent';
-    else if (score >= 70) priority = 'high';
-    else if (score >= 40) priority = 'medium';
+  // Self-Modifying Priority Thresholds
+  const isHighPriorityCycle = memory?.l3_evolutivo?.lifecycleStage === 'decision';
+  const urgentThreshold = isHighPriorityCycle ? 85 : 90;
 
-    return {
-        score,
-        factors,
-        priority
-    };
+  if (score >= urgentThreshold || health?.overallStatus === 'critical') priority = 'urgent';
+  else if (score >= 70) priority = 'high';
+  else if (score >= 40) priority = 'medium';
+
+  return {
+    score,
+    factors,
+    priority,
+  };
 };
 
 /**
  * Hook-friendly utility to sort leads by priority
+ * Uses a Schwartzian Transform (pre-calculating scores once) for O(N log N) efficiency.
  */
-export const sortLeadsByPriority = (leads: Lead[], healthMap: Record<string, VehicleHealthStatus>) => {
-    return [...leads].sort((a, b) => {
-        const scoreA = calculateLeadScore(a, healthMap[a.vehicleId || '']).score;
-        const scoreB = calculateLeadScore(b, healthMap[b.vehicleId || '']).score;
-        return scoreB - scoreA;
-    });
+export const sortLeadsByPriority = (
+  leads: Lead[],
+  healthMap: Record<string, VehicleHealthStatus>,
+) => {
+  const priorityWeight = {
+    urgent: 4,
+    high: 3,
+    medium: 2,
+    low: 1,
+  };
+
+  // Pre-calculate results once for all leads
+  const scoredLeads = leads.map((lead) => {
+    const result = calculateLeadScore(lead, healthMap[lead.vehicleId || '']);
+    return { lead, result };
+  });
+
+  return scoredLeads
+    .sort((a, b) => {
+      // 1. Sort by priority tier (urgent > high > medium > low)
+      const weightA = priorityWeight[a.result.priority];
+      const weightB = priorityWeight[b.result.priority];
+
+      if (weightA !== weightB) {
+        return weightB - weightA;
+      }
+
+      // 2. Tie-breaker: Sort by numerical score within the same tier
+      return b.result.score - a.result.score;
+    })
+    .map((item) => item.lead);
 };
