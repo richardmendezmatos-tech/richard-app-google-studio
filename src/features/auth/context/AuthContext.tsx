@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, ReactNode } from 'react';
 import { AppUser, UserRole } from '@/types/types';
 import { User as FirebaseUser } from 'firebase/auth';
@@ -31,7 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email: currentUser.email,
             displayName: currentUser.displayName,
             photoURL: currentUser.photoURL,
-            role: userRole
+            role: userRole,
           });
         } else {
           setUser(null);
@@ -54,9 +53,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, role, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, role, loading }}>{children}</AuthContext.Provider>;
 };

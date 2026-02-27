@@ -1,7 +1,13 @@
-
 import * as React from 'react';
 import { useState } from 'react';
-import { signUpWithEmail, signInWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential, normalizeUser } from '../services/authService';
+import {
+  signUpWithEmail,
+  signInWithEmail,
+  signInWithGoogle,
+  signInWithFacebook,
+  signInWithGoogleCredential,
+  normalizeUser,
+} from '../services/authService';
 import { auth, getRedirectResult } from '@/services/firebaseService';
 import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -46,7 +52,7 @@ const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || '/';
 
   // --- Google One Tap Integration ---
   React.useEffect(() => {
@@ -73,7 +79,7 @@ const UserLogin: React.FC = () => {
             setLoading(false);
           }
         },
-        cancel_on_tap_outside: false
+        cancel_on_tap_outside: false,
       });
 
       google.accounts.id.prompt();
@@ -148,7 +154,11 @@ const UserLogin: React.FC = () => {
       return 'Acceso no autorizado en este portal. Use el portal administrativo.';
     } else if (authError.code === 'auth/email-already-in-use') {
       return 'Este correo ya está registrado.';
-    } else if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password') {
+    } else if (
+      authError.code === 'auth/invalid-credential' ||
+      authError.code === 'auth/user-not-found' ||
+      authError.code === 'auth/wrong-password'
+    ) {
       return 'Credenciales incorrectas.';
     } else if (authError.code === 'auth/popup-closed-by-user') {
       return 'La ventana de inicio de sesión se cerró.';
@@ -169,7 +179,10 @@ const UserLogin: React.FC = () => {
       {/* Neural Background Elements */}
       <div className="neural-glow-bg" />
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-var" style={{ '--d': '2s' } as React.CSSProperties} />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-var"
+        style={{ '--d': '2s' } as React.CSSProperties}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -226,11 +239,14 @@ const UserLogin: React.FC = () => {
         <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-5">
           <div className="space-y-4">
             <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <Mail
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors"
+                size={18}
+              />
               <input
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="CORREO ELECTRÓNICO"
                 className="input-premium pl-12"
@@ -238,11 +254,14 @@ const UserLogin: React.FC = () => {
             </div>
 
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <Lock
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors"
+                size={18}
+              />
               <input
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
                 className="input-premium pl-12"
@@ -268,7 +287,9 @@ const UserLogin: React.FC = () => {
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <span className="relative z-10">{isRegistering ? 'Inicializar Registro' : 'Acceder al Sistema'}</span>
+                <span className="relative z-10">
+                  {isRegistering ? 'Inicializar Registro' : 'Acceder al Sistema'}
+                </span>
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}
@@ -280,13 +301,18 @@ const UserLogin: React.FC = () => {
               onClick={() => setIsRegistering(!isRegistering)}
               className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-cyan-400 transition-colors"
             >
-              {isRegistering ? '¿Ya estás registrado? Iniciar Sesión' : '¿Nuevo en el centro? Solicitar Acceso'}
+              {isRegistering
+                ? '¿Ya estás registrado? Iniciar Sesión'
+                : '¿Nuevo en el centro? Solicitar Acceso'}
             </button>
           </div>
         </form>
 
         <div className="py-6 text-center border-t border-white/10 bg-slate-900/40">
-          <Link to="/" className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/60 hover:text-cyan-400 transition-all hover:tracking-[0.5em]">
+          <Link
+            to="/"
+            className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/60 hover:text-cyan-400 transition-all hover:tracking-[0.5em]"
+          >
             Volver a la Terminal
           </Link>
         </div>

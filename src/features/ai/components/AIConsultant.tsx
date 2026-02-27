@@ -14,8 +14,13 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
   // Use the Copilot Hook for backend communication
   const { messages, input, setInput, append, isLoading } = useCopilotAgent('consultant-session', {
     initialMessages: [
-      { id: 'welcome', role: 'assistant', content: '¡Saludos! Soy Richard IA. ¿En qué puedo ayudarte hoy? ¿Buscas un SUV económico o quizás una pickup para el trabajo?' }
-    ]
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content:
+          '¡Saludos! Soy Richard IA. ¿En qué puedo ayudarte hoy? ¿Buscas un SUV económico o quizás una pickup para el trabajo?',
+      },
+    ],
   });
 
   // Auto-scroll on new messages
@@ -48,28 +53,47 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
             </div>
             <div>
               <h2 className="text-xl font-black">Richard AI Assistant</h2>
-              <p className="text-xs text-cyan-300 font-bold uppercase tracking-widest">Consultor Certificado</p>
+              <p className="text-xs text-cyan-300 font-bold uppercase tracking-widest">
+                Consultor Certificado
+              </p>
             </div>
           </div>
           <div className="hidden md:block text-right">
-            <span className="text-[10px] font-black text-white/50 uppercase block mb-1">Unidades Disponibles</span>
-            <span className="bg-white/10 px-3 py-1 rounded-full text-sm font-bold">{inventory.length}</span>
+            <span className="text-[10px] font-black text-white/50 uppercase block mb-1">
+              Unidades Disponibles
+            </span>
+            <span className="bg-white/10 px-3 py-1 rounded-full text-sm font-bold">
+              {inventory.length}
+            </span>
           </div>
         </div>
 
         {/* Chat Body */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8">
           {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-slate-100 dark:bg-slate-700 text-slate-500' : 'bg-cyan-50 dark:bg-cyan-500/10 text-[#00aed9]'
-                  }`}>
+            <div
+              key={idx}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    msg.role === 'user'
+                      ? 'bg-slate-100 dark:bg-slate-700 text-slate-500'
+                      : 'bg-cyan-50 dark:bg-cyan-500/10 text-[#00aed9]'
+                  }`}
+                >
                   {msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}
                 </div>
-                <div className={`p-6 rounded-[24px] text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                  ? 'bg-slate-800 dark:bg-slate-700 text-white rounded-tr-none'
-                  : 'bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700'
-                  }`}>
+                <div
+                  className={`p-6 rounded-[24px] text-sm leading-relaxed shadow-sm ${
+                    msg.role === 'user'
+                      ? 'bg-slate-800 dark:bg-slate-700 text-white rounded-tr-none'
+                      : 'bg-slate-50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700'
+                  }`}
+                >
                   {msg.content}
                 </div>
               </div>

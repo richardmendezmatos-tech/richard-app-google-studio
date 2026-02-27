@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCode } from '@/services/geminiService';
 import hljs from 'highlight.js';
@@ -7,35 +6,40 @@ import hljs from 'highlight.js';
 // Nota: Para un entorno de producción, una librería como 'marked' o 'DOMPurify' sería más robusta.
 const simpleMarkdownToHtml = (markdown: string): string => {
   if (!markdown) return '';
-  return markdown
-    // Bloques de código (con sanitización básica)
-    .replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) =>
-      `<pre><code class="language-${lang || 'plaintext'}">${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`
-    )
-    // Encabezados
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    // Negrita
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    // Itálica
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // Listas (manejo simple para elementos consecutivos)
-    .replace(/^\s*-\s(.*$)/gim, '<li>$1</li>')
-    .replace(/<\/li>\s*<li>/g, '</li><li>') // Corrige saltos entre LIs con regex más flexible
-    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-    // Reemplazar saltos de línea por <br>, excepto dentro de <pre>
-    .split('\n').map(line => {
-      // Evitar romper estructura si la línea empieza con tag HTML generado
-      if (line.trim().startsWith('<') || line.trim().length === 0) return line;
-      return line + '<br />';
-    }).join('\n')
-    // Limpieza final de <br> dentro de bloques pre/code y listas
-    .replace(/<pre>((.|\n)*?)<\/pre>/g, (match) => match.replace(/<br \/>/g, ''))
-    .replace(/<br \/>\s*<ul>/g, '<ul>')
-    .replace(/<\/ul>\s*<br \/>/g, '</ul>');
+  return (
+    markdown
+      // Bloques de código (con sanitización básica)
+      .replace(
+        /```(\w*)\n([\s\S]*?)```/g,
+        (match, lang, code) =>
+          `<pre><code class="language-${lang || 'plaintext'}">${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`,
+      )
+      // Encabezados
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      // Negrita
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Itálica
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Listas (manejo simple para elementos consecutivos)
+      .replace(/^\s*-\s(.*$)/gim, '<li>$1</li>')
+      .replace(/<\/li>\s*<li>/g, '</li><li>') // Corrige saltos entre LIs con regex más flexible
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      // Reemplazar saltos de línea por <br>, excepto dentro de <pre>
+      .split('\n')
+      .map((line) => {
+        // Evitar romper estructura si la línea empieza con tag HTML generado
+        if (line.trim().startsWith('<') || line.trim().length === 0) return line;
+        return line + '<br />';
+      })
+      .join('\n')
+      // Limpieza final de <br> dentro de bloques pre/code y listas
+      .replace(/<pre>((.|\n)*?)<\/pre>/g, (match) => match.replace(/<br \/>/g, ''))
+      .replace(/<br \/>\s*<ul>/g, '<ul>')
+      .replace(/<\/ul>\s*<br \/>/g, '</ul>')
+  );
 };
-
 
 const CodeLab: React.FC = () => {
   const [code, setCode] = useState('');
@@ -112,8 +116,18 @@ const CodeLab: React.FC = () => {
           )}
           {!analysis && !loading ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center px-4">
-              <svg className="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              <svg
+                className="w-12 h-12 mb-2 opacity-20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
               </svg>
               <p className="text-sm">Selecciona un modo de análisis para comenzar.</p>
             </div>

@@ -2,12 +2,12 @@ import { analyzeImageWithPrompt } from './geminiService';
 import { Car } from '@/types/types';
 
 export const inventoryIngestionService = {
-    /**
-     * Process an image (Window Sticker, Auction Sheet, or Car Photo) 
-     * and extract structured inventory data.
-     */
-    processInventoryImage: async (base64Image: string): Promise<Partial<Car>> => {
-        const prompt = `
+  /**
+   * Process an image (Window Sticker, Auction Sheet, or Car Photo)
+   * and extract structured inventory data.
+   */
+  processInventoryImage: async (base64Image: string): Promise<Partial<Car>> => {
+    const prompt = `
         ANALIZA ESTA IMAGEN DE UN VEHÍCULO O DOCUMENTO.
         
         Tu tarea es extraer la mayor cantidad de datos técnicos y comerciales posibles para crear una ficha de inventario.
@@ -32,18 +32,18 @@ export const inventoryIngestionService = {
         }
         `;
 
-        try {
-            const data = await analyzeImageWithPrompt(base64Image, prompt);
+    try {
+      const data = await analyzeImageWithPrompt(base64Image, prompt);
 
-            // Post-processing / Sanitization if needed
-            if (data.year) data.year = Number(data.year);
-            if (data.price) data.price = Number(data.price);
-            if (data.mileage) data.mileage = Number(data.mileage);
+      // Post-processing / Sanitization if needed
+      if (data.year) data.year = Number(data.year);
+      if (data.price) data.price = Number(data.price);
+      if (data.mileage) data.mileage = Number(data.mileage);
 
-            return data;
-        } catch (error) {
-            console.error("Inventory Ingestion Error:", error);
-            throw new Error("No se pudo procesar la imagen. Intenta con una foto más clara.");
-        }
+      return data;
+    } catch (error) {
+      console.error('Inventory Ingestion Error:', error);
+      throw new Error('No se pudo procesar la imagen. Intenta con una foto más clara.');
     }
+  },
 };

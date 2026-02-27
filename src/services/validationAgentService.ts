@@ -2,9 +2,9 @@ import { generateText } from './geminiService';
 import { Car } from '@/types/types';
 
 export interface ValidationResult {
-    isValid: boolean;
-    issues: string[];
-    sanitizedResponse: string;
+  isValid: boolean;
+  issues: string[];
+  sanitizedResponse: string;
 }
 
 const GOLDEN_RULES = `
@@ -15,17 +15,17 @@ const GOLDEN_RULES = `
 `;
 
 export class ValidationAgentService {
-    /**
-     * Audits a bot response against Golden Rules and Inventory.
-     */
-    async validateResponse(
-        userQuery: string,
-        botResponse: string,
-        inventory: Car[]
-    ): Promise<ValidationResult> {
-        const inventoryList = inventory.map(c => `- ${c.name} ($${c.price})`).join('\n');
+  /**
+   * Audits a bot response against Golden Rules and Inventory.
+   */
+  async validateResponse(
+    userQuery: string,
+    botResponse: string,
+    inventory: Car[],
+  ): Promise<ValidationResult> {
+    const inventoryList = inventory.map((c) => `- ${c.name} ($${c.price})`).join('\n');
 
-        const prompt = `
+    const prompt = `
         ACTÚA COMO UN AUDITOR DE CUMPLIMIENTO (COMPLIANCE) PARA RICHARD AUTOMOTIVE.
         
         REGLAS DE ORO:
@@ -49,23 +49,23 @@ export class ValidationAgentService {
         }
         `;
 
-        try {
-            const rawResult = await generateText(prompt, "Eres un auditor de cumplimiento estricto.");
-            // Parse JSON from response
-            const jsonMatch = rawResult.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) throw new Error("Invalid auditor response format");
+    try {
+      const rawResult = await generateText(prompt, 'Eres un auditor de cumplimiento estricto.');
+      // Parse JSON from response
+      const jsonMatch = rawResult.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Invalid auditor response format');
 
-            return JSON.parse(jsonMatch[0]) as ValidationResult;
-        } catch (error) {
-            console.error("Validation Agent Error:", error);
-            // Fallback: If validation fails, return original as valid to avoid blocking (or handle as needed)
-            return {
-                isValid: true,
-                issues: [],
-                sanitizedResponse: botResponse
-            };
-        }
+      return JSON.parse(jsonMatch[0]) as ValidationResult;
+    } catch (error) {
+      console.error('Validation Agent Error:', error);
+      // Fallback: If validation fails, return original as valid to avoid blocking (or handle as needed)
+      return {
+        isValid: true,
+        issues: [],
+        sanitizedResponse: botResponse,
+      };
     }
+  }
 }
 
 export const validationAgentService = new ValidationAgentService();

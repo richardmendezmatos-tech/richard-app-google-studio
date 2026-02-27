@@ -9,32 +9,32 @@
  * que bloquea el alias @/features/* desde src/services/.
  */
 export {
-    // Tipos
-    type WhatsAppMessage,
-    type WhatsAppTemplate,
-    type AutoResponseRule,
-    type MessageContext,
+  // Tipos
+  type WhatsAppMessage,
+  type WhatsAppTemplate,
+  type AutoResponseRule,
+  type MessageContext,
 
-    // Constantes
-    MESSAGE_TEMPLATES,
+  // Constantes
+  MESSAGE_TEMPLATES,
 
-    // Funciones utilitarias
-    renderTemplate,
-    detectIntent,
-    generateAutoResponse,
-    sendWhatsAppMessage,
-    getConversationHistory,
-    scheduleFollowUp,
-    createInteractiveMenu,
-    processMenuSelection,
-    trackWhatsAppConversion,
+  // Funciones utilitarias
+  renderTemplate,
+  detectIntent,
+  generateAutoResponse,
+  sendWhatsAppMessage,
+  getConversationHistory,
+  scheduleFollowUp,
+  createInteractiveMenu,
+  processMenuSelection,
+  trackWhatsAppConversion,
 } from '../features/leads/services/whatsappService';
 
 import * as whatsappMethods from '../features/leads/services/whatsappService';
 
 export const whatsappService = {
-    sendMessage: whatsappMethods.sendWhatsAppMessage,
-    getFallbackLink: whatsappMethods.getFallbackLink,
-    renderTemplate: whatsappMethods.renderTemplate,
-    detectIntent: whatsappMethods.detectIntent,
+  sendMessage: whatsappMethods.sendWhatsAppMessage,
+  getFallbackLink: whatsappMethods.getFallbackLink,
+  renderTemplate: whatsappMethods.renderTemplate,
+  detectIntent: whatsappMethods.detectIntent,
 };

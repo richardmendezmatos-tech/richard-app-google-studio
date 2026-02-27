@@ -20,7 +20,7 @@ const STORAGE_KEYS = {
   instructions: 'digital_twin_instructions',
   chat: 'digital_twin_chat_history',
   faceMode: 'digital_twin_face_mode',
-  facePhoto: 'digital_twin_face_photo'
+  facePhoto: 'digital_twin_face_photo',
 };
 
 const DEFAULT_PERSONA_NAME = 'Richard Mendez';
@@ -47,7 +47,9 @@ const normalizePhone = (value: string | null): string | null => {
   return clean.length >= 7 ? clean : null;
 };
 
-const detectAction = (text: string): { kind: ActionKind; payload: Record<string, string> } | null => {
+const detectAction = (
+  text: string,
+): { kind: ActionKind; payload: Record<string, string> } | null => {
   const lower = text.toLowerCase();
 
   if (lower.startsWith('/lead') || lower.includes('crear lead') || lower.includes('nuevo lead')) {
@@ -57,27 +59,37 @@ const detectAction = (text: string): { kind: ActionKind; payload: Record<string,
         name: parseField(text, ['nombre', 'name']) || '',
         phone: parseField(text, ['telefono', 'phone', 'tel']) || '',
         email: parseField(text, ['email', 'correo']) || '',
-        interest: parseField(text, ['interes', 'interest', 'vehiculo']) || ''
-      }
+        interest: parseField(text, ['interes', 'interest', 'vehiculo']) || '',
+      },
     };
   }
 
-  if (lower.startsWith('/inventario') || lower.includes('buscar inventario') || lower.includes('buscar auto')) {
+  if (
+    lower.startsWith('/inventario') ||
+    lower.includes('buscar inventario') ||
+    lower.includes('buscar auto')
+  ) {
     return {
       kind: 'search_inventory',
       payload: {
-        query: parseField(text, ['q', 'query', 'buscar', 'modelo', 'tipo']) || text.replace('/inventario', '').trim()
-      }
+        query:
+          parseField(text, ['q', 'query', 'buscar', 'modelo', 'tipo']) ||
+          text.replace('/inventario', '').trim(),
+      },
     };
   }
 
-  if (lower.startsWith('/whatsapp') || lower.includes('enviar whatsapp') || lower.includes('enviar seguimiento')) {
+  if (
+    lower.startsWith('/whatsapp') ||
+    lower.includes('enviar whatsapp') ||
+    lower.includes('enviar seguimiento')
+  ) {
     return {
       kind: 'send_whatsapp',
       payload: {
         phone: parseField(text, ['telefono', 'phone', 'tel']) || '',
-        message: parseField(text, ['mensaje', 'message', 'msg']) || ''
-      }
+        message: parseField(text, ['mensaje', 'message', 'msg']) || '',
+      },
     };
   }
 
@@ -88,7 +100,10 @@ const formatCars = (cars: Car[]): string => {
   if (cars.length === 0) return 'No encontre unidades con ese criterio.';
   return cars
     .slice(0, 5)
-    .map((car, idx) => `${idx + 1}. ${car.name} - $${(car.price || 0).toLocaleString()}${car.type ? ` (${car.type})` : ''}`)
+    .map(
+      (car, idx) =>
+        `${idx + 1}. ${car.name} - $${(car.price || 0).toLocaleString()}${car.type ? ` (${car.type})` : ''}`,
+    )
     .join('\n');
 };
 
@@ -120,19 +135,30 @@ const loadInitialChat = (): ChatMessage[] => {
 };
 
 const DigitalTwinDashboard: React.FC = () => {
-  const [personaName, setPersonaName] = useState(() => localStorage.getItem(STORAGE_KEYS.personaName) || DEFAULT_PERSONA_NAME);
-  const [instructions, setInstructions] = useState(() => localStorage.getItem(STORAGE_KEYS.instructions) || DEFAULT_INSTRUCTIONS);
+  const [personaName, setPersonaName] = useState(
+    () => localStorage.getItem(STORAGE_KEYS.personaName) || DEFAULT_PERSONA_NAME,
+  );
+  const [instructions, setInstructions] = useState(
+    () => localStorage.getItem(STORAGE_KEYS.instructions) || DEFAULT_INSTRUCTIONS,
+  );
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadInitialChat());
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(false);
-  const [faceMode, setFaceMode] = useState<FaceMode>(() => (localStorage.getItem(STORAGE_KEYS.faceMode) as FaceMode) || 'bot');
-  const [facePhoto, setFacePhoto] = useState<string | null>(() => localStorage.getItem(STORAGE_KEYS.facePhoto));
+  const [faceMode, setFaceMode] = useState<FaceMode>(
+    () => (localStorage.getItem(STORAGE_KEYS.faceMode) as FaceMode) || 'bot',
+  );
+  const [facePhoto, setFacePhoto] = useState<string | null>(() =>
+    localStorage.getItem(STORAGE_KEYS.facePhoto),
+  );
   const [faceError, setFaceError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const systemPrompt = useMemo(() => buildSystemPrompt(personaName, instructions), [personaName, instructions]);
+  const systemPrompt = useMemo(
+    () => buildSystemPrompt(personaName, instructions),
+    [personaName, instructions],
+  );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.personaName, personaName);
@@ -255,7 +281,10 @@ const DigitalTwinDashboard: React.FC = () => {
           const interest = action.payload.interest.trim();
 
           if (!name) {
-            setMessages((prev) => [...prev, { role: 'bot', text: 'Para crear el lead necesito al menos `nombre:`.' }]);
+            setMessages((prev) => [
+              ...prev,
+              { role: 'bot', text: 'Para crear el lead necesito al menos `nombre:`.' },
+            ]);
             return;
           }
 
@@ -265,15 +294,15 @@ const DigitalTwinDashboard: React.FC = () => {
             phone: phone || undefined,
             email: email || undefined,
             vehicleOfInterest: interest || undefined,
-            notes: 'Creado por Agente Digital'
+            notes: 'Creado por Agente Digital',
           });
 
           setMessages((prev) => [
             ...prev,
             {
               role: 'bot',
-              text: `Lead creado: ${name}${phone ? ` | Tel: ${phone}` : ''}${interest ? ` | Interes: ${interest}` : ''}`
-            }
+              text: `Lead creado: ${name}${phone ? ` | Tel: ${phone}` : ''}${interest ? ` | Interes: ${interest}` : ''}`,
+            },
           ]);
           return;
         }
@@ -283,7 +312,9 @@ const DigitalTwinDashboard: React.FC = () => {
           const { cars } = await getPaginatedCars(40, null, 'all', null);
           const filtered = queryText
             ? cars.filter((car) =>
-                `${car.name || ''} ${car.type || ''} ${car.badge || ''}`.toLowerCase().includes(queryText)
+                `${car.name || ''} ${car.type || ''} ${car.badge || ''}`
+                  .toLowerCase()
+                  .includes(queryText),
               )
             : cars;
 
@@ -291,8 +322,8 @@ const DigitalTwinDashboard: React.FC = () => {
             ...prev,
             {
               role: 'bot',
-              text: `Resultado inventario${queryText ? ` para "${queryText}"` : ''}:\n${formatCars(filtered)}`
-            }
+              text: `Resultado inventario${queryText ? ` para "${queryText}"` : ''}:\n${formatCars(filtered)}`,
+            },
           ]);
           return;
         }
@@ -306,8 +337,8 @@ const DigitalTwinDashboard: React.FC = () => {
               ...prev,
               {
                 role: 'bot',
-                text: 'Para WhatsApp necesito `telefono:` y `mensaje:`.'
-              }
+                text: 'Para WhatsApp necesito `telefono:` y `mensaje:`.',
+              },
             ]);
             return;
           }
@@ -319,8 +350,8 @@ const DigitalTwinDashboard: React.FC = () => {
               role: 'bot',
               text: result.success
                 ? `WhatsApp enviado a ${phone}. ID: ${result.messageId || 'N/A'}`
-                : `No se pudo enviar WhatsApp: ${result.error || 'Error desconocido'}`
-            }
+                : `No se pudo enviar WhatsApp: ${result.error || 'Error desconocido'}`,
+            },
           ]);
           return;
         }
@@ -334,7 +365,10 @@ const DigitalTwinDashboard: React.FC = () => {
       console.error('Digital twin chat error:', error);
       setMessages((prev) => [
         ...prev,
-        { role: 'bot', text: 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.' }
+        {
+          role: 'bot',
+          text: 'No pude responder ahora mismo. Intenta nuevamente en unos segundos.',
+        },
       ]);
     } finally {
       setIsThinking(false);
@@ -346,7 +380,11 @@ const DigitalTwinDashboard: React.FC = () => {
       <aside className="w-full max-w-md border-r border-slate-800 bg-slate-900/70 backdrop-blur p-6 space-y-5">
         <div className="flex items-center gap-3">
           {faceMode === 'photo' && facePhoto ? (
-            <img src={facePhoto} alt="Tu rostro" className="w-10 h-10 rounded-xl object-cover border border-cyan-400/40" />
+            <img
+              src={facePhoto}
+              alt="Tu rostro"
+              className="w-10 h-10 rounded-xl object-cover border border-cyan-400/40"
+            />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center">
               {faceMode === 'webcam' ? <Camera size={20} /> : <Bot size={20} />}
@@ -359,7 +397,9 @@ const DigitalTwinDashboard: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Nombre de la Persona</label>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Nombre de la Persona
+          </label>
           <input
             value={personaName}
             onChange={(e) => setPersonaName(e.target.value)}
@@ -369,7 +409,9 @@ const DigitalTwinDashboard: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Instrucciones del Agente</label>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Instrucciones del Agente
+          </label>
           <textarea
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
@@ -377,7 +419,8 @@ const DigitalTwinDashboard: React.FC = () => {
             placeholder="Define tono, reglas y objetivos"
           />
           <p className="text-[10px] text-slate-500">
-            Comandos: `/lead nombre:... telefono:... interes:...`, `/inventario q:...`, `/whatsapp telefono:... mensaje:...`
+            Comandos: `/lead nombre:... telefono:... interes:...`, `/inventario q:...`, `/whatsapp
+            telefono:... mensaje:...`
           </p>
         </div>
 
@@ -409,7 +452,9 @@ const DigitalTwinDashboard: React.FC = () => {
         </div>
 
         <div className="space-y-2 border-t border-slate-800 pt-4">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Rostro del Agente</label>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Rostro del Agente
+          </label>
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => setFaceMode('bot')}
@@ -417,7 +462,9 @@ const DigitalTwinDashboard: React.FC = () => {
             >
               Bot
             </button>
-            <label className={`py-2 rounded-lg text-xs font-bold uppercase tracking-wider border text-center cursor-pointer ${faceMode === 'photo' ? 'bg-cyan-500/20 border-cyan-400/40 text-cyan-200' : 'bg-slate-800 border-slate-700 text-slate-300'}`}>
+            <label
+              className={`py-2 rounded-lg text-xs font-bold uppercase tracking-wider border text-center cursor-pointer ${faceMode === 'photo' ? 'bg-cyan-500/20 border-cyan-400/40 text-cyan-200' : 'bg-slate-800 border-slate-700 text-slate-300'}`}
+            >
               Foto
               <input
                 type="file"
@@ -452,7 +499,13 @@ const DigitalTwinDashboard: React.FC = () => {
         <div className="border-b border-slate-800 p-4">
           <div className="max-w-2xl mx-auto rounded-2xl overflow-hidden border border-slate-800 bg-slate-900/70">
             {faceMode === 'webcam' ? (
-              <video ref={videoRef} autoPlay playsInline muted className="w-full h-56 object-cover" />
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-56 object-cover"
+              />
             ) : faceMode === 'photo' && facePhoto ? (
               <img src={facePhoto} alt="Tu rostro digital" className="w-full h-56 object-cover" />
             ) : (
@@ -472,7 +525,10 @@ const DigitalTwinDashboard: React.FC = () => {
           )}
 
           {messages.map((m, idx) => (
-            <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              key={idx}
+              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   m.role === 'user'
@@ -485,7 +541,9 @@ const DigitalTwinDashboard: React.FC = () => {
             </div>
           ))}
 
-          {isThinking && <p className="text-slate-500 text-sm animate-pulse">Procesando respuesta...</p>}
+          {isThinking && (
+            <p className="text-slate-500 text-sm animate-pulse">Procesando respuesta...</p>
+          )}
         </div>
 
         <div className="border-t border-slate-800 p-4 space-y-3">

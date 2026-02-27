@@ -1,4 +1,3 @@
-
 // firebaseConfig.ts
 // ---------------------------------------------------------------------------
 // Configuración de conexión a Firebase Services
@@ -22,5 +21,5 @@ export const firebaseConfig = {
   storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
   messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
   appId: getEnv('VITE_FIREBASE_APP_ID'),
-  measurementId: getEnv('VITE_FIREBASE_MEASUREMENT_ID')
+  measurementId: getEnv('VITE_FIREBASE_MEASUREMENT_ID'),
 };

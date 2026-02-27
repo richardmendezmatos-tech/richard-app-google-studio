@@ -12,44 +12,46 @@ import { TelemetryProvider } from '@/contexts/TelemetryContext';
 
 // --- Router Logic ---
 const SmartRouter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // Safe check for Capacitor
-    const win = window as Window & { Capacitor?: { isNative: boolean } };
-    const isNative = !!(win.Capacitor && win.Capacitor.isNative);
-    const Router = isNative ? HashRouter : BrowserRouter;
+  // Safe check for Capacitor
+  const win = window as Window & { Capacitor?: { isNative: boolean } };
+  const isNative = !!(win.Capacitor && win.Capacitor.isNative);
+  const Router = isNative ? HashRouter : BrowserRouter;
 
-    useEffect(() => {
-        console.log(`[SmartRouter] Active mode: ${isNative ? 'HashRouter (Native/Capacitor)' : 'BrowserRouter (Web)'}`);
-        // Initialize Google Analytics 4
-        const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
-        initGA(gaId);
-    }, [isNative]);
+  useEffect(() => {
+    console.log(
+      `[SmartRouter] Active mode: ${isNative ? 'HashRouter (Native/Capacitor)' : 'BrowserRouter (Web)'}`,
+    );
+    // Initialize Google Analytics 4
+    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+    initGA(gaId);
+  }, [isNative]);
 
-    return <Router>{children}</Router>;
+  return <Router>{children}</Router>;
 };
 
 interface AppProvidersProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
-    return (
-        <HelmetProvider>
-            <ThemeProvider>
-                <AuthProvider>
-                    <NotificationProvider>
-                        <PrivacyProvider>
-                            <ComparisonProvider>
-                                <TelemetryProvider>
-                                    <SmartRouter>
-                                        <MetaPixel />
-                                        {children}
-                                    </SmartRouter>
-                                </TelemetryProvider>
-                            </ComparisonProvider>
-                        </PrivacyProvider>
-                    </NotificationProvider>
-                </AuthProvider>
-            </ThemeProvider>
-        </HelmetProvider>
-    );
+  return (
+    <HelmetProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <PrivacyProvider>
+              <ComparisonProvider>
+                <TelemetryProvider>
+                  <SmartRouter>
+                    <MetaPixel />
+                    {children}
+                  </SmartRouter>
+                </TelemetryProvider>
+              </ComparisonProvider>
+            </PrivacyProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </HelmetProvider>
+  );
 };

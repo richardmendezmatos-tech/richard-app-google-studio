@@ -4,33 +4,33 @@ import ThemeToggle from './ThemeToggle';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 describe('ThemeToggle', () => {
-    afterEach(() => {
-        cleanup();
-    });
+  afterEach(() => {
+    cleanup();
+  });
 
-    it('renders without crashing', () => {
-        render(
-            <ThemeProvider>
-                <ThemeToggle />
-            </ThemeProvider>
-        );
+  it('renders without crashing', () => {
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>,
+    );
 
-        // Check if the button exists
-        const button = screen.getByRole('button');
-        expect(button).toBeInTheDocument();
-    });
+    // Check if the button exists
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+  });
 
-    it('toggles theme on click', () => {
-        render(
-            <ThemeProvider>
-                <ThemeToggle />
-            </ThemeProvider>
-        );
+  it('toggles theme on click', () => {
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>,
+    );
 
-        const button = screen.getByRole('button');
-        // Initial state (assuming light or system default, button should have label)
-        // We can just check that clicking it doesn't crash
-        fireEvent.click(button);
-        expect(button).toBeInTheDocument();
-    });
+    const button = screen.getByRole('button');
+    // Initial state (assuming light or system default, button should have label)
+    // We can just check that clicking it doesn't crash
+    fireEvent.click(button);
+    expect(button).toBeInTheDocument();
+  });
 });

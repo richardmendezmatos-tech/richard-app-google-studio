@@ -12,14 +12,23 @@ const ChatView: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Copilot Agent Hook (Replaces useChat)
-  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, addToolResult } = useCopilotAgent('main-chat', {
+  const {
+    messages,
+    setMessages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+    addToolResult,
+  } = useCopilotAgent('main-chat', {
     initialMessages: [
       {
         id: 'welcome',
         role: 'assistant',
-        content: '¡Hola! Soy tu consultor Richard IA. ¿En qué vehículo de Richard Automotive estás interesado hoy?'
-      }
-    ]
+        content:
+          '¡Hola! Soy tu consultor Richard IA. ¿En qué vehículo de Richard Automotive estás interesado hoy?',
+      },
+    ],
   });
 
   useEffect(() => {
@@ -32,8 +41,8 @@ const ChatView: React.FC = () => {
           {
             id: 'welcome-back',
             role: 'assistant',
-            content: `¡Bienvenido de nuevo! Veo que estuviste interesado en ${memory.history.slice(-1)[0]}. ¿Te gustaría continuar donde lo dejamos o ver algo nuevo?`
-          }
+            content: `¡Bienvenido de nuevo! Veo que estuviste interesado en ${memory.history.slice(-1)[0]}. ¿Te gustaría continuar donde lo dejamos o ver algo nuevo?`,
+          },
         ]);
       }
     };
@@ -55,12 +64,17 @@ const ChatView: React.FC = () => {
           <ShieldCheck size={20} className="text-cyan-400" />
         </div>
         <div>
-          <h3 className="text-xs font-black text-white uppercase tracking-widest">Richard IA: Asesor F&I</h3>
+          <h3 className="text-xs font-black text-white uppercase tracking-widest">
+            Richard IA: Asesor F&I
+          </h3>
           <p className="text-[10px] text-slate-500 font-medium">Conversación segura y encriptada</p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2 scrollbar-thin scrollbar-thumb-white/10" ref={scrollRef}>
+      <div
+        className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2 scrollbar-thin scrollbar-thumb-white/10"
+        ref={scrollRef}
+      >
         {messages.length === 1 && messages[0].id === 'welcome' && (
           <div className="flex flex-col items-center justify-center py-10 text-slate-500 space-y-4">
             <div className="p-5 bg-slate-800/30 rounded-full border border-white/5">
@@ -78,13 +92,20 @@ const ChatView: React.FC = () => {
                   <Bot size={14} className="text-cyan-400" />
                 </div>
               )}
-              <div className={`max-w-[85%] rounded-[24px] px-5 py-4 shadow-xl mb-1 ${m.role === 'user'
-                  ? 'bg-[#00aed9] text-white rounded-tr-none'
-                  : 'bg-[#131f2a] text-slate-100 rounded-tl-none border border-white/5'
-                }`}>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed font-medium">{m.content}</p>
+              <div
+                className={`max-w-[85%] rounded-[24px] px-5 py-4 shadow-xl mb-1 ${
+                  m.role === 'user'
+                    ? 'bg-[#00aed9] text-white rounded-tr-none'
+                    : 'bg-[#131f2a] text-slate-100 rounded-tl-none border border-white/5'
+                }`}
+              >
+                <p className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
+                  {m.content}
+                </p>
                 {m.role === 'user' && (
-                  <span className="text-[9px] opacity-40 mt-2 block text-right font-bold uppercase tracking-tighter">Enviado</span>
+                  <span className="text-[9px] opacity-40 mt-2 block text-right font-bold uppercase tracking-tighter">
+                    Enviado
+                  </span>
                 )}
               </div>
               {m.role === 'user' && (
@@ -103,11 +124,11 @@ const ChatView: React.FC = () => {
                   <div key={toolCallId} className="flex justify-start pl-10 pr-4">
                     <div className="w-full max-w-sm">
                       <ProgressiveForm
-                        type={args.type as unknown as "trade-in" | "income" | "credit"}
+                        type={args.type as unknown as 'trade-in' | 'income' | 'credit'}
                         onSubmit={(data: LeadInfoFormData) => {
                           addToolResult({
                             callId: toolCallId,
-                            result: data as unknown as Record<string, unknown>
+                            result: data as unknown as Record<string, unknown>,
                           });
                         }}
                       />
