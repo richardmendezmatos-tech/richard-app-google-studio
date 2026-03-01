@@ -1,5 +1,5 @@
 import { UnidadTradeIn, CotizacionFinanciera } from '../domain/TradeIn';
-import { LOAN_RULES } from '../../loans/domain/rules';
+import { REGLAS_FINANCIAMIENTO } from '../../loans/domain/rules';
 import { raSentinel } from '@/infra/monitoring/raSentinelService';
 
 /**
@@ -38,10 +38,10 @@ export class ProcesarTradeInFinanciado {
     // 2. Determinar Monto a Financiar
     const montoAFinanciar = precioUnidadNueva - equidadTradeIn - prontoCash;
 
-    // 3. Determinar APR sugerido
-    let apr = LOAN_RULES.MIN_APR;
-    if (creditScore < 700) apr = 7.95;
-    if (creditScore < 650) apr = 11.5;
+    // 3. Determinar APR sugerido (Alineado con Elegibilidad de Plenitud)
+    let apr = REGLAS_FINANCIAMIENTO.TASA_INTERES_MINIMA;
+    if (creditScore < REGLAS_FINANCIAMIENTO.PUNTUACION_CREDITO_ELITE) apr = 8.95;
+    if (creditScore < 680) apr = 12.5;
 
     // 4. Calcular Pago Mensual (Respetando promoción 0% APR)
     let pagoMensualEstimado = 0;
