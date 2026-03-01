@@ -14,6 +14,8 @@ import { IdentifyOutreachOpportunities } from '../../application/use-cases/Ident
 import { CalculateDynamicMargin } from '../../application/use-cases/CalculateDynamicMargin';
 import { FirestorePredictiveRepository } from '../repositories/FirestorePredictiveRepository';
 import { PredictiveScoringEngine } from '../services/PredictiveScoringEngine';
+import { EvaluarAprobacionVenta } from '../../features/loans/application/EvaluarAprobacionVenta';
+import { FirestoreLoanRepository } from '../../features/loans/infra/FirestoreLoanRepository';
 
 class DIContainer {
   private static instance: DIContainer;
@@ -28,6 +30,7 @@ class DIContainer {
   private surveyRepository = new FirestoreSurveyRepository();
   private houstonRepository = new FirestoreHoustonRepository();
   private predictiveRepository = new FirestorePredictiveRepository();
+  private loanRepository = new FirestoreLoanRepository();
 
   // Services
   private scoringEngine = new PredictiveScoringEngine();
@@ -46,6 +49,7 @@ class DIContainer {
     this.leadRepository,
   );
   private calculateDynamicMarginUseCase = new CalculateDynamicMargin();
+  private evaluarAprobacionVentaUseCase = new EvaluarAprobacionVenta(this.loanRepository);
 
   private constructor() {}
 
@@ -106,6 +110,10 @@ class DIContainer {
 
   public getPredictiveRepository() {
     return this.predictiveRepository;
+  }
+
+  public getEvaluarAprobacionVentaUseCase(): EvaluarAprobacionVenta {
+    return this.evaluarAprobacionVentaUseCase;
   }
 }
 

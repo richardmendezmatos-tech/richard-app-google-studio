@@ -70,9 +70,11 @@ const SentinelStatusBar = React.lazy(() =>
 );
 const InventoryProfitabilityWidget = React.lazy(() => import('./InventoryProfitabilityWidget'));
 const AdminInTakeView = React.lazy(() => import('./AdminInTakeView'));
+const QuickQualifyCard = React.lazy(() => import('@/features/loans/ui/QuickQualifyCard'));
 
 import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
 import { Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   inventory: CarType[];
@@ -380,392 +382,361 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
         {/* Navigation moved to Sidebar (Nivel 13 Restoration) */}
 
         {/* CONTENT AREA */}
-        <main className="animate-in fade-in zoom-in-95 duration-300 min-h-[600px]">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-24 lg:pt-8 bg-[#0b1116] relative z-0 hide-scrollbar overflow-x-hidden">
           <BrandErrorBoundary>
-            {activeTab === 'dashboard' && (
-              <div className="space-y-8">
-                <React.Suspense
-                  fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}
+            <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2">
-                      <MissionControlWidget />
-                    </div>
-                    <div className="lg:col-span-1">
-                      <InventoryProfitabilityWidget inventory={inventory} />
-                    </div>
-                  </div>
-                </React.Suspense>
-
-                {/* KPI WIDGETS ROW */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <StatusWidget
-                    icon={CarFront}
-                    label="Total Unidades"
-                    value={<CountUp end={inventory.length} prefix="" />}
-                    color="bg-blue-500 text-blue-500"
-                    subValue={inventory.length > 0 ? 'Actualizado' : 'Sin stock'}
-                  />
-                  <StatusWidget
-                    icon={BarChart3}
-                    label="Leads Activos"
-                    value={<CountUp end={leads.filter((l) => l.status === 'new').length} />}
-                    color="bg-emerald-500 text-emerald-500"
-                    subValue="Potenciales hoy"
-                  />
-                  <StatusWidget
-                    icon={Package}
-                    label="Valor Total"
-                    value={
-                      <CountUp
-                        end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)}
-                        prefix="$"
-                      />
-                    }
-                    color="bg-purple-500 text-purple-500"
-                    subValue="Estimado"
-                  />
-                  <StatusWidget
-                    icon={Search}
-                    label="Sistema"
-                    value="100%"
-                    color="bg-amber-500 text-amber-500"
-                    subValue={`v3.0 • ${deviceType}`}
-                  />
-                </div>
-
-                {/* QUICK ACCESS GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Digital Twin Card */}
-                  <div
-                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic"
-                    onClick={() => navigate('/digital-twin')}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
-                    <UserIcon
-                      className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500"
-                      size={40}
-                    />
-                    <h3 className="text-2xl font-black text-white uppercase mb-2">
-                      Gemelo Digital
-                    </h3>
-                    <p className="text-slate-400 text-sm mb-6">
-                      Crea contenido de marketing viral con tu avatar IA.
-                    </p>
-                    <div className="flex items-center gap-2 text-[#00aed9] font-black text-[10px] uppercase tracking-widest">
-                      Abrir Laboratorio <ArrowRight size={14} />
-                    </div>
-                  </div>
-
-                  {/* In-Take Card */}
-                  <div
-                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-emerald-500/20 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
-                    onClick={() => navigate('/admin/intake')}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
-                    <ShoppingBag
-                      className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-                      size={40}
-                    />
-                    <h3 className="text-2xl font-black text-white uppercase mb-2">
-                      In-Take Digital
-                    </h3>
-                    <p className="text-slate-400 text-sm mb-6">
-                      Recibe y evalúa nuevas unidades con IA.
-                    </p>
-                    <div className="flex items-center gap-2 text-emerald-500 font-black text-[10px] uppercase tracking-widest">
-                      Iniciar Protocolo <ArrowRight size={14} />
-                    </div>
-                  </div>
-
-                  {/* CRM Card */}
-                  <div
-                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-cyan-500/50 transition-all cursor-pointer hover-kinetic"
-                    onClick={() => navigate('/admin/pipeline')}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
-                    <Activity
-                      className="text-cyan-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-                      size={40}
-                    />
-                    <h3 className="text-2xl font-black text-white uppercase mb-2">Pipeline</h3>
-                    <p className="text-slate-400 text-sm mb-6">
-                      Gestiona tus oportunidades de venta activas.
-                    </p>
-                    <div className="flex items-center gap-2 text-cyan-500 font-black text-[10px] uppercase tracking-widest">
-                      Ver Embudo <ArrowRight size={14} />
-                    </div>
-                  </div>
-
-                  {/* Framework Lab Card */}
-                  <div
-                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic"
-                    onClick={() => navigate('/framework-lab')}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
-                    <Server
-                      className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-                      size={40}
-                    />
-                    <h3 className="text-2xl font-black text-white uppercase mb-2">Framework Lab</h3>
-                    <p className="text-slate-400 text-sm mb-6">
-                      Gestiona integraciones experimentales (Svelte, Astro).
-                    </p>
-                    <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-                      Configurar <div className="w-4 h-[1px] bg-purple-500" />
-                    </span>
-                  </div>
-
-                  {/* Analytics Card */}
-                  <div
-                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
-                    onClick={() => navigate('/admin/analytics')}
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
-                    <BarChart3
-                      className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-                      size={40}
-                    />
-                    <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>
-                    <p className="text-slate-400 text-sm mb-6">
-                      Mapa de calor de inventario y tendencias.
-                    </p>
-                    <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-                      Ver Datos <div className="w-4 h-[1px] bg-emerald-500" />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'analytics' && (
-              <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 shadow-xl border border-white/10">
-                <InventoryHeatmap inventory={inventory} />
-              </div>
-            )}
-
-            {activeTab === 'marketing' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
-                <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl space-y-6">
-                  <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
-                    <Sparkles size={20} /> Content Engine
-                  </div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                    Estrategia Semántica
-                  </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Richard IA utiliza búsqueda semántica para identificar qué modelos de tu
-                    inventario tienen más "momentum" basado en las consultas de los usuarios.
-                    Selecciona una unidad abajo para generar contenido viral.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {inventory.slice(0, 4).map((car) => (
-                      <button
-                        key={car.id}
-                        onClick={() => setMarketingCar(car)}
-                        className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
-                      >
-                        <img
-                          src={optimizeImage(car.img, 100)}
-                          alt={car.name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div>
-                          <div className="text-sm font-black text-white uppercase tracking-tight">
-                            {car.name}
-                          </div>
-                          <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">
-                            Planear Post ✨
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="lg:col-span-1 h-full space-y-6">
                   <React.Suspense
                     fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}
                   >
-                    <GapAnalyticsWidget />
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      <div className="lg:col-span-2">
+                        <MissionControlWidget />
+                      </div>
+                      <div className="lg:col-span-1 space-y-8">
+                        <QuickQualifyCard />
+                        <InventoryProfitabilityWidget inventory={inventory} />
+                      </div>
+                    </div>
                   </React.Suspense>
 
-                  {/* Subscribers Widget */}
-                  <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-hidden flex flex-col max-h-[400px]">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                          <UserIcon size={12} /> Newsroom Audience
-                        </div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tight">
-                          Suscriptores
-                        </h3>
-                      </div>
-                      <span className="text-2xl font-black text-white">{subscribers.length}</span>
-                    </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
-                      {subscribers.map((sub, i) => (
-                        <div
-                          key={sub.id || i}
-                          className="p-3 bg-slate-800/50 rounded-xl border border-white/5 flex flex-col"
-                        >
-                          <span className="text-xs font-bold text-white">{sub.email}</span>
-                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                            {sub.timestamp?.seconds
-                              ? new Date(sub.timestamp.seconds * 1000).toLocaleDateString()
-                              : 'Reciente'}
-                          </span>
-                        </div>
-                      ))}
-                      {subscribers.length === 0 && (
-                        <p className="text-xs text-slate-500 p-4 text-center italic">
-                          Sin suscriptores aún.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'pipeline' && (
-              <div className="h-[calc(100vh-350px)] min-h-[500px]">
-                <React.Suspense
-                  fallback={<div className="p-12 text-center text-slate-500">Cargando CRM...</div>}
-                >
-                  <CRMBoard />
-                </React.Suspense>
-              </div>
-            )}
-
-            {activeTab === 'copilot' && (
-              <div className="min-h-[600px]">
-                <React.Suspense
-                  fallback={
-                    <div className="p-12 text-center text-slate-500">Cargando Copilot...</div>
-                  }
-                >
-                  <SalesCopilot />
-                </React.Suspense>
-              </div>
-            )}
-
-            {activeTab === 'telemetry' && (
-              <React.Suspense
-                fallback={
-                  <div className="p-20 text-center animate-pulse text-slate-500 font-bold uppercase tracking-widest">
-                    Iniciando Puente IoT...
-                  </div>
-                }
-              >
-                <VehicleMonitor vehicleId="UNIT-001" />
-              </React.Suspense>
-            )}
-
-            {activeTab === 'security' && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-bold flex items-center gap-2 text-white">
-                      <Smartphone className="text-[#00aed9]" size={20} />
-                      Acceso Biométrico (Passkeys)
-                    </h3>
-                    <p className="text-slate-400 text-xs md:text-sm mt-1">
-                      Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o
-                      TouchID.
-                    </p>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      if (!auth.currentUser) return alert('Debes estar logueado.');
-                      try {
-                        const { registerPasskey } =
-                          await import('@/features/auth/services/authService');
-                        await registerPasskey(auth.currentUser);
-                        alert('✅ Dispositivo vinculado exitosamente.');
-                      } catch (err: unknown) {
-                        const error = err as { message: string };
-                        alert('Error: ' + error.message);
+                  {/* KPI WIDGETS ROW */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatusWidget
+                      icon={CarFront}
+                      label="Total Unidades"
+                      value={<CountUp end={inventory.length} prefix="" />}
+                      color="bg-blue-500 text-blue-500"
+                      subValue={inventory.length > 0 ? 'Actualizado' : 'Sin stock'}
+                    />
+                    <StatusWidget
+                      icon={BarChart3}
+                      label="Leads Activos"
+                      value={<CountUp end={leads.filter((l) => l.status === 'new').length} />}
+                      color="bg-emerald-500 text-emerald-500"
+                      subValue="Potenciales hoy"
+                    />
+                    <StatusWidget
+                      icon={Package}
+                      label="Valor Total"
+                      value={
+                        <CountUp
+                          end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)}
+                          prefix="$"
+                        />
                       }
-                    }}
-                    className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
-                  >
-                    <Smartphone size={16} /> Vincular Dispositivo
-                  </button>
-                </div>
+                      color="bg-purple-500 text-purple-500"
+                      subValue="Estimado"
+                    />
+                    <StatusWidget
+                      icon={Search}
+                      label="Sistema"
+                      value="100%"
+                      color="bg-amber-500 text-amber-500"
+                      subValue={`v3.0 • ${deviceType}`}
+                    />
+                  </div>
 
-                <div className="min-h-[600px]">
+                  {/* QUICK ACCESS GRID */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Digital Twin Card */}
+                    <div
+                      className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic"
+                      onClick={() => navigate('/digital-twin')}
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
+                      <UserIcon
+                        className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500"
+                        size={40}
+                      />
+                      <h3 className="text-2xl font-black text-white uppercase mb-2">
+                        Gemelo Digital
+                      </h3>
+                      <p className="text-slate-400 text-sm mb-6">
+                        Crea contenido de marketing viral con tu avatar IA.
+                      </p>
+                      <div className="flex items-center gap-2 text-[#00aed9] font-black text-[10px] uppercase tracking-widest">
+                        Abrir Laboratorio <ArrowRight size={14} />
+                      </div>
+                    </div>
+
+                    {/* In-Take Card */}
+                    <div
+                      className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-emerald-500/20 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
+                      onClick={() => navigate('/admin/intake')}
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+                      <ShoppingBag
+                        className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                        size={40}
+                      />
+                      <h3 className="text-2xl font-black text-white uppercase mb-2">
+                        In-Take Digital
+                      </h3>
+                      <p className="text-slate-400 text-sm mb-6">
+                        Recibe y evalúa nuevas unidades con IA.
+                      </p>
+                      <div className="flex items-center gap-2 text-emerald-500 font-black text-[10px] uppercase tracking-widest">
+                        Iniciar Protocolo <ArrowRight size={14} />
+                      </div>
+                    </div>
+
+                    {/* CRM Card */}
+                    <div
+                      className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-cyan-500/50 transition-all cursor-pointer hover-kinetic"
+                      onClick={() => navigate('/admin/pipeline')}
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
+                      <Activity
+                        className="text-cyan-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                        size={40}
+                      />
+                      <h3 className="text-2xl font-black text-white uppercase mb-2">Pipeline</h3>
+                      <p className="text-slate-400 text-sm mb-6">
+                        Gestiona tus oportunidades de venta activas.
+                      </p>
+                      <div className="flex items-center gap-2 text-cyan-500 font-black text-[10px] uppercase tracking-widest">
+                        Ver Embudo <ArrowRight size={14} />
+                      </div>
+                    </div>
+
+                    {/* Framework Lab Card */}
+                    <div
+                      className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic"
+                      onClick={() => navigate('/framework-lab')}
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
+                      <Server
+                        className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                        size={40}
+                      />
+                      <h3 className="text-2xl font-black text-white uppercase mb-2">
+                        Framework Lab
+                      </h3>
+                      <p className="text-slate-400 text-sm mb-6">
+                        Gestiona integraciones experimentales (Svelte, Astro).
+                      </p>
+                      <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
+                        Configurar <div className="w-4 h-[1px] bg-purple-500" />
+                      </span>
+                    </div>
+
+                    {/* Analytics Card */}
+                    <div
+                      className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
+                      onClick={() => navigate('/admin/analytics')}
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+                      <BarChart3
+                        className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                        size={40}
+                      />
+                      <h3 className="text-2xl font-black text-white uppercase mb-2">
+                        Analytics Pro
+                      </h3>
+                      <p className="text-slate-400 text-sm mb-6">
+                        Mapa de calor de inventario y tendencias.
+                      </p>
+                      <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
+                        Ver Datos <div className="w-4 h-[1px] bg-emerald-500" />
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'analytics' && (
+                <motion.div
+                  key="analytics"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 shadow-xl border border-white/10"
+                >
+                  <InventoryHeatmap inventory={inventory} />
+                </motion.div>
+              )}
+
+              {activeTab === 'marketing' && (
+                <motion.div
+                  key="marketing"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]"
+                >
+                  <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl space-y-6">
+                    <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
+                      <Sparkles size={20} /> Content Engine
+                    </div>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                      Estrategia Semántica
+                    </h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      Richard IA utiliza búsqueda semántica para identificar qué modelos de tu
+                      inventario tienen más "momentum" basado en las consultas de los usuarios.
+                      Selecciona una unidad abajo para generar contenido viral.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {inventory.slice(0, 4).map((car) => (
+                        <button
+                          key={car.id}
+                          onClick={() => setMarketingCar(car)}
+                          className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
+                        >
+                          <img
+                            src={optimizeImage(car.img, 100)}
+                            alt={car.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                          <div>
+                            <div className="text-sm font-black text-white uppercase tracking-tight">
+                              {car.name}
+                            </div>
+                            <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">
+                              Planear Post ✨
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                      <p className="text-slate-400 text-xs md:text-sm mt-1">
+                        Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o
+                        TouchID.
+                      </p>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        if (!auth.currentUser) return alert('Debes estar logueado.');
+                        try {
+                          const { registerPasskey } =
+                            await import('@/features/auth/services/authService');
+                          await registerPasskey(auth.currentUser);
+                          alert('✅ Dispositivo vinculado exitosamente.');
+                        } catch (err: unknown) {
+                          const error = err as { message: string };
+                          alert('Error: ' + error.message);
+                        }
+                      }}
+                      className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+                    >
+                      <Smartphone size={16} /> Vincular Dispositivo
+                    </button>
+                  </div>
+
+                  <div className="min-h-[600px]">
+                    <React.Suspense
+                      fallback={
+                        <div className="p-12 text-center text-slate-500">Cargando auditoria...</div>
+                      }
+                    >
+                      <AuditLogViewer />
+                    </React.Suspense>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'billing' && (
+                <motion.div
+                  key="billing"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="min-h-[600px]"
+                >
                   <React.Suspense
                     fallback={
-                      <div className="p-12 text-center text-slate-500">Cargando auditoria...</div>
+                      <div className="p-12 text-center text-slate-500">Cargando facturacion...</div>
                     }
                   >
-                    <AuditLogViewer />
+                    <B2BBillingDashboard />
                   </React.Suspense>
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
 
-            {activeTab === 'billing' && (
-              <div className="min-h-[600px]">
-                <React.Suspense
-                  fallback={
-                    <div className="p-12 text-center text-slate-500">Cargando facturacion...</div>
-                  }
+              {activeTab === 'lab' && (
+                <motion.div
+                  key="lab"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="min-h-[600px] border border-white/10 rounded-[2rem] overflow-hidden bg-slate-900"
                 >
-                  <B2BBillingDashboard />
-                </React.Suspense>
-              </div>
-            )}
+                  <React.Suspense
+                    fallback={<div className="p-10 text-center">Cargando Laboratorio...</div>}
+                  >
+                    <AILabView />
+                  </React.Suspense>
+                </motion.div>
+              )}
 
-            {activeTab === 'lab' && (
-              <div className="min-h-[600px] border border-white/10 rounded-[2rem] overflow-hidden bg-slate-900">
-                <React.Suspense
-                  fallback={<div className="p-10 text-center">Cargando Laboratorio...</div>}
+              {activeTab === 'intake' && (
+                <motion.div
+                  key="intake"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <AILabView />
-                </React.Suspense>
-              </div>
-            )}
+                  <React.Suspense
+                    fallback={
+                      <div className="p-12 text-center text-slate-500 animate-pulse">
+                        Iniciando Protocolo de Recepción Digital...
+                      </div>
+                    }
+                  >
+                    <AdminInTakeView />
+                  </React.Suspense>
+                </motion.div>
+              )}
 
-            {activeTab === 'intake' && (
-              <React.Suspense
-                fallback={
-                  <div className="p-12 text-center text-slate-500 animate-pulse">
-                    Iniciando Protocolo de Recepción Digital...
-                  </div>
-                }
-              >
-                <AdminInTakeView />
-              </React.Suspense>
-            )}
-
-            {activeTab === 'inventory' && (
-              <React.Suspense
-                fallback={
-                  <div className="p-12 text-center text-slate-500">Cargando inventario...</div>
-                }
-              >
-                <AdminInventoryTab
-                  inventory={inventory}
-                  leads={leads}
-                  onDelete={onDelete}
-                  onCreateNew={() => {
-                    setEditingCar(null);
-                    setIsModalOpen(true);
-                  }}
-                  onEdit={(car) => {
-                    setEditingCar(car);
-                    setIsModalOpen(true);
-                  }}
-                  onPlanContent={(car) => setViralCar(car)}
-                  onInitializeDb={onInitializeDb}
-                  handleInitClick={handleInitClick}
-                  isInitializing={isInitializing}
-                />
-              </React.Suspense>
-            )}
+              {activeTab === 'inventory' && (
+                <motion.div
+                  key="inventory"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <React.Suspense
+                    fallback={
+                      <div className="p-12 text-center text-slate-500">Cargando inventario...</div>
+                    }
+                  >
+                    <AdminInventoryTab
+                      inventory={inventory}
+                      leads={leads}
+                      onDelete={onDelete}
+                      onCreateNew={() => {
+                        setEditingCar(null);
+                        setIsModalOpen(true);
+                      }}
+                      onEdit={(car) => {
+                        setEditingCar(car);
+                        setIsModalOpen(true);
+                      }}
+                      onPlanContent={(car) => setViralCar(car)}
+                      onInitializeDb={onInitializeDb}
+                      handleInitClick={handleInitClick}
+                      isInitializing={isInitializing}
+                    />
+                  </React.Suspense>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </BrandErrorBoundary>
-        </main>
+        </div>
       </div>
 
       {/* MODAL EDITOR */}

@@ -1,12 +1,13 @@
-import React from 'react';
-import ComparisonBar from '@/features/inventory/ui/ComparisonBar';
+import React, { Suspense } from 'react';
 import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
 import { CinemaLayout } from '@/components/layout/CinemaLayout';
 import { AnimatedRoutes } from '@/components/AnimatedRoutes';
 
 import { AppProviders } from '@/components/providers/AppProviders';
 import { useAppController } from '@/hooks/useAppController';
-import PrivacyBanner from '@/features/privacy/components/PrivacyBanner';
+
+const ComparisonBar = React.lazy(() => import('@/features/inventory/ui/ComparisonBar'));
+const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner'));
 
 const RichardAutomotiveApp: React.FC = () => {
   const {
@@ -32,9 +33,11 @@ const RichardAutomotiveApp: React.FC = () => {
           handleDelete={handleDelete}
         />
 
-        {/* Global Overlays */}
-        <ComparisonBar />
-        <PrivacyBanner />
+        {/* Global Overlays lazy-loaded para agilizar TTI */}
+        <Suspense fallback={null}>
+          <ComparisonBar />
+          <PrivacyBanner />
+        </Suspense>
       </CinemaLayout>
     </BrandErrorBoundary>
   );
