@@ -5,6 +5,12 @@ export interface Prestamo {
   apr: number;
   terminoMeses: number;
   estado: 'pendiente' | 'aprobado' | 'rechazado' | 'desembolsado';
+  puntuacionCredito?: number;
+  ingresosMensuales?: number;
+  seguroSocial?: string;
+  telefono?: string;
+  resultadoAprobacion?: ResultadoAprobacion;
+  valorTradeIn?: number;
   fechaCreacion: Date;
   metadata?: Record<string, any>;
 }
@@ -15,6 +21,9 @@ export interface SolicitudPrestamo {
   puntuacionCredito: number;
   montoSolicitado: number;
   precioUnidad: number;
+  valorTradeIn?: number;
+  seguroSocial: string;
+  telefono: string;
 }
 
 export interface ResultadoAprobacion {

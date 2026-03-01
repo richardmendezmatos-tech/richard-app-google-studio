@@ -1,12 +1,17 @@
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
 import { REGLAS_FINANCIAMIENTO } from '../domain/rules';
+import { FirestoreLoanRepository } from '../infra/FirestoreLoanRepository';
+import { getFunctionsService } from '@/services/firebaseService';
+import { httpsCallable } from 'firebase/functions';
 
 /**
  * Caso de Uso: Evaluar Aprobacion de Venta
  * Enfocado en generar 'Power' y cierre para Richard Automotive.
  */
 export class EvaluarAprobacionVenta {
-  execute(solicitud: SolicitudPrestamo): ResultadoAprobacion {
+  constructor(private readonly loanRepository?: FirestoreLoanRepository) {}
+
+  async execute(solicitud: SolicitudPrestamo): Promise<ResultadoAprobacion> {
     // 1. Validar Puntuación de Crédito
     if (solicitud.puntuacionCredito < REGLAS_FINANCIAMIENTO.PUNTUACION_CREDITO_MINIMA) {
       return {
@@ -50,13 +55,55 @@ export class EvaluarAprobacionVenta {
         '¡Aprobación Lista! Estás a un paso de estrenar. Finalicemos los detalles del contrato.';
     }
 
-    return {
+    const resultado: ResultadoAprobacion = {
       esElegible: true,
       perfil,
       aprSugerido,
       mensajeVenta,
     };
+
+    // Persistir el intento de forma asíncrona (fire-and-forget seguro delegando al repo)
+    if (this.loanRepository && resultado.esElegible) {
+      this.loanRepository
+        .save({
+          solicitanteId: solicitud.nombreSolicitante,
+          seguroSocial: solicitud.seguroSocial,
+          telefono: solicitud.telefono,
+          monto: solicitud.montoSolicitado,
+          apr: aprSugerido,
+          terminoMeses: 60,
+          estado: 'aprobado',
+          puntuacionCredito: solicitud.puntuacionCredito,
+          ingresosMensuales: solicitud.ingresosMensuales,
+          resultadoAprobacion: resultado,
+          metadata: {
+            valorTradeIn: solicitud.valorTradeIn,
+            precioUnidad: solicitud.precioUnidad,
+          },
+        })
+        .then(async () => {
+          // Enviar Notificación SMS a través de Firebase Functions de forma Asíncrona
+          try {
+            const functionsService = await getFunctionsService();
+            if (functionsService) {
+              const sendSmsLead = httpsCallable(functionsService, 'sendSmsLead');
+              sendSmsLead({
+                toParams: {
+                  phone: solicitud.telefono,
+                  clientName: solicitud.nombreSolicitante,
+                  vehicleDesc: `vehículo (${solicitud.precioUnidad})`,
+                },
+              }).catch((e) => console.error('Error enviando SMS de Lead [Twilio]:', e));
+            }
+          } catch (error) {
+            console.error('Error invocando Twilio:', error);
+          }
+        })
+        .catch(() => {
+          // Silently fail to keep use case pure and separate from IO failures
+        });
+    }
+
+    return resultado;
   }
 }
-
-export const evaluarAprobacionVenta = new EvaluarAprobacionVenta();
