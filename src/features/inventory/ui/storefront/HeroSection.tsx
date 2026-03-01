@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface HeroSectionProps {
@@ -55,12 +56,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   /* ── Headline carousel ── */
   useEffect(() => {
     const iv = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setIdx((p) => (p + 1) % HEADLINES.length);
-        setVisible(true);
-      }, 450);
-    }, 6500);
+      setIdx((p) => (p + 1) % HEADLINES.length);
+    }, 7000);
     return () => clearInterval(iv);
   }, []);
 
@@ -101,7 +98,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="ra-hero__grid-line ra-hero__grid-line--v2" />
         <div className="ra-hero__grid-line ra-hero__grid-line--h1" />
 
-        {/* Glowing orbs */}
+        {/* Glowing orbs & Mesh */}
+        <div className="absolute inset-0 mesh-bg-elite z-[1]" />
         <div className="ra-hero__orb ra-hero__orb--tl" />
         <div className="ra-hero__orb ra-hero__orb--br" />
 
@@ -125,18 +123,36 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <span className="ra-hero__badge-eyebrow">{h.eyebrow}</span>
           </div>
 
-          {/* Headline */}
-          <div
-            className={`ra-hero__headline ${visible ? 'ra-hero__headline--in' : 'ra-hero__headline--out'}`}
-          >
-            <span className="ra-hero__line ra-hero__line--1">{h.line1}</span>
-            <span className="ra-hero__line ra-hero__line--2">{h.line2}</span>
-            <span className="ra-hero__line ra-hero__line--accent">{h.accent}</span>
+          {/* Headline with Motion */}
+          <div className="ra-hero__headline h-[18rem] md:h-[22rem] lg:h-[28rem]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30, skewY: 2 }}
+                animate={{ opacity: 1, y: 0, skewY: 0 }}
+                exit={{ opacity: 0, y: -30, skewY: -2 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col"
+              >
+                <span className="ra-hero__line ra-hero__line--1 text-gradient-cyan">{h.line1}</span>
+                <span className="ra-hero__line ra-hero__line--2">{h.line2}</span>
+                <span className="ra-hero__line ra-hero__line--accent">{h.accent}</span>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          <p className={`ra-hero__sub ${visible ? 'ra-hero__sub--in' : 'ra-hero__sub--out'}`}>
-            {h.sub}
-          </p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={idx}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="ra-hero__sub"
+            >
+              {h.sub}
+            </motion.p>
+          </AnimatePresence>
 
           {/* Trust pills */}
           <div className="ra-hero__pills">
@@ -404,7 +420,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 .ra-hero__line--accent {
                     animation-delay: 0.14s;
                     color: transparent;
-                    -webkit-text-stroke: 2px rgba(0,210,255,0.75);
+                    -webkit-text-stroke: 1.5px rgba(0,210,255,0.6);
                 }
                 @keyframes line-in {
                     from { opacity: 0; transform: translateX(-24px) skewX(-4deg); }

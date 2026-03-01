@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { voiceService } from '@/services/voiceService';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const VoiceOrb: React.FC = () => {
+const VoiceOrb: React.FC = React.memo(() => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
 
@@ -31,13 +31,34 @@ const VoiceOrb: React.FC = () => {
           className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 pointer-events-none"
         >
           {/* The Orb */}
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 blur-md animate-pulse"></div>
-            <div className="absolute inset-0 w-16 h-16 rounded-full border-2 border-cyan-200 opacity-50 animate-ping"></div>
+          <motion.div
+            className="relative"
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#00aed9] to-[#01e0c6] blur-md opacity-80"></div>
+            <motion.div
+              className="absolute inset-0 w-16 h-16 rounded-full border-2 border-[#00aed9]"
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.5, 0, 0.5],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: 'easeOut',
+              }}
+            ></motion.div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]"></div>
+              <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.8)]"></div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Transcript or Prompt */}
           <motion.div
@@ -53,6 +74,8 @@ const VoiceOrb: React.FC = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+VoiceOrb.displayName = 'VoiceOrb';
 
 export default VoiceOrb;

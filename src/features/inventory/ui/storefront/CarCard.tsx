@@ -14,7 +14,7 @@ interface CarCardProps {
   onToggleSave: (e: React.MouseEvent) => void;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car, isSaved, onToggleSave }) => {
+const CarCard: React.FC<CarCardProps> = React.memo(({ car, isSaved, onToggleSave }) => {
   const navigate = useNavigate();
   const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
 
@@ -131,6 +131,8 @@ const CarCard: React.FC<CarCardProps> = ({ car, isSaved, onToggleSave }) => {
       </div>
     </div>
   );
-};
+});
+
+CarCard.displayName = 'CarCard';
 
 export default CarCard;

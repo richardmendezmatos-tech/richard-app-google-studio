@@ -260,7 +260,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
 
           {/* Search & Filters & Sort */}
           <section id="inventory-grid" aria-labelledby="inventory-heading" className="scroll-mt-32">
-            <div className="sticky top-2 z-30 rounded-[1.8rem] border border-cyan-100/20 bg-[linear-gradient(150deg,rgba(7,18,30,0.94),rgba(5,13,22,0.9))] px-4 py-4 shadow-[0_30px_80px_-44px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 sm:rounded-[2.2rem] sm:py-5 md:top-4 md:px-6">
+            <div className="sticky top-2 z-30 glass-premium px-4 py-4 md:top-4 md:px-6">
               <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
                 <p className="font-tech text-[11px] uppercase tracking-[0.24em] text-cyan-200">
                   Inventario Inteligente
@@ -696,9 +696,7 @@ const PulseCard = ({
   };
 
   return (
-    <div
-      className={`rounded-3xl border p-5 shadow-[0_20px_40px_-28px_rgba(0,0,0,0.95)] ${toneStyles[tone]}`}
-    >
+    <div className={`glass-premium p-6 ${toneStyles[tone]}`}>
       <div className="mb-3 inline-flex rounded-xl border border-white/20 bg-black/20 p-2.5">
         {icon}
       </div>
