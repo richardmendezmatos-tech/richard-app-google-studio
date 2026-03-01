@@ -23,6 +23,7 @@ export { verifyGoogleToken } from './googleOneTap';
 
 export { saveFiProgress } from './webhooks/notionWebhook';
 export { sendSmsLead } from './webhooks/twilioWebhook';
+export { onWhatsAppMessage } from './triggers/whatsappWebhook';
 
 import { transcribeVoiceFlow } from './voiceTranscription';
 export { transcribeVoiceFlow };
