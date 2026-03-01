@@ -27,7 +27,7 @@ export const SITE_CONFIG: SiteConfig = {
   domain: 'richard-automotive.com',
   url: 'https://www.richard-automotive.com',
   description:
-    'Autos seminuevos certificados en Puerto Rico. Financiamiento disponible, trade-in, y la mejor selección de SUVs, sedanes y pickups.',
+    'Tu próximo nivel en movilidad comienza aquí. Autos seminuevos certificados en Puerto Rico con financiamiento inteligente y selección curada con IA.',
   social: {
     facebook: 'https://www.facebook.com/richardautomotive1',
     instagram: 'https://www.instagram.com/richardoneal_/',

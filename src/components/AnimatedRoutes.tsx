@@ -14,7 +14,7 @@ interface StorefrontProps {
   onOpenGarage: () => void;
 }
 const Storefront = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory/components/Storefront')),
+  lazyRetry(() => import('@/features/inventory/ui/Storefront')),
 ) as unknown as React.ComponentType<StorefrontProps>;
 interface AdminPanelProps {
   inventory: Car[];
@@ -41,7 +41,7 @@ interface VehicleDetailProps {
   inventory: Car[];
 }
 const VehicleDetail = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory/components/VehicleDetail')),
+  lazyRetry(() => import('@/features/inventory/ui/VehicleDetail')),
 ) as unknown as React.ComponentType<VehicleDetailProps>;
 const TradeInView = React.lazy(() =>
   lazyRetry(() => import('@/features/leads/components/TradeInView')),
@@ -50,7 +50,7 @@ const AppraisalView = React.lazy(() =>
   lazyRetry(() => import('@/features/leads/components/AppraisalView')),
 );
 const ComparisonView = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory/components/ComparisonView')),
+  lazyRetry(() => import('@/features/inventory/ui/ComparisonView')),
 );
 const AdminLogin = React.lazy(() =>
   lazyRetry(() => import('@/features/auth/components/AdminLogin')),
@@ -95,7 +95,7 @@ const HoustonDashboard = React.lazy(() =>
 );
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/components/layout/ChaosTest')));
 const LocalClusterView = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory/components/storefront/LocalClusterView')),
+  lazyRetry(() => import('@/features/inventory/ui/storefront/LocalClusterView')),
 );
 const VoiceAssistantView = React.lazy(() =>
   lazyRetry(() => import('@/components/layout/VoiceAssistantView')),

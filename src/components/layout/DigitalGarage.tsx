@@ -14,7 +14,7 @@ import {
   ScanFace,
   Lock,
 } from 'lucide-react';
-import CarCard from '@/features/inventory/components/storefront/CarCard';
+import CarCard from '@/features/inventory/ui/storefront/CarCard';
 import PhotoAppraisal from '@/features/garage/components/PhotoAppraisal';
 
 interface Props {

@@ -7,10 +7,10 @@ import { generateCarPitch } from '@/services/geminiService';
 import { useDealer } from '@/contexts/DealerContext';
 import { logIntentSignal } from '@/services/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import DealBuilder from '@/features/inventory/components/deal/DealBuilder';
+import DealBuilder from '@/features/inventory/ui/deal/DealBuilder';
 import SEO from '@/components/seo/SEO';
 import { SITE_CONFIG } from '@/constants/siteConfig';
-import Viewer360 from '@/features/inventory/components/common/Viewer360';
+import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
 import { ProgressRing } from '@/components/common/ProgressRing';
 

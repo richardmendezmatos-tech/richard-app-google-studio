@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Car } from '@/types/types';
 import { AGENTS, detectIntent, AgentPersona } from '@/services/agentSystem';
 import { useCopilotAgent } from '@/hooks/useCopilotAgent';
+import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import {
   MessageSquare,
   X,
@@ -98,14 +99,22 @@ const AIChatWidget: React.FC<Props> = () => {
     },
   );
 
-  // Voice State
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<null | { stop: () => void }>(null);
+  const {
+    isListening,
+    toggleListening: toggleVoiceParams,
+    isLoading: isLoadingVoice,
+  } = useVoiceRecognition({
+    onResult: (transcript) => {
+      setInput(transcript);
+      handleFormSubmit(null, transcript, true);
+    },
+    lang: 'es-US',
+  });
+
   const autoSpeakRef = useRef(false);
 
   useEffect(() => {
     return () => {
-      if (recognitionRef.current) recognitionRef.current.stop();
       window.speechSynthesis.cancel();
     };
   }, []);
@@ -117,30 +126,6 @@ const AIChatWidget: React.FC<Props> = () => {
     utterance.rate = 1.1;
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
-  };
-
-  const toggleVoiceParams = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
-    // @ts-expect-error - webkitSpeechRecognition is not standard
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert('Voz no soportada.');
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
-    recognition.onresult = (event: { results: { transcript: string }[][] }) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      handleFormSubmit(null, transcript, true);
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-    recognitionRef.current = recognition;
-    setIsListening(true);
-    recognition.start();
   };
 
   useEffect(() => {
@@ -335,11 +320,13 @@ const AIChatWidget: React.FC<Props> = () => {
               </div>
             ))}
 
-            {isLoading && !messages[messages.length - 1].content && (
+            {(isLoading || isLoadingVoice) && !messages[messages.length - 1].content && (
               <div className="flex justify-start animate-in fade-in">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[9px] text-slate-400 ml-2 animate-pulse">
-                    {activeAgent.name} está pensando...
+                  <span className="text-[9px] text-slate-400 ml-2 animate-pulse font-bold uppercase tracking-wider">
+                    {isLoadingVoice
+                      ? '✨ Transcribiendo voz con IA...'
+                      : `${activeAgent.name} está pensando...`}
                   </span>
                   <div className="bg-white dark:bg-slate-800 px-4 py-3 rounded-[20px] rounded-bl-sm border border-slate-100 dark:border-slate-700 flex gap-1.5 items-center">
                     <div className="w-1.5 h-1.5 bg-[#00aed9] rounded-full animate-bounce" />
@@ -375,6 +362,7 @@ const AIChatWidget: React.FC<Props> = () => {
             <form onSubmit={handleFormSubmit} className="relative flex items-center gap-2">
               <input
                 type="text"
+                data-testid="chat-input"
                 className="w-full bg-slate-100 dark:bg-slate-900 rounded-full py-3.5 pl-5 pr-12 text-sm font-medium text-slate-900 dark:text-white border border-transparent focus:border-[#00aed9] focus:bg-white dark:focus:bg-slate-900 focus:ring-0 outline-none transition-all shadow-inner"
                 placeholder={`Hablar con ${activeAgent.name}...`}
                 value={input}
@@ -391,9 +379,22 @@ const AIChatWidget: React.FC<Props> = () => {
               <button
                 type="button"
                 onClick={toggleVoiceParams}
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md ${isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-[#00aed9]'}`}
+                disabled={isLoadingVoice}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md ${
+                  isListening
+                    ? 'bg-red-500 text-white animate-pulse'
+                    : isLoadingVoice
+                      ? 'bg-[#00aed9] text-white animate-spin-slow'
+                      : 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-[#00aed9]'
+                }`}
               >
-                {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                {isLoadingVoice ? (
+                  <RefreshCw size={16} className="animate-spin" />
+                ) : isListening ? (
+                  <MicOff size={16} />
+                ) : (
+                  <Mic size={16} />
+                )}
               </button>
             </form>
 
@@ -409,6 +410,7 @@ const AIChatWidget: React.FC<Props> = () => {
       )}
 
       <button
+        id="chat-trigger"
         onClick={() => {
           const nextState = !isOpen;
           setIsOpen(nextState);

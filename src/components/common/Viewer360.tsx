@@ -5,4 +5,4 @@
  * DRY: La versión con AI Digital Scan, animejs y métricas vive en features/inventory.
  * Este archivo es el punto de entrada para quien importe desde src/components/common.
  */
-export { default } from '@/features/inventory/components/common/Viewer360';
+export { default } from '@/features/inventory/ui/common/Viewer360';

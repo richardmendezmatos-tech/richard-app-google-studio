@@ -122,32 +122,34 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
   // Else: Use 'serverCars' (Server-side Pagination)
   const isSearching = !!searchTerm || !!visualContext;
 
-  // Client-Side filtering (Legacy logic, used when searching)
-  const filteredAndSorted = inventory
-    .filter((c) => {
-      // If we have semantic matches, restrict to those IDs
-      if (semanticResultIds.length > 0) {
-        return semanticResultIds.includes(c.id);
-      }
+  // Client-Side filtering (Memoized for performance)
+  const filteredAndSorted = useMemo(() => {
+    return inventory
+      .filter((c) => {
+        // If we have semantic matches, restrict to those IDs
+        if (semanticResultIds.length > 0) {
+          return semanticResultIds.includes(c.id);
+        }
 
-      let matchesSearch = true;
-      if (visualContext) {
-        matchesSearch =
-          (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (visualContext || '').toLowerCase().includes(c.type || '') ||
-          c.type.includes(visualContext.split(' ')[0] || '');
-      } else {
-        matchesSearch = (c.name || '').toLowerCase().includes(searchTerm.toLowerCase());
-      }
-      const matchesType = filter === 'all' || c.type === filter;
+        let matchesSearch = true;
+        if (visualContext) {
+          matchesSearch =
+            (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (visualContext || '').toLowerCase().includes(c.type || '') ||
+            c.type.includes(visualContext.split(' ')[0] || '');
+        } else {
+          matchesSearch = (c.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        const matchesType = filter === 'all' || c.type === filter;
 
-      return matchesSearch && matchesType;
-    })
-    .sort((a, b) => {
-      if (sortOrder === 'asc') return a.price - b.price;
-      if (sortOrder === 'desc') return b.price - a.price;
-      return 0;
-    });
+        return matchesSearch && matchesType;
+      })
+      .sort((a, b) => {
+        if (sortOrder === 'asc') return a.price - b.price;
+        if (sortOrder === 'desc') return b.price - a.price;
+        return 0;
+      });
+  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory]);
 
   // Final list to display
   const displayCars = isSearching ? filteredAndSorted : serverCars;
