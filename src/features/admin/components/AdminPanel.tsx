@@ -22,6 +22,9 @@ import {
   Scale,
   FlaskConical,
   Radio,
+  ArrowRight,
+  ShoppingBag,
+  Activity,
 } from 'lucide-react';
 import { getLeadsOnce, auth, getSubscribers } from '@/services/firebaseService';
 import { optimizeImage } from '@/services/firebaseShared';
@@ -31,7 +34,7 @@ import { useAntigravity } from '@/hooks/useAntigravity';
 
 import { GetLeads } from '../../../application/use-cases/GetLeads';
 import { FirestoreLeadRepository } from '../../../infra/repositories/FirestoreLeadRepository';
-import { InventoryHeatmap } from '@/features/inventory/components/InventoryHeatmap';
+import { InventoryHeatmap } from '@/features/inventory/ui/InventoryHeatmap';
 import { useMouseGlow } from '@/hooks/useMouseGlow';
 // import { useReactToPrint } from 'react-to-print'; // Removed
 // import DealSheet from './DealSheet'; // Deprecated in favor of jsPDF
@@ -65,6 +68,9 @@ const MissionControlWidget = React.lazy(() => import('./MissionControlWidget'));
 const SentinelStatusBar = React.lazy(() =>
   import('./SentinelStatusBar').then((m) => ({ default: m.SentinelStatusBar })),
 );
+const InventoryProfitabilityWidget = React.lazy(() => import('./InventoryProfitabilityWidget'));
+const AdminInTakeView = React.lazy(() => import('./AdminInTakeView'));
+
 import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
 import { Suspense } from 'react';
 
@@ -171,6 +177,8 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
     if (path.endsWith('/billing')) return 'billing';
     if (path.endsWith('/lab')) return 'lab';
     if (path.endsWith('/telemetry')) return 'telemetry';
+    if (path.endsWith('/intake')) return 'intake';
+
     return 'dashboard';
   };
   const activeTab = getActiveTab();
@@ -379,14 +387,21 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                 <React.Suspense
                   fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}
                 >
-                  <MissionControlWidget />
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2">
+                      <MissionControlWidget />
+                    </div>
+                    <div className="lg:col-span-1">
+                      <InventoryProfitabilityWidget inventory={inventory} />
+                    </div>
+                  </div>
                 </React.Suspense>
 
                 {/* KPI WIDGETS ROW */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <StatusWidget
                     icon={CarFront}
-                    label="Total Inventario"
+                    label="Total Unidades"
                     value={<CountUp end={inventory.length} prefix="" />}
                     color="bg-blue-500 text-blue-500"
                     subValue={inventory.length > 0 ? 'Actualizado' : 'Sin stock'}
@@ -437,9 +452,49 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                     <p className="text-slate-400 text-sm mb-6">
                       Crea contenido de marketing viral con tu avatar IA.
                     </p>
-                    <span className="text-xs font-bold text-[#00aed9] uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-                      Ingresar <div className="w-4 h-[1px] bg-[#00aed9]" />
-                    </span>
+                    <div className="flex items-center gap-2 text-[#00aed9] font-black text-[10px] uppercase tracking-widest">
+                      Abrir Laboratorio <ArrowRight size={14} />
+                    </div>
+                  </div>
+
+                  {/* In-Take Card */}
+                  <div
+                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-emerald-500/20 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
+                    onClick={() => navigate('/admin/intake')}
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+                    <ShoppingBag
+                      className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                      size={40}
+                    />
+                    <h3 className="text-2xl font-black text-white uppercase mb-2">
+                      In-Take Digital
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-6">
+                      Recibe y evalúa nuevas unidades con IA.
+                    </p>
+                    <div className="flex items-center gap-2 text-emerald-500 font-black text-[10px] uppercase tracking-widest">
+                      Iniciar Protocolo <ArrowRight size={14} />
+                    </div>
+                  </div>
+
+                  {/* CRM Card */}
+                  <div
+                    className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-cyan-500/50 transition-all cursor-pointer hover-kinetic"
+                    onClick={() => navigate('/admin/pipeline')}
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
+                    <Activity
+                      className="text-cyan-500 mb-4 group-hover:scale-110 transition-transform duration-500"
+                      size={40}
+                    />
+                    <h3 className="text-2xl font-black text-white uppercase mb-2">Pipeline</h3>
+                    <p className="text-slate-400 text-sm mb-6">
+                      Gestiona tus oportunidades de venta activas.
+                    </p>
+                    <div className="flex items-center gap-2 text-cyan-500 font-black text-[10px] uppercase tracking-widest">
+                      Ver Embudo <ArrowRight size={14} />
+                    </div>
                   </div>
 
                   {/* Framework Lab Card */}
@@ -670,6 +725,18 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
                   <AILabView />
                 </React.Suspense>
               </div>
+            )}
+
+            {activeTab === 'intake' && (
+              <React.Suspense
+                fallback={
+                  <div className="p-12 text-center text-slate-500 animate-pulse">
+                    Iniciando Protocolo de Recepción Digital...
+                  </div>
+                }
+              >
+                <AdminInTakeView />
+              </React.Suspense>
             )}
 
             {activeTab === 'inventory' && (

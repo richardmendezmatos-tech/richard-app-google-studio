@@ -180,9 +180,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           <>
             <div className="my-3 border-t border-white/5 opacity-50" />
             <p
-              className={`mb-2 px-2 text-[9px] font-black uppercase tracking-[0.2em] text-cyan-500/70 ${isCollapsed ? 'text-center' : ''}`}
+              className={`mb-2 px-2 text-[9px] font-black uppercase tracking-[0.2em] text-[#00aed9] ${isCollapsed ? 'text-center' : ''}`}
             >
-              {!isCollapsed ? 'Gestión Ejecutiva' : 'ADM'}
+              {!isCollapsed ? 'Operaciones' : 'OPS'}
             </p>
             <NavButton
               active={location.pathname === '/admin'}
@@ -191,17 +191,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               icon={<Monitor size={19} />}
-              label="Dashboard"
+              label="Mission Control"
               isCollapsed={isCollapsed}
             />
             <NavButton
-              active={location.pathname === '/admin/inventory'}
+              active={
+                location.pathname === '/admin/inventory' || location.pathname === '/admin/intake'
+              }
               onClick={() => {
                 navigate('/admin/inventory');
                 setIsMobileOpen(false);
               }}
               icon={<Warehouse size={19} />}
-              label="Inventario"
+              label="Unidades"
               isCollapsed={isCollapsed}
             />
             <NavButton
@@ -214,14 +216,21 @@ const Sidebar: React.FC<SidebarProps> = ({
               label="CRM Leads"
               isCollapsed={isCollapsed}
             />
+
+            <div className="my-3 border-t border-white/5 opacity-50" />
+            <p
+              className={`mb-2 px-2 text-[9px] font-black uppercase tracking-[0.2em] text-purple-400 ${isCollapsed ? 'text-center' : ''}`}
+            >
+              {!isCollapsed ? 'Inteligencia IA' : 'AI'}
+            </p>
             <NavButton
-              active={location.pathname === '/admin/marketing'}
+              active={location.pathname === '/admin/copilot'}
               onClick={() => {
-                navigate('/admin/marketing');
+                navigate('/admin/copilot');
                 setIsMobileOpen(false);
               }}
               icon={<Sparkles size={19} />}
-              label="Marketing"
+              label="Sales Copilot"
               isCollapsed={isCollapsed}
             />
             <NavButton
@@ -231,9 +240,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               icon={<BarChart3 size={19} />}
-              label="Analytics Pro"
+              label="Analytics"
               isCollapsed={isCollapsed}
             />
+
+            <div className="my-3 border-t border-white/5 opacity-50" />
+            <p
+              className={`mb-2 px-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 ${isCollapsed ? 'text-center' : ''}`}
+            >
+              {!isCollapsed ? 'Configuración' : 'CFG'}
+            </p>
             <NavButton
               active={location.pathname === '/admin/billing'}
               onClick={() => {
@@ -251,7 +267,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               icon={<Radio size={19} />}
-              label="Telemetría"
+              label="Terminal"
               isCollapsed={isCollapsed}
             />
             <NavButton

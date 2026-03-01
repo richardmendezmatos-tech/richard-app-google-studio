@@ -1,5 +1,5 @@
 import React from 'react';
-import ComparisonBar from '@/features/inventory/components/ComparisonBar';
+import ComparisonBar from '@/features/inventory/ui/ComparisonBar';
 import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
 import { CinemaLayout } from '@/components/layout/CinemaLayout';
 import { AnimatedRoutes } from '@/components/AnimatedRoutes';
