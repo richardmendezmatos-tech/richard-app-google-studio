@@ -15,7 +15,7 @@ import {
 import { generateCarPitch } from '@/services/geminiService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ProgressRing } from '@/components/common/ProgressRing';
-import Viewer360 from '@/features/inventory/components/common/Viewer360';
+import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 
 interface Props {
   car: Car;

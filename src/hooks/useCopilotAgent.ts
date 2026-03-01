@@ -30,6 +30,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     body: {
       leadId: sessionId,
     },
+    maxSteps: 5, // Allows the agent to automatically chain tool calls (Vercel AI SDK 4.x feature)
     onFinish: (message) => {
       if (options.onFinish) options.onFinish(message as Message);
     },

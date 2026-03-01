@@ -11,9 +11,9 @@ interface HeroSectionProps {
 const HEADLINES = [
   {
     eyebrow: 'Showroom en Vivo',
-    line1: 'CONDUCE',
-    line2: 'LO MEJOR',
-    accent: 'DE PR',
+    line1: 'TU PRÓXIMO',
+    line2: 'NIVEL',
+    accent: 'EMPIEZA AQUÍ',
     sub: 'Inventario curado con IA. Financiamiento inteligente. El estándar de oro en movilidad.',
   },
   {
@@ -108,13 +108,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Animated speed lines */}
         <div className="ra-hero__speedlines">
           {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="ra-hero__speedline"
-              style={
-                { '--delay': `${i * 0.4}s`, '--top': `${10 + i * 10}%` } as React.CSSProperties
-              }
-            />
+            <div key={i} className={`ra-hero__speedline ra-hero__speedline--${i}`} />
           ))}
         </div>
       </div>
@@ -316,6 +310,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     animation-delay: var(--delay);
                     transform-origin: left center;
                 }
+                .ra-hero__speedline--0 { --delay: 0s; --top: 10%; }
+                .ra-hero__speedline--1 { --delay: 0.4s; --top: 20%; }
+                .ra-hero__speedline--2 { --delay: 0.8s; --top: 30%; }
+                .ra-hero__speedline--3 { --delay: 1.2s; --top: 40%; }
+                .ra-hero__speedline--4 { --delay: 1.6s; --top: 50%; }
+                .ra-hero__speedline--5 { --delay: 2.0s; --top: 60%; }
+                .ra-hero__speedline--6 { --delay: 2.4s; --top: 70%; }
+                .ra-hero__speedline--7 { --delay: 2.8s; --top: 80%; }
                 @keyframes speedline {
                     0% { opacity: 0; transform: scaleX(0); }
                     30% { opacity: 1; transform: scaleX(1); }

@@ -6,4 +6,4 @@
  * Este archivo es el punto de entrada para quien importe desde src/components/layout/deal.
  * La implementación única vive en features/inventory/components/deal/DealBuilder.
  */
-export { default } from '@/features/inventory/components/deal/DealBuilder';
+export { default } from '@/features/inventory/ui/deal/DealBuilder';

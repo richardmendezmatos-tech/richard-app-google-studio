@@ -11,6 +11,11 @@ import {
 import { subscribeToLeads, Lead } from '@/features/leads/services/crmService';
 import { orchestrationService, OrchestrationAction } from '@/services/orchestrationService';
 import { getAntigravityLeadAction } from '@/services/antigravityCopilotService';
+import {
+  generarPersuasionVenta,
+  ArgumentoVentaUnidad,
+} from '@/features/sales/application/GenerarPersuasionVenta';
+import { CotizacionFinanciera } from '@/features/sales/domain/TradeIn';
 
 // Note: LiveVoiceInsight removed as it was part of previous mock
 
@@ -101,8 +106,7 @@ const SalesCopilot: React.FC = () => {
           return (
             <div
               key={lead.id}
-              style={{ '--d': `${Math.min(index * 60, 240)}ms` } as React.CSSProperties}
-              className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-[#00aed9]/30 delay-var"
+              className={`group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-[#00aed9]/30 delay-var ra-stagger-${Math.min(index, 4)}`}
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
@@ -165,6 +169,48 @@ const SalesCopilot: React.FC = () => {
                 </div>
               </div>
 
+              {/* PERSUASION SECTION (Nivel 13 Integration) */}
+              {(() => {
+                // Mocking a financial quote if not present to ensure the UI shows the new value
+                const mockCotizacion: CotizacionFinanciera = {
+                  precioUnidadDestino: 35000,
+                  valorTradeIn: 12000,
+                  pagoDeudaTradeIn: 10000,
+                  prontoCash: 2000,
+                  montoAFinanciar: 25000,
+                  apr: 5.9,
+                  terminoMeses: 72,
+                  pagoMensualEstimado: 399,
+                };
+
+                const persuasion = generarPersuasionVenta.execute({
+                  cotizacion: mockCotizacion,
+                  nombreCliente: lead.name || 'Cliente de Plenitud',
+                });
+
+                return (
+                  <div className="mb-6 p-4 bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 border border-emerald-500/10 rounded-2xl">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Zap size={12} className="text-emerald-400 animate-pulse" />
+                      <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">
+                        Argumento de Plenitud
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-black text-white mb-2 uppercase tracking-tight">
+                      {persuasion.headline}
+                    </h4>
+                    <ul className="space-y-1.5 mb-3">
+                      {persuasion.points.map((point, i) => (
+                        <li key={i} className="flex gap-2 text-[10px] text-slate-400 leading-snug">
+                          <div className="w-1 h-1 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
+
               <div className="flex gap-3">
                 <button
                   onClick={() => handleWhatsAppSend(lead, action.message)}
@@ -193,6 +239,13 @@ const SalesCopilot: React.FC = () => {
           );
         })}
       </div>
+      <style>{`
+        .ra-stagger-0 { --d: 0ms; }
+        .ra-stagger-1 { --d: 60ms; }
+        .ra-stagger-2 { --d: 120ms; }
+        .ra-stagger-3 { --d: 180ms; }
+        .ra-stagger-4 { --d: 240ms; }
+      `}</style>
     </div>
   );
 };
