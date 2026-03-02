@@ -12,16 +12,16 @@ Estandarizar el flujo de validación y despliegue del repositorio. Priorizar seg
 ## Flujo Operativo
 
 1. Identificar objetivo del usuario:
-- `checks-only`: validar sin desplegar.
-- `release-vercel`: validar y desplegar frontend/API a Vercel.
-- `release-firebase-*`: validar y desplegar componentes Firebase (`functions`, `rules`, `indexes` o `full`).
+   - `checks-only`: validar sin desplegar.
+   - `release-vercel`: validar y desplegar frontend/API a Vercel.
+   - `release-firebase-*`: validar y desplegar componentes Firebase (`functions`, `rules`, `indexes` o `full`).
 
-2. Verificar prerequisitos:
-- Leer `references/ops-playbook.md`.
-- Confirmar que el repo está en `/Users/richardmendez/richard-automotive-_-command-center`.
-- Confirmar comandos disponibles: `npm`, `dotenvx`, `firebase` y/o `vercel` según target.
+1. Verificar prerequisitos:
+   - Leer `references/ops-playbook.md`.
+   - Confirmar que el repo está en `/Users/richardmendez/richard-automotive-_-command-center`.
+   - Confirmar comandos disponibles: `npm`, `dotenvx`, `firebase` y/o `vercel` según target.
 
-3. Ejecutar pipeline con script:
+1. Ejecutar pipeline con script:
 
 ```bash
 .agents/skills/command-center-ops/scripts/release_ops.sh --dry-run --target none
@@ -30,10 +30,10 @@ Estandarizar el flujo de validación y despliegue del repositorio. Priorizar seg
 .agents/skills/command-center-ops/scripts/release_ops.sh --target firebase-functions
 ```
 
-4. Reportar resultado:
-- Incluir qué comandos se ejecutaron.
-- Incluir punto de falla exacto si aplica.
-- No ocultar errores de validación; detener despliegue si fallan checks.
+1. Reportar resultado:
+   - Incluir qué comandos se ejecutaron.
+   - Incluir punto de falla exacto si aplica.
+   - No ocultar errores de validación; detener despliegue si fallan checks.
 
 ## Reglas de Ejecucion
 

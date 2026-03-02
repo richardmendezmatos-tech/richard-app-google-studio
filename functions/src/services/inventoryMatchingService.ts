@@ -1,20 +1,20 @@
-import { MatchResult, Car } from '../domain/entities';
-import { InventoryMatcher } from '../application/use-cases/InventoryMatcher';
-import { FirestoreLeadRepository } from '../infrastructure/repositories/FirestoreLeadRepository';
+import { Car } from '../domain/entities';
+import { InventoryMatcher, MatchResultDTO } from '../application/use-cases/inventory/InventoryMatcher.usecase';
+import { FirestoreLeadRepository } from '../infrastructure/persistence/firestore/FirestoreLeadRepository';
 import * as logger from 'firebase-functions/logger';
 import { logFlowExecution } from './persistenceService';
 
 /**
  * Service to proactively match new inventory units with potential leads.
  * Part of the Richard Automotive Command Center.
- * [REFAC] Using Clean Architecture Use Case & Repository.
+ * [REFAC] Using Clean Architecture Use Case & Repository with Result Pattern.
  */
 export class InventoryMatchingService {
 
     /**
      * Finds potential matches for a new car and "notifies" the system/agent.
      */
-    static async matchInventoryToLeads(carId: string, carData: any): Promise<MatchResult[]> {
+    static async matchInventoryToLeads(carId: string, carData: any): Promise<MatchResultDTO[]> {
         logger.info(`🔍 Proactive Matching [CLEAN]: Looking for candidates for ${carData.name} (${carId})...`);
 
         try {
@@ -22,8 +22,15 @@ export class InventoryMatchingService {
             const leadRepository = new FirestoreLeadRepository();
             const matcher = new InventoryMatcher(leadRepository);
 
-            // 2. Execute Use Case
-            const matches = await matcher.execute(carId, carData as Car);
+            // 2. Execute Use Case (Handles Result Pattern)
+            const result = await matcher.execute(carId, carData as Car);
+
+            if (result.isFailure()) {
+                logger.error(`❌ Error executing InventoryMatcher for ${carId}:`, result.error);
+                return [];
+            }
+
+            const matches = result.value;
 
             // 3. Log result for Command Center Dashboard
             const output = {
@@ -42,7 +49,7 @@ export class InventoryMatchingService {
             return matches;
 
         } catch (error) {
-            logger.error(`❌ Error in Proactive Matching for ${carId}:`, error);
+            logger.error(`❌ Unexpected Error in Proactive Matching for ${carId}:`, error);
             return [];
         }
     }

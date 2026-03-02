@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { AppUser, UserRole } from '@/types/types';
+import { AppUser, UserRole } from '@/domain/entities';
 
 export interface AuthContextType {
   user: AppUser | null;

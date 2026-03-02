@@ -2,109 +2,129 @@ import React from 'react';
 import { ShieldCheck, TrendingUp, Award, CheckCircle2, ArrowRight, Star } from 'lucide-react';
 
 const CREDENTIALS = [
-    { icon: <ShieldCheck size={15} />, label: 'Protección Total', desc: 'Programas de crédito protegidos y seguros certificados.' },
-    { icon: <TrendingUp size={15} />, label: 'Optimización de Tasa', desc: 'Estructuramos tu perfil para capturar el APR más bajo.' },
-    { icon: <Award size={15} />, label: 'Experto Certificado', desc: 'Líder en la industria automotriz bilingüe en la isla.' },
-    { icon: <CheckCircle2 size={15} />, label: 'Aprobación Ágil', desc: 'Conexión directa con la banca local y federal.' },
+  {
+    icon: <ShieldCheck size={15} />,
+    label: 'Protección Total',
+    desc: 'Programas de crédito protegidos y seguros certificados.',
+  },
+  {
+    icon: <TrendingUp size={15} />,
+    label: 'Optimización de Tasa',
+    desc: 'Estructuramos tu perfil para capturar el APR más bajo.',
+  },
+  {
+    icon: <Award size={15} />,
+    label: 'Experto Certificado',
+    desc: 'Líder en la industria automotriz bilingüe en la isla.',
+  },
+  {
+    icon: <CheckCircle2 size={15} />,
+    label: 'Aprobación Ágil',
+    desc: 'Conexión directa con la banca local y federal.',
+  },
 ];
 
 const STATS = [
-    { num: '10k+', lbl: 'Ventas Cerradas' },
-    { num: '15+', lbl: 'Años Expertiz' },
-    { num: '98%', lbl: 'Aprobaciones' },
+  { num: '10k+', lbl: 'Ventas Cerradas' },
+  { num: '15+', lbl: 'Años Expertiz' },
+  { num: '98%', lbl: 'Aprobaciones' },
 ];
 
 export const AuthoritySection: React.FC = () => {
-    return (
-        <section className="ra-authority reveal-up">
-            {/* ── Left: Text ── */}
-            <div className="ra-authority__left">
-                <div className="ra-authority__eyebrow">
-                    <span className="ra-authority__eyebrow-dot" />
-                    El Estándar de Oro en F&amp;I — Puerto Rico
-                </div>
+  return (
+    <section className="ra-authority reveal-up">
+      {/* ── Left: Text ── */}
+      <div className="ra-authority__left">
+        <div className="ra-authority__eyebrow">
+          <span className="ra-authority__eyebrow-dot" />
+          El Estándar de Oro en F&amp;I — Puerto Rico
+        </div>
 
-                <h2 className="ra-authority__headline">
-                    Asesoría que{' '}
-                    <em className="ra-authority__headline-em">Acelera</em>
-                    <br />Tu Aprobación
-                </h2>
+        <h2 className="ra-authority__headline">
+          Asesoría que <em className="ra-authority__headline-em">Acelera</em>
+          <br />
+          Tu Aprobación
+        </h2>
 
-                <p className="ra-authority__body">
-                    Richard Méndez no solo gestiona préstamos; estructura negocios que los bancos respetan. Con más de una década liderando el sector de F&amp;I en Puerto Rico, su firma es sinónimo de transparencia y resultados.
-                </p>
+        <p className="ra-authority__body">
+          Richard Méndez no solo gestiona préstamos; estructura negocios que los bancos respetan.
+          Con más de una década liderando el sector de F&amp;I en Puerto Rico, su firma es sinónimo
+          de transparencia y resultados.
+        </p>
 
-                <div className="ra-authority__grid">
-                    {CREDENTIALS.map((c) => (
-                        <div key={c.label} className="ra-authority__item">
-                            <div className="ra-authority__item-icon">{c.icon}</div>
-                            <div>
-                                <p className="ra-authority__item-title">{c.label}</p>
-                                <p className="ra-authority__item-desc">{c.desc}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+        <div className="ra-authority__grid">
+          {CREDENTIALS.map((c) => (
+            <div key={c.label} className="ra-authority__item">
+              <div className="ra-authority__item-icon">{c.icon}</div>
+              <div>
+                <p className="ra-authority__item-title">{c.label}</p>
+                <p className="ra-authority__item-desc">{c.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-                <button className="ra-authority__cta">
-                    Agendar Consulta Directa
-                    <ArrowRight size={16} />
-                </button>
+        <button className="ra-authority__cta">
+          Agendar Consulta Directa
+          <ArrowRight size={16} />
+        </button>
+      </div>
+
+      {/* ── Right: Portrait card ── */}
+      <div className="ra-authority__right">
+        {/* Glow blob */}
+        <div className="ra-authority__glow" />
+
+        <div className="ra-authority__card">
+          {/* Large portrait */}
+          <div className="ra-authority__portrait-wrap">
+            <img
+              src="/assets/images/richard_real.jpg"
+              alt="Richard Méndez, Founder & F&I Specialist"
+              className="ra-authority__portrait-img"
+              loading="lazy"
+            />
+            {/* gradient overlay */}
+            <div className="ra-authority__portrait-overlay" />
+
+            {/* Floating badge: verified */}
+            <div className="ra-authority__badge-verified">
+              <ShieldCheck size={12} />
+              <span>Verified Expert</span>
             </div>
 
-            {/* ── Right: Portrait card ── */}
-            <div className="ra-authority__right">
-                {/* Glow blob */}
-                <div className="ra-authority__glow" />
-
-                <div className="ra-authority__card">
-                    {/* Large portrait */}
-                    <div className="ra-authority__portrait-wrap">
-                        <img
-                            src="/assets/images/richard_real.jpg"
-                            alt="Richard Méndez, Founder & F&I Specialist"
-                            className="ra-authority__portrait-img"
-                            loading="lazy"
-                        />
-                        {/* gradient overlay */}
-                        <div className="ra-authority__portrait-overlay" />
-
-                        {/* Floating badge: verified */}
-                        <div className="ra-authority__badge-verified">
-                            <ShieldCheck size={12} />
-                            <span>Verified Expert</span>
-                        </div>
-
-                        {/* Floating stars */}
-                        <div className="ra-authority__badge-stars">
-                            {[...Array(5)].map((_, i) => <Star key={i} size={10} className="ra-authority__star" />)}
-                            <span>5.0</span>
-                        </div>
-                    </div>
-
-                    {/* Name / title */}
-                    <div className="ra-authority__identity">
-                        <p className="ra-authority__name">Richard Méndez</p>
-                        <p className="ra-authority__title">Founder &amp; F&amp;I Specialist</p>
-                    </div>
-
-                    {/* Stats row */}
-                    <div className="ra-authority__stats">
-                        {STATS.map((s, i) => (
-                            <React.Fragment key={s.lbl}>
-                                <div className="ra-authority__stat">
-                                    <span className="ra-authority__stat-num">{s.num}</span>
-                                    <span className="ra-authority__stat-lbl">{s.lbl}</span>
-                                </div>
-                                {i < STATS.length - 1 && <div className="ra-authority__stat-div" />}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </div>
+            {/* Floating stars */}
+            <div className="ra-authority__badge-stars">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={10} className="ra-authority__star" />
+              ))}
+              <span>5.0</span>
             </div>
+          </div>
 
-            {/* ── Embedded styles ── */}
-            <style>{`
+          {/* Name / title */}
+          <div className="ra-authority__identity">
+            <p className="ra-authority__name">Richard Méndez</p>
+            <p className="ra-authority__title">Founder &amp; F&amp;I Specialist</p>
+          </div>
+
+          {/* Stats row */}
+          <div className="ra-authority__stats">
+            {STATS.map((s, i) => (
+              <React.Fragment key={s.lbl}>
+                <div className="ra-authority__stat">
+                  <span className="ra-authority__stat-num">{s.num}</span>
+                  <span className="ra-authority__stat-lbl">{s.lbl}</span>
+                </div>
+                {i < STATS.length - 1 && <div className="ra-authority__stat-div" />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Embedded styles ── */}
+      <style>{`
                 /* === AUTHORITY SECTION === */
                 .ra-authority {
                     display: grid;
@@ -343,6 +363,6 @@ export const AuthoritySection: React.FC = () => {
                     background: rgba(255,255,255,0.07);
                 }
             `}</style>
-        </section>
-    );
+    </section>
+  );
 };

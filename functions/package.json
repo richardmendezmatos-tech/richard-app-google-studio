@@ -32,6 +32,7 @@
     "@genkit-ai/googleai": "^1.27.0",
     "@genkit-ai/vertexai": "^1.27.0",
     "@google/generative-ai": "^0.24.1",
+    "@notionhq/client": "^5.11.0",
     "@sendgrid/mail": "^8.1.6",
     "ai": "^6.0.57",
     "cheerio": "^1.2.0",
@@ -62,8 +63,10 @@
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
     "@types/twilio": "^3.19.2",
+    "@vitest/ui": "^4.0.18",
     "genkit-cli": "^1.27.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

@@ -1,5 +1,9 @@
 import { clientsClaim } from 'workbox-core';
-import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from 'workbox-precaching';
+import {
+  precacheAndRoute,
+  cleanupOutdatedCaches,
+  createHandlerBoundToURL,
+} from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
@@ -28,7 +32,7 @@ registerRoute(
       }),
       new CacheableResponsePlugin({ statuses: [0, 200] }),
     ],
-  })
+  }),
 );
 
 registerRoute(
@@ -41,7 +45,7 @@ registerRoute(
         maxAgeSeconds: 60 * 60 * 24 * 7,
       }),
     ],
-  })
+  }),
 );
 
 registerRoute(
@@ -55,5 +59,5 @@ registerRoute(
         maxRetentionTime: 24 * 60,
       }),
     ],
-  })
+  }),
 );

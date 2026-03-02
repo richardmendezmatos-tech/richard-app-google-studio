@@ -3,12 +3,12 @@ import type { Lead } from '@/types/types';
 
 const { antigravityFetchMock, getAntigravityConfigMock } = vi.hoisted(() => ({
   antigravityFetchMock: vi.fn(),
-  getAntigravityConfigMock: vi.fn()
+  getAntigravityConfigMock: vi.fn(),
 }));
 
 vi.mock('@/services/antigravityService', () => ({
   antigravityFetch: antigravityFetchMock,
-  getAntigravityConfig: getAntigravityConfigMock
+  getAntigravityConfig: getAntigravityConfigMock,
 }));
 
 import { getAntigravityOutreachAction } from './antigravityOmnichannelService';
@@ -21,7 +21,7 @@ const lead: Lead = {
   email: 'ana@example.com',
   phone: '7875551212',
   aiScore: 92,
-  vehicleOfInterest: 'Hyundai Tucson'
+  vehicleOfInterest: 'Hyundai Tucson',
 };
 
 describe('getAntigravityOutreachAction', () => {
@@ -29,20 +29,20 @@ describe('getAntigravityOutreachAction', () => {
     vi.clearAllMocks();
     getAntigravityConfigMock.mockReturnValue({
       apiUrl: 'https://api.antigravity.local',
-      outreachActionPath: '/copilot/outreach-action'
+      outreachActionPath: '/copilot/outreach-action',
     });
   });
 
   it('returns null when Antigravity API URL is missing', async () => {
     getAntigravityConfigMock.mockReturnValue({
       apiUrl: '',
-      outreachActionPath: '/copilot/outreach-action'
+      outreachActionPath: '/copilot/outreach-action',
     });
 
     const action = await getAntigravityOutreachAction(lead, {
       trigger: 'nurture',
       fallbackMessage: 'Hola',
-      fallbackChannel: 'whatsapp'
+      fallbackChannel: 'whatsapp',
     });
 
     expect(action).toBeNull();
@@ -55,15 +55,15 @@ describe('getAntigravityOutreachAction', () => {
         channel: 'email',
         message: '',
         subject: 'Seguimiento',
-        shouldSend: true
-      }
+        shouldSend: true,
+      },
     });
 
     const action = await getAntigravityOutreachAction(lead, {
       trigger: 'manual_crm',
       fallbackMessage: 'Mensaje fallback',
       fallbackChannel: 'email',
-      priority: 'high'
+      priority: 'high',
     });
 
     expect(action).toEqual({
@@ -71,7 +71,7 @@ describe('getAntigravityOutreachAction', () => {
       message: 'Mensaje fallback',
       subject: 'Seguimiento',
       reasoning: undefined,
-      shouldSend: true
+      shouldSend: true,
     });
     expect(antigravityFetchMock).toHaveBeenCalledTimes(1);
   });
@@ -80,14 +80,14 @@ describe('getAntigravityOutreachAction', () => {
     antigravityFetchMock.mockResolvedValue({
       action: {
         channel: 'sms',
-        message: 'Hola'
-      }
+        message: 'Hola',
+      },
     });
 
     const action = await getAntigravityOutreachAction(lead, {
       trigger: 'copilot',
       fallbackMessage: 'fallback',
-      fallbackChannel: 'whatsapp'
+      fallbackChannel: 'whatsapp',
     });
 
     expect(action).toBeNull();

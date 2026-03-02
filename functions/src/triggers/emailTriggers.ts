@@ -1,9 +1,9 @@
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
-import { SendLeadEmailSequence } from '../application/use-cases/SendLeadEmailSequence';
+import { SendLeadEmailSequence } from '../application/use-cases';
 import { Lead } from '../domain/entities';
-import { FirestoreLeadRepository } from '../infrastructure/repositories/FirestoreLeadRepository';
-import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
+import { FirestoreLeadRepository } from '../infrastructure/persistence/firestore/FirestoreLeadRepository';
+import { SendGridEmailRepository } from '../infrastructure/messaging/SendGridEmailRepository';
 
 // In Triggers, we can instantiate local repositories if not sharing a global state
 const leadRepository = new FirestoreLeadRepository();

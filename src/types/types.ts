@@ -1,4 +1,3 @@
-
 export type CarType = 'suv' | 'sedan' | 'luxury' | 'pickup';
 
 export type UserRole = 'admin' | 'user';
@@ -60,7 +59,7 @@ export enum ViewMode {
   VOICE_ASSISTANT = 'voice_assistant',
   DEVOPS = 'devops',
   SETTINGS = 'settings',
-  DIGITAL_TWIN = 'digital_twin'
+  DIGITAL_TWIN = 'digital_twin',
 }
 
 export interface ChatMessage {
@@ -92,7 +91,6 @@ export interface BlogPost {
   imageUrl?: string;
   tags: string[];
 }
-
 
 export interface FirestoreTimestamp {
   seconds: number;
@@ -238,7 +236,6 @@ export interface VehicleTelemetry {
   lastUpdate: number;
   status: 'active' | 'idle' | 'warning';
 }
-
 
 declare global {
   interface AIStudio {

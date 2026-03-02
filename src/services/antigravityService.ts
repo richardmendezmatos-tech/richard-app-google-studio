@@ -22,8 +22,12 @@ export const getAntigravityConfig = (): AntigravityConfig => {
   const apiKey = (import.meta.env.VITE_ANTIGRAVITY_API_KEY || '').trim();
   const healthPath = (import.meta.env.VITE_ANTIGRAVITY_HEALTH_PATH || DEFAULT_HEALTH_PATH).trim();
   const imagePath = (import.meta.env.VITE_ANTIGRAVITY_IMAGE_PATH || DEFAULT_IMAGE_PATH).trim();
-  const leadActionPath = (import.meta.env.VITE_ANTIGRAVITY_LEAD_ACTION_PATH || DEFAULT_LEAD_ACTION_PATH).trim();
-  const outreachActionPath = (import.meta.env.VITE_ANTIGRAVITY_OUTREACH_ACTION_PATH || DEFAULT_OUTREACH_ACTION_PATH).trim();
+  const leadActionPath = (
+    import.meta.env.VITE_ANTIGRAVITY_LEAD_ACTION_PATH || DEFAULT_LEAD_ACTION_PATH
+  ).trim();
+  const outreachActionPath = (
+    import.meta.env.VITE_ANTIGRAVITY_OUTREACH_ACTION_PATH || DEFAULT_OUTREACH_ACTION_PATH
+  ).trim();
 
   return {
     enabled: Boolean(edgeUrl || apiUrl),
@@ -33,7 +37,9 @@ export const getAntigravityConfig = (): AntigravityConfig => {
     healthPath: healthPath.startsWith('/') ? healthPath : `/${healthPath}`,
     imagePath: imagePath.startsWith('/') ? imagePath : `/${imagePath}`,
     leadActionPath: leadActionPath.startsWith('/') ? leadActionPath : `/${leadActionPath}`,
-    outreachActionPath: outreachActionPath.startsWith('/') ? outreachActionPath : `/${outreachActionPath}`
+    outreachActionPath: outreachActionPath.startsWith('/')
+      ? outreachActionPath
+      : `/${outreachActionPath}`,
   };
 };
 
@@ -49,7 +55,7 @@ export const getAntigravityHeaders = (): HeadersInit => {
   if (!apiKey) return {};
   return {
     'x-api-key': apiKey,
-    Authorization: `Bearer ${apiKey}`
+    Authorization: `Bearer ${apiKey}`,
   };
 };
 
@@ -75,14 +81,14 @@ export const optimizeWithAntigravity = (url: string, width: number = 800): strin
     w: String(width),
     q: '80',
     fit: 'cover',
-    auto: 'format'
+    auto: 'format',
   });
   return `${base}${cfg.imagePath}?${params.toString()}`;
 };
 
 export const antigravityFetch = async <T = unknown>(
   path: string,
-  init: RequestInit = {}
+  init: RequestInit = {},
 ): Promise<T> => {
   const cfg = getAntigravityConfig();
   if (!cfg.apiUrl) {
@@ -92,7 +98,7 @@ export const antigravityFetch = async <T = unknown>(
   const url = `${trimTrailingSlash(cfg.apiUrl)}${path.startsWith('/') ? path : `/${path}`}`;
   const headers: HeadersInit = {
     ...getAntigravityHeaders(),
-    ...(init.headers || {})
+    ...(init.headers || {}),
   };
 
   const response = await fetch(url, { ...init, headers });

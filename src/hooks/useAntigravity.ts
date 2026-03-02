@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getAntigravityConfig, getAntigravityHeaders, getAntigravityHealthUrl } from '@/services/antigravityService';
+import {
+  getAntigravityConfig,
+  getAntigravityHeaders,
+  getAntigravityHealthUrl,
+} from '@/services/antigravityService';
 
 type AntigravityStatus = 'disabled' | 'checking' | 'online' | 'offline';
 
@@ -32,7 +36,7 @@ export const useAntigravity = () => {
       const response = await fetch(healthUrl, {
         method: 'GET',
         headers: getAntigravityHeaders(),
-        signal: controller.signal
+        signal: controller.signal,
       });
       setStatus(response.ok ? 'online' : 'offline');
       setError(response.ok ? null : `HTTP ${response.status}`);
@@ -54,6 +58,6 @@ export const useAntigravity = () => {
     status,
     lastChecked,
     error,
-    refresh: checkHealth
+    refresh: checkHealth,
   };
 };

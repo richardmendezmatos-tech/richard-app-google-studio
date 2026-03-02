@@ -1,12 +1,16 @@
-import React from 'react';
-import ComparisonBar from '@/features/inventory/components/ComparisonBar';
-import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
-import { CinemaLayout } from '@/components/layout/CinemaLayout';
-import { AnimatedRoutes } from '@/components/AnimatedRoutes';
+import React, { Suspense } from 'react';
+import { BrandErrorBoundary } from '@/shared/brand-ui/common/BrandErrorBoundary';
+import { CinemaLayout } from '@/shared/brand-ui/layout/CinemaLayout';
+import { AnimatedRoutes } from '@/shared/brand-ui/AnimatedRoutes';
 
-import { AppProviders } from '@/components/providers/AppProviders';
+import { AppProviders } from '@/shared/brand-ui/providers/AppProviders';
 import { useAppController } from '@/hooks/useAppController';
-import PrivacyBanner from '@/features/privacy/components/PrivacyBanner';
+
+const ComparisonBar = React.lazy(() => import('@/features/inventory/ui/ComparisonBar'));
+const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner'));
+const CommandCenterPanel = React.lazy(
+  () => import('@/command-center/components/CommandCenterPanel'),
+);
 
 const RichardAutomotiveApp: React.FC = () => {
   const {
@@ -16,7 +20,7 @@ const RichardAutomotiveApp: React.FC = () => {
     handleMagicFix,
     handleAdd,
     handleUpdate,
-    handleDelete
+    handleDelete,
   } = useAppController();
 
   return (
@@ -32,9 +36,11 @@ const RichardAutomotiveApp: React.FC = () => {
           handleDelete={handleDelete}
         />
 
-        {/* Global Overlays */}
-        <ComparisonBar />
-        <PrivacyBanner />
+        {/* Global Overlays lazy-loaded para agilizar TTI */}
+        <Suspense fallback={null}>
+          <ComparisonBar />
+          <PrivacyBanner />
+        </Suspense>
       </CinemaLayout>
     </BrandErrorBoundary>
   );

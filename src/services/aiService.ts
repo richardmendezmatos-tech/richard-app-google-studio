@@ -1,53 +1,48 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Car } from '@/types/types';
-
-// Initialize the API
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-if (!API_KEY) {
-    console.error("Missing VITE_GEMINI_API_KEY in .env");
-}
-
-const genAI = new GoogleGenerativeAI(API_KEY || '');
+import { Car } from '@/domain/entities';
 
 export interface VisualSearchResult {
-    type: 'suv' | 'sedan' | 'pickup' | 'luxury' | null;
-    brand: string | null;
-    color: string | null;
-    confidence: number;
-    key_features: string[];
+  type: string | null;
+  brand: string | null;
+  color: string | null;
+  confidence: number;
+  key_features: string[];
 }
 
 /**
  * Converts a File object to a Base64 string for the API
  */
 const fileToGenerativePart = async (file: File) => {
-    return new Promise<{ inlineData: { data: string; mimeType: string } }>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64Data = reader.result as string;
-            const base64Content = base64Data.split(',')[1];
-            resolve({
-                inlineData: {
-                    data: base64Content,
-                    mimeType: file.type,
-                },
-            });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+  return new Promise<{ inlineData: { data: string; mimeType: string } }>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result;
+      if (typeof base64Data !== 'string') {
+        reject(new Error('Failed to read file as data URL'));
+        return;
+      }
+      const parts = base64Data.split(',');
+      if (parts.length < 2) {
+        reject(new Error('Malformed file data URL'));
+        return;
+      }
+      const base64Content = parts[1];
+      resolve({
+        inlineData: {
+          data: base64Content,
+          mimeType: file.type,
+        },
+      });
+    };
+    reader.onerror = () => reject(new Error('File reading error'));
+    reader.readAsDataURL(file);
+  });
 };
 
 /**
  * Analyzes a car image to extract metadata for search
  */
 export const analyzeCarImage = async (file: File): Promise<VisualSearchResult> => {
-    if (!API_KEY) throw new Error("API Key not configured");
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const prompt = `
+  const prompt = `
     Analyze this image of a vehicle for a car dealership search engine.
     Return a JSON object with the following fields:
     - type: one of ['suv', 'sedan', 'pickup', 'luxury'] (choose the best fit)
@@ -59,58 +54,76 @@ export const analyzeCarImage = async (file: File): Promise<VisualSearchResult> =
     Output strictly valid JSON.
     `;
 
-    try {
-        const imagePart = await fileToGenerativePart(file);
-        const result = await model.generateContent([prompt, imagePart]);
-        const response = await result.response;
-        const text = response.text();
+  try {
+    const imagePart = await fileToGenerativePart(file);
 
-        // Extract JSON from potential markdown code blocks
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            throw new Error("Failed to parse AI response");
-        }
+    // Secure Proxy Call instead of direct SDK usage
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [prompt, imagePart],
+        model: 'gemini-1.5-flash',
+      }),
+    });
 
-        const data = JSON.parse(jsonMatch[0]);
-        return {
-            type: data.type?.toLowerCase() || null,
-            brand: data.brand || null,
-            color: data.color || null,
-            confidence: data.confidence || 0,
-            key_features: data.key_features || []
-        };
-    } catch (error) {
-        console.error("Visual Analysis Error:", error);
-        throw error;
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || `Proxy error: ${response.status}`);
     }
+
+    const { text } = await response.json();
+
+    // Extract JSON from potential markdown code blocks
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Failed to parse AI response');
+    }
+
+    const data = JSON.parse(jsonMatch[0]);
+    return {
+      type: data.type?.toLowerCase() || null,
+      brand: data.brand || null,
+      color: data.color || null,
+      confidence: data.confidence || 0,
+      key_features: data.key_features || [],
+    };
+  } catch (error) {
+    console.error('Visual Analysis Error:', error);
+    throw error;
+  }
 };
 
 /**
  * Filters inventory based on AI analysis
  */
 export const findMatches = (analysis: VisualSearchResult, inventory: Car[]): Car[] => {
-    return inventory.filter(car => {
-        let score = 0;
+  return inventory.filter((car) => {
+    let score = 0;
 
-        // Type Match (High Weight)
-        if (analysis.type && car.type.toLowerCase() === analysis.type) {
-            score += 10;
-        }
+    // Type Match (High Weight)
+    if (analysis.type && car.type.toLowerCase() === analysis.type) {
+      score += 10;
+    }
 
-        // Brand Match (High Weight)
-        if (analysis.brand && (car.name.toLowerCase().includes(analysis.brand.toLowerCase()) || car.badge?.toLowerCase().includes(analysis.brand.toLowerCase()))) {
-            score += 10;
-        }
+    // Brand Match (High Weight)
+    if (
+      analysis.brand &&
+      (car.name.toLowerCase().includes(analysis.brand.toLowerCase()) ||
+        car.badge?.toLowerCase().includes(analysis.brand.toLowerCase()))
+    ) {
+      score += 10;
+    }
 
-        // Color Match (Medium Weight) - Heuristic check in description or name
-        if (analysis.color) {
-            const color = analysis.color.toLowerCase();
-            const text = (car.description + car.name).toLowerCase();
-            if (text.includes(color)) {
-                score += 5;
-            }
-        }
+    // Color Match (Medium Weight) - Heuristic check in description or name
+    if (analysis.color) {
+      const color = analysis.color.toLowerCase();
+      const text = (car.description + car.name).toLowerCase();
+      if (text.includes(color)) {
+        score += 5;
+      }
+    }
 
-        return score >= 10; // Return cars that have at least a type or brand match
-    });
+    return score >= 10; // Return cars that have at least a type or brand match
+  });
 };
