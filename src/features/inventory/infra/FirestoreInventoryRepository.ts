@@ -1,7 +1,7 @@
 import { InventoryRepository } from '../domain/InventoryRepository';
 import { Unidad } from '../domain/Unidad';
 import { db } from '@/infra/firebase/client';
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc } from 'firebase/firestore/lite';
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 
 export class FirestoreInventoryRepository implements InventoryRepository {
   private readonly collectionName = 'inventory';

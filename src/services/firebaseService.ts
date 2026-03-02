@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   doc,
   setDoc,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { app, auth, db, dbLite, isBrowser, getRedirectResult } from '@/infra/firebase/client';
 import { Car, Lead, Subscriber } from '@/types/types';
 import {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '@/services/firebaseService';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore/lite';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
 import { FirestoreTimestamp } from '@/types/types';
 

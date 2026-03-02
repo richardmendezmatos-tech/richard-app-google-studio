@@ -1,5 +1,5 @@
 import { dbLite } from '@/services/firebaseService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface InteractionEvent {
   userId?: string;

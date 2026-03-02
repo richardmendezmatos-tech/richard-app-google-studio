@@ -1,5 +1,5 @@
 import { db } from '@/infra/firebase/client';
-import { collection, addDoc, getDocs } from 'firebase/firestore/lite';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 
 export class FirestoreSurveyRepository {
   async submitSurvey(data: Record<string, any>): Promise<void> {

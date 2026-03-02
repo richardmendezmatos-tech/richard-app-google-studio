@@ -1,5 +1,5 @@
 import { db } from '@/infra/firebase/client';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface SentinelMetric {
   type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated';

@@ -6,7 +6,7 @@ import {
   increment,
   doc,
   updateDoc,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 
 export interface IntentSignal {
   carId: string;

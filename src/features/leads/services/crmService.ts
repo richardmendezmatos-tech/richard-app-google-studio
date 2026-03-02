@@ -9,7 +9,7 @@ import {
   getDoc,
   getDocs,
   serverTimestamp,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { Lead } from '@/types/types';
 import { hubspotService } from '@/core-infra/hubspot/HubSpotClient';
 
@@ -163,7 +163,7 @@ export const updateLeadL3Memory = async (
 /**
  * Near-real-time poller for leads - Aggregates from standard and secure collections
  */
-import { limit } from 'firebase/firestore/lite';
+import { limit } from 'firebase/firestore';
 
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
   let cancelled = false;

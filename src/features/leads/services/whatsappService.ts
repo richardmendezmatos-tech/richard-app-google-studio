@@ -8,7 +8,7 @@
 import { getAIResponse } from '@/services/geminiService';
 import { validationAgentService } from '@/services/validationAgentService';
 import { Car } from '@/types/types';
-import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore/lite';
+import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/services/firebaseService';
 
 export interface WhatsAppMessage {

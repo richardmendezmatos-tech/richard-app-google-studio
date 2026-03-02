@@ -1,5 +1,5 @@
 import { dbLite } from '@/infra/firebase/client';
-import { collection, addDoc, query, where, limit, getDocs } from 'firebase/firestore/lite';
+import { collection, addDoc, query, where, limit, getDocs } from 'firebase/firestore';
 
 export class FirestoreApplicationRepository {
   async submitApplication(data: Record<string, unknown>, dealerId: string): Promise<string> {

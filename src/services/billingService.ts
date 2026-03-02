@@ -8,7 +8,7 @@ import {
   orderBy,
   limit,
   getDocs,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 
 export type MonetizableEvent = 'ai_call' | 'lead_capture' | 'doc_processed' | 'onboarding';
 

@@ -16,7 +16,7 @@ import {
   QueryDocumentSnapshot,
   setDoc,
   writeBatch,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { dbLite as db } from '@/infra/firebase/client';
 import { getStorageService, getAnalyticsService } from '@/infra/firebase/optionalServices';
 import { Car } from '@/domain/entities';

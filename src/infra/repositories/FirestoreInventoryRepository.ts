@@ -1,4 +1,4 @@
-import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore/lite';
+import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/client';
 import { InventoryRepository } from '@domain/repositories/InventoryRepository';
 import { Car } from '@domain/entities';

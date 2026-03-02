@@ -1,5 +1,5 @@
 import { db } from '@/infra/firebase/client';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore/lite';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 
 export class FirestoreSubscriberRepository {
   async subscribe(email: string, source: string = 'newsletter'): Promise<void> {

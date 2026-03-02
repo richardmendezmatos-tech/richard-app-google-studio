@@ -1,5 +1,5 @@
 import { db } from '../firebase/client';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore/lite';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { HoustonRepository } from '../../domain/repositories/HoustonRepository';
 import { HoustonTelemetry } from '../../domain/entities';
 

@@ -1,5 +1,5 @@
 import { db } from '@/infra/firebase/client';
-import { doc, getDoc, setDoc, addDoc, collection, deleteDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, setDoc, addDoc, collection, deleteDoc } from 'firebase/firestore';
 import { AppUser, UserRole } from '../../domain/entities';
 
 export class FirestoreUserRepository {

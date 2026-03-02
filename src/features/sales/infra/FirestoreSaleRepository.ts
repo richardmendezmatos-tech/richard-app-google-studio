@@ -7,7 +7,7 @@ import {
   increment,
   getDoc,
   setDoc,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { SaleRepository } from '../domain/repositories/SaleRepository';
 import { Venta } from '../domain/Venta';
 

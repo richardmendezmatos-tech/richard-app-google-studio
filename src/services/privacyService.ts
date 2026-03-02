@@ -1,5 +1,5 @@
 import { auth, db } from './firebaseService';
-import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { PrivacySettings } from '@/types/types';
 
 const PRIVACY_STORAGE_KEY = 'ra_privacy_settings';

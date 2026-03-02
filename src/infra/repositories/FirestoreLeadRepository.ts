@@ -9,7 +9,7 @@ import {
   addDoc,
   updateDoc,
   serverTimestamp,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import { db } from '../firebase/client';
 import { LeadRepository } from '../../domain/repositories/LeadRepository';
 import { Lead } from '../../domain/entities';
