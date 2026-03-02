@@ -9,8 +9,7 @@ import {
   Activity,
   ShieldCheck,
 } from 'lucide-react';
-import { createTimeline as timeline } from 'animejs';
-
+import { animate } from 'framer-motion';
 interface Props {
   images: string[];
   alt: string;
@@ -56,7 +55,12 @@ const Viewer360: React.FC<Props> = ({
     setHintVisible(false);
     setShowCallouts(false);
 
-    const tl = timeline({
+    animate(-10, 110, {
+      duration: 2.5,
+      ease: 'easeInOut',
+      onUpdate: (latest) => {
+        setScanPosition(latest);
+      },
       onComplete: () => {
         setIsScanning(false);
         setShowCallouts(true);
@@ -64,19 +68,6 @@ const Viewer360: React.FC<Props> = ({
         setTimeout(() => setShowCallouts(false), 5000);
       },
     });
-
-    tl.add(
-      { pos: -10 },
-      {
-        pos: 110,
-        duration: 2500,
-        ease: 'inOutQuad',
-        onUpdate: (anim) => {
-          const target = anim.targets[0] as { pos: number };
-          setScanPosition(target.pos);
-        },
-      },
-    );
   };
 
   // 360 Rotation Logic

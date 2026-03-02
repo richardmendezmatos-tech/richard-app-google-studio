@@ -13,7 +13,7 @@ import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react'
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import './LoginView.css';
 

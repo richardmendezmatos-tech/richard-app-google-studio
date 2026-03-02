@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { analyzeCarImage, VisualSearchResult, findMatches } from '@/services/aiService';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 
 export const useVisualSearch = (inventory: Car[]) => {

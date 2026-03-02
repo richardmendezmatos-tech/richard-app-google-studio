@@ -11,7 +11,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore/lite';
 import { Lead } from '@/types/types';
-import { hubspotService } from '@/services/hubspotService';
+import { hubspotService } from '@/core-infra/hubspot/HubSpotClient';
 
 export type { Lead };
 
@@ -47,16 +47,31 @@ export const updateLead = async (leadId: string, updates: Partial<Lead>) => {
     const leadRef = doc(db, LEADS_COLLECTION, leadId);
     await updateDoc(leadRef, updates as { [x: string]: unknown });
 
-    // HubSpot Sync - Fetch full lead to ensure proper mapping if critical fields changed
+    // HubSpot Sync - Fetch full lead only if critical fields are missing
     if (updates.email || updates.aiScore || updates.customerMemory) {
-      getDoc(leadRef).then((snap) => {
-        if (snap.exists()) {
-          hubspotService.syncLeadToHubSpot({
+      if (updates.email && (updates.name || updates.firstName)) {
+        // We have enough local data to sync directly without fetching
+        hubspotService
+          .syncLeadToHubSpot({
             id: leadId,
-            ...snap.data(),
-          } as Lead);
-        }
-      });
+            ...updates,
+          } as Lead)
+          .catch(console.error);
+      } else {
+        // Fallback to fetch the complete lead from DB
+        getDoc(leadRef)
+          .then((snap) => {
+            if (snap.exists()) {
+              hubspotService
+                .syncLeadToHubSpot({
+                  id: leadId,
+                  ...snap.data(),
+                } as Lead)
+                .catch(console.error);
+            }
+          })
+          .catch(console.error);
+      }
     }
   } catch (error) {
     console.error('Error updating lead:', error);
@@ -148,17 +163,19 @@ export const updateLeadL3Memory = async (
 /**
  * Near-real-time poller for leads - Aggregates from standard and secure collections
  */
+import { limit } from 'firebase/firestore/lite';
+
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
   let cancelled = false;
-  const leadsMap: Record<string, Lead[]> = {
-    applications: [],
-    solicitudes: [],
-  };
 
   const fetchAll = async () => {
     try {
-      const qApps = query(collection(db, 'applications'), orderBy('createdAt', 'desc'));
-      const qSols = query(collection(db, 'solicitudes_credito'), orderBy('createdAt', 'desc'));
+      const qApps = query(collection(db, 'applications'), orderBy('createdAt', 'desc'), limit(50));
+      const qSols = query(
+        collection(db, 'solicitudes_credito'),
+        orderBy('createdAt', 'desc'),
+        limit(50),
+      );
 
       const [snapApps, snapSols] = await Promise.all([getDocs(qApps), getDocs(qSols)]);
 
@@ -180,13 +197,15 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
   };
 
   fetchAll();
-  const intervalId = setInterval(fetchAll, 10000);
+  // Adaptive/lazy interval setting: 30 seconds backpressure to prevent DB abuse instead of 10s
+  const intervalId = setInterval(fetchAll, 30000);
 
   return () => {
     cancelled = true;
     clearInterval(intervalId);
   };
 };
+
 /**
  * Fetches sensitive data from the Secure Vault
  * Note: This will fail if the user is not an authorized Admin (Richard/SuperAdmin)

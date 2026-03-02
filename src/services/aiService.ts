@@ -1,3 +1,13 @@
+import { Car } from '@/domain/entities';
+
+export interface VisualSearchResult {
+  type: string | null;
+  brand: string | null;
+  color: string | null;
+  confidence: number;
+  key_features: string[];
+}
+
 /**
  * Converts a File object to a Base64 string for the API
  */

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 const PrivacyView: React.FC = () => {
   const navigate = useNavigate();

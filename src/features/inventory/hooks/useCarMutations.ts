@@ -4,7 +4,7 @@ import {
   updateVehicle,
   deleteVehicle,
 } from '@/features/inventory/services/inventoryService';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 
 export const useCarMutations = () => {
   const queryClient = useQueryClient();

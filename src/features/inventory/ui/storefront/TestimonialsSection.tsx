@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart } from 'lucide-react';
-import OptimizedImage from '@/components/common/OptimizedImage';
+import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
 
 const TestimonialsSection: React.FC = () => {
   const testimonials = [

@@ -19,7 +19,7 @@ import {
 } from 'firebase/firestore/lite';
 import { dbLite as db } from '@/infra/firebase/client';
 import { getStorageService, getAnalyticsService } from '@/infra/firebase/optionalServices';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 
 const CARS_COLLECTION = 'cars';
 

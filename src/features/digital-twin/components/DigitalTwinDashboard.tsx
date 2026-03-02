@@ -5,7 +5,7 @@ import { AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
 import { addLead } from '@/features/leads/services/crmService';
 import { sendWhatsAppMessage } from '@/features/leads/services/whatsappService';
 import { getPaginatedCars } from '@/features/inventory/services/inventoryService';
-import type { Car } from '@/types/types';
+import { Car, Lead } from '@/domain/entities';
 
 type ChatMessage = {
   role: 'user' | 'bot';

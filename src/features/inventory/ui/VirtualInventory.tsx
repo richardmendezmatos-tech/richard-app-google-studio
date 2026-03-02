@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import PremiumGlassCard from './storefront/PremiumGlassCard';
 
 interface VirtualInventoryProps {

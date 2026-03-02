@@ -1,5 +1,3 @@
-import { CarType } from '../types/types';
-
 export interface Lead {
   id: string;
   firstName: string;
@@ -55,13 +53,18 @@ export interface Car {
   mileage: number;
   type: CarType;
   img: string;
+  badge?: string;
   dealerId?: string;
   transmission?: string;
   fuelType?: string;
   images?: string[];
+  featured?: boolean;
+  features?: string[];
   description?: string;
   createdAt?: number; // Timestamp for inventory age calculation
 }
+
+export type CarType = 'suv' | 'sedan' | 'pickup' | 'luxury';
 
 export type UserRole = 'admin' | 'user' | 'agent' | 'ghost';
 

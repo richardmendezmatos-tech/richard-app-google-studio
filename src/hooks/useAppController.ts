@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { useNotification } from '@/contexts/NotificationContext';
 import { useAuthListener } from './useAuthListener';
 import { useCars } from '@/features/inventory/hooks/useCars';

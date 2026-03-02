@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import {
   X,
   ChevronRight,
@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { generateCarPitch } from '@/services/geminiService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import { ProgressRing } from '@/components/common/ProgressRing';
+import { ProgressRing } from '@/shared/brand-ui/common/ProgressRing';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 
 interface Props {

@@ -20,7 +20,7 @@ import { submitApplication } from '@/services/firebaseService';
 import { addLead } from '@/features/leads/services/crmService';
 import { encryptSSN } from '@/services/ssnEncryptionService';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 interface Props {
   onExit: () => void;

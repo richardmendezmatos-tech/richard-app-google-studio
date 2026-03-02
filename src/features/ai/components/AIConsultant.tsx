@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Car } from '@/types/types';
 import { useCopilotAgent } from '@/hooks/useCopilotAgent';
 import { Send, User, Bot, Sparkles, Loader2 } from 'lucide-react';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 interface Props {
   inventory: Car[];

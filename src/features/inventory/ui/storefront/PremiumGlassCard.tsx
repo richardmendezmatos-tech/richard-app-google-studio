@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/contexts/ComparisonContext';
-import OptimizedImage from '@/components/common/OptimizedImage';
-import { AnimatedCounter } from '@/components/common/AnimatedCounter';
+import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
+import { AnimatedCounter } from '@/shared/brand-ui/common/AnimatedCounter';
 
 interface PremiumGlassCardProps {
   car: Car;

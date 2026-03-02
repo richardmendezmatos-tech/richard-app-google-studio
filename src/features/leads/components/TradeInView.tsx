@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Car, ChevronRight, Loader2 } from 'lucide-react';
 import { addLead } from '@/features/leads/services/crmService';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 type Step = 'identify' | 'details' | 'condition' | 'result';
 

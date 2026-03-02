@@ -1,13 +1,16 @@
 import React, { Suspense } from 'react';
-import { BrandErrorBoundary } from '@/components/common/BrandErrorBoundary';
-import { CinemaLayout } from '@/components/layout/CinemaLayout';
-import { AnimatedRoutes } from '@/components/AnimatedRoutes';
+import { BrandErrorBoundary } from '@/shared/brand-ui/common/BrandErrorBoundary';
+import { CinemaLayout } from '@/shared/brand-ui/layout/CinemaLayout';
+import { AnimatedRoutes } from '@/shared/brand-ui/AnimatedRoutes';
 
-import { AppProviders } from '@/components/providers/AppProviders';
+import { AppProviders } from '@/shared/brand-ui/providers/AppProviders';
 import { useAppController } from '@/hooks/useAppController';
 
 const ComparisonBar = React.lazy(() => import('@/features/inventory/ui/ComparisonBar'));
 const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner'));
+const CommandCenterPanel = React.lazy(
+  () => import('@/command-center/components/CommandCenterPanel'),
+);
 
 const RichardAutomotiveApp: React.FC = () => {
   const {

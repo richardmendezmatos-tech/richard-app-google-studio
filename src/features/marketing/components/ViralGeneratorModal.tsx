@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Wand2, Download, Video, Music, Mic } from 'lucide-react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 
 interface VideoScript {
   hook: string;

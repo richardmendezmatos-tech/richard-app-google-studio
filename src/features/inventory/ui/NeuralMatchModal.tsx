@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { calculateNeuralMatch, analyzeCarImage } from '@/services/geminiService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 

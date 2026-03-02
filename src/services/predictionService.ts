@@ -2,7 +2,7 @@
  * Strategic CEO Engine: Predictive Sales Analytics
  * Heuristic based on price deviation, feature density, and lead momentum.
  */
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 
 export interface PredictionResult {
   daysToSale: number;

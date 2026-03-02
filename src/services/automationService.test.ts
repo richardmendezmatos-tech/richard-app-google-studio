@@ -82,7 +82,7 @@ describe('automationService.processLeadNurturing', () => {
       subject: 'Asunto IA',
     });
     sendTransactionalEmailMock.mockResolvedValue(false);
-    sendWhatsAppMock.mockResolvedValue(true);
+    sendWhatsAppMock.mockResolvedValue({ success: true });
 
     await automationService.processLeadNurturing(baseLead);
 

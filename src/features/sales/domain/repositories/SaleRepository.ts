@@ -1,4 +1,4 @@
-import { Venta } from '../domain/Venta';
+import { Venta } from '../Venta';
 
 export interface SaleRepository {
   executeTransaction(saleData: Omit<Venta, 'id' | 'fechaVenta'>): Promise<string>;

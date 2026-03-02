@@ -9,11 +9,9 @@ import { FirestoreStorageRepository } from '../repositories/FirestoreStorageRepo
 import { FirestoreUserRepository } from '../repositories/FirestoreUserRepository';
 import { FirestoreSubscriberRepository } from '../repositories/FirestoreSubscriberRepository';
 import { FirestoreSurveyRepository } from '../repositories/FirestoreSurveyRepository';
-import { CalculatePredictiveScore } from '../../application/use-cases/CalculatePredictiveScore';
 import { IdentifyOutreachOpportunities } from '../../application/use-cases/IdentifyOutreachOpportunities';
 import { CalculateDynamicMargin } from '../../application/use-cases/CalculateDynamicMargin';
 import { FirestorePredictiveRepository } from '../repositories/FirestorePredictiveRepository';
-import { PredictiveScoringEngine } from '../services/PredictiveScoringEngine';
 import { EvaluarAprobacionVenta } from '../../features/loans/application/EvaluarAprobacionVenta';
 import { FirestoreLoanRepository } from '../../features/loans/infra/FirestoreLoanRepository';
 
@@ -33,17 +31,11 @@ class DIContainer {
   private loanRepository = new FirestoreLoanRepository();
 
   // Services
-  private scoringEngine = new PredictiveScoringEngine();
 
   // Use Cases
   private getLeadsUseCase = new GetLeads(this.leadRepository);
   private getInventoryUseCase = new GetInventory(this.inventoryRepository);
   private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
-  private calculatePredictiveScoreUseCase = new CalculatePredictiveScore(
-    this.predictiveRepository,
-    this.leadRepository,
-    this.scoringEngine,
-  );
   private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(
     this.predictiveRepository,
     this.leadRepository,
@@ -94,10 +86,6 @@ class DIContainer {
 
   public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
     return this.getHoustonTelemetryUseCase;
-  }
-
-  public getCalculatePredictiveScoreUseCase(): CalculatePredictiveScore {
-    return this.calculatePredictiveScoreUseCase;
   }
 
   public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {

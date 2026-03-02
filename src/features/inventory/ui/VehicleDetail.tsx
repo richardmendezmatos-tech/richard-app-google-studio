@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
 import { generateCarPitch } from '@/services/geminiService';
 import { useDealer } from '@/contexts/DealerContext';
 import { logIntentSignal } from '@/services/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import DealBuilder from '@/features/inventory/ui/deal/DealBuilder';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 import { SITE_CONFIG } from '@/constants/siteConfig';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import { useMetaPixel } from '@/hooks/useMetaPixel';
-import { ProgressRing } from '@/components/common/ProgressRing';
+import { ProgressRing } from '@/shared/brand-ui/common/ProgressRing';
 
 interface Props {
   inventory: Car[];

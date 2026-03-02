@@ -13,6 +13,7 @@ import {
 import { db } from '../firebase/client';
 import { LeadRepository } from '../../domain/repositories/LeadRepository';
 import { Lead } from '../../domain/entities';
+import { LeadMapper } from '../mappers/LeadMapper';
 
 export class FirestoreLeadRepository implements LeadRepository {
   private collectionName = 'applications';
@@ -24,25 +25,24 @@ export class FirestoreLeadRepository implements LeadRepository {
       limit(limitCount),
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Lead,
-    );
+    return snapshot.docs.map((doc) => LeadMapper.toDomain(doc.id, doc.data()));
   }
 
-  async getLeadById(id: string): Promise<Lead | null> {
+  async getLeadById(id: string, dealerId: string): Promise<Lead | null> {
     const docRef = doc(db, this.collectionName, id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return null;
-    return { id: docSnap.id, ...docSnap.data() } as Lead;
+
+    const lead = LeadMapper.toDomain(docSnap.id, docSnap.data());
+    if (lead.dealerId !== dealerId) return null; // Aislamiento multi-tenant
+
+    return lead;
   }
 
   async saveLead(lead: Partial<Lead>): Promise<string> {
+    const data = LeadMapper.toPersistence(lead);
     const docRef = await addDoc(collection(db, this.collectionName), {
-      ...lead,
+      ...data,
       timestamp: serverTimestamp(),
     });
     return docRef.id;

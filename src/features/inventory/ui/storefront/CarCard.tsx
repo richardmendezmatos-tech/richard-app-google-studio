@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/contexts/ComparisonContext';
-import OptimizedImage from '@/components/common/OptimizedImage';
+import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
 
 interface CarCardProps {
   car: Car;

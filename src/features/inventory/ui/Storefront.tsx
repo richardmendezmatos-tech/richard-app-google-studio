@@ -1,5 +1,5 @@
 import React, { useState, useContext, Suspense, useMemo } from 'react';
-import { Car, CarType } from '@/types/types';
+import { Car, CarType } from '@/domain/entities';
 import {
   Search,
   Heart,
@@ -25,15 +25,15 @@ import { useSavedCars } from '../hooks/useSavedCars';
 import { useInventoryAnalytics } from '../hooks/useInventoryAnalytics';
 import { AuthContext } from '@/features/auth/context/AuthContextValue';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { SocialProofWidget } from '@/components/layout/conversion/SocialProofWidget';
-import SEO from '../../../components/seo/SEO';
-import OptimizedImage from '@/components/common/OptimizedImage';
+import { SocialProofWidget } from '@/shared/brand-ui/layout/conversion/SocialProofWidget';
+import SEO from '@/shared/brand-ui/seo/SEO';
+import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
 
 // Import New Modular Components
 import HeroSection from './storefront/HeroSection';
 import TrustBar from './storefront/TrustBar';
 import TestimonialsSection from './storefront/TestimonialsSection';
-import FAQSection from '../../../components/layout/FAQSection';
+import FAQSection from '@/shared/brand-ui/layout/FAQSection';
 import SocialFooter from './storefront/SocialFooter';
 import VirtualInventory from './VirtualInventory';
 import { AuthoritySection } from '../../marketing/components/AuthoritySection';

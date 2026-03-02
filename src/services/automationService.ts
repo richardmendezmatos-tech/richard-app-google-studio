@@ -35,7 +35,7 @@ class AutomationService {
     }
 
     if (lead.phone) {
-      const sent = await whatsappService.sendMessage(lead.phone, finalMessage);
+      const { success: sent } = await whatsappService.sendMessage(lead.phone, finalMessage);
       return { success: sent, channel: 'whatsapp' };
     }
 

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 import { submitApplication } from '@/services/firebaseService';
 import { usePhotoUploader } from '@/hooks/usePhotoUploader';

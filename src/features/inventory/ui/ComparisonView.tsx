@@ -3,7 +3,7 @@ import { useComparison } from '@/contexts/ComparisonContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 
 const ComparisonView: React.FC = () => {
   const { selectedCars, removeCarFromCompare, clearComparison } = useComparison();

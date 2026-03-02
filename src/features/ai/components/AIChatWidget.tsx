@@ -15,7 +15,7 @@ import {
   Calculator,
 } from 'lucide-react';
 import { AI_LEGAL_DISCLAIMER } from '@/services/firebaseShared';
-import GenUICarCard from '@/components/layout/chat/GenUICarCard';
+import GenUICarCard from '@/shared/brand-ui/layout/chat/GenUICarCard';
 
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ChatflowOrchestrator } from '@/domain/chatbot/orchestrator';

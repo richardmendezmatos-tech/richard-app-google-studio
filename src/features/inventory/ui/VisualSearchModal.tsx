@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { X, UploadCloud, Camera, AlertCircle, ScanLine } from 'lucide-react';
-import { Car } from '@/types/types';
+import { Car } from '@/domain/entities';
 import { VisualSearchResult } from '@/services/aiService';
 
 interface Props {

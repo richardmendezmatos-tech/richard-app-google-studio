@@ -9,13 +9,14 @@ import { ReindexInventory, AnalyzeLead, AnalyzeLeadOutputSchema } from './applic
 import { logFlowExecution } from './services/persistenceService';
 
 // RE-EXPORTS (Public API)
-export { incomingWhatsAppMessage } from './triggers/whatsappTrigger';
+// RE-EXPORTS (Public API)
 export {
   onCarCreated,
   onCarUpdated,
   onNewApplication,
   onVehicleUpdate,
   onLeadStatusChange,
+  onLeadMetricsUpdate,
 } from './triggers/firestoreTriggers';
 export { cleanupOldLogs, dailyMarketScraper } from './scheduled/maintenanceScheduler';
 export { sendgridWebhook } from './webhooks/sendgridWebhook';
@@ -23,7 +24,7 @@ export { verifyGoogleToken } from './googleOneTap';
 
 export { saveFiProgress } from './webhooks/notionWebhook';
 export { sendSmsLead } from './webhooks/twilioWebhook';
-export { onWhatsAppMessage } from './triggers/whatsappWebhook';
+export { incomingWhatsAppMessage as onWhatsAppMessage } from './triggers/whatsappTrigger';
 
 import { transcribeVoiceFlow } from './voiceTranscription';
 export { transcribeVoiceFlow };
