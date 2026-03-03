@@ -15,23 +15,27 @@ const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 
 export const twilioBackendService = {
   async sendSMS(to: string, body: string): Promise<boolean> {
-    if (!client || !fromPhone) {
-      console.warn('Twilio credentials no configuradas o faltan en el entorno.', { to, body });
-      return false;
-    }
-
-    try {
-      const message = await client.messages.create({
-        body,
-        from: fromPhone,
-        to,
-      });
-
-      console.log(`[Twilio] SMS enviado exitosamente al ${to}. SID: ${message.sid}`);
-      return true;
-    } catch (error) {
-      console.error('[Twilio] Error enviando SMS:', error);
-      return false;
-    }
+    return sendTwilioMessage(to, body);
   },
 };
+
+export async function sendTwilioMessage(to: string, body: string): Promise<boolean> {
+  if (!client || !fromPhone) {
+    console.warn('Twilio credentials no configuradas o faltan en el entorno.', { to, body });
+    return false;
+  }
+
+  try {
+    const message = await client.messages.create({
+      body,
+      from: fromPhone,
+      to,
+    });
+
+    console.log(`[Twilio] SMS enviado exitosamente al ${to}. SID: ${message.sid}`);
+    return true;
+  } catch (error) {
+    console.error('[Twilio] Error enviando SMS:', error);
+    return false;
+  }
+}
