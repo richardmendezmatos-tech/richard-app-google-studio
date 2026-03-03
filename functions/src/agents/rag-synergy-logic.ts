@@ -180,7 +180,6 @@ export async function orchestrateResponse(input: {
 
   let finalResponse = synthesisResult.text;
   let audit = { passed: true, feedback: '', errorType: null };
-  let negotiationStrategy: string | null = null;
 
   try {
     const auditRaw = validationResult.text.trim().replace(/```json|```/g, '');
@@ -222,7 +221,7 @@ export async function orchestrateResponse(input: {
     return null;
   })();
 
-  negotiationStrategy = await negotiationPromise;
+  const negotiationStrategy = await negotiationPromise;
 
   // --- STEP 5: WORKSPACE CHECKPOINTING (Workspace Manager) ---
   const checkpointId = `ra-chat-${input.leadId || 'anonymous'}-${Date.now()}`;

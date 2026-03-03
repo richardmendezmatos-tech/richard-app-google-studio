@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, FC, FormEvent } from 'react';
+import { useState, useCallback, useEffect, FC, useActionState } from 'react';
 import { loginAdmin, loginWithPasskey } from '../services/authService';
 import {
   ShieldAlert,
@@ -30,16 +30,47 @@ const SystemAccessLogin: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [twoFactorCode] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setLocalError] = useState<string | null>(null);
+  const [isLocalLoading, setIsLocalLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // React 19: useActionState for main login form
+  const [formState, formAction, isPending] = useActionState(
+    async (_prevState: any, formData: FormData) => {
+      const emailVal = formData.get('email') as string;
+      const passwordVal = formData.get('password') as string;
+
+      dispatch(loginStart());
+      try {
+        const profile = await loginAdmin(emailVal, passwordVal);
+        dispatch(
+          loginSuccess({
+            ...profile,
+            role: profile.role as UserRole,
+          }),
+        );
+        return { error: null, success: true };
+      } catch (err: any) {
+        const msg = err.message || 'Error de autenticación';
+        dispatch(loginFailure(msg));
+        return { error: msg, success: false };
+      }
+    },
+    { error: null, success: false },
+  );
+
+  // Handle success navigation
+  useEffect(() => {
+    if (formState.success) {
+      navigate('/admin');
+    }
+  }, [formState.success, navigate]);
+
   const handleGhostLogin = useCallback(
     async (key: string) => {
-      setLoading(true);
-      setError('Activando Protocolo Ghost de CTO...');
+      setIsLocalLoading(true);
+      setLocalError('Activando Protocolo Ghost de CTO...');
       try {
         const { validateGhostKey } = await import('../services/authService');
         const user = await validateGhostKey(key);
@@ -52,9 +83,9 @@ const SystemAccessLogin: FC = () => {
         );
         navigate('/admin');
       } catch {
-        setError('Llave Maestra Rechazada.');
+        setLocalError('Llave Maestra Rechazada.');
       } finally {
-        setLoading(false);
+        setIsLocalLoading(false);
       }
     },
     [dispatch, navigate],
@@ -70,53 +101,23 @@ const SystemAccessLogin: FC = () => {
   }, [handleGhostLogin]);
 
   const handleMagicLink = async () => {
-    if (!email) return setError('Ingresa tu email primero');
-    setLoading(true);
+    if (!email) return setLocalError('Ingresa tu email primero');
+    setIsLocalLoading(true);
     try {
       const { sendMagicLink } = await import('../services/authService');
       await sendMagicLink(email);
-      setError('✨ Enlace enviado a tu correo. Revisa tu bandeja.');
+      setLocalError('✨ Enlace enviado a tu correo. Revisa tu bandeja.');
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
-      setError('Error: ' + errorMsg);
+      setLocalError('Error: ' + errorMsg);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    dispatch(loginStart());
-
-    try {
-      const user = (await loginAdmin(email, password, twoFactorCode || '123456')) as AppUser;
-      dispatch(loginSuccess(user));
-      navigate('/admin');
-    } catch (err: unknown) {
-      console.error('Login Error Details:', err);
-      let msg = '';
-      const error = err as { code?: string; message: string };
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-        msg = 'Credenciales incorrectas';
-      } else if (error.message.includes('ACCESS_DENIED')) {
-        msg = 'Cuenta no autorizada (Verifica tu Rol)';
-      } else if (error.message.includes('INVALID_2FA')) {
-        msg = 'Token 2FA incorrecto (Usa 123456)';
-      } else {
-        msg = `Error: ${error.code || error.message || 'Desconocido'}`;
-      }
-      setError(msg);
-      dispatch(loginFailure(msg));
-    } finally {
-      setLoading(false);
+      setIsLocalLoading(false);
     }
   };
 
   const handlePasskeyLogin = async () => {
-    setError(null);
-    setLoading(true);
+    setLocalError(null);
+    setIsLocalLoading(true);
     dispatch(loginStart());
     try {
       const result = await loginWithPasskey();
@@ -129,10 +130,7 @@ const SystemAccessLogin: FC = () => {
           const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
         } else {
-          // PROD: Magic Link / Custom Token fallback based on Passkey Success
-          // For now, we correlate the email and use it to complete the session
-          // In a full WebAuthn backend, we'd exchange the credential for a Firebase Custom Token
-          const profile = await loginAdmin(result.email, 'PASSKEY_SECURED_SESSION'); // Simulation of secure session init
+          const profile = await loginAdmin(result.email, 'PASSKEY_SECURED_SESSION');
           dispatch(
             loginSuccess({
               ...profile,
@@ -156,20 +154,20 @@ const SystemAccessLogin: FC = () => {
       console.error('Passkey Failed:', err);
       const error = err as { message?: string };
       const msg = error.message || 'No se pudo verificar la identidad biométrica.';
-      setError(msg);
+      setLocalError(msg);
       dispatch(loginFailure(msg));
     } finally {
-      setLoading(false);
+      setIsLocalLoading(false);
     }
   };
 
   const handleDevQuickAccess = async () => {
     if (!import.meta.env.DEV) {
-      setError('⛔️ Acceso rápido deshabilitado en Producción.');
+      setLocalError('⛔️ Acceso rápido deshabilitado en Producción.');
       return;
     }
-    setLoading(true);
-    setError(null);
+    setIsLocalLoading(true);
+    setLocalError(null);
     dispatch(loginStart());
     try {
       const { signInWithEmailAndPassword } = await import('firebase/auth');
@@ -193,10 +191,10 @@ const SystemAccessLogin: FC = () => {
       const msg =
         'Error: ' +
         (error.code || error.message || 'Verifica que el usuario admin@richard.com existe');
-      setError(msg);
+      setLocalError(msg);
       dispatch(loginFailure(msg));
     } finally {
-      setLoading(false);
+      setIsLocalLoading(false);
     }
   };
 
@@ -249,7 +247,7 @@ const SystemAccessLogin: FC = () => {
 
           {/* Body */}
           <div className="p-8 pt-6">
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form action={formAction} className="space-y-6">
               {/* Inputs */}
               <div className="space-y-4">
                 <div className="space-y-1.5">
@@ -262,6 +260,7 @@ const SystemAccessLogin: FC = () => {
                     </div>
                     <input
                       type="email"
+                      name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-11 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-white/5 transition-all"
@@ -281,6 +280,7 @@ const SystemAccessLogin: FC = () => {
                     </div>
                     <input
                       type={showPassword ? 'text' : 'password'}
+                      name="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-11 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-[#00aed9]/50 focus:bg-white/5 transition-all"
@@ -305,7 +305,7 @@ const SystemAccessLogin: FC = () => {
               {/* Status Message */}
               <div className="min-h-[24px]">
                 <AnimatePresence mode="wait">
-                  {error && (
+                  {(error || formState.error) && (
                     <motion.div
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -313,7 +313,7 @@ const SystemAccessLogin: FC = () => {
                       className="flex items-center gap-2 text-rose-400 justify-center bg-rose-500/10 py-2 rounded-lg border border-rose-500/20"
                     >
                       <ShieldAlert size={14} />
-                      <span className="text-xs font-bold">{error}</span>
+                      <span className="text-xs font-bold">{error || formState.error}</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -323,12 +323,12 @@ const SystemAccessLogin: FC = () => {
               <div className="space-y-3">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={isPending || isLocalLoading}
                   className="w-full py-4 bg-gradient-to-r from-[#00aed9] to-[#009ac0] hover:to-[#00aed9] text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-[#00aed9]/25 hover:shadow-cyan-400/40 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   <span className="relative flex items-center justify-center gap-2">
-                    {loading ? (
+                    {isPending ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
@@ -346,7 +346,7 @@ const SystemAccessLogin: FC = () => {
                   <button
                     type="button"
                     onClick={handlePasskeyLogin}
-                    disabled={loading}
+                    disabled={isPending || isLocalLoading}
                     className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
                   >
                     <ScanFace
@@ -358,7 +358,7 @@ const SystemAccessLogin: FC = () => {
                   <button
                     type="button"
                     onClick={handleMagicLink}
-                    disabled={loading}
+                    disabled={isPending || isLocalLoading}
                     className="py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold text-xs transition-all hover:border-white/20 flex items-center justify-center gap-2 group"
                   >
                     <Cpu
@@ -386,7 +386,7 @@ const SystemAccessLogin: FC = () => {
             <div className="border-t border-white/5 bg-amber-500/5 p-2 flex justify-center">
               <button
                 onClick={handleDevQuickAccess}
-                disabled={loading}
+                disabled={isPending || isLocalLoading}
                 className="px-3 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors border border-amber-500/20 flex items-center gap-2"
               >
                 <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>

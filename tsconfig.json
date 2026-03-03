@@ -5,11 +5,7 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -24,37 +20,17 @@
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@infra/*": [
-        "src/infra/*"
-      ],
-      "@domain/*": [
-        "src/domain/*"
-      ],
-      "@app/*": [
-        "src/app/*"
-      ]
+      "@/*": ["src/*"],
+      "@infra/*": ["src/infra/*"],
+      "@domain/*": ["src/domain/*"],
+      "@app/*": ["src/app/*"]
     }
   },
-  "include": [
-    "src",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "functions",
-    "richard-qwik-marketplace",
-    "vite.config.ts"
-  ],
+  "include": ["src", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "functions", "richard-qwik-marketplace", "vite.config.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -232,7 +232,7 @@ window.addEventListener('unhandledrejection', (e) => {
     return;
   }
 
-  let fullMessage = '';
+  let fullMessage: string;
   if (reason instanceof Error) {
     fullMessage = reason.message;
   } else if (typeof reason === 'object' && reason !== null) {

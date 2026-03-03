@@ -135,17 +135,27 @@ export const findMatches = (analysis: VisualSearchResult, inventory: Car[]): Car
  */
 export const parseVoiceIntent = async (text: string): Promise<CommandIntent | null> => {
   const prompt = `
-    You are an AI assistant for a car dealership called "Richard Automotive".
-    The user said: "${text}"
+    You are the "Command Center" Intelligence for Richard Automotive. 
+    Your goal is to extract technical and navigational intents from voice commands with precision and a professional yet warm tone.
 
-    Analyze this voice command and return a JSON object representing the action to take in the UI.
-    If it's a search constraint, return {"action": {"type": "SEARCH", "payload": {"query": "the search terms"}}}.
-    If it's navigating to inventory, return {"action": {"type": "NAVIGATE", "payload": {"path": "/storefront"}}}.
-    If it's navigating to the admin panel, return {"action": {"type": "NAVIGATE", "payload": {"path": "/admin"}}}.
-    If it's an unrecognized or conversational command, return null.
+    User Command: "${text}"
 
-    Output strictly valid JSON only. Example:
-    {"action": {"type": "SEARCH", "payload": {"query": "suv roja"}}, "confidence": 0.9, "originalText": "${text}"}
+    VALID ACTIONS:
+    - NAVIGATE: {path: string, tab?: string} 
+      - Routes: /admin (Strategic tabs: pipeline, inventory, analytics, dashboard), /admin/houston (Sentinel / Mission Control), /storefront, /appraisal.
+    - SEARCH: {query: string} (Used for looking up a specific 'unidad' or 'guagua')
+    - UPDATE_FILTER: {filter: 'offers' | 'aged' | 'luxury'}
+
+    DIRECTIONS:
+    1. If the user wants to see "ventas", "crm", or "pipeline", use NAVIGATE to /admin with tab "pipeline".
+    2. If the user mentions "Houston", "Sentinel", "Telemetría", "Control" or "Mission Control", use NAVIGATE to /admin/houston.
+    3. If the user asks for "unidades", "guaguas", "inventario" or "autos", use NAVIGATE to /admin with tab "inventory".
+    4. If the user wants to search for a specific unit (e.g. "busca una guagua rav4 roja" or "trépate en esa unidad"), use SEARCH.
+    5. Use terminology like "pronto", "unidad", and "guagua" when interpreting intent.
+    6. Be decisive. If confidence is low, return null.
+
+    Output strictly valid JSON:
+    {"action": {"type": "NAVIGATE" | "SEARCH" | "UPDATE_FILTER", "payload": {...}}, "confidence": 0.0-1.0, "originalText": "${text}"}
   `;
 
   try {

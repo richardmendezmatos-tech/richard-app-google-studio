@@ -489,7 +489,7 @@ export const generateVideo = async (
     return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
   } catch (e) {
     console.error('Veo 3.1 error:', e);
-    throw new Error('Veo 3.1 unavailable or quota exceeded.');
+    throw new Error('Veo 3.1 unavailable or quota exceeded.', { cause: e });
   }
 };
 

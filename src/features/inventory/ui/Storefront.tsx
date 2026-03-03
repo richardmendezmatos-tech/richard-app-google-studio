@@ -131,7 +131,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
           return semanticResultIds.includes(c.id);
         }
 
-        let matchesSearch = true;
+        let matchesSearch: boolean;
         if (visualContext) {
           matchesSearch =
             (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||

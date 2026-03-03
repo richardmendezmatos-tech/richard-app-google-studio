@@ -29,7 +29,7 @@ export class FirestoreLoanRepository {
       return docRef.id;
     } catch (error) {
       console.error('Error saving loan to Firestore:', error);
-      throw new Error('No se pudo guardar la información del préstamo.');
+      throw new Error('No se pudo guardar la información del préstamo.', { cause: error });
     }
   }
 

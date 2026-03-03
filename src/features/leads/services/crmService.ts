@@ -220,6 +220,8 @@ export const getSecureLeadData = async (leadId: string) => {
     return null;
   } catch (error) {
     console.error('Vault Access Denied or Error:', error);
-    throw new Error('No tienes permisos suficientes para acceder a la Bóveda Segura.');
+    throw new Error('No tienes permisos suficientes para acceder a la Bóveda Segura.', {
+      cause: error,
+    });
   }
 };

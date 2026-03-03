@@ -44,7 +44,7 @@ export class ProcesarTradeInFinanciado {
     if (creditScore < 680) apr = 12.5;
 
     // 4. Calcular Pago Mensual (Respetando promoción 0% APR)
-    let pagoMensualEstimado = 0;
+    let pagoMensualEstimado: number;
     if (apr === 0) {
       pagoMensualEstimado = montoAFinanciar / terminoMeses;
     } else {

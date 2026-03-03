@@ -407,7 +407,7 @@ export const registerPasskey = async (user: User) => {
   } catch (err: unknown) {
     const errorMessage = (err as { message?: string }).message;
     console.error('Passkey Error:', err);
-    throw new Error('Error registrando Passkey: ' + errorMessage);
+    throw new Error('Error registrando Passkey: ' + errorMessage, { cause: err });
   }
 };
 
@@ -457,11 +457,11 @@ export const loginWithPasskey = async () => {
     const errorMessage = (err as { message?: string }).message;
 
     if (errorName === 'NotAllowedError') {
-      throw new Error('Operación biométrica cancelada por el usuario.');
+      throw new Error('Operación biométrica cancelada por el usuario.', { cause: err });
     }
 
     console.error('Passkey Login Error:', err);
     await logAuthActivity('unknown', false, 'passkey_login_failed', errorMessage);
-    throw new Error('Error iniciando sesión con Passkey: ' + errorMessage);
+    throw new Error('Error iniciando sesión con Passkey: ' + errorMessage, { cause: err });
   }
 };

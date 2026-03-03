@@ -17,7 +17,6 @@ import {
 import { useNotification } from '@/contexts/NotificationContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import SEO from '@/shared/brand-ui/seo/SEO';
-import './BlogView.css';
 
 const TONE_OPTIONS: Array<'professional' | 'casual' | 'hype'> = ['professional', 'casual', 'hype'];
 const POST_TYPE_OPTIONS: Array<'news' | 'review' | 'guide'> = ['news', 'review', 'guide'];

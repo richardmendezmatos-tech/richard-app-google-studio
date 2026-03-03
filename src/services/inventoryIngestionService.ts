@@ -43,7 +43,9 @@ export const inventoryIngestionService = {
       return data;
     } catch (error) {
       console.error('Inventory Ingestion Error:', error);
-      throw new Error('No se pudo procesar la imagen. Intenta con una foto más clara.');
+      throw new Error('No se pudo procesar la imagen. Intenta con una foto más clara.', {
+        cause: error,
+      });
     }
   },
 };

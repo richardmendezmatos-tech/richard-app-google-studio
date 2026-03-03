@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useActionState } from 'react';
 import {
   signUpWithEmail,
   signInWithEmail,
@@ -15,7 +15,6 @@ import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
 import SEO from '@/shared/brand-ui/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import './LoginView.css';
 
 interface GoogleCredentialResponse {
   credential: string;
@@ -45,7 +44,7 @@ const UserLogin: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setLocalError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -53,6 +52,39 @@ const UserLogin: React.FC = () => {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/';
+
+  // React 19: useActionState for login/signup
+  const [formState, formAction, isPending] = useActionState(
+    async (_prevState: any, formData: FormData) => {
+      const emailVal = formData.get('email') as string;
+      const passwordVal = formData.get('password') as string;
+      const type = formData.get('authType') as string;
+
+      dispatch(loginStart());
+      try {
+        let appUser;
+        if (type === 'register') {
+          appUser = await signUpWithEmail(emailVal, passwordVal);
+        } else {
+          appUser = await signInWithEmail(emailVal, passwordVal);
+        }
+        dispatch(loginSuccess(appUser));
+        return { error: null, success: true };
+      } catch (err: any) {
+        const msg = getErrorMsg(err);
+        dispatch(loginFailure(msg));
+        return { error: msg, success: false };
+      }
+    },
+    { error: null, success: false },
+  );
+
+  // Handle success navigation
+  React.useEffect(() => {
+    if (formState.success) {
+      navigate(from, { replace: true });
+    }
+  }, [formState.success, navigate, from]);
 
   // --- Google One Tap Integration ---
   React.useEffect(() => {
@@ -73,7 +105,7 @@ const UserLogin: React.FC = () => {
             navigate(from, { replace: true });
           } catch (err: unknown) {
             const msg = getErrorMsg(err);
-            setError(msg);
+            setLocalError(msg); // Changed setError to setLocalError
             dispatch(loginFailure(msg));
           } finally {
             setLoading(false);
@@ -99,36 +131,15 @@ const UserLogin: React.FC = () => {
           navigate(from, { replace: true });
         }
       } catch (err: unknown) {
-        setError(getErrorMsg(err));
+        setLocalError(getErrorMsg(err)); // Changed setError to setLocalError
       }
     };
     checkRedirect();
   }, [dispatch, from, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    dispatch(loginStart());
-
-    try {
-      const appUser = isRegistering
-        ? await signUpWithEmail(email, password)
-        : await signInWithEmail(email, password);
-      dispatch(loginSuccess(appUser));
-      navigate(from, { replace: true });
-    } catch (err: unknown) {
-      const msg = getErrorMsg(err);
-      setError(msg);
-      dispatch(loginFailure(msg));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setLoading(true);
-    setError(null);
+    setLocalError(null); // Changed setError to setLocalError
     dispatch(loginStart());
     try {
       let user;
@@ -141,7 +152,7 @@ const UserLogin: React.FC = () => {
       }
     } catch (err: unknown) {
       const msg = getErrorMsg(err);
-      setError(msg);
+      setLocalError(msg); // Changed setError to setLocalError
       dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
@@ -236,7 +247,8 @@ const UserLogin: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-5">
+        <form action={formAction} className="px-10 pb-10 space-y-5">
+          <input type="hidden" name="authType" value={isRegistering ? 'register' : 'login'} />
           <div className="space-y-4">
             <div className="relative group">
               <Mail
@@ -245,6 +257,7 @@ const UserLogin: React.FC = () => {
               />
               <input
                 type="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -260,6 +273,7 @@ const UserLogin: React.FC = () => {
               />
               <input
                 type="password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -270,20 +284,24 @@ const UserLogin: React.FC = () => {
           </div>
 
           <AnimatePresence>
-            {error && (
+            {(error || formState.error) && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="p-4 rounded-2xl text-[11px] font-bold flex items-center gap-3 bg-red-500/10 text-red-400 border border-red-500/20"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                {error}
+                {error || formState.error}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <button type="submit" disabled={loading} className="primary-btn-premium group">
-            {loading ? (
+          <button
+            type="submit"
+            disabled={isPending || loading}
+            className="primary-btn-premium group"
+          >
+            {isPending || loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>

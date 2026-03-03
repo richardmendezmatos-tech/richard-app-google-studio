@@ -5,6 +5,23 @@ import { VoiceCommandService } from '@/services/VoiceCommandService';
 import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
 import { decode, decodeAudioData, createBlob } from '@/utils/audioUtils';
 
+const WORKLET_NAME = 'pcm-processor';
+const PCM_PROCESSOR_CODE = `
+  class PcmProcessor extends AudioWorkletProcessor {
+    constructor() {
+      super();
+    }
+    process(inputs) {
+      const input = inputs[0];
+      if (input && input[0]) {
+        this.port.postMessage(input[0]);
+      }
+      return true;
+    }
+  }
+  registerProcessor('${WORKLET_NAME}', PcmProcessor);
+`;
+
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 export type Transcription = { id: number; role: 'user' | 'model'; text: string; isFinal: boolean };
 
@@ -35,7 +52,7 @@ export const useVoiceSession = () => {
   const sessionPromise = useRef<Promise<RealtimeSession> | null>(null);
   const inputAudioContext = useRef<AudioContext | null>(null);
   const outputAudioContext = useRef<AudioContext | null>(null);
-  const inputNode = useRef<ScriptProcessorNode | null>(null);
+  const inputNode = useRef<AudioWorkletNode | null>(null);
   const mediaStream = useRef<MediaStream | null>(null);
 
   const nextStartTime = useRef(0);
@@ -94,21 +111,43 @@ export const useVoiceSession = () => {
       });
 
       sessionPromise.current = connectToVoiceSession({
-        onopen: () => {
+        onopen: async () => {
           setConnectionState('connected');
           const source = inputAudioContext.current!.createMediaStreamSource(stream);
-          const scriptProcessor = inputAudioContext.current!.createScriptProcessor(4096, 1, 1);
-          scriptProcessor.onaudioprocess = (event) => {
+
+          // Load AudioWorklet module if not already loaded
+          if (inputAudioContext.current!.state === 'suspended') {
+            await inputAudioContext.current!.resume();
+          }
+
+          const blob = new Blob([PCM_PROCESSOR_CODE], { type: 'application/javascript' });
+          const workletUrl = URL.createObjectURL(blob);
+
+          try {
+            await inputAudioContext.current!.audioWorklet.addModule(workletUrl);
+          } catch (e) {
+            // Module might already be loaded in this context instance
+            console.warn(
+              '[VoiceSession] AudioWorklet module load warning (possibly already loaded):',
+              e,
+            );
+          } finally {
+            URL.revokeObjectURL(workletUrl);
+          }
+
+          const workletNode = new AudioWorkletNode(inputAudioContext.current!, WORKLET_NAME);
+
+          workletNode.port.onmessage = (event) => {
             setIsListening(true);
-            const inputData = event.inputBuffer.getChannelData(0);
-            const pcmBlob = createBlob(inputData);
+            const pcmBlob = createBlob(event.data);
             sessionPromise.current?.then((session) => {
               session.sendRealtimeInput({ media: pcmBlob });
             });
           };
-          source.connect(scriptProcessor);
-          scriptProcessor.connect(inputAudioContext.current!.destination);
-          inputNode.current = scriptProcessor;
+
+          source.connect(workletNode);
+          workletNode.connect(inputAudioContext.current!.destination);
+          inputNode.current = workletNode;
         },
         onmessage: async (message: LiveServerMessage) => {
           handleTranscription(message);

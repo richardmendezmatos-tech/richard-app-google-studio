@@ -9,9 +9,6 @@ import { usePhotoUploader } from '@/hooks/usePhotoUploader';
 import { analyzeTradeInImages } from '@/services/geminiService';
 import { getAppraisalBaseValue } from '@/constants/appraisalBases';
 
-// Import local styles to remove inline dependencies
-import './AppraisalView.css';
-
 // --- Sub-Components (Memoized for Performance) ---
 
 const ContactStep = React.memo(({ info, onChange, onNext }: any) => (
