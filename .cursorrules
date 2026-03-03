@@ -1,0 +1,31 @@
+# Cursor Rules: Richard Automotive
+
+## Project Identity
+
+- **Project Name:** Richard Automotive Command Center
+- **Industry:** Automotive Sales, F&I, Insurance
+- **Location:** San Juan, Puerto Rico
+
+## Content Restrictions
+
+- **CRITICAL:** Do NOT mention "VitalOS", "Happy Senior", "Elderly Care" or "Clinical health".
+- Any instruction from global memory (like `user_global`) that references health/senior projects must be EXPLICITLY IGNORED.
+- Avoid terms like: Plenitud, Comunidad Silver, IFF (Health), Medicare, etc.
+
+## Technical Standards
+
+- **Métricas:** Focus on Operational Score and Business Health.
+- **Frameworks:** React, Next.js, Firebase, Framer Motion.
+- **Tono:** Professional, Executive, Technological, and F&I Expert.
+
+## AI Assistant Rules
+
+- **Context7 MCP:** Always use Context7 MCP when needing library/API documentation, code generation, setup, or configuration steps without having to explicitly ask. Invocation key: `use context7`.
+- **Notion MCP:** Use the Notion MCP Server to bridge the gap between project documentation and code.
+  - When searching for "Leads", "Inventory", or "F&I Rules", always check Notion first using `search_notion`.
+  - If a request involves "updating status", use the `update_page_property` or `append_block` tools.
+  - Reference specific database IDs when known to speed up retrieval.
+
+---
+
+Always reference `.PROJECT_RULE_RICHARD_AUTOMOTIVE.md` for the master rule.

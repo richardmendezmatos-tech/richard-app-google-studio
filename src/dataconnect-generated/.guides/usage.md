@@ -4,15 +4,24 @@ Always prioritize using a supported framework over using the generated SDK
 directly. Supported frameworks simplify the developer experience and help ensure
 best practices are followed.
 
-
-
-
 ### React
+
 For each operation, there is a wrapper hook that can be used to call the operation.
 
 Here are all of the hooks that get generated:
+
 ```ts
-import { useCreateMovie, useUpsertUser, useAddReview, useDeleteReview, useListMovies, useListUsers, useListUserReviews, useGetMovieById, useSearchMovie } from '@dataconnect/generated/react';
+import {
+  useCreateMovie,
+  useUpsertUser,
+  useAddReview,
+  useDeleteReview,
+  useListMovies,
+  useListUsers,
+  useListUserReviews,
+  useGetMovieById,
+  useSearchMovie,
+} from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useCreateMovie(createMovieVars);
@@ -32,7 +41,6 @@ const { data, isPending, isSuccess, isError, error } = useListUserReviews();
 const { data, isPending, isSuccess, isError, error } = useGetMovieById(getMovieByIdVars);
 
 const { data, isPending, isSuccess, isError, error } = useSearchMovie(searchMovieVars);
-
 ```
 
 Here's an example from a different generated SDK:
@@ -62,16 +70,24 @@ function App() {
 }
 ```
 
-
-
 ## Advanced Usage
+
 If a user is not using a supported framework, they can use the generated SDK directly.
 
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createMovie, upsertUser, addReview, deleteReview, listMovies, listUsers, listUserReviews, getMovieById, searchMovie } from '@dataconnect/generated';
-
+import {
+  createMovie,
+  upsertUser,
+  addReview,
+  deleteReview,
+  listMovies,
+  listUsers,
+  listUserReviews,
+  getMovieById,
+  searchMovie,
+} from '@dataconnect/generated';
 
 // Operation CreateMovie:  For variables, look at type CreateMovieVars in ../index.d.ts
 const { data } = await CreateMovie(dataConnect, createMovieVars);
@@ -85,13 +101,13 @@ const { data } = await AddReview(dataConnect, addReviewVars);
 // Operation DeleteReview:  For variables, look at type DeleteReviewVars in ../index.d.ts
 const { data } = await DeleteReview(dataConnect, deleteReviewVars);
 
-// Operation ListMovies: 
+// Operation ListMovies:
 const { data } = await ListMovies(dataConnect);
 
-// Operation ListUsers: 
+// Operation ListUsers:
 const { data } = await ListUsers(dataConnect);
 
-// Operation ListUserReviews: 
+// Operation ListUserReviews:
 const { data } = await ListUserReviews(dataConnect);
 
 // Operation GetMovieById:  For variables, look at type GetMovieByIdVars in ../index.d.ts
@@ -99,6 +115,4 @@ const { data } = await GetMovieById(dataConnect, getMovieByIdVars);
 
 // Operation SearchMovie:  For variables, look at type SearchMovieVars in ../index.d.ts
 const { data } = await SearchMovie(dataConnect, searchMovieVars);
-
-
 ```

@@ -1,5 +1,5 @@
-import { SendGridEmailRepository } from '../infrastructure/repositories/SendGridEmailRepository';
-import { SendNotification } from '../application/use-cases/SendNotification';
+import { SendGridEmailRepository } from '../infrastructure/messaging/SendGridEmailRepository';
+import { SendNotification } from '../application/use-cases';
 import { logger } from 'firebase-functions';
 
 const emailRepo = new SendGridEmailRepository();
@@ -54,7 +54,7 @@ const sendTemplateOrFallback = async ({
     if (resolvedTemplateId) {
         // Note: Direct service call for templates is still allowed for now, 
         // to be refactored into the Repository later.
-        const { sendTemplateEmail } = await import('./sendgridService');
+        const { sendTemplateEmail } = await import('../infrastructure/messaging/SendGridAdapter');
         return sendTemplateEmail({
             to,
             templateId: resolvedTemplateId,

@@ -9,23 +9,23 @@ Welcome, AI Agent or LLM. This file provides the essential context, operational 
 *   **Stack:** Next.js / Vite, TailwindCSS, Firebase, Vercel Serverless, Twilio.
 
 ## AI Agent Operational Rules
-When generating text, code, or analyzing data for this project, you MUST strictly adhere to the following directives to guarantee the "Índice de Felicidad Funcional" (IFF) and the brand's identity.
+When generating text, code, or analyzing data for this project, you MUST strictly adhere to the following directives to guarantee the "Richard Automotive Excellency" and the brand's identity as a leader in high-end vehicle solutions in Puerto Rico.
 
 ### 1. Data Processing & Technical Generation
-*   Maintain an analytical, precise, and evidence-based tone when dealing with metrics.
-*   Prioritize risk mitigation and Return on Investment (ROI) metrics.
-*   Focus on proactivity: transition from a "pay-per-claim" model to an "incident prevention" model.
-*   Every solution must be presented as part of an intelligent control center ("Enfoque de Houston") that monitors 24/7 without invading privacy.
+*   Maintain an analytical, precise, and expert tone when dealing with vehicle appraisal, trade-ins, and F&I (Finance & Insurance).
+*   Prioritize risk mitigation and Maximize Deal Value for the dealership and the client.
+*   Focus on proactivity: transition from reactive sales to predictive inventory planning.
+*   Every solution must be presented as part of an intelligent control center ("Enfoque de Houston") that monitors performance 24/7.
 
 ### 2. Language & Tone (User-Facing)
-*   The tone must be warm, protective, and aspirational.
-*   Eliminate any cold clinical language; transform data into "peace of mind" benefits.
-*   Use keywords such as: plenitud (wholeness), autonomía (autonomy), conexión (connection), and tranquilidad (tranquility).
-*   **STRICT TERMINOLOGY BAN:** Never use terms like asilo, anciano, geriátrico, or dependiente. Always use "comunidad silver" or "adulto en plenitud".
+*   The tone must be sophisticated, expert, and highly professional.
+*   Eliminate any generic "car salesperson" clichés; transform data into "equity and performance" benefits.
+*   Use keywords such as: exclusividad, potencia, valor patrimonial, and ingeniería.
+*   **STRICT BRAND BAN:** NEVER mention Happy Senior, Vitalos, silver community, or any terms related to healthcare or aging. This is a 100% automotive environment.
 
 ### 3. Workspace Persistence Protocol
-*   **Golden Rule:** "Data that is not in the Workspace does not exist."
-*   Do not deliver final results without saving drafts to the file system or database (structured as JSON or technical Markdown) with proper UUID tracking. 
-*   **Checkpointing:** Ensure sub-tasks report save progress to Firebase prior to declaring completion.
+*   **Golden Rule:** "Dato que no está en el Workspace, no existe."
+*   Save all drafts and technical reports as structured JSON or technical Markdown with UUID tracking.
+*   **REGLA DE ORO DE MARCA:** Este proyecto es EXCLUSIVAMENTE para Richard Automotive.
 
-By following these rules, you ensure the technical optimization and emotional connection required by the Richard Automotive and Happy Senior / VitalOS standards.
+By following these rules, you ensure the technical optimization required by Richard Automotive's elite standards.

@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useCallback, ReactNode } from 'react';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
@@ -25,24 +24,27 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  const addNotification = useCallback((type: NotificationType, message: string) => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { id, type, message }]);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      removeNotification(id);
-    }, 5000);
-  }, [removeNotification]);
+  const addNotification = useCallback(
+    (type: NotificationType, message: string) => {
+      const id = Date.now().toString();
+      setNotifications((prev) => [...prev, { id, type, message }]);
+
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        removeNotification(id);
+      }, 5000);
+    },
+    [removeNotification],
+  );
 
   return (
     <NotificationContext.Provider value={{ notifications, addNotification, removeNotification }}>
       {children}
-      
+
       {/* Toast Container Rendered directly by provider for global access */}
       <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none">
         {notifications.map((notif) => (
-          <div 
+          <div
             key={notif.id}
             className={`
               pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl backdrop-blur-md border border-white/10 text-white min-w-[300px] max-w-sm animate-in slide-in-from-right-10 fade-in duration-300
@@ -57,7 +59,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
               {notif.type === 'info' && <Info size={18} />}
             </div>
             <div className="flex-1 text-sm font-medium leading-relaxed">{notif.message}</div>
-            <button 
+            <button
               onClick={() => removeNotification(notif.id)}
               className="text-white/60 hover:text-white transition-colors"
             >

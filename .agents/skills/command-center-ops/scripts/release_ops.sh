@@ -87,7 +87,7 @@ main() {
   validate_target
   
   # Auto-detect Bun for performance
-  local PKG_MANAGER="npm"
+  local PKG_MANAGER="npm run"
   if command -v bun >/dev/null 2>&1 && { [[ -f "bun.lockb" ]] || [[ -f "bun.lock" ]]; }; then
     PKG_MANAGER="bun run"
     echo "⚡ Bun detected! Using Bun for faster execution."

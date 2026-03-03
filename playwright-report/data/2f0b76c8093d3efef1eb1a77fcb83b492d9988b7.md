@@ -1,0 +1,483 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]: RICHARD AUTO
+      - button "Abrir menú" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+    - navigation [ref=e8]:
+      - button "RICHARD AUTOMOTIVE Command Center" [ref=e10] [cursor=pointer]:
+        - paragraph [ref=e11]: RICHARD
+        - paragraph [ref=e12]: AUTOMOTIVE
+        - paragraph [ref=e13]: Command Center
+      - generic [ref=e14]:
+        - button "Digital Store" [ref=e15] [cursor=pointer]:
+          - img [ref=e17]
+          - generic [ref=e20]: Digital Store
+        - button "My Garage" [ref=e22] [cursor=pointer]:
+          - img [ref=e24]
+          - generic [ref=e27]: My Garage
+        - button "Pre-Qualification" [ref=e28] [cursor=pointer]:
+          - img [ref=e30]
+          - generic [ref=e34]: Pre-Qualification
+        - button "Sell my Car" [ref=e35] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e41]: Sell my Car
+        - button "AI Consultant" [ref=e42] [cursor=pointer]:
+          - img [ref=e44]
+          - generic [ref=e47]: AI Consultant
+        - button "AI Newsroom" [ref=e48] [cursor=pointer]:
+          - img [ref=e50]
+          - generic [ref=e53]: AI Newsroom
+        - button "Login" [ref=e55] [cursor=pointer]:
+          - img [ref=e57]
+          - generic [ref=e60]: Login
+      - generic [ref=e61]:
+        - button "Activar modo oscuro" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+        - button "ES" [ref=e65] [cursor=pointer]:
+          - img [ref=e66]
+          - text: ES
+    - main [ref=e70]:
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - img "Ricardo" [ref=e78]
+              - generic [ref=e80]:
+                - heading "Ricardo" [level=3] [ref=e81]
+                - paragraph [ref=e82]: Consultor de Ventas
+            - generic [ref=e83]:
+              - button "Reiniciar Chat" [ref=e84] [cursor=pointer]:
+                - img [ref=e85]
+              - button "Minimizar chat" [ref=e90] [cursor=pointer]:
+                - img [ref=e91]
+          - generic [ref=e93]:
+            - generic [ref=e96]:
+              - generic [ref=e97]: Ricardo
+              - text: ¡Hola! Soy Ricardo, tu experto en autos. ¿Qué buscas hoy?
+            - generic [ref=e100]: Quisiera tasar mi auto actual
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - text: "Aviso: Los precios, pagos y disponibilidad generados por IA son estimaciones para fines informativos y no constituyen una oferta formal. Sujeto a cambios sin previo aviso."
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - button "🚙 ¿Qué SUVs tienes?" [ref=e107] [cursor=pointer]
+              - button "💰 Ofertas de financiamiento" [ref=e108] [cursor=pointer]
+              - button "⚡ Híbridos disponibles" [ref=e109] [cursor=pointer]
+              - button "📅 Agendar Test Drive" [ref=e110] [cursor=pointer]
+            - generic [ref=e111]:
+              - textbox "Hablar con Ricardo..." [active] [ref=e112]: Quisiera tasar mi auto actual
+              - button "Enviar mensaje" [ref=e113] [cursor=pointer]:
+                - img [ref=e114]
+              - button [ref=e117] [cursor=pointer]:
+                - img [ref=e118]
+            - paragraph [ref=e123]: SDK Streaming & Gen UI Active
+        - button [ref=e125] [cursor=pointer]:
+          - img [ref=e126]
+      - button [ref=e130] [cursor=pointer]:
+        - img [ref=e132]
+      - button [ref=e136] [cursor=pointer]:
+        - img [ref=e139]
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - img "Richard Automotive Hero" [ref=e149]
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - generic [ref=e157]:
+                  - generic [ref=e159]: LIVE SHOWROOM
+                  - generic [ref=e160]: ·
+                  - generic [ref=e161]: Trade‑In Elite
+                - generic [ref=e162]:
+                  - generic [ref=e163]: MEJORA
+                  - generic [ref=e164]: SIN
+                  - generic [ref=e165]: FRICCIÓN
+                - paragraph [ref=e166]: Valora tu vehículo, compara y cierra en una experiencia premium de principio a fin.
+                - generic [ref=e167]:
+                  - generic [ref=e168]:
+                    - img [ref=e169]
+                    - text: Certified
+                  - generic [ref=e171]:
+                    - img [ref=e172]
+                    - text: Aprobación Rápida
+                  - generic [ref=e175]:
+                    - img [ref=e176]
+                    - text: 0 Costo Oculto
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - generic [ref=e183]: Sistema Activo
+                  - generic [ref=e184]: Richard IA
+                - button "Catálogo Certificado EXPLORAR INVENTARIO" [ref=e185] [cursor=pointer]:
+                  - generic [ref=e187]:
+                    - generic [ref=e188]: Catálogo Certificado
+                    - generic [ref=e189]: EXPLORAR INVENTARIO
+                  - img [ref=e191]
+                - button "Inteligencia Artificial NEURAL MATCH" [ref=e193] [cursor=pointer]:
+                  - generic [ref=e194]:
+                    - generic [ref=e195]: Inteligencia Artificial
+                    - generic [ref=e196]: NEURAL MATCH
+                  - img [ref=e198]
+                - button "Trade‑In / Vender TASAR MI AUTO" [ref=e210] [cursor=pointer]:
+                  - generic [ref=e211]:
+                    - generic [ref=e212]: Trade‑In / Vender
+                    - generic [ref=e213]: TASAR MI AUTO
+                  - img [ref=e215]
+                - generic [ref=e217]:
+                  - generic [ref=e218]:
+                    - generic [ref=e219]: 240+
+                    - generic [ref=e220]: Unidades
+                  - generic [ref=e222]:
+                    - generic [ref=e223]: 98%
+                    - generic [ref=e224]: Aprobados
+                  - generic [ref=e226]:
+                    - generic [ref=e227]: 24/7
+                    - generic [ref=e228]: IA Activa
+            - generic [ref=e230]:
+              - generic [ref=e231]: ⚡ Financiamiento desde 4.9% APR
+              - generic [ref=e232]: 🛡 Garantía certificada incluida
+              - generic [ref=e233]: 🔁 Trade-In digital en 90 segundos
+              - generic [ref=e234]: 📍 Bayamón, Puerto Rico
+              - generic [ref=e235]: 🤖 Richard AI disponible 24/7
+              - generic [ref=e236]: ✅ Sin costos ocultos
+              - generic [ref=e237]: ⚡ Financiamiento desde 4.9% APR
+              - generic [ref=e238]: 🛡 Garantía certificada incluida
+              - generic [ref=e239]: 🔁 Trade-In digital en 90 segundos
+              - generic [ref=e240]: 📍 Bayamón, Puerto Rico
+              - generic [ref=e241]: 🤖 Richard AI disponible 24/7
+              - generic [ref=e242]: ✅ Sin costos ocultos
+          - main [ref=e243]:
+            - region "Autoridad y Respaldo" [ref=e244]:
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - generic [ref=e247]: El Estándar de Oro en F&I — Puerto Rico
+                  - heading "Asesoría que Acelera Tu Aprobación" [level=2] [ref=e249]:
+                    - text: Asesoría que
+                    - emphasis [ref=e250]: Acelera
+                    - text: Tu Aprobación
+                  - paragraph [ref=e251]: Richard Méndez no solo gestiona préstamos; estructura negocios que los bancos respetan. Con más de una década liderando el sector de F&I en Puerto Rico, su firma es sinónimo de transparencia y resultados.
+                  - generic [ref=e252]:
+                    - generic [ref=e253]:
+                      - img [ref=e255]
+                      - generic [ref=e258]:
+                        - paragraph [ref=e259]: Protección Total
+                        - paragraph [ref=e260]: Programas de crédito protegidos y seguros certificados.
+                    - generic [ref=e261]:
+                      - img [ref=e263]
+                      - generic [ref=e266]:
+                        - paragraph [ref=e267]: Optimización de Tasa
+                        - paragraph [ref=e268]: Estructuramos tu perfil para capturar el APR más bajo.
+                    - generic [ref=e269]:
+                      - img [ref=e271]
+                      - generic [ref=e274]:
+                        - paragraph [ref=e275]: Experto Certificado
+                        - paragraph [ref=e276]: Líder en la industria automotriz bilingüe en la isla.
+                    - generic [ref=e277]:
+                      - img [ref=e279]
+                      - generic [ref=e282]:
+                        - paragraph [ref=e283]: Aprobación Ágil
+                        - paragraph [ref=e284]: Conexión directa con la banca local y federal.
+                  - button "Agendar Consulta Directa" [ref=e285] [cursor=pointer]:
+                    - text: Agendar Consulta Directa
+                    - img [ref=e286]
+                - generic [ref=e289]:
+                  - generic [ref=e290]:
+                    - img "Richard Méndez, Founder & F&I Specialist" [ref=e291]
+                    - generic [ref=e293]:
+                      - img [ref=e294]
+                      - generic [ref=e297]: Verified Expert
+                    - generic [ref=e298]:
+                      - img [ref=e299]
+                      - img [ref=e301]
+                      - img [ref=e303]
+                      - img [ref=e305]
+                      - img [ref=e307]
+                      - generic [ref=e309]: "5.0"
+                  - generic [ref=e310]:
+                    - paragraph [ref=e311]: Richard Méndez
+                    - paragraph [ref=e312]: Founder & F&I Specialist
+                  - generic [ref=e313]:
+                    - generic [ref=e314]:
+                      - generic [ref=e315]: 10k+
+                      - generic [ref=e316]: Ventas Cerradas
+                    - generic [ref=e318]:
+                      - generic [ref=e319]: 15+
+                      - generic [ref=e320]: Años Expertiz
+                    - generic [ref=e322]:
+                      - generic [ref=e323]: 98%
+                      - generic [ref=e324]: Aprobaciones
+            - region "Pulso del Mercado" [ref=e325]:
+              - generic [ref=e326]:
+                - img [ref=e328]
+                - paragraph [ref=e330]: Valor en el Mercado
+                - paragraph [ref=e331]: $38,417
+              - generic [ref=e332]:
+                - img [ref=e334]
+                - paragraph [ref=e337]: Selección de Lujo
+                - paragraph [ref=e338]: 2 unidades
+              - generic [ref=e339]:
+                - img [ref=e341]
+                - paragraph [ref=e348]: Oportunidades de Compra
+                - paragraph [ref=e349]: 1 unidades
+            - region "6 Vehículos" [ref=e350]:
+              - generic [ref=e351]:
+                - generic [ref=e352]:
+                  - paragraph [ref=e353]: Inventario Inteligente
+                  - paragraph [ref=e354]: 6 unidades visibles
+                - generic [ref=e355]:
+                  - generic [ref=e356]:
+                    - img [ref=e357]
+                    - textbox "Buscar modelo, año o características..." [ref=e360]
+                    - button "Búsqueda Visual por IA" [ref=e362] [cursor=pointer]:
+                      - img [ref=e363]
+                  - generic [ref=e366]:
+                    - generic [ref=e367]:
+                      - button "Todos" [ref=e368] [cursor=pointer]
+                      - button "suv" [ref=e369] [cursor=pointer]
+                      - button "sedan" [ref=e370] [cursor=pointer]
+                      - button "pickup" [ref=e371] [cursor=pointer]
+                    - generic [ref=e372]:
+                      - button "Menor Precio" [ref=e373] [cursor=pointer]:
+                        - img [ref=e374]
+                      - button "Mayor Precio" [ref=e377] [cursor=pointer]:
+                        - img [ref=e378]
+              - generic [ref=e382]:
+                - heading "6 Vehículos" [level=2] [ref=e383]
+                - paragraph [ref=e384]: Selección activa para Puerto Rico
+              - generic [ref=e387]:
+                - article "Hyundai Venue 2026" [ref=e388]:
+                  - button "Compacto Richard Certified suv Hyundai Venue 2026 Auto Gasolina 4 Puertas $24,500 Est. $6 /mo" [ref=e389] [cursor=pointer]:
+                    - generic [ref=e390]:
+                      - generic [ref=e391]:
+                        - generic [ref=e392]: Compacto
+                        - generic [ref=e393]:
+                          - img [ref=e394]
+                          - text: Richard Certified
+                      - generic [ref=e397]:
+                        - img [ref=e399]
+                        - img [ref=e402]
+                    - generic [ref=e410]:
+                      - generic [ref=e411]:
+                        - generic [ref=e413]: suv
+                        - heading "Hyundai Venue 2026" [level=3] [ref=e415]
+                      - generic [ref=e416]:
+                        - generic [ref=e417]: Auto
+                        - generic [ref=e418]: Gasolina
+                        - generic [ref=e419]: 4 Puertas
+                      - generic [ref=e420]:
+                        - generic [ref=e421]:
+                          - paragraph [ref=e422]: $24,500
+                          - paragraph [ref=e423]:
+                            - text: Est.
+                            - generic [ref=e424]: $6
+                            - text: /mo
+                        - img [ref=e426]
+                - article "Hyundai Tucson 2026" [ref=e428]:
+                  - button "Rediseñado Richard Certified suv Hyundai Tucson 2026 Auto Gasolina 4 Puertas $39,500 Est. $10 /mo" [ref=e429] [cursor=pointer]:
+                    - generic [ref=e430]:
+                      - generic [ref=e431]:
+                        - generic [ref=e432]: Rediseñado
+                        - generic [ref=e433]:
+                          - img [ref=e434]
+                          - text: Richard Certified
+                      - generic [ref=e437]:
+                        - img [ref=e439]
+                        - img [ref=e442]
+                    - generic [ref=e450]:
+                      - generic [ref=e451]:
+                        - generic [ref=e453]: suv
+                        - heading "Hyundai Tucson 2026" [level=3] [ref=e455]
+                      - generic [ref=e456]:
+                        - generic [ref=e457]: Auto
+                        - generic [ref=e458]: Gasolina
+                        - generic [ref=e459]: 4 Puertas
+                      - generic [ref=e460]:
+                        - generic [ref=e461]:
+                          - paragraph [ref=e462]: $39,500
+                          - paragraph [ref=e463]:
+                            - text: Est.
+                            - generic [ref=e464]: $10
+                            - text: /mo
+                        - img [ref=e466]
+                - article "Hyundai Santa Fe 2026" [ref=e468]:
+                  - button "Más Espacio Richard Certified suv Hyundai Santa Fe 2026 Auto Gasolina 4 Puertas $44,200 Est. $11 /mo" [ref=e469] [cursor=pointer]:
+                    - generic [ref=e470]:
+                      - generic [ref=e471]:
+                        - generic [ref=e472]: Más Espacio
+                        - generic [ref=e473]:
+                          - img [ref=e474]
+                          - text: Richard Certified
+                      - generic [ref=e477]:
+                        - img [ref=e479]
+                        - img [ref=e482]
+                    - generic [ref=e490]:
+                      - generic [ref=e491]:
+                        - generic [ref=e493]: suv
+                        - heading "Hyundai Santa Fe 2026" [level=3] [ref=e495]
+                      - generic [ref=e496]:
+                        - generic [ref=e497]: Auto
+                        - generic [ref=e498]: Gasolina
+                        - generic [ref=e499]: 4 Puertas
+                      - generic [ref=e500]:
+                        - generic [ref=e501]:
+                          - paragraph [ref=e502]: $44,200
+                          - paragraph [ref=e503]:
+                            - text: Est.
+                            - generic [ref=e504]: $11
+                            - text: /mo
+                        - img [ref=e506]
+                - article "Hyundai Palisade 2026" [ref=e508]:
+                  - button "Flagship Richard Certified luxury Hyundai Palisade 2026 Auto Gasolina 4 Puertas $58,900 Est. $14 /mo" [ref=e509] [cursor=pointer]:
+                    - generic [ref=e510]:
+                      - generic [ref=e511]:
+                        - generic [ref=e512]: Flagship
+                        - generic [ref=e513]:
+                          - img [ref=e514]
+                          - text: Richard Certified
+                      - generic [ref=e517]:
+                        - img [ref=e519]
+                        - img [ref=e522]
+                    - generic [ref=e530]:
+                      - generic [ref=e531]:
+                        - generic [ref=e533]: luxury
+                        - heading "Hyundai Palisade 2026" [level=3] [ref=e535]
+                      - generic [ref=e536]:
+                        - generic [ref=e537]: Auto
+                        - generic [ref=e538]: Gasolina
+                        - generic [ref=e539]: 4 Puertas
+                      - generic [ref=e540]:
+                        - generic [ref=e541]:
+                          - paragraph [ref=e542]: $58,900
+                          - paragraph [ref=e543]:
+                            - text: Est.
+                            - generic [ref=e544]: $14
+                            - text: /mo
+                        - img [ref=e546]
+            - region "Nuestra Confianza" [ref=e548]:
+              - generic [ref=e549]:
+                - generic [ref=e550]:
+                  - paragraph [ref=e551]: Trust Protocol
+                  - generic [ref=e552]:
+                    - img [ref=e553]
+                    - text: Verified Dealer
+                - generic [ref=e556]:
+                  - generic [ref=e557]:
+                    - img [ref=e559]
+                    - generic [ref=e562]:
+                      - heading "Certificación 150 Puntos" [level=4] [ref=e563]
+                      - paragraph [ref=e564]: Cada auto pasa una inspección rigurosa antes de ser listado.
+                  - generic [ref=e565]:
+                    - img [ref=e567]
+                    - generic [ref=e569]:
+                      - heading "Love Your Car Guarantee" [level=4] [ref=e570]
+                      - paragraph [ref=e571]: Pruébalo por 24 horas. Si no te enamora, devuélvelo.
+                  - generic [ref=e572]:
+                    - img [ref=e574]
+                    - generic [ref=e577]:
+                      - heading "Entrega o Recogido" [level=4] [ref=e578]
+                      - paragraph [ref=e579]: "Tú eliges: te lo llevamos a casa o vienes a nuestro centro."
+          - region "Preguntas Frecuentes" [ref=e580]:
+            - generic [ref=e582]:
+              - generic [ref=e583]:
+                - generic [ref=e584]:
+                  - img [ref=e585]
+                  - text: Soporte al Cliente
+                - heading "Preguntas Frecuentes" [level=2] [ref=e588]
+                - paragraph [ref=e589]: Resolvemos sus dudas sobre el proceso de compra digital más avanzado del mercado.
+              - generic [ref=e590]:
+                - group [ref=e591]:
+                  - generic "¿Puedo comprar un auto 100% en línea sin visitar el concesionario?" [ref=e592] [cursor=pointer]:
+                    - generic [ref=e593]: ¿Puedo comprar un auto 100% en línea sin visitar el concesionario?
+                    - img [ref=e595]
+                - group [ref=e597]:
+                  - generic "¿Cómo funciona la aprobación de crédito en línea?" [ref=e598] [cursor=pointer]:
+                    - generic [ref=e599]: ¿Cómo funciona la aprobación de crédito en línea?
+                    - img [ref=e601]
+                - group [ref=e603]:
+                  - generic "¿Aceptan autos en 'Trade-In' aunque deba dinero?" [ref=e604] [cursor=pointer]:
+                    - generic [ref=e605]: ¿Aceptan autos en 'Trade-In' aunque deba dinero?
+                    - img [ref=e607]
+                - group [ref=e609]:
+                  - generic "¿Qué garantía tienen los vehículos usados certificados?" [ref=e610] [cursor=pointer]:
+                    - generic [ref=e611]: ¿Qué garantía tienen los vehículos usados certificados?
+                    - img [ref=e613]
+          - region "Testimonios" [ref=e615]:
+            - generic [ref=e616]:
+              - generic [ref=e617]:
+                - text: Nuestros Clientes
+                - heading "Historias de Éxito" [level=2] [ref=e618]
+              - generic [ref=e619]:
+                - generic [ref=e620]:
+                  - generic [ref=e621]:
+                    - img [ref=e622]
+                    - img [ref=e624]
+                    - img [ref=e626]
+                    - img [ref=e628]
+                    - img [ref=e630]
+                  - paragraph [ref=e632]: "\"La experiencia con Richard Automotive fue increíble. La IA me ayudó a elegir la SUV perfecta para mi familia y el proceso fue totalmente transparente.\""
+                  - generic [ref=e637]:
+                    - heading "Carlos Rodríguez" [level=4] [ref=e638]
+                    - paragraph [ref=e639]: Dueño de Santa Fe 2024
+                - generic [ref=e640]:
+                  - generic [ref=e641]:
+                    - img [ref=e642]
+                    - img [ref=e644]
+                    - img [ref=e646]
+                    - img [ref=e648]
+                    - img [ref=e650]
+                  - paragraph [ref=e652]: "\"Nunca pensé que comprar un auto eléctrico fuera tan fácil. El 'Neural Match' acertó totalmente con mi estilo de vida. ¡Estoy enamorada de mi IONIQ!\""
+                  - generic [ref=e657]:
+                    - heading "Sofía Méndez" [level=4] [ref=e658]
+                    - paragraph [ref=e659]: Dueña de IONIQ 5
+                - generic [ref=e660]:
+                  - generic [ref=e661]:
+                    - img [ref=e662]
+                    - img [ref=e664]
+                    - img [ref=e666]
+                    - img [ref=e668]
+                    - img [ref=e670]
+                  - paragraph [ref=e672]: "\"Atención de primera clase. Me trajeron el auto a la oficina para probarlo y cerramos el trato en menos de una hora. Eficiencia pura.\""
+                  - generic [ref=e677]:
+                    - heading "Miguel Ángel" [level=4] [ref=e678]
+                    - paragraph [ref=e679]: Dueño de Genesis GV80
+          - generic "Pie de página social" [ref=e680]:
+            - generic "Contacto y Redes Sociales" [ref=e681]:
+              - generic:
+                - img
+              - generic [ref=e683]:
+                - generic [ref=e684]:
+                  - heading "Richard Automotive" [level=2] [ref=e685]:
+                    - text: Richard
+                    - generic [ref=e686]: Automotive
+                  - paragraph [ref=e687]: Redefiniendo la compra de autos en Puerto Rico con Inteligencia Artificial y transparencia total.
+                - generic [ref=e688]:
+                  - link "Instagram" [ref=e689]:
+                    - /url: https://www.instagram.com/richardoneal_/
+                    - img [ref=e691]
+                  - link "Facebook" [ref=e694]:
+                    - /url: https://www.facebook.com/richardautomotive1
+                    - img [ref=e696]
+              - generic [ref=e698]:
+                - paragraph [ref=e699]: © 2025 Richard Automotive. Todos los derechos reservados.
+                - generic [ref=e700]:
+                  - link "Política de Privacidad" [ref=e701]:
+                    - /url: "#"
+                  - link "Términos de Servicio" [ref=e702]:
+                    - /url: "#"
+                  - link "Mapa del Sitio" [ref=e703]:
+                    - /url: "#"
+        - generic [ref=e704]:
+          - button "Match" [ref=e705] [cursor=pointer]:
+            - img [ref=e706]
+            - text: Match
+          - button "Visual" [ref=e718] [cursor=pointer]:
+            - img [ref=e719]
+            - text: Visual
+          - button "Cash" [ref=e722] [cursor=pointer]:
+            - img [ref=e723]
+            - text: Cash
+  - iframe [ref=e725]:
+    
+```

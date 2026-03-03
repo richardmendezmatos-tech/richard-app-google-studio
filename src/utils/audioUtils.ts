@@ -1,5 +1,4 @@
-
-import { Blob } from "@google/genai";
+import { Blob } from '@google/genai';
 
 /**
  * Decodes a base64 string into a Uint8Array.

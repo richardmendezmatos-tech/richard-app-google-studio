@@ -1,4 +1,4 @@
-import { WhatsAppRepository, WhatsAppSequence, WhatsAppStage } from '../../domain/repositories/WhatsAppRepository';
+import { WhatsAppRepository, WhatsAppSequence, WhatsAppStage } from '../../domain/repositories';
 import { db } from '../../services/firebaseAdmin';
 import * as admin from 'firebase-admin';
 
@@ -37,5 +37,11 @@ export class FirestoreWhatsAppRepository implements WhatsAppRepository {
             currentStage: stage,
             lastInteraction: admin.firestore.Timestamp.now()
         });
+    }
+
+    async sendMessage(to: string, message: string): Promise<boolean> {
+        console.log(`[WhatsApp] Sending message to ${to}: ${message}`);
+        // Integration with 360dialog or Twilio would go here
+        return true;
     }
 }

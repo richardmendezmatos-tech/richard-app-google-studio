@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.firebase
+.vercel
+package-lock.json
+bun.lock
+*.log

@@ -15,7 +15,7 @@ export const DEFAULT_SETTINGS: PrivacySettings = {
   marketing: false,
   aiData: false,
   partnerSharing: false,
-  lastUpdated: Date.now()
+  lastUpdated: Date.now(),
 };
 
 export const PrivacyContext = createContext<PrivacyContextType | undefined>(undefined);

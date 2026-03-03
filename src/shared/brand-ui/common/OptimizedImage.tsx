@@ -1,0 +1,165 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { optimizeImage } from '@/services/firebaseShared';
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  width?: number;
+  priority?: boolean;
+  aspectRatio?: string;
+  onLoad?: () => void;
+  fallbackSrc?: string;
+  placeholder?: string; // Base64 blur placeholder
+  webpSrc?: string; // Optional WebP source
+  loading?: 'lazy' | 'eager';
+}
+
+/**
+ * OptimizedImage Component
+ * Uses the Antigravity Edge service to deliver WebP optimized images
+ * with blur-up animation, lazy loading via Intersection Observer, and WebP fallback support.
+ */
+export const OptimizedImage: React.FC<OptimizedImageProps> = ({
+  src,
+  alt,
+  className = '',
+  width = 800,
+  priority = false,
+  aspectRatio = 'aspect-video',
+  onLoad,
+  fallbackSrc,
+  placeholder,
+  webpSrc,
+  loading = 'lazy',
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const [hasError, setHasError] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Helper to check if image is local and can have optimized versions
+  const isLocal = src.startsWith('/') && !src.startsWith('http');
+
+  const getOptimizedPath = (format: 'webp' | 'avif', size: 'thumbnail' | 'mobile' | 'desktop') => {
+    if (!isLocal) return null;
+    const fileName = src.split('/').pop()?.split('.')[0];
+    return `/optimized/${fileName}-${size}.${format}`;
+  };
+
+  const avifDesktop = getOptimizedPath('avif', 'desktop');
+  const avifMobile = getOptimizedPath('avif', 'mobile');
+  const webpDesktop = getOptimizedPath('webp', 'desktop');
+  const webpMobile = getOptimizedPath('webp', 'mobile');
+
+  // Optimized source from our edge service (for external URLs)
+  const optimizedSrc = isLocal ? src : src ? optimizeImage(src, width) : '';
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (priority || !containerRef.current) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observerRef.current?.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '100px', // Start loading earlier for better UX
+        threshold: 0.01,
+      },
+    );
+
+    observerRef.current.observe(containerRef.current);
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [priority]);
+
+  const handleLoad = () => {
+    setIsLoaded(true);
+    onLoad?.();
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    if (fallbackSrc && imgRef.current) {
+      imgRef.current.src = fallbackSrc;
+    }
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden bg-slate-800/20 ${aspectRatio} ${className}`}
+    >
+      {/* Blurred placeholder fades out once the image is loaded */}
+      {!hasError && (
+        <div
+          className={`absolute inset-0 z-0 transition-opacity duration-500 ${
+            isLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          {placeholder ? (
+            <img
+              src={placeholder}
+              alt=""
+              className="w-full h-full object-cover blur-xl scale-110"
+            />
+          ) : (
+            <div className="w-full h-full bg-slate-800 animate-pulse" />
+          )}
+        </div>
+      )}
+
+      {/* Actual Image with AVIF/WebP support */}
+      {isInView && (
+        <picture className="w-full h-full">
+          {/* AVIF Sources */}
+          {avifDesktop && (
+            <source srcSet={avifDesktop} media="(min-width: 1024px)" type="image/avif" />
+          )}
+          {avifMobile && <source srcSet={avifMobile} type="image/avif" />}
+
+          {/* WebP Sources */}
+          {webpDesktop && (
+            <source srcSet={webpDesktop} media="(min-width: 1024px)" type="image/webp" />
+          )}
+          {webpMobile && <source srcSet={webpMobile} type="image/webp" />}
+          {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
+
+          <img
+            ref={imgRef}
+            src={optimizedSrc}
+            alt={alt}
+            loading={priority ? 'eager' : loading}
+            decoding="async"
+            onLoad={handleLoad}
+            onError={handleError}
+            className={`relative z-10 h-full w-full object-cover transition-opacity duration-500 ${
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            } ${className}`}
+          />
+        </picture>
+      )}
+
+      {/* Error State */}
+      {hasError && !fallbackSrc && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 text-slate-500 z-10">
+          <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">
+            Image Error
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default OptimizedImage;

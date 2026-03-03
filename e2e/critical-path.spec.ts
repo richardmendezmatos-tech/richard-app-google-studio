@@ -6,9 +6,9 @@ test.describe('Critical Path: User Journey', () => {
         await page.goto('/');
         await expect(page).toHaveTitle(/Richard Automotive/);
 
-        // 2. Click "VER INVENTARIO" (Explorar Showroom)
+        // 2. Click "EXPLORAR INVENTARIO"
         // Using a specific text locator for the button content
-        const inventoryButton = page.getByRole('button', { name: /ver inventario/i });
+        const inventoryButton = page.getByRole('button', { name: /explorar inventario/i });
         await expect(inventoryButton).toBeVisible();
         await inventoryButton.click();
 
@@ -42,11 +42,9 @@ test.describe('Critical Path: User Journey', () => {
         await expect(modal.getByText('Pago Mensual Estimado')).toBeVisible();
         await expect(modal.getByRole('heading', { level: 2 })).toBeVisible();
 
-        // Check for "Especificaciones" or "Potencia" which are likely in the detail view
-        // Check for "Potencia" or "Motor" which are likely in the detail view
-        // Also check for the "Agendar Test Drive" button which is critical
-        await expect(page.getByText('Motor').or(page.getByText('Potencia'))).toBeVisible();
-        await expect(page.getByRole('button', { name: /test drive/i })).toBeVisible();
+        // Check for "HP" or "Calculadora" which are in the detail view
+        await expect(page.getByText('HP').or(page.getByText('Calculadora'))).toBeVisible();
+        await expect(page.getByRole('button', { name: /solicitar aprobación/i })).toBeVisible();
 
         // Check that the title is not empty
         const title = await page.title();

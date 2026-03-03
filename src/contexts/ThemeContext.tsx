@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
@@ -28,16 +27,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   });
 
   const toggleTheme = () => {
-    setTheme(prevTheme => {
+    setTheme((prevTheme) => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
       localStorage.setItem('theme', newTheme);
       return newTheme;
     });
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 };

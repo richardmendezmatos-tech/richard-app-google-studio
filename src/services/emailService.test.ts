@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const generateBlogPostMock = vi.fn();
 
 vi.mock('./geminiService', () => ({
-  generateBlogPost: generateBlogPostMock
+  generateBlogPost: generateBlogPostMock,
 }));
 
 const setViteEnv = (key: string, value: string) => {
@@ -34,7 +34,7 @@ describe('emailService', () => {
     const promise = sendTransactionalEmail({
       to: 'test@example.com',
       subject: 'Hola',
-      html: '<p>Test</p>'
+      html: '<p>Test</p>',
     });
 
     await vi.advanceTimersByTimeAsync(350);
@@ -49,7 +49,7 @@ describe('emailService', () => {
     setViteEnv('VITE_RESEND_FROM_EMAIL', 'Richard Auto <hola@richard-automotive.com>');
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
-      json: vi.fn().mockResolvedValue({})
+      json: vi.fn().mockResolvedValue({}),
     });
     vi.stubGlobal('fetch', fetchMock);
 
@@ -57,7 +57,7 @@ describe('emailService', () => {
     const result = await sendTransactionalEmail({
       to: 'client@example.com',
       subject: 'Asunto',
-      html: '<p>Contenido</p>'
+      html: '<p>Contenido</p>',
     });
 
     expect(result).toBe(true);
@@ -67,9 +67,9 @@ describe('emailService', () => {
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({
-          Authorization: 'Bearer re_test_123'
-        })
-      })
+          Authorization: 'Bearer re_test_123',
+        }),
+      }),
     );
   });
 
@@ -78,7 +78,7 @@ describe('emailService', () => {
     generateBlogPostMock.mockResolvedValue({
       id: 'post-1',
       title: 'Noticias Hyundai',
-      excerpt: 'Resumen'
+      excerpt: 'Resumen',
     });
     vi.useFakeTimers();
 
@@ -87,10 +87,14 @@ describe('emailService', () => {
     await vi.advanceTimersByTimeAsync(350);
     const result = await promise;
 
-    expect(generateBlogPostMock).toHaveBeenCalledWith('Novedades Recientes de Hyundai', 'professional', 'news');
+    expect(generateBlogPostMock).toHaveBeenCalledWith(
+      'Novedades Recientes de Hyundai',
+      'professional',
+      'news',
+    );
     expect(result).toEqual({
       success: true,
-      message: 'Newsletter dispatched'
+      message: 'Newsletter dispatched',
     });
   });
 });

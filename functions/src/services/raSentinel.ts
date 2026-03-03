@@ -2,7 +2,7 @@ import { z } from 'genkit';
 import { ai } from './aiManager';
 import * as logger from 'firebase-functions/logger';
 import { logFlowExecution } from './persistenceService';
-import { OperationalSentinel } from '../application/use-cases/OperationalSentinel';
+import { OperationalSentinel, OperationalScoreResultSchema } from '../application/use-cases/ops/OperationalSentinel.usecase';
 
 export const raSentinelFlow = ai.defineFlow(
     {
@@ -11,13 +11,7 @@ export const raSentinelFlow = ai.defineFlow(
             type: z.enum(['lead_health', 'inventory_risk', 'system_performance']),
             context: z.any()
         }),
-        outputSchema: z.object({
-            status: z.string(),
-            insights: z.array(z.string()),
-            riskLevel: z.enum(['low', 'medium', 'high']),
-            recommendations: z.array(z.string()),
-            operational_score: z.number()
-        })
+        outputSchema: OperationalScoreResultSchema // Usamos el esquema del caso de uso
     },
     async (input) => {
         logger.info(`🛡️ Richard Automotive Sentinel [CLEAN]: Analyzing ${input.type}...`);
@@ -27,7 +21,14 @@ export const raSentinelFlow = ai.defineFlow(
             return result.output() || JSON.parse(result.text);
         };
 
-        const output = await OperationalSentinel.execute(input.type, input.context, aiService);
+        const result = await OperationalSentinel.execute(input.type, input.context, aiService);
+
+        if (result.isFailure()) {
+            logger.error(`[raSentinel] Error analyzing ${input.type}:`, result.error);
+            throw new Error(result.error.message);
+        }
+
+        const output = result.value;
 
         // Automate Persistence Protocol
         await logFlowExecution('raSentinel', input, output);

@@ -1,7 +1,7 @@
-
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 // import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
@@ -10,7 +10,7 @@ import path from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const apiKey = env.VITE_FIREBASE_API_KEY || env.API_KEY || "";
+  const apiKey = env.VITE_FIREBASE_API_KEY || env.API_KEY || '';
 
   const suppressFirebaseMixedImportWarning = (warning: any, warn: any) => {
     if (
@@ -40,29 +40,33 @@ export default defineConfig(({ mode }) => {
             'vendor-firebase-auth': ['firebase/auth'],
             'vendor-firebase-db': ['firebase/firestore/lite', 'firebase/firestore'],
             'vendor-ai': ['@google/generative-ai'],
-            'vendor-utils': ['@reduxjs/toolkit', 'react-redux', 'rxjs']
-          }
-        }
+            'vendor-utils': ['@reduxjs/toolkit', 'react-redux', 'rxjs'],
+          },
+        },
       },
-      chunkSizeWarningLimit: 1000, // Reduced from 1500
+      chunkSizeWarningLimit: 1000,
+    },
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-      }
+      },
     },
     define: {
       'process.env.API_KEY': JSON.stringify(apiKey),
-      'global': 'globalThis',
+      global: 'globalThis',
     },
     test: {
       environment: 'jsdom',
       setupFiles: ['./vitest.setup.ts'],
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
-      exclude: ['e2e/**', 'node_modules/**', 'dist/**']
+      exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
     },
     plugins: [
       react(),
+      tailwindcss(),
       nodePolyfills({
         globals: {
           Buffer: true,
@@ -70,7 +74,14 @@ export default defineConfig(({ mode }) => {
           process: true,
         },
       }),
-      viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+      viteCompression({
+        algorithm: 'gzip',
+        ext: '.gz',
+      }),
+      viteCompression({
+        algorithm: 'brotliCompress',
+        ext: '.br',
+      }),
 
       visualizer({ filename: 'stats.html' }),
       VitePWA({
@@ -95,23 +106,23 @@ export default defineConfig(({ mode }) => {
             {
               src: 'app-icon.png',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
             },
             {
               src: 'app-icon.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any'
+              purpose: 'any',
             },
             {
               src: 'app-icon.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'maskable'
-            }
-          ]
-        }
-      })
-    ]
-  }
-})
+              purpose: 'maskable',
+            },
+          ],
+        },
+      }),
+    ],
+  };
+});

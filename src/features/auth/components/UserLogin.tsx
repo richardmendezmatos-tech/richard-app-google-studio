@@ -1,15 +1,20 @@
-
 import * as React from 'react';
-import { useState } from 'react';
-import { signUpWithEmail, signInWithEmail, signInWithGoogle, signInWithFacebook, signInWithGoogleCredential, normalizeUser } from '../services/authService';
+import { useState, useActionState } from 'react';
+import {
+  signUpWithEmail,
+  signInWithEmail,
+  signInWithGoogle,
+  signInWithFacebook,
+  signInWithGoogleCredential,
+  normalizeUser,
+} from '../services/authService';
 import { auth, getRedirectResult } from '@/services/firebaseService';
 import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginStart, loginSuccess, loginFailure } from '@/store/slices/authSlice';
-import SEO from '@/components/seo/SEO';
+import SEO from '@/shared/brand-ui/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import './LoginView.css';
 
 interface GoogleCredentialResponse {
   credential: string;
@@ -39,14 +44,47 @@ const UserLogin: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setLocalError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || '/';
+
+  // React 19: useActionState for login/signup
+  const [formState, formAction, isPending] = useActionState(
+    async (_prevState: any, formData: FormData) => {
+      const emailVal = formData.get('email') as string;
+      const passwordVal = formData.get('password') as string;
+      const type = formData.get('authType') as string;
+
+      dispatch(loginStart());
+      try {
+        let appUser;
+        if (type === 'register') {
+          appUser = await signUpWithEmail(emailVal, passwordVal);
+        } else {
+          appUser = await signInWithEmail(emailVal, passwordVal);
+        }
+        dispatch(loginSuccess(appUser));
+        return { error: null, success: true };
+      } catch (err: any) {
+        const msg = getErrorMsg(err);
+        dispatch(loginFailure(msg));
+        return { error: msg, success: false };
+      }
+    },
+    { error: null, success: false },
+  );
+
+  // Handle success navigation
+  React.useEffect(() => {
+    if (formState.success) {
+      navigate(from, { replace: true });
+    }
+  }, [formState.success, navigate, from]);
 
   // --- Google One Tap Integration ---
   React.useEffect(() => {
@@ -67,13 +105,13 @@ const UserLogin: React.FC = () => {
             navigate(from, { replace: true });
           } catch (err: unknown) {
             const msg = getErrorMsg(err);
-            setError(msg);
+            setLocalError(msg); // Changed setError to setLocalError
             dispatch(loginFailure(msg));
           } finally {
             setLoading(false);
           }
         },
-        cancel_on_tap_outside: false
+        cancel_on_tap_outside: false,
       });
 
       google.accounts.id.prompt();
@@ -93,36 +131,15 @@ const UserLogin: React.FC = () => {
           navigate(from, { replace: true });
         }
       } catch (err: unknown) {
-        setError(getErrorMsg(err));
+        setLocalError(getErrorMsg(err)); // Changed setError to setLocalError
       }
     };
     checkRedirect();
   }, [dispatch, from, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    dispatch(loginStart());
-
-    try {
-      const appUser = isRegistering
-        ? await signUpWithEmail(email, password)
-        : await signInWithEmail(email, password);
-      dispatch(loginSuccess(appUser));
-      navigate(from, { replace: true });
-    } catch (err: unknown) {
-      const msg = getErrorMsg(err);
-      setError(msg);
-      dispatch(loginFailure(msg));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setLoading(true);
-    setError(null);
+    setLocalError(null); // Changed setError to setLocalError
     dispatch(loginStart());
     try {
       let user;
@@ -135,7 +152,7 @@ const UserLogin: React.FC = () => {
       }
     } catch (err: unknown) {
       const msg = getErrorMsg(err);
-      setError(msg);
+      setLocalError(msg); // Changed setError to setLocalError
       dispatch(loginFailure(msg));
     } finally {
       setLoading(false);
@@ -148,7 +165,11 @@ const UserLogin: React.FC = () => {
       return 'Acceso no autorizado en este portal. Use el portal administrativo.';
     } else if (authError.code === 'auth/email-already-in-use') {
       return 'Este correo ya está registrado.';
-    } else if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password') {
+    } else if (
+      authError.code === 'auth/invalid-credential' ||
+      authError.code === 'auth/user-not-found' ||
+      authError.code === 'auth/wrong-password'
+    ) {
       return 'Credenciales incorrectas.';
     } else if (authError.code === 'auth/popup-closed-by-user') {
       return 'La ventana de inicio de sesión se cerró.';
@@ -169,7 +190,10 @@ const UserLogin: React.FC = () => {
       {/* Neural Background Elements */}
       <div className="neural-glow-bg" />
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-var"
+        style={{ '--d': '2s' } as React.CSSProperties}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -223,14 +247,19 @@ const UserLogin: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-10 pb-10 space-y-5">
+        <form action={formAction} className="px-10 pb-10 space-y-5">
+          <input type="hidden" name="authType" value={isRegistering ? 'register' : 'login'} />
           <div className="space-y-4">
             <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <Mail
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors"
+                size={18}
+              />
               <input
                 type="email"
+                name="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="CORREO ELECTRÓNICO"
                 className="input-premium pl-12"
@@ -238,11 +267,15 @@ const UserLogin: React.FC = () => {
             </div>
 
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors" size={18} />
+              <Lock
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-500 transition-colors"
+                size={18}
+              />
               <input
                 type="password"
+                name="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
                 className="input-premium pl-12"
@@ -251,24 +284,30 @@ const UserLogin: React.FC = () => {
           </div>
 
           <AnimatePresence>
-            {error && (
+            {(error || formState.error) && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="p-4 rounded-2xl text-[11px] font-bold flex items-center gap-3 bg-red-500/10 text-red-400 border border-red-500/20"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                {error}
+                {error || formState.error}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <button type="submit" disabled={loading} className="primary-btn-premium group">
-            {loading ? (
+          <button
+            type="submit"
+            disabled={isPending || loading}
+            className="primary-btn-premium group"
+          >
+            {isPending || loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <span className="relative z-10">{isRegistering ? 'Inicializar Registro' : 'Acceder al Sistema'}</span>
+                <span className="relative z-10">
+                  {isRegistering ? 'Inicializar Registro' : 'Acceder al Sistema'}
+                </span>
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}
@@ -280,13 +319,18 @@ const UserLogin: React.FC = () => {
               onClick={() => setIsRegistering(!isRegistering)}
               className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-cyan-400 transition-colors"
             >
-              {isRegistering ? '¿Ya estás registrado? Iniciar Sesión' : '¿Nuevo en el centro? Solicitar Acceso'}
+              {isRegistering
+                ? '¿Ya estás registrado? Iniciar Sesión'
+                : '¿Nuevo en el centro? Solicitar Acceso'}
             </button>
           </div>
         </form>
 
         <div className="py-6 text-center border-t border-white/10 bg-slate-900/40">
-          <Link to="/" className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/60 hover:text-cyan-400 transition-all hover:tracking-[0.5em]">
+          <Link
+            to="/"
+            className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500/60 hover:text-cyan-400 transition-all hover:tracking-[0.5em]"
+          >
             Volver a la Terminal
           </Link>
         </div>

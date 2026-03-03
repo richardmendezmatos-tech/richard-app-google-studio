@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ScoreCalculator } from './application/use-cases/ScoreCalculator';
-import { ProcessWhatsAppMessage } from './application/use-cases/ProcessWhatsAppMessage';
-import { FirestoreInventoryRepository } from './infrastructure/repositories/FirestoreInventoryRepository';
+import { ScoreCalculator } from './application/use-cases';
+import { ProcessWhatsAppMessage } from './application/use-cases';
+import { FirestoreInventoryRepository } from './infrastructure/persistence/firestore/FirestoreInventoryRepository';
 import { Lead, Car } from './domain/entities';
 
 describe('💨 Smoke Test: Richard Automotive "Clean"', () => {
@@ -19,7 +19,9 @@ describe('💨 Smoke Test: Richard Automotive "Clean"', () => {
             year: 2024,
             price: 45000,
             mileage: 10,
-            type: 'pickup'
+            type: 'pickup',
+            category: 'Pick-up',
+            condition: 'New'
         };
 
         const mockLead: Partial<Lead> = {
