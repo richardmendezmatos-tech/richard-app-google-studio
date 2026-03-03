@@ -4,6 +4,8 @@ import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/infra/firebase/client';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+import ProgressiveForm from '@/shared/brand-ui/chat/ProgressiveForm';
+
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
 
@@ -11,6 +13,7 @@ interface ChatMessage {
   id: string;
   role: 'user' | 'agent';
   content: string;
+  widget?: 'income' | 'trade-in' | 'credit';
 }
 
 const fiSystemPrompt = `Eres el "Especialista F&I de Plenitud" para Richard Automotive. 
@@ -21,6 +24,13 @@ Tu objetivo es guiar al usuario a través de una pre-cualificación amistosa hac
 3. Su balance adeudado (si aplica).
 4. Su estimado de pronto pago (Cash).
 5. Su información general de crédito (Excelente, Bueno, Regular).
+
+REGLA MUY IMPORTANTE DE INTERACCIÓN:
+Cuando vayas a pedir los datos de: Ingreso Mensual, Trade-in o Crédito, AL FINAL de tu respuesta DEBES incluir estrictamente uno de estos tags (solo uno a la vez):
+- Para pedir el ingreso: [WIDGET:income]
+- Para pedir detalles del auto actual a intercambiar: [WIDGET:trade-in]
+- Para pedir cómo está su crédito: [WIDGET:credit]
+Usa estos tags para que la interfaz cargue un formulario visual interactivo.
 
 Al final, cuando tengas suficiente información, genera un pequeño "Resumen de Plenitud" y dile al consultor que la información está lista para guardarse en el CRM.
 `;
@@ -70,11 +80,12 @@ const SalesCopilot: React.FC = () => {
     }
   }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isTyping) return;
+  const handleSendMessage = async (e?: React.FormEvent, textOverride?: string) => {
+    if (e) e.preventDefault();
+    const textToSubmit = textOverride || inputMessage;
+    if (!textToSubmit.trim() || isTyping) return;
 
-    const newUserMsg = inputMessage;
+    const newUserMsg = textToSubmit;
     setInputMessage('');
     setMessages((prev) => [
       ...prev,
@@ -86,9 +97,25 @@ const SalesCopilot: React.FC = () => {
       if (chatHistoryRef.current) {
         const result = await chatHistoryRef.current.sendMessage(newUserMsg);
         const responseText = result.response.text();
+
+        let finalContent = responseText;
+        let detectedWidget: 'income' | 'trade-in' | 'credit' | undefined = undefined;
+
+        // Extract Widget Commands like [WIDGET:income]
+        const widgetMatch = responseText.match(/\[WIDGET:(income|trade-in|credit)\]/i);
+        if (widgetMatch && widgetMatch[1]) {
+          detectedWidget = widgetMatch[1].toLowerCase() as any;
+          finalContent = responseText.replace(/\[WIDGET:(income|trade-in|credit)\]/gi, '').trim();
+        }
+
         setMessages((prev) => [
           ...prev,
-          { id: Date.now().toString(), role: 'agent', content: responseText },
+          {
+            id: Date.now().toString(),
+            role: 'agent',
+            content: finalContent,
+            widget: detectedWidget,
+          },
         ]);
       } else {
         throw new Error('Chat no inicializado');
@@ -227,6 +254,22 @@ const SalesCopilot: React.FC = () => {
                 }`}
               >
                 {msg.content}
+                {msg.widget && (
+                  <div className="mt-4">
+                    <ProgressiveForm
+                      type={msg.widget}
+                      onSubmit={(data) => {
+                        const valuesStr = Object.entries(data)
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join(', ');
+                        handleSendMessage(
+                          undefined,
+                          `Dato proporcionado mediante el widget interactivo: ${valuesStr}`,
+                        );
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

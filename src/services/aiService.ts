@@ -1,4 +1,5 @@
 import { Car } from '@/domain/entities';
+import { CommandIntent } from '@/services/VoiceCommandService';
 
 export interface VisualSearchResult {
   type: string | null;
@@ -126,4 +127,50 @@ export const findMatches = (analysis: VisualSearchResult, inventory: Car[]): Car
 
     return score >= 10; // Return cars that have at least a type or brand match
   });
+};
+
+/**
+ * Uses Gemini to parse natural language into a structured UI intent.
+ * Used for complex voice commands that basic regex cannot handle.
+ */
+export const parseVoiceIntent = async (text: string): Promise<CommandIntent | null> => {
+  const prompt = `
+    You are an AI assistant for a car dealership called "Richard Automotive".
+    The user said: "${text}"
+
+    Analyze this voice command and return a JSON object representing the action to take in the UI.
+    If it's a search constraint, return {"action": {"type": "SEARCH", "payload": {"query": "the search terms"}}}.
+    If it's navigating to inventory, return {"action": {"type": "NAVIGATE", "payload": {"path": "/storefront"}}}.
+    If it's navigating to the admin panel, return {"action": {"type": "NAVIGATE", "payload": {"path": "/admin"}}}.
+    If it's an unrecognized or conversational command, return null.
+
+    Output strictly valid JSON only. Example:
+    {"action": {"type": "SEARCH", "payload": {"query": "suv roja"}}, "confidence": 0.9, "originalText": "${text}"}
+  `;
+
+  try {
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [prompt],
+        model: 'gemini-1.5-flash',
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to parse intent via Gemini');
+    }
+
+    const { text: responseText } = await response.json();
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return null;
+    }
+
+    return JSON.parse(jsonMatch[0]) as CommandIntent;
+  } catch (error) {
+    console.error('Intent Parsing Error:', error);
+    return null;
+  }
 };

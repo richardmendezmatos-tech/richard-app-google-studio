@@ -1,10 +1,4 @@
-import {
-  collection,
-  doc,
-  runTransaction,
-  serverTimestamp,
-  increment,
-} from 'firebase/firestore';
+import { collection, doc, runTransaction, serverTimestamp, increment } from 'firebase/firestore';
 import { db } from '@/infra/firebase/client';
 
 /**

@@ -58,9 +58,13 @@ interface VoiceWidgetProps {
   onMessage?: (text: string, sender: 'user' | 'bot') => void;
 }
 
+import { VoiceCommandService } from '@/services/VoiceCommandService';
+import { useNavigate } from 'react-router-dom';
+
 export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
   const [state, setState] = useState<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
   const [isSupported, setIsSupported] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsSupported(voiceService.isSupported());
@@ -92,24 +96,47 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
         if (onMessage) onMessage(text, 'user');
 
         try {
-          // Send to Gemini
-          const rawResponse = await getAIResponse(
-            text,
-            [],
-            [],
-            'Responde brevemente para ser hablado.',
-          );
+          // 1. Try to parse intent first
+          const intent = await VoiceCommandService.parseCommand(text);
 
-          // Validation Agent Audit (Voice optimized check)
-          const validation = await validationAgentService.validateResponse(text, rawResponse, []);
-          const response = validation.sanitizedResponse;
+          if (intent && intent.confidence >= 0.7) {
+            console.log('[VoiceWidget] Intent recognized:', intent);
+            VoiceCommandService.executeAction(intent, {
+              navigate: (path) => navigate(path),
+              setTab: (tab) => localStorage.setItem('admin_active_tab', tab),
+              setSearch: (query) => {
+                // If on storefront, this might not trigger a re-render unless we use query params
+                // For now, save to localStorage and navigate to root
+                localStorage.setItem('inventory_filter', query);
+                navigate(`/?q=${encodeURIComponent(query)}`);
+              },
+            });
 
-          // Show bot message
-          if (onMessage) onMessage(response, 'bot');
+            // Acknowledge the command execution
+            const ackMsg = 'Navegando ahora.';
+            if (onMessage) onMessage(ackMsg, 'bot');
+            setState('speaking');
+            await voiceService.speak(ackMsg);
+          } else {
+            // 2. Fall back to conversational Gemini
+            const rawResponse = await getAIResponse(
+              text,
+              [],
+              [],
+              'Responde brevemente para ser hablado.',
+            );
 
-          // Speak response
-          setState('speaking');
-          await voiceService.speak(response);
+            // Validation Agent Audit (Voice optimized check)
+            const validation = await validationAgentService.validateResponse(text, rawResponse, []);
+            const response = validation.sanitizedResponse;
+
+            // Show bot message
+            if (onMessage) onMessage(response, 'bot');
+
+            // Speak response
+            setState('speaking');
+            await voiceService.speak(response);
+          }
         } catch (e) {
           console.error('AI Error', e);
         } finally {

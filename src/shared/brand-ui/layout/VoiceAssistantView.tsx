@@ -7,8 +7,15 @@ import { useTelemetry } from '@/features/houston/hooks/useTelemetry';
 const VoiceAssistantView: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { connectionState, transcriptions, isSpeaking, isListening, startSession, stopSession } =
-    useVoiceSession();
+  const {
+    connectionState,
+    transcriptions,
+    isSpeaking,
+    isListening,
+    lastAction,
+    startSession,
+    stopSession,
+  } = useVoiceSession();
 
   const telemetry = useTelemetry(connectionState);
 
@@ -124,6 +131,24 @@ const VoiceAssistantView: React.FC = () => {
               className="absolute w-44 h-44 border-4 border-[#00aed9]/20 border-t-[#00aed9] rounded-full"
             />
           )}
+
+          {/* Action Feedback Overlay */}
+          <AnimatePresence>
+            {lastAction && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+                className="absolute top-0 z-50 flex flex-col items-center justify-center pointer-events-none"
+              >
+                <div className="bg-emerald-500/20 border border-emerald-500/50 backdrop-blur-md px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                  <span className="text-emerald-400 font-bold uppercase tracking-widest text-sm flex gap-2 items-center">
+                    ACTON TRIGGERED: {lastAction}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

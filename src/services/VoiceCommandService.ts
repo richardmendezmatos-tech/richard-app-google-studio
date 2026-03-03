@@ -5,6 +5,8 @@
  * specific application actions and state changes.
  */
 
+import { parseVoiceIntent } from './aiService';
+
 export type VoiceAction =
   | { type: 'NAVIGATE'; payload: { path: string; tab?: string } }
   | { type: 'SEARCH'; payload: { query: string; category?: string } }
@@ -92,6 +94,19 @@ export const VoiceCommandService = {
         confidence: 0.8,
         originalText: text,
       };
+    }
+
+    // 5. LLM Fallback for complex routing/search
+    console.log('[VoiceCommand] Falling back to LLM intent parser for:', query);
+    try {
+      const llmIntent = await parseVoiceIntent(text);
+      if (llmIntent) {
+        // Enforce confidence
+        llmIntent.confidence = llmIntent.confidence || 0.8;
+        return llmIntent;
+      }
+    } catch (error) {
+      console.warn('[VoiceCommand] LLM Intent parsing failed:', error);
     }
 
     return null;

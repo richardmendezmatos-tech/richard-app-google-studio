@@ -30,6 +30,7 @@ export const useVoiceSession = () => {
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [lastAction, setLastAction] = useState<string | null>(null);
 
   const sessionPromise = useRef<Promise<RealtimeSession> | null>(null);
   const inputAudioContext = useRef<AudioContext | null>(null);
@@ -158,11 +159,13 @@ export const useVoiceSession = () => {
       if (finalUserText.trim()) {
         VoiceCommandService.parseCommand(finalUserText).then((intent) => {
           if (intent) {
+            setLastAction(intent.action.type);
             VoiceCommandService.executeAction(intent, {
               navigate: (path) => navigate(path),
               setTab: (tab) => localStorage.setItem('admin_active_tab', tab),
               setSearch: (query) => localStorage.setItem('inventory_filter', query),
             });
+            setTimeout(() => setLastAction(null), 3000);
           }
         });
       }
@@ -220,6 +223,7 @@ export const useVoiceSession = () => {
     transcriptions,
     isSpeaking,
     isListening,
+    lastAction,
     startSession,
     stopSession,
   };
