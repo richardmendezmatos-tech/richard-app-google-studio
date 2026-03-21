@@ -329,22 +329,22 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         className={`
-          relative overflow-hidden rounded-2xl border-2 border-dashed transition-all cursor-pointer
+          relative overflow-hidden rounded-2xl border-2 border-dashed transition-all cursor-pointer group
           ${
             isDragging
-              ? 'border-cyan-500 bg-cyan-500/10 scale-[1.02]'
-              : 'border-slate-700 hover:border-slate-600 bg-slate-900/50'
+              ? 'border-primary/50 bg-primary/10 shadow-[0_0_30px_rgba(0,174,217,0.15)] scale-[1.02]'
+              : 'border-white/10 hover:border-primary/30 bg-slate-900/50 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(0,174,217,0.1)]'
           }
         `}
       >
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/10 to-purple-900/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-purple-500/5 pointer-events-none group-hover:from-primary/10 group-hover:to-purple-500/10 transition-colors" />
 
         <div className="relative p-12 flex flex-col items-center justify-center text-center space-y-4">
           <div
-            className={`p-6 bg-cyan-500/10 rounded-2xl transition-transform ${isDragging ? 'scale-110 rotate-6' : 'scale-100 rotate-0'}`}
+            className={`p-6 bg-primary/10 border border-primary/20 rounded-2xl transition-all duration-300 ${isDragging ? 'scale-110 rotate-6 shadow-[0_0_20px_rgba(0,174,217,0.2)]' : 'scale-100 rotate-0 group-hover:shadow-[0_0_15px_rgba(0,174,217,0.1)]'}`}
           >
-            <Upload className="text-cyan-500" size={48} strokeWidth={2} />
+            <Upload className="text-primary drop-shadow-[0_0_8px_rgba(0,174,217,0.5)]" size={48} strokeWidth={1.5} />
           </div>
 
           <div>
@@ -404,13 +404,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 {/* Progress Bar */}
                 {(file.status === 'optimizing' || file.status === 'uploading') && (
                   <div className="mt-2">
-                    <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden border border-white/5">
                       <div
                         style={{ width: `${file.progress}%` }}
-                        className="h-full bg-gradient-to-r from-cyan-500 to-purple-500"
+                        className="h-full bg-linear-to-r from-primary to-purple-500 shadow-[0_0_10px_rgba(0,174,217,0.5)] transition-all duration-300"
                       />
                     </div>
-                    <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">
+                    <p className="text-[10px] text-primary/70 mt-1 uppercase tracking-widest font-bold">
                       {file.status === 'optimizing' ? 'Optimizando...' : 'Subiendo...'}
                     </p>
                   </div>
@@ -418,8 +418,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
                 {/* Error */}
                 {file.status === 'error' && (
-                  <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                    <AlertCircle size={12} />
+                  <p className="text-xs text-rose-400 mt-1 flex items-center gap-1 bg-rose-500/10 py-1 px-2 rounded-md border border-rose-500/20 inline-flex">
+                    <AlertCircle size={12} className="text-rose-500" />
                     {file.error}
                   </p>
                 )}
@@ -445,22 +445,22 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                   </div>
                 )}
                 {(file.status === 'optimizing' || file.status === 'uploading') && (
-                  <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
-                    <Loader2 size={16} className="text-cyan-500 animate-spin" />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_10px_rgba(0,174,217,0.2)]">
+                    <Loader2 size={16} className="text-primary animate-spin" />
                   </div>
                 )}
                 {file.status === 'complete' && (
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                    <CheckCircle size={16} className="text-emerald-500" />
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    <CheckCircle size={16} className="text-emerald-400" />
                   </div>
                 )}
                 {file.status === 'error' && (
                   <button
                     onClick={() => removeFile(index)}
                     aria-label="Eliminar imagen"
-                    className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors"
+                    className="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500/20 hover:shadow-[0_0_15px_rgba(244,63,94,0.3)] transition-all cursor-pointer"
                   >
-                    <X size={16} className="text-red-500" />
+                    <X size={16} className="text-rose-400" />
                   </button>
                 )}
               </div>

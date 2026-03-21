@@ -29,17 +29,17 @@ import { AdminDashboardTab } from './AdminDashboardTab';
 const CRMBoard = React.lazy(() => import('./CRMBoard'));
 const SalesCopilot = React.lazy(() => import('./SalesCopilot'));
 const AdminModal = React.lazy(() => import('./AdminModal').then((m) => ({ default: m.AdminModal })));
-const AuditLogViewer = React.lazy(() => import('./AuditLogViewer').then((m) => ({ default: m.AuditLogViewer })));
-const GapAnalyticsWidget = React.lazy(() => import('./GapAnalyticsWidget').then((m) => ({ default: m.GapAnalyticsWidget })));
 const B2BBillingDashboard = React.lazy(() => import('./B2BBillingDashboard'));
 const EnterpriseStatus = React.lazy(() => import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })));
-const MarketingCreativeStudio = React.lazy(() => import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })));
 const ViralGeneratorModal = React.lazy(() => import('@/features/marketing/components/ViralGeneratorModal'));
 const AdminInventoryTab = React.lazy(() => import('./AdminInventoryTab'));
 const AILabView = React.lazy(() => import('@/features/ai/components/AILabView'));
 const VehicleMonitor = React.lazy(() => import('./VehicleMonitor'));
 const MissionControlWidget = React.lazy(() => import('./MissionControlWidget'));
 const SentinelStatusBar = React.lazy(() => import('./SentinelStatusBar').then((m) => ({ default: m.SentinelStatusBar })));
+const MarketingTabView = React.lazy(() => import('./MarketingTabView').then((m) => ({ default: m.MarketingTabView })));
+const SecurityTabView = React.lazy(() => import('./SecurityTabView').then((m) => ({ default: m.SecurityTabView })));
+const MarketingCreativeStudio = React.lazy(() => import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })));
 
 interface Props {
   inventory: CarType[];
@@ -122,78 +122,13 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             )}
 
             {state.activeTab === 'marketing' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
-                <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl space-y-6">
-                  <div className="flex items-center gap-3 text-[#00aed9] font-black text-xs uppercase tracking-[0.2em]">
-                    <Sparkles size={20} /> Content Engine
-                  </div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">
-                    Estrategia Semántica
-                  </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    Richard IA utiliza búsqueda semántica para identificar qué modelos de tu
-                    inventario tienen más "momentum" basado en las consultas de los usuarios.
-                    Selecciona una unidad abajo para generar contenido viral.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {inventory.slice(0, 4).map((car) => (
-                      <button
-                        key={car.id}
-                        onClick={() => state.setMarketingCar(car)}
-                        className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-[#00aed9] hover:bg-slate-800 transition-all text-left group"
-                      >
-                        <img
-                          src={optimizeImage(car.img, 100)}
-                          alt={car.name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div>
-                          <div className="text-sm font-black text-white uppercase tracking-tight">
-                            {car.name}
-                          </div>
-                          <div className="text-[10px] text-[#00aed9] font-bold uppercase tracking-widest">
-                            Planear Post ✨
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="lg:col-span-1 h-full space-y-6">
-                  <Suspense fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}>
-                    <GapAnalyticsWidget />
-                  </Suspense>
-
-                  <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-6 border border-white/10 shadow-xl overflow-hidden flex flex-col max-h-[400px]">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                          <UserIcon size={12} /> Newsroom Audience
-                        </div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tight">
-                          Suscriptores
-                        </h3>
-                      </div>
-                      <span className="text-2xl font-black text-white">{state.subscribers.length}</span>
-                    </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
-                      {state.subscribers.map((sub: any, i: number) => (
-                        <div key={sub.id || i} className="p-3 bg-slate-800/50 rounded-xl border border-white/5 flex flex-col">
-                          <span className="text-xs font-bold text-white">{sub.email}</span>
-                          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                            {sub.timestamp?.seconds
-                              ? new Date(sub.timestamp.seconds * 1000).toLocaleDateString()
-                              : 'Reciente'}
-                          </span>
-                        </div>
-                      ))}
-                      {state.subscribers.length === 0 && (
-                        <p className="text-xs text-slate-500 p-4 text-center italic">Sin suscriptores aún.</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Suspense fallback={<div className="p-20 text-center animate-pulse text-[#00aed9] font-black uppercase tracking-widest">Inicializando Engine Semántico...</div>}>
+                <MarketingTabView 
+                  inventory={inventory} 
+                  subscribers={state.subscribers} 
+                  setMarketingCar={state.setMarketingCar} 
+                />
+              </Suspense>
             )}
 
             {state.activeTab === 'pipeline' && (
@@ -223,40 +158,9 @@ const AdminPanel: React.FC<Props> = ({ inventory, onUpdate, onAdd, onDelete, onI
             )}
 
             {state.activeTab === 'security' && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-bold flex items-center gap-2 text-white">
-                      <Smartphone className="text-[#00aed9]" size={20} />
-                      Acceso Biométrico (Passkeys)
-                    </h3>
-                    <p className="text-slate-400 text-xs md:text-sm mt-1">
-                      Vincula este dispositivo para iniciar sesión sin contraseña usando FaceID o TouchID.
-                    </p>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      if (!auth.currentUser) return alert('Debes estar logueado.');
-                      try {
-                        const { registerPasskey } = await import('@/features/auth/services/authService');
-                        await registerPasskey(auth.currentUser);
-                        alert('✅ Dispositivo vinculado exitosamente.');
-                      } catch (err: any) {
-                        alert('Error: ' + err.message);
-                      }
-                    }}
-                    className="px-6 py-3 bg-[#00aed9]/10 text-[#00aed9] hover:bg-[#00aed9] hover:text-white border border-[#00aed9]/20 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
-                  >
-                    <Smartphone size={16} /> Vincular Dispositivo
-                  </button>
-                </div>
-
-                <div className="min-h-[600px]">
-                  <Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}>
-                    <AuditLogViewer />
-                  </Suspense>
-                </div>
-              </div>
+              <Suspense fallback={<div className="p-20 text-center animate-pulse text-[#00aed9] font-black uppercase tracking-widest">Bóveda Criptográfica...</div>}>
+                <SecurityTabView />
+              </Suspense>
             )}
 
             {state.activeTab === 'billing' && (

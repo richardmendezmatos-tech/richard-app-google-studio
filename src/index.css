@@ -668,7 +668,7 @@ body {
 }
 
 .text-gradient-premium {
-  @apply text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-400 dark:to-white;
+  @apply text-transparent bg-clip-text bg-linear-to-br from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-400 dark:to-white;
 }
 
 .input-premium {
@@ -760,5 +760,5 @@ body {
 }
 
 .text-gradient-cyan {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-600;
+  @apply text-transparent bg-clip-text bg-linear-to-r from-primary to-cyan-600;
 }

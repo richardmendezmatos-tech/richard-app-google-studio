@@ -58,7 +58,7 @@ import { generateActuarialReport } from '@/utils/pdfGenerator';
 import { generateMockActuarialData } from '@/utils/actuarialUtils';
 
 const COLUMNS = [
-  { id: 'new', title: 'Nuevos', color: 'bg-[#00aed9]', glow: 'shadow-[#00aed9]/20' },
+  { id: 'new', title: 'Nuevos', color: 'bg-primary', glow: 'shadow-primary/20' },
   { id: 'contacted', title: 'Contactados', color: 'bg-amber-500', glow: 'shadow-amber-500/20' },
   { id: 'negotiation', title: 'Negociando', color: 'bg-purple-500', glow: 'shadow-purple-500/20' },
   { id: 'sold', title: 'Ventas Cerradas', color: 'bg-emerald-500', glow: 'shadow-emerald-500/20' },
@@ -132,7 +132,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
       const masterKey = window.prompt('Ingresa la Master Key para desencriptar este SSN:');
       if (!masterKey) return;
 
-      const decrypted = decryptSSN(lead.ssn_encrypted, masterKey);
+      const decrypted = await decryptSSN(lead.ssn_encrypted, masterKey);
       if (decrypted === 'DECRYPTION_ERROR') {
         addNotification('error', 'Llave incorrecta. No se pudo desencriptar.');
       } else {
@@ -156,55 +156,65 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
   return (
     <div
-      className={`glass-card glass-premium p-5 rounded-[24px] group transition-all duration-300 relative ${isOverlay ? 'shadow-2xl scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-[#00aed9]' : 'shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-[#00aed9] hover:-translate-y-1 hover-kinetic'}`}
+      className={`bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-4xl group transition-all duration-300 relative ${
+        isOverlay
+          ? 'shadow-[0_0_40px_rgba(0,174,217,0.3)] scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-primary'
+          : 'shadow-2xl hover:border-primary/50 hover:bg-slate-800/60 hover:shadow-[0_0_30px_rgba(0,174,217,0.15)] hover:-translate-y-1'
+      }`}
     >
       {!isOverlay && (
-        <div className="absolute top-5 right-5 text-slate-300 dark:text-slate-600">
+        <div className="absolute top-6 right-6 text-slate-500 group-hover:text-slate-300 transition-colors cursor-grab active:cursor-grabbing">
           <GripVertical size={16} />
         </div>
       )}
 
-      <div className="flex justify-between mb-3 pr-6">
+      <div className="flex justify-between mb-4 pr-8">
         <span
-          className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${lead.type === 'trade-in' ? 'bg-purple-100 text-purple-600' : lead.type === 'finance' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-[#00aed9]'}`}
+          className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
+            lead.type === 'trade-in'
+              ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+              : lead.type === 'finance'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : 'bg-primary/10 text-primary border border-primary/20'
+          }`}
         >
           {lead.type || 'Standard'}
         </span>
         {scoring.score > 80 && (
-          <span className="px-2.5 py-1 bg-amber-100 text-amber-600 rounded-full text-[9px] font-black uppercase tracking-widest animate-pulse">
+          <span className="px-3 py-1 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full text-[9px] font-black uppercase tracking-widest animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.2)]">
             Alta Prioridad
           </span>
         )}
-        <span className="text-[10px] text-slate-400 flex items-center gap-1">
-          <Clock size={10} />
+        <span className="text-[10px] text-slate-400 flex items-center gap-1.5 font-bold">
+          <Clock size={10} className="text-slate-500" />
           {lead.createdAt?.seconds
             ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString()
             : 'Reciente'}
         </span>
       </div>
 
-      <div className="font-black text-slate-800 dark:text-white text-md mb-1 tracking-tight pr-4 flex items-center gap-2">
+      <div className="font-black text-white text-lg mb-1 tracking-tight pr-4 flex items-center gap-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
         {maskName(lead.name || `${lead.firstName} ${lead.lastName}`, userRole)}
         {userRole !== 'admin' && (
           <span title="Protección PII Activa">
-            <ShieldCheck size={12} className="text-emerald-500 opacity-50" />
+            <ShieldCheck size={14} className="text-emerald-500 opacity-80" />
           </span>
         )}
       </div>
 
-      <div className="text-xs font-medium text-slate-400 truncate mb-4">
+      <div className="text-sm font-medium text-slate-400 truncate mb-5 leading-relaxed">
         {lead.vehicleOfInterest || lead.message || 'Sin detalles'}
       </div>
 
       {/* AI Scoring Section - Premium Predictive Gauge */}
       {(lead.aiAnalysis || scoring.score > 0) && (
-        <div className="mb-4 p-4 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
+        <div className="mb-4 p-4 bg-linear-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-2">
               <div className="p-1 px-1.5 bg-primary/10 rounded-md">
                 <Wand2 size={10} className="text-primary animate-pulse" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Probabilidad Predictiva
               </span>
             </div>
@@ -229,12 +239,12 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
           {/* Premium Progress Track */}
           <div className="relative h-1.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) predictive-bar-width ${
+              className={`h-full transition-all duration-1500 cubic-bezier(0.23, 1, 0.32, 1) predictive-bar-width ${
                 scoring.score > 80
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                  ? 'bg-linear-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                   : scoring.score > 50
-                    ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                    ? 'bg-linear-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                    : 'bg-linear-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
               }`}
               style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
             />
@@ -249,28 +259,28 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
       )}
 
       {/* Business Actions */}
-      <div className="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-white/5">
+      <div className="flex justify-between items-center pt-4 mt-4 border-t border-white/5">
         <div className="flex gap-2" onPointerDown={(e) => e.stopPropagation()}>
           {lead.phone && (
             <button
               onClick={handleWhatsAppSend}
               disabled={isSending}
-              className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 transition-colors"
+              className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 hover:scale-105 transition-all"
             >
               {isSending ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin" />
               ) : (
-                <MessageCircle size={14} />
+                <MessageCircle size={16} />
               )}
             </button>
           )}
           {lead.email && (
             <a
               href={`mailto:${lead.email}`}
-              className="p-2.5 bg-[#00aed9]/10 text-[#00aed9] rounded-xl hover:bg-[#00aed9]/20 transition-colors"
+              className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 hover:scale-105 transition-all"
               title={`Enviar email a ${lead.email}`}
             >
-              <Mail size={14} />
+              <Mail size={16} />
             </a>
           )}
           <button
@@ -278,10 +288,10 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
               e.stopPropagation();
               navigate(`/admin/analytics/${lead.id}`);
             }}
-            className="p-2.5 bg-purple-500/10 text-purple-500 rounded-xl hover:bg-purple-500/20"
+            className="p-2.5 bg-purple-500/10 text-purple-500 rounded-xl hover:bg-purple-500/20 hover:scale-105 transition-all"
             title="Analytics"
           >
-            <TrendingUp size={14} />
+            <TrendingUp size={16} />
           </button>
           <button
             onClick={(e) => {
@@ -289,32 +299,32 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
               const data = generateMockActuarialData(lead as any);
               generateActuarialReport(data);
             }}
-            className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20"
-            title="Reporte"
+            className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20 hover:scale-105 transition-all"
+            title="Reporte Actuarial"
           >
-            <FileText size={14} />
+            <FileText size={16} />
           </button>
         </div>
         <div className="flex items-center gap-2">
           {(lead.ssn_encrypted || lead.ssn) && (
             <div className="flex items-center gap-2">
               {revealedSSN && (
-                <span className="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                <span className="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
                   {revealedSSN}
                 </span>
               )}
               <button
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={handleReveal}
-                className="p-2 text-slate-400 hover:text-amber-500 transition-colors"
+                className="p-2.5 bg-slate-800 text-slate-400 hover:text-amber-500 hover:bg-slate-700/80 rounded-xl transition-all"
                 title="Ver SSN Segura"
               >
                 {isRevealing ? (
-                  <Loader2 size={12} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin" />
                 ) : revealedSSN ? (
-                  <EyeOff size={12} />
+                  <EyeOff size={16} />
                 ) : (
-                  <Eye size={12} />
+                  <Eye size={16} />
                 )}
               </button>
             </div>
@@ -445,21 +455,21 @@ const CRMBoard: React.FC = () => {
     >
       <div
         ref={containerRef as any}
-        className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar"
+        className="flex gap-6 h-full overflow-x-auto pb-4 px-1 custom-scrollbar scroll-smooth"
       >
         {COLUMNS.map((col) => {
           const colLeads = groupedLeads[col.id] || [];
           return (
             <div
               key={col.id}
-              className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50"
+              className="min-w-[360px] w-full bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-6 flex flex-col h-full border border-white/5 shadow-2xl"
             >
               <div className="flex items-center gap-3 mb-6 px-2">
-                <div className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-lg`} />
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                <div className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.2)]`} />
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
                   {col.title}
                 </h3>
-                <span className="ml-auto bg-white/80 dark:bg-slate-800 px-3 py-1 rounded-full text-[10px] font-black">
+                <span className="ml-auto bg-slate-800/80 border border-white/5 px-3 py-1 rounded-full text-[10px] font-black text-white shadow-inner">
                   {colLeads.length}
                 </span>
               </div>
@@ -473,9 +483,10 @@ const CRMBoard: React.FC = () => {
                   ))}
                 </SortableContext>
                 {colLeads.length === 0 && (
-                  <div className="h-24 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Vacío
+                  <div className="h-32 flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-3xl opacity-50 bg-slate-900/20">
+                    <GripVertical size={24} className="text-slate-600 mb-2" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Arrastrar Aquí
                     </span>
                   </div>
                 )}

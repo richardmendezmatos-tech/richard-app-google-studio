@@ -21,9 +21,9 @@ export const AdminDashboardTab: React.FC<Props> = ({
   MissionControlWidget
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <React.Suspense
-        fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}
+        fallback={<div className="h-48 rounded-4xl bg-slate-900/40 animate-pulse border border-white/5" />}
       >
         <MissionControlWidget />
       </React.Suspense>
@@ -66,59 +66,68 @@ export const AdminDashboardTab: React.FC<Props> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-[#00aed9]/50 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 hover:border-primary/50 hover:bg-slate-800/60 hover:shadow-[0_0_30px_rgba(0,174,217,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           onClick={() => navigate('/digital-twin')}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#00aed9]/10 rounded-full blur-3xl group-hover:bg-[#00aed9]/20 transition-all" />
-          <UserIcon
-            className="text-[#00aed9] mb-4 group-hover:scale-110 transition-transform duration-500"
-            size={40}
-          />
-          <h3 className="text-2xl font-black text-white uppercase mb-2">
-            Gemelo Digital
-          </h3>
-          <p className="text-slate-400 text-sm mb-6">
-            Crea contenido de marketing viral con tu avatar IA.
-          </p>
-          <span className="text-xs font-bold text-[#00aed9] uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-            Ingresar <div className="w-4 h-[1px] bg-[#00aed9]" />
-          </span>
+          <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500" />
+          <div className="relative z-10">
+            <UserIcon
+              className="text-primary mb-6 group-hover:scale-110 transition-transform duration-500"
+              size={44}
+              strokeWidth={1.5}
+            />
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-primary transition-colors">
+              Gemelo Digital
+            </h3>
+            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+              Crea contenido de marketing viral con tu avatar IA conectado al inventario.
+            </p>
+            <span className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-3 group-hover:gap-5 transition-all">
+              Ingresar <div className="w-8 h-px bg-primary group-hover:w-12 transition-all" />
+            </span>
+          </div>
         </div>
 
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-purple-500/50 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 hover:border-purple-500/50 hover:bg-slate-800/60 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           onClick={() => navigate('/framework-lab')}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
-          <Server
-            className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-            size={40}
-          />
-          <h3 className="text-2xl font-black text-white uppercase mb-2">Framework Lab</h3>
-          <p className="text-slate-400 text-sm mb-6">
-            Gestiona integraciones experimentales (Svelte, Astro).
-          </p>
-          <span className="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-            Configurar <div className="w-4 h-[1px] bg-purple-500" />
-          </span>
+          <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-500" />
+          <div className="relative z-10">
+            <Server
+              className="text-purple-500 mb-6 group-hover:scale-110 transition-transform duration-500"
+              size={44}
+              strokeWidth={1.5}
+            />
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-purple-400 transition-colors">Framework Lab</h3>
+            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+              Gestiona despliegues, workers, e integraciones experimentales (Vercel, AI Servers).
+            </p>
+            <span className="text-xs font-black text-purple-500 uppercase tracking-widest flex items-center gap-3 group-hover:gap-5 transition-all">
+              Configurar <div className="w-8 h-px bg-purple-500 group-hover:w-12 transition-all" />
+            </span>
+          </div>
         </div>
 
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-emerald-500/50 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 hover:border-emerald-500/50 hover:bg-slate-800/60 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           onClick={() => setActiveTab('analytics')}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
-          <BarChart3
-            className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
-            size={40}
-          />
-          <h3 className="text-2xl font-black text-white uppercase mb-2">Analytics Pro</h3>
-          <p className="text-slate-400 text-sm mb-6">
-            Mapa de calor de inventario y tendencias.
-          </p>
-          <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
-            Ver Datos <div className="w-4 h-[1px] bg-emerald-500" />
-          </span>
+          <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+          <div className="relative z-10">
+            <BarChart3
+              className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform duration-500"
+              size={44}
+              strokeWidth={1.5}
+            />
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-emerald-400 transition-colors">Analytics Pro</h3>
+            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+              Mapa de calor de inventario, retención de leads y métricas de ROI.
+            </p>
+            <span className="text-xs font-black text-emerald-500 uppercase tracking-widest flex items-center gap-3 group-hover:gap-5 transition-all">
+              Ver Datos <div className="w-8 h-px bg-emerald-500 group-hover:w-12 transition-all" />
+            </span>
+          </div>
         </div>
       </div>
     </div>

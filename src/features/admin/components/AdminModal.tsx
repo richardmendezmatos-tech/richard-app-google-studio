@@ -204,22 +204,26 @@ export const AdminModal: React.FC<AdminModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full sm:max-w-7xl sm:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-2xl animate-in fade-in">
+      <div className="bg-slate-900/95 backdrop-blur-3xl w-full sm:max-w-7xl sm:rounded-4xl rounded-t-4xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-white/5 max-h-[92vh] flex flex-col relative">
+        {/* Glow effect back */}
+        <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent opacity-70" />
+        
         {/* Header */}
-        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 z-10 sticky top-0">
+        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-transparent z-10 sticky top-0 backdrop-blur-xl">
           <div>
-            <div className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest">
-              Editor de Inventario
+            <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 mb-1">
+               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,174,217,0.8)]" />
+               Editor de Inventario
             </div>
-            <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+            <h2 className="text-2xl font-black text-white uppercase tracking-tight">
               {car ? 'Editar Unidad' : 'Nueva Unidad'}
             </h2>
           </div>
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
-            className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-rose-500 hover:text-white transition-colors"
+            className="w-10 h-10 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 border border-white/5 transition-all"
           >
             <X size={20} />
           </button>
@@ -228,11 +232,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         {/* Scrollable Form */}
         <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
           {/* Left Side: Media & Preview */}
-          <div className="w-full lg:w-1/2 p-8 bg-slate-50 dark:bg-slate-900/50 border-r border-slate-100 dark:border-white/5 overflow-y-auto custom-scrollbar">
+          <div className="w-full lg:w-1/2 p-8 bg-slate-950/30 border-r border-white/5 overflow-y-auto custom-scrollbar">
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-2 h-6 bg-[#00aed9] rounded-full" />
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                <div className="w-2 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(0,174,217,0.5)]" />
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Multimedia y Galería
                 </h3>
               </div>
@@ -241,16 +245,17 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               <ImageUploader onUploadComplete={handleUploadComplete} onLog={logDebug} />
 
               {/* Stats or Preview Placeholder */}
-              <div className="p-6 rounded-3xl bg-gradient-to-br from-[#173d57]/10 to-transparent border border-[#00aed9]/10">
-                <div className="flex items-center gap-3 text-[#00aed9] mb-3">
-                  <Sparkles size={18} />
+              <div className="p-6 rounded-3xl bg-linear-to-br from-primary/10 to-transparent border border-primary/20 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <div className="flex items-center gap-3 text-primary mb-3 relative z-10">
+                  <Sparkles size={18} className="animate-pulse" />
                   <span className="text-xs font-black uppercase tracking-widest">
                     Sugerencia Pro
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Las unidades con más de 5 fotos de alta calidad tienen un **40% más de
-                  probabilidad** de ser vendidas en la primera semana. Asegúrate de incluir
+                <p className="text-xs text-slate-400 leading-relaxed relative z-10">
+                  Las unidades con más de 5 fotos de alta calidad tienen un <strong className="text-white">40% más de
+                  probabilidad</strong> de ser vendidas en la primera semana. Asegúrate de incluir
                   interiores y motor.
                 </p>
               </div>
@@ -258,12 +263,12 @@ export const AdminModal: React.FC<AdminModalProps> = ({
           </div>
 
           {/* Right Side: Data Form */}
-          <div className="w-full lg:w-1/2 p-8 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-900">
+          <div className="w-full lg:w-1/2 p-8 overflow-y-auto custom-scrollbar bg-transparent">
             {errorMessage && (
-              <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/50 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-                <ShieldAlert className="text-rose-500 shrink-0 mt-0.5" size={20} />
+              <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                <ShieldAlert className="text-rose-400 shrink-0 mt-0.5" size={20} />
                 <div>
-                  <h4 className="text-sm font-black text-rose-500 uppercase tracking-wide">
+                  <h4 className="text-sm font-black text-rose-400 uppercase tracking-wide">
                     Error al Guardar
                   </h4>
                   <p className="text-xs text-rose-300 mt-1 font-mono">{errorMessage}</p>
@@ -273,29 +278,29 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-6 bg-purple-500 rounded-full" />
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                <div className="w-2 h-6 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Detalles Técnicos
                 </h3>
               </div>
 
               {/* Basic Info */}
               <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
+                <div className="space-y-2 group">
+                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Nombre de la Unidad
                   </label>
                   <input
                     name="name"
                     defaultValue={car?.name}
                     required
-                    className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white"
+                    className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
                     placeholder="Ej. Toyota Corolla GR"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
+                  <div className="space-y-2 group">
+                    <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                       Precio (USD)
                     </label>
                     <input
@@ -303,18 +308,18 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                       type="number"
                       defaultValue={car?.price}
                       required
-                      className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white"
+                      className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
                       placeholder="25000"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
+                  <div className="space-y-2 group">
+                    <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                       Etiqueta (Badge)
                     </label>
                     <input
                       name="badge"
                       defaultValue={car?.badge}
-                      className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white"
+                      className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
                       placeholder="Ej. Recién Llegado"
                     />
                   </div>
@@ -322,8 +327,8 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
+                <div className="space-y-2 group">
+                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Categoría
                   </label>
                   <div className="relative">
@@ -331,36 +336,36 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                       name="type"
                       defaultValue={car?.type || 'suv'}
                       aria-label="Tipo de vehículo"
-                      className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white appearance-none"
+                      className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white appearance-none"
                     >
-                      <option value="suv">🚙 SUV / Crossover</option>
-                      <option value="sedan">🚗 Sedan / Coupe</option>
-                      <option value="pickup">🛻 Pickup / Truck</option>
-                      <option value="luxury">💎 Luxury / Sport</option>
+                      <option value="suv" className="bg-slate-800 text-white">🚙 SUV / Crossover</option>
+                      <option value="sedan" className="bg-slate-800 text-white">🚗 Sedan / Coupe</option>
+                      <option value="pickup" className="bg-slate-800 text-white">🛻 Pickup / Truck</option>
+                      <option value="luxury" className="bg-slate-800 text-white">💎 Luxury / Sport</option>
                     </select>
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 text-white">
                       <X size={16} className="rotate-45" />
                     </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
+                <div className="space-y-2 group">
+                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Características (Separadas por coma)
                   </label>
                   <input
                     name="features"
                     defaultValue={car?.features?.join(', ')}
-                    className="w-full h-[56px] px-5 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-800 dark:text-white"
+                    className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
                     placeholder="GPS, Cuero, Techo Panorámico..."
                   />
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3 group">
                 <div className="flex justify-between items-center mb-1">
                   <label
                     htmlFor="description-field"
-                    className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1"
+                    className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
                   >
                     Descripción Narrativa
                   </label>
@@ -368,7 +373,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                     type="button"
                     onClick={generateAIDescription}
                     disabled={isGenerating}
-                    className="text-[10px] font-black uppercase tracking-widest text-[#00aed9] bg-[#00aed9]/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-[#00aed9] hover:text-white transition-all disabled:opacity-50"
+                    className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-primary hover:text-white transition-all disabled:opacity-50 border border-primary/20 hover:border-transparent hover:shadow-[0_0_15px_rgba(0,174,217,0.4)]"
                   >
                     {isGenerating ? (
                       <Loader2 size={12} className="animate-spin" />
@@ -384,12 +389,12 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full p-5 bg-slate-50 dark:bg-slate-800 rounded-[2rem] font-medium outline-none focus:ring-2 focus:ring-[#00aed9] border border-transparent focus:border-[#00aed9]/30 transition-all text-slate-700 dark:text-slate-200 resize-none"
+                  className="w-full p-5 bg-slate-900/50 rounded-3xl font-medium outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600 resize-none"
                   placeholder="Escribe la historia de este vehículo..."
                 />
                 {aiTier && (
                   <span
-                    className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-tighter ${aiTier === 'Premium' ? 'bg-purple-500/10 text-purple-500' : 'bg-emerald-500/10 text-emerald-500'}`}
+                    className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border ${aiTier === 'Premium' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}
                   >
                     IA Engine: {aiTier}
                   </span>
@@ -398,16 +403,16 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
               {/* Strategic Debug Console */}
               {debugLogs.length > 0 && (
-                <div className="p-5 bg-slate-950 rounded-[2rem] border border-rose-500/20 space-y-2">
+                <div className="p-5 bg-black/50 rounded-3xl border border-rose-500/20 space-y-2 backdrop-blur-md">
                   <div className="text-[9px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
+                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
                     Log de Diagnóstico (IT)
                   </div>
                   <div className="max-h-24 overflow-y-auto custom-scrollbar">
                     {debugLogs.map((log, i) => (
                       <div
                         key={i}
-                        className="text-[8px] font-mono text-slate-500 break-all leading-relaxed"
+                        className="text-[8px] font-mono text-slate-400 break-all leading-relaxed"
                       >
                         {log}
                       </div>
@@ -420,7 +425,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="w-full h-[64px] bg-gradient-to-r from-[#0d2232] to-[#173d57] text-white rounded-[2rem] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full h-[64px] bg-linear-to-r from-primary/80 to-purple-600/80 hover:from-primary hover:to-purple-500 text-white rounded-3xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] disabled:opacity-50 flex items-center justify-center gap-3 border border-white/10"
                 >
                   {isUploading ? (
                     <>
