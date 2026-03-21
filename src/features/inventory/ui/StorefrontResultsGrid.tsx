@@ -57,12 +57,12 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-[400px] animate-pulse rounded-[40px] border border-cyan-200/15 bg-slate-900/80"
+                className="h-[400px] animate-pulse rounded-[40px] border border-primary/15 bg-slate-900/40 backdrop-blur-xl"
               />
             ))}
           </div>
         ) : displayCars.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-cyan-300/20 bg-[#081726]/85 py-20 text-center animate-in fade-in">
+          <div className="col-span-full flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-primary/20 bg-slate-900/60 backdrop-blur-xl py-20 text-center animate-in fade-in">
             {isSearching ? (
               <>
                 <p className="font-cinematic text-4xl tracking-[0.06em] text-slate-100">
@@ -73,7 +73,7 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
                 </p>
                 <button
                   onClick={onClearFilters}
-                  className="mt-5 rounded-full border border-cyan-200/30 px-6 py-2 text-xs font-black uppercase tracking-[0.2em] text-cyan-200 transition-colors hover:bg-cyan-200/10"
+                  className="mt-5 rounded-full border border-primary/30 px-6 py-2 text-xs font-black uppercase tracking-[0.2em] text-primary-200 transition-colors hover:bg-primary/10"
                 >
                   Limpiar Filtros
                 </button>
@@ -159,7 +159,7 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
                 <button
                   onClick={onFetchNextPage}
                   disabled={isFetchingNextPage}
-                  className="group flex items-center gap-2 rounded-full border border-cyan-300/20 bg-[#081a29] px-8 py-4 font-bold text-cyan-100 shadow-lg shadow-black/30 transition-all hover:-translate-y-0.5 hover:border-[#00aed9] hover:bg-[#00aed9] hover:text-white active:scale-95"
+                  className="group flex items-center gap-2 rounded-full border border-primary/20 bg-slate-900/80 px-8 py-4 font-bold text-primary-100 shadow-lg shadow-black/30 transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-white active:scale-95"
                 >
                   {isFetchingNextPage ? (
                     <Loader2 className="animate-spin" />
