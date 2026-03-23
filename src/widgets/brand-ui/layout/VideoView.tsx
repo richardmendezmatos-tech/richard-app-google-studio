@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateVideo } from '@/features/ai-hub';
+import { generateVideo } from '@/shared/api/ai';
 import { Clapperboard, UploadCloud, Film, AlertTriangle, KeyRound, Download } from 'lucide-react';
 
 // Helper to convert file to base64

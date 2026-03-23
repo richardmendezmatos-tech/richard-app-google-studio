@@ -248,3 +248,13 @@ declare global {
     aistudio?: AIStudio;
   }
 }
+
+
+export interface CommandIntent {
+  action: {
+    type: 'NAVIGATE' | 'SEARCH' | 'UPDATE_FILTER';
+    payload: any;
+  };
+  confidence: number;
+  originalText: string;
+}

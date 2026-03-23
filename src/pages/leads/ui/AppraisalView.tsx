@@ -6,7 +6,7 @@ import SEO from '@/shared/ui/seo/SEO';
 
 import { submitApplication } from '@/shared/api/firebase/firebaseService';
 import { usePhotoUploader } from '@/shared/lib/hooks/usePhotoUploader';
-import { analyzeTradeInImages } from '@/features/ai-hub';
+import { analyzeTradeInImages } from '@/shared/api/ai';
 import { getAppraisalBaseValue } from '@/features/appraisal';
 
 // --- Sub-Components (Memoized for Performance) ---

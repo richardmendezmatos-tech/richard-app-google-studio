@@ -14,7 +14,7 @@ import { AuthoritySection } from '@/features/marketing';
 // Extracted UI Components
 import { StorefrontToolbar } from '@/features/inventory';
 import StorefrontMarketPulse from '@/features/inventory/ui/StorefrontMarketPulse';
-import StorefrontResultsGrid from '@/features/inventory/ui/StorefrontResultsGrid';
+import StorefrontResultsGrid from '@/widgets/inventory/StorefrontResultsGrid';
 import StorefrontComparisonBar from '@/widgets/comparison/StorefrontComparisonBar';
 import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
 

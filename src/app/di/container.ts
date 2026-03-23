@@ -105,7 +105,7 @@ class DIContainer {
   }
 }
 
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { sendWhatsAppMessage } from '@/features/leads';
 import { getAntigravityOutreachAction } from '@/features/omnichannel';
 

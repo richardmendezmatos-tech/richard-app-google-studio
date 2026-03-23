@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { generateCode } from '@/features/ai-hub';
+import { generateCode } from '@/shared/api/ai';
 import hljs from 'highlight.js';
 
 // Un conversor simple de Markdown a HTML para renderizar la respuesta de la IA.

@@ -6,7 +6,7 @@
  */
 
 import { getAIResponse } from '@/shared/api/ai';
-import { validationAgentService } from '@/shared/api/ai';
+import { validationAgentService } from '@/features/ai-hub';
 import { Car } from '@/shared/types/types';
 import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/firebaseService';

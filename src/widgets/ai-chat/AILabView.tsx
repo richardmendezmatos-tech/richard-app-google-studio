@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 // @ts-expect-error: Vanilla HyperList is not typed for 2026 vite standard
-import { createHyperList } from '@/shared/brand-ui/vanilla/HyperList';
+import { createHyperList } from '@/widgets/brand-ui/layout/vanilla/HyperList';
 import { Activity, Zap, Cpu, Code2 } from 'lucide-react';
 const SandboxEnvironment = React.lazy(() => import('./SandboxEnvironment'));
 

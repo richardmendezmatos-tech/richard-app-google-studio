@@ -13,7 +13,7 @@ import {
   updatePassword,
   User,
 } from 'firebase/auth';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { UserRole, AppUser } from '@/entities/shared';
 import { auth, getAnalyticsService } from '@/shared/api/firebase/firebaseService';
 

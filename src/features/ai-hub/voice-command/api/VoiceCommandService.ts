@@ -5,7 +5,7 @@
  * specific application actions and state changes.
  */
 
-import { parseVoiceIntent } from '@/features/ai-hub';
+import { parseVoiceIntent } from '@/shared/api/ai';
 
 export type VoiceAction =
   | { type: 'NAVIGATE'; payload: { path: string; tab?: string } }
@@ -14,11 +14,7 @@ export type VoiceAction =
   | { type: 'DASHBOARD_UPDATE'; payload: { filter: string } }
   | { type: 'UPDATE_FILTER'; payload: { filter: string } };
 
-export interface CommandIntent {
-  action: VoiceAction;
-  confidence: number;
-  originalText: string;
-}
+import { CommandIntent } from '@/shared/types/types';
 
 export const VoiceCommandService = {
   /**

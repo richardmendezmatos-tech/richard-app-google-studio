@@ -1,4 +1,4 @@
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 
 export const inventoryService = {
   async fetchInventory(dealerId: string) {

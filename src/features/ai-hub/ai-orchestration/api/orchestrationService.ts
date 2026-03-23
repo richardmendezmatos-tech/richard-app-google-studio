@@ -1,7 +1,7 @@
 import { Lead } from '@/shared/api/adapters/leads/crmService';
 import { VehicleHealthStatus } from '@/shared/types/types';
 import { calculateLeadScore, ScoringResult } from '@/entities/lead';
-import { AGENTS, AgentPersona } from './agentSystem';
+import { AGENTS, AgentPersona } from '../../api/agentSystem';
 
 export interface OrchestrationAction {
   agentId: AgentPersona;

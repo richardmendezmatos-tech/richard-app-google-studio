@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/entities/shared';
 import { getCookie, setCookie } from '@/shared/api/tracking/cookieService';
-import { analyzeGarageSelection } from '@/features/ai-hub';
+import { analyzeGarageSelection } from '@/shared/api/ai';
 import { BiometricService } from '@/shared/api/security/biometricService';
 import {
   ArrowLeft,

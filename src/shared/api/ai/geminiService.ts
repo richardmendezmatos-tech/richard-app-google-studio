@@ -247,7 +247,7 @@ export const getAIResponse = async (
 
   try {
     // PHASE 11: Intelligence Router
-    const { localAIService } = await import('./localAIService');
+    const { localAIService } = await import('./localAiService');
     const isLocalAvailable = await localAIService.isAvailable();
     const isSensitive = localAIService.isSensitive(userPrompt);
 
@@ -291,7 +291,7 @@ export const getAIResponse = async (
 
     // Final fallback attempt with Local AI if Gemini fails
     try {
-      const { localAIService } = await import('./localAIService');
+      const { localAIService } = await import('./localAiService');
       if (await localAIService.isAvailable()) {
         return await localAIService.generateText(userPrompt, systemInstruction);
       }

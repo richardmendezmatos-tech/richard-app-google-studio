@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { voiceService } from '@/shared/api/voice/voiceService';
-import { getAIResponse } from '@/features/ai-hub';
+import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
+import { getAIResponse } from '@/shared/api/ai';
 import { validationAgentService } from '@/features/ai-hub';
 
 // Icons
@@ -58,7 +58,7 @@ interface VoiceWidgetProps {
   onMessage?: (text: string, sender: 'user' | 'bot') => void;
 }
 
-import { VoiceCommandService } from '@/shared/lib/voice/VoiceCommandService';
+import { VoiceCommandService } from '@/features/ai-hub/voice-command/api/VoiceCommandService';
 import { useNavigate } from 'react-router-dom';
 
 export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {

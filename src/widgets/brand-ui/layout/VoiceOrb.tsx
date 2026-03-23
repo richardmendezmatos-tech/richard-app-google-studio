@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { voiceService } from '@/shared/api/voice/voiceService';
+import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const VoiceOrb: React.FC = React.memo(() => {

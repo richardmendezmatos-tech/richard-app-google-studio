@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Car } from '@/entities/shared';
 import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
-import { generateCarPitch } from '@/features/ai-hub';
+import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics, DealBuilder, Viewer360 } from '@/features/inventory';

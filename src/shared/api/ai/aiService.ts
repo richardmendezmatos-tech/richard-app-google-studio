@@ -1,5 +1,5 @@
 import { Car } from '@/shared/types/types';
-import { CommandIntent } from '@/shared/lib/voice/VoiceCommandService';
+import { CommandIntent } from '@/shared/types/types';
 
 export interface VisualSearchResult {
   type: string | null;

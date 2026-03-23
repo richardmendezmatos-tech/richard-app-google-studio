@@ -12,7 +12,7 @@ import {
   Globe,
   Radio,
 } from 'lucide-react';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { HoustonTelemetry } from '@/entities/shared';
 
 export const HoustonTelemetryTab: React.FC = () => {

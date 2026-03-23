@@ -1,6 +1,6 @@
 import { useState, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Car, CarType } from '@/entities/shared';
+import { Car, CarType } from '@/shared/types/types';
 import { useVisualSearch } from './useVisualSearch';
 import { useCars } from './useCars';
 import { useSavedCars } from './useSavedCars';

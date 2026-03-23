@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDealer } from '@/entities/dealer';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { Car as CarType, Lead, Subscriber } from '@/shared/types/types';
 import { getSubscribers } from '@/shared/api/firebase/firebaseService';
 

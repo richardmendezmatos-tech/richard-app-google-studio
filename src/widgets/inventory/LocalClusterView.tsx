@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CarType } from '@/shared/types/types';
 import { Car } from '@/entities/shared';
 import SEO from '@/shared/ui/seo/SEO';
-import HeroSection from './HeroSection';
+import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
-import CarDetailModal from '../CarDetailModal';
-import { useInventoryAnalytics } from '../../hooks/useInventoryAnalytics';
+import CarDetailModal from '@/features/inventory/ui/CarDetailModal';
+import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { DatabaseZap, MapPin, Sparkles } from 'lucide-react';
 
 interface LocalClusterViewProps {

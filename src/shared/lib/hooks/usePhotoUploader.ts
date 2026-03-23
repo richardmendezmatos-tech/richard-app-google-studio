@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 
 export interface PhotoState {
   [key: string]: File | null;

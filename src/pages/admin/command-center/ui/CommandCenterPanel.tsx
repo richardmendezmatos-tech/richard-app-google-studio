@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { Car, Lead, AppUser } from '@/entities/shared';
 import { Subscriber } from '@/shared/types/types';
 import {

@@ -49,7 +49,7 @@ import {
   Radio,
   CheckCircle2,
 } from 'lucide-react';
-import { DI } from '@/shared/lib/di/registry';
+import { DI } from '@/app/di/registry';
 import { HoustonTelemetry, OutreachOpportunity } from '@/entities/shared';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 
