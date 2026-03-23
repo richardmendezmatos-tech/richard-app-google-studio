@@ -9,7 +9,7 @@ import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2 } fro
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import SEO from '@/shared/ui/seo/SEO';
 
-const UserProfile: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const { settings, updateSettings } = usePrivacyStore();
   const { addNotification } = useNotification();
@@ -254,7 +254,7 @@ const UserProfile: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading || !passwords.new}
-                    className="h-[50px] px-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold uppercase tracking-wider hover:bg-rose-500 hover:text-white disabled:opacity-50 transition-all flex items-center gap-2"
+                    className="h-board-header px-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-bold uppercase tracking-wider hover:bg-rose-500 hover:text-white disabled:opacity-50 transition-all flex items-center gap-2"
                   >
                     <Lock size={18} /> {isLoading ? 'Procesando...' : 'Actualizar Contraseña'}
                   </button>
@@ -306,6 +306,7 @@ const UserProfile: React.FC = () => {
                     <button
                       onClick={() => window.open('/privacy', '_blank')}
                       className="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-xs font-black uppercase tracking-wider"
+                      title="Ver aviso de privacidad"
                     >
                       Ver
                     </button>
@@ -334,6 +335,7 @@ const PrivacyToggleInProfile: React.FC<{
       </div>
       <button
         onClick={() => onChange(!enabled)}
+        title={`Alternar ${label}`}
         className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}
       >
         <div
@@ -344,4 +346,4 @@ const PrivacyToggleInProfile: React.FC<{
   );
 };
 
-export default UserProfile;
+export default ProfilePage;

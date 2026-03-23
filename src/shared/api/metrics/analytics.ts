@@ -1,5 +1,5 @@
 import ReactGA from 'react-ga4';
-import { initMetaPixel, trackMetaEvent } from '../lib/analytics/useMetaPixel';
+import { initMetaPixel, trackMetaEvent } from "@/shared/lib/analytics/useMetaPixel";
 
 // Safety wrapper to handle Vite/Rollup CommonJS to ESM transpilation quirks in production
 const getGA = () => (ReactGA as any).default || ReactGA;

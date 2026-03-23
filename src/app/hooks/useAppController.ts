@@ -66,11 +66,28 @@ export const useAppController = () => {
     setPendingVisualSearch,
     handleMagicFix,
     handleAdd: async (car: Omit<Car, 'id'>) => {
-      await addCar(car);
+      try {
+        await addCar(car);
+        addNotification('success', 'Vehículo agregado correctamente al inventario.');
+      } catch (err: any) {
+        addNotification('error', `Error al agregar: ${err.message}`);
+      }
     },
     handleUpdate: async (car: Car) => {
-      await updateCar(car);
+      try {
+        await updateCar(car);
+        addNotification('success', 'Vehículo actualizado correctamente.');
+      } catch (err: any) {
+        addNotification('error', `Error al actualizar: ${err.message}`);
+      }
     },
-    handleDelete: deleteCar,
+    handleDelete: async (id: string) => {
+      try {
+        await deleteCar(id);
+        addNotification('success', 'Vehículo eliminado correctamente.');
+      } catch (err: any) {
+        addNotification('error', `Error al eliminar: ${err.message}`);
+      }
+    },
   };
 };

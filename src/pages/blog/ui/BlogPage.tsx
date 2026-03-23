@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { generateBlogPost } from '@/shared/api/ai';
 import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';
 import { BlogPost } from '@/shared/types/types';
+import { useBlogPosts, useCreateBlogPost } from '@/features/blog/hooks/useBlog';
 import {
   Newspaper,
   Loader2,
@@ -22,8 +23,25 @@ import DOMPurify from 'dompurify';
 const TONE_OPTIONS: Array<'professional' | 'casual' | 'hype'> = ['professional', 'casual', 'hype'];
 const POST_TYPE_OPTIONS: Array<'news' | 'review' | 'guide'> = ['news', 'review', 'guide'];
 
-const BlogView: React.FC = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+const dummyPosts: BlogPost[] = [
+  {
+    id: '1',
+    title: 'El Futuro Eléctrico: ¿Por qué el IONIQ 5 está cambiando el juego?',
+    excerpt:
+      'Exploramos cómo la arquitectura E-GMP de Hyundai está redefiniendo lo que esperamos de un vehículo eléctrico en términos de carga y espacio.',
+    content: 'El Hyundai IONIQ 5 no es solo un auto nuevo; es una declaración de intenciones...',
+    author: 'Richard AI Editor',
+    date: '10 de octubre de 2025',
+    tags: ['EV', 'Tecnología', 'Futuro'],
+    imageUrl:
+      'https://s7d1.scene7.com/is/image/hyundai/2025-ioniq-5-limited-rwd-atlas-white-profile?fmt=png-alpha&wid=1200',
+  },
+];
+
+const BlogPage: React.FC = () => {
+  const { data: posts = [], isLoading: isLoadingPosts } = useBlogPosts(50);
+  const createPostMutation = useCreateBlogPost();
+
   const [topic, setTopic] = useState('');
   const [tone, setTone] = useState<'professional' | 'casual' | 'hype'>('professional');
   const [postType, setPostType] = useState<'news' | 'review' | 'guide'>('news');
@@ -40,8 +58,15 @@ const BlogView: React.FC = () => {
     addNotification('info', 'Richard IA está investigando y redactando tu artículo...');
 
     try {
+      // 1. Generate text using AI
       const newPost = await generateBlogPost(topic, tone, postType);
-      setPosts((prev) => [newPost, ...prev]);
+      
+      // 2. Strip the localized ID to persist directly to Firebase
+      const { id: _ignore, ...postDataToSave } = newPost;
+      
+      // 3. Save to backend (Optimistic Update via React Query Hook automatically runs)
+      await createPostMutation.mutateAsync(postDataToSave);
+      
       setTopic('');
       addNotification('success', '¡Artículo publicado con éxito en el Newsroom!');
     } catch (error) {
@@ -88,21 +113,6 @@ const BlogView: React.FC = () => {
       addNotification('success', 'Enlace copiado al portapapeles');
     }
   };
-
-  const dummyPosts: BlogPost[] = [
-    {
-      id: '1',
-      title: 'El Futuro Eléctrico: ¿Por qué el IONIQ 5 está cambiando el juego?',
-      excerpt:
-        'Exploramos cómo la arquitectura E-GMP de Hyundai está redefiniendo lo que esperamos de un vehículo eléctrico en términos de carga y espacio.',
-      content: 'El Hyundai IONIQ 5 no es solo un auto nuevo; es una declaración de intenciones...',
-      author: 'Richard AI Editor',
-      date: '10 de octubre de 2025',
-      tags: ['EV', 'Tecnología', 'Futuro'],
-      imageUrl:
-        'https://s7d1.scene7.com/is/image/hyundai/2025-ioniq-5-limited-rwd-atlas-white-profile?fmt=png-alpha&wid=1200',
-    },
-  ];
 
   const displayPosts = posts.length > 0 ? posts : dummyPosts;
 
@@ -177,6 +187,7 @@ const BlogView: React.FC = () => {
                   Format
                 </label>
                 <select
+                  title="Format"
                   value={postType}
                   onChange={(e) => setPostType(e.target.value as 'news' | 'review' | 'guide')}
                   className="w-full bg-slate-100 dark:bg-slate-900/50 border border-transparent dark:border-slate-800 rounded-xl px-4 py-2 text-[10px] font-black uppercase text-slate-700 dark:text-slate-200 outline-none focus:border-primary transition-all cursor-pointer"
@@ -208,10 +219,10 @@ const BlogView: React.FC = () => {
               />
               <button
                 onClick={handleGenerate}
-                disabled={isGenerating || !topic.trim()}
+                disabled={isGenerating || createPostMutation.status === 'pending' || !topic.trim()}
                 className="absolute right-2 top-2 bottom-2 aspect-square bg-primary hover:bg-cyan-400 disabled:opacity-30 disabled:grayscale text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
               >
-                {isGenerating ? (
+                {isGenerating || createPostMutation.status === 'pending' ? (
                   <Loader2 size={20} className="animate-spin" />
                 ) : (
                   <Sparkles size={20} />
@@ -225,63 +236,71 @@ const BlogView: React.FC = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         {/* Feed Section */}
-        <div className="lg:col-span-3 space-y-12">
-          {displayPosts.map((post, idx) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="group cyber-glow bg-white dark:bg-slate-900/40 rounded-[48px] overflow-hidden border border-slate-100 dark:border-slate-800/50 shadow-sm hover:shadow-2xl hover:border-primary/30 transition-all duration-700 cursor-pointer"
-              onClick={() => setSelectedPost(post)}
-            >
-              <div className="flex flex-col md:row-span-1 md:flex-row h-full">
-                <div className="w-full md:w-5/12 h-72 md:h-auto relative overflow-hidden">
-                  <img
-                    src={post.imageUrl}
-                    alt={post.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  />
-                  <div className="absolute top-6 left-6 flex flex-col gap-2">
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">
-                      {post.tags[0]}
+        <div className="lg:col-span-3 space-y-12 relative min-h-[400px]">
+          {isLoadingPosts && posts.length === 0 ? (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            </div>
+          ) : (
+            displayPosts.map((post, idx) => (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="group cyber-glow bg-white dark:bg-slate-900/40 rounded-[48px] overflow-hidden border border-slate-100 dark:border-slate-800/50 shadow-sm hover:shadow-2xl hover:border-primary/30 transition-all duration-700 cursor-pointer"
+                onClick={() => setSelectedPost(post)}
+              >
+                <div className="flex flex-col md:row-span-1 md:flex-row h-full">
+                  <div className="w-full md:w-5/12 h-72 md:h-auto relative overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    {post.imageUrl && (
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      />
+                    )}
+                    <div className="absolute top-6 left-6 flex flex-col gap-2">
+                      <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">
+                        {post.tags?.[0] || 'AUTOS'}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center space-y-6">
-                  <div className="flex items-center gap-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                    <span className="flex items-center gap-2">
-                      <Calendar size={12} className="text-primary" /> {post.date}
-                    </span>
-                    <span className="flex items-center gap-2 text-slate-500">
-                      <Clock size={12} /> 4 min read
-                    </span>
-                  </div>
-                  <h3 className="text-3xl lg:text-4xl font-black text-slate-800 dark:text-white leading-[1.1] group-hover:text-gradient-cyan transition-all">
-                    {post.title}
-                  </h3>
-                  <p className="text-slate-500 dark:text-slate-400 line-clamp-2 text-lg font-light leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
-                        <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
-                          RA
-                        </div>
-                      </div>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-200 underline decoration-primary/30">
-                        {post.author}
+                  <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center space-y-6">
+                    <div className="flex items-center gap-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                      <span className="flex items-center gap-2">
+                        <Calendar size={12} className="text-primary" /> {post.date}
+                      </span>
+                      <span className="flex items-center gap-2 text-slate-500">
+                        <Clock size={12} /> 4 min read
                       </span>
                     </div>
-                    <div className="flex items-center text-primary font-black text-[10px] uppercase tracking-widest gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                      Open <ArrowRight size={14} />
+                    <h3 className="text-3xl lg:text-4xl font-black text-slate-800 dark:text-white leading-[1.1] group-hover:text-gradient-cyan transition-all">
+                      {post.title}
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 line-clamp-2 text-lg font-light leading-relaxed">
+                      {post.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
+                          <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
+                            RA
+                          </div>
+                        </div>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200 underline decoration-primary/30">
+                          {post.author}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-primary font-black text-[10px] uppercase tracking-widest gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                        Open <ArrowRight size={14} />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+            ))
+          )}
         </div>
 
         {/* Sidebar */}
@@ -321,7 +340,7 @@ const BlogView: React.FC = () => {
                 </button>
               </div>
             </div>
-            <div className="absolute -bottom-10 -right-10 text-white/5 rotate-12 -z-0">
+            <div className="absolute -bottom-10 -right-10 text-white/5 rotate-12 z-0">
               <Newspaper size={180} />
             </div>
           </div>
@@ -360,7 +379,7 @@ const BlogView: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-[#0d2232]/80 backdrop-blur-xl flex justify-center items-center p-4 md:p-8"
+            className="fixed inset-0 z-200 bg-[#0d2232]/80 backdrop-blur-xl flex justify-center items-center p-4 md:p-8"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -371,6 +390,7 @@ const BlogView: React.FC = () => {
               {/* Close Button UI */}
               <div className="absolute top-8 left-8 z-50 flex gap-2">
                 <button
+                  title="Close Modal"
                   onClick={() => setSelectedPost(null)}
                   className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl text-white transition-all border border-white/20 group shadow-xl"
                 >
@@ -379,22 +399,22 @@ const BlogView: React.FC = () => {
               </div>
 
               <div className="absolute top-8 right-8 z-50">
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl text-white transition-all border border-white/20 shadow-xl">
+                <button title="Bookmark" className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl text-white transition-all border border-white/20 shadow-xl">
                   <Bookmark size={20} />
                 </button>
               </div>
 
               {/* Modal Content - Side Image */}
-              <div className="w-full md:w-5/12 h-[300px] md:h-full relative shrink-0">
+              <div className="w-full md:w-5/12 h-board-column-lg md:h-full relative shrink-0">
                 <img
-                  src={selectedPost.imageUrl}
+                  src={selectedPost.imageUrl || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600'}
                   alt={selectedPost.title}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
                 <div className="absolute bottom-12 left-12 right-12 space-y-4">
                   <div className="flex gap-2">
-                    {selectedPost.tags.map((tag) => (
+                    {selectedPost.tags?.map((tag) => (
                       <span
                         key={tag}
                         className="px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-widest rounded-full"
@@ -427,6 +447,7 @@ const BlogView: React.FC = () => {
                       </div>
                     </div>
                     <button
+                      title="Share Post"
                       onClick={() => handleSharePost(selectedPost)}
                       className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary transition-all"
                     >
@@ -480,4 +501,4 @@ const BlogView: React.FC = () => {
   );
 };
 
-export default BlogView;
+export default BlogPage;

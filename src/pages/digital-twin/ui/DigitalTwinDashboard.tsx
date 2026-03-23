@@ -145,6 +145,15 @@ const DigitalTwinDashboard: React.FC = () => {
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(false);
+  
+  // New Toggles for Omnichannel Integration
+  const [whatsappEnabled, setWhatsappEnabled] = useState(
+    () => localStorage.getItem('digital_twin_whatsapp') === 'true'
+  );
+  const [hubspotEnabled, setHubspotEnabled] = useState(
+    () => localStorage.getItem('digital_twin_hubspot') === 'true'
+  );
+
   const [faceMode, setFaceMode] = useState<FaceMode>(
     () => (localStorage.getItem(STORAGE_KEYS.faceMode) as FaceMode) || 'bot',
   );
@@ -171,6 +180,14 @@ const DigitalTwinDashboard: React.FC = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.chat, JSON.stringify(messages.slice(-40)));
   }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('digital_twin_whatsapp', String(whatsappEnabled));
+  }, [whatsappEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('digital_twin_hubspot', String(hubspotEnabled));
+  }, [hubspotEnabled]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.faceMode, faceMode);
@@ -450,6 +467,41 @@ const DigitalTwinDashboard: React.FC = () => {
             <Trash2 size={14} /> Limpiar Chat
           </button>
         </div>
+
+        {/* --- OMNICHANNEL INTEGRATIONS START --- */}
+        <div className="space-y-3 pt-4 border-t border-slate-800">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+            Conexión Rube MCP
+          </label>
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-white/5 transition-colors">
+              <span className="text-xs font-bold text-slate-300">WhatsApp Auto-Reply</span>
+              <div
+                className={`w-10 h-5 rounded-full relative transition-colors ${whatsappEnabled ? 'bg-cyan-500' : 'bg-slate-700'}`}
+                onClick={() => setWhatsappEnabled((v) => !v)}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-transform ${whatsappEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}
+                />
+              </div>
+            </label>
+            <label className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-white/5 transition-colors">
+              <span className="text-xs font-bold text-slate-300">Sincronización HubSpot</span>
+              <div
+                className={`w-10 h-5 rounded-full relative transition-colors ${hubspotEnabled ? 'bg-orange-500' : 'bg-slate-700'}`}
+                onClick={() => setHubspotEnabled((v) => !v)}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-transform ${hubspotEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}
+                />
+              </div>
+            </label>
+            <p className="text-[10px] text-slate-500 leading-tight">
+              Activar Composio Sync enviará los datos recopilados por el Digital Twin (Leads y Preferencias) al CRM externo automáticamente.
+            </p>
+          </div>
+        </div>
+        {/* --- OMNICHANNEL INTEGRATIONS END --- */}
 
         <div className="space-y-2 border-t border-slate-800 pt-4">
           <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">

@@ -8,8 +8,6 @@ import { useAppController } from '@/app/hooks/useAppController';
 
 const ComparisonBar = React.lazy(() => import('@/widgets/comparison/ComparisonBar').then(m => ({ default: m.default || m })));
 const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner').then(m => ({ default: m.default || m })));
-const CommandCenterPanel = React.lazy(() => import('@/pages/admin/command-center/ui/CommandCenterPanel').then(m => ({ default: m.default || m })));
-
 const RichardAutomotiveApp: React.FC = () => {
   const {
     inventory,

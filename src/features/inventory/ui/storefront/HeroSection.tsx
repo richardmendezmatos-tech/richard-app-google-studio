@@ -11,25 +11,25 @@ interface HeroSectionProps {
 
 const HEADLINES = [
   {
-    eyebrow: 'Showroom en Vivo',
-    line1: 'ENCUENTRA TU',
-    line2: 'AUTO',
-    accent: 'IDEAL HOY',
-    sub: 'Inventario curado con IA. Financiamiento inteligente. El estándar de oro en movilidad.',
+    eyebrow: 'Autoridad en Puerto Rico',
+    line1: 'EL AUTO DE',
+    line2: 'TUS SUEÑOS',
+    accent: 'ESTÁ AQUÍ',
+    sub: 'Garantizamos la mejor estructura de financiamiento. Descubre unidades exclusivas y sal montado hoy.',
   },
   {
-    eyebrow: 'Colección Curada',
-    line1: 'ENCUENTRA',
-    line2: 'TU AUTO',
-    accent: 'EXACTO',
-    sub: 'Descubre vehículos certificados de alta demanda sin perder tiempo buscando.',
+    eyebrow: 'Aprobación VIP',
+    line1: 'TU CRÉDITO',
+    line2: 'NO ES',
+    accent: 'PROBLEMA',
+    sub: 'Nuestros especialistas pelean tu aprobación incluso con $0 pronto. Transparencia total, cero trucos.',
   },
   {
-    eyebrow: 'Trade‑In Elite',
-    line1: 'TASACIÓN',
-    line2: 'EN 90',
-    accent: 'SEGUNDOS',
-    sub: 'Valora tu vehículo al instante y úsalo como pronto para tu próxima compra.',
+    eyebrow: 'Bono de Trade-In',
+    line1: 'PAGAMOS MÁS',
+    line2: 'POR TU',
+    accent: 'TRADE-IN',
+    sub: 'Cotiza tu vehículo actual en 90 segundos. Úsalo como pronto y llévate una unidad superior hoy mismo.',
   },
 ];
 
@@ -156,14 +156,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* Trust pills */}
           <div className="ra-hero__pills">
-            <span className="ra-hero__pill">
-              <Shield size={11} /> Certified
+            <span className="ra-hero__pill" title="Todas nuestras unidades pasan por estrictos controles">
+              <Shield size={11} /> 100% Certified
             </span>
-            <span className="ra-hero__pill">
-              <Clock size={11} /> Aprobación Rápida
+            <span className="ra-hero__pill" title="Decisiones rápidas para que no pierdas tiempo">
+              <Clock size={11} /> Aprobación en 15 Min
             </span>
-            <span className="ra-hero__pill">
-              <Zap size={11} /> 0 Costo Oculto
+            <span className="ra-hero__pill" title="Sin trucos, compra hoy, maneja hoy">
+              <Zap size={11} /> Entrega el Mismo Día
             </span>
           </div>
         </div>
@@ -171,21 +171,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Right: CTA panel */}
         <div className="ra-hero__right">
           <div className="ra-hero__panel">
-            {/* Panel header */}
+            {/* Panel header: Scarcity & Urgency */}
             <div className="ra-hero__panel-header">
               <div className="ra-hero__panel-status">
                 <span className="ra-hero__panel-dot" />
-                <span>Sistema Activo</span>
+                <span>3 Especialistas Libres</span>
               </div>
-              <span className="ra-hero__panel-label">Richard IA</span>
+              <span className="ra-hero__panel-label text-orange-400 opacity-90">Atención Inmediata</span>
             </div>
 
             {/* CTA buttons */}
             <button onClick={onBrowseInventory} className="ra-cta ra-cta--primary">
               <div className="ra-cta__shine" />
               <div className="ra-cta__text">
-                <span className="ra-cta__tag">Catálogo Certificado</span>
-                <span className="ra-cta__label">VER INVENTARIO DISPONIBLE</span>
+                <span className="ra-cta__tag">Acceso Exclusivo</span>
+                <span className="ra-cta__label">EXPLORAR INVENTARIO </span>
               </div>
               <div className="ra-cta__icon">
                 <ArrowRight size={18} />
@@ -195,7 +195,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button onClick={onNeuralMatch} className="ra-cta ra-cta--secondary">
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Inteligencia Artificial</span>
-                <span className="ra-cta__label">ENCUENTRA MI AUTO IDEAL</span>
+                <span className="ra-cta__label">DESCUBRE TU AUTO IDEAL</span>
               </div>
               <div className="ra-cta__icon ra-cta__icon--cyan">
                 <BrainCircuit size={18} />
@@ -204,8 +204,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
             <button onClick={onSellCar} className="ra-cta ra-cta--tertiary">
               <div className="ra-cta__text">
-                <span className="ra-cta__tag">Trade‑In / Vender</span>
-                <span className="ra-cta__label">OBTÉN OFERTA AL INSTANTE</span>
+                <span className="ra-cta__tag">Cotización VIP</span>
+                <span className="ra-cta__label">COTIZA TU AUTO EN 90S</span>
               </div>
               <div className="ra-cta__icon ra-cta__icon--green">
                 <DollarSign size={18} />
@@ -215,18 +215,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Stat bar */}
             <div className="ra-hero__stats">
               <div className="ra-hero__stat">
-                <span className="ra-hero__stat-num">240+</span>
-                <span className="ra-hero__stat-lbl">Unidades</span>
+                <span className="ra-hero__stat-num">500+</span>
+                <span className="ra-hero__stat-lbl">Familias Montadas</span>
               </div>
               <div className="ra-hero__stat-div" />
               <div className="ra-hero__stat">
-                <span className="ra-hero__stat-num">98%</span>
-                <span className="ra-hero__stat-lbl">Aprobados</span>
+                <span className="ra-hero__stat-num">4.9%</span>
+                <span className="ra-hero__stat-lbl">Tasa Desde</span>
               </div>
               <div className="ra-hero__stat-div" />
               <div className="ra-hero__stat">
                 <span className="ra-hero__stat-num">24/7</span>
-                <span className="ra-hero__stat-lbl">IA Activa</span>
+                <span className="ra-hero__stat-lbl">Asesoría IA</span>
               </div>
             </div>
           </div>

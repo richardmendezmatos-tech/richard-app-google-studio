@@ -118,6 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/pages/storefront/ui/Storefront').catch(() => {})}
           icon={<ShoppingBag size={19} />}
           label={t('sidebar.storefront')}
           isCollapsed={isCollapsed}
@@ -128,6 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/garage');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/pages/digital-garage/ui/DigitalGaragePage').catch(() => {})}
           icon={<Warehouse size={19} />}
           label={t('sidebar.garage')}
           isCollapsed={isCollapsed}
@@ -138,6 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/qualify');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/pages/leads/ui/PreQualifyView').catch(() => {})}
           icon={<FileCheck2 size={19} />}
           label={t('sidebar.qualify')}
           isCollapsed={isCollapsed}
@@ -148,6 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/trade-in');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/pages/leads/ui/TradeInView').catch(() => {})}
           icon={<CarIcon size={19} />}
           label={t('sidebar.tradeIn')}
           isCollapsed={isCollapsed}
@@ -158,6 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/consultant');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/widgets/ai-chat/AIConsultant').catch(() => {})}
           icon={<BotMessageSquare size={19} />}
           label={t('sidebar.consultant')}
           isCollapsed={isCollapsed}
@@ -168,6 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/blog');
             setIsMobileOpen(false);
           }}
+          onMouseEnter={() => import('@/pages/blog/ui/BlogPage').catch(() => {})}
           icon={<Newspaper size={19} />}
           label={t('sidebar.blog')}
           isCollapsed={isCollapsed}
@@ -187,6 +193,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin');
                 setIsMobileOpen(false);
               }}
+              onMouseEnter={() => import('@/pages/admin/command-center/ui/MissionControlDashboard').catch(() => {})}
               icon={<Monitor size={19} />}
               label="Mission Control"
               isCollapsed={isCollapsed}
@@ -199,6 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/inventory');
                 setIsMobileOpen(false);
               }}
+              onMouseEnter={() => import('@/pages/admin/command-center/ui/SentinelInventoryTab').catch(() => {})}
               icon={<Warehouse size={19} />}
               label="Unidades"
               isCollapsed={isCollapsed}
@@ -209,6 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/pipeline');
                 setIsMobileOpen(false);
               }}
+              onMouseEnter={() => import('@/pages/admin/command-center/ui/CRMBoard').catch(() => {})}
               icon={<Activity size={19} />}
               label="CRM Leads"
               isCollapsed={isCollapsed}
@@ -402,6 +411,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 interface NavButtonProps {
   active: boolean;
   onClick: () => void;
+  onMouseEnter?: () => void;
   icon: React.ReactNode;
   label: string;
   isAction?: boolean;
@@ -411,6 +421,7 @@ interface NavButtonProps {
 const NavButton: React.FC<NavButtonProps> = ({
   active,
   onClick,
+  onMouseEnter,
   icon,
   label,
   isAction = false,
@@ -426,6 +437,7 @@ const NavButton: React.FC<NavButtonProps> = ({
   return (
     <button
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       className={`${base} ${stateClass}`}
       aria-current={active ? 'page' : undefined}
       title={isCollapsed ? label : undefined}

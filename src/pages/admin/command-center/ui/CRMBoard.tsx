@@ -56,6 +56,7 @@ import { getAntigravityOutreachAction } from '@/features/omnichannel/api/antigra
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
 import { generateActuarialReport } from '@/shared/lib/utils/pdfGenerator';
 import { generateMockActuarialData } from '@/entities/finance';
+import SmartDealSheetModal from '@/features/sales-automation/ui/SmartDealSheetModal';
 
 const COLUMNS = [
   {
@@ -93,11 +94,12 @@ const COLUMNS = [
 interface LeadCardProps {
   lead: Lead;
   onPrint: () => void;
+  onOpenDealSheet: (lead: Lead) => void;
   userRole: UserRole;
   isOverlay?: boolean;
 }
 
-const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay }) => {
+const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, userRole, isOverlay }) => {
   const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -311,11 +313,10 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const data = generateMockActuarialData(lead as any);
-              generateActuarialReport(data);
+              onOpenDealSheet(lead);
             }}
             className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20"
-            title="Reporte"
+            title="Smart Deal Sheet"
           >
             <FileText size={14} />
           </button>
@@ -349,29 +350,35 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
     </div>
   );
 };
-
-const SortableLeadItem = ({ lead, userRole }: { lead: Lead; userRole: UserRole }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: lead.id,
-    data: { lead },
-  });
-  const style = {
-    '--translate': CSS.Translate.toString(transform),
-    '--transition': transition,
-  } as React.CSSProperties;
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} dnd-sortable`}
-    >
-      <LeadCard lead={lead} onPrint={() => {}} userRole={userRole} />
-    </div>
-  );
-};
+  
+  interface SortableLeadItemProps {
+    lead: Lead;
+    userRole: UserRole;
+    onOpenDealSheet: (lead: Lead) => void;
+  }
+  
+  const SortableLeadItem = ({ lead, userRole, onOpenDealSheet }: SortableLeadItemProps) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+      id: lead.id,
+      data: { lead },
+    });
+    const style = {
+      '--translate': CSS.Translate.toString(transform),
+      '--transition': transition,
+    } as React.CSSProperties;
+  
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} dnd-sortable`}
+      >
+        <LeadCard lead={lead} onPrint={() => {}} onOpenDealSheet={onOpenDealSheet} userRole={userRole} />
+      </div>
+    );
+  };
 
 const CRMBoard: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>(() => {
@@ -402,6 +409,7 @@ const CRMBoard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedLeadForDealSheet, setSelectedLeadForDealSheet] = useState<Lead | null>(null);
   const { addNotification } = useNotification();
   const { containerRef } = useMouseGlow();
   const userRole: UserRole = 'admin'; // Hardcoded for now, should come from context
@@ -496,7 +504,12 @@ const CRMBoard: React.FC = () => {
                   strategy={verticalListSortingStrategy}
                 >
                   {colLeads.map((lead) => (
-                    <SortableLeadItem key={lead.id} lead={lead} userRole={userRole} />
+                    <SortableLeadItem 
+                      key={lead.id} 
+                      lead={lead} 
+                      userRole={userRole} 
+                      onOpenDealSheet={(lead) => setSelectedLeadForDealSheet(lead)}
+                    />
                   ))}
                 </SortableContext>
                 {colLeads.length === 0 && (
@@ -517,12 +530,27 @@ const CRMBoard: React.FC = () => {
             <LeadCard
               lead={leads.find((l) => l.id === activeId)!}
               onPrint={() => {}}
+              onOpenDealSheet={() => {}}
               userRole={userRole}
               isOverlay
             />
           ) : null}
         </DragOverlay>,
         document.body,
+      )}
+      
+      {/* Smart Deal Sheet Modal */}
+      {selectedLeadForDealSheet && (
+        <SmartDealSheetModal
+          lead={selectedLeadForDealSheet}
+          onClose={() => setSelectedLeadForDealSheet(null)}
+          onExportPDF={(data, lead) => {
+            // Optional integration to export the AI data via jsPDF later
+            // const mockData = generateMockActuarialData(lead as any);
+            // generateActuarialReport(mockData);
+            addNotification('info', 'Exportación premium iniciada.');
+          }}
+        />
       )}
     </DndContext>
   );

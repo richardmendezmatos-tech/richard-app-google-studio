@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useCopilotAgent, type Message } from '@/features/ai-hub';
 import { Bot, User, Send, ShieldCheck } from 'lucide-react';
-import ProgressiveForm from '../chat/ProgressiveForm';
+import ProgressiveForm from '@/widgets/brand-ui/chat/ProgressiveForm';
 import { customerMemoryService } from '@/features/leads';
 
 interface LeadInfoFormData {
@@ -165,7 +165,7 @@ const ChatView: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="absolute right-4 bottom-2 p-3 bg-primary hover:bg-cyan-500 disabled:opacity-50 disabled:bg-slate-800 text-white rounded-2xl transition-all shadow-lg hover:scale-105 active:scale-95 translate-y-[-1px]"
+          className="absolute right-4 bottom-2 p-3 bg-primary hover:bg-cyan-500 disabled:opacity-50 disabled:bg-slate-800 text-white rounded-2xl transition-all shadow-lg hover:scale-105 active:scale-95 -translate-y-px"
           aria-label="Enviar mensaje"
         >
           <Send size={20} />

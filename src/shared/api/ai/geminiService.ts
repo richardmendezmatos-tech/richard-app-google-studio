@@ -361,6 +361,13 @@ export const generateText = async (prompt: string, instruction?: string): Promis
   return await callGeminiProxy(prompt, instruction, 'gemini-1.5-flash');
 };
 
+export const generateStructuredJSON = async (prompt: string, instruction?: string, modelName: string = 'gemini-2.0-flash'): Promise<any> => {
+  const text = await callGeminiProxy(prompt, instruction, modelName, {
+    responseMimeType: 'application/json',
+  });
+  return JSON.parse(text);
+};
+
 export const generateCode = async (prompt: string, instruction?: string): Promise<string> => {
   return await callGeminiProxy(prompt, instruction, 'gemini-1.5-flash');
 };

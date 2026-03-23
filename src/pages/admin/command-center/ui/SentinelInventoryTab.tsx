@@ -18,10 +18,11 @@ import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
 import { calculatePredictiveDTS } from '@/entities/car';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';
+import { useCommandCenterData } from '../hooks/useCommandCenterData';
+import { useDealer } from '@/entities/dealer';
+import { useCars } from '@/features/inventory';
 
 interface AdminInventoryTabProps {
-  inventory: CarType[];
-  leads: Lead[];
   onDelete: (id: string) => void;
   onCreateNew: () => void;
   onEdit: (car: CarType) => void;
@@ -32,8 +33,6 @@ interface AdminInventoryTabProps {
 }
 
 const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
-  inventory,
-  leads,
   onDelete,
   onCreateNew,
   onEdit,
@@ -42,6 +41,14 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   handleInitClick,
   isInitializing,
 }) => {
+  const { currentDealer } = useDealer();
+  const { leads, isLoadingLeads } = useCommandCenterData(currentDealer.id || 'richard-automotive');
+  const { data: carData, isLoading: isLoadingCars } = useCars(12);
+  
+  const inventory = React.useMemo(() => {
+    return carData?.pages.flatMap((page) => page.cars) || [];
+  }, [carData]);
+
   const searchInputRef = React.useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
@@ -122,7 +129,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
             <input
               type="text"
               placeholder="Buscar vehículo..."
-              className="w-full pl-12 pr-4 h-[50px] bg-slate-950 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-medium text-white placeholder:text-slate-600"
+              className="w-full pl-12 pr-4 h-board-header bg-slate-950 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-medium text-white placeholder:text-slate-600"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               ref={searchInputRef}

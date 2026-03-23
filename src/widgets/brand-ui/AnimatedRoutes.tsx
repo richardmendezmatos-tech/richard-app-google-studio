@@ -16,18 +16,18 @@ interface StorefrontProps {
 const Storefront = React.lazy(() =>
   lazyRetry(() => import('@/pages/storefront/ui/Storefront')),
 ) as unknown as React.ComponentType<StorefrontProps>;
-interface CommandCenterPanelProps {
+interface AdminRoutesProps {
   inventory: Car[];
   onUpdate: (car: Car) => Promise<void>;
   onAdd: (car: Omit<Car, 'id'>) => Promise<void>;
   onDelete: (id: string) => void;
   onInitializeDb: () => Promise<void>;
 }
-const CommandCenterPanel = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/CommandCenterPanel')),
-) as unknown as React.ComponentType<CommandCenterPanelProps>;
+const AdminRoutes = React.lazy(() =>
+  lazyRetry(() => import('@/pages/admin/command-center/ui/AdminRoutes').then(m => ({ default: m.AdminRoutes || m.default }))),
+) as unknown as React.ComponentType<AdminRoutesProps>;
 const DigitalTwinDashboard = React.lazy(() =>
-  lazyRetry(() => import('@/widgets/digital-twin/DigitalTwinDashboard')),
+  lazyRetry(() => import('@/pages/digital-twin/ui/DigitalTwinDashboard')),
 );
 interface AIConsultantProps {
   inventory: Car[];
@@ -35,7 +35,7 @@ interface AIConsultantProps {
 const AIConsultant = React.lazy(() =>
   lazyRetry(() => import('@/widgets/ai-chat/AIConsultant')),
 ) as unknown as React.ComponentType<AIConsultantProps>;
-const AILabView = React.lazy(() => lazyRetry(() => import('@/widgets/ai-chat/AILabView')));
+const AILabPage = React.lazy(() => lazyRetry(() => import('@/pages/ai-lab/ui/AILabPage')));
 const UserLogin = React.lazy(() => lazyRetry(() => import('@/pages/auth/ui/UserLogin')));
 interface VehicleDetailProps {
   inventory: Car[];
@@ -55,16 +55,16 @@ const ComparisonView = React.lazy(() =>
 const SystemAccessLogin = React.lazy(() =>
   lazyRetry(() => import('@/pages/auth/ui/SystemAccessLogin')),
 );
-const BlogView = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/BlogView')));
-const UserProfile = React.lazy(() =>
-  lazyRetry(() => import('@/widgets/brand-ui/layout/UserProfile')),
+const BlogPage = React.lazy(() => lazyRetry(() => import('@/pages/blog/ui/BlogPage')));
+const ProfilePage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/profile/ui/ProfilePage')),
 );
 interface DigitalGarageProps {
   inventory: Car[];
   onExit: () => void;
 }
-const DigitalGarage = React.lazy(() =>
-  lazyRetry(() => import('@/widgets/brand-ui/layout/DigitalGarage')),
+const DigitalGaragePage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/digital-garage/ui/DigitalGaragePage')),
 ) as unknown as React.ComponentType<DigitalGarageProps>;
 interface PreQualifyViewProps {
   onExit: () => void;
@@ -99,9 +99,7 @@ const ChaosTest = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/la
 const LocalClusterView = React.lazy(() =>
   lazyRetry(() => import('@/features/inventory').then(m => ({ default: m.LocalClusterView }))),
 );
-const VoiceAssistantView = React.lazy(() =>
-  lazyRetry(() => import('@/widgets/brand-ui/layout/VoiceAssistantView')),
-);
+
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
 ) as unknown as React.ComponentType<any>;
@@ -287,8 +285,8 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AuthGuard>
                 <PageWrapper>
-                  <DigitalGarage inventory={inventory} onExit={() => navigate('/')} />
-                </PageWrapper>
+                <DigitalGaragePage inventory={inventory} onExit={() => navigate('/')} />
+              </PageWrapper>
               </AuthGuard>
             }
           />
@@ -327,9 +325,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
           <Route
             path="/blog"
             element={
-              <PageWrapper>
-                <BlogView />
-              </PageWrapper>
+              <BlogPage />
             }
           />
           <Route
@@ -337,7 +333,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AuthGuard>
                 <PageWrapper>
-                  <UserProfile />
+                  <ProfilePage />
                 </PageWrapper>
               </AuthGuard>
             }
@@ -347,7 +343,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AuthGuard>
                 <PageWrapper>
-                  <AILabView />
+                  <AILabPage />
                 </PageWrapper>
               </AuthGuard>
             }
@@ -373,7 +369,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AdminGuard>
                 <PageWrapper>
-                  <CommandCenterPanel
+                  <AdminRoutes
                     inventory={inventory}
                     onUpdate={handleUpdate}
                     onAdd={handleAdd}
@@ -428,46 +424,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
               </PageWrapper>
             }
           />
-          <Route
-            path="/admin/billing"
-            element={
-              <AdminGuard>
-                <PageWrapper>
-                  <B2BBillingDashboard />
-                </PageWrapper>
-              </AdminGuard>
-            }
-          />
-          <Route
-            path="/admin/analytics/:leadId"
-            element={
-              <AdminGuard>
-                <PageWrapper>
-                  <LeadAnalyticsPage />
-                </PageWrapper>
-              </AdminGuard>
-            }
-          />
-          <Route
-            path="/admin/houston"
-            element={
-              <AdminGuard>
-                <PageWrapper>
-                  <HoustonDashboard />
-                </PageWrapper>
-              </AdminGuard>
-            }
-          />
-          <Route
-            path="/admin/voice"
-            element={
-              <AdminGuard>
-                <PageWrapper>
-                  <VoiceAssistantView />
-                </PageWrapper>
-              </AdminGuard>
-            }
-          />
+
           <Route
             path="/e2e-framework"
             element={
