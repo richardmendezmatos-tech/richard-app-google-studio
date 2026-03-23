@@ -11,6 +11,8 @@ import {
   Calendar,
   AlertCircle,
   Share2,
+  MessageCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
@@ -418,12 +420,17 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           </div>
 
           {/* CTA Button */}
-          <button
-            onClick={handleRequestApproval}
-            className="mt-4 w-full py-5 premium-gradient text-white rounded-[25px] font-black text-xs md:text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all shrink-0"
-          >
-            Solicitar Aprobación <ChevronRight size={18} />
-          </button>
+          <div className="mt-4 flex flex-col items-center shrink-0 w-full gap-3">
+            <button
+              onClick={handleRequestApproval}
+              className="w-full py-5 premium-gradient text-white rounded-[25px] font-black text-xs md:text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <MessageCircle size={18} /> Consultar por WhatsApp
+            </button>
+            <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+              <ShieldCheck size={12} className="text-emerald-500" /> Respuesta inmediata. Sin compromiso de compra.
+            </p>
+          </div>
         </div>
       </div>
       <style>{`

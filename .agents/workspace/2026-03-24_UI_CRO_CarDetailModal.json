@@ -1,0 +1,15 @@
+{
+  "id": "2026-03-24_UI_CRO_CarDetailModal",
+  "category": "UI_CRO",
+  "status": "completed",
+  "timestamp": "2026-03-24T00:00:00Z",
+  "description": "Applied form-cro principles to CarDetailModal.tsx. Changed CTA button 'Solicitar Aprobación' to 'Consultar por WhatsApp' with a WhatsApp-style icon (MessageCircle) and added a friction-reducing microcopy ('Respuesta inmediata. Sin compromiso.').",
+  "files_modified": [
+    "src/features/inventory/ui/CarDetailModal.tsx"
+  ],
+  "metrics_impact": {
+    "friction": "reduced",
+    "clarity": "improved",
+    "trust": "increased"
+  }
+}
