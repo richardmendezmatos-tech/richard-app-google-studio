@@ -5,6 +5,7 @@ import { customerMemoryService } from '../services/customerMemoryService';
 import { saveCheckpoint } from '../services/persistenceService';
 import { getMarketInsight } from '../services/marketIntelService';
 import { WHATSAPP_AGENT_PROMPT } from '../application/use-cases/leads/WhatsAppAgent.prompt';
+import { semanticSearch } from '../infrastructure/ai/VectorAdapter';
 
 const SALES_STAGES = `
 1. Introduction: Start conversation, introduce Richard Automotive. Verify they are speaking to the right person if needed.
@@ -118,6 +119,40 @@ export async function orchestrateResponse(input: {
     });
   }
 
+  // Parse Research results to fetch semantic inventory if needed
+  let queryExpansion = '';
+  let needsInventory = false;
+  let needsPolicy = false;
+  try {
+    const rawR = researchResult.text.trim().replace(/```json|```/g, '');
+    const parsedR = JSON.parse(rawR);
+    queryExpansion = parsedR.queryExpansion ?? '';
+    needsInventory = parsedR.needsInventory ?? false;
+    needsPolicy = parsedR.needsPolicy ?? false;
+    logger.info('Research Intent', { queryExpansion, needsInventory, needsPolicy });
+  } catch (e) {
+    logger.warn('Failed to parse research JSON', { raw: researchResult.text });
+  }
+
+  let inventorySnippet = '';
+  if (needsInventory && queryExpansion) {
+    logger.info(`Triggering Semantic Search for: "${queryExpansion}"`);
+    try {
+      const cars = await semanticSearch(queryExpansion, 3);
+      if (cars && cars.length > 0) {
+        inventorySnippet = cars.map((c: any) => 
+          `- ${c.year || ''} ${c.make} ${c.model} (${c.price ? '$'+c.price : 'Consultar'}): ${c.description || ''}`
+        ).join('\\n');
+        logger.info('Live inventory matching complete:', { carsCount: cars.length });
+      } else {
+        inventorySnippet = 'No encontramos unidades exactas según esa descripción actual. Sugiere buscar una alternativa similar o agenda visita al dealer.';
+      }
+    } catch (e) {
+      logger.error('Vector Search Semantic DB Error', e);
+      inventorySnippet = 'Error conectando al inventario, pedir disculpas cordialmente.';
+    }
+  }
+
   // --- STEP 2: SYNTHESIS (RICHARD IA) ---
   const synthesisResult = await ai.run('synthesis-agent', async () => {
     const basePrompt = input.isWhatsApp
@@ -132,6 +167,7 @@ export async function orchestrateResponse(input: {
             - MARKET_INTEL: ${marketIntel ? `Promedio PR: $${marketIntel.averagePrice}, Más bajo: $${marketIntel.lowestPrice}` : 'Sin datos de mercado recientes'}
             - INTENCIÓN_SEMÁNTICA: ${intent}
             - MEMORIA_RELEVANTE: ${customerMemory ? JSON.stringify(customerMemory) : 'Cliente sin historial'}
+            - INVENTARIO_RELEVANTE: ${inventorySnippet || 'No se buscó inventario adicional en este turno.'}
             - REGLA: Usa MARKET_INTEL proactivamente para defender el precio si Richard Automotive es más barato.
             - REGLA: Los precios son finales. No invented descuentos ni tasas.
             - REGLA: Si el cliente mostró interés previo en un modelo, menciónalo como experto.
@@ -149,7 +185,8 @@ export async function orchestrateResponse(input: {
     const finalPrompt = basePrompt
       .replace('{{customerContext}}', JSON.stringify(input.leadContext))
       .replace('{{history}}', JSON.stringify(input.history.slice(-5)))
-      .replace('{{message}}', input.message);
+      .replace('{{message}}', input.message)
+      .replace('{{inventory}}', inventorySnippet || 'No se requiere inventario.');
 
     return await ai.generate({
       prompt: finalPrompt,

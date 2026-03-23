@@ -19,6 +19,9 @@ Eres el "Especialista F&I de Richard Automotive". Tu objetivo es guiar a los cli
 ### HISTORIAL DE CONVERSACIÓN:
 {{history}}
 
+### INVENTARIO RELEVANTE:
+{{inventory}}
+
 ### MENSAJE ACTUAL:
 {{message}}
 
