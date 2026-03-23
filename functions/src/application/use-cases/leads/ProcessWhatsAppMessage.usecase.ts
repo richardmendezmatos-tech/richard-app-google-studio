@@ -49,9 +49,13 @@ export class ProcessWhatsAppMessage {
     // 4. Extract and Save Lead Intelligence
     const isHotIntent = ['purchase_ready', 'financing', 'test_drive', 'trade_in'].includes(intent);
     
+    // Clean standard E.164 phone by removing 'whatsapp:' prefix if present from Twilio
+    const cleanPhone = input.from.replace('whatsapp:', '');
+
     if (lead) {
       const updatedLead = {
         ...lead,
+        phone: lead.phone || cleanPhone,
         status: isHotIntent ? 'Qualified' : (lead.status || 'new'),
         aiAnalysis: {
           ...(lead.aiAnalysis || {}),
@@ -64,22 +68,24 @@ export class ProcessWhatsAppMessage {
       } as any;
       await this.leadRepo.updateLead(chatId, updatedLead);
       
-      if (isHotIntent) {
-        import('../../../services/hubspotService').then(({ hubspotService }) => {
-          hubspotService.syncLeadToHubSpot(updatedLead).catch((e: any) => console.error('HubSpot Sync error', e));
-        });
-      }
-    } else if (isHotIntent) {
-      // If no lead exists but the intent is hot, we create it dynamically for HubSpot sync
+      // Always sync to HubSpot so non-hot leads can enter re-engagement campaigns
+      import('../../../services/hubspotService').then(({ hubspotService }) => {
+        hubspotService.syncLeadToHubSpot(updatedLead).catch((e: any) => console.error('HubSpot Sync error', e));
+      });
+    } else {
+      // If no lead exists we always sync it dynamically to HubSpot
       const newLead: any = {
         firstName: 'WhatsApp',
         lastName: 'Lead',
-        phone: input.from,
-        status: 'Qualified',
+        phone: cleanPhone,
+        status: isHotIntent ? 'Qualified' : 'new',
         timestamp: new Date(),
         aiAnalysis: {
           intent: intent,
-          score: 85,
+          score: isHotIntent ? 85 : 50,
+          sentiment,
+          buyerStage,
+          negotiationStrategy,
         } 
       };
       // We trigger the sync without awaiting so it doesn't block the WhatsApp reply

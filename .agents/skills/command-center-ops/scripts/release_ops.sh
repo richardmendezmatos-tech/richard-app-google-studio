@@ -104,19 +104,19 @@ main() {
       echo "Checks completed; no deployment requested."
       ;;
     vercel)
-      run_cmd "npm run deploy:vercel"
+      run_cmd "$PKG_MANAGER deploy:vercel"
       ;;
     firebase-functions)
-      run_cmd "npm run deploy:firebase:functions"
+      run_cmd "$PKG_MANAGER deploy:firebase:functions"
       ;;
     firebase-rules)
-      run_cmd "npm run deploy:firebase:rules"
+      run_cmd "$PKG_MANAGER deploy:firebase:rules"
       ;;
     firebase-indexes)
-      run_cmd "npm run deploy:firebase:indexes"
+      run_cmd "$PKG_MANAGER deploy:firebase:indexes"
       ;;
     firebase-full)
-      run_cmd "npm run deploy:firebase:full"
+      run_cmd "$PKG_MANAGER deploy:firebase:full"
       ;;
   esac
 }

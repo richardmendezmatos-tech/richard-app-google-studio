@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2022',
       sourcemap: true,
-      rollupOptions: {
+      rolldownOptions: {
         onwarn: suppressFirebaseMixedImportWarning,
         output: {
           manualChunks: {
@@ -50,9 +50,7 @@ export default defineConfig(({ mode }) => {
       drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
+      tsconfigPaths: true,
     },
     define: {
       'process.env.API_KEY': JSON.stringify(apiKey),
@@ -91,7 +89,6 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'app-icon.png'],
         injectManifest: {
-          minify: 'esbuild',
           sourcemap: false,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         },
