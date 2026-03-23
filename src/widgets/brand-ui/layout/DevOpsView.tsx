@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateText } from '@/features/ai-agents';
+import { generateText } from '@/features/ai-hub';
 import { Github, Terminal, Copy, Check, Zap, AlertCircle, Wrench } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 

@@ -6,7 +6,7 @@ import { useCars } from '@/features/inventory';
 import { useCarMutations } from '@/features/inventory';
 
 import { startGeofenceMonitoring } from '@/shared/api/location/geofenceService';
-import { uploadInitialInventory } from '@/shared/api/adapters/inventory/inventoryService';
+import { uploadInitialInventory } from '@/entities/inventory/api/adapters/inventoryService';
 import { initialInventoryData } from '@/entities/inventory';
 import { requestNotificationPermission, onForegroundMessage } from '@/shared/api/communications/notificationService';
 

@@ -1,5 +1,5 @@
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
-import { getPaginatedCars } from '@/shared/api/adapters/inventory/inventoryService';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/shared/types/types';
 
 /**

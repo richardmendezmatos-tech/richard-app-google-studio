@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { analyzeCarVisuals, VisualSearchResult, findMatches } from '@/features/ai-agents/api/aiService';
+import { analyzeCarVisuals, VisualSearchResult, findMatches } from '@/shared/api/ai/aiService';
 import { Car } from '@/entities/shared';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 

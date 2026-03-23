@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateBlogPost } from '@/features/ai-agents';
+import { generateBlogPost } from '@/features/ai-hub';
 import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';
 import { BlogPost } from '@/shared/types/types';
 import {

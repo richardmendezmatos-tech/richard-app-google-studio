@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
-import { addVehicle as addCar } from '@/shared/api/adapters/inventory/inventoryService';
+import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';
 import { CarType } from '@/shared/types/types';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

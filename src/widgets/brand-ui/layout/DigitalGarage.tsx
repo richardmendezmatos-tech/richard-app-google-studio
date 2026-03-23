@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/entities/shared';
 import { getCookie, setCookie } from '@/shared/api/tracking/cookieService';
-import { analyzeGarageSelection } from '@/features/ai-agents';
+import { analyzeGarageSelection } from '@/features/ai-hub';
 import { BiometricService } from '@/shared/api/security/biometricService';
 import {
   ArrowLeft,
@@ -14,7 +14,7 @@ import {
   ScanFace,
   Lock,
 } from 'lucide-react';
-import CarCard from '@/widgets/inventory/CarCard';
+import CarCard from '@/entities/inventory/ui/CarCard';
 import { PhotoAppraisal } from '@/features/garage';
 
 interface Props {

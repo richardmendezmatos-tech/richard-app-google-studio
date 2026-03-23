@@ -1,4 +1,4 @@
-import { generateText } from '@/features/ai-agents/api/geminiService';
+import { generateText } from '@/shared/api/ai/geminiService';
 import { Car } from '@/shared/types/types';
 
 export interface ValidationResult {

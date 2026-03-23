@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Send, Save, RotateCcw, Trash2, Mic, MicOff, Camera, UserCircle2 } from 'lucide-react';
-import { getAIResponse } from '@/features/ai-agents';
+import { getAIResponse } from '@/features/ai-hub';
 import { AI_LEGAL_DISCLAIMER } from '@/shared/api/firebase/firebaseShared';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { sendWhatsAppMessage } from '@/features/leads';
-import { getPaginatedCars } from '@/shared/api/adapters/inventory/inventoryService';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car, Lead } from '@/entities/shared';
 
 type ChatMessage = {

@@ -1,4 +1,4 @@
-import { analyzeTradeInImages } from '@/features/ai-agents';
+import { analyzeTradeInImages } from '@/shared/api/ai';
 
 export interface AppraisalResult {
   condition: string;

@@ -3,7 +3,7 @@ import {
   addVehicle,
   updateVehicle,
   deleteVehicle,
-} from '@/shared/api/adapters/inventory/inventoryService';
+} from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/entities/shared';
 
 export const useCarMutations = () => {

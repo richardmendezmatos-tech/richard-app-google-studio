@@ -9,8 +9,8 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { subscribeToLeads, Lead } from '@/shared/api/adapters/leads/crmService';
-import { orchestrationService, OrchestrationAction } from '@/features/ai-agents/api/orchestrationService';
-import { getAntigravityLeadAction } from '@/features/ai-agents';
+import { orchestrationService, OrchestrationAction } from '@/features/ai-hub-orchestration/api/orchestrationService';
+import { getAntigravityLeadAction } from '@/features/ai-hub';
 
 // Note: LiveVoiceInsight removed as it was part of previous mock
 

@@ -2,7 +2,7 @@ import { GetLeads } from '@/features/shared';
 import { GetInventory } from '@/features/shared';
 import { GetHoustonTelemetry } from '@/features/shared';
 import { FirestoreLeadRepository } from '@/entities/lead';
-import { FirestoreInventoryRepository } from '@/shared/api/repositories/FirestoreInventoryRepository';
+import { FirestoreInventoryRepository } from '@/entities/inventory/api/repositories/FirestoreInventoryRepository';
 import { FirestoreHoustonRepository } from '@/entities/shared';
 import { FirestoreApplicationRepository } from '@/shared/api/repositories/FirestoreApplicationRepository';
 import { FirestoreStorageRepository } from '@/shared/api/repositories/FirestoreStorageRepository';

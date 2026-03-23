@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { voiceService } from '@/shared/api/voice/voiceService';
-import { getAIResponse } from '@/features/ai-agents';
-import { validationAgentService } from '@/features/ai-agents';
+import { getAIResponse } from '@/features/ai-hub';
+import { validationAgentService } from '@/features/ai-hub';
 
 // Icons
 const MicIcon = () => (
@@ -58,7 +58,7 @@ interface VoiceWidgetProps {
   onMessage?: (text: string, sender: 'user' | 'bot') => void;
 }
 
-import { VoiceCommandService } from '@/shared/api/voice/VoiceCommandService';
+import { VoiceCommandService } from '@/shared/lib/voice/VoiceCommandService';
 import { useNavigate } from 'react-router-dom';
 
 export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {

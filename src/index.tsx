@@ -24,7 +24,7 @@ import './index.css'; // Premium UI Styles
 
 
 import './i18n'; // i18n setup
-import '@/shared/lib/di/container'; // Hydrate DI Container
+import '@/app/di/container'; // Hydrate DI Container
 import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
 
 declare global {

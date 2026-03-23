@@ -1,27 +1,24 @@
 import { useCallback } from 'react';
-import { logBehavioralEvent } from '@/features/leads';
-import { incrementCarView } from '@/shared/api/adapters/inventory/inventoryService';
+
+import { incrementCarView } from '@/entities/inventory/api/adapters/inventoryService';
 import * as ga from '@/shared/api/metrics/analytics';
 
 export const useInventoryAnalytics = () => {
   const trackCarView = useCallback((carId: string) => {
-    logBehavioralEvent({ carId, action: 'view' });
+    // Event logging delegated to pure GA
     ga.trackEvent('Engagement', 'view_car', carId);
   }, []);
 
   const trackCarViewIncremental = useCallback((carId: string) => {
     incrementCarView(carId);
-    logBehavioralEvent({ carId, action: 'view' });
     ga.trackEvent('Engagement', 'view_car', carId);
   }, []);
 
   const trackGarageAdd = useCallback((carId: string) => {
-    logBehavioralEvent({ carId, action: 'garage_add' });
     ga.trackEvent('Conversion', 'add_to_garage', carId);
   }, []);
 
   const trackCarConfigure = useCallback((carId: string) => {
-    logBehavioralEvent({ carId, action: 'configure' });
     ga.trackEvent('Engagement', 'car_configure', carId);
   }, []);
 

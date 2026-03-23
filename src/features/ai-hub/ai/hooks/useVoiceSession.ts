@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connectToVoiceSession } from '@/features/ai-agents';
-import { VoiceCommandService } from '@/shared/api/voice/VoiceCommandService';
+import { connectToVoiceSession } from '@/features/ai-hub';
+import { VoiceCommandService } from '@/shared/lib/voice/VoiceCommandService';
 import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
 import { decode, decodeAudioData, createBlob } from '@/shared/lib/utils/audioUtils';
 

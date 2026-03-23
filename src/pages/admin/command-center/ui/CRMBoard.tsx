@@ -51,7 +51,7 @@ import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { useLeadScoring } from '@/features/leads';
 import { useVehicleHealth } from '@/shared/api/metrics/telemetryService';
 import * as whatsappService from '@/features/leads/services/whatsappService';
-import { orchestrationService } from '@/features/ai-agents/api/orchestrationService';
+import { orchestrationService } from '@/features/ai-hub-orchestration/api/orchestrationService';
 import { getAntigravityOutreachAction } from '@/features/omnichannel/api/antigravityOmnichannelService';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
 import { generateActuarialReport } from '@/shared/lib/utils/pdfGenerator';

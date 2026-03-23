@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Car } from '@/shared/types/types';
-import { compareCars } from '@/features/ai-agents';
+import { compareCars } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 
 import { X, Trophy, Zap } from 'lucide-react';

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { useCopilotAgent, type Message } from '@/features/ai-agents';
+import { useCopilotAgent, type Message } from '@/features/ai-hub';
 import { Bot, User, Send, ShieldCheck } from 'lucide-react';
 import ProgressiveForm from '../chat/ProgressiveForm';
 import { customerMemoryService } from '@/features/leads';

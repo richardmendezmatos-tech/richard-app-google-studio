@@ -1,4 +1,4 @@
-import { analyzeImageWithPrompt } from '@/features/ai-agents';
+import { analyzeImageWithPrompt } from '@/shared/api/ai';
 import { Car } from '@/shared/types/types';
 
 export const inventoryIngestionService = {

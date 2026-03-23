@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '@/entities/shared';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
-import { useComparison } from '@/features/comparison';
+
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 
 interface CarCardProps {
@@ -16,18 +16,9 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = React.memo(({ car, isSaved, onToggleSave }) => {
   const navigate = useNavigate();
-  const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
-
-  // Check if this specific car is in comparison
-  const isComparing = isInComparison(car.id);
-
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isComparing) {
-      removeCarFromCompare(car.id);
-    } else {
-      addCarToCompare(car);
-    }
+    onCompare(e);
   };
 
   const estimatedMonthly = Math.round(car.price / 72); // Rough 72 month calculation

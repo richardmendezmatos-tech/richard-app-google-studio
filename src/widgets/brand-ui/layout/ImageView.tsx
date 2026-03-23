@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateImage } from '@/features/ai-agents';
+import { generateImage } from '@/features/ai-hub';
 import { GeneratedImage } from '@/shared/types/types';
 import {
   ImageIcon,

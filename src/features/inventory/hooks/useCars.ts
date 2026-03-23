@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getPaginatedCars } from '@/shared/api/adapters/inventory/inventoryService';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import type { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export const useCars = (

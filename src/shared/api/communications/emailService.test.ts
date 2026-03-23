@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const generateBlogPostMock = vi.fn();
 
-vi.mock('@/features/ai-agents/api/geminiService', () => ({
+vi.mock('@/shared/api/ai/geminiService', () => ({
   generateBlogPost: generateBlogPostMock,
 }));
 

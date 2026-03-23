@@ -1,7 +1,7 @@
 import { db } from '@/shared/api/firebase/firebaseService';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
-import { generateEmbedding } from '@/features/ai-agents';
-import { vectorStoreService } from '@/features/ai-agents';
+import { generateEmbedding } from '@/shared/api/ai';
+import { vectorStoreService } from '@/shared/api/ai';
 
 export interface CustomerPreference {
   brands: string[];

@@ -1,7 +1,6 @@
 export * from './api/agentSystem';
 export * from './api/aiService';
 export * from './api/antigravityCopilotService';
-export * from './api/orchestrationService';
 export * from './api/validationAgentService';
 export * from './api/vectorStoreService';
 export * from './api/geminiService';

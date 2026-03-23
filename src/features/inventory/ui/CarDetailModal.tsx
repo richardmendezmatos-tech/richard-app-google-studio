@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/shared/types/types';
 import {
   X,
   ChevronRight,
@@ -12,7 +12,7 @@ import {
   AlertCircle,
   Share2,
 } from 'lucide-react';
-import { generateCarPitch } from '@/features/ai-agents';
+import { generateCarPitch } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';

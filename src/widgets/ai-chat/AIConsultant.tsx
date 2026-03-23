@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Car } from '@/shared/types/types';
-import { useCopilotAgent } from '@/features/ai-agents';
+import { useCopilotAgent } from '@/features/ai-hub';
 import { Send, User, Bot, Sparkles, Loader2 } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
 
