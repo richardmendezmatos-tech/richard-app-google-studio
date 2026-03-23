@@ -1,4 +1,4 @@
-import { Lead } from '@/entities/lead';
+import { Lead } from '@/shared/types/types';
 import { hubspotService } from '../api/hubspot.api';
 import { whatsappService } from '../api/whatsapp.api';
 

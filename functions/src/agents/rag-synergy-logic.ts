@@ -26,6 +26,11 @@ export const MultiAgentResponseSchema = z.object({
     intent: z.string(),
     negotiationStrategy: z.string().optional(),
     inventoryMatched: z.array(z.string()).optional(),
+    extractedData: z.object({
+      workStatus: z.string().nullable().optional(),
+      downPayment: z.string().nullable().optional(),
+      tradeInVehicle: z.string().nullable().optional(),
+    }).optional(),
   }),
 });
 
@@ -76,7 +81,12 @@ export async function orchestrateResponse(input: {
                   "urgency": "low" | "medium" | "high",
                   "buyerStage": "awareness" | "consideration" | "decision" | "post_sale",
                   "needsInventory": boolean,
-                  "queryExpansion": string // Si needsInventory=true, descripción optimizada para buscar autos
+                  "queryExpansion": string, // Si needsInventory=true, descripción optimizada para buscar autos
+                  "extractedData": {
+                      "workStatus": "Type of employment or null",
+                      "downPayment": "Amount or confirmation of pronto or null",
+                      "tradeInVehicle": "Make/model for trade-in or null"
+                  }
               }`,
       config: { temperature: 0 },
     });
@@ -91,6 +101,7 @@ export async function orchestrateResponse(input: {
   let buyerStage = 'consideration';
   let queryExpansion = '';
   let needsInventory = false;
+  let extractedData: any = {};
 
   try {
     const rawRouter = routerResult.text.trim().replace(/```json|```/g, '');
@@ -101,7 +112,8 @@ export async function orchestrateResponse(input: {
     buyerStage = parsedRouter.buyerStage ?? buyerStage;
     needsInventory = parsedRouter.needsInventory ?? false;
     queryExpansion = parsedRouter.queryExpansion ?? '';
-    logger.info('Lean Router Analysis', { intent, needsInventory, sentiment });
+    extractedData = parsedRouter.extractedData ?? {};
+    logger.info('Lean Router Analysis', { intent, needsInventory, sentiment, extractedData });
   } catch (e) {
     logger.warn('Failed to parse router JSON', { raw: routerResult.text });
   }
@@ -220,6 +232,7 @@ export async function orchestrateResponse(input: {
       urgency,
       buyerStage,
       negotiationStrategy: negotiationStrategy || undefined,
+      extractedData,
       validationAudit: {
         passed: audit.passed,
         errorType: audit.errorType,

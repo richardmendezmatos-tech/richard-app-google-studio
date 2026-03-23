@@ -99,6 +99,12 @@ export class HubSpotService {
       if (lead.hasPronto) {
           contactProperties.has_downpayment = 'Yes';
       }
+      if (lead.workStatus) {
+          contactProperties.work_status = String(lead.workStatus);
+      }
+      if (lead.tradeIn) {
+          contactProperties.trade_in_vehicle = String(lead.tradeIn);
+      }
 
       if (contactId) {
         // Update

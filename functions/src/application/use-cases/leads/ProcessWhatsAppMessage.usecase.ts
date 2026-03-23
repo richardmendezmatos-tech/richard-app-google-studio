@@ -44,7 +44,7 @@ export class ProcessWhatsAppMessage {
       isWhatsApp: true,
     });
 
-    const { intent, sentiment, buyerStage, negotiationStrategy } = aiResult.metadata || {};
+    const { intent, sentiment, buyerStage, negotiationStrategy, extractedData } = aiResult.metadata || {};
 
     // 4. Extract and Save Lead Intelligence
     const isHotIntent = ['purchase_ready', 'financing', 'test_drive', 'trade_in'].includes(intent);
@@ -57,6 +57,10 @@ export class ProcessWhatsAppMessage {
         ...lead,
         phone: lead.phone || cleanPhone,
         status: isHotIntent ? 'Qualified' : (lead.status || 'new'),
+        workStatus: extractedData?.workStatus || lead.workStatus,
+        hasPronto: extractedData?.downPayment ? true : lead.hasPronto,
+        downPaymentAmount: extractedData?.downPayment || (lead as any).downPaymentAmount,
+        tradeIn: extractedData?.tradeInVehicle || lead.tradeIn,
         aiAnalysis: {
           ...(lead.aiAnalysis || {}),
           score: lead.aiAnalysis?.score || (isHotIntent ? 85 : 50),
@@ -79,6 +83,10 @@ export class ProcessWhatsAppMessage {
         lastName: 'Lead',
         phone: cleanPhone,
         status: isHotIntent ? 'Qualified' : 'new',
+        workStatus: extractedData?.workStatus,
+        hasPronto: !!extractedData?.downPayment,
+        downPaymentAmount: extractedData?.downPayment,
+        tradeIn: extractedData?.tradeInVehicle,
         timestamp: new Date(),
         aiAnalysis: {
           intent: intent,

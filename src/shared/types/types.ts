@@ -32,6 +32,9 @@ export interface Car {
   blurPlaceholder?: string;
   images?: string[];
   year?: number;
+  make?: string;
+  model?: string;
+  mileage?: number;
   featured?: boolean;
   description?: string;
   features?: string[];

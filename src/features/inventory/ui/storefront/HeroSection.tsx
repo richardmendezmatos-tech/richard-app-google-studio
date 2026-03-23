@@ -12,24 +12,24 @@ interface HeroSectionProps {
 const HEADLINES = [
   {
     eyebrow: 'Showroom en Vivo',
-    line1: 'TU PRÓXIMO',
-    line2: 'NIVEL',
-    accent: 'EMPIEZA AQUÍ',
+    line1: 'ENCUENTRA TU',
+    line2: 'AUTO',
+    accent: 'IDEAL HOY',
     sub: 'Inventario curado con IA. Financiamiento inteligente. El estándar de oro en movilidad.',
   },
   {
     eyebrow: 'Colección Curada',
-    line1: 'SEÑAL',
-    line2: 'SOBRE',
-    accent: 'RUIDO',
-    sub: 'Precio, estado y contexto en una lectura rápida para comprar con ventaja real.',
+    line1: 'ENCUENTRA',
+    line2: 'TU AUTO',
+    accent: 'EXACTO',
+    sub: 'Descubre vehículos certificados de alta demanda sin perder tiempo buscando.',
   },
   {
     eyebrow: 'Trade‑In Elite',
-    line1: 'MEJORA',
-    line2: 'SIN',
-    accent: 'FRICCIÓN',
-    sub: 'Valora tu vehículo, compara y cierra en una experiencia premium de principio a fin.',
+    line1: 'TASACIÓN',
+    line2: 'EN 90',
+    accent: 'SEGUNDOS',
+    sub: 'Valora tu vehículo al instante y úsalo como pronto para tu próxima compra.',
   },
 ];
 
@@ -185,7 +185,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               <div className="ra-cta__shine" />
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Catálogo Certificado</span>
-                <span className="ra-cta__label">EXPLORAR INVENTARIO</span>
+                <span className="ra-cta__label">VER INVENTARIO DISPONIBLE</span>
               </div>
               <div className="ra-cta__icon">
                 <ArrowRight size={18} />
@@ -195,7 +195,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button onClick={onNeuralMatch} className="ra-cta ra-cta--secondary">
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Inteligencia Artificial</span>
-                <span className="ra-cta__label">NEURAL MATCH</span>
+                <span className="ra-cta__label">ENCUENTRA MI AUTO IDEAL</span>
               </div>
               <div className="ra-cta__icon ra-cta__icon--cyan">
                 <BrainCircuit size={18} />
@@ -205,7 +205,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button onClick={onSellCar} className="ra-cta ra-cta--tertiary">
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Trade‑In / Vender</span>
-                <span className="ra-cta__label">TASAR MI AUTO</span>
+                <span className="ra-cta__label">OBTÉN OFERTA AL INSTANTE</span>
               </div>
               <div className="ra-cta__icon ra-cta__icon--green">
                 <DollarSign size={18} />

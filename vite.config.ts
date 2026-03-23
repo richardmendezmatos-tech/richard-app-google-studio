@@ -32,17 +32,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       rolldownOptions: {
         onwarn: suppressFirebaseMixedImportWarning,
-        output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-framer': ['framer-motion'],
-            'vendor-ui-icons': ['lucide-react'],
-            'vendor-firebase-auth': ['firebase/auth'],
-            'vendor-firebase-db': ['firebase/firestore/lite', 'firebase/firestore'],
-            'vendor-ai': ['@google/generative-ai'],
-            'vendor-utils': ['@reduxjs/toolkit', 'react-redux', 'rxjs'],
-          },
-        },
+        output: {},
       },
       chunkSizeWarningLimit: 1000,
     },
@@ -50,7 +40,9 @@ export default defineConfig(({ mode }) => {
       drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     resolve: {
-      tsconfigPaths: true,
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
     },
     define: {
       'process.env.API_KEY': JSON.stringify(apiKey),

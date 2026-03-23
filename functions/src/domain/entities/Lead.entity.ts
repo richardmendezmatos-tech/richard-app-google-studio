@@ -23,6 +23,9 @@ export interface Lead {
   appointmentCompleted?: boolean;
   timestamp?: Date;
   vehicleOfInterest?: string;
+  workStatus?: string;
+  downPaymentAmount?: number;
+  tradeIn?: string;
   aiAnalysis?: {
     score: number;
     insights: string[];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/shared/types/types';
 import { SocialProofWidget } from '@/widgets/brand-ui/layout/conversion/SocialProofWidget';
 import SEO from '@/shared/ui/seo/SEO';
 
