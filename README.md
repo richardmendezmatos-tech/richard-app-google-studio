@@ -6,12 +6,14 @@ Este proyecto es el motor de inteligencia artificial para la marca personal de *
 
 ---
 
-## 🛠️ Tecnologías
+## 🛠️ Tecnologías del Command Center
 
-- **Motor IA:** Google Gemini API (v1.5 Flash/Pro)
-- **Backend:** Firebase (Functions & Firestore)
-- **Frontend:** HTML5 / Tailwind CSS (Diseño Minimalista)
-- **Seguridad:** Capas de protección anti-prompt injection
+- **Motor IA:** Google Gemini API (v1.5 Flash/Pro) vía Firebase Genkit
+- **Backend & Cloud:** Firebase (Cloud Functions, Firestore, App Check)
+- **Frontend App:** Frontend en React / Vite con Tailwind CSS
+- **CRM & Ventas:** Integración bidireccional con HubSpot API
+- **Comunicaciones:** Twilio WhatsApp API para Auto-Recuperación de Leads
+- **Testing & QA:** Vitest (Unit) y Playwright (End-to-End)
 
 ## 🧠 Características del Asistente
 
