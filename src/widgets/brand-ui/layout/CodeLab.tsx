@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCode } from '@/shared/api/ai';
 import hljs from 'highlight.js';
+import DOMPurify from 'dompurify';
 
 // Un conversor simple de Markdown a HTML para renderizar la respuesta de la IA.
 // Nota: Para un entorno de producción, una librería como 'marked' o 'DOMPurify' sería más robusta.
@@ -135,7 +136,7 @@ const CodeLab: React.FC = () => {
             <div
               ref={contentRef}
               className="prose prose-invert prose-sm max-w-none prose-pre:bg-[#282c34] prose-pre:border prose-pre:border-slate-700 prose-pre:p-0"
-              dangerouslySetInnerHTML={{ __html: analysis }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(analysis) }}
             ></div>
           )}
         </div>

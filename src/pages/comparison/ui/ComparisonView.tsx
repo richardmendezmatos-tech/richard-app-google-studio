@@ -3,6 +3,7 @@ import { useComparison } from '@/features/comparison';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
 import { useInventoryAnalytics } from '@/features/inventory';
+import DOMPurify from 'dompurify';
 import SEO from '@/shared/ui/seo/SEO';
 
 const ComparisonView: React.FC = () => {
@@ -116,7 +117,7 @@ const ComparisonView: React.FC = () => {
                   </span>
                 </h3>
                 <div className="prose prose-invert prose-lg text-slate-300">
-                  <p dangerouslySetInnerHTML={{ __html: verdict.text }} />
+                  <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(verdict.text) }} />
                 </div>
               </div>
             </div>

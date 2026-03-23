@@ -17,6 +17,7 @@ import {
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import SEO from '@/shared/ui/seo/SEO';
+import DOMPurify from 'dompurify';
 
 const TONE_OPTIONS: Array<'professional' | 'casual' | 'hype'> = ['professional', 'casual', 'hype'];
 const POST_TYPE_OPTIONS: Array<'news' | 'review' | 'guide'> = ['news', 'review', 'guide'];
@@ -440,16 +441,18 @@ const BlogView: React.FC = () => {
                     <div
                       className="text-slate-700 dark:text-slate-300 font-light leading-relaxed space-y-6 text-lg"
                       dangerouslySetInnerHTML={{
-                        __html: selectedPost.content
-                          .replace(
-                            /\*\*(.*?)\*\*/g,
-                            '<strong class="font-black text-slate-900 dark:text-white">$1</strong>',
-                          )
-                          .replace(/\n/g, '<br/>')
-                          .replace(
-                            /## (.*)/g,
-                            '<h2 class="text-3xl font-black mt-12 mb-6 text-slate-800 dark:text-white uppercase tracking-tighter border-b border-primary/20 pb-2">$1</h2>',
-                          ),
+                        __html: DOMPurify.sanitize(
+                          selectedPost.content
+                            .replace(
+                              /\*\*(.*?)\*\*/g,
+                              '<strong class="font-black text-slate-900 dark:text-white">$1</strong>',
+                            )
+                            .replace(/\n/g, '<br/>')
+                            .replace(
+                              /## (.*)/g,
+                              '<h2 class="text-3xl font-black mt-12 mb-6 text-slate-800 dark:text-white uppercase tracking-tighter border-b border-primary/20 pb-2">$1</h2>',
+                            )
+                        ),
                       }}
                     />
                   </div>

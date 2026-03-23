@@ -1,0 +1,38 @@
+import { z } from 'zod';
+
+export const leadSchema = z.object({
+  type: z.enum(['whatsapp', 'form', 'trade-in', 'visual_ai', 'chat', 'finance', 'general']).optional().default('general'),
+  status: z.enum(['new', 'contacted', 'negotiation', 'sold', 'lost', 'negotiating']).optional().default('new'),
+  name: z.string().max(100, 'Name is too long').optional(),
+  firstName: z.string().max(50, 'First name is too long').optional(),
+  lastName: z.string().max(50, 'Last name is too long').optional(),
+  email: z.string().email('Invalid email format').max(150).optional().or(z.literal('')),
+  phone: z.string().max(20, 'Phone number is too long').optional().or(z.literal('')),
+  ssn: z.string().max(11).optional(),
+  ssn_encrypted: z.string().optional(),
+  carId: z.string().max(50).optional(),
+  notes: z.string().max(2000).optional(),
+  vehicleOfInterest: z.string().max(100).optional(),
+  vehicleId: z.string().max(50).optional(),
+  tradeInDetails: z.string().max(1000).optional(),
+  tradeInPhotos: z.array(z.string().url().max(500)).max(10).optional(),
+  message: z.string().max(2000).optional(),
+  dealerId: z.string().max(50).optional(),
+  category: z.string().max(50).optional(),
+  monthlyIncome: z.union([z.string().max(50), z.number()]).optional(),
+  hasPronto: z.boolean().optional().default(false),
+  chatInteractions: z.number().int().optional(),
+  responded: z.boolean().optional(),
+  documentsSent: z.boolean().optional(),
+  dealClosed: z.boolean().optional(),
+  appointmentCompleted: z.boolean().optional(),
+  aiScore: z.number().min(0).max(100).optional(),
+  aiSummary: z.string().max(500).optional(),
+  behavioralMetrics: z.any().optional(),
+  aiAnalysis: z.any().optional(),
+  predictiveScore: z.number().optional(),
+  timestamp: z.any().optional(),
+  createdAt: z.any().optional(),
+}).strip(); // Security: Strip unknown fields to prevent NoSQL injection via unexpected huge payloads
+
+export type LeadInput = z.infer<typeof leadSchema>;

@@ -106,25 +106,18 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         }
       }
 
-      const response = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents,
-          model: 'gemini-1.5-flash',
-          systemInstruction:
-            'Eres un vendedor experto de autos de lujo y seminuevos. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
-        }),
+      const { functions } = await import('@/shared/api/firebase/client');
+      const { httpsCallable } = await import('firebase/functions');
+      const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+      
+      const response = await askGemini({
+        contents,
+        model: 'gemini-1.5-flash',
+        systemInstruction:
+          'Eres un vendedor experto de autos de lujo y seminuevos. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
       });
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setDescription(data.text);
+      setDescription(response.data);
     } catch (error) {
       console.error('AI Generation Error:', error);
       alert('Error generando descripción. Intenta nuevamente.');

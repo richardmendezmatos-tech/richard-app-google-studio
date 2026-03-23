@@ -58,22 +58,16 @@ export const analyzeCarVisuals = async (file: File): Promise<VisualSearchResult>
   try {
     const imagePart = await fileToGenerativePart(file);
 
-    // Secure Proxy Call instead of direct SDK usage
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [prompt, imagePart],
-        model: 'gemini-1.5-flash',
-      }),
+    const { functions } = await import('@/shared/api/firebase/client');
+    const { httpsCallable } = await import('firebase/functions');
+    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+    
+    const response = await askGemini({
+      contents: [prompt, imagePart],
+      model: 'gemini-1.5-flash',
     });
 
-    if (!response.ok) {
-      const errData = await response.json();
-      throw new Error(errData.error || `Proxy error: ${response.status}`);
-    }
-
-    const { text } = await response.json();
+    const text = response.data;
 
     // Extract JSON from potential markdown code blocks
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -159,20 +153,16 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
   `;
 
   try {
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [prompt],
-        model: 'gemini-1.5-flash',
-      }),
+    const { functions } = await import('@/shared/api/firebase/client');
+    const { httpsCallable } = await import('firebase/functions');
+    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+
+    const response = await askGemini({
+      contents: [prompt],
+      model: 'gemini-1.5-flash',
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to parse intent via Gemini');
-    }
-
-    const { text: responseText } = await response.json();
+    const responseText = response.data;
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return null;

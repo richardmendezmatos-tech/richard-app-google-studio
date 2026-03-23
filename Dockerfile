@@ -94,15 +94,15 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Crear usuario no-root para nginx (principio de mínimo privilegio)
-RUN addgroup -g 1001 -S nginx-app && \
-  adduser -u 1001 -S nginx-app -G nginx-app && \
-  chown -R nginx-app:nginx-app /usr/share/nginx/html && \
-  chown -R nginx-app:nginx-app /var/cache/nginx && \
-  chown -R nginx-app:nginx-app /var/log/nginx && \
+RUN addgroup -g 1001 -S appuser && \
+  adduser -u 1001 -S appuser -G appuser && \
+  chown -R appuser:appuser /usr/share/nginx/html && \
+  chown -R appuser:appuser /var/cache/nginx && \
+  chown -R appuser:appuser /var/log/nginx && \
   touch /var/run/nginx.pid && \
-  chown nginx-app:nginx-app /var/run/nginx.pid
+  chown appuser:appuser /var/run/nginx.pid
 
-USER nginx-app
+USER appuser
 
 EXPOSE 8080
 

@@ -32,6 +32,7 @@ vi.mock('@/features/omnichannel/api/antigravityOmnichannelService', () => ({
 }));
 
 import { automationService } from './automationService';
+import { DI } from '@/app/di/registry';
 
 const NOW = Date.UTC(2026, 1, 11, 15, 0, 0);
 
@@ -50,6 +51,8 @@ describe('automationService.processLeadNurturing', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(Date, 'now').mockReturnValue(NOW);
+    DI.getAntigravityOutreachAction = getAntigravityOutreachActionMock;
+    DI.sendWhatsAppMessage = sendWhatsAppMock;
   });
 
   it('sends via email when Antigravity suggests email and marks lead as emailed', async () => {

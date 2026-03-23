@@ -83,6 +83,7 @@ export const generateCarDescription = ai.defineFlow(
 export const generateDescription = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
     minInstances: 1,
@@ -106,6 +107,7 @@ export const semanticCarSearch = ai.defineFlow(
 export const searchCarsSemantic = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
     minInstances: 1,
@@ -133,6 +135,7 @@ export const reindexInventoryFlow = ai.defineFlow(
 export const triggerReindex = onCallGenkit(
   {
     authPolicy: (auth) => requireAdmin(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
   },
@@ -170,6 +173,7 @@ export const analyzeLeadFlow = ai.defineFlow(
 export const analyzeLead = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
   },
@@ -212,6 +216,7 @@ export const chatWithLeadFlow = ai.defineFlow(
 export const chatWithLead = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
   },
@@ -221,6 +226,7 @@ export const chatWithLead = onCallGenkit(
 export const processVoiceChunk = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
   },
@@ -241,6 +247,7 @@ export const processVoiceChunk = onCallGenkit(
 export const transcribeVoice = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
   },
@@ -250,9 +257,45 @@ export const transcribeVoice = onCallGenkit(
 export const raSentinel = onCallGenkit(
   {
     authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
     cors: ALLOWED_ORIGINS,
     secrets: ['GEMINI_API_KEY'],
     minInstances: 1,
   },
   raSentinelFlow,
+);
+
+export const askGemini = onCallGenkit(
+  {
+    authPolicy: (auth) => requireSignedIn(auth),
+    enforceAppCheck: true,
+    cors: ALLOWED_ORIGINS,
+    secrets: ['GEMINI_API_KEY'],
+    minInstances: 1,
+  },
+  ai.defineFlow(
+    {
+      name: 'askGemini',
+      inputSchema: z.object({
+        contents: z.array(z.any()),
+        model: z.string().optional(),
+        systemInstruction: z.string().optional(),
+        config: z.any().optional(),
+      }),
+      outputSchema: z.string(),
+    },
+    async (input) => {
+      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      const apiKey = process.env.GEMINI_API_KEY || "";
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+         model: input.model || "gemini-m-1.5-flash",
+         systemInstruction: input.systemInstruction,
+         generationConfig: input.config as any
+      });
+      const result = await model.generateContent(input.contents as any);
+      const response = await result.response;
+      return response.text();
+    }
+  )
 );

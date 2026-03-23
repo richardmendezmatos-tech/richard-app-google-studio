@@ -16,6 +16,7 @@ import { generateCarPitch } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
+import DOMPurify from 'dompurify';
 
 interface Props {
   car: Car;
@@ -402,9 +403,11 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                     <div className="prose prose-sm dark:prose-invert leading-relaxed text-slate-600 dark:text-slate-300">
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: aiPitch
-                            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
-                            .replace(/\n/g, '<br/>'),
+                          __html: DOMPurify.sanitize(
+                            aiPitch
+                              .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
+                              .replace(/\n/g, '<br/>')
+                          ),
                         }}
                       />
                     </div>

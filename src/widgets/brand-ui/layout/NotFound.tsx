@@ -86,10 +86,8 @@ const NotFound: React.FC = () => {
         ))}
       </div>
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-                .absolute.rounded-full.bg-\\[\\#00aed9\\] {
+      <style>{`
+                .absolute.rounded-full.bg-primary {
                     width: var(--p-width);
                     height: var(--p-height);
                     left: var(--p-left);
@@ -97,9 +95,7 @@ const NotFound: React.FC = () => {
                     animation-duration: var(--p-duration);
                     animation-delay: var(--p-delay);
                 }
-            `,
-        }}
-      />
+            `}</style>
 
       <div className="max-w-md w-full z-10 animate-in fade-in zoom-in duration-700">
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center space-y-6">
@@ -145,9 +141,7 @@ const NotFound: React.FC = () => {
         </div>
       </div>
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
+      <style>{`
         @keyframes bounce-subtle {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
@@ -155,9 +149,7 @@ const NotFound: React.FC = () => {
         .animate-bounce-subtle {
           animation: bounce-subtle 4s ease-in-out infinite;
         }
-      `,
-        }}
-      />
+      `}</style>
     </div>
   );
 };

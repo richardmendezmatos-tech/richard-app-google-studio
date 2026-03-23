@@ -2,15 +2,52 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    // Inventory and general images
+    
+    // Helper para verificar Administrador a través de lectura Firestore
+    function isAdmin() {
+      return request.auth != null && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isSafeSize() {
+      // Máximo 5MB
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // Bloquear todo acceso raíz por defecto
     match /{allPaths=**} {
-      // 1. Read Access: Public (Required for storefront)
+      allow read, write: if false;
+    }
+
+    // 1. Inventario Automotriz
+    match /inventory/{imageId} {
       allow read: if true;
-      
-      // 2. Write Access: Authenticated Users (Isolation Test)
-      allow write: if request.auth != null && 
-                   request.resource.contentType.matches('image/.*') &&
-                   request.resource.size < 20 * 1024 * 1024;
+      // Solo admis pueden crear/modificar imágenes de catálogo
+      allow write: if isAdmin() && isImage() && isSafeSize();
+    }
+
+    // 2. Archivos de Usuarios (Avatares, etc.)
+    match /users/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId && isImage() && isSafeSize();
+    }
+
+    // 3. Documentos y Evidencia (Trade-In, Aplicaciones)
+    match /documents/{docId} {
+      // Solo accesibles por admins internamente o creador en caso de mantener sesión
+      allow read: if isAdmin();
+      // Permitir subida a usuarios autenticados temporalmente para aplicar
+      allow write: if request.auth != null && isSafeSize();
+    }
+    
+    // 4. Fallback genérico restringido de 5MB por si la App usa otras rutas legacy
+    match /uploads/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && isImage() && isSafeSize();
     }
   }
 }

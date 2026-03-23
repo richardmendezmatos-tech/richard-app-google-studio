@@ -141,24 +141,18 @@ export const generateCarMarketingContent = async (
   }
 
   try {
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents,
-        model: 'gemini-1.5-flash',
-        config: { responseMimeType: 'application/json' },
-      }),
+    const { functions } = await import('@/shared/api/firebase/client');
+    const { httpsCallable } = await import('firebase/functions');
+    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+
+    const response = await askGemini({
+      contents,
+      model: 'gemini-1.5-flash',
+      config: { responseMimeType: 'application/json' },
     });
 
-    if (!response.ok) throw new Error('API Error');
-
-    const data = await response.json();
-
     // Robust cleaning of the response if needed
-    let cleanText = data.text;
+    let cleanText = response.data;
     if (cleanText.includes('```json')) {
       cleanText = cleanText.split('```json')[1].split('```')[0].trim();
     } else if (cleanText.includes('```')) {

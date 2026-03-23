@@ -22,6 +22,24 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    // Prevención de Billing Attacks y Strings Infinitos
+    function isSafeString(field, maxLen) {
+      let val = request.resource.data.get(field, '');
+      return val is string && val.size() <= maxLen;
+    }
+
+    function isValidPublicPayload() {
+      // Garantiza que si mandan estos campos, no excedan el tamaño normal
+      return isSafeString('name', 150) &&
+             isSafeString('firstName', 100) &&
+             isSafeString('lastName', 100) &&
+             isSafeString('email', 150) &&
+             isSafeString('phone', 50) &&
+             isSafeString('message', 2000) &&
+             isSafeString('type', 50) &&
+             isSafeString('status', 50);
+    }
+
     // --- Collections ---
 
     // Car Inventory: Publicly readable for marketplace
@@ -45,14 +63,14 @@ service cloud.firestore {
     
     // Applications (Leads): Isolated by Dealer logic
     match /applications/{appId} {
-      allow create: if true; 
+      allow create: if isValidPublicPayload(); 
       allow read, update, delete: if isAdmin() && 
                                      (resource == null || resource.data.dealerId == getUserData().dealerId);
     }
 
     // CRM Leads
     match /leads/{leadId} {
-      allow create: if true;
+      allow create: if isValidPublicPayload();
       allow read, update, delete: if isAdmin() && 
                                      (resource == null || resource.data.dealerId == getUserData().dealerId);
     }
@@ -71,7 +89,7 @@ service cloud.firestore {
 
     // Secure PII Vault (Full SSN/Credit Reports)
     match /applications_secure/{appId} {
-      allow create: if isAuthenticated(); 
+      allow create: if isAuthenticated() && isValidPublicPayload(); 
       allow read: if isAdmin() && 
                     (getUserData().get('superAdmin', false) == true || getUserData().get('accessPII', false) == true);
       allow update, delete: if false; 
@@ -86,7 +104,7 @@ service cloud.firestore {
 
     // Solicitudes de Crédito (Phase 16: Zero-Knowledge SSN)
     match /solicitudes_credito/{docId} {
-      allow create: if true; 
+      allow create: if isValidPublicPayload(); 
       allow read: if isAdmin();
       allow update, delete: if false; 
     }
@@ -94,7 +112,7 @@ service cloud.firestore {
     // Login Security
     match /login_attempts/{attemptId} {
       allow read: if isAdmin();
-      allow create, update: if true;
+      allow create, update: if true; // rate limiting relies on frontend/cloud functions
       allow delete: if isAdmin();
     }
   }

@@ -11,6 +11,7 @@ import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
+import DOMPurify from 'dompurify';
 
 interface Props {
   inventory: Car[];
@@ -242,9 +243,11 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
               <div
                 className="prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-300 leading-relaxed"
                 dangerouslySetInnerHTML={{
-                  __html: (aiPitch || '')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
-                    .replace(/\n/g, '<br/>'),
+                  __html: DOMPurify.sanitize(
+                    (aiPitch || '')
+                      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
+                      .replace(/\n/g, '<br/>')
+                  ),
                 }}
               />
             )}

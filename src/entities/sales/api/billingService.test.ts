@@ -1,4 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('@/shared/api/firebase/client', () => ({
+  db: {},
+  auth: {},
+}));
+
 import { logUsageEvent, getUsageLogs, MonetizableEvent } from './billingService';
 
 // Mocking Firebase is complex in this environment, but we can verify the function signatures and basic logic

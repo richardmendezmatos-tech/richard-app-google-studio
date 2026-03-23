@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import CarCard from '@/entities/inventory/ui/CarCard';
 import { PhotoAppraisal } from '@/features/garage';
+import DOMPurify from 'dompurify';
 
 interface Props {
   inventory: Car[];
@@ -200,7 +201,7 @@ const DigitalGarage: React.FC<Props> = ({ inventory, onExit }) => {
                       </div>
                     ) : (
                       <div
-                        dangerouslySetInnerHTML={{ __html: aiAnalysis }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aiAnalysis) }}
                         className="prose prose-invert prose-sm text-slate-300"
                       />
                     )}
