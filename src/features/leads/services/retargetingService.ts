@@ -1,4 +1,4 @@
-import { dbLite } from '@/services/firebaseService';
+import { dbLite } from '@/shared/api/firebase/firebaseService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface InteractionEvent {

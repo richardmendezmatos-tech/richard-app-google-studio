@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Lead, subscribeToLeads } from '@/features/leads/services/crmService';
+import { Lead, subscribeToLeads } from '@/shared/api/adapters/leads/crmService';
 import { LeadLifecycleAnalytics } from './LeadLifecycleAnalytics';
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';
 
@@ -35,7 +35,7 @@ const LeadAnalyticsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Loader2 className="animate-spin text-[#00aed9]" size={32} />
+        <Loader2 className="animate-spin text-primary" size={32} />
       </div>
     );
   }
@@ -68,7 +68,7 @@ const LeadAnalyticsPage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight">
-              Analytics: <span className="text-[#00aed9]">{lead.name}</span>
+              Analytics: <span className="text-primary">{lead.name}</span>
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm">
               Visualización profunda de ciclo de vida y score

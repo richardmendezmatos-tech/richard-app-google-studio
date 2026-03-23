@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { logBehavioralEvent } from '@/features/leads/services/retargetingService';
-import { incrementCarView } from '@/features/inventory/services/inventoryService';
-import * as ga from '@/services/analytics';
+import { logBehavioralEvent } from '@/features/leads';
+import { incrementCarView } from '@/shared/api/adapters/inventory/inventoryService';
+import * as ga from '@/shared/api/metrics/analytics';
 
 export const useInventoryAnalytics = () => {
   const trackCarView = useCallback((carId: string) => {

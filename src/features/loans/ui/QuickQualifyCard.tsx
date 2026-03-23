@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
-import { container } from '../../../infra/di/container';
+import { DI } from '@/shared/lib/di/registry';
 import {
   appraisalVisionService,
   AppraisalResult,
@@ -47,7 +47,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
       valorTradeIn: tradeInEstimado > 0 ? tradeInEstimado : undefined,
     };
 
-    const evaluateUseCase = container.getEvaluarAprobacionVentaUseCase();
+    const evaluateUseCase = DI.getEvaluarAprobacionVentaUseCase();
     const res = await evaluateUseCase.execute(solicitud);
 
     setResultado(res);
@@ -86,8 +86,8 @@ const QuickQualifyCard: React.FC = React.memo(() => {
   };
 
   return (
-    <div className="bg-[#131f2a] border border-white/5 rounded-[32px] p-6 lg:p-8 overflow-hidden relative group transition-all hover:border-[#00aed9]/30 shadow-2xl">
-      <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none text-[#00aed9]">
+    <div className="bg-[#131f2a] border border-white/5 rounded-[32px] p-6 lg:p-8 overflow-hidden relative group transition-all hover:border-primary/30 shadow-2xl">
+      <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none text-primary">
         <Zap size={120} />
       </div>
 
@@ -101,7 +101,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
             className="relative z-10"
           >
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-[#00aed9]/10 rounded-2xl flex items-center justify-center text-[#00aed9] border border-[#00aed9]/20">
+              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
                 <TrendingUp size={24} />
               </div>
               <div>
@@ -117,13 +117,13 @@ const QuickQualifyCard: React.FC = React.memo(() => {
             <div className="space-y-6">
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <User size={12} className="text-[#00aed9]" /> Nombre del Comprador
+                  <User size={12} className="text-primary" /> Nombre del Comprador
                 </label>
                 <input
                   type="text"
                   placeholder="Ej. Juan Pérez"
                   title="Nombre completo del comprador"
-                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-[#00aed9]/50 transition-all outline-none"
+                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-primary/50 transition-all outline-none"
                   value={formData.nombreSolicitante}
                   onChange={(e) => setFormData({ ...formData, nombreSolicitante: e.target.value })}
                 />
@@ -131,13 +131,13 @@ const QuickQualifyCard: React.FC = React.memo(() => {
 
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <User size={12} className="text-[#00aed9]" /> Seguro Social
+                  <User size={12} className="text-primary" /> Seguro Social
                 </label>
                 <input
                   type="text"
                   placeholder="XXX-XX-XXXX"
                   title="Número de Seguro Social Completo"
-                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-[#00aed9]/50 transition-all outline-none"
+                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-primary/50 transition-all outline-none"
                   value={formData.seguroSocial}
                   onChange={(e) => setFormData({ ...formData, seguroSocial: e.target.value })}
                   maxLength={11}
@@ -146,13 +146,13 @@ const QuickQualifyCard: React.FC = React.memo(() => {
 
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <User size={12} className="text-[#00aed9]" /> Teléfono Móvil
+                  <User size={12} className="text-primary" /> Teléfono Móvil
                 </label>
                 <input
                   type="tel"
                   placeholder="(787) 555-0000"
                   title="Número de Teléfono del comprador"
-                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-[#00aed9]/50 transition-all outline-none"
+                  className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-primary/50 transition-all outline-none"
                   value={formData.telefono}
                   onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                 />
@@ -166,7 +166,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                   <input
                     type="number"
                     title="Puntuación de crédito (Empírica)"
-                    className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-[#00aed9]/50 transition-all outline-none"
+                    className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-primary/50 transition-all outline-none"
                     value={formData.puntuacionCredito}
                     onChange={(e) =>
                       setFormData({ ...formData, puntuacionCredito: Number(e.target.value) })
@@ -180,7 +180,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                   <input
                     type="number"
                     title="Ingreso mensual bruto del comprador"
-                    className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-[#00aed9]/50 transition-all outline-none"
+                    className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-primary/50 transition-all outline-none"
                     value={formData.ingresosMensuales}
                     onChange={(e) =>
                       setFormData({ ...formData, ingresosMensuales: Number(e.target.value) })
@@ -194,7 +194,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     Precio de la Unidad
                   </label>
-                  <span className="text-[#00aed9] font-black">${monto.toLocaleString()}</span>
+                  <span className="text-primary font-black">${monto.toLocaleString()}</span>
                 </div>
                 <input
                   type="range"
@@ -202,7 +202,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                   max="80000"
                   step="1000"
                   title="Ajustar precio de la unidad para simulación"
-                  className="w-full h-1.5 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#00aed9]"
+                  className="w-full h-1.5 bg-white/5 rounded-lg appearance-none cursor-pointer accent-primary"
                   value={monto}
                   onChange={(e) => setMonto(Number(e.target.value))}
                 />
@@ -221,7 +221,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                       <span className="text-slate-400 uppercase tracking-widest font-black">
                         Total a Financiar
                       </span>
-                      <span className="text-[#00aed9] font-black">
+                      <span className="text-primary font-black">
                         ${Math.max(0, monto - appraisalResult.suggestedAppraisal).toLocaleString()}
                       </span>
                     </div>
@@ -232,7 +232,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
               {/* VISUAL APPRAISAL SECTION */}
               <div className="bg-white/5 border border-white/5 rounded-2xl p-4 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest flex items-center gap-2">
+                  <h4 className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
                     <Camera size={12} /> Tasación Visual IA
                   </h4>
                   {previewImage && (
@@ -249,9 +249,9 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                 </div>
 
                 {!previewImage ? (
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-xl py-6 cursor-pointer hover:border-[#00aed9]/50 hover:bg-[#00aed9]/5 transition-all group/upload">
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-xl py-6 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group/upload">
                     <ImageIcon
-                      className="text-slate-500 group-hover/upload:text-[#00aed9] transition-colors mb-2"
+                      className="text-slate-500 group-hover/upload:text-primary transition-colors mb-2"
                       size={24}
                     />
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest group-hover/upload:text-slate-300">
@@ -274,7 +274,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                       />
                       {isAppraising && (
                         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center">
-                          <Loader2 size={20} className="text-[#00aed9] animate-spin mb-1" />
+                          <Loader2 size={20} className="text-primary animate-spin mb-1" />
                           <span className="text-[8px] font-black text-white uppercase tracking-widest">
                             Analizando...
                           </span>
@@ -306,7 +306,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
 
               <button
                 onClick={handleCalculate}
-                className="w-full bg-gradient-to-r from-[#00aed9] to-blue-600 hover:from-[#00c2f0] hover:to-blue-500 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn"
+                className="w-full bg-linear-to-r from-primary to-blue-600 hover:from-[#00c2f0] hover:to-blue-500 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn"
               >
                 Evaluar Aprobación{' '}
                 <ArrowRight
@@ -340,7 +340,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
             </div>
 
             <div className="bg-[#0b1116] border border-white/5 rounded-2xl p-6 mb-8 relative">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#131f2a] px-4 text-[8px] font-black text-[#00aed9] uppercase tracking-widest border border-white/5 rounded-full">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#131f2a] px-4 text-[8px] font-black text-primary uppercase tracking-widest border border-white/5 rounded-full">
                 Sales Script AI
               </span>
               <p className="text-white font-bold leading-relaxed italic text-sm">
@@ -354,7 +354,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
                   <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
                     APR Sugerido
                   </p>
-                  <p className="text-xl font-black text-[#00aed9]">{resultado.aprSugerido}%</p>
+                  <p className="text-xl font-black text-primary">{resultado.aprSugerido}%</p>
                 </div>
                 <div className="bg-white/5 rounded-xl p-3 border border-white/5">
                   <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">

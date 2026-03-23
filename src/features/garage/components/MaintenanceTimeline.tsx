@@ -41,7 +41,7 @@ const MaintenanceTimeline: React.FC = () => {
   return (
     <div className="bg-[#131f2a] rounded-[40px] p-8 border border-white/5 relative overflow-hidden">
       <h3 className="text-xl font-black text-white mb-8 uppercase tracking-tighter flex items-center gap-2">
-        <Clock className="text-[#00aed9]" size={20} /> Historial de Cuidado
+        <Clock className="text-primary" size={20} /> Historial de Cuidado
       </h3>
 
       <div className="relative space-y-8">

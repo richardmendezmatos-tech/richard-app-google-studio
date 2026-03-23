@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CarType } from '@/types/types';
-import { Car } from '@/domain/entities';
-import SEO from '@/shared/brand-ui/seo/SEO';
+import { CarType } from '@/shared/types/types';
+import { Car } from '@/entities/shared';
+import SEO from '@/shared/ui/seo/SEO';
 import HeroSection from './HeroSection';
-import PremiumGlassCard from './PremiumGlassCard';
+import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
 import CarDetailModal from '../CarDetailModal';
 import { useInventoryAnalytics } from '../../hooks/useInventoryAnalytics';
 import { DatabaseZap, MapPin, Sparkles } from 'lucide-react';

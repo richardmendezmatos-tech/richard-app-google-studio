@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { X, UploadCloud, Camera, AlertCircle, ScanLine } from 'lucide-react';
-import { Car } from '@/domain/entities';
-import { VisualSearchResult } from '@/services/aiService';
+import { Car } from '@/entities/shared';
+import { VisualSearchResult } from '@/features/ai-agents/api/aiService';
 
 interface Props {
   isOpen: boolean;
@@ -69,7 +69,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d2232]/90 p-4 backdrop-blur-xl animate-in fade-in"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-[#0d2232]/90 p-4 backdrop-blur-xl animate-in fade-in"
       onClick={onClose}
     >
       <div
@@ -86,7 +86,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
             <X size={20} />
           </button>
           <h2 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 uppercase tracking-tight">
-            <Camera className="text-[#00aed9]" size={32} />
+            <Camera className="text-primary" size={32} />
             Neural Match
           </h2>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
@@ -108,8 +108,8 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                                 relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center overflow-hidden
                                 ${
                                   dragActive
-                                    ? 'border-[#00aed9] bg-[#00aed9]/5'
-                                    : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-[#00aed9]/50'
+                                    ? 'border-primary bg-primary/5'
+                                    : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-primary/50'
                                 }
                             `}
             onDragEnter={handleDrag}
@@ -120,12 +120,12 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
             {isAnalyzing ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90 dark:bg-slate-900/90 z-20 backdrop-blur-sm">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-[#00aed9]/20 rounded-full animate-ping"></div>
-                  <div className="relative w-16 h-16 bg-[#00aed9]/10 rounded-full flex items-center justify-center border border-[#00aed9]">
-                    <ScanLine size={32} className="text-[#00aed9] animate-pulse" />
+                  <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
+                  <div className="relative w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center border border-primary">
+                    <ScanLine size={32} className="text-primary animate-pulse" />
                   </div>
                 </div>
-                <p className="mt-6 text-sm font-black uppercase tracking-widest text-[#00aed9]">
+                <p className="mt-6 text-sm font-black uppercase tracking-widest text-primary">
                   Analizando Vectores...
                 </p>
                 <p className="text-xs text-slate-400 mt-2 font-mono">Generando embeddings...</p>

@@ -8,15 +8,19 @@ This skill guides creation of distinctive, production-grade frontend interfaces 
 
 The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
 
-## Design Thinking
+## Design Thinking: The Premium Command Center Aesthetic
 
-Before coding, understand the context and commit to a BOLD aesthetic direction:
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+For Richard Automotive, the MANDATORY aesthetic is the **"Premium Command Center"**. 
+- **Purpose**: High-end, Bloomberg-terminal-like interfaces for both Admin and Storefront.
+- **Tone**: Dark glassmorphism, luxury fintech, cinematic lighting, and high data density.
+- **Core Elements**: 
+  - Dark slate themes (`bg-slate-900`, `bg-slate-950`).
+  - Extreme glassmorphism (`backdrop-blur-3xl`, `backdrop-blur-xl`, `bg-white/5`).
+  - Luminous accents (`shadow-[0_0_15px_rgba(0,174,217,0.4)]`, text-glow effects).
+  - Semantic Tailwind v4 color tokens (`text-primary`, `border-primary/20`).
+- **Differentiation**: Richard Automotive must look like a high-end enterprise operating system, not a generic dealership site.
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+**CRITICAL**: NEVER use pastel, playful, brutalist, or light-mode generic themes. Focus entirely on the dark, refined, and glowing Command Center aesthetic.
 
 Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
 - Production-grade and functional
@@ -24,19 +28,17 @@ Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
 - Cohesive with a clear aesthetic point-of-view
 - Meticulously refined in every detail
 
-## Frontend Aesthetics Guidelines
+## Frontend Implementation Guidelines
 
 Focus on:
-- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
-- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
-- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
-- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+- **Typography**: Maintain high-contrast technical typography. Use clean sans-serif bodies with highly legible weights for data rows, and glowing (`text-shadow`) application for key metrics.
+- **Color & Theme**: Exclusively use the Richard Automotive Tailwind v4 design system. Rely on `primary`, `emerald`, `purple`, and `rose` CSS variables defined in `index.css`. Maintain extreme consistency across modules.
+- **Motion**: Use smooth, cinematic micro-interactions. Example: Button hovers that trigger glowing cyan halos (`hover:shadow-[0_0_20px_rgba(0,174,217,0.3)]`) and subtle lift (`hover:-translate-y-1`). Staggered fades (`fade-in-up`) for table rows.
+- **Spatial Composition**: Prioritize data density but mask it with elegant padding and transparency. Use `grid` and `flex` layouts that adapt flawlessly.
+- **Backgrounds & Visual Details**: Avoid flat colors like `#1e293b`. Instead use `bg-slate-900/40` layered over radial gradient blobs (`bg-primary/10 blur-[100px]`) to create deep atmospheric depth.
 
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+NEVER use generic AI aesthetics (purple gradients on white) or flat light-mode components. 
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
-
-**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
+**IMPORTANT**: Any new UI element must cleanly integrate with the existing `Storefront` or `AdminPanel` ecosystems. Before adding independent CSS, verify if a Tailwind utility or a standard Command Center component already solves the problem.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.

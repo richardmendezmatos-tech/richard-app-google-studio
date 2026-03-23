@@ -22,11 +22,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from '@/App';
 import './index.css'; // Premium UI Styles
 
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-import { DealerProvider } from '@/contexts/DealerContext';
+
 import './i18n'; // i18n setup
-import { nativeBridgeService } from '@/services/nativeBridgeService';
+import '@/shared/lib/di/container'; // Hydrate DI Container
+import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
 
 declare global {
   interface Window {
@@ -270,15 +269,11 @@ try {
   console.log('✅ [Index] Root created, rendering...');
   root.render(
     <React.StrictMode>
-      <Provider store={store}>
-        <DealerProvider>
-          <QueryClientProvider client={queryClient}>
-            <BootReadySignal>
-              <App />
-            </BootReadySignal>
-          </QueryClientProvider>
-        </DealerProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <BootReadySignal>
+          <App />
+        </BootReadySignal>
+      </QueryClientProvider>
     </React.StrictMode>,
   );
 } catch (e: unknown) {

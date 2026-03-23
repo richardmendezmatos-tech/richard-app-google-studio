@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useDealer } from '@/contexts/DealerContext';
-import { container } from '../../../infra/di/container';
-import { Car as CarType, Lead, Subscriber } from '@/types/types';
-import { getSubscribers } from '@/services/firebaseService';
+import { useDealer } from '@/entities/dealer';
+import { DI } from '@/shared/lib/di/registry';
+import { Car as CarType, Lead, Subscriber } from '@/shared/types/types';
+import { getSubscribers } from '@/shared/api/firebase/firebaseService';
 
 export const useAdminPanelState = (onInitializeDb?: () => Promise<void>) => {
   const { currentDealer } = useDealer();
@@ -35,7 +35,7 @@ export const useAdminPanelState = (onInitializeDb?: () => Promise<void>) => {
   const fetchDashboardData = useCallback(async () => {
     try {
       const dealerId = currentDealer?.id || 'richard-automotive';
-      const useCase = container.getGetLeadsUseCase();
+      const useCase = DI.getGetLeadsUseCase();
       const updatedLeads = await useCase.execute(dealerId);
       setLeads(updatedLeads as any);
     } catch (e) {

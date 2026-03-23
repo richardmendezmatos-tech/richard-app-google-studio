@@ -143,7 +143,7 @@ const Viewer360: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className={`aspect-[4/3] bg-gradient-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-950 rounded-[40px] shadow-2xl relative overflow-hidden group select-none cursor-grab active:cursor-grabbing border border-white/10 transition-all duration-700 ${isScanning ? 'ring-4 ring-cyan-500/50 scale-[0.98]' : ''}`}
+      className={`aspect-[4/3] bg-linear-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-950 rounded-[40px] shadow-2xl relative overflow-hidden group select-none cursor-grab active:cursor-grabbing border border-white/10 transition-all duration-700 ${isScanning ? 'ring-4 ring-cyan-500/50 scale-[0.98]' : ''}`}
       onMouseDown={(e) => handleStart(e.clientX)}
       onMouseMove={(e) => (activeMode === '360' ? handleMove(e.clientX) : handleCinematicMove(e))}
       onMouseUp={handleEnd}
@@ -161,17 +161,17 @@ const Viewer360: React.FC<Props> = ({
       {/* Badges */}
       <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 pointer-events-none">
         {badge && (
-          <span className="bg-[#00aed9] text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg animate-in slide-in-from-left">
+          <span className="bg-primary text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg animate-in slide-in-from-left">
             {badge}
           </span>
         )}
         {activeMode === '360' ? (
           <span className="bg-slate-900/80 backdrop-blur text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit border border-white/10">
-            <Rotate3D size={12} className="text-[#00aed9]" /> 360° Interactive
+            <Rotate3D size={12} className="text-primary" /> 360° Interactive
           </span>
         ) : (
           <span className="bg-slate-900/80 backdrop-blur text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit border border-white/10">
-            <ZoomIn size={12} className="text-[#00aed9]" /> AI Enhanced
+            <ZoomIn size={12} className="text-primary" /> AI Enhanced
           </span>
         )}
       </div>
@@ -261,14 +261,14 @@ const Viewer360: React.FC<Props> = ({
         <div className="bg-black/60 backdrop-blur-md text-white px-6 py-3 rounded-full flex items-center gap-3 animate-pulse">
           {activeMode === '360' ? (
             <>
-              <MousePointer2 size={20} className="text-[#00aed9]" />
+              <MousePointer2 size={20} className="text-primary" />
               <span className="font-bold text-sm uppercase tracking-widest">
                 Arrastra para girar
               </span>
             </>
           ) : (
             <>
-              <Smartphone size={20} className="text-[#00aed9]" />
+              <Smartphone size={20} className="text-primary" />
               <span className="font-bold text-sm uppercase tracking-widest">
                 Mueve para explorar
               </span>
@@ -289,7 +289,7 @@ const Viewer360: React.FC<Props> = ({
         </button>
         <button
           onClick={onFullscreen}
-          className="p-3 bg-white/10 hover:bg-[#00aed9] backdrop-blur-md rounded-full text-white transition-all border border-white/10 hover:scale-110 active:scale-95"
+          className="p-3 bg-white/10 hover:bg-primary backdrop-blur-md rounded-full text-white transition-all border border-white/10 hover:scale-110 active:scale-95"
           title="Pantalla Completa"
         >
           <Maximize2 size={20} />
@@ -301,7 +301,7 @@ const Viewer360: React.FC<Props> = ({
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-48 h-1 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm pointer-events-none">
           <div
             ref={progressRef}
-            className="h-full bg-[#00aed9] transition-all duration-75 viewer-progress-fill"
+            className="h-full bg-primary transition-all duration-75 viewer-progress-fill"
           />
         </div>
       )}

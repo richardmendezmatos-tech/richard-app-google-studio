@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
-import { Car } from '@/domain/entities';
-import { calculateNeuralMatch, analyzeCarImage } from '@/services/geminiService';
+import { Car } from '@/entities/shared';
+import { calculateNeuralMatch, analyzeCarImage } from '@/features/ai-agents/api/geminiService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 
 import {
@@ -239,7 +239,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
   const promptStrength = Math.min(100, (profile.length / 100) * 100);
   const strengthColor =
-    promptStrength < 30 ? 'bg-red-500' : promptStrength < 70 ? 'bg-yellow-500' : 'bg-[#00aed9]';
+    promptStrength < 30 ? 'bg-red-500' : promptStrength < 70 ? 'bg-yellow-500' : 'bg-primary';
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -255,13 +255,13 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
   }, [results]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0d2232]/95 backdrop-blur-xl animate-in fade-in">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-[#0d2232]/95 backdrop-blur-xl animate-in fade-in">
       <div
         ref={containerRef}
         className="w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh]"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00aed9] to-transparent opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
         <button
           onClick={onClose}
@@ -274,12 +274,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
         <div className="relative z-10 flex flex-col h-full">
           <div className="p-8 border-b border-slate-800 flex items-center gap-4 shrink-0">
-            <div className="w-12 h-12 bg-[#00aed9]/20 rounded-xl flex items-center justify-center border border-[#00aed9]/50 shadow-[0_0_20px_rgba(0,174,217,0.3)]">
-              <BrainCircuit size={24} className="text-[#00aed9]" />
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/50 shadow-[0_0_20px_rgba(0,174,217,0.3)]">
+              <BrainCircuit size={24} className="text-primary" />
             </div>
             <div>
               <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-                Neural Match <span className="text-[#00aed9]">v4.0</span>
+                Neural Match <span className="text-primary">v4.0</span>
               </h2>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Identidad Digital & Compatibilidad
@@ -309,7 +309,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                             flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide border transition-all duration-200
                                             ${
                                               activeTags.includes(tag.id)
-                                                ? 'bg-[#00aed9] text-white border-[#00aed9] shadow-lg shadow-cyan-500/30'
+                                                ? 'bg-primary text-white border-primary shadow-lg shadow-cyan-500/30'
                                                 : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white'
                                             }
                                         `}
@@ -330,7 +330,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                       value={profile}
                       onChange={(e) => setProfile(e.target.value)}
                       placeholder="Escribe o usa el micrófono: 'Busco algo seguro para mi familia, que tenga espacio para las bicicletas y que no gaste mucha gasolina...'"
-                      className="w-full bg-slate-800/80 border-2 border-slate-700 rounded-3xl p-6 text-white placeholder:text-slate-600 focus:border-[#00aed9] focus:bg-slate-800 outline-none text-lg leading-relaxed resize-none min-h-[200px] transition-all shadow-inner relative z-10"
+                      className="w-full bg-slate-800/80 border-2 border-slate-700 rounded-3xl p-6 text-white placeholder:text-slate-600 focus:border-primary focus:bg-slate-800 outline-none text-lg leading-relaxed resize-none min-h-[200px] transition-all shadow-inner relative z-10"
                     />
                     <div className="absolute top-4 right-4 z-20">
                       <button
@@ -340,7 +340,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                                 ${
                                                   isListening
                                                     ? 'bg-red-500 text-white animate-pulse shadow-red-500/40'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-[#00aed9] hover:text-white'
+                                                    : 'bg-slate-700 text-slate-300 hover:bg-primary hover:text-white'
                                                 }
                                             `}
                         title="Dictado por Voz"
@@ -351,7 +351,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     </div>
                     <div className="flex justify-between items-center px-4 py-2">
                       <span
-                        className={`text-[10px] font-bold uppercase tracking-widest ${promptStrength > 50 ? 'text-[#00aed9]' : 'text-slate-500'}`}
+                        className={`text-[10px] font-bold uppercase tracking-widest ${promptStrength > 50 ? 'text-primary' : 'text-slate-500'}`}
                       >
                         {isListening ? 'Escuchando...' : 'IA de Análisis Activa'}
                       </span>
@@ -365,7 +365,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     {...getRootProps()}
                     className={`
                                         w-full md:w-1/3 min-h-[200px] border-2 border-dashed rounded-[40px] flex flex-col items-center justify-center p-6 text-center transition-all cursor-pointer group/drop
-                                        ${isDragActive ? 'border-[#00aed9] bg-[#00aed9]/10 scale-[1.02]' : 'border-slate-700 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/60'}
+                                        ${isDragActive ? 'border-primary bg-primary/10 scale-[1.02]' : 'border-slate-700 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/60'}
                                     `}
                   >
                     <input {...getInputProps()} />
@@ -374,17 +374,17 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                         <img
                           src={droppedImage}
                           alt="Analizando"
-                          className="w-24 h-24 object-cover rounded-2xl shadow-lg border-2 border-[#00aed9]/50"
+                          className="w-24 h-24 object-cover rounded-2xl shadow-lg border-2 border-primary/50"
                         />
-                        <span className="text-[10px] font-black uppercase text-[#00aed9] animate-pulse">
+                        <span className="text-[10px] font-black uppercase text-primary animate-pulse">
                           Escaneando Imagen...
                         </span>
                       </div>
                     ) : (
                       <>
-                        <div className="w-14 h-14 bg-slate-700/50 rounded-full flex items-center justify-center mb-4 group-hover/drop:scale-110 group-hover/drop:bg-[#00aed9]/20 transition-all">
+                        <div className="w-14 h-14 bg-slate-700/50 rounded-full flex items-center justify-center mb-4 group-hover/drop:scale-110 group-hover/drop:bg-primary/20 transition-all">
                           <UploadCloud
-                            className="text-slate-400 group-hover/drop:text-[#00aed9]"
+                            className="text-slate-400 group-hover/drop:text-primary"
                             size={28}
                           />
                         </div>
@@ -399,12 +399,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                 <div className="w-full mt-4 flex justify-center relative z-20 group pb-8">
                   <div
-                    className={`absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
+                    className={`absolute -inset-1 bg-linear-to-r from-cyan-400 to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
                   ></div>
                   <button
                     onClick={() => handleScan()}
                     disabled={isAnalyzing || !profile.trim()}
-                    className="w-full md:w-auto px-12 py-5 bg-[#00aed9] hover:bg-cyan-500 text-white rounded-[30px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:scale-100"
+                    className="w-full md:w-auto px-12 py-5 bg-primary hover:bg-cyan-500 text-white rounded-[30px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:scale-100"
                     title="Iniciar Escaneo Neural"
                   >
                     <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors shadow-inner">
@@ -426,11 +426,11 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
               <div className="h-full flex flex-col items-center justify-center space-y-12">
                 <div className="relative">
                   <div className="w-48 h-48 border border-slate-700/50 rounded-full animate-[spin_10s_linear_infinite]"></div>
-                  <div className="absolute inset-4 border border-[#00aed9]/30 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
-                  <div className="absolute inset-8 border-2 border-t-[#00aed9] border-r-transparent border-b-[#00aed9] border-l-transparent rounded-full animate-spin"></div>
+                  <div className="absolute inset-4 border border-primary/30 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
+                  <div className="absolute inset-8 border-2 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-[#00aed9]/10 rounded-full flex items-center justify-center backdrop-blur-sm animate-pulse">
-                      <BrainCircuit size={40} className="text-[#00aed9]" />
+                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center backdrop-blur-sm animate-pulse">
+                      <BrainCircuit size={40} className="text-primary" />
                     </div>
                   </div>
                 </div>
@@ -439,7 +439,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     {SCAN_MESSAGES[scanMessageIndex]}
                   </h3>
                   <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#00aed9] animate-[translateX_2s_ease-in-out_infinite] w-1/3 rounded-full"></div>
+                    <div className="h-full bg-primary animate-[translateX_2s_ease-in-out_infinite] w-1/3 rounded-full"></div>
                   </div>
                   <p className="text-slate-500 font-mono text-xs">
                     Procesando {inventory.length} vectores de datos.
@@ -450,9 +450,9 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
             {step === 'results' && (
               <div className="space-y-6">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 bg-[#173d57]/50 p-6 rounded-3xl border border-[#00aed9]/30">
+                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 bg-[#173d57]/50 p-6 rounded-3xl border border-primary/30">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-[#00aed9] rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
                       <User size={24} className="text-white" />
                     </div>
                     <div>
@@ -500,13 +500,13 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                                     group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl cursor-pointer transition-all duration-300
                                                     ${
                                                       isTopMatch
-                                                        ? 'bg-gradient-to-r from-[#00aed9]/20 to-slate-800/80 border border-[#00aed9]/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
+                                                        ? 'bg-linear-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
                                                         : 'bg-slate-800/30 border border-slate-700 hover:bg-slate-800/80'
                                                     }
                                                 `}
                         >
                           {isTopMatch && (
-                            <div className="absolute -top-3 -right-3 bg-[#00aed9] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-10">
+                            <div className="absolute -top-3 -right-3 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-10">
                               <CheckCircle2 size={12} /> Match Perfecto
                             </div>
                           )}
@@ -522,7 +522,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                           <div className="flex-1 w-full">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <h4 className="text-xl font-black text-white group-hover:text-[#00aed9] transition-colors">
+                                <h4 className="text-xl font-black text-white group-hover:text-primary transition-colors">
                                   {car.name}
                                 </h4>
                                 <p className="text-slate-400 text-sm font-bold">
@@ -541,7 +541,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                             <div className="w-full h-2 bg-slate-700 rounded-full mb-3 overflow-hidden">
                               <div
-                                className={`h-full rounded-full transition-all duration-1000 ease-out ${result.score > 85 ? 'bg-[#00aed9]' : result.score > 60 ? 'bg-emerald-500' : 'bg-amber-500'} w-[var(--match-score)]`}
+                                className={`h-full rounded-full transition-all duration-1000 ease-out ${result.score > 85 ? 'bg-primary' : result.score > 60 ? 'bg-emerald-500' : 'bg-amber-500'} w-[var(--match-score)]`}
                               />
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed border-l-2 border-slate-600 pl-3 italic">
@@ -549,7 +549,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                             </p>
                           </div>
 
-                          <div className="hidden md:flex bg-slate-700/50 w-10 h-10 rounded-full items-center justify-center group-hover:bg-[#00aed9] group-hover:text-white transition-colors">
+                          <div className="hidden md:flex bg-slate-700/50 w-10 h-10 rounded-full items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                             <ChevronRight size={20} />
                           </div>
                         </div>

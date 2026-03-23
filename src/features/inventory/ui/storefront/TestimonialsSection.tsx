@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart } from 'lucide-react';
-import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
+import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 
 const TestimonialsSection: React.FC = () => {
   const testimonials = [
@@ -36,7 +36,7 @@ const TestimonialsSection: React.FC = () => {
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-cyan-100/15 bg-[linear-gradient(140deg,rgba(6,16,28,0.95),rgba(2,8,14,0.94))] py-16 sm:rounded-[40px] sm:py-20">
       <div className="pointer-events-none absolute right-0 top-0 hidden p-20 opacity-5 md:block">
-        <Heart size={300} className="text-[#00aed9]" />
+        <Heart size={300} className="text-primary" />
       </div>
 
       <div className="relative z-10 mb-16 space-y-4 text-center">
@@ -45,7 +45,7 @@ const TestimonialsSection: React.FC = () => {
         </span>
         <h2 className="font-cinematic text-5xl uppercase tracking-[0.08em] text-slate-50 md:text-6xl">
           Historias de{' '}
-          <span className="bg-gradient-to-r from-[#00aed9] to-cyan-300 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-primary to-cyan-300 bg-clip-text text-transparent">
             Éxito
           </span>
         </h2>
@@ -69,12 +69,12 @@ const TestimonialsSection: React.FC = () => {
               <OptimizedImage
                 src={t.img}
                 alt={t.name}
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-[#00aed9]/20"
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-primary/20"
                 width={48}
               />
               <div>
                 <h4 className="text-sm font-bold text-white">{t.name}</h4>
-                <p className="font-tech text-xs uppercase tracking-[0.16em] text-[#00aed9]">
+                <p className="font-tech text-xs uppercase tracking-[0.16em] text-primary">
                   {t.role}
                 </p>
               </div>

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { analyzeCarImage, VisualSearchResult, findMatches } from '@/services/aiService';
-import { Car } from '@/domain/entities';
+import { analyzeCarVisuals, VisualSearchResult, findMatches } from '@/features/ai-agents/api/aiService';
+import { Car } from '@/entities/shared';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 
 export const useVisualSearch = (inventory: Car[]) => {
@@ -19,7 +19,7 @@ export const useVisualSearch = (inventory: Car[]) => {
 
       try {
         // 1. Analyze Image
-        const result = await analyzeCarImage(file);
+        const result = await analyzeCarVisuals(file);
         setAnalysis(result);
 
         // 2. Find Matches

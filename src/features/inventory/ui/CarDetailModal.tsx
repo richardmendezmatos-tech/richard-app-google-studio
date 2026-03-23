@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Car } from '@/domain/entities';
+import { Car } from '@/entities/shared';
 import {
   X,
   ChevronRight,
@@ -12,9 +12,9 @@ import {
   AlertCircle,
   Share2,
 } from 'lucide-react';
-import { generateCarPitch } from '@/services/geminiService';
+import { generateCarPitch } from '@/features/ai-agents';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import { ProgressRing } from '@/shared/brand-ui/common/ProgressRing';
+import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 
 interface Props {
@@ -149,14 +149,14 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="car-modal-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0d2232]/80 backdrop-blur-xl animate-in fade-in"
+      className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-[#0d2232]/80 backdrop-blur-xl animate-in fade-in"
     >
       <div className="bg-slate-50 dark:bg-slate-900 w-full max-w-6xl h-[90vh] rounded-[40px] md:rounded-[60px] shadow-2xl p-4 md:p-6 relative flex flex-col lg:flex-row gap-6 overflow-hidden">
         {/* Action Buttons (Close & Share) */}
         <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-20 flex gap-2">
           <button
             onClick={handleShare}
-            className="w-10 h-10 lg:w-12 lg:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-[#00aed9] hover:text-white transition-all shadow-lg"
+            className="w-10 h-10 lg:w-12 lg:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-primary hover:text-white transition-all shadow-lg"
             title="Compartir en Redes"
           >
             <Share2 size={20} />
@@ -186,7 +186,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         <div className="w-full lg:w-2/5 flex flex-col h-full overflow-hidden">
           {/* Header Info */}
           <div className="mb-6 px-2">
-            <span className="text-[10px] font-black text-[#00aed9] uppercase tracking-[0.3em]">
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
               {car.type}
             </span>
             <h2
@@ -233,13 +233,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <div className="flex bg-slate-200 dark:bg-slate-800 p-1.5 rounded-2xl mb-4 shrink-0">
             <button
               onClick={() => handleTabChange('calculator')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'calculator' ? 'bg-white dark:bg-slate-600 text-[#00aed9] shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'calculator' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
             >
               Calculadora
             </button>
             <button
               onClick={() => handleTabChange('insight')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'insight' ? 'bg-white dark:bg-slate-600 text-[#00aed9] shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'insight' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
             >
               <Sparkles size={14} /> Richard's Insight
             </button>
@@ -277,7 +277,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                                     ${
                                       errors.downPayment
                                         ? 'border-red-500 focus:ring-4 focus:ring-red-500/20 bg-red-50 dark:bg-red-900/10'
-                                        : 'border-transparent focus:ring-4 focus:ring-[#00aed9]/20'
+                                        : 'border-transparent focus:ring-4 focus:ring-primary/20'
                                     }`}
                       placeholder="0"
                     />
@@ -288,7 +288,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       max={car.price}
                       value={downPayment || 0}
                       onChange={(e) => setDownPayment(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-[#00aed9]"
+                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary"
                     />
 
                     {errors.downPayment && (
@@ -313,7 +313,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       onChange={(e) =>
                         setTradeIn(e.target.value === '' ? '' : Number(e.target.value))
                       }
-                      className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300"
+                      className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-primary/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300"
                       placeholder="0"
                     />
                     <input
@@ -323,7 +323,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       max={car.price}
                       value={tradeIn || 0}
                       onChange={(e) => setTradeIn(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-[#00aed9]"
+                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary"
                     />
                   </div>
                 </div>
@@ -341,7 +341,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       id="creditRateSelect"
                       value={creditRate}
                       onChange={(e) => setCreditRate(Number(e.target.value))}
-                      className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-[20px] focus:ring-4 focus:ring-[#00aed9]/20 text-sm font-bold appearance-none cursor-pointer outline-none"
+                      className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-[20px] focus:ring-4 focus:ring-primary/20 text-sm font-bold appearance-none cursor-pointer outline-none"
                     >
                       <option value={0.029}>Excelente (720+)</option>
                       <option value={0.059}>Bueno (660+)</option>
@@ -367,7 +367,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                         className={`py-4 rounded-[20px] font-bold text-sm transition-all border-2 ${
                           term === t
                             ? 'bg-[#173d57] border-[#173d57] text-white shadow-lg transform scale-105'
-                            : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 hover:border-[#00aed9] hover:text-[#00aed9]'
+                            : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 hover:border-primary hover:text-primary'
                         }`}
                       >
                         {t} Meses
@@ -380,8 +380,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 h-full flex flex-col">
                 <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-[30px]">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-[#00aed9]/10 rounded-full flex items-center justify-center">
-                      <Sparkles size={20} className="text-[#00aed9]" />
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Sparkles size={20} className="text-primary" />
                     </div>
                     <div>
                       <h4 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">
@@ -393,7 +393,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
                   {loadingPitch ? (
                     <div className="flex flex-col items-center justify-center text-slate-400 gap-4 py-8">
-                      <Loader2 className="animate-spin text-[#00aed9]" size={32} />
+                      <Loader2 className="animate-spin text-primary" size={32} />
                       <p className="text-xs font-bold uppercase tracking-widest animate-pulse">
                         Analizando especificaciones...
                       </p>
@@ -403,7 +403,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       <div
                         dangerouslySetInnerHTML={{
                           __html: aiPitch
-                            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#00aed9]">$1</strong>')
+                            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
                             .replace(/\n/g, '<br/>'),
                         }}
                       />

@@ -1,0 +1,33 @@
+scripts/generate-sitemap.ts(4,29): error TS2307: Cannot find module '../src/constants/siteConfig.ts' or its corresponding type declarations.
+scripts/reseed-inventory.ts(4,38): error TS2307: Cannot find module '../src/constants/initialInventory.ts' or its corresponding type declarations.
+scripts/reseed-inventory.ts(38,34): error TS7006: Parameter 'car' implicitly has an 'any' type.
+scripts/submit-sitemaps.ts(1,29): error TS2307: Cannot find module '../src/constants/siteConfig' or its corresponding type declarations.
+scripts/sync-to-notebook.ts(1,27): error TS2307: Cannot find module '../src/infra/di/container' or its corresponding type declarations.
+scripts/verify-phase-17.ts(2,22): error TS2307: Cannot find module '../src/types/types' or its corresponding type declarations.
+scripts/verify-phase-17.ts(3,33): error TS2307: Cannot find module '../src/services/presenceService' or its corresponding type declarations.
+scripts/verify-phase-17.ts(55,36): error TS7006: Parameter 'agents' implicitly has an 'any' type.
+scripts/verify-phase-17.ts(62,32): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/App.tsx(30,11): error TS2322: Type 'import("/Users/richardmendez/richard-automotive-_-command-center/src/shared/types/types").Car[]' is not assignable to type 'import("/Users/richardmendez/richard-automotive-_-command-center/src/entities/shared/model/entities").Car[]'.
+  Type 'Car' is missing the following properties from type 'Car': make, model, mileage
+src/entities/shared/api/repositories/HoustonRepository.ts(1,34): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/entities/shared/api/repositories/InventoryRepository.ts(1,21): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/entities/shared/api/repositories/LeadRepository.ts(1,22): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/entities/shared/api/repositories/PredictiveRepository.ts(1,41): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/entities/shared/lib/services/AnalyticsService.test.ts(3,27): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/entities/shared/lib/services/AnalyticsService.ts(1,27): error TS2307: Cannot find module '../entities' or its corresponding type declarations.
+src/features/ai-agents/index.ts(4,1): error TS2308: Module './api/aiService' has already exported a member named 'analyzeCarImage'. Consider explicitly re-exporting to resolve the ambiguity.
+src/features/comparison/model/useComparisonStore.ts(2,10): error TS2305: Module '"@/shared/types"' has no exported member 'Car'.
+src/features/sales/application/ProcesarEntradaInventario.ts(2,10): error TS2724: '"@/entities/shared"' has no exported member named 'SaleRepository'. Did you mean 'LeadRepository'?
+src/features/sales/application/VenderUnidad.ts(1,10): error TS2724: '"@/entities/shared"' has no exported member named 'SaleRepository'. Did you mean 'LeadRepository'?
+src/features/sales/infra/FirestoreSaleRepository.ts(11,10): error TS2724: '"@/entities/shared"' has no exported member named 'SaleRepository'. Did you mean 'LeadRepository'?
+src/features/search/api/searchService.ts(1,41): error TS2307: Cannot find module './supabaseClient' or its corresponding type declarations.
+src/features/shared/model/use-cases/CalculatePredictiveScore.ts(29,38): error TS2554: Expected 2 arguments, but got 1.
+src/pages/admin/command-center/ui/CommandCenterPanel.tsx(65,9): error TS2322: Type 'Promise<typeof import("/Users/richardmendez/richard-automotive-_-command-center/src/features/marketing/index")>' is not assignable to type 'Promise<{ default: ComponentType<any>; }>'.
+  Property 'default' is missing in type 'typeof import("/Users/richardmendez/richard-automotive-_-command-center/src/features/marketing/index")' but required in type '{ default: ComponentType<any>; }'.
+src/pages/auth/ui/SystemAccessLogin.tsx(91,16): error TS2304: Cannot find name 'loginSuccess'.
+src/shared/api/repositories/FirestoreInventoryRepository.ts(3,37): error TS2307: Cannot find module '@/entities/inventory/api/inventoryRepository' or its corresponding type declarations.
+src/widgets/brand-ui/AnimatedRoutes.tsx(93,70): error TS2339: Property 'LeadAnalyticsPage' does not exist on type 'typeof import("/Users/richardmendez/richard-automotive-_-command-center/src/features/leads/index")'.
+src/widgets/digital-twin/DigitalTwinDashboard.tsx(325,100): error TS2345: Argument of type 'import("/Users/richardmendez/richard-automotive-_-command-center/src/shared/types/types").Car[]' is not assignable to parameter of type 'import("/Users/richardmendez/richard-automotive-_-command-center/src/entities/shared/model/entities").Car[]'.
+  Type 'Car' is missing the following properties from type 'Car': make, model, mileage
+src/widgets/houston/HoustonDashboard.tsx(80,56): error TS7006: Parameter 'data' implicitly has an 'any' type.
+verify-phase-16.ts(3,22): error TS2307: Cannot find module './src/types/types' or its corresponding type declarations.

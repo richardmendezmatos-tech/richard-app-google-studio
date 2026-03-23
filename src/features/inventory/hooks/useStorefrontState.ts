@@ -1,11 +1,11 @@
 import { useState, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Car, CarType } from '@/domain/entities';
+import { Car, CarType } from '@/entities/shared';
 import { useVisualSearch } from './useVisualSearch';
 import { useCars } from './useCars';
 import { useSavedCars } from './useSavedCars';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
-import { AuthContext } from '@/features/auth/context/AuthContextValue';
+import { useAuthStore } from '@/entities/session';
 
 export function useStorefrontState(
   inventory: Car[],
@@ -22,9 +22,9 @@ export function useStorefrontState(
   const [visualContext, setVisualContext] = useState<string | null>(null);
   const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Car[]>([]);
-  const [isFixing, setIsFixing] = useState(false);
 
-  const { user } = useContext(AuthContext);
+
+  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -129,6 +129,8 @@ export function useStorefrontState(
       return [...prev, car];
     });
   };
+
+  const [isFixing, setIsFixing] = useState(false);
 
   const handleMagicClick = async () => {
     if (!onMagicFix) return;

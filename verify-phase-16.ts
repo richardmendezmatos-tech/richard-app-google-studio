@@ -1,5 +1,5 @@
-import { orchestrationService } from './src/services/orchestrationService.ts';
-import { automationService } from './src/services/automationService.ts';
+import { orchestrationService } from './src/features/ai-agents/api/orchestrationService.ts';
+import { automationService } from './src/features/automation/api/automationService.ts';
 import { Lead } from './src/types/types'
 
 // Mocking external services to avoid Firebase errors

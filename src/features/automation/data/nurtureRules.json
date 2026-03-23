@@ -1,0 +1,23 @@
+[
+    {
+        "id": "day_1_actuarial",
+        "delayDays": 1,
+        "condition": "!lead.actuarialGenerated",
+        "agent": "sofia",
+        "template": "Hola {name}, soy Sofia del equipo de Richard Automotive. Vi tu interés en la unidad {vehicle}. Acabo de correr un reporte actuarial y el valor de mercado actual es agresivo a tu favor. ¿Tienes 2 minutos hoy para que te envíe los números por aquí?"
+    },
+    {
+        "id": "day_3_test_drive",
+        "delayDays": 3,
+        "condition": "lead.aiScore > 80",
+        "agent": "jordan",
+        "template": "Qué tal {name}, soy Jordan. Tuvimos 3 consultas adicionales hoy por la unidad {vehicle}. Para respetar tu lugar en la fila, te he bloqueado un espacio mañana para una prueba de manejo VIP y asegurarte un bono especial de cierre. ¿Prefieres en la mañana o en la tarde?"
+    },
+    {
+        "id": "day_7_check_in",
+        "delayDays": 7,
+        "condition": "true",
+        "agent": "ricardo",
+        "template": "Hola {name}. Richard Mendez me pidió personalmente que pasara a saludarte. Seguimos apartando la mirada en esa {vehicle} para ti. Sabemos que comprar un auto es una decisión táctica; ¿hay alguna inquietud matemática o de financiamiento que esté frenando el proceso en la que yo pueda apoyarte directamente?"
+    }
+]

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import OptimizedImage from '@/shared/brand-ui/common/OptimizedImage';
+import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 
 interface HeroSectionProps {
   onNeuralMatch: () => void;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Car } from '@/domain/entities';
-import PremiumGlassCard from './storefront/PremiumGlassCard';
+import { Car } from '@/entities/shared';
+import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
 
 interface VirtualInventoryProps {
   cars: Car[];

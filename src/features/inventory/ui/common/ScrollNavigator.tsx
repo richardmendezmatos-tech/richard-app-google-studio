@@ -5,4 +5,4 @@
  * DRY: No duplicar la implementación aquí.
  * Importa siempre desde este punto de entrada si estás dentro de features/inventory.
  */
-export { ScrollNavigator } from '@/shared/brand-ui/common/ScrollNavigator';
+export { ScrollNavigator } from '@/shared/ui/common/ScrollNavigator';

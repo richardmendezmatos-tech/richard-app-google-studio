@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import admin from 'firebase-admin';
-import { SITE_CONFIG } from '../src/constants/siteConfig.ts';
+import { SITE_CONFIG } from '../src/shared/config/siteConfig.ts';
 
 const ROOT = process.cwd();
 const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');

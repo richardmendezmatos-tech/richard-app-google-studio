@@ -717,7 +717,7 @@ body {
 }
 
 .scan-line {
-  @apply absolute left-0 right-0 h-[2px] bg-cyan-500 z-10;
+  @apply absolute left-0 right-0 h-0.5 bg-cyan-500 z-10;
   box-shadow:
     0 0 15px theme('colors.cyan.500'),
     0 0 5px #fff;

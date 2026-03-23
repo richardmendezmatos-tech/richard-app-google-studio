@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car } from '@/types/types';
+import { Car } from '@/shared/types/types';
 import { Flame, Ghost, TrendingUp, Sparkles, ScanLine, BrainCircuit } from 'lucide-react';
 
 interface Props {
@@ -49,8 +49,8 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
       <div className="flex items-center justify-between mb-2">
         <div>
           <h3 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
-            <ScanLine className="text-[#00aed9]" /> Inventory{' '}
-            <span className="text-[#00aed9]">Heatmap</span>
+            <ScanLine className="text-primary" /> Inventory{' '}
+            <span className="text-primary">Heatmap</span>
           </h3>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
             Real-time engagement telemetry
@@ -75,7 +75,7 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
             >
               {/* Background Heat Gradient */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br transition-opacity duration-700 ${heat.color}`}
+                className={`absolute inset-0 bg-linear-to-br transition-opacity duration-700 ${heat.color}`}
               ></div>
 
               {/* Content Overlay */}
@@ -141,17 +141,17 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
 
       {/* Strategic Insights Card */}
       <div className="bg-slate-800/50 backdrop-blur-xl rounded-[32px] p-6 border border-white/5 mt-8 overflow-hidden relative group">
-        <div className="absolute top-0 right-0 p-8 opacity-5 -mr-4 -mt-4 text-[#00aed9] group-hover:scale-110 transition-transform duration-700">
+        <div className="absolute top-0 right-0 p-8 opacity-5 -mr-4 -mt-4 text-primary group-hover:scale-110 transition-transform duration-700">
           <BrainCircuit size={120} />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/20">
+          <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/20">
             <Sparkles className="w-8 h-8 text-white animate-pulse" />
           </div>
           <div className="flex-1 space-y-1">
             <h4 className="text-lg font-black text-white uppercase tracking-tighter flex items-center gap-2">
-              Neural <span className="text-[#00aed9]">Marketing Insight</span>
+              Neural <span className="text-primary">Marketing Insight</span>
             </h4>
             <p className="text-slate-400 text-xs font-medium leading-relaxed max-w-2xl">
               Our AI detected a <span className="text-orange-400 font-bold">14% increase</span> in
@@ -159,7 +159,7 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
               programmatic bidding on "Digital Twin" previews for top inventory.
             </p>
           </div>
-          <button className="px-6 py-3 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#00aed9] hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap">
+          <button className="px-6 py-3 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap">
             Apply AI Strategy
           </button>
         </div>

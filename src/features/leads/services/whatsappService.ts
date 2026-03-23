@@ -5,11 +5,11 @@
  * integration with Gemini AI for Richard Automotive.
  */
 
-import { getAIResponse } from '@/services/geminiService';
-import { validationAgentService } from '@/services/validationAgentService';
-import { Car } from '@/types/types';
+import { getAIResponse } from '@/features/ai-agents';
+import { validationAgentService } from '@/features/ai-agents';
+import { Car } from '@/shared/types/types';
 import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
-import { db } from '@/services/firebaseService';
+import { db } from '@/shared/api/firebase/firebaseService';
 
 export interface WhatsAppMessage {
   id: string;

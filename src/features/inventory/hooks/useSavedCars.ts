@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getCookie, setCookie } from '@/services/cookieService';
+import { getCookie, setCookie } from '@/shared/api/tracking/cookieService';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 
 const SAVED_CARS_COOKIE = 'richard_saved_cars';

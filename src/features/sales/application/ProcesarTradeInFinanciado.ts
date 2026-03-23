@@ -1,6 +1,6 @@
 import { UnidadTradeIn, CotizacionFinanciera } from '../domain/TradeIn';
 import { REGLAS_FINANCIAMIENTO } from '../../loans/domain/rules';
-import { raSentinel } from '@/infra/monitoring/raSentinelService';
+import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 /**
  * Caso de Uso: Procesar Trade-In Financiado

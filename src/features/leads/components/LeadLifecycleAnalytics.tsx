@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lead } from '@/types/types';
+import { Lead } from '@/shared/types/types';
 import {
   Activity,
   Calendar,
@@ -71,7 +71,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
-        <Activity className="text-[#00aed9]" /> Lead Lifecycle
+        <Activity className="text-primary" /> Lead Lifecycle
       </h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -217,7 +217,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
       {/* Phase 21: Marketing Efficiency & ROI Dashboard */}
       <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         <h4 className="font-bold text-slate-500 text-xs uppercase tracking-wider mb-6 flex items-center gap-2">
-          <PieChart size={14} className="text-[#00aed9]" /> Marketing Efficiency (Operation Shield)
+          <PieChart size={14} className="text-primary" /> Marketing Efficiency (Operation Shield)
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -272,10 +272,10 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
 
       {/* Customer Memory Visualization */}
       {lead.customerMemory && (
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-32 bg-[#00aed9]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="bg-linear-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
-          <h4 className="font-bold text-[#00aed9] text-xs uppercase tracking-wider mb-4 relative z-10 flex items-center gap-2">
+          <h4 className="font-bold text-primary text-xs uppercase tracking-wider mb-4 relative z-10 flex items-center gap-2">
             <Zap size={14} /> AI Context Memory
           </h4>
 

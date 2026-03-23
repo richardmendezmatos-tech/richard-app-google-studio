@@ -1,4 +1,4 @@
-import { db } from '../../../infra/firebase/client';
+import { db } from '@/shared/api/firebase/client';
 import {
   collection,
   addDoc,

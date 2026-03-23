@@ -1,0 +1,118 @@
+import { GetLeads } from '@/features/shared';
+import { GetInventory } from '@/features/shared';
+import { GetHoustonTelemetry } from '@/features/shared';
+import { FirestoreLeadRepository } from '@/entities/lead';
+import { FirestoreInventoryRepository } from '@/shared/api/repositories/FirestoreInventoryRepository';
+import { FirestoreHoustonRepository } from '@/entities/shared';
+import { FirestoreApplicationRepository } from '@/shared/api/repositories/FirestoreApplicationRepository';
+import { FirestoreStorageRepository } from '@/shared/api/repositories/FirestoreStorageRepository';
+import { FirestoreUserRepository } from '@/entities/shared';
+import { FirestoreSubscriberRepository } from '@/shared/api/repositories/FirestoreSubscriberRepository';
+import { FirestoreSurveyRepository } from '@/shared/api/repositories/FirestoreSurveyRepository';
+import { IdentifyOutreachOpportunities } from '@/features/shared';
+import { CalculateDynamicMargin } from '@/features/shared';
+import { FirestorePredictiveRepository } from '@/entities/shared';
+import { EvaluarAprobacionVenta } from '@/features/loans';
+import { FirestoreLoanRepository } from '@/features/loans';
+
+class DIContainer {
+  private static instance: DIContainer;
+
+  // Repositories
+  private leadRepository = new FirestoreLeadRepository();
+  private inventoryRepository = new FirestoreInventoryRepository();
+  private applicationRepository = new FirestoreApplicationRepository();
+  private storageRepository = new FirestoreStorageRepository();
+  private userRepository = new FirestoreUserRepository();
+  private subscriberRepository = new FirestoreSubscriberRepository();
+  private surveyRepository = new FirestoreSurveyRepository();
+  private houstonRepository = new FirestoreHoustonRepository();
+  private predictiveRepository = new FirestorePredictiveRepository();
+  private loanRepository = new FirestoreLoanRepository();
+
+  // Services
+
+  // Use Cases
+  private getLeadsUseCase = new GetLeads(this.leadRepository);
+  private getInventoryUseCase = new GetInventory(this.inventoryRepository);
+  private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
+  private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(
+    this.predictiveRepository,
+    this.leadRepository,
+  );
+  private calculateDynamicMarginUseCase = new CalculateDynamicMargin();
+  private evaluarAprobacionVentaUseCase = new EvaluarAprobacionVenta(this.loanRepository);
+
+  private constructor() {}
+
+  public static getInstance(): DIContainer {
+    if (!DIContainer.instance) {
+      DIContainer.instance = new DIContainer();
+    }
+    return DIContainer.instance;
+  }
+
+  public getGetLeadsUseCase(): GetLeads {
+    return this.getLeadsUseCase;
+  }
+
+  public getGetInventoryUseCase(): GetInventory {
+    return this.getInventoryUseCase;
+  }
+
+  public getLeadRepository() {
+    return this.leadRepository;
+  }
+
+  public getApplicationRepository() {
+    return this.applicationRepository;
+  }
+
+  public getStorageRepository() {
+    return this.storageRepository;
+  }
+
+  public getUserRepository() {
+    return this.userRepository;
+  }
+
+  public getSubscriberRepository() {
+    return this.subscriberRepository;
+  }
+
+  public getSurveyRepository() {
+    return this.surveyRepository;
+  }
+
+  public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
+    return this.getHoustonTelemetryUseCase;
+  }
+
+  public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {
+    return this.identifyOutreachOpportunitiesUseCase;
+  }
+
+  public getCalculateDynamicMarginUseCase(): CalculateDynamicMargin {
+    return this.calculateDynamicMarginUseCase;
+  }
+
+  public getPredictiveRepository() {
+    return this.predictiveRepository;
+  }
+
+  public getEvaluarAprobacionVentaUseCase(): EvaluarAprobacionVenta {
+    return this.evaluarAprobacionVentaUseCase;
+  }
+}
+
+import { DI } from '@/shared/lib/di/registry';
+import { sendWhatsAppMessage } from '@/features/leads';
+import { getAntigravityOutreachAction } from '@/features/omnichannel';
+
+export const container = DIContainer.getInstance();
+
+// Hydrate static registry for FSD compliance
+Object.assign(DI, container, {
+  sendWhatsAppMessage,
+  getAntigravityOutreachAction,
+});

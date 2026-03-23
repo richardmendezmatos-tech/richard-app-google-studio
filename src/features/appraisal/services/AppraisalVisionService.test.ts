@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { appraisalVisionService } from './AppraisalVisionService';
-import { analyzeTradeInImages } from '@/services/geminiService';
+import { analyzeTradeInImages } from '@/features/ai-agents/api/geminiService';
 
-vi.mock('@/services/geminiService', () => ({
+vi.mock('@/features/ai-agents/api/geminiService', () => ({
   analyzeTradeInImages: vi.fn(),
 }));
 

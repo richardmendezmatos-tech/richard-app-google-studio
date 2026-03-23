@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { calculateLoan, CreditTier, getCreditTierLabel } from '@/utils/financeCalculator';
+import { calculateLoan, CreditTier, getCreditTierLabel } from '@/entities/finance';
 import { DollarSign, TrendingUp, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -48,7 +48,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
   const getPowerLabel = (score: number) => {
     if (score > 80)
       return { text: '¡Aprobación Inmediata!', color: 'text-emerald-400', bg: 'bg-emerald-500' };
-    if (score > 50) return { text: 'Muy Probable', color: 'text-[#00aed9]', bg: 'bg-[#00aed9]' };
+    if (score > 50) return { text: 'Muy Probable', color: 'text-primary', bg: 'bg-primary' };
     return { text: 'Requiere Revisión', color: 'text-amber-400', bg: 'bg-amber-500' };
   };
 
@@ -75,7 +75,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
   return (
     <div className="bg-slate-900 border border-slate-700/50 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none text-[#00aed9]">
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none text-primary">
         <DollarSign size={200} />
       </div>
 
@@ -91,7 +91,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
         </div>
 
         {/* MONTHLY PAYMENT HERO */}
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 text-center border border-slate-700 shadow-inner relative group">
+        <div className="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 text-center border border-slate-700 shadow-inner relative group">
           <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-2">
             Tu Mensualidad Estimada
           </p>
@@ -120,7 +120,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
           <div>
             <div className="flex justify-between text-sm font-bold text-slate-300 mb-3">
               <label>Pago Inicial (Down Payment)</label>
-              <span className="text-[#00aed9]">${downPayment.toLocaleString()}</span>
+              <span className="text-primary">${downPayment.toLocaleString()}</span>
             </div>
             <input
               type="range"
@@ -129,7 +129,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
               step="500"
               value={downPayment}
               onChange={(e) => setDownPayment(Number(e.target.value))}
-              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#00aed9]"
+              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
             />
             <div className="flex justify-between text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-wider">
               <span>$0</span>
@@ -168,7 +168,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
                 <button
                   key={t}
                   onClick={() => setTerm(t)}
-                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${term === t ? 'bg-[#00aed9] text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
+                  className={`flex-1 py-2 rounded-lg text-xs font-black transition-all ${term === t ? 'bg-primary text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
                 >
                   {t}
                 </button>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { Lead, VehicleHealthStatus } from '@/types/types';
-import { calculateLeadScore, ScoringResult } from '@/services/leadScoringService';
+import { Lead, VehicleHealthStatus } from '@/shared/types/types';
+import { calculateLeadScore, ScoringResult } from '@/entities/lead';
 
 /**
  * Hook to provide dynamic scoring for a specific lead.

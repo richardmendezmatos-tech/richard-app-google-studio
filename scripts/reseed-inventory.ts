@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import fs from 'fs';
 import path from 'path';
-import { initialInventoryData } from '../src/constants/initialInventory.ts';
+import { initialInventoryData } from '../src/entities/inventory/model/initialInventory.ts';
 
 const ROOT = process.cwd();
 const CARS_COLLECTION = 'cars';
@@ -35,7 +35,7 @@ const runReseed = async () => {
 
     console.log(`Reseeding ${initialInventoryData.length} vehicles...`);
 
-    initialInventoryData.forEach(car => {
+    initialInventoryData.forEach((car: any) => {
         const idSlug = car.name
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')

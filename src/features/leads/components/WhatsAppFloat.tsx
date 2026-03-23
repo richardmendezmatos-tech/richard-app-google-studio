@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Sparkles, ChevronRight } from 'lucide-react';
-import { addLead } from '../services/crmService';
-import { useMetaPixel } from '@/hooks/useMetaPixel';
+import { addLead } from '@/shared/api/adapters/leads/crmService';
+import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { useLocation } from 'react-router-dom';
-import { SITE_CONFIG } from '@/constants/siteConfig';
-import { createInteractiveMenu } from '../services/whatsappService';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import { createInteractiveMenu } from '@/features/leads/services/whatsappService';
 
 export const WhatsAppFloat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +101,7 @@ export const WhatsAppFloat: React.FC = () => {
       {isOpen && (
         <div className="mb-4 w-[320px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl route-fade-in dark:border-slate-800 dark:bg-slate-900">
           {/* Premium Header */}
-          <div className="bg-gradient-to-br from-[#25D366] to-[#128C7E] p-5">
+          <div className="bg-linear-to-br from-[#25D366] to-[#128C7E] p-5">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/20">

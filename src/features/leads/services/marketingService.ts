@@ -1,5 +1,5 @@
-import { Car } from '@/types/types';
-import { blobToBase64 } from '@/services/imageOptimizationService';
+import { Car } from '@/shared/types/types';
+import { blobToBase64 } from '@/shared/api/media/imageOptimizationService';
 
 export interface MarketingContent {
   instagram: string;

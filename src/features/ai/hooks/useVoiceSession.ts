@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connectToVoiceSession } from '@/services/geminiService';
-import { VoiceCommandService } from '@/services/VoiceCommandService';
+import { connectToVoiceSession } from '@/features/ai-agents';
+import { VoiceCommandService } from '@/shared/api/voice/VoiceCommandService';
 import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
-import { decode, decodeAudioData, createBlob } from '@/utils/audioUtils';
+import { decode, decodeAudioData, createBlob } from '@/shared/lib/utils/audioUtils';
 
 const WORKLET_NAME = 'pcm-processor';
 const PCM_PROCESSOR_CODE = `

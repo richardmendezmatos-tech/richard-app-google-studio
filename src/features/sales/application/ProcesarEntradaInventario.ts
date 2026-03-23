@@ -1,6 +1,6 @@
 import { UnidadTradeIn } from '../domain/TradeIn';
 import { SaleRepository } from '../domain/repositories/SaleRepository';
-import { raSentinel } from '@/infra/monitoring/raSentinelService';
+import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 /**
  * Caso de Uso: Procesar Entrada de Inventario (Trade-In In-Take)

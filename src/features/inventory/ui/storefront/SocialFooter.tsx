@@ -1,6 +1,6 @@
 import React from 'react';
 import { Globe, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
-import { SITE_CONFIG } from '@/constants/siteConfig';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 const SocialFooter: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const SocialFooter: React.FC = () => {
       <div className="relative z-10 flex flex-col items-center justify-between gap-10 md:flex-row">
         <div className="text-center md:text-left">
           <h2 className="font-cinematic flex items-center justify-center gap-2 text-3xl uppercase tracking-[0.08em] md:justify-start">
-            Richard<span className="text-[#00aed9]">Automotive</span>
+            Richard<span className="text-primary">Automotive</span>
           </h2>
           <p className="mt-2 max-w-md text-sm text-slate-300">
             Redefiniendo la compra de autos en Puerto Rico con Inteligencia Artificial y
@@ -87,7 +87,7 @@ const SocialButton = ({
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-cyan-200/40 hover:bg-[#00aed9]"
+    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-cyan-200/40 hover:bg-primary"
     title={label}
   >
     <span className="text-white group-hover:animate-bounce">{icon}</span>

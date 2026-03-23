@@ -1,4 +1,4 @@
-import { analyzeTradeInImages } from '@/services/geminiService';
+import { analyzeTradeInImages } from '@/features/ai-agents';
 
 export interface AppraisalResult {
   condition: string;

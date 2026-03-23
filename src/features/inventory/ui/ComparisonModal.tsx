@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Car } from '@/types/types';
-import { compareCars } from '@/services/geminiService';
+import { Car } from '@/shared/types/types';
+import { compareCars } from '@/features/ai-agents';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 
 import { X, Trophy, Zap } from 'lucide-react';
@@ -35,12 +35,12 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
   if (!car1 || !car2) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#0d2232] flex items-center justify-center animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-100 bg-[#0d2232] flex items-center justify-center animate-in fade-in duration-300">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-blue-900/20 to-transparent transform -skew-x-12 -translate-x-20"></div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-red-900/20 to-transparent transform -skew-x-12 translate-x-20"></div>
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-linear-to-r from-blue-900/20 to-transparent transform -skew-x-12 -translate-x-20"></div>
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-red-900/20 to-transparent transform -skew-x-12 translate-x-20"></div>
       </div>
 
       <button
@@ -56,7 +56,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
         <div className="text-center mb-8">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">
             Richard{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00aed9] to-purple-500">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-500">
               VS
             </span>{' '}
             Arena
@@ -111,19 +111,19 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
             {!result && !loading && (
               <button
                 onClick={handleBattle}
-                className="group relative w-24 h-24 lg:w-32 lg:h-32 bg-slate-900 border-4 border-[#00aed9] rounded-full flex items-center justify-center hover:scale-110 hover:shadow-[0_0_50px_rgba(0,174,217,0.6)] transition-all cursor-pointer"
+                className="group relative w-24 h-24 lg:w-32 lg:h-32 bg-slate-900 border-4 border-primary rounded-full flex items-center justify-center hover:scale-110 hover:shadow-[0_0_50px_rgba(0,174,217,0.6)] transition-all cursor-pointer"
               >
                 <span className="text-4xl lg:text-5xl font-black text-white italic group-hover:animate-pulse">
                   VS
                 </span>
-                <div className="absolute inset-0 rounded-full border-t-4 border-[#00aed9] animate-spin [animation-duration:3s]"></div>
+                <div className="absolute inset-0 rounded-full border-t-4 border-primary animate-spin [animation-duration:3s]"></div>
               </button>
             )}
 
             {loading && (
               <div className="flex flex-col items-center gap-4">
-                <div className="w-24 h-24 border-4 border-slate-700 border-t-[#00aed9] rounded-full animate-spin"></div>
-                <p className="text-[#00aed9] font-bold text-xs uppercase tracking-widest animate-pulse">
+                <div className="w-24 h-24 border-4 border-slate-700 border-t-primary rounded-full animate-spin"></div>
+                <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">
                   Simulando...
                 </p>
               </div>
@@ -131,7 +131,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
 
             {result && (
               <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
-                <div className="px-6 py-2 bg-[#00aed9] rounded-full shadow-lg shadow-cyan-500/50">
+                <div className="px-6 py-2 bg-primary rounded-full shadow-lg shadow-cyan-500/50">
                   <span className="text-white font-black uppercase tracking-widest text-sm">
                     Análisis Completo
                   </span>
@@ -191,7 +191,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
             <div className="bg-slate-800/50 backdrop-blur-md rounded-[40px] border border-slate-700 p-8 lg:p-10">
               {/* Final Verdict */}
               <div className="text-center mb-10">
-                <h4 className="text-[#00aed9] font-black uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2">
+                <h4 className="text-primary font-black uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2">
                   <Zap size={18} /> Veredicto de Richard IA
                 </h4>
                 <p className="text-2xl lg:text-3xl font-medium text-white leading-tight max-w-3xl mx-auto">

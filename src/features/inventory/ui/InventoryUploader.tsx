@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { inventoryIngestionService } from '@/services/inventoryIngestionService';
-import { Car } from '@/types/types';
+import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
+import { Car } from '@/shared/types/types';
 import { Loader2, Upload, AlertCircle, FileText, Image as ImageIcon } from 'lucide-react';
 
 interface InventoryUploaderProps {

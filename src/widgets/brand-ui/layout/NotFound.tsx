@@ -1,0 +1,165 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, Home } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+
+const NotFound: React.FC = () => {
+  const [seconds, setSeconds] = useState(10);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [navigate]);
+
+  interface Particle {
+    id: number;
+    width: string;
+    height: string;
+    left: string;
+    top: string;
+    animationDuration: string;
+    animationDelay: string;
+  }
+
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const particlesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const data = [...Array(20)].map((_, i) => ({
+        id: i,
+        width: Math.random() * 4 + 2 + 'px',
+        height: Math.random() * 4 + 2 + 'px',
+        left: Math.random() * 100 + '%',
+        top: Math.random() * 100 + '%',
+        animationDuration: Math.random() * 3 + 2 + 's',
+        animationDelay: Math.random() * 2 + 's',
+      }));
+      setParticles(data);
+
+      // Set styles directly on DOM to avoid lint warnings about inline styles
+      data.forEach((p, i) => {
+        const el = particlesRef.current[i];
+        if (el) {
+          el.style.width = p.width;
+          el.style.height = p.height;
+          el.style.left = p.left;
+          el.style.top = p.top;
+          el.style.animationDuration = p.animationDuration;
+          el.style.animationDelay = p.animationDelay;
+        }
+      });
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950 relative overflow-hidden">
+      <Helmet>
+        <title>404 | Richard Automotive</title>
+        <meta name="robots" content="noindex,follow" />
+      </Helmet>
+      {/* Background Decor */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,_rgba(0,174,217,0.05)_0%,_transparent_40%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,_rgba(139,92,246,0.05)_0%,_transparent_40%)]"></div>
+
+      {/* Dynamic Particles simulation with CSS */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        {particles.map((p, i) => (
+          <div
+            key={p.id}
+            ref={(el) => { particlesRef.current[i] = el; }}
+            className="absolute rounded-full bg-primary animate-pulse"
+          />
+        ))}
+      </div>
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+                .absolute.rounded-full.bg-\\[\\#00aed9\\] {
+                    width: var(--p-width);
+                    height: var(--p-height);
+                    left: var(--p-left);
+                    top: var(--p-top);
+                    animation-duration: var(--p-duration);
+                    animation-delay: var(--p-delay);
+                }
+            `,
+        }}
+      />
+
+      <div className="max-w-md w-full z-10 animate-in fade-in zoom-in duration-700">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center space-y-6">
+          <h1 className="text-8xl md:text-9xl font-black italic tracking-tighter bg-linear-to-b from-white to-primary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,174,217,0.3)] animate-bounce-subtle">
+            404
+          </h1>
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-white uppercase tracking-tight">
+              Página no encontrada
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Lo sentimos, la sección{' '}
+              <span className="text-primary font-black underline underline-offset-4 decoration-2">
+                {location.pathname}
+              </span>{' '}
+              no está disponible en nuestro catálogo.
+            </p>
+          </div>
+
+          <div className="inline-block px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+              Redirección al inicio en <span className="text-white">{seconds}</span>s
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-xs font-black uppercase tracking-widest transition-all group"
+            >
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              Volver Atrás
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-primary hover:bg-cyan-500 rounded-2xl text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-cyan-500/20 transition-all active:scale-95"
+            >
+              <Home size={16} />
+              Ir al Inicio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @keyframes bounce-subtle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 4s ease-in-out infinite;
+        }
+      `,
+        }}
+      />
+    </div>
+  );
+};
+
+export default NotFound;

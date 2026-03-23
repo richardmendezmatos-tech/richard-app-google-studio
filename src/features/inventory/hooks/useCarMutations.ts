@@ -3,8 +3,8 @@ import {
   addVehicle,
   updateVehicle,
   deleteVehicle,
-} from '@/features/inventory/services/inventoryService';
-import { Car } from '@/domain/entities';
+} from '@/shared/api/adapters/inventory/inventoryService';
+import { Car } from '@/entities/shared';
 
 export const useCarMutations = () => {
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
 import { REGLAS_FINANCIAMIENTO } from '../domain/rules';
 import { FirestoreLoanRepository } from '../infra/FirestoreLoanRepository';
-import { getFunctionsService } from '@/services/firebaseService';
+import { getFunctionsService } from '@/shared/api/firebase/firebaseService';
 import { httpsCallable } from 'firebase/functions';
 
 /**

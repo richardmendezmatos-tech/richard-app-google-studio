@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Wand2, Download, Video, Music, Mic } from 'lucide-react';
-import { Car } from '@/domain/entities';
+import { Car } from '@/entities/shared';
 
 interface VideoScript {
   hook: string;
@@ -65,7 +65,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
             </p>
             <button
               onClick={handleGenerate}
-              className="w-full h-16 bg-[#00aed9] hover:bg-cyan-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
+              className="w-full h-16 bg-primary hover:bg-cyan-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
             >
               <Sparkles size={20} />
               Crear Video Viral
@@ -118,7 +118,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
           <button className="flex-1 h-14 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 border border-white/10">
             <Wand2 size={18} /> Regenerar
           </button>
-          <button className="flex-1 h-14 bg-[#00aed9] hover:bg-cyan-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
+          <button className="flex-1 h-14 bg-primary hover:bg-cyan-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
             <Download size={18} /> Exportar Vídeo
           </button>
         </div>
@@ -128,7 +128,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -146,7 +146,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
           <div className="p-8">
             <header className="flex justify-between items-start mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#00aed9]/20 rounded-2xl flex items-center justify-center text-[#00aed9]">
+                <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-primary">
                   <Video size={24} />
                 </div>
                 <div>

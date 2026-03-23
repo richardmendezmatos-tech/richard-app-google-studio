@@ -1,0 +1,13 @@
+import { DI } from '@/shared/lib/di/registry';
+
+export const inventoryService = {
+  async fetchInventory(dealerId: string) {
+    try {
+      const useCase = DI.getGetInventoryUseCase();
+      return await useCase.execute(dealerId);
+    } catch (error) {
+      console.error('[inventoryService] Error:', error);
+      throw error;
+    }
+  },
+};

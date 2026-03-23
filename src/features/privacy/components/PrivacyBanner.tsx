@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, X, ChevronRight, Lock, Eye, BarChart3, Zap } from 'lucide-react';
-import { PrivacySettings } from '@/types/types';
-import { getPrivacySettings, savePrivacySettings } from '@/services/privacyService';
+import { PrivacySettings } from '@/shared/types/types';
+import { getPrivacySettings, savePrivacySettings } from '@/shared/api/security/privacyService';
 
 const PrivacyConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -52,12 +52,12 @@ const PrivacyConsent: React.FC = () => {
   return (
     <div className="fixed bottom-6 left-6 right-6 z-[9999] route-fade-in md:left-auto md:right-10 md:w-[450px]">
       <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl group">
-        <div className="absolute -mr-10 -mt-10 right-0 top-0 h-32 w-32 rounded-full bg-[#00aed9]/10 blur-3xl" />
+        <div className="absolute -mr-10 -mt-10 right-0 top-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
 
         <div className="relative z-10">
           <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-xl bg-[#00aed9]/20 p-2.5">
-              <Shield className="text-[#00aed9]" size={20} />
+            <div className="rounded-xl bg-primary/20 p-2.5">
+              <Shield className="text-primary" size={20} />
             </div>
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight text-white">
@@ -85,7 +85,7 @@ const PrivacyConsent: React.FC = () => {
               <div className="flex flex-col gap-3">
                 <button
                   onClick={handleAcceptAll}
-                  className="w-full rounded-xl bg-[#00aed9] py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-cyan-500/20 transition-all hover:bg-cyan-500 active:scale-[0.98]"
+                  className="w-full rounded-xl bg-primary py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-cyan-500/20 transition-all hover:bg-cyan-500 active:scale-[0.98]"
                 >
                   Aceptar Todo
                 </button>
@@ -139,7 +139,7 @@ const PrivacyConsent: React.FC = () => {
                 </button>
                 <button
                   onClick={handleSavePreferences}
-                  className="flex-[2] rounded-xl bg-[#00aed9] py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-cyan-500/20 transition-all active:scale-95"
+                  className="flex-[2] rounded-xl bg-primary py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-cyan-500/20 transition-all active:scale-95"
                 >
                   Guardar Seleccion
                 </button>

@@ -1,5 +1,5 @@
 import { Unidad, EstadoUnidad } from '../domain/Unidad';
-import { raSentinel } from '../../../infra/monitoring/raSentinelService';
+import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 export interface RecibirUnidadParams {
   vin: string;

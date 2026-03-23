@@ -13,9 +13,9 @@ import {
   updatePassword,
   User,
 } from 'firebase/auth';
-import { container } from '@/infra/di/container';
-import { UserRole, AppUser } from '@/domain/entities';
-import { auth, getAnalyticsService } from '@/services/firebaseService';
+import { DI } from '@/shared/lib/di/registry';
+import { UserRole, AppUser } from '@/entities/shared';
+import { auth, getAnalyticsService } from '@/shared/api/firebase/firebaseService';
 
 // --- Types & Constants ---
 const AUDIT_LOGS_COLLECTION = 'audit_logs';
@@ -62,7 +62,7 @@ export const normalizeUser = (user: User, roleOverride?: UserRole) => {
 };
 
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
-  const userRepo = container.getUserRepository();
+  const userRepo = DI.getUserRepository();
   const existing = await userRepo.getUserProfile(user.uid);
   const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
   const currentDealerName = localStorage.getItem('current_dealer_name') || 'Richard Automotive';
@@ -81,7 +81,7 @@ const createUserProfile = async (user: User, role: UserRole = 'user') => {
 };
 
 export const getUserRole = async (uid: string): Promise<UserRole> => {
-  return await container.getUserRepository().getUserRole(uid);
+  return await DI.getUserRepository().getUserRole(uid);
 };
 
 // --- Audit & Security ---
@@ -102,7 +102,7 @@ export const logAuthActivity = async (
   const device = navigator.userAgent;
 
   try {
-    await container.getUserRepository().logActivity({
+    await DI.getUserRepository().logActivity({
       email,
       ip,
       device,
@@ -271,7 +271,7 @@ export const updateUserProfile = async (
 ) => {
   try {
     await updateProfile(user, data);
-    await container.getUserRepository().saveUserProfile(user.uid, data);
+    await DI.getUserRepository().saveUserProfile(user.uid, data);
     await logAuthActivity(user.email || 'unknown', true, 'profile_update');
   } catch (error: unknown) {
     const errorMessage = (error as { message?: string }).message;
@@ -325,7 +325,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
     const sanitizedIP = (ip || '0_0_0_0').replace(/[.:]/g, '_');
     const attemptId = `${sanitizedEmail}_${sanitizedIP}`;
 
-    const userRepo = container.getUserRepository();
+    const userRepo = DI.getUserRepository();
     const profile = await userRepo.getUserProfile(authResult.user.uid);
 
     if (profile?.isBlocked) {
@@ -397,7 +397,7 @@ export const registerPasskey = async (user: User) => {
 
     // 5. Save Credential ID
     if (credential) {
-      await container.getUserRepository().saveUserProfile(user.uid, {
+      await DI.getUserRepository().saveUserProfile(user.uid, {
         passkeyEnabled: true,
         passkeyId: credential.id,
       });
@@ -431,7 +431,7 @@ export const loginWithPasskey = async () => {
 
     if (credential) {
       // 2. Correlation: Find associated user by passkeyId
-      const userRepo = container.getUserRepository();
+      const userRepo = DI.getUserRepository();
       const userData = await userRepo.getUserByPasskeyId(credential.id);
 
       if (!userData || !userData.email) {

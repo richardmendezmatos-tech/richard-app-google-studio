@@ -232,7 +232,7 @@ export const TradeInCalculator: React.FC = () => {
 
           <button
             onClick={handleGenerarPropuesta}
-            className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98] uppercase tracking-widest text-sm"
+            className="w-full py-4 bg-linear-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98] uppercase tracking-widest text-sm"
           >
             Generar Argumentos IA
           </button>

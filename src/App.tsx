@@ -1,16 +1,14 @@
 import React, { Suspense } from 'react';
-import { BrandErrorBoundary } from '@/shared/brand-ui/common/BrandErrorBoundary';
-import { CinemaLayout } from '@/shared/brand-ui/layout/CinemaLayout';
-import { AnimatedRoutes } from '@/shared/brand-ui/AnimatedRoutes';
+import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
+import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
+import { AnimatedRoutes } from '@/widgets/brand-ui/AnimatedRoutes';
 
-import { AppProviders } from '@/shared/brand-ui/providers/AppProviders';
-import { useAppController } from '@/hooks/useAppController';
+import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
+import { useAppController } from '@/app/hooks/useAppController';
 
-const ComparisonBar = React.lazy(() => import('@/features/inventory/ui/ComparisonBar'));
-const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner'));
-const CommandCenterPanel = React.lazy(
-  () => import('@/command-center/components/CommandCenterPanel'),
-);
+const ComparisonBar = React.lazy(() => import('@/widgets/comparison/ComparisonBar').then(m => ({ default: m.default || m })));
+const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner').then(m => ({ default: m.default || m })));
+const CommandCenterPanel = React.lazy(() => import('@/pages/admin/command-center/ui/CommandCenterPanel').then(m => ({ default: m.default || m })));
 
 const RichardAutomotiveApp: React.FC = () => {
   const {

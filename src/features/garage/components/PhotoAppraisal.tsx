@@ -41,13 +41,13 @@ const PhotoAppraisal: React.FC = () => {
   return (
     <div className="bg-[#131f2a] rounded-[40px] p-8 border border-white/5 relative overflow-hidden group">
       {/* Background Glow */}
-      <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#00aed9]/10 blur-[100px] rounded-full group-hover:bg-[#00aed9]/20 transition-all duration-700"></div>
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full group-hover:bg-primary/20 transition-all duration-700"></div>
 
       <div className="relative z-10">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-[#00aed9]/20 rounded-lg flex items-center justify-center">
-              <Camera className="text-[#00aed9]" size={18} />
+            <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+              <Camera className="text-primary" size={18} />
             </div>
             <h3 className="text-xl font-black text-white uppercase tracking-tighter">
               Avalúo por Foto AI
@@ -61,10 +61,10 @@ const PhotoAppraisal: React.FC = () => {
         {!result && !isAnalyzing && (
           <div
             onClick={handleUpload}
-            className="border-2 border-dashed border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center hover:border-[#00aed9]/40 hover:bg-[#00aed9]/5 transition-all cursor-pointer group/upload"
+            className="border-2 border-dashed border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group/upload"
           >
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover/upload:scale-110 group-hover/upload:bg-[#00aed9]/20 transition-all">
-              <ImageIcon className="text-slate-500 group-hover/upload:text-[#00aed9]" size={32} />
+            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover/upload:scale-110 group-hover/upload:bg-primary/20 transition-all">
+              <ImageIcon className="text-slate-500 group-hover/upload:text-primary" size={32} />
             </div>
             <p className="text-white font-bold text-sm mb-1 uppercase tracking-widest">
               Arrastra tus fotos
@@ -78,13 +78,13 @@ const PhotoAppraisal: React.FC = () => {
         {isAnalyzing && (
           <div className="py-20 flex flex-col items-center justify-center space-y-4">
             <div className="relative">
-              <Loader2 className="text-[#00aed9] animate-spin" size={48} />
+              <Loader2 className="text-primary animate-spin" size={48} />
               <Sparkles
                 className="absolute -top-2 -right-2 text-amber-500 animate-pulse"
                 size={20}
               />
             </div>
-            <p className="text-[#00aed9] font-black text-xs uppercase tracking-[0.3em] animate-pulse">
+            <p className="text-primary font-black text-xs uppercase tracking-[0.3em] animate-pulse">
               Escaneando Condiciones...
             </p>
           </div>
@@ -94,7 +94,7 @@ const PhotoAppraisal: React.FC = () => {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-[#0b1116] rounded-2xl p-6 border border-white/5">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-black text-[#00aed9] uppercase tracking-widest">
+                <span className="text-[10px] font-black text-primary uppercase tracking-widest">
                   Vehículo Detectado
                 </span>
                 <div className="flex items-center gap-1 text-green-500">
@@ -146,7 +146,7 @@ const PhotoAppraisal: React.FC = () => {
               </div>
             )}
 
-            <button className="w-full bg-[#00aed9] hover:bg-cyan-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/20 group/btn">
+            <button className="w-full bg-primary hover:bg-cyan-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/20 group/btn">
               <Zap size={18} className="fill-white" /> OBTENER OFERTA TRADE-IN{' '}
               <ImageIcon size={18} className="group-hover/btn:translate-x-1 transition-transform" />
             </button>
