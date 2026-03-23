@@ -1,0 +1,19 @@
+{
+  "id": "uuid-whatsapp-lean-rag-semantic",
+  "category": "INTEGRATION_AUTOMATION",
+  "date": "2026-03-23T15:45:26-04:00",
+  "title": "WhatsApp AI: Lean RAG & Semantic Inventory",
+  "status": "COMPLETED",
+  "metrics": {
+    "filesChanged": [
+      "functions/src/agents/rag-synergy-logic.ts",
+      "functions/src/application/use-cases/leads/WhatsAppAgent.prompt.ts"
+    ],
+    "commits": 1,
+    "agentsConsolidated": 3
+  },
+  "metadata": {
+    "target": "Ultra-Low Cost & Real Inventory Injection",
+    "roi": "Reduced LLM calls per message from 5 to 2. Massive token savings."
+  }
+}
