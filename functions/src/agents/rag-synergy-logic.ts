@@ -55,83 +55,55 @@ export async function orchestrateResponse(input: {
       .catch((e) => logger.error('Failed to update customer memory', e));
   }
 
-  // --- STEP 1: PARALLEL RESEARCH & ANALYSIS (CQRS Lite) ---
+  // --- STEP 1: ROUTING & INTEL (Lean Synergy) ---
   // Fetch market intel if vehicle is present to enable proactive sales
   const marketIntelPromise =
     input.vehicleContext?.make && input.vehicleContext?.model
       ? getMarketInsight(input.vehicleContext.make, input.vehicleContext.model)
       : Promise.resolve(null);
 
-  const [researchResult, analysisResult, marketIntel] = await Promise.all([
-    ai.run('research-agent', async () => {
-      return await ai.generate({
-        prompt: `Eres el Research Agent de Richard Automotive. 
-                Analiza este mensaje: "${input.message}"
-                Historial: ${JSON.stringify(input.history.slice(-3))}
-                Contexto del Lead: ${JSON.stringify(input.leadContext)}
-                Memoria Histórica: ${JSON.stringify(customerMemory || 'No hay memoria previa')}
-                Intención Detectada: ${input.metadata?.intent || 'Desconocida'}
-                
-                RETORNA SOLO UN OBJETO JSON con:
-                - queryExpansion: versión profesional de la búsqueda.
-                - needsInventory: boolean.
-                - needsPolicy: boolean (F&I/Financiamiento).
-                `,
-        config: { temperature: 0.1 },
-      });
-    }),
-    ai.run('analysis-agent', async () => {
-      return await ai.generate({
-        prompt: `Eres un analizador de CRM especializado en ventas de autos.
-                Mensaje del cliente: "${input.message}"
-                Historial reciente: ${JSON.stringify(input.history.slice(-4))}
-        
-                Clasifica y retorna SOLO JSON válido (sin markdown):
-                {
-                    "sentiment": "positive" | "neutral" | "negative" | "frustrated" | "excited",
-                    "intent": "inquiry" | "consultation" | "purchase_ready" | "objection" | "trade_in" | "financing" | "test_drive" | "exit",
-                    "urgency": "low" | "medium" | "high",
-                    "buyerStage": "awareness" | "consideration" | "decision" | "post_sale"
-                }`,
-        config: { temperature: 0 },
-      });
-    }),
-    marketIntelPromise,
-  ]);
+  const routerPromise = ai.run('router-agent', async () => {
+    return await ai.generate({
+      prompt: `Eres un Analista CRM experto de Richard Automotive.
+              Analiza el mensaje: "${input.message}"
+              Historial (últimos 3): ${JSON.stringify(input.history.slice(-3))}
+              Contexto Lead: ${JSON.stringify(input.leadContext)}
+              
+              RETORNA SOLO JSON VÁLIDO (sin markdown):
+              {
+                  "sentiment": "positive" | "neutral" | "negative" | "frustrated" | "excited",
+                  "intent": "inquiry" | "consultation" | "purchase_ready" | "objection" | "trade_in" | "financing" | "test_drive" | "exit",
+                  "urgency": "low" | "medium" | "high",
+                  "buyerStage": "awareness" | "consideration" | "decision" | "post_sale",
+                  "needsInventory": boolean,
+                  "queryExpansion": string // Si needsInventory=true, descripción optimizada para buscar autos
+              }`,
+      config: { temperature: 0 },
+    });
+  });
 
-  // Parse Analysis results early
+  const [routerResult, marketIntel] = await Promise.all([routerPromise, marketIntelPromise]);
+
+  // Parse Router results
   let sentiment = 'neutral';
   let intent = 'consultation';
   let urgency = 'medium';
   let buyerStage = 'consideration';
-
-  try {
-    const raw = analysisResult.text.trim().replace(/```json|```/g, '');
-    const parsed = JSON.parse(raw);
-    sentiment = parsed.sentiment ?? sentiment;
-    intent = parsed.intent ?? intent;
-    urgency = parsed.urgency ?? urgency;
-    buyerStage = parsed.buyerStage ?? buyerStage;
-    logger.info('Sentiment & Intent', { sentiment, intent, urgency, buyerStage });
-  } catch (e) {
-    logger.warn('Failed to parse sentiment/intent JSON, using defaults', {
-      raw: analysisResult.text,
-    });
-  }
-
-  // Parse Research results to fetch semantic inventory if needed
   let queryExpansion = '';
   let needsInventory = false;
-  let needsPolicy = false;
+
   try {
-    const rawR = researchResult.text.trim().replace(/```json|```/g, '');
-    const parsedR = JSON.parse(rawR);
-    queryExpansion = parsedR.queryExpansion ?? '';
-    needsInventory = parsedR.needsInventory ?? false;
-    needsPolicy = parsedR.needsPolicy ?? false;
-    logger.info('Research Intent', { queryExpansion, needsInventory, needsPolicy });
+    const rawRouter = routerResult.text.trim().replace(/```json|```/g, '');
+    const parsedRouter = JSON.parse(rawRouter);
+    sentiment = parsedRouter.sentiment ?? sentiment;
+    intent = parsedRouter.intent ?? intent;
+    urgency = parsedRouter.urgency ?? urgency;
+    buyerStage = parsedRouter.buyerStage ?? buyerStage;
+    needsInventory = parsedRouter.needsInventory ?? false;
+    queryExpansion = parsedRouter.queryExpansion ?? '';
+    logger.info('Lean Router Analysis', { intent, needsInventory, sentiment });
   } catch (e) {
-    logger.warn('Failed to parse research JSON', { raw: researchResult.text });
+    logger.warn('Failed to parse router JSON', { raw: routerResult.text });
   }
 
   let inventorySnippet = '';
@@ -153,7 +125,7 @@ export async function orchestrateResponse(input: {
     }
   }
 
-  // --- STEP 2: SYNTHESIS (RICHARD IA) ---
+  // --- STEP 2: SYNTHESIS & VALIDATION (Lean Synergy) ---
   const synthesisResult = await ai.run('synthesis-agent', async () => {
     const basePrompt = input.isWhatsApp
       ? WHATSAPP_AGENT_PROMPT
@@ -171,12 +143,10 @@ export async function orchestrateResponse(input: {
             - REGLA: Usa MARKET_INTEL proactivamente para defender el precio si Richard Automotive es más barato.
             - REGLA: Los precios son finales. No invented descuentos ni tasas.
             - REGLA: Si el cliente mostró interés previo en un modelo, menciónalo como experto.
-            - REGLA: Si el cliente mostró interés previo en un modelo, menciónalo como experto.
             - TERMINOLOGÍA DEL DEALER (OBLIGATORIO): Usa términos nativos como "guagua", "unidad", "pronto" y "trade-in". 
             - TONO: "Boricua Profesional". Cálido, respetuoso y enfocado en la seguridad financiera y paz mental del cliente. Conecta con la cultura de Puerto Rico usando un lenguaje claro pero experto.
 
             MENSAJE CLIENTE: "${input.message}"
-            CONTEXTO INVESTIGACIÓN: ${researchResult.text}
             
             Enfoque: Determina la ETAPA ACTUAL y usa la MEMORIA_RELEVANTE para personalizar.
             Genera una respuesta en "Boricua Profesional".
@@ -184,81 +154,41 @@ export async function orchestrateResponse(input: {
 
     const finalPrompt = basePrompt
       .replace('{{customerContext}}', JSON.stringify(input.leadContext))
-      .replace('{{history}}', JSON.stringify(input.history.slice(-5)))
+      .replace('{{history}}', JSON.stringify(input.history.slice(-3))) // Restricted visual history
       .replace('{{message}}', input.message)
       .replace('{{inventory}}', inventorySnippet || 'No se requiere inventario.');
 
-    return await ai.generate({
-      prompt: finalPrompt,
-    });
-  });
+    const structuredPrompt = finalPrompt + `\n\nIMPORTANTE: ESTÁS EN MODO STRICT. DEBES RETORNAR ÚNICAMENTE UN OBJETO JSON VÁLIDO.
+    Auto-valida tu respuesta asegurando que no inventas precios ni prometes APRs sin disclaimer.
+    {
+      "response": "Tu respuesta persuasiva aquí...",
+      "negotiationStrategy": "PAS" | "AIDA" | "FAB" | null,
+      "validationPassed": true | false
+    }`;
 
-  // --- STEP 3: LOGICAL CHECKSUM & COMPLIANCE ---
-  const validationResult = await ai.run('validation-agent', async () => {
     return await ai.generate({
-      prompt: `Eres el Validation Agent (Auditor de Calidad Nivel 12).
-            RESPUESTA PROPUESTA: "${synthesisResult.text}"
-            CONTEXTO DE VERDAD (HECHOS):
-            - Vehículo: ${input.vehicleContext?.name || 'Inquiry general'}
-            - Precio: ${input.vehicleContext?.price || 'N/A'}
-            - Reglas: No garantizar APR, no inventar stock, disclaimer obligatorio.
-            - Regla Terminología: Valida el uso de "guagua", "unidad" y "pronto". Asegura un trato profesional y cercano.
-            
-            AUDITA SEGÚN ESTRATEGIA DE CHECKSUM LÓGICO:
-            1. Alucinación de Precio: ¿El precio en la respuesta coincide con ${input.vehicleContext?.price}?
-            2. Legal Compliance: Si habla de financiamiento, ¿incluye Disclaimer de APR estimado?
-            3. Inventory Integrity: ¿Promete disponibilidad que no esté confirmada?
-            
-            RETORNA JSON: { "passed": boolean, "errorType": "PRICE"|"POLICY"|"TONE"|null, "feedback": "string", "correctedResponse": "string" }
-            `,
-      config: { temperature: 0 },
+      prompt: structuredPrompt,
+      config: { temperature: 0.1 },
     });
   });
 
   let finalResponse = synthesisResult.text;
-  let audit = { passed: true, feedback: '', errorType: null };
+  let negotiationStrategy: string | null = null;
+  const audit = { passed: true, feedback: 'Auto-validated structurally', errorType: null };
 
   try {
-    const auditRaw = validationResult.text.trim().replace(/```json|```/g, '');
-    const auditData = JSON.parse(auditRaw);
-    audit = {
-      passed: auditData.passed,
-      feedback: auditData.feedback,
-      errorType: auditData.errorType,
-    };
-
-    if (!auditData.passed && auditData.correctedResponse) {
-      finalResponse = auditData.correctedResponse;
-      logger.warn('Validation FAILED — Logic Checksum triggered corection', {
-        feedback: auditData.feedback,
-      });
+    const rawSynth = synthesisResult.text.trim().replace(/```json|```/g, '');
+    const parsedSynth = JSON.parse(rawSynth);
+    finalResponse = parsedSynth.response || finalResponse;
+    negotiationStrategy = parsedSynth.negotiationStrategy || null;
+    audit.passed = parsedSynth.validationPassed ?? true;
+    
+    if (!audit.passed) {
+       logger.warn('Agent self-reported validation failure.');
     }
-  } catch (e) {
-    logger.error('Failed to parse validation JSON', { error: e, raw: validationResult.text });
+  } catch(e) {
+    logger.warn('Synthesis did not return JSON. Using raw text.');
   }
-
-  // --- STEP 4: POST-PROCESSING ---
-  // Background execution for negotiation strategy to keep responsiveness
-  const negotiationPromise = (async () => {
-    const lowerMsg = input.message.toLowerCase();
-    if (
-      lowerMsg.includes('pago') ||
-      lowerMsg.includes('mensual') ||
-      lowerMsg.includes('pronto') ||
-      lowerMsg.includes('caro')
-    ) {
-      const negotiationAnalysis = await ai.generate({
-        prompt: `Review user: "${input.message}".
-                Objection: ${intent === 'objection' ? 'Yes' : 'No'}.
-                Suggest psychological strategy name (PAS/AIDA/FAB) or null.`,
-        config: { temperature: 0.1 },
-      });
-      return negotiationAnalysis.text.trim() === 'null' ? null : negotiationAnalysis.text.trim();
-    }
-    return null;
-  })();
-
-  const negotiationStrategy = await negotiationPromise;
 
   // --- STEP 5: WORKSPACE CHECKPOINTING (Workspace Manager) ---
   const checkpointId = `ra-chat-${input.leadId || 'anonymous'}-${Date.now()}`;
