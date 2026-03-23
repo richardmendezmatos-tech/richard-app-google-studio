@@ -26,6 +26,10 @@ export interface Lead {
   aiAnalysis?: {
     score: number;
     insights: string[];
+    intent?: string;
+    sentiment?: string;
+    buyerStage?: string;
+    negotiationStrategy?: string;
     nudgeSent?: boolean;
     requestedConsultation?: boolean;
     preferredType?: string;

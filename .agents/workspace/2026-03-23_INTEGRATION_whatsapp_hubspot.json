@@ -1,0 +1,12 @@
+{
+  "id": "uuid-whatsapp-hubspot-auto-responder",
+  "category": "INTEGRATION_AUTOMATION",
+  "date": "2026-03-23T14:50:53-04:00",
+  "title": "WhatsApp AI Auto-Responder",
+  "status": "COMPLETED",
+  "metrics": {
+    "filesChanged": 3,
+    "toolsUsed": ["write_to_file", "multi_replace_file_content"],
+    "predictedROI": "High conversion rate out of office hours"
+  }
+}
