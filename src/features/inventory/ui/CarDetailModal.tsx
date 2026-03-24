@@ -208,7 +208,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
               <Calculator size={14} /> Pago Mensual Estimado
             </div>
-            <div className="text-5xl lg:text-6xl font-black premium-gradient text-transparent bg-clip-text tracking-tighter my-2">
+            <div className="text-5xl lg:text-6xl font-black text-slate-800 dark:text-white tracking-tighter my-2">
               ${calculatedPayment}
             </div>
 
@@ -276,7 +276,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                         if (errors.downPayment)
                           setErrors((prev) => ({ ...prev, downPayment: undefined }));
                       }}
-                      className={`w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 rounded-[20px] text-lg font-bold outline-none transition-all placeholder:text-slate-300 
+                      className={`w-full px-5 py-4 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white border-2 rounded-[20px] text-lg font-bold outline-none transition-all placeholder:text-slate-400 
                                     ${
                                       errors.downPayment
                                         ? 'border-red-500 focus:ring-4 focus:ring-red-500/20 bg-red-50 dark:bg-red-900/10'
@@ -316,7 +316,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       onChange={(e) =>
                         setTradeIn(e.target.value === '' ? '' : Number(e.target.value))
                       }
-                      className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-primary/20 text-lg font-bold outline-none transition-all placeholder:text-slate-300"
+                      className="w-full px-5 py-4 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[20px] focus:ring-4 focus:ring-primary/20 text-lg font-bold outline-none transition-all placeholder:text-slate-400"
                       placeholder="0"
                     />
                     <input
@@ -344,7 +344,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       id="creditRateSelect"
                       value={creditRate}
                       onChange={(e) => setCreditRate(Number(e.target.value))}
-                      className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-[20px] focus:ring-4 focus:ring-primary/20 text-sm font-bold appearance-none cursor-pointer outline-none"
+                      className="w-full px-6 py-4 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white border-none rounded-[20px] focus:ring-4 focus:ring-primary/20 text-sm font-bold appearance-none cursor-pointer outline-none"
                     >
                       <option value={0.029}>Excelente (720+)</option>
                       <option value={0.059}>Bueno (660+)</option>
@@ -423,7 +423,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <div className="mt-4 flex flex-col items-center shrink-0 w-full gap-3">
             <button
               onClick={handleRequestApproval}
-              className="w-full py-5 premium-gradient text-white rounded-[25px] font-black text-xs md:text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+              className="w-full py-5 btn-premium text-white rounded-[25px] font-black text-xs md:text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all"
             >
               <MessageCircle size={18} /> Consultar por WhatsApp
             </button>

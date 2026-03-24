@@ -4,7 +4,7 @@ import { ArrowLeft, Car, ChevronRight, Loader2 } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import SEO from '@/shared/ui/seo/SEO';
 
-type Step = 'identify' | 'details' | 'condition' | 'result';
+type Step = 'identify' | 'details' | 'contact' | 'result';
 
 interface TradeInFormData {
   year: string;
@@ -12,6 +12,8 @@ interface TradeInFormData {
   model: string;
   mileage: string;
   condition: 'excellent' | 'good' | 'fair' | 'poor';
+  name: string;
+  phone: string;
 }
 
 const TradeInView: React.FC = () => {
@@ -24,6 +26,8 @@ const TradeInView: React.FC = () => {
     model: '',
     mileage: '',
     condition: 'good',
+    name: '',
+    phone: '',
   });
 
   // Mock Data for Selectors
@@ -58,13 +62,12 @@ const TradeInView: React.FC = () => {
     setTimeout(() => {
       setIsLoading(false);
       setStep('result');
-      setStep('result');
 
       // Capture Lead
       addLead({
         type: 'trade-in',
-        name: 'Anonymous Visitor',
-        phone: 'Not provided',
+        name: formData.name || 'Anonymous Visitor',
+        phone: formData.phone || 'Not provided',
         notes: `Trade-In: ${formData.year} ${formData.make} ${formData.model} (${formData.mileage} miles) - Condition: ${formData.condition}`,
       });
     }, 2000);
@@ -161,7 +164,7 @@ const TradeInView: React.FC = () => {
               onClick={() => setStep('details')}
               className="w-full py-4 bg-primary hover:bg-[#009ac0] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center gap-2"
             >
-              Siguiente Paso <ChevronRight size={18} />
+              Confirmar Vehículo <ChevronRight size={18} />
             </button>
           </div>
         );
@@ -174,13 +177,39 @@ const TradeInView: React.FC = () => {
               </label>
               <input
                 type="number"
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-500"
                 placeholder="Ej. 45000"
                 value={formData.mileage}
                 onChange={(e) => handleInputChange('mileage', e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            
+            <div className="pt-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-primary block mb-3">
+                Condición del Vehículo
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { id: 'excellent', label: 'Excelente', desc: 'Como nuevo.' },
+                  { id: 'good', label: 'Bueno', desc: 'Desgaste normal.' },
+                  { id: 'fair', label: 'Regular', desc: 'Reparaciones menores.' },
+                  { id: 'poor', label: 'Malo', desc: 'Problemas mecánicos.' },
+                ].map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => handleInputChange('condition', c.id as any)}
+                    className={`p-4 rounded-xl border text-left transition-all ${formData.condition === c.id ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-slate-800 border-slate-700 hover:border-slate-600'}`}
+                  >
+                    <h4 className={`text-base font-bold ${formData.condition === c.id ? 'text-primary' : 'text-white'}`}>
+                      {c.label}
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-1">{c.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-4">
               <button
                 onClick={() => setStep('identify')}
                 className="w-full py-4 bg-slate-800 text-slate-400 font-bold rounded-xl hover:bg-slate-700 transition-colors"
@@ -189,47 +218,50 @@ const TradeInView: React.FC = () => {
               </button>
               <button
                 disabled={!formData.mileage}
-                onClick={() => setStep('condition')}
-                className="w-full py-4 bg-primary hover:bg-[#009ac0] disabled:opacity-50 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center gap-2"
+                onClick={() => setStep('contact')}
+                className="w-full py-4 bg-primary hover:bg-[#009ac0] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center gap-2"
               >
-                Siguiente <ChevronRight size={18} />
+                Calcular Valor <ChevronRight size={18} />
               </button>
             </div>
           </div>
         );
-      case 'condition':
+      case 'contact':
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right duration-500">
-            <div className="grid grid-cols-1 gap-4">
-              {[
-                {
-                  id: 'excellent',
-                  label: 'Excelente',
-                  desc: 'Como nuevo, sin defectos mecánicos ni cosméticos.',
-                },
-                { id: 'good', label: 'Bueno', desc: 'Desgaste normal, mantenimiento al día.' },
-                {
-                  id: 'fair',
-                  label: 'Regular',
-                  desc: 'Necesita algunas reparaciones menores o cosméticas.',
-                },
-                { id: 'poor', label: 'Malo', desc: 'Daños significativos o problemas mecánicos.' },
-              ].map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => handleInputChange('condition', c.id as any)}
-                  className={`p-6 rounded-xl border text-left transition-all ${formData.condition === c.id ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-slate-800 border-slate-700 hover:border-slate-600'}`}
-                >
-                  <h4
-                    className={`text-lg font-bold ${formData.condition === c.id ? 'text-primary' : 'text-white'}`}
-                  >
-                    {c.label}
-                  </h4>
-                  <p className="text-sm text-slate-400 mt-1">{c.desc}</p>
-                </button>
-              ))}
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-black text-white tracking-tight mb-2">¡Tu oferta está lista!</h3>
+              <p className="text-slate-400 text-sm">¿A qué WhatsApp te enviamos los detalles de la tasación?</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                  Tu Nombre
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-500"
+                  placeholder="Ej. Juan Pérez"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                  Número de WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-500"
+                  placeholder="Ej. 787-555-0199"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-4">
               <button
                 onClick={() => setStep('details')}
                 className="w-full py-4 bg-slate-800 text-slate-400 font-bold rounded-xl hover:bg-slate-700 transition-colors"
@@ -237,12 +269,16 @@ const TradeInView: React.FC = () => {
                 Atrás
               </button>
               <button
+                disabled={!formData.name || !formData.phone}
                 onClick={calculateOffer}
-                className="w-full py-4 bg-linear-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-linear-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 disabled:opacity-50 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 flex items-center justify-center gap-2"
               >
-                {isLoading ? <Loader2 className="animate-spin" /> : 'Ver mi Oferta'}
+                {isLoading ? <Loader2 className="animate-spin" /> : 'Ver Mi Oferta Ahora'}
               </button>
             </div>
+            <p className="text-center text-[10px] text-slate-500 font-medium pt-2">
+              <span className="text-emerald-500">🔒</span> Información 100% segura. Solo para tu oferta.
+            </p>
           </div>
         );
       case 'result': {
@@ -315,10 +351,10 @@ const TradeInView: React.FC = () => {
             </p>
             {/* Progress Bar */}
             <div className="flex justify-center gap-2 mt-8">
-              {['identify', 'details', 'condition'].map((s, i) => (
+              {['identify', 'details', 'contact'].map((s, i) => (
                 <div
                   key={s}
-                  className={`h-1 w-12 rounded-full transition-all duration-300 ${['identify', 'details', 'condition'].indexOf(step) >= i ? 'bg-primary' : 'bg-slate-800'}`}
+                  className={`h-1 w-12 rounded-full transition-all duration-300 ${['identify', 'details', 'contact'].indexOf(step) >= i ? 'bg-primary' : 'bg-slate-800'}`}
                 />
               ))}
             </div>
