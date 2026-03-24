@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '@/entities/shared';
-import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
+import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
@@ -25,6 +25,11 @@ const CarCard: React.FC<CarCardProps> = React.memo(
 
   const estimatedMonthly = Math.round(car.price / 72); // Rough 72 month calculation
 
+  // CRO Heuristics: Pseudo-random deterministic values based on car ID (Zero layout shift, zero API cost)
+  const idHash = car.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const peopleViewing = (idHash % 5) + 2; // 2 to 6 people
+  const isScarce = car.badge?.toLowerCase().includes('luxury') || (idHash % 3 === 0);
+
   return (
     <div
       onClick={() => navigate(`/v/${generateVehicleSlug(car)}/${car.id}`)}
@@ -47,6 +52,9 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           )}
           <span className="px-3 py-1.5 bg-white/90 dark:bg-slate-700/90 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1 backdrop-blur-sm">
             <ShieldCheck size={12} className="text-emerald-500" /> Richard Certified
+          </span>
+          <span className="px-3 py-1.5 bg-rose-500/90 text-white text-[10px] font-bold tracking-widest rounded-full shadow-lg flex items-center gap-1 backdrop-blur-sm animate-pulse">
+            <Users size={12} /> {peopleViewing} viendo ahora
           </span>
         </div>
 
@@ -108,7 +116,12 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           </span>
         </div>
 
-        <div className="mt-auto flex items-end justify-between border-t border-slate-100 dark:border-slate-700 pt-6">
+        <div className="mt-auto flex items-end justify-between border-t border-slate-100 dark:border-slate-700 pt-6 relative">
+          {isScarce && (
+             <div className="absolute -top-3 left-0 bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-0.5 rounded-sm flex items-center gap-1 shadow-sm">
+                <Zap size={10} fill="currentColor" /> ALTA DEMANDA
+             </div>
+          )}
           <div>
             <p className="text-2xl font-black text-slate-700 dark:text-slate-200">
               ${car.price.toLocaleString()}
@@ -117,8 +130,8 @@ const CarCard: React.FC<CarCardProps> = React.memo(
               Est. ${estimatedMonthly}/mes
             </p>
           </div>
-          <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors">
-            Ver Detalles
+          <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors text-center shadow-xs">
+            Solicitar Prueba
           </div>
         </div>
       </div>

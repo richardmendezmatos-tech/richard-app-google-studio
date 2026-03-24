@@ -2,6 +2,7 @@ import React from 'react';
 import { Car } from '@/shared/types/types';
 import { SocialProofWidget } from '@/widgets/brand-ui/layout/conversion/SocialProofWidget';
 import SEO from '@/shared/ui/seo/SEO';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 // Import Modular Components
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
@@ -40,6 +41,35 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
           description="El dealer más tecnológico de Puerto Rico. Encuentra autos certificados, financiamiento flexible, y usa nuestra IA para encontrar tu auto ideal."
           url="/"
           type="website"
+          schema={{
+            "@context": "https://schema.org",
+            "@type": "AutoDealer",
+            "name": "Richard Automotive",
+            "image": SITE_CONFIG.seo.ogImage,
+            "@id": SITE_CONFIG.url,
+            "url": SITE_CONFIG.url,
+            "telephone": "+1-787-000-0000",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Zona Metropolitana",
+              "addressLocality": "San Juan",
+              "addressRegion": "PR",
+              "postalCode": "00901",
+              "addressCountry": "US"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 18.4233,
+              "longitude": -66.0656
+            },
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              "opens": "09:00",
+              "closes": "18:00"
+            },
+            "priceRange": "$$"
+          }}
         />
 
         {/* Hero Section */}

@@ -41,6 +41,9 @@ type ServerContent = {
   };
 };
 
+import { Capacitor } from '@capacitor/core';
+import { VoiceRecorder } from 'capacitor-voice-recorder';
+
 export const useVoiceSession = () => {
   const navigate = useNavigate();
   const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
@@ -99,6 +102,13 @@ export const useVoiceSession = () => {
 
   const startSession = async () => {
     try {
+      if (Capacitor.isNativePlatform()) {
+        const hasPermission = await VoiceRecorder.hasAudioRecordingPermission();
+        if (!hasPermission.value) {
+          await VoiceRecorder.requestAudioRecordingPermission();
+        }
+      }
+
       setConnectionState('connecting');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStream.current = stream;

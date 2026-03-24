@@ -160,6 +160,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             modelDate: year.toString(),
             bodyType: car.type,
             vehicleConfiguration: car.features?.join(', '),
+            ...(car.mileage ? {
+              mileageFromOdometer: {
+                '@type': 'QuantitativeValue',
+                value: car.mileage,
+                unitCode: 'SMI'
+              }
+            } : {}),
             offers: {
               '@type': 'Offer',
               url: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,

@@ -3,6 +3,7 @@ import { LeadRepository, EmailRepository, SMSRepository, MetaRepository, WhatsAp
 import { ScoreCalculator } from './ScoreCalculator.usecase';
 import { Lead, LeadEntity } from '../../../domain/entities';
 import { Result, success, failure } from '../../../domain/types';
+import { hubspotService } from '../../../services/hubspotService';
 
 /**
  * Esquema de entrada estricto para nuevas solicitudes de Lead.
@@ -52,7 +53,9 @@ export class ProcessNewLeadApplication {
             await this.handleNotifications(lead, analysis, leadEntity);
 
             // 4. Marketing & CRM Data Flow
+            const finalLead = { ...lead, ...updatedLead } as Lead;
             await this.metaRepo.sendLeadEvent(lead.email, lead.phone, lead);
+            await hubspotService.syncLeadToHubSpot(finalLead);
 
             return success(undefined);
         } catch (error) {
@@ -86,11 +89,17 @@ export class ProcessNewLeadApplication {
             await this.smsRepo.send(lead.phone, `Hola ${lead.firstName}, recibimos tu solicitud en Richard Automotive. Estaremos en contacto.`);
         }
 
-        // WhatsApp Proactivo (Solo para leads de ALTO POTENCIAL)
-        if (lead.phone && (analysis.score >= 85 || entity.isHighPotential())) {
-            const waMessage = `¡Hola ${lead.firstName}! Soy Richard de Richard Automotive. 🦅🚀 Tu perfil califica para atención prioritaria. ¿Coordinamos una videollamada hoy?`;
-            await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
-            console.log(`[WhatsApp Automation] Nudge sent to high-priority lead.`);
+        // WhatsApp Proactivo Integrado (Universal + VIP)
+        if (lead.phone) {
+            if (analysis.score >= 85 || entity.isHighPotential()) {
+                const waMessage = `¡Hola ${lead.firstName}! Soy Richard de Richard Automotive. 🦅🚀 Vi tu interés y tu perfil califica para atención prioritaria VIP. ¿Tienes unos minutos para coordinar una cita hoy?`;
+                await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
+                console.log(`[WhatsApp Automation] Ruteo VIP enviado a: ${lead.phone}`);
+            } else {
+                const waMessage = `¡Hola ${lead.firstName}! Bienvenido a Richard Automotive. 🚗 Recibimos tu información y un asesor ya está evaluando tus opciones. ¿Tienes alguna pregunta inicial sobre nuestro inventario?`;
+                await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
+                console.log(`[WhatsApp Automation] Welcome Nudge estándar enviado a: ${lead.phone}`);
+            }
         }
     }
 }

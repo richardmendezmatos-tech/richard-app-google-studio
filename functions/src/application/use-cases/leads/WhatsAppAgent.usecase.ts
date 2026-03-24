@@ -112,25 +112,30 @@ export class WhatsAppAgent {
     }
 
     let nextStage: any = sequence?.currentStage || 'welcome';
+    let justSuggestedAppointment = false;
+
     if (
       parsedResponse.extractedData?.intentLevel === 'appointment_ready' &&
       nextStage !== 'appointment_suggested'
     ) {
       nextStage = 'appointment_suggested';
-      
-      // ✅ [OMNICHANNEL SYNC] Trigger HubSpot Deal Creation via Composio / Rube MCP
+      justSuggestedAppointment = true;
+    } else if (
+      (input.message.toLowerCase().includes('cita') ||
+      input.message.toLowerCase().includes('ver')) &&
+      nextStage !== 'appointment_suggested'
+    ) {
+      nextStage = 'appointment_suggested';
+      justSuggestedAppointment = true;
+    }
+
+    // ✅ Phase 8 - If we just entered 'appointment_suggested', trigger HubSpot Deal Creation via Composio / Rube MCP
+    if (justSuggestedAppointment) {
       await syncToHubspot({
         phone: input.from,
         ...parsedResponse.extractedData
       });
-    } else if (
-      input.message.toLowerCase().includes('cita') ||
-      input.message.toLowerCase().includes('ver')
-    ) {
-      nextStage = 'appointment_suggested';
     }
-
-    // TODO: Phase 8 - If nextStage === 'appointment_suggested', enqueue Composio HubSpot task
 
     return {
       reply: parsedResponse.reply,

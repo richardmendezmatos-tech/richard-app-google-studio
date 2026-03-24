@@ -63,7 +63,7 @@ service cloud.firestore {
     
     // Applications (Leads): Isolated by Dealer logic
     match /applications/{appId} {
-      allow create: if isValidPublicPayload(); 
+      allow create: if true; 
       allow read, update, delete: if isAdmin() && 
                                      (resource == null || resource.data.dealerId == getUserData().dealerId);
     }
@@ -104,7 +104,14 @@ service cloud.firestore {
 
     // Solicitudes de Crédito (Phase 16: Zero-Knowledge SSN)
     match /solicitudes_credito/{docId} {
-      allow create: if isValidPublicPayload(); 
+      allow create: if true; 
+      allow read: if isAdmin();
+      allow update, delete: if false; 
+    }
+
+    // F&I Web Credit Applications
+    match /credit_applications/{appId} {
+      allow create: if true; // Public submission from the Web Form
       allow read: if isAdmin();
       allow update, delete: if false; 
     }

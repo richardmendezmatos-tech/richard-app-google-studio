@@ -52,6 +52,35 @@ const CollectionPage: React.FC<Props> = ({ inventory }) => {
     return 'Colección Exclusiva';
   }, [brand, maxPrice, isBrandView, isBudgetView]);
 
+  const schemaData = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": h1Title,
+      "description": seoDescription,
+      "url": typeof window !== 'undefined' ? window.location.href : SITE_CONFIG.url,
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": filteredInventory.map((car, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "item": {
+            "@type": "Vehicle",
+            "name": `${car.year} ${car.make} ${car.model}`,
+            "image": car.images?.[0] || SITE_CONFIG.seo.ogImage,
+            "url": typeof window !== 'undefined' ? `${window.location.origin}/inventory/${car.id}` : `${SITE_CONFIG.url}/inventory/${car.id}`,
+            "offers": {
+              "@type": "Offer",
+              "price": car.price,
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        }))
+      }
+    };
+  }, [h1Title, seoDescription, filteredInventory]);
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 pb-20">
       <SEO
@@ -60,6 +89,7 @@ const CollectionPage: React.FC<Props> = ({ inventory }) => {
         image={SITE_CONFIG.seo.ogImage}
         url={window.location.pathname}
         type="website"
+        schema={schemaData}
       />
 
       <main className="max-w-7xl mx-auto px-4 lg:px-8">
@@ -88,18 +118,35 @@ const CollectionPage: React.FC<Props> = ({ inventory }) => {
             <p className="text-slate-500 dark:text-slate-400">Intenta buscar con otros filtros o contacta a ventas.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-            {filteredInventory.map((car) => (
-              <CarCard 
-                key={car.id} 
-                car={car}
-                isSaved={false}
-                isComparing={false}
-                onToggleSave={() => {}}
-                onCompare={() => {}}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+              {filteredInventory.map((car) => (
+                <CarCard 
+                  key={car.id} 
+                  car={car}
+                  isSaved={false}
+                  isComparing={false}
+                  onToggleSave={() => {}}
+                  onCompare={() => {}}
+                />
+              ))}
+            </div>
+
+            {/* SEO Content Depth Block (seo-audit compliance) */}
+            <section className="mt-20 bg-white/50 dark:bg-slate-900/50 rounded-[30px] p-8 md:p-12 border border-slate-200 dark:border-white/5">
+              <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white mb-4">
+                ¿Por qué elegir un {isBrandView && brand ? capitalize(brand) : "vehículo de nuestra colección"} en Richard Automotive?
+              </h2>
+              <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400">
+                <p className="mb-4">
+                  Todos nuestros vehículos {isBrandView && brand ? capitalize(brand) : "premium"} pasan por una rigurosa <strong>inspección mecánica y visual multipuntos</strong> garantizando un alto nivel de calidad. Entendemos que adquirir un auto usado en Puerto Rico es una inversión importante para ti y tu familia. Por eso, en Richard Automotive proveemos transparencia total, historiales vehiculares limpios (CarFax) y el respaldo de las mejores instituciones financieras de la isla.
+                </p>
+                <p>
+                  Además de nuestra garantía suprema, te ayudamos a conseguir la mejor tasa de financiamiento con o sin pronto pago, y somos especialistas en tasar tu auto actual al mejor valor del mercado (Trade-In). Únete a las cientos de familias y clientes que ya conducen con la <strong className="text-primary">seguridad y confianza</strong> que solo Richard Automotive puede ofrecer.
+                </p>
+              </div>
+            </section>
+          </>
         )}
       </main>
     </div>

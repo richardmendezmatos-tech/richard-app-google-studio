@@ -57,6 +57,7 @@ import { sendTransactionalEmail } from '@/shared/api/communications/emailService
 import { generateActuarialReport } from '@/shared/lib/utils/pdfGenerator';
 import { generateMockActuarialData } from '@/entities/finance';
 import SmartDealSheetModal from '@/features/sales-automation/ui/SmartDealSheetModal';
+import OmnichannelInbox from './OmnichannelInbox';
 
 const COLUMNS = [
   {
@@ -95,11 +96,12 @@ interface LeadCardProps {
   lead: Lead;
   onPrint: () => void;
   onOpenDealSheet: (lead: Lead) => void;
+  onOpenInbox: (lead: Lead) => void;
   userRole: UserRole;
   isOverlay?: boolean;
 }
 
-const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, userRole, isOverlay }) => {
+const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onOpenInbox, userRole, isOverlay }) => {
   const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -283,28 +285,17 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, use
       {/* Business Actions */}
       <div className="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-white/5">
         <div className="flex gap-2" onPointerDown={(e) => e.stopPropagation()}>
-          {lead.phone && (
-            <button
-              onClick={handleWhatsAppSend}
-              disabled={isSending}
-              className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 transition-colors"
-            >
-              {isSending ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <MessageCircle size={14} />
-              )}
-            </button>
-          )}
-          {lead.email && (
-            <a
-              href={`mailto:${lead.email}`}
-              className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-colors"
-              title={`Enviar email a ${lead.email}`}
-            >
-              <Mail size={14} />
-            </a>
-          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenInbox(lead);
+            }}
+            className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 transition-colors"
+            title="Abrir Buzón Omnicanal"
+          >
+            <MessageCircle size={14} />
+          </button>
+          
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -360,9 +351,10 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, use
     lead: Lead;
     userRole: UserRole;
     onOpenDealSheet: (lead: Lead) => void;
+    onOpenInbox: (lead: Lead) => void;
   }
   
-  const SortableLeadItem = ({ lead, userRole, onOpenDealSheet }: SortableLeadItemProps) => {
+  const SortableLeadItem = ({ lead, userRole, onOpenDealSheet, onOpenInbox }: SortableLeadItemProps) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
       id: lead.id,
       data: { lead },
@@ -380,7 +372,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, use
         {...listeners}
         className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} dnd-sortable`}
       >
-        <LeadCard lead={lead} onPrint={() => {}} onOpenDealSheet={onOpenDealSheet} userRole={userRole} />
+        <LeadCard lead={lead} onPrint={() => {}} onOpenDealSheet={onOpenDealSheet} onOpenInbox={onOpenInbox} userRole={userRole} />
       </div>
     );
   };
@@ -415,6 +407,7 @@ const CRMBoard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedLeadForDealSheet, setSelectedLeadForDealSheet] = useState<Lead | null>(null);
+  const [selectedLeadForInbox, setSelectedLeadForInbox] = useState<Lead | null>(null);
   const { addNotification } = useNotification();
   const { containerRef } = useMouseGlow();
   const userRole: UserRole = 'admin'; // Hardcoded for now, should come from context
@@ -514,6 +507,7 @@ const CRMBoard: React.FC = () => {
                       lead={lead} 
                       userRole={userRole} 
                       onOpenDealSheet={(lead) => setSelectedLeadForDealSheet(lead)}
+                      onOpenInbox={(lead) => setSelectedLeadForInbox(lead)}
                     />
                   ))}
                 </SortableContext>
@@ -536,6 +530,7 @@ const CRMBoard: React.FC = () => {
               lead={leads.find((l) => l.id === activeId)!}
               onPrint={() => {}}
               onOpenDealSheet={() => {}}
+              onOpenInbox={() => {}}
               userRole={userRole}
               isOverlay
             />
@@ -555,6 +550,14 @@ const CRMBoard: React.FC = () => {
             // generateActuarialReport(mockData);
             addNotification('info', 'Exportación premium iniciada.');
           }}
+        />
+      )}
+
+      {/* Omnichannel Inbox Modal */}
+      {selectedLeadForInbox && (
+        <OmnichannelInbox
+          lead={selectedLeadForInbox}
+          onClose={() => setSelectedLeadForInbox(null)}
         />
       )}
     </DndContext>

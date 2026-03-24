@@ -18,6 +18,8 @@ export {
   onLeadStatusChange,
   onLeadMetricsUpdate,
 } from './triggers/firestoreTriggers';
+export { onCreditApplicationCreated } from './triggers/onCreditApplicationCreated';
+export { onLeadInactivityNurturing } from './triggers/marketingAutomation';
 export { cleanupOldLogs, dailyMarketScraper } from './scheduled/maintenanceScheduler';
 export { sendgridWebhook } from './webhooks/sendgridWebhook';
 export { verifyGoogleToken } from './googleOneTap';

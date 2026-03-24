@@ -1,23 +1,7 @@
-import { orchestrationService } from './src/features/ai-agents/api/orchestrationService.ts';
+import { orchestrationService } from './src/features/ai-hub/ai-orchestration/api/orchestrationService.ts';
 import { automationService } from './src/features/automation/api/automationService.ts';
-import { Lead } from './src/types/types'
+import { Lead } from './src/entities/shared';
 
-// Mocking external services to avoid Firebase errors
-(automationService as unknown as { processLeadNurturing: (lead: Lead) => Promise<void> }).processLeadNurturing = async function (lead: Lead) {
-    console.log(`[Mock Automation] Processing lead: ${lead.name}`);
-    const now = Date.now();
-    const rawCreatedAt = lead.createdAt as unknown;
-    const createdAtTime = rawCreatedAt && typeof (rawCreatedAt as { seconds: number }).seconds === 'number'
-        ? (rawCreatedAt as { seconds: number }).seconds * 1000 : now;
-
-    const daysSinceCreation = Math.floor((now - createdAtTime) / (1000 * 60 * 60 * 24));
-    console.log(`[Mock Automation] Days since creation: ${daysSinceCreation}`);
-
-    // Simulating rule check
-    if (daysSinceCreation >= 3 && lead.aiScore && lead.aiScore > 80) {
-        console.log(`[Mock Automation] RULE MATCH: day_3_test_drive for ${lead.vehicleOfInterest}`);
-    }
-};
 
 async function verify() {
     console.log('--- Phase 16 Verification (MOCKED) ---');

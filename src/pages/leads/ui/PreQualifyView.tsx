@@ -77,7 +77,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     // Step 3: Financial Profile
     if (currentStep === 4) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
     // Step 4: Legal & Security
-    if (currentStep === 5) return d.dob && d.ssn.length >= 4 && d.creditAuth;
+    if (currentStep === 5) return d.dob && d.ssn.replace(/\D/g, '').length === 9 && d.creditAuth;
     return true; // Step 3 (Info block) is just informational
   };
 
@@ -445,12 +445,14 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
                     />
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                        SSN (Últimos 4)
+                        Seguro Social Completo (9 Dígitos)
                       </label>
                       <div className="relative">
                         <input
                           type={showSSN ? 'text' : 'password'}
                           name="ssn"
+                          autoComplete="off"
+                          maxLength={11}
                           value={formData.ssn}
                           onChange={handleInputChange}
                           placeholder="XXX-XX-XXXX"
