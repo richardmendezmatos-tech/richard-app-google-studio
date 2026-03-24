@@ -54,6 +54,7 @@ export const incomingWhatsAppMessage = onRequest({
     const WhatsAppPayloadSchema = z.object({
         Body: z.preprocess((val) => String(val || ""), z.string()),
         From: z.preprocess((val) => String(val || ""), z.string()),
+        MessageSid: z.preprocess((val) => String(val || ""), z.string().optional()),
         VehicleId: z.preprocess((val) => (val ? String(val) : undefined), z.string().optional()),
     });
 
@@ -63,14 +64,44 @@ export const incomingWhatsAppMessage = onRequest({
         return;
     }
 
-    const { Body, From, VehicleId } = validation.data;
+    const { Body, From, VehicleId, MessageSid } = validation.data;
+
+    // 1. Idempotency Check
+    if (MessageSid) {
+        const { getFirestore } = await import('firebase-admin/firestore');
+        const idempotencyRef = getFirestore().collection('webhook_idempotency').doc(MessageSid);
+        const doc = await idempotencyRef.get();
+        if (doc.exists) {
+            logger.info(`Idempotency hit: Message ${MessageSid} already processed.`);
+            res.set('Content-Type', 'text/xml');
+            res.status(200).send('<Response></Response>');
+            return;
+        }
+        await idempotencyRef.set({ processedAt: new Date(), from: From });
+    }
+
+    // 2. Exponential Backoff Retry Loop
+    const executeWithRetry = async (retries = 2) => {
+        let lastError: any;
+        for (let i = 0; i <= retries; i++) {
+            try {
+                return await whatsAppProcessor.execute({
+                    from: From,
+                    body: Body || "Hola",
+                    vehicleId: VehicleId
+                });
+            } catch (err) {
+                lastError = err;
+                if (i === retries) throw err;
+                logger.warn(`AI Processor failed, retrying (${i + 1}/${retries})...`, err);
+                await new Promise(resolve => setTimeout(resolve, 2000 * Math.pow(2, i)));
+            }
+        }
+        throw lastError;
+    };
 
     try {
-        const replyText = await whatsAppProcessor.execute({
-            from: From,
-            body: Body || "Hola",
-            vehicleId: VehicleId
-        });
+        const replyText = await executeWithRetry() as string;
 
         const { createTwiMLReply } = await import('../infrastructure/messaging/TwilioAdapter');
         const twiml = createTwiMLReply(replyText);

@@ -6,7 +6,10 @@ import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide
 import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
-import { useInventoryAnalytics, DealBuilder, Viewer360 } from '@/features/inventory';
+import { useInventoryAnalytics } from '@/features/inventory';
+
+const DealBuilder = React.lazy(() => import('@/features/inventory').then(m => ({ default: m.DealBuilder })));
+const Viewer360 = React.lazy(() => import('@/features/inventory').then(m => ({ default: m.Viewer360 })));
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
@@ -243,15 +246,17 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
         {/* Left Column: Media Gallery */}
         <div className="space-y-6">
           {/* 360 Viewer Integration */}
-          <div className="relative z-10">
-            <Viewer360
-              images={car.images && car.images.length > 0 ? car.images : [car.img]}
-              alt={car.name}
-              badge={car.badge}
-              carPrice={car.price}
-              carType={car.type}
-              onFullscreen={handleGalleryOpen}
-            />
+          <div className="relative z-10 w-full min-h-[300px]">
+            <React.Suspense fallback={<div className="w-full h-[300px] lg:h-[400px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-3xl" />}>
+              <Viewer360
+                images={car.images && car.images.length > 0 ? car.images : [car.img]}
+                alt={car.name}
+                badge={car.badge}
+                carPrice={car.price}
+                carType={car.type}
+                onFullscreen={handleGalleryOpen}
+              />
+            </React.Suspense>
           </div>
 
           {/* AI Insight Card */}
@@ -346,14 +351,34 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
           <div className="h-px bg-slate-200 dark:bg-slate-800" />
 
           {/* Deal Builder Engine */}
-          <DealBuilder
-            vehicleId={car.id}
-            vehiclePrice={car.price}
-            vehicleName={car.name}
-            vehicleImage={car.img}
-          />
+          <div id="deal-builder-section" className="scroll-mt-24 min-h-[500px]">
+            <React.Suspense fallback={<div className="w-full h-[500px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-[40px]" />}>
+              <DealBuilder
+                vehicleId={car.id}
+                vehiclePrice={car.price}
+                vehicleName={car.name}
+                vehicleImage={car.img}
+              />
+            </React.Suspense>
+          </div>
         </div>
       </main>
+
+      {/* Mobile Sticky CTA */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] z-50 lg:hidden flex items-center justify-between">
+        <div>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{car.name}</p>
+          <p className="text-xl font-black text-slate-800 dark:text-white leading-none mt-1">${car.price.toLocaleString()}</p>
+        </div>
+        <button 
+          onClick={() => {
+            document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-primary/30 transition-all active:scale-95"
+        >
+          Me Interesa
+        </button>
+      </div>
     </div>
   );
 };

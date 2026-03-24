@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Car, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, Car, ChevronRight, Loader2, MessageCircle } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import SEO from '@/shared/ui/seo/SEO';
 
@@ -299,16 +299,19 @@ const TradeInView: React.FC = () => {
 
             <div className="flex flex-col md:flex-row gap-4 justify-center max-w-md mx-auto">
               <button
-                onClick={() => {}}
-                className="flex-1 py-4 bg-primary hover:bg-[#009ac0] text-slate-900 font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all"
+                onClick={() => {
+                  const message = `¡Hola! Acabo de tasar mi ${formData.year} ${formData.make} ${formData.model} por un valor estimado de $${offerValue.toLocaleString()}. Me gustaría agendar la inspección física.`;
+                  window.open(`https://wa.me/17875550000?text=${encodeURIComponent(message)}`, '_blank');
+                }}
+                className="flex-1 py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-black rounded-xl shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                Aplicar a Compra
+                <MessageCircle size={20} /> Agendar en WhatsApp
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all"
+                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all text-sm"
               >
-                Buscar Otro Auto
+                Volver a la Tienda
               </button>
             </div>
           </div>

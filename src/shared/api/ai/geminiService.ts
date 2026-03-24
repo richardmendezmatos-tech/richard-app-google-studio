@@ -571,6 +571,40 @@ export const analyzeTradeInImages = async (images: string[]): Promise<Record<str
   }
 };
 
+export const generateCoverImage = async (prompt: string): Promise<string> => {
+  try {
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (!apiKey) {
+      console.warn("No VITE_OPENAI_API_KEY found. Falling back to Unsplash.");
+      return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600';
+    }
+
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'dall-e-3',
+        prompt: `A highly realistic, cinematic, and professional automotive photography thumbnail for a blog post about: ${prompt}. Minimalist, elegant, 8k resolution, volumetric lighting. No text.`,
+        n: 1,
+        size: '1024x1024',
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data[0].url;
+  } catch (err) {
+    console.error('generateCoverImage Error:', err);
+    return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600';
+  }
+};
+
 export const generateBlogPost = async (
   topic: string,
   tone: 'professional' | 'casual' | 'hype' = 'professional',

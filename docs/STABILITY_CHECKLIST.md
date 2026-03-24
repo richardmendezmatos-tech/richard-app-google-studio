@@ -23,7 +23,7 @@ Notes:
 Run from the project root:
 
 ```bash
-npm run test -- src/services/antigravityOmnichannelService.test.ts src/services/automationService.test.ts src/services/emailService.test.ts
+npm run test -- src/features/omnichannel/api/antigravityOmnichannelService.test.ts src/features/automation/api/automationService.test.ts src/shared/api/communications/emailService.test.ts
 npm run build
 ```
 

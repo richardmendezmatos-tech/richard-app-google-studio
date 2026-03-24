@@ -186,12 +186,23 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
             </p>
             <p className="text-3xl font-mono font-bold text-white tracking-widest">{referenceId}</p>
           </div>
-          <button
-            onClick={onExit}
-            className="w-full py-4 bg-[#173d57] hover:bg-primary text-white rounded-2xl font-bold uppercase tracking-widest transition-all shadow-lg"
-          >
-            Volver al Inicio
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => {
+                 const m = `¡Hola! Acabo de enviar mi solicitud (Caso #${referenceId}). Quisiera hablar con un experto.`;
+                 window.open(`https://wa.me/17875550000?text=${encodeURIComponent(m)}`, '_blank');
+              }}
+              className="w-full py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(37,211,102,0.3)] hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            >
+              <MessagesSquare size={20} /> VIP por WhatsApp
+            </button>
+            <button
+              onClick={onExit}
+              className="w-full py-4 bg-[#173d57] hover:bg-primary text-white rounded-2xl font-bold uppercase tracking-widest transition-all shadow-lg text-xs"
+            >
+              Volver al Inicio
+            </button>
+          </div>
         </div>
       </div>
     );

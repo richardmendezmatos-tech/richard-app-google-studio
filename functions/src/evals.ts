@@ -1,6 +1,6 @@
 import { z } from 'genkit';
 import { ai } from './services/aiManager';
-import { chatWithLeadFlow } from './index';
+import { chatWithLeadFlow } from './application/use-cases/ai-flows/leadAnalysisFlows';
 import * as logger from 'firebase-functions/logger';
 import { onCallGenkit } from 'firebase-functions/https';
 import { requireAdmin } from './security/policies';

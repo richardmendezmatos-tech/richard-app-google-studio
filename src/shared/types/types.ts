@@ -94,6 +94,8 @@ export interface BlogPost {
   date: string;
   imageUrl?: string;
   tags: string[];
+  slug?: string;
+  metaDescription?: string;
 }
 
 export interface FirestoreTimestamp {

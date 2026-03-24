@@ -1,0 +1,20 @@
+{
+  "id": "req-14b3-20260324",
+  "timestamp": "2026-03-24T17:18:01-04:00",
+  "type": "STRATEGIC_PLANNING",
+  "category": "PLANNING_NIVEL_14",
+  "status": "DRAFT",
+  "content": {
+    "next_steps": [
+      {
+        "action": "git_push",
+        "description": "Subir los cambios actuales (CRO y testing) para detonar el pipeline de Vercel/Firebase."
+      },
+      {
+        "action": "nivel_14_kickoff",
+        "description": "Seleccionar el primer pilar de la Orquestación Predictiva para iniciar desarrollo."
+      }
+    ],
+    "context": "El proyecto actual Nivel 13 ha finalizado estructuralmente. La fase de ingesta, despliegue y validación local es exitosa."
+  }
+}

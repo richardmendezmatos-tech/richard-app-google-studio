@@ -19,6 +19,8 @@ const AILabPage = React.lazy(() => import('@/pages/ai-lab/ui/AILabPage'));
 const CRMBoard = React.lazy(() => import('./CRMBoard'));
 const HoustonDashboard = React.lazy(() => import('@/widgets/houston/HoustonDashboard'));
 const DealDesker = React.lazy(() => import('./DealDesker'));
+const NewsroomPage = React.lazy(() => import('@/pages/admin/newsroom/ui/NewsroomPage'));
+const AudiencesView = React.lazy(() => import('@/pages/admin/audiences/ui/AudiencesView'));
 
 const LeadAnalyticsPage = React.lazy(() => import('@/features/leads').then(m => ({ default: m.LeadAnalyticsPage })));
 
@@ -130,6 +132,8 @@ export const AdminRoutes = (props: any) => {
         <Route path="lab" element={<AILabPage />} />
         <Route path="telemetry" element={<HoustonTelemetryTab />} />
         <Route path="pipeline" element={<CRMBoardWrapper />} />
+        <Route path="newsroom" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando Newsroom...</div>}><NewsroomPage /></Suspense>} />
+        <Route path="audiences" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando audiencias...</div>}><AudiencesView /></Suspense>} />
         <Route path="desker" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando herramienta financiera...</div>}><DealDesker /></Suspense>} />
         <Route path="marketing" element={<MarketingWrapper />} />
         <Route path="houston" element={<HoustonDashboard />} />

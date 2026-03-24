@@ -222,6 +222,28 @@ const Sidebar: React.FC<SidebarProps> = ({
               label="CRM Leads"
               isCollapsed={isCollapsed}
             />
+            <NavButton
+              active={location.pathname === '/admin/newsroom'}
+              onClick={() => {
+                navigate('/admin/newsroom');
+                setIsMobileOpen(false);
+              }}
+              onMouseEnter={() => import('@/pages/admin/newsroom/ui/NewsroomPage').catch(() => {})}
+              icon={<Newspaper size={19} />}
+              label="Newsroom"
+              isCollapsed={isCollapsed}
+            />
+            <NavButton
+              active={location.pathname === '/admin/audiences'}
+              onClick={() => {
+                navigate('/admin/audiences');
+                setIsMobileOpen(false);
+              }}
+              onMouseEnter={() => import('@/pages/admin/audiences/ui/AudiencesView').catch(() => {})}
+              icon={<UserIcon size={19} />}
+              label="Audiencias"
+              isCollapsed={isCollapsed}
+            />
 
             <div className="my-3 border-t border-white/5 opacity-50" />
             <p
