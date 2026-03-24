@@ -34,7 +34,7 @@ export class ProcessNewLeadApplication {
         try {
             const lead = input.data as Lead;
             const appId = input.id;
-            const leadEntity = new LeadEntity(lead);
+            const leadEntity = LeadEntity.create(lead);
 
             // 1. Lógica de Dominio: Scoring & Análisis
             const analysis = ScoreCalculator.execute(lead);

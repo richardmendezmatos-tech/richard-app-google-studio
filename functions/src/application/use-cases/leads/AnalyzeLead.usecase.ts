@@ -38,7 +38,7 @@ export class AnalyzeLead {
             }
 
             // 2. Utilizar Entidad de Dominio para lógica enriquecida
-            const leadEntity = new LeadEntity(input as Lead);
+            const leadEntity = LeadEntity.create(input as Lead);
 
             // 3. Calcular scoring (Interactor)
             const scoringResult = ScoreCalculator.execute(input);

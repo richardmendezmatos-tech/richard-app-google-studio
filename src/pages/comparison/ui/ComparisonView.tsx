@@ -5,6 +5,7 @@ import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
 import { useInventoryAnalytics } from '@/features/inventory';
 import DOMPurify from 'dompurify';
 import SEO from '@/shared/ui/seo/SEO';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 const ComparisonView: React.FC = () => {
   const { selectedCars, removeCarFromCompare, clearComparison } = useComparison();
@@ -235,7 +236,7 @@ const ComparisonView: React.FC = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/vehicle/${car.id}`)}
+                  onClick={() => navigate(`/v/${generateVehicleSlug(car)}/${car.id}`)}
                   className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-colors"
                 >
                   Ver Auto

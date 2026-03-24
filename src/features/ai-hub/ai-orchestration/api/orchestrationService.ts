@@ -2,6 +2,7 @@ import { Lead } from '@/shared/api/adapters/leads/crmService';
 import { VehicleHealthStatus } from '@/shared/types/types';
 import { calculateLeadScore, ScoringResult } from '@/entities/lead';
 import { AGENTS, AgentPersona } from '../../api/agentSystem';
+import { workspaceManager } from '@/features/automation/api/workspaceManager';
 
 export interface OrchestrationAction {
   agentId: AgentPersona;
@@ -66,13 +67,23 @@ class OrchestrationService {
 
     const message = `Hola ${lead.name}, soy ${agent.name} de Richard Automotive. ${memoryNudge}${healthContext} Quisiera conversar sobre cómo podemos ayudarte con esto y las opciones para tu próximo auto.`;
 
-    return {
+    const actionData: OrchestrationAction = {
       agentId,
       message,
       priority: scoring.priority,
       reasoning,
       suggestedAction,
     };
+
+    // Protocolo de Persistencia: "Dato que no está en el Workspace, es dato que no existe"
+    // Grabamos un checkpoint ANTES de retornar y que se dispare al usuario o sistema saliente
+    const sessionId = workspaceManager.startSession();
+    await workspaceManager.checkpointOperation(sessionId, 'LEAD_ORCHESTRATION', {
+      leadId: lead.id,
+      actionData,
+    });
+
+    return actionData;
   }
 
   /**

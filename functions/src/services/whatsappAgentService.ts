@@ -38,6 +38,7 @@ export class WhatsAppAgentService {
       leadId,
       message,
       customerContext: vehicleContext,
+      from: 'whatsapp',
     });
 
     // External side-effect: Appointment Scheduling

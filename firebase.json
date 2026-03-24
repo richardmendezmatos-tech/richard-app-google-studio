@@ -30,6 +30,14 @@
     ],
     "rewrites": [
       {
+        "source": "/sitemap.xml",
+        "function": "generateSitemap"
+      },
+      {
+        "source": "/merchant-feed.xml",
+        "function": "generateMerchantFeed"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

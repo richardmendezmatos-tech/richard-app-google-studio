@@ -56,6 +56,15 @@ const SystemAccessLogin = React.lazy(() =>
   lazyRetry(() => import('@/pages/auth/ui/SystemAccessLogin')),
 );
 const BlogPage = React.lazy(() => lazyRetry(() => import('@/pages/blog/ui/BlogPage')));
+
+// --- SEO Programático: Colecciones ---
+interface CollectionProps {
+  inventory: Car[];
+}
+const CollectionPage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/storefront/ui/CollectionPage')),
+) as unknown as React.ComponentType<CollectionProps>;
+
 const ProfilePage = React.lazy(() =>
   lazyRetry(() => import('@/pages/profile/ui/ProfilePage')),
 );
@@ -98,6 +107,9 @@ const HoustonDashboard = React.lazy(() =>
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/ChaosTest')));
 const LocalClusterView = React.lazy(() =>
   lazyRetry(() => import('@/features/inventory').then(m => ({ default: m.LocalClusterView }))),
+);
+const CreditAppPage = React.lazy(() => 
+  lazyRetry(() => import('@/pages/storefront/ui/CreditAppPage')),
 );
 
 const CRMBoard = React.lazy(() =>
@@ -241,6 +253,14 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             }
           />
           <Route
+            path="/v/:slug/:id"
+            element={
+              <PageWrapper>
+                <VehicleDetail inventory={inventory} />
+              </PageWrapper>
+            }
+          />
+          <Route
             path="/vehicle/:id"
             element={
               <PageWrapper>
@@ -257,10 +277,34 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             }
           />
           <Route
+            path="/coleccion/:brand"
+            element={
+              <PageWrapper>
+                <CollectionPage inventory={inventory} />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/presupuesto/:maxPrice"
+            element={
+              <PageWrapper>
+                <CollectionPage inventory={inventory} />
+              </PageWrapper>
+            }
+          />
+          <Route
             path="/trade-in"
             element={
               <PageWrapper>
                 <TradeInView />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/apply"
+            element={
+              <PageWrapper>
+                <CreditAppPage />
               </PageWrapper>
             }
           />

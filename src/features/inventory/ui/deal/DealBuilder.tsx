@@ -24,7 +24,12 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
   const [creditTier, setCreditTier] = useState<CreditTier>('good');
   // Derived payment calculation instead of synchronous effect
   const payment = React.useMemo(() => {
-    const result = calculateLoan(vehiclePrice, downPayment, term, creditTier);
+    const result = calculateLoan({
+      vehiclePrice,
+      downPayment,
+      termMonths: term,
+      creditTier
+    });
     return result.monthlyPayment;
   }, [vehiclePrice, downPayment, term, creditTier]);
 

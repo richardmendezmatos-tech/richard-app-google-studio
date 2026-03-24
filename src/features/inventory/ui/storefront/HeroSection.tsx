@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 
 interface HeroSectionProps {
   onNeuralMatch: () => void;
@@ -181,7 +182,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* CTA buttons */}
-            <button onClick={onBrowseInventory} className="ra-cta ra-cta--primary">
+            <button
+              onClick={() => {
+                trackInterestIndex('browse_inventory_intent', 'hero');
+                onBrowseInventory();
+              }}
+              className="ra-cta ra-cta--primary"
+            >
               <div className="ra-cta__shine" />
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Acceso Exclusivo</span>
@@ -192,7 +199,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
             </button>
 
-            <button onClick={onNeuralMatch} className="ra-cta ra-cta--secondary">
+            <button
+              onClick={() => {
+                trackInterestIndex('neural_match_intent', 'hero');
+                onNeuralMatch();
+              }}
+              className="ra-cta ra-cta--secondary"
+            >
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Inteligencia Artificial</span>
                 <span className="ra-cta__label">DESCUBRE TU AUTO IDEAL</span>
@@ -202,7 +215,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
             </button>
 
-            <button onClick={onSellCar} className="ra-cta ra-cta--tertiary">
+            <button
+              onClick={() => {
+                trackInterestIndex('sell_car_intent', 'hero');
+                onSellCar();
+              }}
+              className="ra-cta ra-cta--tertiary"
+            >
               <div className="ra-cta__text">
                 <span className="ra-cta__tag">Cotización VIP</span>
                 <span className="ra-cta__label">COTIZA TU AUTO EN 90S</span>

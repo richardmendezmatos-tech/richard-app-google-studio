@@ -39,6 +39,16 @@ export const onCarCreated = onDocumentCreated('cars/{carId}', async (event) => {
 
     // Proactive Matching Motor (Richard Automotive Command Center)
     await InventoryMatchingService.matchInventoryToLeads(event.params.carId, data);
+    
+    // Auto-FAQ Generation for SEO Snippets
+    if (!data.seoFaqs || data.seoFaqs.length === 0) {
+      const { generateAutoFaqsForVehicle } = await import('../infrastructure/seo/autoFaqGenerator');
+      const faqs = await generateAutoFaqsForVehicle(data.name || 'car', data.brand || '', data.price || 0);
+      if (faqs.length > 0) {
+        await event.data?.ref.update({ seoFaqs: faqs });
+        logger.info(`Generadas ${faqs.length} FAQs semánticas para el carro ${event.params.carId}`);
+      }
+    }
   } catch (e) {
     logger.error(`Error indexing car ${event.params.carId}:`, e);
   }
@@ -113,7 +123,7 @@ export const onVehicleUpdate = onDocumentUpdated(
     // Check for Price Drop
     if (after.price < before.price) {
       try {
-        const useCase = new NotifyPriceDrop(leadRepository, emailRepository);
+        const useCase = new NotifyPriceDrop(leadRepository, emailRepository, whatsAppRepository);
         await useCase.execute(
           event.params.carId,
           Number(before.price),

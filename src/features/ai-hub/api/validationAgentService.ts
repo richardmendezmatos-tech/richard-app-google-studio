@@ -1,11 +1,14 @@
 import { generateText } from '@/shared/api/ai/geminiService';
 import { Car } from '@/shared/types/types';
+import { z } from 'zod';
 
-export interface ValidationResult {
-  isValid: boolean;
-  issues: string[];
-  sanitizedResponse: string;
-}
+export const ValidationResultSchema = z.object({
+  isValid: z.boolean(),
+  issues: z.array(z.string()),
+  sanitizedResponse: z.string(),
+});
+
+export type ValidationResult = z.infer<typeof ValidationResultSchema>;
 
 const GOLDEN_RULES = `
 1. PRECISIÓN DE INVENTARIO: Solo menciona autos que estén explícitamente en el "Contexto de Inventario". Si no están, di que no los tienes disponibles ahora mismo.
@@ -55,7 +58,9 @@ export class ValidationAgentService {
       const jsonMatch = rawResult.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Invalid auditor response format');
 
-      return JSON.parse(jsonMatch[0]) as ValidationResult;
+      // Parsea el JSON estrictamente con Zod en lugar de "as ValidationResult"
+      const parsedData = JSON.parse(jsonMatch[0]);
+      return ValidationResultSchema.parse(parsedData);
     } catch (error) {
       console.error('Validation Agent Error:', error);
       // Fallback: If validation fails, return original as valid to avoid blocking (or handle as needed)

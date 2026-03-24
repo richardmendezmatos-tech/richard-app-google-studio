@@ -12,13 +12,14 @@ import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import DOMPurify from 'dompurify';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 interface Props {
   inventory: Car[];
 }
 
 const VehicleDetail: React.FC<Props> = ({ inventory }) => {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug } = useParams<{ id: string; slug?: string }>();
   const navigate = useNavigate();
   const { currentDealer } = useDealer();
   const [engagedTime, setEngagedTime] = useState(0);
@@ -29,6 +30,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 
   useEffect(() => {
     if (car) {
+      // SEO Automatic Redirection (Canonical URL Enforcement)
+      const correctSlug = generateVehicleSlug(car);
+      if (!slug || slug !== correctSlug) {
+        navigate(`/v/${correctSlug}/${car.id}`, { replace: true });
+        return;
+      }
+
       analytics.trackCarViewIncremental(car.id);
       // Growth: Track Meta ViewContent
       trackEvent('ViewContent', {
@@ -39,7 +47,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
         currency: 'USD',
       });
     }
-  }, [car, analytics, trackEvent]);
+  }, [car, slug, navigate, analytics, trackEvent]);
 
   // Moat: Track engaged time on vehicle
   useEffect(() => {
@@ -118,12 +126,24 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
       <SEO
-        title={car.name}
+        title={`${car.name} | Richard Automotive`}
         description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
         image={car.img}
-        url={`/vehicle/${car.id}`}
+        url={`/v/${slug || generateVehicleSlug(car)}/${car.id}`}
         type="product"
         schema={[
+          ...(car.seoFaqs && car.seoFaqs.length > 0 ? [{
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: car.seoFaqs.map(faq => ({
+              '@type': 'Question',
+              name: faq.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.answer
+              }
+            }))
+          }] : []),
           {
             '@context': 'https://schema.org/',
             '@type': 'Car',
@@ -142,7 +162,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             vehicleConfiguration: car.features?.join(', '),
             offers: {
               '@type': 'Offer',
-              url: `${siteUrl}/vehicle/${car.id}`,
+              url: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
               priceCurrency: 'USD',
               price: car.price,
               itemCondition: 'https://schema.org/UsedCondition',
@@ -173,7 +193,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                 '@type': 'ListItem',
                 position: 3,
                 name: car.name,
-                item: `${siteUrl}/vehicle/${car.id}`,
+                item: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
               },
             ],
           },

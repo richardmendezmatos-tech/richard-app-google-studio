@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { HashRouter, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@/shared/ui/providers/ThemeProvider';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/shared/lib/react-query';
 
 import { NotificationProvider } from '@/shared/ui/providers/NotificationProvider';
 
@@ -36,14 +38,16 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
     <HelmetProvider>
       <ThemeProvider>
-        <NotificationProvider>
-          <TelemetryProvider>
-            <SmartRouter>
-              <MetaPixel />
-              {children}
-            </SmartRouter>
-          </TelemetryProvider>
-        </NotificationProvider>
+        <QueryClientProvider client={queryClient}>
+          <NotificationProvider>
+            <TelemetryProvider>
+              <SmartRouter>
+                <MetaPixel />
+                {children}
+              </SmartRouter>
+            </TelemetryProvider>
+          </NotificationProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </HelmetProvider>
   );

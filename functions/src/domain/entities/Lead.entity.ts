@@ -1,4 +1,5 @@
 import { LeadStatus } from '../types';
+import { LeadSchema } from '../validators/lead.schema';
 
 export interface Lead {
   id?: string;
@@ -12,6 +13,15 @@ export interface Lead {
   employer?: string;
   vehicleId?: string;
   hasPronto?: boolean;
+  ssn?: string;
+  addressLine1?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  housingType?: string;
+  timeAtAddress?: string;
+  timeAtEmployer?: string;
+  hasCreditApplication?: boolean;
   chatInteractions?: number;
   viewedInventoryMultipleTimes?: boolean;
   location?: string;
@@ -65,10 +75,30 @@ export interface Lead {
 }
 
 export class LeadEntity {
-  constructor(private props: Lead) {}
+  private constructor(private props: Lead) {}
+
+  /**
+   * Factory Method para instanciar la Entidad de forma Segura (con validación de Zod)
+   */
+  public static create(data: unknown): LeadEntity {
+    const parseResult = LeadSchema.safeParse(data);
+    if (!parseResult.success) {
+      throw new Error(`Error de Integridad LeadEntity (Zod): ${parseResult.error.message}`);
+    }
+    // Zod lo retorna limpio y tipado, forzamos a Lead ya que Zod es más permisivo con el catchall
+    return new LeadEntity(parseResult.data as Lead);
+  }
 
   public get data(): Lead {
     return { ...this.props };
+  }
+
+  /**
+   * Actualiza el Lead con nueva información re-validándola contra Zod
+   */
+  public update(newData: Partial<Lead>): LeadEntity {
+    const updated = { ...this.props, ...newData };
+    return LeadEntity.create(updated);
   }
 
   /**

@@ -108,3 +108,9 @@ export const trackInteraction = (action: string, details?: any) => {
   analytics.engagement('ai_interaction')(action)(undefined);
   trackMetaEvent('AIInteraction', { action, details });
 };
+
+// Phase 7: Sincronización Avanzada Analytics
+export const trackInterestIndex = (carId: string, source: 'hero' | 'blog' | 'gallery') => {
+  analytics.engagement('interest_index')(`${carId}-${source}`)();
+  trackMetaEvent('InterestIndex', { content_id: carId, source });
+};

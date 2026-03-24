@@ -20,6 +20,7 @@ import {
 import { dbLite as db } from '@/shared/api/firebase/client';
 import { getStorageService, getAnalyticsService } from '@/shared/api/firebase/optionalServices';
 import { Car } from '@/entities/shared';
+import { carSchema } from '@/shared/lib/validators/car.schema';
 const CARS_COLLECTION = 'cars';
 
 export interface PaginatedResult {
@@ -103,11 +104,15 @@ export const getCarById = async (id: string): Promise<Car | null> => {
 export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
   const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
 
-  const docRef = await addDoc(collection(db, CARS_COLLECTION), {
+  const validatedData = carSchema.parse({
     ...carData,
     dealerId: currentDealerId,
     views: 0,
     leads_count: 0,
+  });
+
+  const docRef = await addDoc(collection(db, CARS_COLLECTION), {
+    ...validatedData,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -116,9 +121,11 @@ export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
 };
 
 export const updateVehicle = async (id: string, updates: Partial<Car>) => {
+  const validatedUpdates = carSchema.partial().parse(updates);
+
   const docRef = doc(db, CARS_COLLECTION, id);
   await updateDoc(docRef, {
-    ...updates,
+    ...validatedUpdates,
     updatedAt: serverTimestamp(),
   });
 };

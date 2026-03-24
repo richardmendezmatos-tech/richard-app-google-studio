@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car } from '@/entities/shared';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 
@@ -14,8 +15,9 @@ interface CarCardProps {
   onToggleSave: (e: React.MouseEvent) => void;
 }
 
-const CarCard: React.FC<CarCardProps> = React.memo(({ car, isSaved, onToggleSave }) => {
-  const navigate = useNavigate();
+const CarCard: React.FC<CarCardProps> = React.memo(
+  ({ car, isSaved, onToggleSave, onCompare, isComparing, onSelect }) => {
+    const navigate = useNavigate();
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCompare(e);
@@ -25,10 +27,10 @@ const CarCard: React.FC<CarCardProps> = React.memo(({ car, isSaved, onToggleSave
 
   return (
     <div
-      onClick={() => navigate(`/vehicle/${car.id}`)}
+      onClick={() => navigate(`/v/${generateVehicleSlug(car)}/${car.id}`)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          navigate(`/vehicle/${car.id}`);
+          navigate(`/v/${generateVehicleSlug(car)}/${car.id}`);
         }
       }}
       role="button"

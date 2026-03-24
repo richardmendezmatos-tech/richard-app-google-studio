@@ -42,6 +42,7 @@ export interface Car {
   views?: number;
   leads_count?: number;
   dealerId?: string;
+  seoFaqs?: { question: string; answer: string }[];
 }
 
 export enum ViewMode {
@@ -113,6 +114,7 @@ export interface Lead {
   ssn_encrypted?: string;
   carId?: string;
   notes?: string;
+  hasCreditApplication?: boolean;
   createdAt?: FirestoreTimestamp;
   timestamp?: FirestoreTimestamp; // Support both for backward compatibility
 

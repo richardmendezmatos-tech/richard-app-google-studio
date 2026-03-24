@@ -37,6 +37,9 @@ import authApp from './authApp';
 import { onRequest } from 'firebase-functions/v2/https';
 export const authApi = onRequest({ cors: true }, authApp);
 
+export { generateSitemap } from './infrastructure/seo/sitemapGenerator';
+export { generateMerchantFeed } from './infrastructure/seo/merchantFeedGenerator';
+
 const ALLOWED_ORIGINS = [
   'https://richard-automotive.vercel.app',
   'https://richard-automotive-dev.web.app',

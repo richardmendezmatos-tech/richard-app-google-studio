@@ -2,8 +2,8 @@ import { WhatsAppRepository } from '../../../domain/repositories';
 import { ai } from '../../../services/aiManager';
 import { WHATSAPP_AGENT_PROMPT } from './WhatsAppAgent.prompt';
 
-import { Composio } from 'composio-core';
-
+// SDK Removed due to Firebase Cloud Functions PEER conflicts
+// Using pure HTTP fetch for Composio interactions
 /**
  * Conexión a Rube MCP (Composio) para HubSpot
  * Dispara la creación del Lead y del Deal asociado en el CRM
@@ -18,30 +18,47 @@ async function syncToHubspot(data: any): Promise<void> {
       return;
     }
 
-    const composio = new Composio({ apiKey });
-    
-    // Create/Update Contact
-    const contactRes = await composio.executeAction('HUBSPOT_CREATE_CONTACT', {
-      properties: {
-        phone: data.phone,
-        firstname: data.name || 'WhatsApp Lead',
-        lifecyclestage: 'lead'
-      }
-    });
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey
+    };
 
-    console.log('[Composio:HubSpot] Contact created/updated:', contactRes);
+    // Create/Update Contact
+    const contactRes = await fetch('https://api.composio.dev/v1/actions/execute', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        action: 'HUBSPOT_CREATE_CONTACT',
+        input: {
+          properties: {
+            phone: data.phone,
+            firstname: data.name || 'WhatsApp Lead',
+            lifecyclestage: 'lead'
+          }
+        }
+      })
+    });
+    
+    console.log('[Composio:HubSpot] Contact ResponseStatus:', contactRes.status);
 
     // Create Deal
-    const dealRes = await composio.executeAction('HUBSPOT_CREATE_DEAL', {
-      properties: {
-        dealname: `WhatsApp Lead - ${data.suggestedVehicle || 'Auto'}`,
-        dealstage: 'appointmentscheduled',
-        pipeline: 'default',
-        amount: data.budget ? String(data.budget) : ''
-      }
+    const dealRes = await fetch('https://api.composio.dev/v1/actions/execute', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        action: 'HUBSPOT_CREATE_DEAL',
+        input: {
+          properties: {
+            dealname: `WhatsApp Lead - ${data.suggestedVehicle || 'Auto'}`,
+            dealstage: 'appointmentscheduled',
+            pipeline: 'default',
+            amount: data.budget ? String(data.budget) : ''
+          }
+        }
+      })
     });
 
-    console.log('[Composio:HubSpot] Deal created:', dealRes);
+    console.log('[Composio:HubSpot] Deal ResponseStatus:', dealRes.status);
   } catch (err: any) {
     console.error('[Composio:HubSpot] Error syncing to CRM:', err.message || err);
   }

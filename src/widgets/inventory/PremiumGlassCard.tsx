@@ -5,6 +5,7 @@ import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 interface PremiumGlassCardProps {
   car: Car;
@@ -54,11 +55,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      onClick={() => (onSelect ? onSelect() : navigate(`/vehicle/${car.id}`))}
+      onClick={() => (onSelect ? onSelect() : navigate(`/v/${generateVehicleSlug(car)}/${car.id}`))}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           if (onSelect) onSelect();
-          else navigate(`/vehicle/${car.id}`);
+          else navigate(`/v/${generateVehicleSlug(car)}/${car.id}`);
         }
       }}
       role="button"

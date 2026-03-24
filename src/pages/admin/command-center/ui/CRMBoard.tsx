@@ -202,6 +202,11 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, use
             Alta Prioridad
           </span>
         )}
+        {lead.hasCreditApplication && (
+          <span className="px-2.5 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm">
+            <ShieldCheck size={10} /> Credit App
+          </span>
+        )}
         <span className="text-[10px] text-slate-400 flex items-center gap-1">
           <Clock size={10} />
           {lead.createdAt?.seconds
