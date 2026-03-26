@@ -87,7 +87,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
 
         <OptimizedImage
           src={car.img}
-          alt={car.name}
+          alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
           className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
           aspectRatio="aspect-[4/3]"
         />

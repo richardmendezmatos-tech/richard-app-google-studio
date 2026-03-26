@@ -27,7 +27,7 @@ export const SITE_CONFIG: SiteConfig = {
   domain: 'richard-automotive.com',
   url: 'https://www.richard-automotive.com',
   description:
-    'Tu próximo nivel en movilidad comienza aquí. Autos seminuevos certificados en Puerto Rico con financiamiento inteligente y selección curada con IA.',
+    'Tu destino de autos nuevos y usados de lujo en Puerto Rico. Richard Automotive en Bayamón ofrece financiamiento inteligente, trade-in y selección curada con IA.',
   social: {
     facebook: 'https://www.facebook.com/richardautomotive1',
     instagram: 'https://www.instagram.com/richardoneal_/',
@@ -40,11 +40,13 @@ export const SITE_CONFIG: SiteConfig = {
   },
   seo: {
     keywords: [
-      'autos seminuevos puerto rico',
-      'carros usados san juan',
-      'financiamiento autos pr',
-      'trade in puerto rico',
-      'suv seminuevos',
+      'autos usados puerto rico',
+      'autos nuevos bayamon puerto rico',
+      'carros usados san juan pr',
+      'dealer de autos puerto rico',
+      'financiamiento de autos pr',
+      'trade in bayamon pr',
+      'carros de lujo bayamon',
       'richard automotive',
       'autos certificados pr',
     ],

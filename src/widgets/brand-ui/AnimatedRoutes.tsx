@@ -111,6 +111,12 @@ const LocalClusterView = React.lazy(() =>
 const CreditAppPage = React.lazy(() => 
   lazyRetry(() => import('@/pages/storefront/ui/CreditAppPage')),
 );
+const FinanciamientoPage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/financiamiento/ui/FinanciamientoPage')),
+);
+const ContactoPage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/contacto/ui/ContactoPage')),
+);
 
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
@@ -305,6 +311,22 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <PageWrapper>
                 <CreditAppPage />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/financiamiento"
+            element={
+              <PageWrapper>
+                <FinanciamientoPage />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/contacto"
+            element={
+              <PageWrapper>
+                <ContactoPage />
               </PageWrapper>
             }
           />

@@ -114,7 +114,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         contents,
         model: 'gemini-1.5-flash',
         systemInstruction:
-          'Eres un vendedor experto de autos de lujo y seminuevos. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
+          'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
       });
 
       setDescription(response.data);

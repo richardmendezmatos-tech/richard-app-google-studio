@@ -37,8 +37,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
     <>
       <div className="h-full w-full bg-transparent">
         <SEO
-          title="Autos Usados de Lujo en San Juan, PR | Richard Automotive — Financiamiento Expreso"
-          description="Compra autos seminuevos certificados en Puerto Rico con financiamiento en 24h, trade-in a precio justo y entrega inmediata en San Juan. El dealer más tecnológico de PR con IA para encontrar tu auto ideal."
+          title="Autos Nuevos y Usados de Lujo en Puerto Rico | Richard Automotive"
+          description="Compra autos nuevos y usados de lujo en Bayamón, Puerto Rico. Financiamiento expreso en 24h, trade-in a precio justo y entrega inmediata. El dealer más tecnológico de PR con IA para encontrar tu auto ideal."
           url="/"
           type="website"
           schema={{
@@ -48,19 +48,19 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
             "image": SITE_CONFIG.seo.ogImage,
             "@id": SITE_CONFIG.url,
             "url": SITE_CONFIG.url,
-            "telephone": "+1-787-000-0000",
+            "telephone": "+1-787-368-2880",
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "Zona Metropolitana",
-              "addressLocality": "San Juan",
+              "streetAddress": "Bayamón",
+              "addressLocality": "Bayamón",
               "addressRegion": "PR",
-              "postalCode": "00901",
+              "postalCode": "00961",
               "addressCountry": "US"
             },
             "geo": {
               "@type": "GeoCoordinates",
-              "latitude": 18.4233,
-              "longitude": -66.0656
+              "latitude": 18.3990,
+              "longitude": -66.1573
             },
             "openingHoursSpecification": {
               "@type": "OpeningHoursSpecification",
@@ -71,6 +71,9 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
             "priceRange": "$$"
           }}
         />
+
+        {/* Visually hidden H1 for search engine crawlers — matches SEO keyword strategy */}
+        <h1 className="sr-only">Autos Nuevos y Usados de Lujo en Puerto Rico — Richard Automotive Bayamón</h1>
 
         {/* Hero Section */}
         <HeroSection
