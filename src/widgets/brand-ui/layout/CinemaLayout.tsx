@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect, Suspense, lazy } from 'react';
+// CinemaLayout.tsx
+import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
 import ReloadPrompt from '@/widgets/brand-ui/layout/ReloadPrompt';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
+import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
 
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { useLocation } from 'react-router-dom';
@@ -11,10 +13,6 @@ import { Car } from '@/shared/types/types';
 
 /**
  * Safe lazy import helper.
- * If the JS chunk fails to load (e.g. stale cache after a Vercel redeployment),
- * we attempt a ONE-TIME hard reload to bust the cache. On the second attempt
- * (or if a reload is already in progress) we return a no-op component so the
- * page continues to work without the widget.
  */
 function safeLazy<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -32,7 +30,6 @@ function safeLazy<T extends React.ComponentType<any>>(
           window.location.reload();
         }
 
-        // Return an empty component so lazy() never rejects.
         return { default: (() => null) as unknown as T };
       }) as Promise<{ default: T }>,
   );
@@ -61,11 +58,12 @@ const WhatsAppFloat = safeLazy(
 
 interface CinemaLayoutProps {
   children: React.ReactNode;
-  inventory?: Car[]; // Passed down for widgets
+  inventory?: Car[];
 }
 
 export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeFloatingWidget, setActiveFloatingWidget] = useState<'chat' | 'voice' | 'whatsapp' | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('sidebar_collapsed') === 'true';
@@ -89,7 +87,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
     if (main) main.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Defer non-critical floating widgets to reduce initial JS cost.
+  // Defer non-critical floating widgets
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       setShowDeferredWidgets(true);
@@ -102,6 +100,10 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
   useEffect(() => {
     localStorage.setItem('sidebar_collapsed', String(isSidebarCollapsed));
   }, [isSidebarCollapsed]);
+
+  const handleWidgetSelect = useCallback((widget: 'chat' | 'voice' | 'whatsapp' | null) => {
+    setActiveFloatingWidget(widget);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-transparent overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -136,29 +138,33 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         {/* Global Floating Widgets */}
         <ReloadPrompt />
         <OfflineIndicator />
+        
         {showDeferredWidgets && (
-          <>
-            {/* Each widget is isolated: if its chunk fails or it throws,
-                ChatErrorBoundary silently returns null so the rest of the
-                page (inventory, navigation) is completely unaffected. */}
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <AIChatWidget inventory={inventory} />
-              </Suspense>
-            </ChatErrorBoundary>
-
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <VoiceWidget />
-              </Suspense>
-            </ChatErrorBoundary>
-
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <WhatsAppFloat />
-              </Suspense>
-            </ChatErrorBoundary>
-          </>
+          <FloatingActionOrbit 
+            activeWidget={activeFloatingWidget}
+            onWidgetSelect={handleWidgetSelect}
+            chatWidget={
+              <ChatErrorBoundary>
+                <Suspense fallback={null}>
+                  <AIChatWidget inventory={inventory} />
+                </Suspense>
+              </ChatErrorBoundary>
+            }
+            voiceWidget={
+              <ChatErrorBoundary>
+                <Suspense fallback={null}>
+                  <VoiceWidget />
+                </Suspense>
+              </ChatErrorBoundary>
+            }
+            whatsappWidget={
+              <ChatErrorBoundary>
+                <Suspense fallback={null}>
+                  <WhatsAppFloat />
+                </Suspense>
+              </ChatErrorBoundary>
+            }
+          />
         )}
 
         {/* Dynamic Content */}

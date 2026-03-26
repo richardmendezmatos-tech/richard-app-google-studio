@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
 import { getAIResponse } from '@/shared/api/ai';
 import { validationAgentService } from '@/features/ai-hub';
@@ -38,7 +38,7 @@ const Waveform = () => {
 
   return (
     <div className="flex items-center gap-1 h-4">
-      {bars.map((scale, i) => (
+      {bars.map((_, i) => (
         <div
           key={i}
           className="w-1 bg-white rounded-full animate-pulse audio-bar-height"
@@ -70,7 +70,7 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
     setIsSupported(voiceService.isSupported());
   }, []);
 
-  const handleMicClick = () => {
+  const handleMicClick = useCallback(() => {
     if (state === 'speaking') {
       voiceService.stopListening(); // Actually stops implementation
       window.speechSynthesis.cancel();
@@ -152,29 +152,42 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
         setState('idle');
       },
     });
-  };
+  }, [state, navigate, onMessage]);
+
+  useEffect(() => {
+    if (isSupported && state === 'idle') {
+      handleMicClick();
+    }
+    return () => {
+      voiceService.stopListening();
+      window.speechSynthesis.cancel();
+    };
+  }, [isSupported, state, handleMicClick]);
 
   if (!isSupported) return null;
 
   return (
-    <div className="fixed right-24 z-[1001] bottom-[calc(6.9rem+env(safe-area-inset-bottom))] sm:bottom-6 sm:right-28">
+    <div className="relative">
       {state !== 'idle' && (
-        <div className="absolute bottom-16 right-0 mb-4 overflow-hidden rounded-2xl border border-white/20 bg-black/40 p-4 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] backdrop-blur-xl ring-1 ring-white/10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="overflow-hidden rounded-2xl border border-white/20 bg-black/40 p-4 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] backdrop-blur-xl ring-1 ring-white/10 animate-in fade-in slide-in-from-top-4 duration-300 min-w-[220px]">
           <div className="relative z-10">
             {state === 'listening' && (
               <div className="flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                 <span className="text-sm font-medium tracking-wide text-white/90">Hearing...</span>
                 <Waveform />
               </div>
             )}
             {state === 'thinking' && (
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-indigo-300 animate-pulse">
-                  Processing...
+                <span className="text-sm font-medium text-emerald-400 animate-pulse">
+                  Richard is thinking...
                 </span>
-                <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-bounce delay-100" />
-                <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-bounce delay-200" />
-                <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-bounce delay-300" />
+                <div className="flex gap-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce" />
+                </div>
               </div>
             )}
             {state === 'speaking' && (
@@ -188,28 +201,6 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
           <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent pointer-events-none" />
         </div>
       )}
-
-      <button
-        onClick={handleMicClick}
-        aria-label={state === 'listening' ? 'Stop Listening' : 'Start Voice Assistant'}
-        className={`group relative flex h-14 w-14 items-center justify-center rounded-full border border-white/20 shadow-2xl transition-all duration-300 active:scale-90 ${
-          state === 'listening'
-            ? 'bg-red-500/80 scale-110 ring-4 ring-red-500/20'
-            : 'bg-indigo-600/80 hover:bg-indigo-500 hover:scale-105 ring-4 ring-indigo-500/0 hover:ring-indigo-500/20'
-        } backdrop-blur-md`}
-      >
-        <div className="relative z-10 text-white transition-transform group-hover:rotate-6">
-          {state === 'listening' ? <StopIcon /> : <MicIcon />}
-        </div>
-
-        {/* Animated Rings for Listening State */}
-        {state === 'listening' && (
-          <>
-            <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
-            <div className="absolute inset-[-8px] rounded-full border border-red-500/30 animate-pulse" />
-          </>
-        )}
-      </button>
     </div>
   );
 };
