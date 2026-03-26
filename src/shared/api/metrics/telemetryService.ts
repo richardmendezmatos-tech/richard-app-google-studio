@@ -7,13 +7,18 @@ import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
 const TELEMETRY_PATH = 'telemetry';
 
 export const updateVehicleTelemetry = async (telemetry: VehicleTelemetry) => {
-  const rtdb = await getRealtimeDbService();
-  const { ref, set } = await import('firebase/database');
-  const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${telemetry.vehicleId}`);
-  await set(vehicleRef, {
-    ...telemetry,
-    lastUpdate: Date.now(),
-  });
+  try {
+    const rtdb = await getRealtimeDbService();
+    if (!rtdb) return;
+    const { ref, set } = await import('firebase/database');
+    const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${telemetry.vehicleId}`);
+    await set(vehicleRef, {
+      ...telemetry,
+      lastUpdate: Date.now(),
+    });
+  } catch (error) {
+    console.warn('[Telemetry] Update deferred or failed:', error);
+  }
 };
 
 export const useVehicleTelemetry = (vehicleId: string) => {

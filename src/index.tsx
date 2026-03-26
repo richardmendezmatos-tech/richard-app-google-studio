@@ -96,6 +96,8 @@ const showError = (msg: string) => {
     'firebaseinstallations',
     'installations/request-failed',
     'permission_denied',
+    'send was called before connect',
+    'send before connect',
   ];
   if (suppressedKeywords.some((k) => lowerMsg.includes(k))) {
     console.warn('⚠️ [Bootstrap] Noise suppressed:', msg);
@@ -226,8 +228,13 @@ window.addEventListener('unhandledrejection', (e) => {
   const msg = reason?.message || reason?.toString() || '';
 
   // Consolidate suppression and error reporting
-  if (msg.includes('firebaseinstallations') || msg.includes('PERMISSION_DENIED')) {
-    console.warn('[Firebase] Promise rejection suppressed (API Restriction)');
+  if (
+    msg.includes('firebaseinstallations') ||
+    msg.includes('PERMISSION_DENIED') ||
+    msg.includes('send was called before connect') ||
+    msg.includes('send before connect')
+  ) {
+    console.warn('[Bootstrap] Analytics/Firebase promise rejection suppressed (API Restriction/Connect)');
     return;
   }
 

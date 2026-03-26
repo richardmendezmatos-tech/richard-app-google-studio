@@ -13,14 +13,18 @@ const createAnalyticsService = () => {
 
   const init = (measurementId: string = 'G-XXXXXXXXXX') => {
     if (!isInitialized && typeof window !== 'undefined') {
-      getGA().initialize(measurementId);
-      isInitialized = true;
-      console.log('[Analytics] GA4 initialized via Closure Engine');
-      
-      const pixelId = import.meta.env.VITE_META_PIXEL_ID;
-      if (pixelId) {
-        initMetaPixel(pixelId);
-        console.log('[Analytics] Meta Pixel initialized');
+      try {
+        getGA().initialize(measurementId);
+        isInitialized = true;
+        console.log('[Analytics] GA4 initialized via Closure Engine');
+        
+        const pixelId = import.meta.env.VITE_META_PIXEL_ID;
+        if (pixelId) {
+          initMetaPixel(pixelId);
+          console.log('[Analytics] Meta Pixel initialized');
+        }
+      } catch (e) {
+        console.warn('[Analytics] Initialization failed (will retry on next event):', e);
       }
     }
   };
@@ -32,15 +36,23 @@ const createAnalyticsService = () => {
   const trackEvent =
     (category: string) => (action: string) => (label?: string) => (value?: number) => {
       if (isInitialized) {
-        getGA().event({ category, action, label, value });
-        trackMetaEvent(action, { category, label, value });
+        try {
+          getGA().event({ category, action, label, value });
+          trackMetaEvent(action, { category, label, value });
+        } catch (e) {
+          console.warn('[Analytics] Event tracking deferred or failed:', e);
+        }
       }
     };
 
   const trackPageView = (path: string) => {
     if (isInitialized) {
-      getGA().send({ hitType: 'pageview', page: path });
-      trackMetaEvent('PageView', { path });
+      try {
+        getGA().send({ hitType: 'pageview', page: path });
+        trackMetaEvent('PageView', { path });
+      } catch (e) {
+        console.warn('[Analytics] PageView tracking deferred or failed:', e);
+      }
     }
   };
 
