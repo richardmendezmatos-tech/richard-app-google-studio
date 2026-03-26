@@ -50,7 +50,7 @@ const ContactoPage: React.FC = () => {
     <>
       <SEO
         title="Contacto — Richard Automotive Bayamón Puerto Rico | (787) 368-2880"
-        description="Contacta a Richard Automotive en Bayamón, Puerto Rico. Llámanos al (787) 368-2880 o escríbenos por WhatsApp. Atendemos toda la isla — Lunes a Sábado 9AM a 6PM."
+        description="Contacta a Richard Automotive en Bayamón, PR. Ubicados en la Carr #2. Autos nuevos y usados de lujo. Llámanos al (787) 368-2880 o WhatsApp 24/7. Servicio a todo Puerto Rico."
         url="/contacto"
         type="website"
         schema={schema}

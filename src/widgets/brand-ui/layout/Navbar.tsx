@@ -34,6 +34,18 @@ const Navbar: React.FC = () => {
               Inventario
             </Link>
             <Link
+              to="/financiamiento"
+              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
+            >
+              Financiamiento
+            </Link>
+            <Link
+              to="/contacto"
+              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
+            >
+              Contacto
+            </Link>
+            <Link
               to="/ai-lab"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
@@ -96,6 +108,18 @@ const Navbar: React.FC = () => {
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             Inventario
+          </Link>
+          <Link
+            to="/financiamiento"
+            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
+          >
+            Financiamiento
+          </Link>
+          <Link
+            to="/contacto"
+            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
+          >
+            Contacto
           </Link>
           <Link
             to="/ai-lab"

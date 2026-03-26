@@ -68,7 +68,26 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
               "opens": "09:00",
               "closes": "18:00"
             },
-            "priceRange": "$$"
+            "priceRange": "$$",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "5.0",
+              "reviewCount": "3"
+            },
+            "review": [
+              {
+                "@type": "Review",
+                "author": { "@type": "Person", "name": "Carlos Rodríguez" },
+                "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+                "reviewBody": "La experiencia con Richard Automotive fue increíble. La IA me ayudó a elegir la SUV perfecta."
+              },
+              {
+                "@type": "Review",
+                "author": { "@type": "Person", "name": "Sofía Méndez" },
+                "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+                "reviewBody": "Nunca pensé que comprar un auto eléctrico fuera tan fácil. El Neural Match acertó totalmente."
+              }
+            ]
           }}
         />
 

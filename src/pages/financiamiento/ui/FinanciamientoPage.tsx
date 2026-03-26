@@ -64,7 +64,7 @@ const FinanciamientoPage: React.FC = () => {
     <>
       <SEO
         title="Financiamiento de Autos en Puerto Rico | Richard Automotive Bayamón"
-        description="Obtén financiamiento de autos nuevos y usados en Bayamón, PR. Pre-aprobación en 24h, tasas competitivas, y aplica en línea desde tu celular. Servicio en todo Puerto Rico."
+        description="Aplica para financiamiento de autos nuevos y usados en Bayamón, PR. Pre-aprobación en 24h, tasas competitivas y crédito flexible. Dealer de autos líder en Puerto Rico."
         url="/financiamiento"
         type="website"
         schema={schema}
