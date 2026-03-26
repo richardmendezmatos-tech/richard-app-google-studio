@@ -3,18 +3,61 @@ import { Menu } from 'lucide-react';
 import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
 import ReloadPrompt from '@/widgets/brand-ui/layout/ReloadPrompt';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
+import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { useLocation } from 'react-router-dom';
 import { Car } from '@/shared/types/types';
 
-const AIChatWidget = lazy(() => import('@/widgets/ai-chat/AIChatWidget').then(m => ({ default: (m as any).default || m }))) as any;
-const VoiceWidget = lazy(() => 
-  import('@/widgets/ai-chat/VoiceWidget').then((mod) => ({ default: (mod as any).default || mod.VoiceWidget || mod }))
+/**
+ * Safe lazy import helper.
+ * If the JS chunk fails to load (e.g. stale cache after a Vercel redeployment),
+ * we attempt a ONE-TIME hard reload to bust the cache. On the second attempt
+ * (or if a reload is already in progress) we return a no-op component so the
+ * page continues to work without the widget.
+ */
+function safeLazy<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>,
+  sessionKey: string,
+): React.LazyExoticComponent<T> {
+  return lazy(
+    () =>
+      factory().catch((err: unknown) => {
+        const isChunkError =
+          err instanceof TypeError &&
+          /failed to fetch dynamically imported module/i.test((err as Error).message);
+
+        if (isChunkError && !sessionStorage.getItem(sessionKey)) {
+          sessionStorage.setItem(sessionKey, '1');
+          window.location.reload();
+        }
+
+        // Return an empty component so lazy() never rejects.
+        return { default: (() => null) as unknown as T };
+      }) as Promise<{ default: T }>,
+  );
+}
+
+const AIChatWidget = safeLazy(
+  () => import('@/widgets/ai-chat/AIChatWidget').then((m) => ({ default: (m as any).default || m })),
+  'chat_chunk_reloaded',
 ) as any;
-const WhatsAppFloat = lazy(() => 
-  import('@/features/leads').then((mod) => ({ default: (mod as any).default || mod.WhatsAppFloat || mod }))
-) as any;
+
+const VoiceWidget = safeLazy(
+  () =>
+    import('@/widgets/ai-chat/VoiceWidget').then((mod) => ({
+      default: (mod as any).default || mod.VoiceWidget || mod,
+    })),
+  'voice_chunk_reloaded',
+);
+
+const WhatsAppFloat = safeLazy(
+  () =>
+    import('@/features/leads').then((mod) => ({
+      default: (mod as any).default || mod.WhatsAppFloat || mod,
+    })),
+  'whatsapp_chunk_reloaded',
+);
 
 interface CinemaLayoutProps {
   children: React.ReactNode;
@@ -94,11 +137,28 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         <ReloadPrompt />
         <OfflineIndicator />
         {showDeferredWidgets && (
-          <Suspense fallback={null}>
-            <AIChatWidget inventory={inventory} />
-            <VoiceWidget />
-            <WhatsAppFloat />
-          </Suspense>
+          <>
+            {/* Each widget is isolated: if its chunk fails or it throws,
+                ChatErrorBoundary silently returns null so the rest of the
+                page (inventory, navigation) is completely unaffected. */}
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <AIChatWidget inventory={inventory} />
+              </Suspense>
+            </ChatErrorBoundary>
+
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <VoiceWidget />
+              </Suspense>
+            </ChatErrorBoundary>
+
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <WhatsAppFloat />
+              </Suspense>
+            </ChatErrorBoundary>
+          </>
         )}
 
         {/* Dynamic Content */}
