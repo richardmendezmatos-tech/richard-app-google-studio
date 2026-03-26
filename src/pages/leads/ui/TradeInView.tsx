@@ -271,7 +271,7 @@ const TradeInView: React.FC = () => {
               <button
                 disabled={!formData.name || !formData.phone}
                 onClick={calculateOffer}
-                className="w-full py-4 bg-linear-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 disabled:opacity-50 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 disabled:opacity-50 text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 flex items-center justify-center gap-2"
               >
                 {isLoading ? <Loader2 className="animate-spin" /> : 'Ver Mi Oferta Ahora'}
               </button>
@@ -289,7 +289,7 @@ const TradeInView: React.FC = () => {
               <p className="text-slate-400 font-bold text-lg mb-2">
                 Tu {formData.year} {formData.make} {formData.model} vale aproximadamente:
               </p>
-              <div className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-400 tracking-tighter">
+              <div className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 tracking-tighter">
                 ${offerValue.toLocaleString()}
               </div>
               <p className="text-xs text-slate-500 mt-4">
@@ -329,7 +329,7 @@ const TradeInView: React.FC = () => {
         type="website"
       />
       {/* Background Atmosphere */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-linear-to-b from-primary/10 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
 
       <header className="p-6 relative z-10">
         <button

@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-cyan-400 to-cyan-700 text-white shadow-lg shadow-cyan-500/25">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-700 text-white shadow-lg shadow-cyan-500/25">
               <Car size={18} strokeWidth={2.6} />
             </div>
             <span className="font-cinematic text-2xl tracking-[0.12em] text-white">

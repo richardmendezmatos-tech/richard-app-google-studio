@@ -98,7 +98,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
       ref={containerRef as any}
       className="min-h-screen bg-transparent text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden bg-noise"
     >
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-linear-to-b from-cyan-900/20 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none" />
       <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-[1600px] mx-auto p-4 lg:p-10 space-y-8 relative z-10 flex flex-col h-full">
@@ -109,7 +109,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
               <ShieldCheck size={12} />
               <span>Command Center v2.0</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-linear-to-r from-white to-slate-500 tracking-tighter">
+            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500 tracking-tighter">
               {currentDealer.name}
             </h1>
           </div>
@@ -174,7 +174,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
           <div className="flex gap-3 w-full md:w-auto">
             <button
               onClick={() => navigate('/digital-twin')}
-              className="h-[44px] px-6 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2"
+              className="h-[44px] px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2"
             >
               <UserIcon size={18} /> Gemelo Digital
             </button>

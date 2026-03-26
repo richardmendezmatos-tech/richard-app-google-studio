@@ -26,7 +26,7 @@ const ReloadPrompt = () => {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[2000] animate-in slide-in-from-bottom-5 fade-in">
       <div className="bg-[#0d2232] border border-primary/30 p-4 rounded-2xl shadow-2xl flex items-center gap-4 text-white min-w-[300px]">
-        <div className="p-3 bg-linear-to-br from-primary to-blue-600 rounded-xl relative">
+        <div className="p-3 bg-gradient-to-br from-primary to-blue-600 rounded-xl relative">
           <DownloadCloud size={20} className="text-white relative z-10" />
           <div className="absolute inset-0 bg-white/20 animate-pulse rounded-xl"></div>
         </div>

@@ -71,7 +71,7 @@ const IntakeView: React.FC = () => {
         <header className="relative z-10 mb-12 flex justify-between items-end">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-linear-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
                 <Zap className="text-white" size={20} />
               </div>
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
@@ -80,7 +80,7 @@ const IntakeView: React.FC = () => {
             </div>
             <h1 className="text-4xl font-black text-white uppercase tracking-tighter">
               Recepción de{' '}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-white to-slate-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">
                 Unidades
               </span>
             </h1>

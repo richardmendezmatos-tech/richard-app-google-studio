@@ -35,7 +35,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
           alt={car.name}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
         {/* Status Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">

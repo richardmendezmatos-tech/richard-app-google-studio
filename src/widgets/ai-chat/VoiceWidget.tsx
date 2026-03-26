@@ -185,7 +185,7 @@ export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
             )}
           </div>
           {/* Subtle background glow */}
-          <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/10 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent pointer-events-none" />
         </div>
       )}
 

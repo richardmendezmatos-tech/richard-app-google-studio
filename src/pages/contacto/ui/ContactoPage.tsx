@@ -66,7 +66,7 @@ const ContactoPage: React.FC = () => {
               alt="Richard Automotive Dealership in Bayamón, Puerto Rico" 
               className="w-full h-full object-cover opacity-50"
             />
-            <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -89,7 +89,7 @@ const ContactoPage: React.FC = () => {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-linear-to-r from-green-500 to-green-400 text-slate-900 font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-[0_0_30px_rgba(34,197,94,0.4)]"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-400 text-slate-900 font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-[0_0_30px_rgba(34,197,94,0.4)]"
             >
               <MessageCircle size={18} />
               Escribir por WhatsApp
@@ -197,7 +197,7 @@ const ContactoPage: React.FC = () => {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-linear-to-r from-cyan-500 to-purple-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform"
             >
               <MessageCircle size={18} />
               Empezar Conversación

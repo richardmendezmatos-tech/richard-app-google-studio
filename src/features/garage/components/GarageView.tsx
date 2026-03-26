@@ -116,7 +116,7 @@ const VehicleCard = ({ vehicle }: { vehicle: GarageVehicle }) => {
 
       {/* AI Nudge Button */}
       {vehicle.equityStatus === 'optimal' && (
-        <button className="w-full bg-linear-to-r from-green-500/20 to-primary/20 hover:from-green-500/30 hover:to-primary/30 border border-green-500/30 p-4 rounded-2xl flex items-center justify-between group/btn transition-all">
+        <button className="w-full bg-gradient-to-r from-green-500/20 to-primary/20 hover:from-green-500/30 hover:to-primary/30 border border-green-500/30 p-4 rounded-2xl flex items-center justify-between group/btn transition-all">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
               <Zap size={16} className="text-white fill-white" />

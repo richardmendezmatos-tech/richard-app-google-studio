@@ -39,8 +39,8 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
       {/* Animated Background */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-linear-to-r from-blue-900/20 to-transparent transform -skew-x-12 -translate-x-20"></div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-red-900/20 to-transparent transform -skew-x-12 translate-x-20"></div>
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-blue-900/20 to-transparent transform -skew-x-12 -translate-x-20"></div>
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-red-900/20 to-transparent transform -skew-x-12 translate-x-20"></div>
       </div>
 
       <button
@@ -56,7 +56,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
         <div className="text-center mb-8">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">
             Richard{' '}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
               VS
             </span>{' '}
             Arena

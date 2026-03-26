@@ -97,7 +97,7 @@ const ComparisonView: React.FC = () => {
 
         {/* VERDICT CARD */}
         {verdict && (
-          <div className="bg-linear-to-r from-slate-900 to-slate-800 border border-primary/30 rounded-3xl p-8 mb-12 relative overflow-hidden shadow-2xl shadow-cyan-900/20">
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 border border-primary/30 rounded-3xl p-8 mb-12 relative overflow-hidden shadow-2xl shadow-cyan-900/20">
             <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
               <Crown size={200} />
             </div>

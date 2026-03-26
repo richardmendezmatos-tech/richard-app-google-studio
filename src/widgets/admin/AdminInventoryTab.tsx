@@ -152,7 +152,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
             <button
               onClick={onCreateNew}
-              className="px-8 h-[56px] bg-linear-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
+              className="px-8 h-[56px] bg-gradient-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <Plus size={18} strokeWidth={3} className="relative z-10" /> 

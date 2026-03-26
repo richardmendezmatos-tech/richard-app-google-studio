@@ -96,7 +96,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
         </div>
 
         {/* MONTHLY PAYMENT HERO */}
-        <div className="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 text-center border border-slate-700 shadow-inner relative group">
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 text-center border border-slate-700 shadow-inner relative group">
           <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-2">
             Tu Mensualidad Estimada
           </p>

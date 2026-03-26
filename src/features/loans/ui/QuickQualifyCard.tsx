@@ -306,7 +306,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
 
               <button
                 onClick={handleCalculate}
-                className="w-full bg-linear-to-r from-primary to-blue-600 hover:from-[#00c2f0] hover:to-blue-500 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn"
+                className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-[#00c2f0] hover:to-blue-500 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn"
               >
                 Evaluar Aprobación{' '}
                 <ArrowRight

@@ -54,7 +54,7 @@ const SalesCopilot: React.FC = () => {
     <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-linear-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 hover:rotate-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 hover:rotate-3">
             <Target className="text-white" size={24} />
           </div>
           <div>

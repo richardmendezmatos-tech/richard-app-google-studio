@@ -137,7 +137,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
             <img src={img.url} alt={img.prompt} className="w-full aspect-square object-cover" />
 
             {/* Overlay Actions */}
-            <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end gap-2">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end gap-2">
               <p className="text-xs text-slate-300 line-clamp-2 mb-2">{img.prompt}</p>
 
               <div className="flex gap-2">

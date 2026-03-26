@@ -42,7 +42,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
       tabIndex={0}
       className="group bg-white dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
     >
-      <div className="relative aspect-[4/3] bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
         {/* Badges Container */}
         <div className="absolute top-6 left-6 z-10 flex flex-col gap-2 items-start">
           {car.badge && (

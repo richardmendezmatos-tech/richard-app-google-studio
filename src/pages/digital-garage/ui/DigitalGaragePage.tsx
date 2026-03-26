@@ -242,7 +242,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
         return (
           <div className="max-w-2xl bg-slate-800/50 p-8 rounded-3xl border border-white/5">
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 bg-linear-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-xl">RM</div>
+              <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-xl">RM</div>
               <div>
                 <h2 className="text-2xl font-black text-white">Richard Mendez</h2>
                 <p className="text-slate-400">Miembro desde 2024</p>

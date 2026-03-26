@@ -162,7 +162,7 @@ const BlogPage: React.FC = () => {
                     </p>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50 relative">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-px">
                           <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
                             RA
                           </div>

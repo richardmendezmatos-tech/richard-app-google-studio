@@ -200,7 +200,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-2xl animate-in fade-in">
       <div className="bg-slate-900/95 backdrop-blur-3xl w-full sm:max-w-7xl sm:rounded-4xl rounded-t-4xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-white/5 max-h-[92vh] flex flex-col relative">
         {/* Glow effect back */}
-        <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent opacity-70" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-70" />
         
         {/* Header */}
         <div className="p-8 border-b border-white/5 flex justify-between items-center bg-transparent z-10 sticky top-0 backdrop-blur-xl">
@@ -238,7 +238,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               <ImageUploader onUploadComplete={handleUploadComplete} onLog={logDebug} />
 
               {/* Stats or Preview Placeholder */}
-              <div className="p-6 rounded-3xl bg-linear-to-br from-primary/10 to-transparent border border-primary/20 relative overflow-hidden group">
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 <div className="flex items-center gap-3 text-primary mb-3 relative z-10">
                   <Sparkles size={18} className="animate-pulse" />
@@ -418,7 +418,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="w-full h-[64px] bg-linear-to-r from-primary/80 to-purple-600/80 hover:from-primary hover:to-purple-500 text-white rounded-3xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] disabled:opacity-50 flex items-center justify-center gap-3 border border-white/10"
+                  className="w-full h-[64px] bg-gradient-to-r from-primary/80 to-purple-600/80 hover:from-primary hover:to-purple-500 text-white rounded-3xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] disabled:opacity-50 flex items-center justify-center gap-3 border border-white/10"
                 >
                   {isUploading ? (
                     <>

@@ -206,12 +206,12 @@ const UserLogin: React.FC = () => {
         <div className="pt-10 pb-6 px-10 text-center relative">
           <motion.div
             whileHover={{ scale: 1.05, rotate: 5 }}
-            className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-xl bg-linear-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400"
+            className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400"
           >
             <Zap size={36} className="drop-shadow-lg" />
           </motion.div>
 
-          <h2 className="text-3xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-linear-to-r from-white to-slate-400">
+          <h2 className="text-3xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
             {isRegistering ? 'Crear Perfil' : 'Bienvenido'}
           </h2>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-6">
@@ -323,9 +323,9 @@ const UserLogin: React.FC = () => {
           <button
             type="submit"
             disabled={isPending || loading}
-            className="w-full relative group overflow-hidden rounded-xl bg-linear-to-r from-cyan-600 to-blue-600 p-px transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none mt-2"
+            className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 p-px transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none mt-2"
           >
-            <div className="relative flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-blue-600 px-8 py-3.5 rounded-[11px] font-bold text-white shadow-lg">
+            <div className="relative flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 rounded-[11px] font-bold text-white shadow-lg">
               {isPending || loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (

@@ -34,7 +34,7 @@ export const SocialProofWidget: React.FC = () => {
   return (
     <div className="fixed right-6 bottom-6 z-40 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl route-fade-in sm:block sm:max-w-sm dark:border-slate-700 dark:bg-slate-800">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-cyan-600 shadow-lg shadow-cyan-500/20">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cyan-600 shadow-lg shadow-cyan-500/20">
           <Icon size={18} className="text-white" />
         </div>
         <div className="min-w-0 flex-1">

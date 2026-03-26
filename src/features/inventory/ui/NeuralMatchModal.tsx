@@ -261,7 +261,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
         className="w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh]"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
-        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
         <button
           onClick={onClose}
@@ -399,7 +399,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                 <div className="w-full mt-4 flex justify-center relative z-20 group pb-8">
                   <div
-                    className={`absolute -inset-1 bg-linear-to-r from-cyan-400 to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
+                    className={`absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
                   ></div>
                   <button
                     onClick={() => handleScan()}
@@ -500,7 +500,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                                     group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl cursor-pointer transition-all duration-300
                                                     ${
                                                       isTopMatch
-                                                        ? 'bg-linear-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
+                                                        ? 'bg-gradient-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
                                                         : 'bg-slate-800/30 border border-slate-700 hover:bg-slate-800/80'
                                                     }
                                                 `}

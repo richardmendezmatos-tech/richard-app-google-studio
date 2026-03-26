@@ -42,7 +42,7 @@ export const CreditCalculator: React.FC = () => {
           <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-6 leading-tight">
             Diseña tu Plan de
             <br />
-            <span className="bg-linear-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent italic">Financiamiento</span>
+            <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent italic">Financiamiento</span>
           </h2>
           
           <p className="text-slate-400 text-lg mb-8 max-w-lg leading-relaxed">
@@ -59,7 +59,7 @@ export const CreditCalculator: React.FC = () => {
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-[40px] p-8 lg:p-10 shadow-2xl relative overflow-hidden">
           {/* Result Display */}
-          <div className="text-center mb-10 p-6 bg-linear-to-b from-white/5 to-transparent rounded-3xl border border-white/5">
+          <div className="text-center mb-10 p-6 bg-gradient-to-b from-white/5 to-transparent rounded-3xl border border-white/5">
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2 block">Pago Mensual Estimado</span>
             <div className="flex items-center justify-center gap-1">
               <span className="text-2xl font-black text-cyan-500/50 mt-4">$</span>
@@ -146,7 +146,7 @@ export const CreditCalculator: React.FC = () => {
               </div>
             </div>
 
-            <button className="w-full bg-linear-to-r from-cyan-500 to-cyan-400 text-slate-950 font-black uppercase tracking-[0.2em] py-5 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,174,217,0.4)] flex items-center justify-center gap-3 group mt-4">
+            <button className="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-950 font-black uppercase tracking-[0.2em] py-5 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,174,217,0.4)] flex items-center justify-center gap-3 group mt-4">
               Aplicar Financiamiento
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>

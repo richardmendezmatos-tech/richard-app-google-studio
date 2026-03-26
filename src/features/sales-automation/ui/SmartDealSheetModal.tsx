@@ -65,7 +65,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
           {/* Header */}
           <div className="p-6 sm:p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shrink-0">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
                 <FileText className="text-white" size={24} />
               </div>
               <div>
@@ -131,7 +131,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Psycological Profile */}
                   <div className="space-y-6">
-                    <div className="p-5 sm:p-6 bg-linear-to-br from-purple-500/5 to-indigo-500/5 dark:bg-slate-800/50 rounded-3xl border border-purple-500/10 dark:border-slate-700">
+                    <div className="p-5 sm:p-6 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 dark:bg-slate-800/50 rounded-3xl border border-purple-500/10 dark:border-slate-700">
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-500 mb-5 flex items-center gap-2">
                         <Brain size={14} /> Perfil Psicológico
                       </h3>
@@ -205,7 +205,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                 </div>
 
                 {/* The Pitch */}
-                <div className="p-5 sm:p-6 bg-linear-to-r from-primary/10 to-cyan-500/10 dark:bg-primary/5 rounded-3xl border border-primary/20">
+                <div className="p-5 sm:p-6 bg-gradient-to-r from-primary/10 to-cyan-500/10 dark:bg-primary/5 rounded-3xl border border-primary/20">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-3 flex items-center gap-2">
                     <Sparkles size={14} /> Pitch de Cierre (Copiar y Pegar / Leer)
                   </h3>

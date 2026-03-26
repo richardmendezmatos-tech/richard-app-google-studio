@@ -45,7 +45,7 @@ const TestimonialsSection: React.FC = () => {
         </span>
         <h2 className="font-cinematic text-5xl uppercase tracking-[0.08em] text-slate-50 md:text-6xl">
           Historias de{' '}
-          <span className="bg-linear-to-r from-primary to-cyan-300 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-primary to-cyan-300 bg-clip-text text-transparent">
             Éxito
           </span>
         </h2>

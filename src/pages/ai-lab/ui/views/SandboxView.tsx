@@ -139,7 +139,7 @@ const AILabView: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-linear-to-br from-primary/20 to-purple-600/20 border border-primary/20 p-8 rounded-[2rem] shadow-xl">
+            <div className="bg-gradient-to-br from-primary/20 to-purple-600/20 border border-primary/20 p-8 rounded-[2rem] shadow-xl">
               <div className="text-xs font-black text-white uppercase tracking-widest mb-2">
                 Strategic Insight
               </div>

@@ -165,7 +165,7 @@ export const HoustonTelemetryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-premium p-6 rounded-2xl border border-white/10 bg-linear-to-br from-cyan-950/20 to-indigo-950/20">
+          <div className="glass-premium p-6 rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-950/20 to-indigo-950/20">
             <h4 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-2 mb-4">
               <Zap size={14} className="text-amber-400" /> Real-time Ops
             </h4>

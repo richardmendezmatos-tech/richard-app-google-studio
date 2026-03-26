@@ -238,7 +238,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
               <ImageUploader onUploadComplete={handleUploadComplete} onLog={logDebug} />
 
               {/* Stats or Preview Placeholder */}
-              <div className="p-6 rounded-3xl bg-linear-to-br from-[#173d57]/10 to-transparent border border-primary/10">
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-[#173d57]/10 to-transparent border border-primary/10">
                 <div className="flex items-center gap-3 text-primary mb-3">
                   <Sparkles size={18} />
                   <span className="text-xs font-black uppercase tracking-widest">
@@ -471,7 +471,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="w-full h-[64px] bg-linear-to-r from-[#0d2232] to-[#173d57] text-white rounded-[2rem] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full h-[64px] bg-gradient-to-r from-[#0d2232] to-[#173d57] text-white rounded-[2rem] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3"
                 >
                   {isUploading ? (
                     <>

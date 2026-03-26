@@ -272,7 +272,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
 
       {/* Customer Memory Visualization */}
       {lead.customerMemory && (
-        <div className="bg-linear-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 p-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
           <h4 className="font-bold text-primary text-xs uppercase tracking-wider mb-4 relative z-10 flex items-center gap-2">

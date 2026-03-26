@@ -160,7 +160,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                       alt={car.name}
                       className="w-full aspect-4/5 object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
 
                     {/* Overlay Content Preview */}
                     <div className="absolute bottom-10 left-10 right-10">
@@ -204,7 +204,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                       <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center shadow-lg">
+                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center shadow-lg">
                               <Instagram size={20} className="text-white" />
                             </div>
                             <div>
@@ -386,7 +386,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                   key={i}
                   className="w-8 h-8 rounded-full border-2 border-[#0f172a] bg-slate-800 flex items-center justify-center overflow-hidden"
                 >
-                  <div className="w-full h-full bg-linear-to-br from-primary to-blue-600 opacity-50" />
+                  <div className="w-full h-full bg-gradient-to-br from-primary to-blue-600 opacity-50" />
                 </div>
               ))}
             </div>

@@ -250,7 +250,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
           {/* Sofia Avatar Area */}
           <div className="relative z-10 bg-slate-800/50 backdrop-blur-xl border border-white/10 p-6 rounded-3xl animate-in slide-in-from-left duration-700">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-linear-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-primary/30">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-primary/30">
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/4128/4128335.png"
                   alt="Sofia AI"

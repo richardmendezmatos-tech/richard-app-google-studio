@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -30,14 +29,11 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2022',
       sourcemap: true,
-      rolldownOptions: {
+      rollupOptions: {
         onwarn: suppressFirebaseMixedImportWarning,
         output: {},
       },
       chunkSizeWarningLimit: 1000,
-    },
-    esbuild: {
-      drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     resolve: {
       alias: {
@@ -56,8 +52,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      tailwindcss(),
-      // Compress static images at build-time: ~40-60% byte reduction for PNG/JPG/WebP
       ViteImageOptimizer({
         png: { quality: 80 },
         jpeg: { quality: 80 },
@@ -80,7 +74,6 @@ export default defineConfig(({ mode }) => {
         algorithm: 'brotliCompress',
         ext: '.br',
       }),
-
       visualizer({ filename: 'stats.html' }),
       VitePWA({
         strategies: 'injectManifest',

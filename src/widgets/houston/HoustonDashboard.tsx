@@ -183,7 +183,7 @@ const HoustonDashboard: React.FC = () => {
           </div>
         </div>
         <div className="glass-premium px-10 py-6 flex items-center gap-10 border border-white/5 group hover:scale-[1.02] transition-all duration-500 cursor-pointer shadow-2xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="text-right">
             <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">
               Autonomy Score
@@ -522,7 +522,7 @@ const HoustonDashboard: React.FC = () => {
                     initial={{ width: 0 }}
                     animate={{ width: '78%' }}
                     transition={{ duration: 2, ease: 'circOut' }}
-                    className="h-full bg-linear-to-r from-cyan-600 via-cyan-400 to-white/40 rounded-full shadow-[0_0_20px_rgba(0,174,217,0.6)]"
+                    className="h-full bg-gradient-to-r from-cyan-600 via-cyan-400 to-white/40 rounded-full shadow-[0_0_20px_rgba(0,174,217,0.6)]"
                   />
                 </div>
               </div>

@@ -42,7 +42,7 @@ const VoiceOrb: React.FC = React.memo(() => {
               ease: 'easeInOut',
             }}
           >
-            <div className="w-16 h-16 rounded-full bg-linear-to-tr from-primary to-[#01e0c6] blur-md opacity-80"></div>
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-[#01e0c6] blur-md opacity-80"></div>
             <motion.div
               className="absolute inset-0 w-16 h-16 rounded-full border-2 border-primary"
               animate={{

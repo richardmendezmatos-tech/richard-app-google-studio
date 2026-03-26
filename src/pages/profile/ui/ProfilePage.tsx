@@ -103,7 +103,7 @@ const ProfilePage: React.FC = () => {
           {/* Left Column: Identity Card */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-slate-900 rounded-[30px] p-8 shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-24 bg-linear-to-br from-primary/20 to-purple-500/20" />
+              <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-primary/20 to-purple-500/20" />
 
               <div className="relative mb-6">
                 <div className="w-32 h-32 rounded-full p-1 bg-white dark:bg-slate-800 shadow-2xl relative z-10">

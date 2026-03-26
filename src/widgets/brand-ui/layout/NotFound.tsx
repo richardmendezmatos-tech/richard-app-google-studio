@@ -99,7 +99,7 @@ const NotFound: React.FC = () => {
 
       <div className="max-w-md w-full z-10 animate-in fade-in zoom-in duration-700">
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center space-y-6">
-          <h1 className="text-8xl md:text-9xl font-black italic tracking-tighter bg-linear-to-b from-white to-primary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,174,217,0.3)] animate-bounce-subtle">
+          <h1 className="text-8xl md:text-9xl font-black italic tracking-tighter bg-gradient-to-b from-white to-primary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,174,217,0.3)] animate-bounce-subtle">
             404
           </h1>
 

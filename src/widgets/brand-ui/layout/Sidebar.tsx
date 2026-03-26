@@ -344,7 +344,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => navigate('/profile')}
               className={`group flex w-full items-center rounded-xl transition-colors hover:bg-white/10 ${isCollapsed ? 'justify-center p-2' : 'mb-3 gap-3 p-2 text-left'}`}
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-cyan-400 to-cyan-700 text-white">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 text-white">
                 {user.photoURL ? (
                   <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" loading="lazy" decoding="async" width={40} height={40} />
                 ) : (
@@ -451,7 +451,7 @@ const NavButton: React.FC<NavButtonProps> = ({
 }) => {
   const base = `group relative flex w-full items-center transition-all duration-200 ${isCollapsed ? 'justify-center px-0 py-3 rounded-xl' : 'gap-3 rounded-2xl px-4 py-3 text-left'}`;
   const stateClass = active
-    ? 'bg-linear-to-r from-cyan-500 to-cyan-600 text-white shadow-[0_12px_25px_-14px_rgba(0,174,217,0.7)]'
+    ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-[0_12px_25px_-14px_rgba(0,174,217,0.7)]'
     : isAction
       ? 'border border-cyan-300/25 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/20'
       : 'text-slate-300 hover:bg-white/8 hover:text-white';

@@ -37,7 +37,7 @@ export const EnterpriseStatus = () => {
     <div
       className={`
       relative overflow-hidden rounded-xl border border-white/5 p-4
-      bg-linear-to-br from-[#0f172a] to-[#1e293b]
+      bg-gradient-to-br from-[#0f172a] to-[#1e293b]
       shadow-2xl transition-all duration-300
       ${isUp ? 'shadow-emerald-500/10' : 'shadow-red-500/10'}
     `}

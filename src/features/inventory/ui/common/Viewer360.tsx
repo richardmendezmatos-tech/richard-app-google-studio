@@ -143,7 +143,7 @@ const Viewer360: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className={`aspect-[4/3] bg-linear-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-950 rounded-[40px] shadow-2xl relative overflow-hidden group select-none cursor-grab active:cursor-grabbing border border-white/10 transition-all duration-700 ${isScanning ? 'ring-4 ring-cyan-500/50 scale-[0.98]' : ''}`}
+      className={`aspect-[4/3] bg-gradient-to-br from-slate-100 to-white dark:from-slate-900 dark:to-slate-950 rounded-[40px] shadow-2xl relative overflow-hidden group select-none cursor-grab active:cursor-grabbing border border-white/10 transition-all duration-700 ${isScanning ? 'ring-4 ring-cyan-500/50 scale-[0.98]' : ''}`}
       onMouseDown={(e) => handleStart(e.clientX)}
       onMouseMove={(e) => (activeMode === '360' ? handleMove(e.clientX) : handleCinematicMove(e))}
       onMouseUp={handleEnd}

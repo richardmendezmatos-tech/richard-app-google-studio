@@ -34,7 +34,7 @@ export const AdminHeader: React.FC<Props> = ({
           <ShieldCheck size={12} />
           <span>Command Center v2.0</span>
         </div>
-        <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-linear-to-r from-white to-slate-500 tracking-tighter animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500 tracking-tighter animate-in fade-in slide-in-from-bottom-4 duration-500">
           {currentDealer.name}
         </h1>
       </div>
@@ -111,7 +111,7 @@ export const AdminHeader: React.FC<Props> = ({
       <div className="flex gap-3 w-full md:w-auto">
         <button
           onClick={() => navigate('/digital-twin')}
-          className="h-[44px] px-6 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-500/20 active:scale-95 transition-all flex items-center gap-2"
+          className="h-[44px] px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-500/20 active:scale-95 transition-all flex items-center gap-2"
         >
           <UserIcon size={18} /> Gemelo Digital
         </button>

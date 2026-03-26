@@ -1,88 +1,7 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-brand-cyan: #00e5ff;
-  --color-brand-cyan-strong: #00b8cc;
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: #00aed9;
-  --color-primary-foreground: #ffffff;
-
-  --font-editorial: 'Cormorant Garamond', serif;
-  --font-tech: 'Sora', sans-serif;
-
-  --spacing-board-header: 50px;
-  --spacing-board-column-lg: 300px;
-  --spacing-board-column-md: 200px;
-  --spacing-board-column-sm: 150px;
-
-  --height-board-header: 50px;
-
-  --animate-bounce-slow: bounce-slow 4s ease-in-out infinite;
-  --animate-gradient-x: gradientX 8s ease infinite;
-  --animate-spin-slow: spinSlow 32s linear infinite;
-  --animate-neural-pulse: neural-pulse 15s ease-in-out infinite alternate;
-  --animate-scan: scan 3s linear infinite;
-
-  @keyframes bounce-slow {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-  @keyframes gradientX {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  @keyframes spinSlow {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes neural-pulse {
-    0% {
-      transform: scale(1) translate(0, 0);
-      opacity: 0.5;
-    }
-    50% {
-      transform: scale(1.1) translate(2%, 2%);
-      opacity: 0.8;
-    }
-    100% {
-      transform: scale(1) translate(-2%, -2%);
-      opacity: 0.5;
-    }
-  }
-  @keyframes scan {
-    0% {
-      top: 0%;
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      top: 100%;
-      opacity: 0;
-    }
-  }
-}
 
 :root {
   --brand-cyan: #00e5ff;
@@ -668,7 +587,7 @@ body {
 }
 
 .text-gradient-premium {
-  @apply text-transparent bg-clip-text bg-linear-to-br from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-400 dark:to-white;
+  @apply text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-400 dark:to-white;
 }
 
 .input-premium {
@@ -760,5 +679,5 @@ body {
 }
 
 .text-gradient-cyan {
-  @apply text-transparent bg-clip-text bg-linear-to-r from-primary to-cyan-600;
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-600;
 }

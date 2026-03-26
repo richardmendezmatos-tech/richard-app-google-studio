@@ -42,7 +42,7 @@ export class BrandErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-[#050b14] text-cyan-500 font-mono flex flex-col items-center justify-center p-6 relative overflow-hidden">
           {/* Background Effects */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#000000_100%)] pointer-events-none" />
-          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
 
           <div className="z-10 max-w-2xl w-full bg-[#0a1625] border border-cyan-900/50 rounded-lg p-8 shadow-[0_0_50px_rgba(0,174,217,0.1)] relative">
             {/* Decorative Corners */}

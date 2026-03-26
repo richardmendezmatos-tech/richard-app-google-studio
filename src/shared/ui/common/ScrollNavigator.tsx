@@ -110,7 +110,7 @@ export const ScrollNavigator: React.FC = () => {
             className="absolute inset-x-0 h-full bg-white/5 dark:bg-slate-800/50 backdrop-blur-md rounded-full border border-white/10 overflow-hidden cursor-pointer"
           >
             {/* Active Progress Fill */}
-            <div className="h-full bg-linear-to-r from-cyan-500 to-blue-600 shadow-[0_0_15px_rgba(0,174,217,0.6)] w-[var(--scroll-progress)]" />
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-[0_0_15px_rgba(0,174,217,0.6)] w-[var(--scroll-progress)]" />
           </div>
 
           {/* Draggable Knob */}

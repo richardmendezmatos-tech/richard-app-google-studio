@@ -69,12 +69,12 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
       {/* Image Section */}
       <div className="relative aspect-[4/3] overflow-hidden p-8 flex items-center justify-center rounded-t-[24px]">
         {/* Dynamic Shine Overlay */}
-        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
         {/* Badges */}
         <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 items-start">
           {isRecommended && (
-            <span className="font-tech animate-pulse rounded-full border border-white/20 bg-linear-to-r from-amber-400 to-orange-500 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-slate-900 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+            <span className="font-tech animate-pulse rounded-full border border-white/20 bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-slate-900 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
               Recomendado para ti
             </span>
           )}

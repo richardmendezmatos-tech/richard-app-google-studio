@@ -69,7 +69,7 @@ const DevOpsView: React.FC = () => {
         <button
           onClick={handleGeneratePush}
           disabled={loading || !description.trim()}
-          className="w-full py-5 bg-linear-to-r from-primary to-blue-600 hover:scale-[1.01] active:scale-95 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-3 transition-all disabled:opacity-50"
+          className="w-full py-5 bg-gradient-to-r from-primary to-blue-600 hover:scale-[1.01] active:scale-95 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-3 transition-all disabled:opacity-50"
         >
           {loading ? (
             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -95,7 +95,7 @@ const DevOpsView: React.FC = () => {
             </button>
           </div>
           <div className="bg-slate-900/50 p-6 rounded-xl font-mono text-primary break-all border border-slate-800/50 relative group overflow-hidden">
-            <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             {command}
           </div>
         </div>

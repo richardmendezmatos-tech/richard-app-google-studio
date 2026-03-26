@@ -309,7 +309,7 @@ const NewsroomPage: React.FC = () => {
                     </p>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-px">
                           <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
                             RA
                           </div>
@@ -331,7 +331,7 @@ const NewsroomPage: React.FC = () => {
 
         {/* Sidebar */}
         <aside className="space-y-8">
-          <div className="bg-linear-to-br from-[#173d57] to-[#0d2232] p-8 rounded-[40px] text-white relative overflow-hidden shadow-2xl">
+          <div className="bg-gradient-to-br from-[#173d57] to-[#0d2232] p-8 rounded-[40px] text-white relative overflow-hidden shadow-2xl">
             <div className="relative z-10 space-y-6">
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
                 <Sparkles className="text-primary" />
@@ -356,7 +356,7 @@ const NewsroomPage: React.FC = () => {
                 <button
                   onClick={handleSubscribe}
                   disabled={isSubscribing}
-                  className="w-full bg-linear-to-r from-primary to-[#008cb1] hover:brightness-110 disabled:opacity-50 text-white py-4 rounded-2xl flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-950/40"
+                  className="w-full bg-gradient-to-r from-primary to-[#008cb1] hover:brightness-110 disabled:opacity-50 text-white py-4 rounded-2xl flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-950/40"
                 >
                   {isSubscribing ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -440,7 +440,7 @@ const NewsroomPage: React.FC = () => {
                   alt={selectedPost.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 <div className="absolute bottom-12 left-12 right-12 space-y-4">
                   <div className="flex gap-2">
                     {selectedPost.tags?.map((tag) => (

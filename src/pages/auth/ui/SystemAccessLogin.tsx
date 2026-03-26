@@ -225,13 +225,13 @@ const SystemAccessLogin: FC = () => {
         <div className="glass-premium overflow-hidden">
           {/* Header */}
           <div className="relative p-8 pb-6 text-center border-b border-white/5">
-            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-60"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60"></div>
 
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, type: 'spring' }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-primary/20 to-indigo-500/10 border border-primary/20 mb-4 shadow-[0_0_30px_-5px_rgba(0,174,217,0.3)]"
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-indigo-500/10 border border-primary/20 mb-4 shadow-[0_0_30px_-5px_rgba(0,174,217,0.3)]"
             >
               <Command className="text-primary" size={32} strokeWidth={1.5} />
             </motion.div>
@@ -323,7 +323,7 @@ const SystemAccessLogin: FC = () => {
                 <button
                   type="submit"
                   disabled={isPending || isLocalLoading}
-                  className="w-full py-4 bg-linear-to-r from-primary to-[#009ac0] hover:to-primary text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-primary/25 hover:shadow-cyan-400/40 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+                  className="w-full py-4 bg-gradient-to-r from-primary to-[#009ac0] hover:to-primary text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-primary/25 hover:shadow-cyan-400/40 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   <span className="relative flex items-center justify-center gap-2">

@@ -35,7 +35,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
           alt={car.name}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
         {/* Status Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
@@ -66,7 +66,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col relative z-20 bg-linear-to-t from-slate-900/90 to-transparent">
+      <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col relative z-20 bg-gradient-to-t from-slate-900/90 to-transparent">
         <div>
           <h3 className="text-xl font-black text-white uppercase tracking-tight truncate mb-1">
             {car.name}

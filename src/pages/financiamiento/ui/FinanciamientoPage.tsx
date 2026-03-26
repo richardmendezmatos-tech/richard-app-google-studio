@@ -80,8 +80,8 @@ const FinanciamientoPage: React.FC = () => {
               alt="Luxury car financing in Puerto Rico" 
               className="w-full h-full object-cover opacity-40 scale-105"
             />
-            <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/60 to-[#0a0f1e]" />
-            <div className="absolute inset-0 bg-linear-to-r from-[#0a0f1e] via-[#0a0f1e]/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/60 to-[#0a0f1e]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1e] via-[#0a0f1e]/40 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto text-center md:text-left">
@@ -93,7 +93,7 @@ const FinanciamientoPage: React.FC = () => {
             <h1 className="text-4xl md:text-7xl font-black tracking-tight mb-6 leading-tight">
               Financiamiento
               <br />
-              <span className="bg-linear-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 de Autos de Lujo
               </span>
             </h1>
@@ -108,7 +108,7 @@ const FinanciamientoPage: React.FC = () => {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-cyan-400 text-slate-900 font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-[0_0_30px_rgba(0,174,217,0.4)]"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-900 font-black uppercase tracking-widest px-8 py-4 rounded-2xl hover:scale-105 transition-transform shadow-[0_0_30px_rgba(0,174,217,0.4)]"
               >
                 <Phone size={18} />
                 Aplicar por WhatsApp
@@ -211,7 +211,7 @@ const FinanciamientoPage: React.FC = () => {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-linear-to-r from-cyan-500 to-purple-500 text-white font-black uppercase tracking-widest px-10 py-5 rounded-3xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(0,174,217,0.3)]"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-black uppercase tracking-widest px-10 py-5 rounded-3xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(0,174,217,0.3)]"
             >
               <Phone size={20} />
               Hablar con un Asesor Ahora

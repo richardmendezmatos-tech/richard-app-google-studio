@@ -187,11 +187,11 @@ const AIChatWidget: React.FC<Props> = () => {
             className={`relative p-6 text-white flex items-center justify-between shadow-lg z-10 transition-colors duration-500 
             ${
               currentPersona === 'ricardo'
-                ? 'bg-linear-to-r from-[#173d57] to-[#0f2a3d]'
+                ? 'bg-gradient-to-r from-[#173d57] to-[#0f2a3d]'
                 : currentPersona === 'sofia'
-                  ? 'bg-linear-to-r from-emerald-900 to-emerald-800'
+                  ? 'bg-gradient-to-r from-emerald-900 to-emerald-800'
                   : currentPersona === 'jordan'
-                    ? 'bg-linear-to-r from-slate-900 to-rose-900 border-b border-rose-500/50'
+                    ? 'bg-gradient-to-r from-slate-900 to-rose-900 border-b border-rose-500/50'
                     : 'bg-slate-900'
             }`}
           >
@@ -420,7 +420,7 @@ const AIChatWidget: React.FC<Props> = () => {
             analytics.trackInteraction('chat_closed');
           }
         }}
-        className={`group relative w-16 h-16 rounded-full flex items-center justify-center text-white shadow-[0_10px_40px_-10px_rgba(0,174,217,0.5)] transition-all duration-500 hover:scale-110 ${isOpen ? 'bg-slate-800 rotate-90' : 'bg-linear-to-r from-primary to-blue-500'}`}
+        className={`group relative w-16 h-16 rounded-full flex items-center justify-center text-white shadow-[0_10px_40px_-10px_rgba(0,174,217,0.5)] transition-all duration-500 hover:scale-110 ${isOpen ? 'bg-slate-800 rotate-90' : 'bg-gradient-to-r from-primary to-blue-500'}`}
       >
         {isOpen ? (
           <X size={28} />

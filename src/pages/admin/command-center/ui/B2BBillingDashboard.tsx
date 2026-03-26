@@ -72,7 +72,7 @@ const B2BBillingDashboard = () => {
 
       {/* KPI Executive Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-premium p-8 rounded-[2.5rem] border border-emerald-500/20 bg-linear-to-br from-emerald-500/10 to-transparent relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 route-fade-in">
+        <div className="glass-premium p-8 rounded-[2.5rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-transparent relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 route-fade-in">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
           <TrendingUp
             className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform"
@@ -92,7 +92,7 @@ const B2BBillingDashboard = () => {
           </div>
         </div>
 
-        <div className="glass-premium p-8 rounded-[2.5rem] border border-amber-500/20 bg-linear-to-br from-amber-500/10 to-transparent relative overflow-hidden group hover:border-amber-500/40 transition-all duration-500 route-fade-in">
+        <div className="glass-premium p-8 rounded-[2.5rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-transparent relative overflow-hidden group hover:border-amber-500/40 transition-all duration-500 route-fade-in">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all" />
           <Cpu
             className="text-amber-500 mb-6 group-hover:scale-110 transition-transform"
@@ -112,7 +112,7 @@ const B2BBillingDashboard = () => {
           </div>
         </div>
 
-        <div className="glass-premium p-8 rounded-[2.5rem] border border-primary/20 bg-linear-to-br from-primary/10 to-transparent relative overflow-hidden group hover:border-primary/40 transition-all duration-500 route-fade-in">
+        <div className="glass-premium p-8 rounded-[2.5rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-transparent relative overflow-hidden group hover:border-primary/40 transition-all duration-500 route-fade-in">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
           <DollarSign
             className="text-primary mb-6 group-hover:scale-110 transition-transform"

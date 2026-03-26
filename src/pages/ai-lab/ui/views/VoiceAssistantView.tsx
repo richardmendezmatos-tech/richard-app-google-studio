@@ -116,7 +116,7 @@ const VoiceAssistantView: React.FC = () => {
                 : '0 0 40px rgba(0,174,217,0.2)',
             }}
             transition={{ duration: 1, repeat: Infinity }}
-            className={`w-36 h-36 rounded-full bg-linear-to-br from-primary to-blue-700 flex items-center justify-center z-20 relative overflow-hidden ${isListening ? 'ring-4 ring-emerald-500/50' : ''}`}
+            className={`w-36 h-36 rounded-full bg-gradient-to-br from-primary to-blue-700 flex items-center justify-center z-20 relative overflow-hidden ${isListening ? 'ring-4 ring-emerald-500/50' : ''}`}
           >
             {/* Inner AI Sparkle */}
             <div className="absolute inset-0 bg-white/20 blur-xl rounded-full mix-blend-overlay" />
@@ -156,8 +156,8 @@ const VoiceAssistantView: React.FC = () => {
       <div className="w-full max-w-4xl z-10 flex flex-col items-center gap-6 mb-4">
         {/* Transcript Glass Panel */}
         <div className="w-full relative">
-          <div className="absolute inset-0 bg-linear-to-t from-[#0a0f1a] via-transparent to-transparent z-10 h-12 bottom-0 pointer-events-none" />
-          <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1a] via-transparent to-transparent z-10 h-8 top-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent z-10 h-12 bottom-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1a] via-transparent to-transparent z-10 h-8 top-0 pointer-events-none" />
 
           <div
             ref={scrollRef}

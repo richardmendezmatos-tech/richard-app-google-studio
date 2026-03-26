@@ -199,7 +199,7 @@ const SalesCopilot: React.FC = () => {
     <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in flex flex-col h-[75vh]">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 shrink-0">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-linear-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
             <Target className="text-white" size={24} />
           </div>
           <div>
@@ -236,8 +236,8 @@ const SalesCopilot: React.FC = () => {
               <div
                 className={`w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center shadow-lg ${
                   msg.role === 'user'
-                    ? 'bg-linear-to-br from-purple-500 to-indigo-600 border border-purple-400/30'
-                    : 'bg-linear-to-br from-primary to-blue-600 border border-cyan-400/30'
+                    ? 'bg-gradient-to-br from-purple-500 to-indigo-600 border border-purple-400/30'
+                    : 'bg-gradient-to-br from-primary to-blue-600 border border-cyan-400/30'
                 }`}
               >
                 {msg.role === 'user' ? (
@@ -277,7 +277,7 @@ const SalesCopilot: React.FC = () => {
         {isTyping && (
           <div className="flex w-full justify-start">
             <div className="flex items-start gap-4 max-w-[85%]">
-              <div className="w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center bg-linear-to-br from-primary to-blue-600 opacity-50">
+              <div className="w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 opacity-50">
                 <Bot size={20} className="text-white" />
               </div>
               <div className="p-5 rounded-3xl bg-[#131f2a] border border-cyan-500/20 rounded-tl-sm flex gap-2 items-center">
@@ -292,7 +292,7 @@ const SalesCopilot: React.FC = () => {
 
       {/* Input Area */}
       <form onSubmit={handleSendMessage} className="relative mt-auto shrink-0 group">
-        <div className="absolute -inset-2 bg-linear-to-r from-cyan-500/0 via-purple-500/10 to-indigo-500/0 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+        <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/0 via-purple-500/10 to-indigo-500/0 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
         <div className="relative flex items-center bg-[#131f2a] border border-white/10 rounded-2xl p-2 focus-within:border-primary/50 transition-colors shadow-2xl">
           <input
             type="text"

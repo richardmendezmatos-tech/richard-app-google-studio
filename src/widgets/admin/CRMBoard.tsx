@@ -210,7 +210,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
       {/* AI Scoring Section - Premium Predictive Gauge */}
       {(lead.aiAnalysis || scoring.score > 0) && (
-        <div className="mb-4 p-4 bg-linear-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
+        <div className="mb-4 p-4 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-2">
               <div className="p-1 px-1.5 bg-primary/10 rounded-md">
@@ -243,10 +243,10 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
             <div
               className={`h-full transition-all duration-1500 cubic-bezier(0.23, 1, 0.32, 1) predictive-bar-width ${
                 scoring.score > 80
-                  ? 'bg-linear-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                   : scoring.score > 50
-                    ? 'bg-linear-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'bg-linear-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                    : 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
               }`}
               style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
             />
@@ -484,7 +484,7 @@ const CRMBoard: React.FC = () => {
           <button
             onClick={handleStartNurturing}
             disabled={isNurturing}
-            className="group flex items-center gap-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/30"
+            className="group flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/30"
           >
             {isNurturing ? (
               <span className="flex items-center gap-2">

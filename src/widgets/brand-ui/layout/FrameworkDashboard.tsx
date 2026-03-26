@@ -62,7 +62,7 @@ const FrameworkDashboard: React.FC = () => {
           <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter flex items-center gap-4">
             <Cpu className="text-cyan-500 hidden md:block" size={48} strokeWidth={1} />
             Multi-Framework{' '}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
               Core
             </span>
           </h1>
@@ -125,7 +125,7 @@ const FrameworkDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[500px]">
         {/* LEFT: ACTIVE ARCHITECTURE */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-px bg-linear-to-br from-white/10 to-transparent rounded-3xl overflow-hidden">
+          <div className="p-px bg-gradient-to-br from-white/10 to-transparent rounded-3xl overflow-hidden">
             <div className="bg-slate-950/80 backdrop-blur-xl p-8 h-full rounded-3xl relative overflow-hidden group">
               {/* Decorative Grid */}
               <div className="absolute inset-0 bg-[linear-gradient(rgba(0,174,217,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,174,217,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none" />
@@ -155,7 +155,7 @@ const FrameworkDashboard: React.FC = () => {
           </div>
 
           {/* LAST ACTION BANNER */}
-          <div className="p-6 rounded-2xl bg-linear-to-r from-slate-900 to-slate-950 border border-white/5 flex items-center justify-between">
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-white/5 flex items-center justify-between">
             <div>
               <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-1">
                 {t('dashboard.lastAction')}

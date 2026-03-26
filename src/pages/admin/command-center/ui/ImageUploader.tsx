@@ -338,7 +338,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         `}
       >
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-linear-to-br from-cyan-900/10 to-purple-900/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/10 to-purple-900/10 pointer-events-none" />
 
         <div className="relative p-12 flex flex-col items-center justify-center text-center space-y-4">
           <div
@@ -407,7 +407,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                       <div
                         style={{ '--progress-width': `${file.progress}%` } as React.CSSProperties}
-                        className="h-full bg-linear-to-r from-cyan-500 to-purple-500 progress-bar-width"
+                        className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 progress-bar-width"
                       />
                     </div>
                     <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">
