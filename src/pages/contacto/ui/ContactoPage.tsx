@@ -58,10 +58,18 @@ const ContactoPage: React.FC = () => {
 
       <div className="min-h-screen bg-[#0a0f1e] text-white">
         {/* Hero */}
-        <section className="relative overflow-hidden py-24 px-6">
-          <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-[#0a0f1e] to-purple-900/10 pointer-events-none" />
+        <section className="relative min-h-[50vh] flex items-center overflow-hidden py-24 px-6">
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/assets/seo/contact-hero.png" 
+              alt="Richard Automotive Dealership in Bayamón, Puerto Rico" 
+              className="w-full h-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
+          </div>
 
-          <div className="relative max-w-4xl mx-auto text-center">
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-6">
               <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
               <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">
@@ -69,12 +77,12 @@ const ContactoPage: React.FC = () => {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+            <h1 className="text-4xl md:text-7xl font-black tracking-tight mb-6 leading-tight">
               Contáctanos
             </h1>
 
             <p className="text-lg text-slate-300 max-w-xl mx-auto mb-10">
-              Estamos listos para ayudarte a encontrar tu próximo auto. Escríbenos o llámanos — respondemos rápido.
+              Estamos listos para ayudarte a encontrar tu próximo auto. Escríbenos o llámanos — respondemos rápido desde nuestro concesionario en Bayamón.
             </p>
 
             <a

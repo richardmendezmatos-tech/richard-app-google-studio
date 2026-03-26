@@ -72,30 +72,38 @@ const FinanciamientoPage: React.FC = () => {
 
       <div className="min-h-screen bg-[#0a0f1e] text-white">
         {/* Hero */}
-        <section className="relative overflow-hidden py-24 px-6">
-          <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-[#0a0f1e] to-purple-900/10 pointer-events-none" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+        <section className="relative min-h-[60vh] flex items-center overflow-hidden py-24 px-6">
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/assets/seo/financing-hero.png" 
+              alt="Luxury car financing in Puerto Rico" 
+              className="w-full h-full object-cover opacity-40 scale-105"
+            />
+            <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/60 to-[#0a0f1e]" />
+            <div className="absolute inset-0 bg-linear-to-r from-[#0a0f1e] via-[#0a0f1e]/40 to-transparent" />
+          </div>
 
-          <div className="relative max-w-4xl mx-auto text-center">
+          <div className="relative z-10 max-w-4xl mx-auto text-center md:text-left">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-6">
               <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
               <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">Richard Automotive — Bayamón</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
-              Financiamiento de Autos
+            <h1 className="text-4xl md:text-7xl font-black tracking-tight mb-6 leading-tight">
+              Financiamiento
               <br />
               <span className="bg-linear-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                en Puerto Rico
+                de Autos de Lujo
               </span>
             </h1>
 
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg text-slate-300 max-w-2xl mb-10 leading-relaxed">
               Pre-aprobación en <strong className="text-white">24 horas</strong>, tasas competitivas y proceso 100% digital.
-              Servimos a toda la isla desde Bayamón.
+              Hacemos que el camino hacia tu próximo auto sea tan premium como el vehículo mismo.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
