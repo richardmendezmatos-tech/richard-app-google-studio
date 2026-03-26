@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
-// import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import path from 'path';
 
@@ -57,6 +57,14 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      // Compress static images at build-time: ~40-60% byte reduction for PNG/JPG/WebP
+      ViteImageOptimizer({
+        png: { quality: 80 },
+        jpeg: { quality: 80 },
+        jpg: { quality: 80 },
+        webp: { lossless: false, quality: 80 },
+        svg: { multipass: true },
+      }),
       nodePolyfills({
         globals: {
           Buffer: true,

@@ -65,6 +65,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+  <!-- Preload LCP hero image so browser fetches it before rendering begins -->
+  <link rel="preload" as="image" href="/assets/ra-hero-optimized.png" fetchpriority="high" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
@@ -84,7 +87,7 @@
   <!-- Styles migrated to index.css -->
 
   <!-- Styles migrated to index.css -->
-  <!-- <meta name="theme-color" content="#0f172a"> -->
+  <meta name="theme-color" content="#0f172a">
 
   <script type="application/ld+json">
     {

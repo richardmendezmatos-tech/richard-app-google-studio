@@ -82,7 +82,7 @@ const MarketingWrapper = () => {
               onClick={() => ctx.setMarketingCar(car)}
               className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-primary hover:bg-slate-800 transition-all text-left group"
             >
-              <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" />
+              <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" loading="lazy" decoding="async" width={48} height={48} />
               <div>
                 <div className="text-sm font-black text-white uppercase tracking-tight">{car.name}</div>
                 <div className="text-[10px] text-primary font-bold uppercase tracking-widest">Planear Post ✨</div>

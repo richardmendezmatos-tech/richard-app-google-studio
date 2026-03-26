@@ -346,7 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-cyan-400 to-cyan-700 text-white">
                 {user.photoURL ? (
-                  <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" />
+                  <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" loading="lazy" decoding="async" width={40} height={40} />
                 ) : (
                   <UserIcon size={18} />
                 )}
