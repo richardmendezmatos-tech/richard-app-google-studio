@@ -117,6 +117,9 @@ const FinanciamientoPage = React.lazy(() =>
 const ContactoPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/contacto/ui/ContactoPage')),
 );
+const CitySEOPage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/storefront/ui/CitySEOPage')),
+);
 
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
@@ -327,6 +330,14 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <PageWrapper>
                 <ContactoPage />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/usados-en/:city"
+            element={
+              <PageWrapper>
+                <CitySEOPage />
               </PageWrapper>
             }
           />

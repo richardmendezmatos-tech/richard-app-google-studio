@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/shared/ui/seo/SEO';
 import { CheckCircle, Clock, FileText, Phone, ChevronRight, Zap, Shield, TrendingDown } from 'lucide-react';
+import { CreditCalculator } from '@/features/loans/ui/CreditCalculator';
 
 const WHATSAPP_LINK = 'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20financiamiento';
 
@@ -71,7 +72,6 @@ const FinanciamientoPage: React.FC = () => {
       />
 
       <div className="min-h-screen bg-[#0a0f1e] text-white">
-        {/* Hero */}
         <section className="relative min-h-[60vh] flex items-center overflow-hidden py-24 px-6">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
@@ -123,6 +123,9 @@ const FinanciamientoPage: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* Dynamic Calculator Section */}
+        <CreditCalculator />
 
         {/* Benefits */}
         <section className="py-16 px-6 bg-slate-900/30">
