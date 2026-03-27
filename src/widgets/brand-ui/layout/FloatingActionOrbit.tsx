@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Mic, Phone, X, Zap } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 interface FloatingActionOrbitProps {
   activeWidget: 'chat' | 'voice' | 'whatsapp' | null;
@@ -18,6 +19,23 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
   whatsappWidget,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPulseActive, setIsPulseActive] = useState(false);
+  const location = useLocation();
+
+  // Proactive entry: Pulse after 2s if no widget is active
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPulseActive(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const getLabelForPath = () => {
+    if (location.pathname.includes('/vehicle/')) return '¿TE GUSTA ESTE AUTO?';
+    if (location.pathname.includes('/store')) return 'MIRA NUESTRO STOCK';
+    if (location.pathname.includes('/financiamiento')) return 'CALCULA TU CUOTA';
+    return 'CENTRO DE MANDO';
+  };
 
   const handleMainClick = useCallback(() => {
     if (activeWidget) {
@@ -34,7 +52,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-4 pointer-events-none">
+    <div className="fixed bottom-6 right-6 lg:bottom-8 lg:right-8 z-[999] flex flex-col items-end gap-4 pointer-events-none">
       {/* Backdrop for focus when Orbit is open */}
       <AnimatePresence>
         {isOpen && !activeWidget && (
@@ -42,7 +60,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-none z-[-1]"
+            className="fixed inset-0 bg-black/50 pointer-events-none z-[-1]"
           />
         )}
       </AnimatePresence>
@@ -53,10 +71,10 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           {activeWidget === 'chat' && (
             <motion.div
               key="chat-box"
-              initial={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(20px)' }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(20px)' }}
-              className="absolute bottom-24 right-0"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              className="absolute bottom-24 right-0 will-change-transform"
             >
               <div className="shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] rounded-3xl overflow-hidden ring-1 ring-white/10">
                 {chatWidget}
@@ -67,10 +85,10 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           {activeWidget === 'voice' && (
             <motion.div
               key="voice-box"
-              initial={{ opacity: 0, y: 30, scale: 0.8, filter: 'blur(20px)' }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: 30, scale: 0.8, filter: 'blur(20px)' }}
-              className="absolute bottom-24 right-0"
+              initial={{ opacity: 0, y: 30, scale: 0.85 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.85 }}
+              className="absolute bottom-24 right-0 will-change-transform"
             >
               {voiceWidget}
             </motion.div>
@@ -79,10 +97,10 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           {activeWidget === 'whatsapp' && (
             <motion.div
               key="whatsapp-box"
-              initial={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(20px)' }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(20px)' }}
-              className="absolute bottom-24 right-0"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              className="absolute bottom-24 right-0 will-change-transform"
             >
               <div className="shadow-[0_20px_60px_-15px_rgba(37,211,102,0.3)] rounded-3xl overflow-hidden ring-1 ring-white/10">
                 {whatsappWidget}
@@ -147,12 +165,23 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           onClick={handleMainClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`relative z-50 w-18 h-18 rounded-full flex items-center justify-center transition-all duration-700 ${
+          className={`relative z-50 w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 group/main ${
             isOpen || activeWidget
               ? 'bg-cyan-500 shadow-[0_0_40px_rgba(0,229,255,0.6)]'
-              : 'glass-premium border-2 border-cyan-400/20 text-cyan-400 hover:border-cyan-400/60 shadow-[0_0_15px_rgba(0,174,217,0.1)]'
+              : `glass-premium border-2 border-cyan-400/20 text-cyan-400 hover:border-cyan-400/60 shadow-[0_0_15px_rgba(0,174,217,0.1)] ${isPulseActive && !activeWidget ? 'motion-proactive' : ''}`
           }`}
         >
+          {/* Proactive Label (Tooltip from Prompt) */}
+          {!isOpen && !activeWidget && (
+            <div className="absolute right-20 bg-white/95 backdrop-blur-md text-black text-[10px] font-bold px-4 py-2 rounded-xl shadow-2xl opacity-0 group-hover/main:opacity-100 transition-all duration-300 transform translate-x-4 group-hover/main:translate-x-0 whitespace-nowrap pointer-events-none tracking-wider">
+              <span className="flex items-center gap-2">
+                <Zap size={12} className="text-cyan-600 fill-current" />
+                {getLabelForPath()}
+              </span>
+              {/* Arrow */}
+              <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-2 h-2 bg-white/95 rotate-45" />
+            </div>
+          )}
           {/* Outer Pulsing Glow */}
           {(isOpen || activeWidget) && (
             <motion.div

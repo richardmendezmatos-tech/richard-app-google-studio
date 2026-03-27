@@ -138,6 +138,7 @@
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-image-optimizer": "^2.0.3",
     "vite-plugin-node-polyfills": "^0.25.0",
+    "vite-plugin-prerender": "^1.0.8",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.18"
   },

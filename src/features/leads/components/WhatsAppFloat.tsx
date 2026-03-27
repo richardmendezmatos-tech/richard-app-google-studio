@@ -1,175 +1,464 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Sparkles, ChevronRight } from 'lucide-react';
+import { ChevronRight, X } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { useLocation } from 'react-router-dom';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { createInteractiveMenu } from '@/features/leads/services/whatsappService';
+import { Car } from '@/shared/types/types';
 
-export const WhatsAppFloat: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface WhatsAppFloatProps {
+  isEmbedded?: boolean;
+  inventory?: Car[];
+}
+
+const INITIAL_MESSAGES: { text: string; sender: 'user' | 'bot' }[] = [
+  { text: '¡Hola! 👋 Soy Richard IA, tu asesor personal.', sender: 'bot' },
+  { text: 'Mi meta es tu tranquilidad. ¿En qué puedo ayudarte a encontrar hoy? 🛡️', sender: 'bot' },
+];
+
+// ─── WhatsApp SVG Icon ───────────────────────────────────────────────────────
+const WhatsAppIcon = ({ size = 28 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M16 2C8.28 2 2 8.28 2 16c0 2.46.67 4.77 1.83 6.75L2 30l7.45-1.8A13.93 13.93 0 0 0 16 30c7.72 0 14-6.28 14-14S23.72 2 16 2z"
+      fill="currentColor"
+    />
+    <path
+      d="M22.45 19.14c-.33-.17-1.97-.97-2.28-1.08-.3-.1-.52-.17-.74.17-.22.33-.85 1.08-1.04 1.3-.19.22-.38.25-.71.08-.33-.17-1.38-.51-2.63-1.62a9.85 9.85 0 0 1-1.82-2.27c-.19-.33-.02-.51.14-.67.15-.15.33-.38.5-.57.17-.19.22-.33.33-.55.11-.22.06-.42-.02-.58-.08-.17-.74-1.78-1.01-2.44-.27-.64-.54-.55-.74-.56l-.63-.01c-.22 0-.58.08-.88.42-.3.33-1.15 1.13-1.15 2.75 0 1.62 1.18 3.19 1.34 3.41.17.22 2.32 3.54 5.62 4.97.79.34 1.4.54 1.88.69.79.25 1.51.21 2.08.13.63-.09 1.97-.81 2.25-1.59.28-.78.28-1.44.2-1.58-.08-.14-.3-.22-.63-.38z"
+      fill="white"
+    />
+  </svg>
+);
+
+// ─── Context detection ────────────────────────────────────────────────────────
+type QuickAction = { icon: string; label: string; message: string };
+
+const getContextActions = (pathname: string, vehicle?: VehicleContext | null, inventory: Car[] = []): QuickAction[] => {
+  // Enhanced detection: if no vehicle in state, try to find it by current slug
+  let activeVehicle = vehicle;
+  if (!activeVehicle && pathname.includes('/vehicle/')) {
+    const slug = pathname.split('/').pop();
+    const found = inventory.find(c => c.id === slug || c.name.toLowerCase().replace(/\s+/g, '-') === slug);
+    if (found) {
+      activeVehicle = {
+        id: found.id,
+        make: found.make,
+        model: found.model,
+        year: found.year
+      };
+    }
+  }
+
+  if (activeVehicle) {
+    return [
+      {
+        icon: '🛡️',
+        label: `Consultar seguridad de este ${activeVehicle.make}`,
+        message: `Hola Richard IA, busco seguridad y paz mental. ¿Este ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model} está listo para una prueba de manejo protegida?`,
+      },
+      { icon: '💰', label: 'Ver plan de pagos cómodo', message: `Hola! Me interesa un plan de financiamiento tranquilo para el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.` },
+      { icon: '📅', label: 'Agendar cita privada', message: `Hola! Me gustaría coordinar una visita privada para ver el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.` },
+    ];
+  }
+  if (pathname.includes('financiamiento') || pathname.includes('prequal') || pathname.includes('prequalify')) {
+    return [
+      { icon: '✅', label: 'Quiero pre-cualificarme', message: 'Hola! Quiero comenzar mi proceso de pre-cualificación para un auto.' },
+      { icon: '💳', label: 'Tengo crédito bajo', message: 'Necesito ayuda con financiamiento, tengo historial de crédito limitado.' },
+      { icon: '🏦', label: 'Comparar bancos', message: 'Quiero comparar las opciones de tasas de interés disponibles.' },
+    ];
+  }
+  if (pathname.includes('usados-en') || pathname.includes('bayamon') || pathname.includes('vega-alta')) {
+    const city = pathname.includes('bayamon') ? 'Bayamón' : pathname.includes('vega-alta') ? 'Vega Alta' : 'Puerto Rico';
+    return [
+      { icon: '📍', label: `Dealer en ${city}`, message: `Hola! Estoy en ${city} y quiero saber más sobre su inventario.` },
+      { icon: '🚗', label: 'Ver inventario disponible', message: 'Me gustaría ver los autos disponibles cerca de mí.' },
+      { icon: '💰', label: 'Preguntar por financiamiento', message: `Quiero financiar un auto desde ${city}.` },
+    ];
+  }
+  if (pathname.includes('vender') || pathname.includes('appraisal') || pathname.includes('trade')) {
+    return [
+      { icon: '🏷️', label: 'Tasar mi auto ahora', message: 'Hola! Quiero una tasación de mi auto. ¿Me pueden ayudar?' },
+      { icon: '🔄', label: 'Trade-in por uno nuevo', message: 'Quiero hacer trade-in de mi auto por uno del inventario.' },
+      { icon: '📸', label: 'Enviar fotos de mi auto', message: 'Me gustaría enviar fotos de mi auto para una tasación rápida.' },
+    ];
+  }
+  // Default / Storefront
+  return [
+    { icon: '🛡️', label: 'Ver Inventario Seguro', message: 'Hola Richard IA! Me gustaría conocer su inventario de autos certificados y seguros.' },
+    { icon: '✅', label: 'Prequalificación sin compromiso', message: 'Hola! Me interesa saber mis opciones de financiamiento de forma privada y sin compromiso.' },
+    { icon: '🤝', label: 'Hablar con un asesor', message: 'Hola! Necesito asesoría para encontrar el auto ideal que me brinde tranquilidad.' },
+  ];
+};
+
+// ─── Preview bubble messages by context ──────────────────────────────────────
+const getPreviewMessage = (pathname: string): string => {
+  if (pathname.includes('financiamiento') || pathname.includes('prequal'))
+    return '💳 ¿Dudas sobre financiamiento? Te ayudo en segundos.';
+  if (pathname.includes('usados-en'))
+    return '📍 ¿Quieres un dealer cerca de ti? Escríbenos.';
+  if (pathname.includes('vender') || pathname.includes('appraisal'))
+    return '🏷️ ¿Cuánto vale tu auto? Te damos precio hoy.';
+  return '👋 ¿Buscas un auto? Escríbenos, respondemos en minutos.';
+};
+
+type VehicleContext = { id?: string; make?: string; model?: string; year?: string | number };
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false, inventory = [] }) => {
+  const [isOpen, setIsOpen] = useState(isEmbedded); // Default open if embedded
   const [showPreview, setShowPreview] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [messages, setMessages] = useState<{ text: string; sender: 'bot' | 'user' }[]>([
-    { text: '¡Hola! 👋 Soy Richard IA, el cerebro de Richard Automotive.', sender: 'bot' },
-    {
-      text: 'Mi misión es ayudarte a encontrar el auto que eleve tu estilo de vida. ¿Qué tienes en mente hoy?',
-      sender: 'bot',
-    },
+    { text: '¡Hola! 👋 Soy Richard IA, tu asesor digital.', sender: 'bot' },
+    { text: 'Selecciona una opción y te conectamos en segundos con nuestro equipo. 🚀', sender: 'bot' },
   ]);
 
   const phoneNumber = SITE_CONFIG.contact.whatsapp;
   const location = useLocation();
   const { trackEvent } = useMetaPixel();
 
-  // Auto-detect vehicle context from URL or State
-  type VehicleContext = {
-    id?: string;
-    make?: string;
-    model?: string;
-    year?: string | number;
-  };
   const state = location.state as { vehicle?: VehicleContext } | null;
   const vehicle = state?.vehicle;
+  const quickActions = getContextActions(location.pathname, vehicle, inventory);
+  const previewMsg = getPreviewMessage(location.pathname);
 
-  // Show preview after 5 seconds on first visit
+  // Smart preview: once per session, after 4s, hide after 8s
   useEffect(() => {
-    const hasSeenPreview = localStorage.getItem('whatsapp_preview_seen');
-    if (!hasSeenPreview) {
-      const timer = setTimeout(() => {
-        setShowPreview(true);
-        localStorage.setItem('whatsapp_preview_seen', 'true');
-      }, 5000);
-      return () => clearTimeout(timer);
+    const key = 'wa_preview_seen';
+    if (isOpen || dismissed || sessionStorage.getItem(key)) return;
+    const show = setTimeout(() => {
+      setShowPreview(true);
+      sessionStorage.setItem(key, 'true');
+    }, 4000);
+    const hide = setTimeout(() => setShowPreview(false), 12000);
+    return () => { clearTimeout(show); clearTimeout(hide); };
+  }, [isOpen, dismissed]);
+
+  // Reset messages when route changes (context shift) - idiomatic way to reset state on change
+  const [prevPath, setPrevPath] = useState(location.pathname);
+  if (prevPath !== location.pathname) {
+    setPrevPath(location.pathname);
+    if (messages.length > 2) {
+      setMessages(INITIAL_MESSAGES);
     }
-  }, []);
+  }
 
-  const quickActions = [
-    {
-      icon: '🚗',
-      label: 'Ver Inventario',
-      message: 'Hola! Me gustaría ver el inventario disponible',
-    },
-    { icon: '💰', label: 'Financiamiento', message: 'Quiero información sobre financiamiento' },
-    { icon: '📅', label: 'Agendar Cita', message: 'Me gustaría agendar una cita' },
-  ];
-
-  const handleQuickAction = async (action: (typeof quickActions)[0]) => {
+  const handleQuickAction = async (action: QuickAction) => {
     setMessages((prev) => [...prev, { text: action.label, sender: 'user' }]);
-
-    trackEvent('Lead', {
-      content_name: 'WhatsApp Quick Action',
-      content_category: 'Richard IA',
-      content_ids: [action.label],
-    });
-
+    trackEvent('Lead', { content_name: 'WhatsApp Quick Action', content_category: action.label });
     setIsTyping(true);
 
     setTimeout(() => {
       setIsTyping(false);
-      let finalMessage = action.message;
-      if (vehicle) {
-        finalMessage += ` [Contexto: ${vehicle.year} ${vehicle.make} ${vehicle.model}]`;
-      }
+      let finalMsg = action.message;
+      if (vehicle) finalMsg += ` [Auto: ${vehicle.year} ${vehicle.make} ${vehicle.model} #${vehicle.id}]`;
 
       addLead({
         type: 'whatsapp',
-        name: 'Lead de WhatsApp',
+        name: 'Lead WhatsApp',
         phone: 'Pendiente',
-        notes: `Acción: ${action.label}. Contexto: ${vehicle ? `Viendo ${vehicle.year} ${vehicle.make} ${vehicle.model} (ID: ${vehicle.id})` : 'Explorando Showroom'}`,
+        notes: `Acción: ${action.label}. Ruta: ${location.pathname}`,
         carId: vehicle?.id,
       });
 
-      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(finalMessage)}`;
-      window.open(url, '_blank');
-    }, 1200);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+    }, 1000);
   };
 
   const handleOpenChat = () => {
-    trackEvent('Lead', {
-      content_name: 'WhatsApp Open Chat',
-      content_category: 'Floating Button',
-    });
-
+    trackEvent('Lead', { content_name: 'WhatsApp Open Chat', content_category: 'Floating Button' });
     const menu = createInteractiveMenu();
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(menu)}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(menu)}`, '_blank');
+  };
+
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev);
+    setShowPreview(false);
+    setDismissed(true);
   };
 
   return (
-    <div className="w-[320px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-4 dark:border-slate-800 dark:bg-slate-900 font-sans">
-      {/* Premium Header */}
-      <div className="bg-gradient-to-br from-[#25D366] to-[#128C7E] p-5">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/20">
-              <Sparkles size={24} className="text-[#128C7E]" />
+    <div className={`${isEmbedded ? 'relative p-0' : 'fixed bottom-6 right-6 z-[200] flex flex-col items-end gap-3'}`}>
+
+      {/* ── Preview Bubble ─────────────────────────────────────────────── */}
+      {showPreview && !isOpen && !isEmbedded && (
+        <div
+          className="relative flex items-center gap-2 max-w-[240px] px-4 py-2.5 rounded-2xl text-white text-[12px] font-semibold leading-tight cursor-pointer select-none"
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            border: '1px solid rgba(37,211,102,0.35)',
+            boxShadow: '0 8px 32px rgba(37,211,102,0.2), 0 2px 8px rgba(0,0,0,0.4)',
+            animation: 'wa-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          }}
+          onClick={handleToggle}
+        >
+          <span className="w-2 h-2 rounded-full bg-[#25D366] shrink-0" style={{ animation: 'wa-pulse 1.5s ease-in-out infinite' }} />
+          <span>{previewMsg}</span>
+          {/* Arrow pointing right-down */}
+          <div
+            className="absolute -bottom-2 right-6 w-0 h-0"
+            style={{
+              borderLeft: '6px solid transparent',
+              borderRight: '6px solid transparent',
+              borderTop: '8px solid #16213e',
+            }}
+          />
+        </div>
+      )}
+
+      {/* ── Chat Widget ────────────────────────────────────────────────── */}
+      {isOpen && (
+        <div
+          className="w-[320px] overflow-hidden rounded-3xl font-sans"
+          style={{
+            background: '#0f0f1a',
+            border: isEmbedded ? 'none' : '1px solid rgba(37,211,102,0.25)',
+            boxShadow: isEmbedded ? 'none' : '0 24px 80px rgba(37,211,102,0.18), 0 8px 32px rgba(0,0,0,0.6)',
+            animation: isEmbedded ? 'none' : 'wa-open 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            transformOrigin: 'bottom right',
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #075E54 0%, #128C7E 50%, #25D366 100%)',
+              padding: '18px 20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Glow orb */}
+            <div style={{
+              position: 'absolute', top: '-20px', right: '-20px',
+              width: 80, height: 80, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.12)', filter: 'blur(12px)',
+            }} />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="relative">
+                <div style={{
+                  width: 46, height: 46, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(8px)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1.5px solid rgba(255,255,255,0.3)',
+                }}>
+                  <WhatsAppIcon size={26} />
+                </div>
+                <span style={{
+                  position: 'absolute', bottom: 0, right: 0,
+                  width: 12, height: 12, background: '#a3ffac',
+                  border: '2px solid #075E54', borderRadius: '50%',
+                  animation: 'wa-pulse 2s ease-in-out infinite',
+                }} />
+              </div>
+              <div className="flex-1">
+                <h3 style={{ color: '#fff', fontSize: 13, fontWeight: 800, letterSpacing: '0.05em', margin: 0 }}>
+                  RICHARD IA · WHATSAPP
+                </h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span style={{ width: 6, height: 6, background: '#a3ffac', borderRadius: '50%', animation: 'wa-pulse 1.5s ease-in-out infinite' }} />
+                  <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em' }}>
+                    EN LÍNEA AHORA
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={handleToggle}
+                style={{
+                  background: 'rgba(0,0,0,0.15)', border: 'none', borderRadius: '50%',
+                  width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: 'rgba(255,255,255,0.8)',
+                }}
+              >
+                <X size={16} />
+              </button>
             </div>
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-[#128C7E] rounded-full"></span>
           </div>
-          <div className="flex-1">
-            <h3 className="text-white font-black text-xs uppercase tracking-widest">
-              Richard IA
-            </h3>
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-green-300 rounded-full animate-pulse"></span>
-              <p className="text-white/90 text-[10px] font-bold uppercase tracking-widest">
-                En Línea
-              </p>
-            </div>
+
+          {/* Chat Body */}
+          <div style={{
+            padding: '16px', height: 280, overflowY: 'auto',
+            background: 'linear-gradient(180deg, #0d1117 0%, #0f0f1a 100%)',
+            display: 'flex', flexDirection: 'column', gap: 10,
+          }}>
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                style={{
+                  maxWidth: '88%',
+                  alignSelf: msg.sender === 'bot' ? 'flex-start' : 'flex-end',
+                  padding: '10px 14px',
+                  borderRadius: msg.sender === 'bot' ? '4px 18px 18px 18px' : '18px 4px 18px 18px',
+                  background: msg.sender === 'bot'
+                    ? 'rgba(255,255,255,0.06)'
+                    : 'linear-gradient(135deg, #128C7E, #25D366)',
+                  border: msg.sender === 'bot' ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                  color: '#f0f0f0',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  lineHeight: 1.5,
+                  boxShadow: msg.sender === 'user' ? '0 4px 14px rgba(37,211,102,0.3)' : 'none',
+                  animation: 'wa-msg-in 0.3s ease',
+                }}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {isTyping && (
+              <div style={{
+                alignSelf: 'flex-start', display: 'flex', gap: 5,
+                padding: '10px 14px', borderRadius: '4px 18px 18px 18px',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}>
+                {[0, 0.2, 0.4].map((d, i) => (
+                  <span key={i} style={{
+                    width: 6, height: 6, background: '#25D366', borderRadius: '50%',
+                    animation: `wa-bounce 1s ease-in-out infinite`,
+                    animationDelay: `${d}s`,
+                  }} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div style={{
+            padding: '12px 14px 6px',
+            background: '#0f0f1a',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            {quickActions.map((action, i) => (
+              <button
+                key={i}
+                onClick={() => handleQuickAction(action)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  width: '100%', padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 12, cursor: 'pointer', marginBottom: 6,
+                  transition: 'all 0.2s',
+                  color: '#e0e0e0',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(37,211,102,0.12)';
+                  e.currentTarget.style.borderColor = 'rgba(37,211,102,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)';
+                }}
+              >
+                <span style={{ fontSize: 18 }}>{action.icon}</span>
+                <span style={{ flex: 1, textAlign: 'left', fontSize: 12, fontWeight: 600 }}>
+                  {action.label}
+                </span>
+                <ChevronRight size={13} style={{ color: '#25D366', opacity: 0.7 }} />
+              </button>
+            ))}
+          </div>
+
+          {/* Footer CTA */}
+          <div style={{ padding: '0 14px 14px', background: '#0f0f1a' }}>
+            <button
+              onClick={handleOpenChat}
+              style={{
+                width: '100%', padding: '11px',
+                background: 'linear-gradient(135deg, #128C7E, #25D366)',
+                border: 'none', borderRadius: 14, cursor: 'pointer',
+                color: '#fff', fontSize: 11, fontWeight: 800,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                boxShadow: '0 4px 20px rgba(37,211,102,0.35)',
+                transition: 'transform 0.15s, box-shadow 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 8px 28px rgba(37,211,102,0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(37,211,102,0.35)';
+              }}
+            >
+              <WhatsAppIcon size={16} />
+              Abrir Chat en WhatsApp
+            </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Chat Body */}
-      <div className="p-4 h-[350px] overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-3">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`max-w-[85%] p-3 rounded-2xl text-xs font-medium leading-relaxed animate-fade-in-up ${
-              msg.sender === 'bot'
-                ? 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 self-start shadow-sm border border-slate-100 dark:border-slate-700'
-                : 'bg-[#25D366] text-white self-end shadow-md'
-            }`}
-            style={{ '--delay': `${Math.min(i * 60, 240)}ms` } as React.CSSProperties}
-          >
-            {msg.text}
-          </div>
-        ))}
-        {isTyping && (
-          <div className="bg-white dark:bg-slate-800 p-2 rounded-2xl self-start flex gap-1 shadow-sm border border-slate-100 dark:border-slate-700">
-            <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce"></span>
-            <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-            <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-          </div>
-        )}
-      </div>
-
-      {/* Actions Area */}
-      <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 gap-2">
-        {quickActions.map((action, i) => (
-          <button
-            key={i}
-            onClick={() => handleQuickAction(action)}
-            className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700 group"
-          >
-            <span className="text-xl group-hover:scale-125 transition-transform">
-              {action.icon}
-            </span>
-            <span className="flex-1 text-left text-xs font-bold text-slate-700 dark:text-slate-200">
-              {action.label}
-            </span>
-            <ChevronRight size={14} className="text-slate-300 group-hover:text-[#25D366]" />
-          </button>
-        ))}
+      {/* ── Floating Button ─────────────────────────────────────────────── */}
+      {!isEmbedded && (
         <button
-          onClick={handleOpenChat}
-          className="mt-2 w-full py-3 bg-slate-100 dark:bg-slate-800 hover:bg-[#25D366]/10 text-slate-600 dark:text-slate-300 hover:text-[#25D366] rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+          onClick={handleToggle}
+          aria-label="Abrir chat de WhatsApp"
+          style={{
+            width: 60, height: 60, borderRadius: '50%', border: 'none',
+            background: 'linear-gradient(135deg, #128C7E 0%, #25D366 100%)',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 24px rgba(37,211,102,0.5), 0 0 0 0 rgba(37,211,102,0.4)',
+            animation: isOpen ? 'none' : 'wa-ring 2.5s ease-in-out infinite',
+            transition: 'transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s',
+            transform: isOpen ? 'rotate(10deg) scale(0.92)' : 'scale(1)',
+            color: '#fff',
+            position: 'relative',
+          }}
+          onMouseEnter={(e) => {
+            if (!isOpen) e.currentTarget.style.transform = 'scale(1.12)';
+          }}
+          onMouseLeave={(e) => {
+            if (!isOpen) e.currentTarget.style.transform = 'scale(1)';
+          }}
         >
-          <MessageCircle size={14} />
-          Abrir Menú Interactivo
+          {isOpen ? <X size={24} /> : <WhatsAppIcon size={30} />}
+
+          {/* Notification badge */}
+          {!isOpen && (
+            <span style={{
+              position: 'absolute', top: -2, right: -2,
+              width: 16, height: 16, background: '#ff3b3b',
+              borderRadius: '50%', border: '2px solid #0f0f1a',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 9, fontWeight: 800, color: '#fff',
+            }}>
+              1
+            </span>
+          )}
         </button>
-      </div>
+      )}
+
+      {/* ── Keyframe Styles ─────────────────────────────────────────────── */}
+      <style>{`
+        @keyframes wa-ring {
+          0%   { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 0 rgba(37,211,102,0.4); }
+          70%  { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 16px rgba(37,211,102,0); }
+          100% { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 0 rgba(37,211,102,0); }
+        }
+        @keyframes wa-pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%       { opacity: 0.6; transform: scale(0.85); }
+        }
+        @keyframes wa-bounce {
+          0%, 60%, 100% { transform: translateY(0); }
+          30%            { transform: translateY(-5px); }
+        }
+        @keyframes wa-open {
+          from { opacity: 0; transform: scale(0.85) translateY(12px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes wa-slide-in {
+          from { opacity: 0; transform: translateX(20px) scale(0.92); }
+          to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes wa-msg-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

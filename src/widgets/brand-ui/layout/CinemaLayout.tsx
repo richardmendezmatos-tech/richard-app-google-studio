@@ -54,7 +54,7 @@ const WhatsAppFloat = safeLazy(
       default: (mod as any).default || mod.WhatsAppFloat || mod,
     })),
   'whatsapp_chunk_reloaded',
-);
+) as any;
 
 interface CinemaLayoutProps {
   children: React.ReactNode;
@@ -139,37 +139,39 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         <ReloadPrompt />
         <OfflineIndicator />
         
-        {showDeferredWidgets && (
-          <FloatingActionOrbit 
-            activeWidget={activeFloatingWidget}
-            onWidgetSelect={handleWidgetSelect}
-            chatWidget={
-              <ChatErrorBoundary>
-                <Suspense fallback={null}>
-                  <AIChatWidget inventory={inventory} />
-                </Suspense>
-              </ChatErrorBoundary>
-            }
-            voiceWidget={
-              <ChatErrorBoundary>
-                <Suspense fallback={null}>
-                  <VoiceWidget />
-                </Suspense>
-              </ChatErrorBoundary>
-            }
-            whatsappWidget={
-              <ChatErrorBoundary>
-                <Suspense fallback={null}>
-                  <WhatsAppFloat />
-                </Suspense>
-              </ChatErrorBoundary>
-            }
-          />
-        )}
 
         {/* Dynamic Content */}
         <div className="relative z-10 min-h-full">{children}</div>
       </main>
+
+      {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}
+      {showDeferredWidgets && (
+        <FloatingActionOrbit 
+          activeWidget={activeFloatingWidget}
+          onWidgetSelect={handleWidgetSelect}
+          chatWidget={
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <AIChatWidget inventory={inventory} />
+              </Suspense>
+            </ChatErrorBoundary>
+          }
+          voiceWidget={
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <VoiceWidget />
+              </Suspense>
+            </ChatErrorBoundary>
+          }
+          whatsappWidget={
+            <ChatErrorBoundary>
+              <Suspense fallback={null}>
+                <WhatsAppFloat isEmbedded={true} inventory={inventory} />
+              </Suspense>
+            </ChatErrorBoundary>
+          }
+        />
+      )}
     </div>
   );
 };
