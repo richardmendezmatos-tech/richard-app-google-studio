@@ -2,7 +2,6 @@
 import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
-import ReloadPrompt from '@/widgets/brand-ui/layout/ReloadPrompt';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
@@ -136,7 +135,6 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
       >
         {/* Global Floating Widgets */}
-        <ReloadPrompt />
         <OfflineIndicator />
         
 
