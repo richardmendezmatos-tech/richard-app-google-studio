@@ -60,7 +60,7 @@ export class FirestoreLeadRepository implements LeadRepository {
       // productivo real aquí usaríamos un EventBus o Cloud Function (Trigger).
       import('@/features/sales-automation/model/sales-orchestrator.service')
         .then(({ salesOrchestrator }) => {
-           salesOrchestrator.processNewLead(safeData as Lead).catch((e) => {
+           salesOrchestrator.processNewLead({ ...safeData, id: docRef.id } as Lead).catch((e) => {
              console.error('[Sync Error] Failed to execute background sales automation:', e);
            });
         }).catch(err => console.error('Failed to load orchestrator dynamically', err));

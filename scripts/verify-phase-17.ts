@@ -1,6 +1,6 @@
 
-import { Lead } from '../src/types/types';
-import { presenceService } from '../src/services/presenceService';
+import { Lead } from '../src/shared/types/types';
+import { presenceService } from '../src/shared/api/tracking/presenceService';
 
 console.log("--------------------------------------------------");
 console.log("   VERIFICACIÓN DE FASE 17 - ESTILO & ANALYTICS   ");
@@ -52,14 +52,14 @@ async function verify() {
             console.warn("⚠️ No se detectaron agentes activos (revisar mocks).");
         }
 
-        presenceService.subscribe((agents) => {
+        presenceService.subscribe((agents: any[]) => {
             console.log(`📡 Evento de presencia recibido. Agentes activos: ${agents.length}`);
         });
 
         presenceService.setMyStatus({ uid: 'me', displayName: 'Test User', email: 'test@test.com' } as any, 'busy');
 
         const updatedAgents = presenceService.getActiveAgents();
-        if (updatedAgents.find(a => a.userId === 'me' && a.status === 'busy')) {
+        if (updatedAgents.find((a: any) => a.userId === 'me' && a.status === 'busy')) {
             console.log("✅ Actualización de estado de agente exitosa.");
         } else {
             console.error("❌ Falló la actualización de estado.");

@@ -1,4 +1,4 @@
-import { container } from '../src/infra/di/container';
+import { container } from '../src/app/di/container';
 import * as fs from 'fs';
 import * as path from 'path';
 

@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from '../src/constants/siteConfig';
+import { SITE_CONFIG } from '../src/shared/config/siteConfig';
 
 type EngineResult = {
   engine: 'google' | 'bing';

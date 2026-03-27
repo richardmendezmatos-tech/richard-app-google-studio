@@ -42,6 +42,7 @@ export interface Car {
   views?: number;
   leads_count?: number;
   dealerId?: string;
+  createdAt?: FirestoreTimestamp | Date | number;
   seoFaqs?: { question: string; answer: string }[];
 }
 
@@ -117,6 +118,10 @@ export interface Lead {
   carId?: string;
   notes?: string;
   hasCreditApplication?: boolean;
+  hasPronto?: boolean;
+  dealerId?: string;
+  category?: string;
+  monthlyIncome?: number;
   createdAt?: FirestoreTimestamp;
   timestamp?: FirestoreTimestamp; // Support both for backward compatibility
 
@@ -143,6 +148,11 @@ export interface Lead {
   emailSent?: boolean;
   nudgeSent?: boolean;
   lastContacted?: FirestoreTimestamp;
+  chatInteractions?: number;
+  responded?: boolean;
+  documentsSent?: boolean;
+  dealClosed?: boolean;
+  appointmentCompleted?: boolean;
 
   // Phase 21: Marketing Intelligence
   acquisitionCost?: number; // In USD
