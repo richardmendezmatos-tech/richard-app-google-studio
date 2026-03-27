@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 const VoiceOrb: React.FC = React.memo(() => {
   const [isListening, setIsListening] = useState(false);

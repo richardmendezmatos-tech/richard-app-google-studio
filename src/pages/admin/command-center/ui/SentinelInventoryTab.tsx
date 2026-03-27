@@ -75,7 +75,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
     const totalValue = inventory.reduce((acc, car) => acc + (Number(car.price) || 0), 0);
     const avgAdvantage =
       inventory.reduce((acc, car) => {
-        const carLeads = leads.filter((l) => l.vehicleId === car.id).length;
+        const carLeads = leads.filter((l: Lead) => l.vehicleId === car.id).length;
         return acc + calculatePredictiveDTS(car, carLeads).advantageScore;
       }, 0) / (units || 1);
     return { units, totalValue, avgAdvantage };
@@ -179,7 +179,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
               <CommandCenterCarCard
                 key={car.id}
                 car={car}
-                leadCount={leads.filter((l) => l.vehicleId === car.id).length}
+                leadCount={leads.filter((l: Lead) => l.vehicleId === car.id).length}
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onPlanContent={() => onPlanContent(car)}

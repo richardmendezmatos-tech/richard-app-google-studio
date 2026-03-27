@@ -10,7 +10,7 @@ import {
   Loader2,
   MessageCircle,
 } from 'lucide-react';
-import * as whatsappService from '@/features/leads/services/whatsappService';
+import * as whatsappService from '@/features/leads/model/whatsappService';
 
 interface Opportunity {
   id: string;

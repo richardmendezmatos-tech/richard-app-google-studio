@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 

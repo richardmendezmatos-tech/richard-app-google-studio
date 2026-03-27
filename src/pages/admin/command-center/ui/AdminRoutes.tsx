@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate, useOutletContext } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Smartphone, Sparkles } from 'lucide-react';
 import { auth } from '@/shared/api/firebase/firebaseService';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
@@ -51,8 +51,7 @@ const AnalyticsWrapper = () => {
 };
 
 const CRMBoardWrapper = () => {
-  const ctx = useOutletContext<CommandCenterContextType>();
-  return <CRMBoard onUpdate={ctx.onUpdate} onDelete={ctx.onDelete} />;
+  return <CRMBoard />;
 };
 
 const MarketingWrapper = () => {

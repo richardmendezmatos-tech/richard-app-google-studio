@@ -1,0 +1,12 @@
+.predictiveBarWidth {
+  width: var(--p-width, 0%);
+}
+
+.heatmapDot {
+  left: var(--p-width, 0%);
+}
+
+.dndSortable {
+  transform: var(--translate);
+  transition: var(--transition);
+}

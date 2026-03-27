@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ShieldCheck, User, Home, Briefcase, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
@@ -174,8 +174,8 @@ export const CreditApplicationForm: React.FC = () => {
                   <input required name="zipCode" value={formData.zipCode} onChange={handleChange} autoComplete="postal-code" inputMode="numeric" className={inputClasses} placeholder="00901" />
                 </div>
                 <div>
-                  <label className={labelClasses}>Estatus de la Propiedad</label>
-                  <select name="housingType" value={formData.housingType} onChange={handleChange} className={inputClasses}>
+                  <label htmlFor="housingType" className={labelClasses}>Estatus de la Propiedad</label>
+                  <select id="housingType" name="housingType" value={formData.housingType} onChange={handleChange} className={inputClasses} title="Estatus de la Propiedad">
                     <option value="Rent">Alquilo (Renta Mensual)</option>
                     <option value="Own">Propia (Dueño / Hipoteca)</option>
                     <option value="Family">Vivo con Familiares (Familiar)</option>
@@ -206,7 +206,7 @@ export const CreditApplicationForm: React.FC = () => {
                 </div>
                 <div className="md:col-span-2 mt-2">
                   <div className="flex justify-between items-end mb-2">
-                    <label className={labelClasses} style={{ marginBottom: '0px' }}>Ingreso Bruto Mensual</label>
+                    <label className={`${labelClasses} !mb-0`}>Ingreso Bruto Mensual</label>
                     <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest bg-cyan-500/10 px-2 py-1 rounded">Confidencial</span>
                   </div>
                   <div className="relative">

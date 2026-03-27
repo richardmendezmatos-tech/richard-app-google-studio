@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getSubscribers } from '@/shared/api/firebase/firebaseService';
 import { Subscriber } from '@/shared/types/types';
 import { Users, Mail, Bell, Search, Filter, Loader2, Send } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 const AudiencesView: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);

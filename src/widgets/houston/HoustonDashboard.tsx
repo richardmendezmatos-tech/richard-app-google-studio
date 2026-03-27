@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 /**
  * Isolated Jitter Label to prevent full dashboard re-renders.
@@ -37,6 +37,7 @@ const JitterLabel: React.FC<{ metricKey: string }> = ({ metricKey }) => {
     </div>
   );
 };
+import styles from './HoustonDashboard.module.css';
 import {
   Activity,
   Zap,
@@ -139,8 +140,7 @@ const HoustonDashboard: React.FC = () => {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/5 blur-[160px] rounded-full animate-pulse" />
         <div
-          className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/5 blur-[160px] rounded-full animate-pulse"
-          style={{ animationDelay: '3s' }}
+          className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/5 blur-[160px] rounded-full animate-pulse [animation-delay:3s]"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-cyan-900/5 blur-[200px] rounded-full" />
       </div>
@@ -303,8 +303,8 @@ const HoustonDashboard: React.FC = () => {
                       {[...Array(4)].map((_, i) => (
                         <div
                           key={i}
-                          className="w-1 h-full bg-cyan-500/40 animate-pulse"
-                          style={{ animationDelay: `${i * 250}ms` }}
+                          className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles.pulseWithDelay}`}
+                          style={{ '--delay': `${i * 250}ms` } as React.CSSProperties}
                         />
                       ))}
                     </div>
@@ -408,9 +408,9 @@ const HoustonDashboard: React.FC = () => {
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="w-1 h-full bg-cyan-500/40 animate-pulse"
-                      style={{ animationDelay: `${i * 150}ms` }}
-                    />
+                      className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles.pulseWithDelay}`}
+                      style={{ '--delay': `${i * 150}ms` } as React.CSSProperties}
+                        />
                   ))}
                 </div>
                 <span className="text-[10px] text-cyan-500/60 uppercase font-black tracking-widest">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lead } from '@/shared/api/adapters/leads/crmService';
-import { X, Send, Bot, User, Phone, Mail, MessageCircle, Clock } from 'lucide-react';
+import { X, Send, Bot, User, Phone, Mail, MessageCircle, Clock, Wand2, ShieldCheck } from 'lucide-react';
 
 interface Props {
   lead: Lead;
@@ -93,6 +93,8 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
           <button
             onClick={onClose}
             className="p-3 text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+            aria-label="Cerrar chat"
+            title="Cerrar ventana de chat"
           >
             <X size={20} />
           </button>
@@ -188,6 +190,8 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
               onClick={handleSend}
               disabled={!inputText.trim()}
               className="w-12 h-12 bg-primary hover:bg-slate-800 dark:bg-primary dark:hover:bg-white text-white dark:text-slate-900 rounded-2xl flex items-center justify-center transition-all hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:hover:translate-y-0"
+              aria-label="Enviar mensaje"
+              title="Enviar"
             >
               <Send size={18} className="translate-x-0.5" />
             </button>

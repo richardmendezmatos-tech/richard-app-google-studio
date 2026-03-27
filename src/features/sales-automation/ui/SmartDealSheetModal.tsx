@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { FileText, Loader2, Sparkles, Target, Brain, DollarSign, X, Car as CarIcon, Download } from 'lucide-react';
 import { Lead, Car } from '@/shared/types/types';
 import { generateSmartDealSheet, DealSheetData } from '../model/dealSheetService';

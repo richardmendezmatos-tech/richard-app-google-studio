@@ -17,7 +17,11 @@ export class WhatsAppService {
     }
 
     // Clean phone number (assuming format mostly clean, but ideally needs E.164 parsing)
-    const cleanPhone = lead.phone.replace(/\\D/g, '');
+    if (!lead.phone) {
+      console.warn('⚠️ [WhatsAppService] No phone number provided for lead:', lead.id);
+      return;
+    }
+    const cleanPhone = lead.phone.replace(/\D/g, '');
 
     const payload = {
       messaging_product: 'whatsapp',

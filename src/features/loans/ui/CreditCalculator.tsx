@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Calculator, DollarSign, Calendar, TrendingUp, ArrowRight, Info } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 const INTEREST_RATES = {
   excellent: 5.99, // 740+
@@ -84,6 +84,8 @@ export const CreditCalculator: React.FC = () => {
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
                 className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                aria-label="Ajustar precio del auto"
+                title="Desliza para cambiar el precio"
               />
             </div>
 
@@ -103,19 +105,23 @@ export const CreditCalculator: React.FC = () => {
                 value={downPayment}
                 onChange={(e) => setDownPayment(Number(e.target.value))}
                 className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                aria-label="Ajustar pronto inicial"
+                title="Desliza para cambiar el pronto"
               />
             </div>
 
             {/* Term & Credit Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <label htmlFor="termSelect" className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                   <Calendar size={14} className="text-cyan-500" /> Término (Meses)
                 </label>
                 <select 
+                  id="termSelect"
                   className="w-full bg-[#0b1116] border border-white/5 rounded-xl px-4 py-3 text-white font-bold focus:border-cyan-500/50 transition-all outline-none appearance-none"
                   value={term}
                   onChange={(e) => setTerm(Number(e.target.value))}
+                  title="Seleccione el término en meses"
                 >
                   <option value={48}>48 Meses</option>
                   <option value={60}>60 Meses</option>

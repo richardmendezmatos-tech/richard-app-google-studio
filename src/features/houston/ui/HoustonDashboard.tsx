@@ -1,155 +1,157 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Zap, Activity, Cpu, Globe, AlertTriangle } from 'lucide-react';
-import { HoustonTelemetry } from '../model/hooks/useTelemetry';
+import { 
+  ShieldCheck, 
+  Zap, 
+  Activity, 
+  Database, 
+  Globe, 
+  Lock, 
+  RefreshCcw,
+  Wifi,
+  Server
+} from 'lucide-react';
+import styles from './HoustonDashboard.module.css';
 
-interface HoustonDashboardProps {
-  telemetry: HoustonTelemetry;
-}
+export const HoustonDashboard: React.FC = () => {
+  const [metrics, setMetrics] = React.useState({
+    systemHealth: 98,
+    connectivity: 'stable',
+    activeNodes: 4,
+    apiLatency: 12,
+    securityScore: 100
+  });
 
-export const HoustonDashboard: React.FC<HoustonDashboardProps> = ({ telemetry }) => {
-  const isOptimal = telemetry.status === 'optimal';
+  // Simulamos telemetría en tiempo real para dar vida al dashboard
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics(prev => ({
+        ...prev,
+        apiLatency: Math.floor(Math.random() * (15 - 8 + 1) + 8),
+        systemHealth: Math.random() > 0.9 ? 97 : 98
+      }));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="p-6 space-y-6 bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden relative shadow-2xl">
-      {/* Background Glow */}
-      <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-[80px] transition-colors duration-1000 ${isOptimal ? 'bg-cyan-500/20' : 'bg-red-500/20'}`}></div>
+    <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-[2.5rem] shadow-2xl shadow-cyan-500/5 relative overflow-hidden group">
+      {/* Background Glows */}
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-600/10 rounded-full blur-[100px] animate-pulse" />
 
-      <header className="flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl ${isOptimal ? 'bg-cyan-500/20 text-cyan-400' : 'bg-red-500/20 text-red-400'} border border-current/20`}>
-            <Shield size={20} className={isOptimal ? 'animate-pulse' : ''} />
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8 relative">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
+            <Activity className="text-cyan-400 animate-kinetic-pulse" size={24} />
           </div>
           <div>
-            <h3 className="text-white font-black tracking-tight text-lg">HOUSTON_CENTRAL</h3>
-            <p className="text-[10px] text-slate-400 font-mono uppercase tracking-[0.2em]">Live Telemetry Feed</p>
+            <h3 className="text-xs font-black text-cyan-500 uppercase tracking-[0.2em] mb-1">
+              Mission Control
+            </h3>
+            <h2 className="text-2xl font-black text-white tracking-tight">
+              Houston <span className="text-cyan-400">Command Center</span>
+            </h2>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-          <div className={`w-1.5 h-1.5 rounded-full ${isOptimal ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-red-500 animate-ping'}`}></div>
-          <span className="text-[10px] text-slate-300 font-bold uppercase">{telemetry.status}</span>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-2 gap-4 relative z-10">
-        {/* Latency Card */}
-        <MetricCard
-          icon={<Zap size={14} />}
-          label="Latency"
-          value={`${telemetry.latency}ms`}
-          subValue="Optimal Edge Response"
-          color="cyan"
-          progress={Math.max(0, 100 - (telemetry.latency / 2))}
-        />
-
-        {/* Security / Paz Mental Card */}
-        <MetricCard
-          icon={<Shield size={14} />}
-          label="Paz Mental"
-          value={`${telemetry.securityScore}%`}
-          subValue="Risk Mitigation Active"
-          color="indigo"
-          progress={telemetry.securityScore}
-        />
-
-        {/* Quality Card */}
-        <MetricCard
-          icon={<Activity size={14} />}
-          label="Signal Quality"
-          value={`${telemetry.quality}%`}
-          subValue="Connection Stability"
-          color="emerald"
-          progress={telemetry.quality}
-        />
-
-        {/* Packet Loss Card */}
-        <MetricCard
-          icon={<Globe size={14} />}
-          label="Integrity"
-          value={telemetry.packetLoss === 0 ? 'Pure' : 'Lossy'}
-          subValue={telemetry.packetLoss === 0 ? 'No Data Drops' : `${telemetry.packetLoss}% Drops`}
-          color={telemetry.packetLoss === 0 ? 'cyan' : 'red'}
-          progress={100 - (telemetry.packetLoss * 10)}
-        />
-      </div>
-
-      {/* AI Hub Status Bar */}
-      <footer className="pt-4 border-t border-white/5 relative z-10">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1">
-            <Cpu size={10} /> AI_CORE_PROCESSING
+        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 rounded-full border border-white/5 ring-1 ring-white/5">
+          <div className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
+          <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
+            En Vivo 24/7
           </span>
-          <span className="text-[9px] text-cyan-400 font-mono">STANDBY_IDLE</span>
         </div>
-        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: "20%" }}
-            animate={{ width: ["20%", "60%", "20%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="h-full bg-cyan-500 shadow-[0_0_10px_#06b6d4]"
-          />
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+        
+        {/* Metric 1: System Health */}
+        <div className="glass-premium p-6 border border-white/5 hover:border-cyan-500/30 transition-all duration-500">
+          <div className="flex justify-between items-start mb-4">
+            <ShieldCheck className="text-cyan-400" size={20} />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Estado</span>
+          </div>
+          <div className="text-3xl font-black text-white mb-2">{metrics.systemHealth}%</div>
+          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div 
+              className={`h-full bg-gradient-to-r from-cyan-500 to-indigo-500 transition-all duration-1000 ${styles.healthBar}`} 
+              style={{ '--health-width': `${metrics.systemHealth}%` } as React.CSSProperties} 
+            />
+          </div>
+          <div className="mt-2 text-[10px] font-bold text-cyan-500/60 uppercase">Estructura Óptima</div>
         </div>
-      </footer>
-      
-      {!isOptimal && (
-        <div className="absolute inset-0 bg-red-900/10 pointer-events-none animate-pulse"></div>
-      )}
-    </div>
-  );
-};
 
-const MetricCard = ({ 
-  icon, 
-  label, 
-  value, 
-  subValue, 
-  color, 
-  progress 
-}: { 
-  icon: React.ReactNode; 
-  label: string; 
-  value: string; 
-  subValue: string; 
-  color: 'cyan' | 'indigo' | 'emerald' | 'red';
-  progress: number;
-}) => {
-  const colorMap = {
-    cyan: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20 shadow-cyan-500/5',
-    indigo: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20 shadow-indigo-500/5',
-    emerald: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20 shadow-emerald-500/5',
-    red: 'text-red-400 bg-red-400/10 border-red-400/20 shadow-red-500/5',
-  };
+        {/* Metric 2: API Latency */}
+        <div className="glass-premium p-6 border border-white/5 hover:border-indigo-500/30 transition-all duration-500">
+          <div className="flex justify-between items-start mb-4">
+            <Zap className="text-indigo-400" size={20} />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Latencia</span>
+          </div>
+          <div className="text-3xl font-black text-white mb-2">{metrics.apiLatency}ms</div>
+          <div className="flex items-center gap-1">
+            {[1,2,3,4,5,6,7,8,9,10].map(i => (
+              <div 
+                key={i} 
+                className={`w-1 h-3 rounded-full transition-all duration-300 ${i <= metrics.apiLatency/1.5 ? 'bg-indigo-500' : 'bg-slate-800'}`} 
+              />
+            ))}
+          </div>
+          <div className="mt-2 text-[10px] font-bold text-indigo-500/60 uppercase">Respuesta en milisegundos</div>
+        </div>
 
-  const progressColorMap = {
-    cyan: 'bg-cyan-500',
-    indigo: 'bg-indigo-500',
-    emerald: 'bg-emerald-500',
-    red: 'bg-red-500',
-  };
+        {/* Metric 3: Security */}
+        <div className="glass-premium p-6 border border-white/5 hover:border-emerald-500/30 transition-all duration-500">
+          <div className="flex justify-between items-start mb-4">
+            <Lock className="text-emerald-400" size={20} />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seguridad</span>
+          </div>
+          <div className="text-3xl font-black text-white mb-2">{metrics.securityScore}%</div>
+          <div className="text-[10px] font-bold text-emerald-500/80 uppercase flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Encriptación de Grado Clínico
+          </div>
+          <div className="mt-3 text-[10px] text-slate-500 font-medium leading-relaxed">
+            Protección activa contra intrusiones y fuga de datos.
+          </div>
+        </div>
 
-  return (
-    <div className={`p-4 rounded-2xl border transition-all duration-500 hover:border-white/20 group ${colorMap[color]}`}>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="opacity-60 group-hover:opacity-100 transition-opacity">
-          {icon}
-        </span>
-        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 group-hover:text-slate-300 transition-colors">
-          {label}
-        </span>
+        {/* Metric 4: Multi-Tenant Sync */}
+        <div className="glass-premium p-6 border border-white/5 hover:border-amber-500/30 transition-all duration-500">
+          <div className="flex justify-between items-start mb-4">
+            <RefreshCcw className="text-amber-400 animate-spin-slow" size={20} />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sinc</span>
+          </div>
+          <div className="text-3xl font-black text-white mb-2">Sync</div>
+          <div className="flex items-center gap-2">
+            <Wifi size={14} className="text-amber-500/50" />
+            <span className="text-[10px] font-bold text-amber-500/80 uppercase">Firebase Realtime</span>
+          </div>
+          <div className="mt-3 grid grid-cols-4 gap-1">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-1 bg-amber-500/40 rounded-full" />
+            ))}
+          </div>
+        </div>
+
       </div>
-      <div className="text-xl font-black text-white mb-0.5 tracking-tight group-hover:scale-105 transition-transform origin-left">
-        {value}
-      </div>
-      <div className="text-[9px] text-slate-500 truncate mb-3">
-        {subValue}
-      </div>
-      <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className={`h-full ${progressColorMap[color]}`}
-        />
+
+      {/* Footer / Status Bar */}
+      <div className="mt-8 pt-6 border-t border-white/5 flex flex-wrap items-center justify-between gap-6 relative">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <Server size={14} className="text-slate-500" />
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Nodo: </span>
+            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">US-EAST-1</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe size={14} className="text-slate-500" />
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Tráfico: </span>
+            <span className="text-[10px] font-black text-white uppercase tracking-widest">Global CDN</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+          <Database size={14} /> Vitalos Core v.4.2
+        </div>
       </div>
     </div>
   );

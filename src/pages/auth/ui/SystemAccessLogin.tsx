@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/shared/api/firebase/firebaseService';
 import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { useAuthStore } from '@/entities/session';
 import { AppUser, UserRole } from '@/entities/shared';

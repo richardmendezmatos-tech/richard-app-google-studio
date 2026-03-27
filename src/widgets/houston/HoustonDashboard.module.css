@@ -1,0 +1,3 @@
+.pulseWithDelay {
+  animation-delay: var(--delay, 0ms);
+}

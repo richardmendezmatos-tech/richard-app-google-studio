@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Mic, MicOff, Bot, Activity, Wifi, Cpu, Gauge, Radio } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { useVoiceSession } from '@/features/ai-hub';
 import { useTelemetry } from '@/features/houston';
 

@@ -261,6 +261,7 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
           className={`${styles.floatingButton} ${isOpen ? styles.floatingButtonOpen : styles.floatingButtonRing}`}
           onClick={handleToggle}
           aria-label="Abrir chat de WhatsApp"
+          title="Chat con Richard IA"
         >
           {isOpen ? <X size={24} /> : <WhatsAppIcon size={30} />}
           {!isOpen && (

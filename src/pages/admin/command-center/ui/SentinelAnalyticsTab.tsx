@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Zap, Activity, DollarSign } from 'lucide-react';
 import { Car, Lead } from '@/entities/shared';
 import { InventoryHeatmap } from '@/features/inventory';

@@ -52,12 +52,13 @@ import { maskEmail, maskPhone, maskName, UserRole } from '@/shared/lib/utils/pri
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { useLeadScoring } from '@/features/leads';
 import { useVehicleHealth } from '@/shared/api/metrics/telemetryService';
-import * as whatsappService from '@/features/leads/services/whatsappService';
+import * as whatsappService from '@/features/leads/model/whatsappService';
 import { orchestrationService } from '@/features/ai-hub/ai-orchestration/api/orchestrationService';
 import { getAntigravityOutreachAction } from '@/features/omnichannel/api/antigravityOmnichannelService';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
 import { generateActuarialReport } from '@/shared/lib/utils/pdfGenerator';
 import { generateMockActuarialData } from '@/entities/finance';
+import styles from './CRMBoard.module.css';
 
 const COLUMNS = [
   { id: 'new', title: 'Nuevos', color: 'bg-primary', glow: 'shadow-primary/20' },
@@ -241,7 +242,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
           {/* Premium Progress Track */}
           <div className="relative h-1.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-1500 cubic-bezier(0.23, 1, 0.32, 1) predictive-bar-width ${
+              className={`h-full transition-all duration-1500 cubic-bezier(0.23, 1, 0.32, 1) ${styles.predictiveBarWidth} ${
                 scoring.score > 80
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                   : scoring.score > 50
@@ -254,7 +255,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
 
           {/* Pulsing Dot Tracer */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-4 bg-white rounded-full shadow-[0_0_8px_white] transition-all duration-500 border border-primary/20 heatmap-dot"
+            className={`absolute top-1/2 -translate-y-1/2 w-1.5 h-4 bg-white rounded-full shadow-[0_0_8px_white] transition-all duration-500 border border-primary/20 ${styles.heatmapDot}`}
             style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
           />
         </div>
@@ -353,7 +354,7 @@ const SortableLeadItem = ({ lead, userRole }: { lead: Lead; userRole: UserRole }
       style={style}
       {...attributes}
       {...listeners}
-      className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} dnd-sortable`}
+      className={`mb-4 touch-none transition-opacity duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'} ${styles.dndSortable}`}
     >
       <LeadCard lead={lead} onPrint={() => {}} userRole={userRole} />
     </div>

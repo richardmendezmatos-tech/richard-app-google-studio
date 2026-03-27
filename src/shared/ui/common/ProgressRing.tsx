@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { animate } from 'framer-motion';
+import { animate } from 'motion/react';
 
 interface ProgressRingProps {
   value: number;

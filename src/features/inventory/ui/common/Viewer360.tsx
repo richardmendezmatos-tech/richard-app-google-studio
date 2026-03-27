@@ -9,7 +9,7 @@ import {
   Activity,
   ShieldCheck,
 } from 'lucide-react';
-import { animate } from 'framer-motion';
+import { animate, stagger } from 'motion/react';
 interface Props {
   images: string[];
   alt: string;

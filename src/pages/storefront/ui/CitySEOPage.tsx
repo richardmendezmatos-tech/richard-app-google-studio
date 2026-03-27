@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, Star, ShieldCheck, Zap, ArrowRight, MessageSquare } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { getAutoDealerSchema } from '@/shared/config/seoSchemas';
 
 interface CityConfig {

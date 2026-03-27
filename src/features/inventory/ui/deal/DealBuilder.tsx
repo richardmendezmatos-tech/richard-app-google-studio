@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateLoan, CreditTier, getCreditTierLabel } from '@/entities/finance';
 import { DollarSign, TrendingUp, CheckCircle, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface DealBuilderProps {
   vehicleId: string;
@@ -135,6 +135,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
               value={downPayment}
               onChange={(e) => setDownPayment(Number(e.target.value))}
               className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
+              aria-label="Ajustar pago inicial"
             />
             <div className="flex justify-between text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-wider">
               <span>$0</span>

@@ -9,6 +9,7 @@ import { useAntigravity } from '@/features/automation';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
 import { useCommandCenterData } from '../hooks/useCommandCenterData';
+import { CommandCenterWidget } from '@/widgets/houston/CommandCenterWidget';
 
 // Lazy load modals & status bars that remain in layout
 const CommandCenterModal = React.lazy(() => import('./CommandCenterModal').then((m) => ({ default: m.CommandCenterModal })));
@@ -197,8 +198,13 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
           </div>
         </header>
 
+        {/* HOUSTON MISSION CONTROL (PREMIUM TELEMETRY) */}
+        <div className="shrink-0">
+          <CommandCenterWidget />
+        </div>
+
         {/* NESTED ROUTES OUTLET */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-8 bg-transparent relative z-0 hide-scrollbar overflow-x-hidden min-h-[600px]">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-0 bg-transparent relative z-0 hide-scrollbar overflow-x-hidden min-h-[400px]">
           <BrandErrorBoundary>
             <Suspense fallback={<div className="p-12 text-center text-slate-500 font-black animate-pulse">CARGANDO MÓDULO...</div>}>
               <Outlet context={layoutContext} />

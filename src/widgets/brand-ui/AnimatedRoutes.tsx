@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Car } from '@/entities/shared';
 
 // --- Lazy Imports ---

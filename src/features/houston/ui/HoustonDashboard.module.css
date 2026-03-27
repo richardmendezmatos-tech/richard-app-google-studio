@@ -1,0 +1,3 @@
+.healthBar {
+  width: var(--health-width, 0%);
+}

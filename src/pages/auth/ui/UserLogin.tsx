@@ -13,7 +13,7 @@ import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react'
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/entities/session';
 import SEO from '@/shared/ui/seo/SEO';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface GoogleCredentialResponse {
   credential: string;
@@ -196,7 +196,7 @@ const UserLogin: React.FC = () => {
       {/* Animated Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0a1118] to-black" />
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse [animation-delay:2s]" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -231,6 +231,7 @@ const UserLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSocialLogin('google')}
+                  aria-label="Continuar con Google"
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-all group"
                 >
                   <Chrome size={20} className="text-slate-400 group-hover:text-blue-400 transition-colors" />
@@ -240,6 +241,7 @@ const UserLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSocialLogin('facebook')}
+                  aria-label="Continuar con Facebook"
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-all group"
                 >
                   <Globe size={20} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
@@ -265,7 +267,7 @@ const UserLogin: React.FC = () => {
           <input type="hidden" name="authType" value={isRegistering ? 'register' : 'login'} />
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <label htmlFor="login-email" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                 Correo Electrónico
               </label>
               <div className="relative group">
@@ -274,6 +276,7 @@ const UserLogin: React.FC = () => {
                   size={18}
                 />
                 <input
+                  id="login-email"
                   type="email"
                   name="email"
                   value={email}
@@ -286,7 +289,7 @@ const UserLogin: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <label htmlFor="login-password" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                 Contraseña
               </label>
               <div className="relative group">
@@ -295,6 +298,7 @@ const UserLogin: React.FC = () => {
                   size={18}
                 />
                 <input
+                  id="login-password"
                   type="password"
                   name="password"
                   value={password}

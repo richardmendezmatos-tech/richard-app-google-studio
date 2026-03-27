@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useState, useRef, useCallback, useLayoutEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const ScrollNavigator: React.FC = () => {

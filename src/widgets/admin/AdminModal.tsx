@@ -280,10 +280,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               {/* Basic Info */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label htmlFor="admin-car-name" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Nombre de la Unidad
                   </label>
                   <input
+                    id="admin-car-name"
                     name="name"
                     defaultValue={car?.name}
                     required
@@ -293,10 +294,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2 group">
-                    <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                    <label htmlFor="admin-car-price" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                       Precio (USD)
                     </label>
                     <input
+                      id="admin-car-price"
                       name="price"
                       type="number"
                       defaultValue={car?.price}
@@ -306,10 +308,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                     />
                   </div>
                   <div className="space-y-2 group">
-                    <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                    <label htmlFor="admin-car-badge" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                       Etiqueta (Badge)
                     </label>
                     <input
+                      id="admin-car-badge"
                       name="badge"
                       defaultValue={car?.badge}
                       className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
@@ -321,14 +324,14 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label htmlFor="admin-car-type" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Categoría
                   </label>
                   <div className="relative">
                     <select
+                      id="admin-car-type"
                       name="type"
                       defaultValue={car?.type || 'suv'}
-                      aria-label="Tipo de vehículo"
                       className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white appearance-none"
                     >
                       <option value="suv" className="bg-slate-800 text-white">🚙 SUV / Crossover</option>
@@ -342,10 +345,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   </div>
                 </div>
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label htmlFor="admin-car-features" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
                     Características (Separadas por coma)
                   </label>
                   <input
+                    id="admin-car-features"
                     name="features"
                     defaultValue={car?.features?.join(', ')}
                     className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white placeholder:text-slate-600"
