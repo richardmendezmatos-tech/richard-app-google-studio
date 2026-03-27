@@ -75,44 +75,6 @@ export default defineConfig(({ mode }) => {
         ext: '.br',
       }),
       visualizer({ filename: 'stats.html' }),
-      VitePWA({
-        strategies: 'injectManifest',
-        srcDir: 'src',
-        filename: 'sw.js',
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'app-icon.png'],
-        injectManifest: {
-          sourcemap: false,
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        },
-        manifest: {
-          name: 'Richard Automotive',
-          short_name: 'RichardAuto',
-          display: 'standalone',
-          theme_color: '#00aed9',
-          background_color: '#0f172a',
-          description: 'Premium Automotive Sales & Predictive Service OS',
-          icons: [
-            {
-              src: 'app-icon.png',
-              sizes: '192x192',
-              type: 'image/png',
-            },
-            {
-              src: 'app-icon.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: 'app-icon.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable',
-            },
-          ],
-        },
-      }),
     ],
   };
 });
