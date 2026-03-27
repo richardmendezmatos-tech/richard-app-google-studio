@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { MapPin, Star, ShieldCheck, Zap, ArrowRight, MessageSquare } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
 import { motion } from 'framer-motion';
+import { getAutoDealerSchema } from '@/shared/config/seoSchemas';
 
 interface CityConfig {
   name: string;
@@ -33,9 +34,10 @@ const cities: Record<string, CityConfig> = {
   'vega-alta': {
     name: 'Vega Alta',
     slug: 'vega-alta',
-    description: 'Tu destino para autos de lujo en Vega Alta. Richard Automotive trae la sofisticación y calidad que buscas con financiamiento directo.',
+    description: 'Descubre los mejores autos usados de lujo en Vega Alta. Richard Automotive ofrece una selección de clase mundial con financiamiento flexible en la zona norte.',
     heroImage: '/assets/seo/vega-alta-hero.png',
-    keywords: ['autos usados vega alta', 'dealer puerto rico vega alta'],
+    keywords: ['autos usados vega alta', 'dealer de lujo vega alta', 'carros baratos vega alta', 'financiamiento autos vega alta'],
+    landmark: 'Gran Caribe / Costa Norte',
   },
   'vega-baja': {
     name: 'Vega Baja',
@@ -51,6 +53,14 @@ const cities: Record<string, CityConfig> = {
     heroImage: '/assets/seo/carolina-hero.png',
     keywords: ['autos usados carolina', 'dealer de lujo carolina', 'venda de autos carolina'],
     landmark: 'Isla Verde',
+  },
+  bayamon: {
+    name: 'Bayamón',
+    slug: 'bayamon',
+    description: 'Los mejores autos usados certificados en Bayamón. Richard Automotive ofrece financiamiento experto y trade-ins valorados al máximo en el corazón del área metro.',
+    heroImage: '/assets/seo/bayamon-hero.png',
+    keywords: ['autos usados bayamon', 'dealer de autos bayamon', 'carros usados certificados bayamon'],
+    landmark: 'Plaza Las Américas / Área Metro',
   },
 };
 
@@ -70,6 +80,7 @@ export const CitySEOPage: React.FC = () => {
         title={`Autos Usados de Lujo en ${config.name} | Richard Automotive`}
         description={config.description}
         keywords={config.keywords.join(', ')}
+        schema={getAutoDealerSchema(config.name)}
       />
 
       {/* Premium Hero */}

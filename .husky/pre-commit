@@ -3,6 +3,9 @@
 # Runs lint + unit tests before every commit.
 # Aborts the commit if either fails.
 
+# Ensure npm/node are in PATH (git uses a restricted environment; npm lives under nvm)
+export PATH="$HOME/.nvm/versions/node/v24.14.1/bin:$PATH"
+
 echo "🔍 [PRE-COMMIT] Running linter..."
 npm run lint
 LINT_EXIT=$?

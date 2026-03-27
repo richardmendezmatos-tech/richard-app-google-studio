@@ -8,6 +8,9 @@ import { useAppController } from '@/app/hooks/useAppController';
 
 const ComparisonBar = React.lazy(() => import('@/widgets/comparison/ComparisonBar').then(m => ({ default: m.default || m })));
 const PrivacyBanner = React.lazy(() => import('@/features/privacy/components/PrivacyBanner').then(m => ({ default: m.default || m })));
+import SEO from '@/shared/ui/seo/SEO';
+import { getWebsiteSchema } from '@/shared/config/seoSchemas';
+
 const RichardAutomotiveApp: React.FC = () => {
   const {
     inventory,
@@ -21,6 +24,7 @@ const RichardAutomotiveApp: React.FC = () => {
 
   return (
     <BrandErrorBoundary>
+      <SEO schema={getWebsiteSchema()} />
       <CinemaLayout inventory={inventory}>
         <AnimatedRoutes
           inventory={inventory}

@@ -2,4 +2,5 @@
 # .husky/commit-msg — Richard Automotive v2026.1
 # Validates commit message against Conventional Commits standard.
 
+export PATH="$HOME/.nvm/versions/node/v24.14.1/bin:$PATH"
 npx --no -- commitlint --edit "$1"

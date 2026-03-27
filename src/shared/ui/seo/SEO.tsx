@@ -9,6 +9,7 @@ interface SEOProps {
   url?: string;
   type?: string;
   schema?: object | object[]; // JSON-LD structured data or array of objects
+  keywords?: string;
   noIndex?: boolean;
   noFollow?: boolean;
 }
@@ -20,6 +21,7 @@ const SEO: React.FC<SEOProps> = ({
   url,
   type = 'website',
   schema,
+  keywords,
   noIndex = false,
   noFollow = false,
 }) => {
@@ -45,7 +47,7 @@ const SEO: React.FC<SEOProps> = ({
       {/* Standard Metadata */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      <meta name="keywords" content={SITE_CONFIG.seo.keywords.join(', ')} />
+      <meta name="keywords" content={keywords || SITE_CONFIG.seo.keywords.join(', ')} />
       <meta name="robots" content={robotsValue} />
       <meta name="googlebot" content={robotsValue} />
       <link rel="canonical" href={currentUrl} />
