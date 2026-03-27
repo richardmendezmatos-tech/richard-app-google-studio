@@ -94,7 +94,7 @@ const SystemAccessLogin: FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const key = params.get('richard_key');
-    // Security Fix (Kluster.ai): Only allow Ghost Login in local dev environment
+    // Ghost Protocol: Auto-access via richard_key (DEV only)
     if (key && import.meta.env.DEV) {
       handleGhostLogin(key);
     }

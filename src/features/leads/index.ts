@@ -1,9 +1,12 @@
-export { default as LeadAnalyticsPage } from './components/LeadAnalyticsPage';
-export * from './components/LeadLifecycleAnalytics';
-export * from './components/WhatsAppFloat';
-export * from './hooks/useLeadScoring';
-export * from './services/customerMemoryService';
-export * from './services/marketingService';
-export * from './services/retargetingService';
-export * from './services/scoring/PredictiveScoringEngine';
-export * from './services/whatsappService';
+// UI Components
+export { default as LeadAnalyticsPage } from './ui/LeadAnalyticsPage';
+export * from './ui/LeadLifecycleAnalytics';
+export * from './ui/WhatsAppFloat';
+
+// Model / Hooks
+export * from './model/hooks/useLeadScoring';
+export * from './model/customerMemoryService';
+export * from './model/marketingService';
+export * from './model/retargetingService';
+export * from './model/scoring/PredictiveScoringEngine';
+export * from './model/whatsappService';

@@ -6,7 +6,7 @@
   "status": "COMPLETED",
   "metrics": {
     "filesChanged": 2,
-    "toolsUsed": ["multi_replace_file_content", "kluster_code_review_auto"],
+    "toolsUsed": ["multi_replace_file_content"],
     "predictedROI": "Hyper-personalized context during 24/7 communications"
   }
 }

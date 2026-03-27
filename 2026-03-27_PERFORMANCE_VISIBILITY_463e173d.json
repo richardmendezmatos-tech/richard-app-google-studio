@@ -15,7 +15,6 @@
     }
   ],
   "verification": {
-    "kluster_status": "VERIFIED",
     "manual_test_required": "Mobile emulation check"
   },
   "metrics": {

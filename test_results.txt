@@ -1,0 +1,365 @@
+
+> richard-automotive@1.0.3 test
+> dotenvx run -- vitest run
+
+[38;2;236;213;63m[dotenvx@1.57.2] injecting env (17) from .env[39m
+5:26:13 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+5:26:13 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+5:26:13 PM [vite] warning: `esbuild` option was specified by "vite-plugin-node-polyfills" plugin. This option is deprecated, please use `oxc` instead.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{
+  jsx: 'automatic',
+  jsxImportSource: undefined,
+  banner: "import __buffer_polyfill from 'vite-plugin-node-polyfills/shims/buffer'\n" +
+    'globalThis.Buffer = globalThis.Buffer || __buffer_polyfill\n' +
+    "import __global_polyfill from 'vite-plugin-node-polyfills/shims/global'\n" +
+    'globalThis.global = globalThis.global || __global_polyfill\n' +
+    "import __process_polyfill from 'vite-plugin-node-polyfills/shims/process'\n" +
+    'globalThis.process = globalThis.process || __process_polyfill\n'
+}`
+
+[1m[46m RUN [49m[22m [36mv4.1.2 [39m[90m/Users/richardmendez/richard-automotive-_-command-center[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 10 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/entities/chatbot/model/orchestrator.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/features/automation/api/automationService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/features/omnichannel/api/antigravityOmnichannelService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/shared/api/communications/emailService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/features/appraisal/services/AppraisalVisionService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/entities/shared/lib/services/AnalyticsService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/entities/lead/__tests__/leadSchema.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/widgets/brand-ui/layout/ThemeToggle.test.tsx.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/entities/lead/lib/mappers/LeadMapper.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /Users/richardmendez/richard-automotive-_-command-center/src/entities/sales/api/billingService.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:94[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m103:5[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/cli-api.Bxr1Nn49.js:[2m3450:5[22m[39m
+
+[31m[1mCaused by: Error[22m: Cannot find module 'undici/lib/handler/wrap-handler.js'
+Require stack:
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js
+- /Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js[39m
+[90m [2m❯[22m Module._resolveFilename node:internal/modules/cjs/loader:[2m1421:15[22m[39m
+[90m [2m❯[22m defaultResolveImpl node:internal/modules/cjs/loader:[2m1059:19[22m[39m
+[90m [2m❯[22m resolveForCJSWithHooks node:internal/modules/cjs/loader:[2m1064:22[22m[39m
+[90m [2m❯[22m Module._load node:internal/modules/cjs/loader:[2m1227:37[22m[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[90m [2m❯[22m wrapModuleLoad node:internal/modules/cjs/loader:[2m245:24[22m[39m
+[90m [2m❯[22m Module.require node:internal/modules/cjs/loader:[2m1504:12[22m[39m
+[90m [2m❯[22m require node:internal/modules/helpers:[2m152:16[22m[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js:[2m8:21[22m[39m
+[90m [2m❯[22m Module._compile node:internal/modules/cjs/loader:[2m1761:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/jsdom-dispatcher.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/resources/per-document-resource-loader.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/Document-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/Document.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/XMLDocument.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/documents.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/nodes/DOMImplementation-impl.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/generated/idl/DOMImplementation.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/living/interfaces.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/jsdom/browser/Window.js', '/Users/richardmendez/richard-automotive-_-command-center/node_modules/jsdom/lib/api.js' ] }[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [2mno tests[22m
+[2m      Tests [22m [2mno tests[22m
+[2m     Errors [22m [1m[31m10 errors[39m[22m
+[2m   Start at [22m 17:26:13
+[2m   Duration [22m 1.87s[2m (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)[22m
+
+[1m[38;2;140;35;50m☠ Command failed with exit code 1: /Users/richardmendez/richard-automotive-_-command-center/node_modules/.bin/vitest run[39m[22m
