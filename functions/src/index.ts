@@ -23,6 +23,7 @@ export { incomingWhatsAppMessage as onWhatsAppMessage } from './triggers/whatsap
 import { transcribeVoiceFlow } from './voiceTranscription';
 export { transcribeVoiceFlow };
 
+
 export { chatWithAgent } from './copilot';
 import { raSentinelFlow } from './services/raSentinel';
 export { raSentinelFlow };
@@ -35,6 +36,8 @@ export { generateSitemap } from './infrastructure/seo/sitemapGenerator';
 export { generateMerchantFeed } from './infrastructure/seo/merchantFeedGenerator';
 
 const ALLOWED_ORIGINS = [
+  'https://richard-automotive.com',
+  'https://www.richard-automotive.com',
   'https://richard-automotive.vercel.app',
   'https://richard-automotive-dev.web.app',
   'http://localhost:5173',

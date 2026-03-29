@@ -5,16 +5,18 @@ import nodemailer from 'nodemailer';
 let sendGridInitialized = false;
 let smtpTransport: nodemailer.Transporter | null = null;
 
-const ensureSendGridConfigured = () => {
-    if (sendGridInitialized) return;
+const ensureSendGridConfigured = (): boolean => {
+    if (sendGridInitialized) return true;
 
     const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey) {
-        throw new Error('SendGrid not configured');
+        logger.warn('⚠️ SendGrid API Key not found. Falling back to SMTP.');
+        return false;
     }
 
     sgMail.setApiKey(apiKey);
     sendGridInitialized = true;
+    return true;
 };
 
 const ensureSmtpTransport = () => {
@@ -77,11 +79,19 @@ export interface SendEmailParams {
 export const sendTemplateEmail = async (params: SendEmailParams) => {
     const { to, templateId, dynamicData, trackingSettings } = params;
 
-    try {
-        ensureSendGridConfigured();
-    } catch (error) {
-        logger.error('Cannot send email: SENDGRID_API_KEY not configured');
-        throw error;
+    const isConfigured = ensureSendGridConfigured();
+    if (!isConfigured) {
+        const fallbackHtml = `
+          <h2>Richard Automotive</h2>
+          <p>Te compartimos la siguiente información:</p>
+          <pre>${JSON.stringify(dynamicData, null, 2)}</pre>
+        `;
+        return trySmtpFallback(
+            to,
+            'Actualizacion de Richard Automotive',
+            fallbackHtml,
+            `Richard Automotive: ${JSON.stringify(dynamicData)}`
+        );
     }
 
     const from = getSender();
@@ -135,11 +145,9 @@ export const sendPlainEmail = async (
     text: string,
     html?: string
 ) => {
-    try {
-        ensureSendGridConfigured();
-    } catch (error) {
-        logger.error('Cannot send email: SENDGRID_API_KEY not configured');
-        throw error;
+    const isConfigured = ensureSendGridConfigured();
+    if (!isConfigured) {
+        return trySmtpFallback(to, subject, html || text, text);
     }
 
     const from = getSender();

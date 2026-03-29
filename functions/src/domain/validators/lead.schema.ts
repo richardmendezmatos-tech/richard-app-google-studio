@@ -11,6 +11,11 @@ export const LeadStatusSchema = z.enum([
   'pre-approved'
 ]);
 
+const FirestoreDateSchema = z.union([
+  z.date(),
+  z.any().transform(v => (v && typeof v === 'object' && 'toDate' in v ? (v as any).toDate() : v))
+]).pipe(z.date());
+
 export const LeadSchema = z.object({
   id: z.string().optional(),
   firstName: z.string().min(1, 'El nombre es obligatorio').trim(),
@@ -41,7 +46,7 @@ export const LeadSchema = z.object({
   documentsSent: z.boolean().optional(),
   dealClosed: z.boolean().optional(),
   appointmentCompleted: z.boolean().optional(),
-  timestamp: z.date().optional(),
+  timestamp: FirestoreDateSchema.optional(),
   vehicleOfInterest: z.string().optional(),
   workStatus: z.string().optional(),
   downPaymentAmount: z.number().optional(),
@@ -64,21 +69,21 @@ export const LeadSchema = z.object({
     intentTrajectory: z.enum(['improving', 'stable', 'declining']).optional(),
   }).optional(),
   emailSequence: z.object({
-    welcome1SentAt: z.date().optional(),
-    welcome2SentAt: z.date().optional(),
-    welcome3SentAt: z.date().optional(),
-    welcome4SentAt: z.date().optional(),
-    reengagement1SentAt: z.date().optional(),
-    reengagement2SentAt: z.date().optional(),
-    reengagement3SentAt: z.date().optional(),
-    postAppointment1SentAt: z.date().optional(),
-    postAppointment2SentAt: z.date().optional(),
-    postAppointment3SentAt: z.date().optional(),
+    welcome1SentAt: FirestoreDateSchema.optional(),
+    welcome2SentAt: FirestoreDateSchema.optional(),
+    welcome3SentAt: FirestoreDateSchema.optional(),
+    welcome4SentAt: FirestoreDateSchema.optional(),
+    reengagement1SentAt: FirestoreDateSchema.optional(),
+    reengagement2SentAt: FirestoreDateSchema.optional(),
+    reengagement3SentAt: FirestoreDateSchema.optional(),
+    postAppointment1SentAt: FirestoreDateSchema.optional(),
+    postAppointment2SentAt: FirestoreDateSchema.optional(),
+    postAppointment3SentAt: FirestoreDateSchema.optional(),
     emailsSent: z.number().optional(),
-    lastEmailSentAt: z.date().optional(),
+    lastEmailSentAt: FirestoreDateSchema.optional(),
     lastError: z.object({
       message: z.string(),
-      timestamp: z.date(),
+      timestamp: FirestoreDateSchema,
       emailType: z.string(),
     }).optional(),
   }).optional()

@@ -33,9 +33,22 @@ export class ProcessNewLeadApplication {
      */
     async execute(input: LeadApplicationInput): Promise<Result<void>> {
         try {
-            const lead = input.data as Lead;
             const appId = input.id;
-            const leadEntity = LeadEntity.create(lead);
+            const leadData = input.data;
+
+            // 1. Validar y Crear Entidad (Nivel Senior: Fail fast with clear logs)
+            let leadEntity: LeadEntity;
+            try {
+                leadEntity = LeadEntity.create(leadData);
+            } catch (validationError: any) {
+                console.error(`[CRÍTICO] Error de validación al procesar lead ${appId}:`, {
+                    error: validationError instanceof Error ? validationError.message : String(validationError),
+                    data: JSON.stringify(leadData)
+                });
+                throw validationError; // Re-throw to ensure function marks as failed
+            }
+
+            const lead = leadEntity.data;
 
             // 1. Lógica de Dominio: Scoring & Análisis
             const analysis = ScoreCalculator.execute(lead);
@@ -50,7 +63,7 @@ export class ProcessNewLeadApplication {
             console.log(`[ProcessNewLead] Persisted lead: ${appId} (Status: ${updatedLead.status})`);
 
             // 3. Orquestación de Notificaciones (Efectos Secundarios)
-            await this.handleNotifications(lead, analysis, leadEntity);
+            await this.handleNotifications(lead, analysis, leadEntity, appId);
 
             // 4. Marketing & CRM Data Flow
             const finalLead = { ...lead, ...updatedLead } as Lead;
@@ -67,12 +80,29 @@ export class ProcessNewLeadApplication {
     /**
      * Maneja el flujo de comunicación multicanal basado en el perfil del lead.
      */
-    private async handleNotifications(lead: Lead, analysis: any, entity: LeadEntity): Promise<void> {
+    private async handleNotifications(lead: Lead, analysis: any, entity: LeadEntity, leadId: string): Promise<void> {
+        const baseUrl = process.env.VITE_APP_URL || 'https://richard-automotive.com';
+        const crmLink = `${baseUrl}/admin/pipeline?leadId=${leadId}`;
+
         // Notificación al equipo (Admin)
         await this.emailRepo.send({
             to: 'richardmendezmatos@gmail.com',
-            subject: `🦅 New Lead - ${lead.firstName} ${lead.lastName} (Score: ${analysis.score})`,
-            html: `<h2>New Lead Received</h2><p><strong>Applicant:</strong> ${lead.firstName} ${lead.lastName}</p><hr><h3>AI Analysis</h3><p>Score: ${analysis.score}/100 (${analysis.category})</p>`
+            subject: `🦅 NUEVO LEAD: ${lead.firstName} ${lead.lastName} (Score: ${analysis.score})`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <h2 style="color: #0891b2;">🚀 Nuevo Lead Recibido</h2>
+                    <p><strong>Candidato:</strong> ${lead.firstName} ${lead.lastName}</p>
+                    <p><strong>Email:</strong> ${lead.email || 'N/A'}</p>
+                    <p><strong>Teléfono:</strong> ${lead.phone || 'N/A'}</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                    <h3>🧠 Análisis de IA</h3>
+                    <p><strong>Score:</strong> ${analysis.score}/100</p>
+                    <p><strong>Categoría:</strong> ${analysis.category.toUpperCase()}</p>
+                    <p><strong>Insights:</strong> ${analysis.insights || 'Sin insights adicionales'}</p>
+                    <br>
+                    <a href="${crmLink}" style="background: #0891b2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver en CRM Board</a>
+                </div>
+            `
         });
 
         // Bienvenida al Cliente (Email)
