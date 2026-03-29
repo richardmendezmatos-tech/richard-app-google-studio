@@ -36,7 +36,7 @@ export class ProcessNewLeadApplication {
             const appId = input.id;
             const leadData = input.data;
 
-            // 1. Validar y Crear Entidad (Nivel Senior: Fail fast with clear logs)
+            // 1. Validación de Entidad (Fail-fast strategy)
             let leadEntity: LeadEntity;
             try {
                 leadEntity = LeadEntity.create(leadData);
@@ -116,17 +116,17 @@ export class ProcessNewLeadApplication {
 
         // Bienvenida al Cliente (SMS)
         if (lead.phone) {
-            await this.smsRepo.send(lead.phone, `Hola ${lead.firstName}, recibimos tu solicitud en Richard Automotive. Estaremos en contacto.`);
+            await this.smsRepo.send(lead.phone, `Hola ${lead.firstName}, recibimos su solicitud en Richard Automotive. Estaremos en contacto.`);
         }
 
         // WhatsApp Proactivo Integrado (Universal + VIP)
         if (lead.phone) {
             if (analysis.score >= 85 || entity.isHighPotential()) {
-                const waMessage = `¡Hola ${lead.firstName}! Soy Richard de Richard Automotive. 🦅🚀 Vi tu interés y tu perfil califica para atención prioritaria VIP. ¿Tienes unos minutos para coordinar una cita hoy?`;
+                const waMessage = `¡Hola ${lead.firstName}! Le habla Richard de Richard Automotive. 🦅🚀 Hemos analizado su solicitud y califica para atención estratégica prioritaria. ¿Podemos coordinar una cita hoy en el Richard Automotive Command Center?`;
                 await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
                 console.log(`[WhatsApp Automation] Ruteo VIP enviado a: ${lead.phone}`);
             } else {
-                const waMessage = `¡Hola ${lead.firstName}! Bienvenido a Richard Automotive. 🚗 Recibimos tu información y un asesor ya está evaluando tus opciones. ¿Tienes alguna pregunta inicial sobre nuestro inventario?`;
+                const waMessage = `¡Hola ${lead.firstName}! Recibimos su solicitud en Richard Automotive. 🚗 Su perfil comercial está siendo evaluado por un asesor. ¿Desea ver detalles técnicos de alguna unidad en particular?`;
                 await this.whatsAppRepo.sendMessage(lead.phone, waMessage);
                 console.log(`[WhatsApp Automation] Welcome Nudge estándar enviado a: ${lead.phone}`);
             }

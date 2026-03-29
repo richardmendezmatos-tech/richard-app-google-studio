@@ -55,7 +55,7 @@ export class ProcesarTradeInFinanciado {
     }
 
     // Integración con raSentinel para Operational Score e IFF (Fire & Forget para latencia cero)
-    const operationalScore = raSentinel.calculateOperationalScore('trade_in_calculation', {
+    const operationalScore = raSentinel.calculateBusinessHealthScore('trade_in_calculation', {
       montoAFinanciar,
       creditScore,
     });

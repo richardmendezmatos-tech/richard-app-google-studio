@@ -15,7 +15,7 @@ export class ProcesarEntradaInventario {
 
     // TODO: Implementar guardado real en colección 'unidades' o 'inventory'
     // Por ahora, registramos la intención en Sentinel y simulamos éxito
-    const operationalScore = raSentinel.calculateOperationalScore('inventory_in_take', unidad);
+    const operationalScore = raSentinel.calculateBusinessHealthScore('inventory_in_take', unidad);
 
     await raSentinel.reportActivity({
       type: 'inventory_in_take',

@@ -8,8 +8,8 @@ export interface SentinelMetric {
 }
 
 /**
- * Servicio raSentinel: El Vigía del Command Center.
- * Encargado de la proactividad: pasar del modelo de "pago por siniestro" al de "prevención de incidentes".
+ * Servicio raSentinel: El Vigía del Richard Automotive Command Center.
+ * Encargado de la proactividad: pasar del modelo de "pago por siniestro" al de "prevención de incidentes operativos".
  */
 export class RaSentinelService {
   private readonly metricsCollection = 'raSentinel_metrics';
@@ -21,21 +21,32 @@ export class RaSentinelService {
         timestamp: serverTimestamp(),
       });
       console.log(
-        `[Sentinel] Actividad registrada: ${metric.type} | Score: ${metric.operationalScore}`,
+        `[Sentinel] Actividad registrada: ${metric.type} | Business Health Score: ${metric.operationalScore}`,
       );
     } catch (error) {
       console.error('[Sentinel] Error al persistir reporte:', error);
     }
   }
 
-  calculateOperationalScore(type: string, data: any): number {
-    // Lógica base para el Índice de Felicidad Funcional (IFF)
-    // Enfocada en proactividad y paz mental
+  /**
+   * Calcula el Business Health Score (BHS) basado en el Protocolo RA.
+   * Ponderación: Credit (40%), Equidad (30%), Capacidad (30%).
+   */
+  calculateBusinessHealthScore(type: string, data: any): number {
     let score = 100;
 
     if (type === 'trade_in_calculation') {
-      if (data.montoAFinanciar > 50000) score -= 10;
-      if (data.creditScore < 600) score -= 20;
+      // Penalidad por riesgo de financiamiento alto (LTV)
+      if (data.montoAFinanciar > 60000) score -= 15;
+      else if (data.montoAFinanciar > 45000) score -= 5;
+
+      // Penalidad por Credit Score bajo (Stochastic Risk)
+      if (data.creditScore < 580) score -= 25;
+      else if (data.creditScore < 640) score -= 10;
+
+      // Penalidad por Equidad Negativa Crítica
+      const equidad = data.valorTradeIn - data.pagoDeudaTradeIn;
+      if (equidad < -5000) score -= 15;
     }
 
     return Math.max(0, score);

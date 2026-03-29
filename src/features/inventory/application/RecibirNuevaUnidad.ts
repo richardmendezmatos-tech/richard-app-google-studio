@@ -49,7 +49,7 @@ export class RecibirNuevaUnidad {
             (nuevaUnidad.costoAdquisicion + nuevaUnidad.costoRecondicionamiento)) /
           (nuevaUnidad.costoAdquisicion + nuevaUnidad.costoRecondicionamiento),
       },
-      operationalScore: raSentinel.calculateOperationalScore('inventory_in_take', nuevaUnidad),
+      operationalScore: raSentinel.calculateBusinessHealthScore('inventory_in_take', nuevaUnidad),
     });
 
     console.log(

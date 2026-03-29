@@ -7,9 +7,9 @@ export interface ArgumentoVentaUnidad {
 }
 
 /**
- * Caso de Uso: Generar Persuasión de Venta
- * Utiliza IA (Simulado con lógica experta) para transformar datos técnicos
- * en beneficios de paz mental y plenitud para la familia.
+ * Caso de Uso: Generar Estrategia de Cierre (Sales Copilot AI)
+ * Transforma datos financieros en argumentos de optimización de inversión
+ * y eficiencia operativa para el cliente de Richard Automotive.
  */
 export class GenerarPersuasionVenta {
   execute(params: {
@@ -17,31 +17,32 @@ export class GenerarPersuasionVenta {
     nombreCliente: string;
   }): ArgumentoVentaUnidad {
     const { cotizacion, nombreCliente } = params;
-    const esEquidadPositiva = cotizacion.valorTradeIn - cotizacion.pagoDeudaTradeIn > 0;
+    const netoEquidad = cotizacion.valorTradeIn - cotizacion.pagoDeudaTradeIn;
+    const esEquidadPositiva = netoEquidad > 0;
 
     const points: string[] = [];
 
     if (esEquidadPositiva) {
       points.push(
-        `Su unidad actual le está regalando un beneficio neto de $${(cotizacion.valorTradeIn - cotizacion.pagoDeudaTradeIn).toLocaleString()} para su nueva inversión.`,
+        `Optimización de Capital: Su unidad actual genera un beneficio líquido de $${netoEquidad.toLocaleString()} aplicable a su nueva inversión.`,
       );
     } else {
       points.push(
-        `Hemos logrado consolidar su deuda anterior para que pueda estrenar hoy mismo con un pago cómodo.`,
+        `Eficiencia de Deuda: Hemos estructurado una consolidación estratégica para eliminar su balance anterior y facilitar el estreno hoy.`,
       );
     }
 
     points.push(
-      `Su pago mensual de $${cotizacion.pagoMensualEstimado.toLocaleString()} está protegido con una tasa del ${cotizacion.apr}%, asegurando su estabilidad familiar.`,
+      `Protección de Flujo: Su pago de $${cotizacion.pagoMensualEstimado.toLocaleString()} con una tasa preferencial del ${cotizacion.apr}% asegura su estabilidad financiera a largo plazo.`,
     );
     points.push(
-      `En Richard Automotive, su autonomía es nuestra prioridad. Esta estructura está diseñada para su tranquilidad financiera.`,
+      `En Richard Automotive, maximizamos su ROI operativo. Este negocio está diseñado bajo los más altos estándares de eficiencia del Command Center.`,
     );
 
     return {
-      headline: `Propuesta de Plenitud para ${nombreCliente}`,
+      headline: `Propuesta Estratégica de Inversión - ${nombreCliente}`,
       points,
-      callToAction: `Firmar Compromiso de Venta y Estrenar`,
+      callToAction: `Ejecutar Cierre y Entrega de Unidad`,
     };
   }
 }

@@ -15,7 +15,7 @@ vi.mock('node:fs', () => ({
 }));
 
 describe('raSentinel', () => {
-    describe('calculateOperationalScore', () => {
+    describe('calculateBusinessHealthScore', () => {
         it('should calculate a correct score based on input data', () => {
             const highRiskData = {
                 active_followup: false,
