@@ -476,7 +476,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             }
           />
           <Route
-            path="/digital-twin"
+            path="/strategy-lab"
             element={
               <AdminGuard>
                 <PageWrapper>

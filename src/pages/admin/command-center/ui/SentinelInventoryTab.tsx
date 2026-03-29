@@ -85,33 +85,39 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
     <div className="flex flex-col gap-8 min-h-[600px]">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
         {[
-          { label: 'Unidades', value: totalStats.units, icon: Package, color: 'text-blue-500' },
+          { label: 'Unidades', value: totalStats.units, icon: Package, color: 'from-blue-600 to-cyan-500' },
           {
-            label: 'Valor Total',
+            label: 'Capital Total',
             value: `$${(totalStats.totalValue / 1000000).toFixed(1)}M`,
             icon: DollarSign,
-            color: 'text-emerald-500',
+            color: 'from-emerald-600 to-teal-500',
           },
           {
-            label: 'Advantage Prom.',
+            label: 'Score Advantage',
             value: `${totalStats.avgAdvantage.toFixed(1)}%`,
             icon: TrendingUp,
-            color: 'text-primary',
+            color: 'from-primary to-indigo-600',
           },
-          { label: 'Ventas Proy.', value: '12', icon: Zap, color: 'text-amber-500' },
+          { label: 'Expectativa Venta', value: '12', icon: Zap, color: 'from-amber-600 to-orange-500' },
         ].map((stat, i) => (
           <div
             key={i}
-            className="glass-premium p-4 flex items-center gap-4 hover-kinetic cursor-default"
+            className="glass-premium p-6 flex flex-col gap-4 hover-kinetic cursor-default border border-white/5 relative overflow-hidden group"
           >
-            <div className={`p-3 rounded-2xl bg-white/5 dark:bg-slate-800 shadow-sm ${stat.color}`}>
-              <stat.icon size={20} />
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-5 blur-2xl group-hover:opacity-20 transition-opacity`} />
+            <div className="flex justify-between items-start relative z-10">
+              <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
+                <stat.icon size={18} />
+              </div>
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                Live Telemetry
+              </div>
             </div>
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <div className="relative z-10">
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
                 {stat.label}
               </div>
-              <div className="text-xl font-black text-slate-800 dark:text-white tracking-tight text-glow">
+              <div className="text-3xl font-black text-white tracking-tightest leading-none text-glow">
                 {stat.value}
               </div>
             </div>
@@ -156,7 +162,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
             <button
               onClick={onCreateNew}
-              className="px-6 h-[44px] bg-primary hover:bg-cyan-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+              className="px-8 h-[48px] bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
             >
               <Plus size={18} strokeWidth={3} /> Nueva Unidad
             </button>

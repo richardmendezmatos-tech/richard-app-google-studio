@@ -59,36 +59,36 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
         </div>
 
         {/* Precio */}
-        <div className="w-board-column-sm font-black text-white text-glow flex items-center">
+        <div className="w-board-column-sm font-black text-white text-glow flex items-center tracking-tighter">
           ${car.price?.toLocaleString()}
         </div>
 
         {/* Advantage */}
         <div className="w-board-column-sm flex items-center">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-primary/10 text-primary uppercase tracking-widest border border-primary/20">
+          <span className="inline-flex items-center px-2 py-1 rounded-lg text-[9px] font-black bg-primary/5 text-primary uppercase tracking-[0.2em] border border-primary/20">
             +{predictiveStats.advantageScore.toFixed(0)}%
           </span>
         </div>
 
         {/* Sales Velocity */}
         <div className="w-board-column-sm flex items-center gap-2">
-          <Clock size={12} className="text-slate-500" />
-          <span className="text-xs font-bold text-slate-400">14 Días</span>
+          <Clock size={12} className="text-slate-600" />
+          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">14 Días</span>
         </div>
 
         {/* Acciones */}
-        <div className="flex-1 flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex-1 flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pr-2">
           <button
             onClick={() => onPlanContent(car)}
-            className="p-2 hover:bg-primary/10 text-slate-400 hover:text-primary rounded-lg transition-all"
-            title="Marketing"
-            aria-label="Marketing"
+            className="p-2.5 hover:bg-primary/10 text-slate-500 hover:text-primary rounded-xl transition-all border border-transparent hover:border-primary/20"
+            title="Strategy Lab"
+            aria-label="Strategy Lab"
           >
             <Sparkles size={16} />
           </button>
           <button
             onClick={() => onEdit(car)}
-            className="p-2 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-all"
+            className="p-2.5 hover:bg-white/5 text-slate-500 hover:text-white rounded-xl transition-all border border-transparent hover:border-white/10"
             title="Editar"
             aria-label="Editar"
           >
@@ -96,7 +96,7 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
           </button>
           <button
             onClick={() => onDelete(car.id)}
-            className="p-2 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-all"
+            className="p-2.5 hover:bg-rose-500/5 text-slate-500 hover:text-rose-500 rounded-xl transition-all border border-transparent hover:border-rose-500/10"
             title="Eliminar"
             aria-label="Eliminar"
           >

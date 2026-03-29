@@ -57,27 +57,27 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           icon={CarFront}
           label="Total Unidades"
           value={<CountUp end={inventory.length} prefix="" />}
-          color="bg-blue-500 text-blue-500"
-          subValue={inventory.length > 0 ? 'Actualizado' : 'Sin stock'}
+          color="bg-gradient-to-br from-blue-500 to-cyan-400 text-white"
+          subValue={inventory.length > 0 ? 'STATUS: OPTIMAL' : 'OUT OF STOCK'}
         />
         <StatusWidget
           icon={BarChart3}
           label="Leads Activos"
           value={<CountUp end={leads.filter((l) => l.status === 'new').length} />}
-          color="bg-emerald-500 text-emerald-500"
-          subValue="Potenciales hoy"
+          color="bg-gradient-to-br from-emerald-500 to-teal-400 text-white"
+          subValue="CONVERSION PIPELINE"
         />
         <StatusWidget
           icon={Package}
-          label="Valor Total"
+          label="Valor de Inventario"
           value={
             <CountUp
               end={inventory.reduce((sum, car) => sum + (Number(car.price) || 0), 0)}
               prefix="$"
             />
           }
-          color="bg-purple-500 text-purple-500"
-          subValue="Estimado"
+          color="bg-gradient-to-br from-purple-500 to-indigo-400 text-white"
+          subValue="ASSET CAPITALIZATION"
         />
         <StatusWidget
           icon={Search}
@@ -90,22 +90,21 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
       {/* QUICK ACCESS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Digital Twin Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-sentinel border border-white/10 p-8 hover:border-primary/50 transition-all cursor-pointer hover-kinetic"
-          onClick={() => navigate('/digital-twin')}
+          className="group relative overflow-hidden rounded-[2.5rem] glass-premium border border-white/5 p-8 hover:border-primary/40 transition-all cursor-pointer hover-kinetic"
+          onClick={() => navigate('/strategy-lab')}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-all" />
           <UserIcon
-            className="text-primary mb-4 group-hover:scale-110 transition-transform duration-500"
-            size={40}
+            className="text-primary mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700"
+            size={44}
           />
-          <h3 className="text-2xl font-black text-white uppercase mb-2">Gemelo Digital</h3>
-          <p className="text-slate-400 text-sm mb-6">
-            Crea contenido de marketing viral con tu avatar IA.
+          <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Strategy Lab</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-6 opacity-70 group-hover:opacity-100 transition-opacity">
+            Ingeniería de marketing y simulación de demanda con tu avatar IA.
           </p>
-          <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-widest">
-            Abrir Laboratorio <ArrowRight size={14} />
+          <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.2em]">
+            RA PROTOCOL <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 

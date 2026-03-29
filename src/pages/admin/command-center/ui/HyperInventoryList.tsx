@@ -75,24 +75,24 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
       onScroll={handleScroll}
     >
       {/* HEADER (Sticky) */}
-      <div className="sticky top-0 z-20 flex items-center bg-slate-900/95 backdrop-blur-md border-b border-white/5 px-6 h-board-header">
-        <div className="flex-1 text-[10px] font-black uppercase tracking-widest text-primary min-w-board-column-lg">
-          Unidad
+      <div className="sticky top-0 z-20 flex items-center bg-[#050c14]/90 backdrop-blur-2xl border-b border-white/5 px-8 h-16">
+        <div className="flex-1 text-[9px] font-black uppercase tracking-[0.3em] text-primary min-w-board-column-lg">
+          Asset / Identity
         </div>
-        <div className="w-board-column-md text-[10px] font-black uppercase tracking-widest text-slate-400">
-          Tipo / Badge
+        <div className="w-board-column-md text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+          Classification
         </div>
-        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
-          Precio
+        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+          Valuation
         </div>
-        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
+        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
           Advantage
         </div>
-        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
-          Sales Velocity
+        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+          Market Velocity
         </div>
-        <div className="flex-1 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">
-          Acciones
+        <div className="flex-1 text-right text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+          Control
         </div>
       </div>
 

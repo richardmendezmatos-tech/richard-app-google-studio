@@ -63,33 +63,38 @@ import styles from './CRMBoard.module.css';
 const COLUMNS = [
   {
     id: 'new',
-    title: 'Nuevos',
+    title: 'Input / New',
     color: 'bg-primary',
     glow: 'shadow-primary/20',
+    step: '01'
   },
   {
     id: 'contacted',
-    title: 'Contactados',
+    title: 'In Engagement',
     color: 'bg-amber-500',
     glow: 'shadow-amber-500/20',
+    step: '02'
   },
   {
     id: 'negotiation',
-    title: 'Negociando',
-    color: 'bg-purple-500',
-    glow: 'shadow-purple-500/20',
+    title: 'Strategy Lab / Neg',
+    color: 'bg-indigo-500',
+    glow: 'shadow-indigo-500/20',
+    step: '03'
   },
   {
     id: 'sold',
-    title: 'Ventas Cerradas',
+    title: 'Closed Revenue',
     color: 'bg-emerald-500',
     glow: 'shadow-emerald-500/20',
+    step: '04'
   },
   {
     id: 'lost',
-    title: 'Perdidos',
-    color: 'bg-red-500',
-    glow: 'shadow-red-500/20',
+    title: 'Archive',
+    color: 'bg-slate-600',
+    glow: 'shadow-slate-500/20',
+    step: '05'
   },
 ];
 
@@ -186,7 +191,11 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onO
 
   return (
     <div
-      className={`glass-card glass-premium p-5 rounded-[24px] group transition-all duration-300 relative ${isOverlay ? 'shadow-2xl scale-105 rotate-3 cursor-grabbing z-50 ring-2 ring-primary' : 'shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-primary hover:-translate-y-1 hover-kinetic'}`}
+      className={`glass-card glass-premium group transition-all duration-500 relative ${
+        isOverlay 
+          ? 'shadow-2xl scale-105 rotate-2 cursor-grabbing z-50 ring-2 ring-primary bg-slate-900/40' 
+          : 'p-6 rounded-[32px] hover-border-primary hover:-translate-y-1 hover-kinetic-glow'
+      }`}
     >
       {!isOverlay && (
         <div className="absolute top-5 right-5 text-slate-300 dark:text-slate-600">
@@ -227,59 +236,41 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onO
         )}
       </div>
 
-      <div className="text-xs font-medium text-slate-400 truncate mb-4">
-        {lead.vehicleOfInterest || lead.message || 'Sin detalles'}
+      <div className="text-xs font-bold text-slate-500 truncate mb-4 uppercase tracking-[0.05em] flex items-center gap-2">
+        <Car size={12} className="text-primary/50" />
+        {lead.vehicleOfInterest || lead.message || 'Asset Identification Pending'}
       </div>
 
       {/* AI Scoring Section - Premium Predictive Gauge */}
-      {(lead.aiAnalysis || scoring.score > 0) && (
+      {scoring.score > 0 && (
         <div className="mb-4 p-4 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
-          <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1 px-1.5 bg-primary/10 rounded-md">
-                <Wand2 size={10} className="text-primary animate-pulse" />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400">
-                Probabilidad Predictiva
-              </span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span
-                className={`text-[11px] font-black tracking-tighter ${scoring.score > 80 ? 'text-emerald-500' : scoring.score > 50 ? 'text-amber-500' : 'text-rose-500'}`}
-              >
-                {scoring.score}%
-              </span>
-              <span className="text-[7px] font-bold uppercase text-slate-400 tracking-widest leading-none">
-                Confianza IA
-              </span>
-            </div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
+              AI Opportunity Signal
+            </span>
+            <span className={`text-[11px] font-black tracking-tighter ${scoring.score > 80 ? 'text-emerald-500' : 'text-amber-500'}`}>
+              {scoring.score}%
+            </span>
           </div>
 
-          {typeof lead.aiAnalysis === 'string' && (
-            <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mb-3 italic">
-              "{lead.aiAnalysis}"
-            </p>
-          )}
-
-          {/* Premium Progress Track */}
-          <div className="relative h-1.5 w-full bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden">
+          {/* Premium Progress Track / Opportunity Radar HUD */}
+          <div className="relative h-1 w-full bg-slate-800/40 rounded-full overflow-hidden mb-1">
             <div
-              className={`h-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) ${styles.predictiveBarWidth} ${
+              className={`h-full transition-all duration-[1500ms] ease-[cubic-bezier(0.23,1,0.32,1)] ${
                 scoring.score > 80
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                  ? 'bg-gradient-to-r from-emerald-500 to-cyan-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
                   : scoring.score > 50
-                    ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-500 shadow-[0_0_15px_rgba(251,191,36,0.3)]'
+                    : 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-[0_0_15px_rgba(244,63,94,0.3)]'
               }`}
-              style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
+              style={{ width: `${scoring.score}%` }}
             />
           </div>
-
-          {/* Pulsing Dot Tracer */}
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 w-1.5 h-4 bg-white rounded-full shadow-[0_0_8px_white] transition-all duration-500 border border-primary/20 ${styles.heatmapDot}`}
-            style={{ '--p-width': `${scoring.score}%` } as React.CSSProperties}
-          />
+          
+          <div className="flex justify-between items-center text-[7px] font-black uppercase tracking-[0.2em] text-slate-500">
+            <span>Critical Path</span>
+            <span className="text-primary animate-pulse">Scanning Agent Active</span>
+          </div>
         </div>
       )}
 
@@ -488,14 +479,19 @@ const CRMBoard: React.FC = () => {
               key={col.id}
               className="min-w-[320px] w-full bg-white/40 dark:bg-slate-800/20 backdrop-blur-xl rounded-[2.5rem] p-5 flex flex-col h-full border border-slate-200/50"
             >
-              <div className="flex items-center gap-3 mb-6 px-2">
-                <div className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-lg`} />
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                  {col.title}
-                </h3>
-                <span className="ml-auto bg-white/80 dark:bg-slate-800 px-3 py-1 rounded-full text-[10px] font-black">
+              <div className="flex items-center gap-3 mb-8 px-2">
+                <div className={`w-1.5 h-6 rounded-full ${col.color} shadow-[0_0_12px_var(--tw-shadow-color)]`} />
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">
+                    Stage {(col as any).step}
+                  </span>
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.25em] text-white">
+                    {col.title}
+                  </h3>
+                </div>
+                <div className="ml-auto bg-white/5 border border-white/5 px-2.5 py-1 rounded-lg text-[10px] font-black text-slate-400">
                   {colLeads.length}
-                </span>
+                </div>
               </div>
               <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-[100px]">
                 <SortableContext

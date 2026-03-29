@@ -112,7 +112,19 @@ import { getAntigravityOutreachAction } from '@/features/omnichannel';
 export const container = DIContainer.getInstance();
 
 // Hydrate static registry for FSD compliance
-Object.assign(DI, container, {
-  sendWhatsAppMessage,
-  getAntigravityOutreachAction,
-});
+// Note: Manual assignment since class methods are not enumerable in Object.assign
+DI.getLeadsUseCase = container.getGetLeadsUseCase.bind(container);
+DI.getInventoryUseCase = container.getGetInventoryUseCase.bind(container);
+DI.getLeadRepository = container.getLeadRepository.bind(container);
+DI.getApplicationRepository = container.getApplicationRepository.bind(container);
+DI.getStorageRepository = container.getStorageRepository.bind(container);
+DI.getUserRepository = container.getUserRepository.bind(container);
+DI.getSubscriberRepository = container.getSubscriberRepository.bind(container);
+DI.getSurveyRepository = container.getSurveyRepository.bind(container);
+DI.getHoustonTelemetryUseCase = container.getGetHoustonTelemetryUseCase.bind(container);
+DI.getIdentifyOutreachOpportunitiesUseCase = container.getIdentifyOutreachOpportunitiesUseCase.bind(container);
+DI.getCalculateDynamicMarginUseCase = container.getCalculateDynamicMarginUseCase.bind(container);
+DI.getPredictiveRepository = container.getPredictiveRepository.bind(container);
+DI.getEvaluarAprobacionVentaUseCase = container.getEvaluarAprobacionVentaUseCase.bind(container);
+DI.sendWhatsAppMessage = sendWhatsAppMessage;
+DI.getAntigravityOutreachAction = getAntigravityOutreachAction;

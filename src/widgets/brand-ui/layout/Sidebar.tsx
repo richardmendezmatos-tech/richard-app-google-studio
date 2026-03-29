@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const getCurrentViewMode = (): ViewMode | string => {
     const path = location.pathname;
-    if (path.startsWith('/admin') || path === '/digital-twin') return ViewMode.ADMIN;
+    if (path.startsWith('/admin') || path === '/strategy-lab') return ViewMode.ADMIN;
     if (path === '/garage') return ViewMode.DIGITAL_GARAGE;
     if (path === '/qualify') return ViewMode.PRE_QUALIFY;
     if (path === '/consultant') return ViewMode.AI_CONSULTANT;
@@ -324,12 +324,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
         {role === 'admin' && (
           <NavButton
-            active={currentMode === ViewMode.DIGITAL_TWIN}
+            active={location.pathname === '/strategy-lab'}
             onClick={() => {
-              navigate('/digital-twin');
+              navigate('/strategy-lab');
               setIsMobileOpen(false);
             }}
-            icon={<User size={19} />}
+            icon={<FlaskConical size={19} />}
             label={t('sidebar.digitalTwin')}
           />
         )}

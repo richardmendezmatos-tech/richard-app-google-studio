@@ -31,6 +31,11 @@
   --mesh-2: #7000ff;
   --mesh-3: #ff0070;
   --mesh-4: #00ffaa;
+  
+  /* Glass V2 Tokens */
+  --glass-bg: rgba(8, 18, 30, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-reflection: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
 }
 
 html {
@@ -89,23 +94,33 @@ body {
 .glass-premium {
   position: relative;
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(10, 25, 41, 0.65);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.glass-premium::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glass-reflection);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .glass-premium:hover {
-  transform: translateY(-4px) scale(1.01);
-  background: linear-gradient(155deg, rgba(15, 23, 42, 0.5), rgba(2, 6, 12, 0.7));
-  border-color: hsla(var(--cyber-cyan), 0.3);
+  transform: translateY(-8px) translateZ(0);
+  background: rgba(10, 25, 41, 0.75);
+  border-color: hsla(var(--cyber-cyan), 0.4);
   box-shadow:
     0 40px 80px -20px rgba(0, 0, 0, 0.6),
-    0 0 20px hsla(var(--cyber-cyan), 0.1);
+    0 0 30px hsla(var(--cyber-cyan), 0.15);
 }
 
 .glass-sentinel {

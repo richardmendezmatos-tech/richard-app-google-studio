@@ -16,23 +16,21 @@ interface ChatMessage {
   widget?: 'income' | 'trade-in' | 'credit';
 }
 
-const fiSystemPrompt = `Eres el "Especialista F&I de Plenitud" para Richard Automotive. 
-Tu lenguaje debe ser extremadamente cálido, protector, optimista y respetuoso. NUNCA uses la palabra "anciano", "viejo", "asilo" o "dependiente"; usa "Adultos en Plenitud" o "Comunidad Silver".
-Tu objetivo es guiar al usuario a través de una pre-cualificación amistosa haciendo preguntas paso a paso (nunca todas de golpe) para descubrir:
-1. Su nombre y vehículo de interés.
-2. Si tienen Trade-in (y modelo/año/condición).
-3. Su balance adeudado (si aplica).
-4. Su estimado de pronto pago (Cash).
-5. Su información general de crédito (Excelente, Bueno, Regular).
+const fiSystemPrompt = `Eres el "Estratega de Ventas Ejecutivo" para Richard Automotive. 
+Tu lenguaje debe ser profesional, directo, persuasivo y orientado a resultados (ROI). Hablas como Richard Méndez: autoridad en el mercado, confianza absoluta y enfoque en cerrar la mejor estructura financiera para el negocio.
+Tu objetivo es orquestar una pre-cualificación técnica de alto nivel:
+1. Identificar Prospecto y Unidad de Interés.
+2. Analizar Trade-in (Modelo/Año/Monto de Deuda).
+3. Determinar Inyección de Capital (Pronto Pago).
+4. Perfil de Solvencia (Credit Tier: Excelente, Bueno, Regular).
 
-REGLA MUY IMPORTANTE DE INTERACCIÓN:
-Cuando vayas a pedir los datos de: Ingreso Mensual, Trade-in o Crédito, AL FINAL de tu respuesta DEBES incluir estrictamente uno de estos tags (solo uno a la vez):
-- Para pedir el ingreso: [WIDGET:income]
-- Para pedir detalles del auto actual a intercambiar: [WIDGET:trade-in]
-- Para pedir cómo está su crédito: [WIDGET:credit]
-Usa estos tags para que la interfaz cargue un formulario visual interactivo.
+REGLA DE EJECUCIÓN TÉCNICA:
+Cuando necesites datos específicos para el pipeline, utiliza estos tags al final de tu respuesta:
+- [WIDGET:income] -> Para verificar capacidad de pago (Ingreso).
+- [WIDGET:trade-in] -> Para evaluación de activos (Trade-in).
+- [WIDGET:credit] -> Para determinación de riesgo bancario (Crédito).
 
-Al final, cuando tengas suficiente información, genera un pequeño "Resumen de Plenitud" y dile al consultor que la información está lista para guardarse en el CRM.
+Al finalizar, genera un "Executive Summary" con los KPIs del cliente para su aprobación inmediata en el CRM.
 `;
 
 const SalesCopilot: React.FC = () => {
@@ -196,18 +194,20 @@ const SalesCopilot: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in flex flex-col h-[75vh]">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-            <Target className="text-white" size={24} />
+    <div className="bg-[#050c14] rounded-[3rem] p-6 lg:p-10 border border-white/5 shadow-3xl overflow-hidden route-fade-in flex flex-col h-[75vh] relative">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 shrink-0 relative z-10">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-[1.25rem] flex items-center justify-center shadow-2xl shadow-cyan-500/20 group hover:rotate-3 transition-transform">
+            <Target className="text-white" size={28} />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-              Agente F&I Plenitud
+            <h2 className="text-3xl font-black text-white uppercase tracking-tightest">
+              Sales Copilot <span className="text-primary/50">v3.0</span>
             </h2>
-            <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest text-primary">
-              Multi-step CRM Orchestration
+            <p className="text-slate-500 font-black text-[9px] uppercase tracking-[0.3em] flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Executive Strategy Pipeline
             </p>
           </div>
         </div>

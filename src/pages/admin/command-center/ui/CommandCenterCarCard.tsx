@@ -29,38 +29,38 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
   return (
     <div className="group relative glass-premium overflow-hidden shadow-xl hover-kinetic flex flex-col h-full route-fade-in">
       {/* Image Section */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-72 overflow-hidden">
         <img
-          src={optimizeImage(car.img, 600)}
+          src={optimizeImage(car.img, 800)}
           alt={car.name}
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050c14] via-transparent to-slate-950/40" />
 
         {/* Status Badges */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-          <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
+        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+          <span className="px-3 py-1 bg-white/5 backdrop-blur-xl rounded-lg text-[9px] font-black text-white uppercase tracking-[0.2em] border border-white/10">
             {car.type}
           </span>
           {car.badge && (
-            <span className="px-3 py-1 bg-primary rounded-full text-[10px] font-black text-white uppercase tracking-widest shadow-lg shadow-primary/30">
+            <span className="px-3 py-1 bg-primary/20 backdrop-blur-xl rounded-lg text-[9px] font-black text-primary uppercase tracking-[0.2em] border border-primary/30">
               {car.badge}
             </span>
           )}
         </div>
 
         {isEco && (
-          <div className="absolute top-4 right-4 h-8 w-8 bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-500">
-            <Leaf size={14} fill="currentColor" />
+          <div className="absolute top-6 right-6 h-9 w-9 bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-500 shadow-lg">
+            <Leaf size={16} fill="currentColor" className="opacity-80" />
           </div>
         )}
 
         {/* Price Display */}
-        <div className="absolute bottom-4 left-6">
-          <div className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">
-            Precio de Venta
+        <div className="absolute bottom-6 left-8">
+          <div className="text-[9px] font-black text-primary/70 uppercase tracking-[0.3em] mb-1">
+            Asset Valuation
           </div>
-          <div className="text-3xl font-black text-white tracking-tighter text-glow">
+          <div className="text-4xl font-black text-white tracking-tightest leading-none text-glow">
             <AnimatedCounter value={car.price || 0} format="currency" />
           </div>
         </div>
@@ -118,28 +118,28 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
         )}
 
         {/* Professional Actions */}
-        <div className="flex gap-3 pt-4 mt-auto">
+        <div className="flex gap-4 pt-4 mt-auto relative z-10">
           <button
             onClick={onPlanContent}
-            className="flex-1 h-12 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group/btn"
+            className="flex-1 h-12 bg-primary/5 hover:bg-primary text-primary hover:text-white border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 group/btn shadow-lg hover:shadow-primary/20"
           >
-            <Sparkles size={16} className="group-hover/btn:rotate-12 transition-transform" />
-            Marketing
+            <Sparkles size={16} className="group-hover/btn:rotate-12 transition-transform duration-500" />
+            Strategy Lab
           </button>
           <div className="flex gap-2">
             <button
               onClick={() => onEdit(car)}
-              className="w-12 h-12 bg-white/5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-2xl flex items-center justify-center transition-all border border-white/5"
+              className="w-12 h-12 bg-white/5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all border border-white/10 group/edit"
               title="Editar Unidad"
             >
-              <Edit3 size={18} />
+              <Edit3 size={18} className="group-hover/edit:scale-110 transition-transform" />
             </button>
             <button
               onClick={() => onDelete(car.id)}
-              className="w-12 h-12 bg-rose-500/5 text-rose-500/60 hover:text-white hover:bg-rose-500 rounded-2xl flex items-center justify-center transition-all border border-rose-500/10"
+              className="w-12 h-12 bg-rose-500/5 text-rose-500/60 hover:text-white hover:bg-rose-600 rounded-xl flex items-center justify-center transition-all border border-rose-500/10 group/del"
               title="Eliminar Unidad"
             >
-              <Trash2 size={18} />
+              <Trash2 size={18} className="group-hover/del:scale-110 transition-transform" />
             </button>
           </div>
         </div>

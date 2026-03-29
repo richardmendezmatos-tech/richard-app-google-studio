@@ -108,7 +108,7 @@ export const HoustonDashboard: React.FC = () => {
           <div className="text-3xl font-black text-white mb-2">{metrics.securityScore}%</div>
           <div className="text-[10px] font-bold text-emerald-500/80 uppercase flex items-center gap-1">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Encriptación de Grado Clínico
+            Encriptación de Máxima Precisión
           </div>
           <div className="mt-3 text-[10px] text-slate-500 font-medium leading-relaxed">
             Protección activa contra intrusiones y fuga de datos.
@@ -150,7 +150,7 @@ export const HoustonDashboard: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-          <Database size={14} /> Vitalos Core v.4.2
+          <Database size={14} /> RA OS CORE v.4.2
         </div>
       </div>
     </div>

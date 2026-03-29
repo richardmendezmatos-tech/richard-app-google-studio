@@ -106,11 +106,11 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
         {/* HEADER AREA */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-8 shrink-0">
           <div>
-            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.25em] mb-2">
-              <ShieldCheck size={12} />
-              <span>Command Center v2.0</span>
+            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-3 opacity-80">
+              <ShieldCheck size={12} className="animate-pulse" />
+              <span>RA MISSION CONTROL v3.0</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500 tracking-tighter">
+            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-slate-500 tracking-tightest leading-none pb-2">
               {currentDealer.name}
             </h1>
           </div>
@@ -174,10 +174,10 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
 
           <div className="flex gap-3 w-full md:w-auto">
             <button
-              onClick={() => navigate('/digital-twin')}
-              className="h-[44px] px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2"
+              onClick={() => navigate('/strategy-lab')}
+              className="h-[44px] px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-95"
             >
-              <UserIcon size={18} /> Gemelo Digital
+              <UserIcon size={16} /> Strategy Lab
             </button>
             <button
               onClick={() => {
