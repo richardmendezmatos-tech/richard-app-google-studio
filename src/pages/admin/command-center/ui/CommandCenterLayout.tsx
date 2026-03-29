@@ -134,42 +134,6 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
             <Suspense fallback={<div className="h-10 w-40 rounded-xl bg-white/5 animate-pulse" />}>
               <EnterpriseStatus />
             </Suspense>
-
-            <button
-              onClick={() => navigate('/admin/houston')}
-              className="h-10 px-6 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-500/20 transition-all flex items-center gap-2"
-            >
-              <Radio size={14} /> Sentinel Terminal
-            </button>
-          </div>
-
-          <div className="hidden xl:flex items-center gap-4 px-6 py-3 glass-premium border border-white/10 rounded-2xl backdrop-blur-3xl">
-            <div className="relative">
-              <ShieldCheck className="text-emerald-500" size={24} />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black text-white uppercase tracking-widest">Security Copilot</span>
-                <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-500 text-[8px] font-black rounded-md uppercase">Active</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5 whitespace-nowrap">
-                  Zero Trust Integrity: {securityScore}%
-                </div>
-                <div className="w-1 h-1 bg-slate-700 rounded-full" />
-                <div className="text-[9px] text-amber-500 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-                  <Scale size={8} /> AI Fairness: 99%
-                </div>
-              </div>
-            </div>
-            <div className="w-[1px] h-8 bg-white/10 mx-2" />
-            <div className="flex flex-col items-end">
-              <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-1">
-                <Zap size={10} fill="currentColor" /> Platform Health
-              </div>
-              <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Latency: 24ms</div>
-            </div>
           </div>
 
           <div className="flex gap-3 w-full md:w-auto">
@@ -198,10 +162,6 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
           </div>
         </header>
 
-        {/* HOUSTON MISSION CONTROL (PREMIUM TELEMETRY) */}
-        <div className="shrink-0">
-          <CommandCenterWidget />
-        </div>
 
         {/* NESTED ROUTES OUTLET */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-0 bg-transparent relative z-0 hide-scrollbar overflow-x-hidden min-h-[400px]">

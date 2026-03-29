@@ -119,7 +119,7 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
                       <MessageCircle size={10} className="text-purple-500" />
                     )}
                     <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                      {isUser ? 'Cliente' : isAi ? 'Houston IA' : 'Asesor'} • {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {isUser ? 'Cliente' : isAi ? 'Asistente IA' : 'Asesor'} • {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   
@@ -170,7 +170,7 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={aiAssist ? "Houston IA está sugiriendo una respuesta..." : `Escribe tu mensaje para ${lead.name || 'el cliente'}...`}
+                placeholder={aiAssist ? "El Asistente IA está sugiriendo una respuesta..." : `Escribe tu mensaje para ${lead.name || 'el cliente'}...`}
                 className={`w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-2xl py-3 px-4 text-sm resize-none focus:ring-2 transition-all ${aiAssist ? 'focus:ring-purple-500 placeholder-purple-300' : 'focus:ring-primary'}`}
                 rows={2}
                 onKeyDown={(e) => {

@@ -62,12 +62,11 @@ export const AdminHeader: React.FC<Props> = ({
           <EnterpriseStatus />
         </React.Suspense>
 
-        <button
-          onClick={() => navigate('/admin/houston')}
-          className="h-10 px-6 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-500/20 transition-all flex items-center gap-2 group"
+        <React.Suspense
+          fallback={<div className="h-10 w-40 rounded-xl bg-white/5 animate-pulse" />}
         >
-          <Radio size={14} className="group-hover:animate-pulse" /> Houston Terminal
-        </button>
+          <EnterpriseStatus />
+        </React.Suspense>
       </div>
 
       <div className="hidden xl:flex items-center gap-4 px-6 py-3 glass-premium border border-white/10 rounded-2xl backdrop-blur-3xl group cursor-default route-fade-in hover-kinetic">
