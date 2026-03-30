@@ -68,7 +68,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
             <div className="p-2 bg-blue-500 rounded-xl">
               <Activity className="text-white" size={24} />
             </div>
-            Digital Twin Telemetry
+            raSentinel Telemetry
           </h2>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-xs font-bold px-2 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-400">

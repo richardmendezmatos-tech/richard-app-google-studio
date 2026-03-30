@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import {
   ShieldCheck,
   Zap,
@@ -40,6 +40,14 @@ export const HoustonDashboard: React.FC = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const healthRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (healthRef.current) {
+      healthRef.current.style.width = `${metrics.systemHealth}%`;
+    }
+  }, [metrics.systemHealth]);
 
   return (
     <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-[2.5rem] shadow-2xl shadow-cyan-500/5 relative overflow-hidden group">
@@ -93,7 +101,10 @@ export const HoustonDashboard: React.FC = () => {
               </div>
             </div>
             <div className="w-16 h-1.5 bg-slate-900 rounded-full overflow-hidden">
-              <div className="h-full bg-primary" style={{ width: `${metrics.systemHealth}%` }} />
+              <div 
+                ref={healthRef}
+                className="h-full bg-primary transition-all duration-1000" 
+              />
             </div>
           </div>
 

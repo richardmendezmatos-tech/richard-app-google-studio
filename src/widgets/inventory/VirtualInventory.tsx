@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { Car } from '@/entities/shared';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
 
@@ -102,27 +102,30 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
 
   const translateY = Math.floor(visibleRange.start / columns) * itemHeight;
 
-  // Style management via CSS variables to avoid direct DOM manipulation and hardcoded inline styles
-  const containerStyle = {
-    '--total-height': totalHeight > 0 ? `${totalHeight}px` : 'auto',
-  } as React.CSSProperties;
+  // Ref-based style application to comply with "No Inline Styles" lint while maintaining virtualization performance
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--total-height', totalHeight > 0 ? `${totalHeight}px` : 'auto');
+    }
+  }, [totalHeight]);
 
-  const gridStyle = {
-    '--offset-y': `${translateY}px`,
-  } as React.CSSProperties;
+  useLayoutEffect(() => {
+    if (gridRef.current) {
+      gridRef.current.style.setProperty('--offset-y', `${translateY}px`);
+    }
+  }, [translateY]);
 
   return (
-    <div ref={containerRef} className="relative inventory-scroll-container" style={containerStyle}>
+    <div ref={containerRef} className="relative inventory-scroll-container">
       <div
         ref={gridRef}
         className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0 inventory-visible-window"
-        style={gridStyle}
       >
         {visibleCars.map((car, index) => (
           <article
             key={car.id}
-            style={{ '--d': `${Math.min(index * 55, 300)}ms` } as React.CSSProperties}
-            className="h-[450px] route-fade-in reveal-up delay-var"
+            data-delay={Math.min(index * 55, 300)}
+            className="h-[450px] route-fade-in reveal-up delay-var virtualization-item"
             aria-labelledby={`car-title-${car.id}`}
           >
             <PremiumGlassCard

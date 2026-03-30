@@ -4,6 +4,8 @@ import { Car } from '@/entities/shared';
 import { useSavedCarIds, useToggleSavedCar } from '@/features/garage/hooks/useGarage';
 import { analyzeGarageSelection } from '@/shared/api/ai';
 import { BiometricService } from '@/shared/api/security/biometricService';
+import { motion, AnimatePresence } from 'motion/react';
+import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import {
   ArrowLeft,
   Car as CarIcon,
@@ -14,9 +16,12 @@ import {
   Sparkles,
   ScanFace,
   Lock,
+  Zap
 } from 'lucide-react';
 import CarCard from '@/entities/inventory/ui/CarCard';
 import { PhotoAppraisal } from '@/features/garage';
+import { useAppraisals } from '@/features/garage/hooks/useAppraisals';
+import { useApplications } from '@/features/garage/hooks/useApplications';
 import DOMPurify from 'dompurify';
 import { SkeletonCarCard } from '@/shared/ui/loaders/SkeletonCarCard';
 
@@ -31,6 +36,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
   const [activeTab, setActiveTab] = useState<Tab>('cars');
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { addNotification } = useNotification();
 
   // Hook FSD
   const { data: savedIds = [], isLoading: isLoadingSavedIds } = useSavedCarIds();
@@ -98,32 +104,24 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
     toggleSaveMutation.mutate(car.id);
   };
 
-  const applications = [
-    {
-      id: 'APP-001',
-      date: '2025-10-24',
-      status: 'approved',
-      vehicle: 'Toyota RAV4 2024',
-      amount: '$35,000',
-    },
-    {
-      id: 'APP-002',
-      date: '2025-12-15',
-      status: 'pending',
-      vehicle: 'Dodge Ram 1500',
-      amount: '$42,000',
-    },
-  ];
+  const { data: savedAppraisals = [], isLoading: isLoadingAppraisals } = useAppraisals();
+  const { data: savedApplications = [], isLoading: isLoadingApplications } = useApplications();
 
-  const tradeIns = [
-    {
-      id: 'TRD-992',
-      date: '2025-12-30',
-      vehicle: 'Honda Civic 2018',
-      estimatedValue: '$14,500',
-      status: 'valid',
-    },
-  ];
+  const applications = savedApplications.map(app => ({
+    id: app.id,
+    date: app.date,
+    status: app.status,
+    bank: 'Richard Financial',
+    details: app.vehicle ? `Interés en ${app.vehicle.name}` : 'General Pre-Qual'
+  }));
+
+  const tradeIns = savedAppraisals.map(a => ({
+    id: a.id,
+    date: a.date,
+    vehicle: `${a.vehicle.year} ${a.vehicle.make} ${a.vehicle.model}`,
+    estimatedValue: `$${a.value.estimated.toLocaleString()}`,
+    status: a.status
+  }));
 
   const renderTabs = () => (
     <div className="flex flex-wrap gap-4 mb-8">
@@ -233,27 +231,48 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
           </div>
         );
       case 'applications':
+        if (applications.length === 0) {
+          return (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20 opacity-50 bg-slate-800/20 rounded-3xl border border-dashed border-white/10"
+            >
+              <FileText size={64} className="mx-auto text-slate-600 mb-4" />
+              <h2 className="text-2xl font-bold text-slate-400">Sin Solicitudes</h2>
+              <p className="text-slate-500">Tus pre-cualificaciones de crédito aparecerán aquí.</p>
+            </motion.div>
+          );
+        }
         return (
           <div className="grid gap-4 max-w-4xl">
             {applications.map((app) => (
-              <div
+              <motion.div
                 key={app.id}
-                className="bg-slate-800/50 p-6 rounded-2xl border border-white/5 flex items-center justify-between"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="group bg-slate-800/50 p-6 rounded-2xl border border-white/5 flex items-center justify-between hover:border-primary/30 transition-all"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-bold text-white text-lg">{app.vehicle}</h3>
-                    <StatusBadge status={app.status as 'approved' | 'pending' | 'rejected'} />
+                    <h3 className="font-black text-white text-lg uppercase tracking-tight">{app.details}</h3>
+                    <StatusBadge status={app.status as any} />
                   </div>
-                  <p className="text-slate-400 text-sm">
-                    ID: {app.id} • Enviada: {app.date}
-                  </p>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(app.id);
+                      addNotification('success', `ID ${app.id} copiado al portapapeles`);
+                    }}
+                    className="text-slate-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:text-primary transition-colors"
+                  >
+                    CASO: {app.id} <span className="opacity-0 group-hover:opacity-100 transition-opacity">(Click para copiar)</span> • {app.date}
+                  </button>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl font-black text-white">{app.amount}</div>
-                  <div className="text-xs text-slate-500 uppercase font-bold">Monto</div>
+                  <div className="text-lg font-black text-primary uppercase tracking-tighter">{app.bank}</div>
+                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest text-right">Procesador</div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         );
@@ -263,28 +282,34 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
             <PhotoAppraisal />
             <div className="grid gap-4 max-w-4xl">
               <h3 className="text-xl font-black uppercase tracking-tight text-white mb-4">
-                Valoraciones Previas
+                Historial de Ofertas RA
               </h3>
-              {tradeIns.map((offer) => (
-                <div
-                  key={offer.id}
-                  className="bg-slate-800/50 p-6 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-primary/30 transition-colors"
-                >
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-bold text-white text-lg">{offer.vehicle}</h3>
-                      <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase rounded">
-                        Oferta Visible
-                      </span>
-                    </div>
-                    <p className="text-slate-400 text-sm">Fecha: {offer.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-black text-primary">{offer.estimatedValue}</div>
-                    <div className="text-xs text-slate-500 uppercase font-bold">Valor Estimado</div>
-                  </div>
+              {tradeIns.length === 0 ? (
+                <div className="text-center py-10 opacity-30 border border-dashed border-white/10 rounded-2xl">
+                  <p className="text-slate-400 italic">No hay ofertas anteriores registradas.</p>
                 </div>
-              ))}
+              ) : (
+                tradeIns.map((t) => (
+                  <motion.div
+                    key={t.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-slate-900/50 p-5 rounded-2xl border border-white/5 flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <h4 className="font-bold text-white uppercase">{t.vehicle}</h4>
+                        <div className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded uppercase">Certificada</div>
+                      </div>
+                      <p className="text-slate-500 text-[10px] font-mono tracking-widest">ID: {t.id} • {t.date}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-black text-emerald-400">${t.estimatedValue}</div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase">VALOR RA</div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
             </div>
           </div>
         );
@@ -312,6 +337,31 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                   Teléfono
                 </label>
                 <div className="text-white font-medium">+1 (787) 555-0199</div>
+              </div>
+              
+              {/* Digital Twin Intelligence Section */}
+              <div className="p-6 bg-primary/5 border border-primary/20 rounded-2xl relative overflow-hidden group">
+                 <div className="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition-all text-primary rotate-12">
+                    <Sparkles size={80} />
+                 </div>
+                 <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                    <Zap size={14} /> RA Digital Status
+                 </h4>
+                 <div className="space-y-4 relative z-10">
+                    <div className="flex justify-between items-center text-sm">
+                       <span className="text-slate-400 font-bold uppercase text-[10px]">Unidades Tasadas</span>
+                       <span className="text-white font-black">{savedAppraisals.length}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                       <span className="text-slate-400 font-bold uppercase text-[10px]">Integrity Score (RA)</span>
+                       <span className="text-emerald-400 font-black">94/100</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-white/5">
+                       <p className="text-[9px] text-slate-500 uppercase leading-relaxed">
+                          Tu perfil está certificado nivel **Silver**. Incrementa tu score completando inspecciones físicas en el Bunker.
+                       </p>
+                    </div>
+                 </div>
               </div>
             </div>
             <div className="mt-8 p-4 bg-slate-900/50 rounded-xl flex items-center justify-between">

@@ -30,7 +30,7 @@ const AdminRoutes = React.lazy(() =>
     })),
   ),
 ) as unknown as React.ComponentType<AdminRoutesProps>;
-const DigitalTwinDashboard = React.lazy(() =>
+const StrategyLabDashboard = React.lazy(() =>
   lazyRetry(() => import('@/pages/digital-twin/ui/DigitalTwinDashboard')),
 );
 interface AIConsultantProps {
@@ -467,7 +467,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AdminGuard>
                 <PageWrapper>
-                  <DigitalTwinDashboard />
+                  <StrategyLabDashboard />
                 </PageWrapper>
               </AdminGuard>
             }

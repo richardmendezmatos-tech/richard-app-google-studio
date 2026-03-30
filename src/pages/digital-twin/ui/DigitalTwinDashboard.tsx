@@ -379,7 +379,7 @@ const DigitalTwinDashboard: React.FC = () => {
       setMessages((prev) => [...prev, { role: 'bot', text: response }]);
       speak(response);
     } catch (error) {
-      console.error('Digital twin chat error:', error);
+      console.error('RA Digital chat error:', error);
       setMessages((prev) => [
         ...prev,
         {
@@ -408,7 +408,8 @@ const DigitalTwinDashboard: React.FC = () => {
             </div>
           )}
           <div>
-            <h1 className="text-lg font-black uppercase tracking-wider">Agente Digital</h1>
+            <h1 className="text-lg font-black uppercase tracking-wider">RA Digital</h1>
+            <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Powered by Strategy Lab</p>
             <p className="text-xs text-slate-400">Usando tu cara en foto o webcam</p>
           </div>
         </div>
@@ -497,7 +498,7 @@ const DigitalTwinDashboard: React.FC = () => {
               </div>
             </label>
             <p className="text-[10px] text-slate-500 leading-tight">
-              Activar Composio Sync enviará los datos recopilados por el Digital Twin (Leads y
+              Activar Composio Sync enviará los datos recopilados por RA Digital (Leads y
               Preferencias) al CRM externo automáticamente.
             </p>
           </div>

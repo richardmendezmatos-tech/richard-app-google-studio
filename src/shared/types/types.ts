@@ -221,6 +221,40 @@ export interface Subscriber {
   timestamp?: FirestoreTimestamp | { seconds: number };
 }
 
+export interface Appraisal {
+  id: string;
+  date: string;
+  vehicle: {
+    make: string;
+    model: string;
+    year: number;
+    mileage: number;
+    vin?: string;
+  };
+  condition: {
+    overall: 'excellent' | 'good' | 'fair' | 'poor';
+    details: string[];
+  };
+  value: {
+    estimated: number;
+    currency: string;
+    validUntil: string; // ISO string
+  };
+  status: 'valid' | 'expired' | 'certified';
+}
+
+export interface FinancialApplication {
+  id: string;
+  date: string;
+  status: 'pending' | 'approved' | 'reviewing' | 'expired';
+  type: 'pre-qualification' | 'full-app';
+  vehicle?: {
+    name: string;
+    price: number;
+  };
+  referenceId: string;
+}
+
 export interface MarketProjection {
   month: number;
   estimatedValue: number;

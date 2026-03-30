@@ -22,9 +22,15 @@ export class AppraisalVisionService {
       reasoning: string;
     };
 
-    // Calculamos el valor sugerido multiplicando el baseline por el ajuste de la IA (0.7 - 1.1)
+    // 1. Aplicamos el ajuste de la IA (estado físico)
+    const iaAdjustment = result.estimatedValueAdjustment || 1.0;
+    
+    // 2. Aplicamos depreciación estimada por millaje (Simplificado/Dealer-grade)
+    // Asumimos un desgaste de 0.5% por cada 5k millas sobre el promedio
+    const mileageAdjustment = 1.0; // Placeholder para lógica más compleja
+    
     const suggestedAppraisal = Math.round(
-      marketBaseline * (result.estimatedValueAdjustment || 1.0),
+      marketBaseline * iaAdjustment * mileageAdjustment
     );
 
     return {

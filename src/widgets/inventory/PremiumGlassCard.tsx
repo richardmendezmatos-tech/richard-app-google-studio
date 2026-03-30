@@ -69,8 +69,6 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           else navigate(`/v/${generateVehicleSlug(car)}/${car.id}`);
         }
       }}
-      role="button"
-      tabIndex={0}
       className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300"
     >
       {/* Image Section */}

@@ -21,6 +21,8 @@ import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { encryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import SEO from '@/shared/ui/seo/SEO';
+import { useSaveApplication } from '@/features/garage/hooks/useApplications';
+import { FinancialApplication } from '@/shared/types/types';
 
 interface Props {
   onExit: () => void;
@@ -30,6 +32,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
   const { addNotification } = useNotification();
   const location = useLocation();
   const { trackEvent } = useMetaPixel();
+  const saveApplication = useSaveApplication();
 
   // Retrieve vehicle context if available
   const dealContext = location.state as
@@ -141,6 +144,21 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
       });
 
       setReferenceId(refId);
+
+      // Persistir en Digital Garage
+      const newApp: FinancialApplication = {
+        id: refId,
+        date: new Date().toISOString().split('T')[0],
+        status: 'pending',
+        type: 'pre-qualification',
+        referenceId: refId,
+        vehicle: dealContext ? {
+          name: dealContext.vehicle.name,
+          price: dealContext.vehicle.price
+        } : undefined
+      };
+
+      saveApplication.mutate(newApp);
 
       // Growth: Track CompleteRegistration
       trackEvent('CompleteRegistration', {

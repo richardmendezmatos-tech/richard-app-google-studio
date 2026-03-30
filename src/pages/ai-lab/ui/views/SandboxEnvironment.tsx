@@ -53,7 +53,7 @@ export default function App() {
       <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
       <div className="relative z-10 grid h-full grid-cols-1 gap-5 p-6 lg:grid-cols-2">
         <div className="rounded-3xl border border-white/10 bg-slate-900/55 p-6 backdrop-blur-xl">
-          <h1 className="text-2xl font-black uppercase tracking-tight">Digital Twin Lite</h1>
+          <h1 className="text-2xl font-black uppercase tracking-tight">Strategy Lab Lite</h1>
           <p className="mt-1 text-xs font-mono text-slate-400">CONNECTED: EDGE_NODE_PR_01</p>
           <div className="mt-8 space-y-4">
             <Gauge value={telemetry.rpm} max={8000} color="#06b6d4" label="Engine RPM" unit="rpm" />
@@ -180,6 +180,7 @@ export default function App() {
           </span>
         </div>
         <textarea
+          title="Code Editor"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           className="h-full w-full resize-none bg-[#040810] p-4 font-mono text-[12px] text-slate-200 outline-none"

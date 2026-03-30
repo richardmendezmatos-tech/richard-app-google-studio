@@ -156,7 +156,7 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
             <p className="text-slate-400 text-xs font-medium leading-relaxed max-w-2xl">
               Our AI detected a <span className="text-orange-400 font-bold">14% increase</span> in
               high-intent signals for SUVs in the last 6 hours. Recommendation: Increase
-              programmatic bidding on "Digital Twin" previews for top inventory.
+              programmatic bidding on "Digital Asset" previews for top inventory.
             </p>
           </div>
           <button className="px-6 py-3 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95 whitespace-nowrap">

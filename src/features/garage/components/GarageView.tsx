@@ -32,7 +32,7 @@ const GarageView: React.FC = () => {
             Mi Garaje Inteligente
           </h1>
           <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">
-            Digital Twin & Asset Management
+            RA Digital & Asset Management
           </p>
         </div>
         <button className="bg-primary hover:bg-cyan-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/20">

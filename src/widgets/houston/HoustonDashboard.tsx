@@ -49,6 +49,7 @@ import {
   Server,
   Radio,
   CheckCircle2,
+  Car as CarIcon
 } from 'lucide-react';
 import { DI } from '@/app/di/registry';
 import { HoustonTelemetry, OutreachOpportunity } from '@/entities/shared';
@@ -178,6 +179,9 @@ const HoustonDashboard: React.FC = () => {
             <span className="border-l border-white/10 pl-8">
               Loc: <span className="text-slate-300">HQ_SAN_JUAN</span>
             </span>
+            <span className="border-l border-white/10 pl-8 group cursor-pointer hover:text-cyan-400 transition-colors">
+              Appraisals: <span className="text-emerald-400">RA_LIVE</span>
+            </span>
           </div>
         </div>
         <div className="glass-premium px-10 py-6 flex items-center gap-10 border border-white/5 group hover:scale-[1.02] transition-all duration-500 cursor-pointer shadow-2xl relative overflow-hidden">
@@ -269,6 +273,37 @@ const HoustonDashboard: React.FC = () => {
               </motion.div>
             );
           })}
+
+          {/* New Appraisal Pulse Metric */}
+          <motion.div
+            variants={itemVariants}
+            className="glass-premium p-6 border border-emerald-500/20 bg-emerald-500/[0.02] transition-all group overflow-hidden relative cursor-pointer"
+            onClick={() => window.open('/trade-in', '_blank')}
+          >
+            <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-20 transition-all duration-700 text-emerald-500">
+               <CarIcon size={120} />
+            </div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-emerald-500/60 font-black mb-3">
+              Appraisal Pulse
+            </p>
+            <div className="flex items-end gap-3 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+              <span className="text-5xl font-black text-white tracking-tighter">
+                24
+              </span>
+              <span className="text-xs text-slate-500 mb-2 font-black uppercase tracking-widest">
+                / 24H
+              </span>
+            </div>
+            <div className="mt-8 flex items-center justify-between">
+              <span className="text-[10px] font-black px-3 py-1 rounded-lg border border-emerald-500/20 text-emerald-400 bg-emerald-500/5 uppercase">
+                RA_Intelligence
+              </span>
+              <div className="flex items-center gap-2 text-[9px] font-black text-emerald-500/40">
+                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
+                <span>VALUATOR_LINK</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Central Visualizer */}
@@ -473,6 +508,10 @@ const HoustonDashboard: React.FC = () => {
                 {
                   label: 'Autonomy',
                   content: 'Richard AI ejecutando flujos de prospección nivel 14.',
+                },
+                {
+                  label: 'Appraisals',
+                  content: 'RA_VALUATOR detectó tendencia alcista en inventario Europeo de alta gama.',
                 },
               ].map((insight, idx) => (
                 <li key={idx} className="flex gap-5 group/li">
