@@ -303,8 +303,7 @@ const HoustonDashboard: React.FC = () => {
                       {[...Array(4)].map((_, i) => (
                         <div
                           key={i}
-                          className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles.pulseWithDelay}`}
-                          style={{ '--delay': `${i * 250}ms` } as React.CSSProperties}
+                          className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles[`delay-${i * 250}`]}`}
                         />
                       ))}
                     </div>
@@ -408,9 +407,8 @@ const HoustonDashboard: React.FC = () => {
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles.pulseWithDelay}`}
-                      style={{ '--delay': `${i * 150}ms` } as React.CSSProperties}
-                        />
+                      className={`w-1 h-full bg-cyan-500/40 animate-pulse ${styles[`delay-${i * 150}`]}`}
+                    />
                   ))}
                 </div>
                 <span className="text-[10px] text-cyan-500/60 uppercase font-black tracking-widest">

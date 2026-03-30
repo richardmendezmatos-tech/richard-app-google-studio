@@ -189,30 +189,48 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                     <InfoRow icon={BadgeDollarSign} label="Monthly Income" value={data.monthlyIncome ? `$${Number(data.monthlyIncome).toLocaleString()}` : 'N/A'} color="text-indigo-400" />
                     <InfoRow icon={Briefcase} label="Employment Status" value={data.employmentStatus} color="text-amber-400" />
                     <InfoRow icon={Calendar} label="Time in Job" value={data.timeAtJob} color="text-slate-400" />
-                    
-                    <div className="mt-8 p-6 bg-slate-900/60 rounded-3xl border border-white/5 relative overflow-hidden group">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                          <Activity size={16} className="text-cyan-400" />
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Opportunity Vector</span>
-                        </div>
-                        <span className="text-2xl font-black text-white">{data.aiAnalysis?.score || lead.aiScore || 0}%</span>
-                      </div>
-                      <div className="space-y-3">
-                        {data.aiAnalysis?.insights?.map((insight: string, i: number) => (
-                          <div key={i} className="flex gap-3 items-start text-xs font-bold text-slate-400">
-                            <ArrowRight size={12} className="text-cyan-500 mt-1 shrink-0" />
-                            <span>{insight}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center p-8 bg-white/2 rounded-[2rem] border border-dashed border-white/10 opacity-60">
+                  <div className="flex flex-col items-center justify-center p-8 bg-white/2 rounded-[2rem] border border-dashed border-white/10 opacity-60">
                     <MessageSquare size={48} className="text-slate-700 mb-4" />
                     <p className="text-sm font-bold text-slate-500 text-center">Standard Inquiry Profile</p>
                     <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-2">Extended Finance Data N/A</p>
+                  </div>
+                )}
+
+                {/* Predictive Vector Module */}
+                {(data.predictiveScore || data.aiAnalysis || data.aiScore) && (
+                  <div className="mt-8 p-6 bg-slate-900/60 rounded-3xl border border-white/5 relative overflow-hidden group">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <Activity size={16} className="text-cyan-400 animate-pulse" />
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Houston Predictive Vector</span>
+                      </div>
+                      <span className="text-2xl font-black text-cyan-400 tracking-tighter">
+                        {data.predictiveScore || data.aiAnalysis?.score || lead.aiScore || 0}
+                        <span className="text-lg opacity-50 ml-1">%</span>
+                      </span>
+                    </div>
+                    <div className="space-y-4">
+                      {(data.predictiveInsights?.factors || data.aiAnalysis?.insights || ['Scoring Baseline Asignado', 'Evaluación inicial en progreso']).map((insight: string, i: number) => (
+                        <div key={i} className="flex gap-3 items-start text-[11px] font-bold text-slate-400 leading-relaxed">
+                          <ArrowRight size={14} className="text-cyan-500 mt-0.5 shrink-0" />
+                          <span>{insight}</span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {(data.recommendedAction || data.predictiveInsights?.recommendedAction) && (
+                      <div className="mt-6 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl flex items-start gap-3">
+                        <div className="p-2 bg-cyan-500/10 rounded-lg">
+                          <ShieldCheck size={16} className="text-cyan-400" />
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-black text-cyan-500 uppercase tracking-widest block mb-1">Recommended Action</span>
+                          <span className="text-xs text-white font-bold">{data.recommendedAction || data.predictiveInsights?.recommendedAction}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
