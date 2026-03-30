@@ -33,7 +33,7 @@ export const HoustonTelemetryTab: React.FC = () => {
   };
 
   useEffect(() => {
-    const useCase = DI.getGetHoustonTelemetryUseCase();
+    const useCase = DI.getHoustonTelemetryUseCase();
 
     // Initial fetch
     useCase.execute().then(setTelemetry);

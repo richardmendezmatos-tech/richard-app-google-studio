@@ -7,7 +7,7 @@ import { DI } from '@/app/di/registry';
 export const leadService = {
   async fetchLeads(dealerId: string) {
     try {
-      const useCase = DI.getGetLeadsUseCase();
+      const useCase = DI.getLeadsUseCase();
       return await useCase.execute(dealerId);
     } catch (error) {
       console.error('[leadService.fetchLeads] Error:', error);

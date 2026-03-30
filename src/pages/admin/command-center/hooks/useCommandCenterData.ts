@@ -7,7 +7,7 @@ export const useCommandCenterData = (dealerId: string) => {
     queryKey: ['leads', dealerId],
     queryFn: async () => {
       if (!dealerId) return [];
-      const useCase = DI.getGetLeadsUseCase();
+      const useCase = DI.getLeadsUseCase();
       return useCase.execute(dealerId);
     },
     staleTime: 1000 * 60 * 5, // 5 minutes cache

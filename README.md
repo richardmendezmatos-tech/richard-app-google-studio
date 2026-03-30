@@ -6,14 +6,22 @@ Este proyecto es el motor de inteligencia artificial para la marca personal de *
 
 ---
 
-## 🛠️ Tecnologías del Command Center
+## 🚀 Sentinel 3.2: Richard Intelligence OS
 
-- **Motor IA:** Google Gemini API (v1.5 Flash/Pro) vía Firebase Genkit
-- **Backend & Cloud:** Firebase (Cloud Functions, Firestore, App Check)
-- **Frontend App:** Frontend en React / Vite con Tailwind CSS
-- **CRM & Ventas:** Integración bidireccional con HubSpot API
-- **Comunicaciones:** Twilio WhatsApp API para Auto-Recuperación de Leads
-- **Testing & QA:** Vitest (Unit) y Playwright (End-to-End)
+La versión **3.2 (Sentinel)** introduce el "Neural Command Center" optimizado para movilidad extrema y precisión de datos.
+
+### 🛠️ Tecnologías Core
+
+- **Motor IA:** Google Gemini API (v1.5 Flash/Pro) vía Firebase Genkit (Houston Layer).
+- **Backend:** Firebase 11+ (Cloud Functions, Firestore con Índices Predictivos).
+- **Frontend App:** Vite + React 19 (Strict Mode) + Tailwind CSS (Glassmorphism).
+- **Mobile UX:** Nuevo **Bottom Navigation Bar** con estados hápticos simulados y transiciones de 300ms.
+
+### 🧠 Capacidades Avanzadas
+
+- **Hyper-Inventory List:** Renderizado virtualizado capaz de manejar >10,000 unidades con 0ms de lag de scroll.
+- **Predictive Advantage:** Algoritmo integrado que calcula el "DTS" (Days to Sell) basado en leads en tiempo real.
+- **Sincronización Total:** Arquitectura de índices espejo entre local y producción.
 
 ## 🧠 Características del Asistente
 

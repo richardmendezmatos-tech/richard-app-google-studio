@@ -114,7 +114,7 @@ export const syncInventory = (callback: (inventory: InventoryRecord[]) => void) 
 export const getInventoryOnce = async (): Promise<Car[]> => {
   const dealerId =
     (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  return await DI.getGetInventoryUseCase().execute(dealerId);
+  return await DI.getInventoryUseCase().execute(dealerId);
 };
 
 export const submitApplication = async (data: Record<string, unknown>) => {
@@ -149,7 +149,7 @@ export const syncLeads = (callback: (leads: LeadRecord[]) => void) => {
 export const getLeadsOnce = async (): Promise<Lead[]> => {
   const dealerId =
     (isBrowser ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  return await DI.getGetLeadsUseCase().execute(dealerId, 200);
+  return await DI.getLeadsUseCase().execute(dealerId, 200);
 };
 
 export const updateLeadStatus = async (leadId: string, newStatus: string) => {

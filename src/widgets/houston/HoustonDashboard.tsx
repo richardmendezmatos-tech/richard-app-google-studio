@@ -71,7 +71,7 @@ const HoustonDashboard: React.FC = () => {
     }));
   }, []);
 
-  const getHoustonTelemetry = useMemo(() => DI.getGetHoustonTelemetryUseCase(), []);
+  const getHoustonTelemetry = useMemo(() => DI.getHoustonTelemetryUseCase(), []);
   const identifyOutreachOpportunities = useMemo(
     () => DI.getIdentifyOutreachOpportunitiesUseCase(),
     [],

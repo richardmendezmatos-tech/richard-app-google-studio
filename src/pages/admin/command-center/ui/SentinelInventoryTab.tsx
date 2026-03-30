@@ -57,6 +57,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   const searchInputRef = React.useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = React.useState<'todo' | 'premium' | 'oportunidad' | 'baja'>('todo');
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
 
   React.useEffect(() => {
     searchInputRef.current?.focus();

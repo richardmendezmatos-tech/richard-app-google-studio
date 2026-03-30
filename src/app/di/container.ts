@@ -33,9 +33,9 @@ class DIContainer {
   // Services
 
   // Use Cases
-  private getLeadsUseCase = new GetLeads(this.leadRepository);
-  private getInventoryUseCase = new GetInventory(this.inventoryRepository);
-  private getHoustonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
+  private leadsUseCase = new GetLeads(this.leadRepository);
+  private inventoryUseCase = new GetInventory(this.inventoryRepository);
+  private houstonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
   private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(
     this.predictiveRepository,
     this.leadRepository,
@@ -52,12 +52,12 @@ class DIContainer {
     return DIContainer.instance;
   }
 
-  public getGetLeadsUseCase(): GetLeads {
-    return this.getLeadsUseCase;
+  public getLeadsUseCase(): GetLeads {
+    return this.leadsUseCase;
   }
 
-  public getGetInventoryUseCase(): GetInventory {
-    return this.getInventoryUseCase;
+  public getInventoryUseCase(): GetInventory {
+    return this.inventoryUseCase;
   }
 
   public getLeadRepository() {
@@ -84,8 +84,8 @@ class DIContainer {
     return this.surveyRepository;
   }
 
-  public getGetHoustonTelemetryUseCase(): GetHoustonTelemetry {
-    return this.getHoustonTelemetryUseCase;
+  public getHoustonTelemetryUseCase(): GetHoustonTelemetry {
+    return this.houstonTelemetryUseCase;
   }
 
   public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {
@@ -113,15 +113,15 @@ export const container = DIContainer.getInstance();
 
 // Hydrate static registry for FSD compliance
 // Note: Manual assignment since class methods are not enumerable in Object.assign
-DI.getLeadsUseCase = container.getGetLeadsUseCase.bind(container);
-DI.getInventoryUseCase = container.getGetInventoryUseCase.bind(container);
+DI.getLeadsUseCase = container.getLeadsUseCase.bind(container);
+DI.getInventoryUseCase = container.getInventoryUseCase.bind(container);
 DI.getLeadRepository = container.getLeadRepository.bind(container);
 DI.getApplicationRepository = container.getApplicationRepository.bind(container);
 DI.getStorageRepository = container.getStorageRepository.bind(container);
 DI.getUserRepository = container.getUserRepository.bind(container);
 DI.getSubscriberRepository = container.getSubscriberRepository.bind(container);
 DI.getSurveyRepository = container.getSurveyRepository.bind(container);
-DI.getHoustonTelemetryUseCase = container.getGetHoustonTelemetryUseCase.bind(container);
+DI.getHoustonTelemetryUseCase = container.getHoustonTelemetryUseCase.bind(container);
 DI.getIdentifyOutreachOpportunitiesUseCase = container.getIdentifyOutreachOpportunitiesUseCase.bind(container);
 DI.getCalculateDynamicMarginUseCase = container.getCalculateDynamicMarginUseCase.bind(container);
 DI.getPredictiveRepository = container.getPredictiveRepository.bind(container);
