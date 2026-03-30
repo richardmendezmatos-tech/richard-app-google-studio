@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Sparkles, Wand2, Download, Video, Music, Mic } from 'lucide-react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 
 interface VideoScript {
   hook: string;

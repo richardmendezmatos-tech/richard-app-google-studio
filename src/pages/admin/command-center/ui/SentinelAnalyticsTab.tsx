@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Zap, Activity, DollarSign } from 'lucide-react';
-import { Car, Lead } from '@/entities/shared';
+import { Car, Lead } from '@/entities/lead';
 import { InventoryHeatmap } from '@/features/inventory';
 import { LeadSourceChart } from './LeadSourceChart';
 import { ConversionFunnel } from './ConversionFunnel';

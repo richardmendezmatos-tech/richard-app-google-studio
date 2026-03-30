@@ -48,7 +48,7 @@ import {
 import { automationService } from '@/features/automation/api/automationService';
 import { decryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
-import { maskEmail, maskPhone, maskName, UserRole } from '@/shared/lib/utils/privacyUtils';
+import { maskEmail, maskPhone, maskName } from '@/shared/lib/utils/privacyUtils';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { useLeadScoring } from '@/features/leads';
 import { useVehicleHealth } from '@/shared/api/metrics/telemetryService';

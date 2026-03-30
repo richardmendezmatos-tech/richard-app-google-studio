@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Lead, Car } from '@/shared/types/types';
 import { generateSmartDealSheet, DealSheetData } from '../model/dealSheetService';
-import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { getPaginatedCars } from '@/entities/lead/api/adapters/inventoryService';
 
 interface SmartDealSheetModalProps {
   lead: Lead | null;

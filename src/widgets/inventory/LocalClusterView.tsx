@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CarType } from '@/shared/types/types';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import SEO from '@/shared/ui/seo/SEO';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';

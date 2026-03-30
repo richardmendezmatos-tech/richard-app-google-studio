@@ -13,7 +13,7 @@ import {
   Radio,
 } from 'lucide-react';
 import { DI } from '@/app/di/registry';
-import { HoustonTelemetry } from '@/entities/shared';
+import { HoustonTelemetry } from '@/entities/houston';
 
 export const HoustonTelemetryTab: React.FC = () => {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);

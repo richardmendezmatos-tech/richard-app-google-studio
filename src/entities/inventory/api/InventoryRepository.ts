@@ -1,4 +1,4 @@
-import { Car } from '../../model/entities';
+import { Car } from '@/entities/inventory';
 
 export interface InventoryRepository {
   getInventory(dealerId: string, limit: number): Promise<Car[]>;

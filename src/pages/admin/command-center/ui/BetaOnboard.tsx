@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';
 import { CarType } from '@/shared/types/types';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

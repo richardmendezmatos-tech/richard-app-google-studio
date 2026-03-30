@@ -1,6 +1,6 @@
-import { Lead, PredictiveInsight } from '@/entities/shared';
-import { PredictiveRepository } from '@/entities/shared';
-import { LeadRepository } from '@/entities/shared';
+import { Lead, PredictiveInsight } from '@/entities/lead';
+import { PredictiveRepository } from '@/entities/lead';
+import { LeadRepository } from '@/entities/lead';
 
 export interface ScoringEngine {
   compute(lead: Lead): Promise<PredictiveInsight>;

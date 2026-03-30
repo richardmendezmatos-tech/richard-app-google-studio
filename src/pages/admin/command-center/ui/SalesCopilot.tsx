@@ -39,7 +39,7 @@ const SalesCopilot: React.FC = () => {
       id: '1',
       role: 'agent',
       content:
-        '¡Hola! Soy tu asistente de F&I de Plenitud 🌟. Estoy aquí para ayudarte a estructurar el mejor financiamiento posible para nuestros clientes de la Comunidad Silver con toda la tranquilidad que merecen. ¿Con quién tengo el gusto de trabajar hoy y qué vehículo les interesa?',
+        '¡Hola! Soy tu asistente de F&I de Richard Automotive 🏎️. Estoy aquí para ayudarte a estructurar el mejor financiamiento posible para nuestros clientes exclusivos con la precisión y autoridad que nos distingue. ¿Con quién tengo el gusto de trabajar hoy y qué vehículo de nuestra flota de lujo les interesa?',
     },
   ]);
   const [inputMessage, setInputMessage] = useState('');

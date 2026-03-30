@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car as CarType, Lead } from '@/entities/shared';
+import { Car as CarType, Lead } from '@/entities/lead';
 import {
   Plus,
   Package,
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
-import { calculatePredictiveDTS } from '@/entities/car';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';
 import { useCommandCenterData } from '../hooks/useCommandCenterData';

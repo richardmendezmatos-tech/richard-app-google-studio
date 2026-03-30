@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 
 interface ComparisonState {
   selectedCars: Car[];

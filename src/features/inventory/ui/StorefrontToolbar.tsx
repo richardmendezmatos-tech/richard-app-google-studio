@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, BrainCircuit, Camera, ArrowUpDown, Sparkles, Heart } from 'lucide-react';
-import { CarType } from '@/entities/shared';
+import { CarType } from '@/entities/inventory';
 
 interface Props {
   state: any;

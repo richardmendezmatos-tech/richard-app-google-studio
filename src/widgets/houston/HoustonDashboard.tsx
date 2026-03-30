@@ -52,7 +52,7 @@ import {
   Car as CarIcon
 } from 'lucide-react';
 import { DI } from '@/app/di/registry';
-import { HoustonTelemetry, OutreachOpportunity } from '@/entities/shared';
+import { HoustonTelemetry, OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 
 /**

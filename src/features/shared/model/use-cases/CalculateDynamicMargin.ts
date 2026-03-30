@@ -1,4 +1,5 @@
-import { Lead, Car, MarginAdjustment } from '@/entities/shared';
+import { Lead, MarginAdjustment } from '@/entities/lead';
+import { Car } from '@/entities/lead';
 import { MARGIN_RULES } from '@/entities/sales';
 
 export class CalculateDynamicMargin {

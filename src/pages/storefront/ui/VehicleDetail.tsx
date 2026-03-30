@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 // Feature FSD imports
 import { useSavedCarIds, useToggleSavedCar } from '@/features/garage/hooks/useGarage';
 import { analyzeGarageSelection } from '@/shared/api/ai';
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import CarCard from '@/entities/inventory/ui/CarCard';
 import { PhotoAppraisal } from '@/features/garage';
-import { useAppraisals } from '@/features/garage/hooks/useAppraisals';
+import { useAppraisals } from '@/entities/appraisal';
 import { useApplications } from '@/features/garage/hooks/useApplications';
 import DOMPurify from 'dompurify';
 import { SkeletonCarCard } from '@/shared/ui/loaders/SkeletonCarCard';
@@ -358,7 +358,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                     </div>
                     <div className="mt-4 pt-4 border-t border-white/5">
                        <p className="text-[9px] text-slate-500 uppercase leading-relaxed">
-                          Tu perfil está certificado nivel **Silver**. Incrementa tu score completando inspecciones físicas en el Bunker.
+                          Tu perfil está certificado nivel **Titanium**. Incrementa tu score completando inspecciones físicas en nuestro Performance Center.
                        </p>
                     </div>
                  </div>

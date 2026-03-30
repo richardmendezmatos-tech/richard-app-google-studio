@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';

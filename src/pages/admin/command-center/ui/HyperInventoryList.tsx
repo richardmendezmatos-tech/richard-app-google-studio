@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Car, Lead } from '@/entities/shared';
+import { Car, Lead } from '@/entities/lead';
 import InventoryRow from './InventoryRow';
 
 interface HyperInventoryListProps {

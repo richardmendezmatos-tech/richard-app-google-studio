@@ -1,4 +1,4 @@
-import { Lead, PredictiveInsight } from '@/entities/shared';
+import { Lead, PredictiveInsight } from '@/entities/lead';
 import { ScoringEngine } from '@/features/shared';
 
 export class PredictiveScoringEngine implements ScoringEngine {

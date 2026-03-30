@@ -1,4 +1,5 @@
-import { Lead, Car } from '../../model/entities';
+import { Lead } from '@/entities/lead';
+import { Car } from '@/entities/lead';
 
 export class AnalyticsService {
   /**
@@ -41,7 +42,7 @@ export class AnalyticsService {
 
     return categories
       .map((cat) => {
-        const units = inventory.filter((c) => c.type === cat);
+        const units = inventory.filter((c) => c.type === carTypeMap[cat] || c.type === cat);
         const totalCost = units.reduce((sum, car) => sum + car.price * 0.8, 0);
         const totalMargin = units.reduce((sum, car) => sum + car.price * 0.2, 0);
 
@@ -54,3 +55,10 @@ export class AnalyticsService {
       .filter((d) => d.Costo > 0);
   }
 }
+
+const carTypeMap: Record<string, string> = {
+  suv: 'SUV',
+  sedan: 'Sedán',
+  luxury: 'Lujo',
+  pickup: 'Pickup',
+};

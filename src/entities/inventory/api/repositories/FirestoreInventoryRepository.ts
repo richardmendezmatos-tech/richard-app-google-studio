@@ -1,7 +1,7 @@
 import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
-import { InventoryRepository } from '@/entities/shared/api/repositories/InventoryRepository';
-import { Car } from '@/entities/shared';
+import { InventoryRepository } from '@/entities/inventory';
+import { Car } from '@/entities/inventory';
 
 export class FirestoreInventoryRepository implements InventoryRepository {
   private collectionName = 'cars';

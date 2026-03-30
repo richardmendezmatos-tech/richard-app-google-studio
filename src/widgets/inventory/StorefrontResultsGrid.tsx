@@ -1,6 +1,6 @@
 import React from 'react';
 import { DatabaseZap, Loader2, Wrench, Heart, Sparkles } from 'lucide-react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import VirtualInventory from '@/widgets/inventory/VirtualInventory';
 
 interface StorefrontResultsGridProps {

@@ -1,4 +1,4 @@
-import { HoustonTelemetry } from '../../model/entities';
+import { HoustonTelemetry } from '../model/types';
 
 export interface HoustonRepository {
   getTelemetry(): Promise<HoustonTelemetry>;

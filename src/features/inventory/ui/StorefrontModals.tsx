@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
 import CarDetailModal from './CarDetailModal';

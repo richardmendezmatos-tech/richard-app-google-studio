@@ -1,5 +1,5 @@
-import { HoustonRepository } from '@/entities/shared';
-import { HoustonTelemetry } from '@/entities/shared';
+import { HoustonRepository } from '@/entities/houston';
+import { HoustonTelemetry } from '@/entities/houston';
 
 export class GetHoustonTelemetry {
   constructor(private houstonRepo: HoustonRepository) {}

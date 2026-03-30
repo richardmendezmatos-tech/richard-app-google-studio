@@ -4,7 +4,7 @@ import {
   updateVehicle,
   deleteVehicle,
 } from '@/entities/inventory/api/adapters/inventoryService';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 
 export const useCarMutations = () => {
   const queryClient = useQueryClient();

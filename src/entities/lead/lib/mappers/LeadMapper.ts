@@ -1,4 +1,4 @@
-import { Lead } from '@/entities/shared';
+import { Lead } from '@/entities/lead';
 
 export class LeadMapper {
   /**

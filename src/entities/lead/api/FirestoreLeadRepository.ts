@@ -11,8 +11,8 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
-import { LeadRepository } from '@/entities/shared';
-import { Lead } from '@/entities/shared';
+import { LeadRepository } from '@/entities/lead';
+import { Lead } from '@/entities/lead';
 import { LeadMapper } from '@/entities/lead/lib/mappers/LeadMapper';
 import { leadSchema } from '@/entities/lead/lib/schemas/leadSchema';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';

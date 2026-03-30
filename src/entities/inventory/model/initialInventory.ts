@@ -1,4 +1,4 @@
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 
 export const initialInventoryData: Omit<Car, 'id'>[] = [
   {

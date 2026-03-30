@@ -1,5 +1,5 @@
-import { LeadRepository } from '@/entities/shared';
-import { Lead } from '@/entities/shared';
+import { LeadRepository } from '@/entities/lead';
+import { Lead } from '@/entities/lead';
 
 export class GetLeads {
   constructor(private leadRepo: LeadRepository) {}

@@ -1,4 +1,5 @@
-import { Lead, Car } from '@/shared/types/types';
+import { Car } from '@/entities/lead';
+import { Lead } from '@/entities/lead';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
 export interface DealSheetData {

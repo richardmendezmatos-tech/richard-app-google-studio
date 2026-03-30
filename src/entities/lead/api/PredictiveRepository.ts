@@ -1,4 +1,4 @@
-import { Lead, PredictiveInsight } from '../../model/entities';
+import { Lead, PredictiveInsight } from '../model/types';
 
 export interface PredictiveRepository {
   getPredictiveInsight(leadId: string): Promise<PredictiveInsight | null>;

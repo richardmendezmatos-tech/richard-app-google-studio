@@ -1,4 +1,4 @@
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 
 /**
  * Convierte un texto en un slug amigable para SEO.

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import SEO from '@/shared/ui/seo/SEO';
 import { Sparkles, ChevronLeft } from 'lucide-react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';

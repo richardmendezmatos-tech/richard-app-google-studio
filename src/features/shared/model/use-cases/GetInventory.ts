@@ -1,5 +1,5 @@
-import { InventoryRepository } from '@/entities/shared';
-import { Car } from '@/entities/shared';
+import { InventoryRepository } from '@/entities/inventory';
+import { Car } from '@/entities/inventory';
 
 export class GetInventory {
   constructor(private inventoryRepo: InventoryRepository) {}

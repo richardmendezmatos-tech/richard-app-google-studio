@@ -9,7 +9,7 @@ export interface SentinelMetric {
 
 /**
  * Servicio raSentinel: El Vigía del Richard Automotive Command Center.
- * Encargado de la proactividad: pasar del modelo de "pago por siniestro" al de "prevención de incidentes operativos".
+ * Optimización de Cierre: Monitoreo en tiempo real de la viabilidad del negocio y maximización del ROI.
  */
 export class RaSentinelService {
   private readonly metricsCollection = 'raSentinel_metrics';

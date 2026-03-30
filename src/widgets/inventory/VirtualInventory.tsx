@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
 
 interface VirtualInventoryProps {

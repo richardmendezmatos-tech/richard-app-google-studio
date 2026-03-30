@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-
 import { ShieldAlert } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
 import { motion, AnimatePresence } from 'motion/react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/lead';
 
 // --- Lazy Imports ---
 interface StorefrontProps {
@@ -116,8 +116,8 @@ const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/pages/storefront/
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
 ) as unknown as React.ComponentType<any>;
-import { uploadInitialInventory } from '@/entities/inventory/api/adapters/inventoryService';
-import { initialInventoryData } from '@/entities/inventory';
+import { uploadInitialInventory } from '@/entities/lead/api/adapters/inventoryService';
+import { initialInventoryData } from '@/entities/lead';
 import { lazyRetry } from '@/shared/lib/utils/lazyRetry';
 
 // --- Guards ---

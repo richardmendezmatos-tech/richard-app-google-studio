@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { calculateNeuralMatch, analyzeCarImage } from '@/shared/api/ai/geminiService';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 

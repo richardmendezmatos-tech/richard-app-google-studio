@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 
 interface StorefrontComparisonBarProps {

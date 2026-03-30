@@ -2,7 +2,7 @@ import React from 'react';
 import { Car as CarType } from '@/shared/types/types';
 import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
-import { calculatePredictiveDTS } from '@/entities/car';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 
 interface AdminCarCardProps {

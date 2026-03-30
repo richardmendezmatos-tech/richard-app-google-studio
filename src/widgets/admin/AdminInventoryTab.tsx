@@ -15,7 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
-import { calculatePredictiveDTS } from '@/entities/car';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AdminCarCard } from './AdminCarCard';
 import HyperInventoryList from './HyperInventoryList';
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Car as CarType } from '@/entities/shared';
+import { Car as CarType } from '@/entities/inventory';
 import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
-import { calculatePredictiveDTS } from '@/entities/car';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 
 interface CommandCenterCarCardProps {

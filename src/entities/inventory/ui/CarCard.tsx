@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
-import { calculatePredictiveDTS } from '@/entities/car';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 import { calculateMonthlyPayment, calculateSuggestedPronto } from '@/shared/lib/utils/financing';
 
 interface CarCardProps {

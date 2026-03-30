@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { analyzeCarVisuals, VisualSearchResult, findMatches } from '@/shared/api/ai/aiService';
-import { Car } from '@/entities/shared';
+import { Car } from '@/entities/inventory';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 
 export const useVisualSearch = (inventory: Car[]) => {

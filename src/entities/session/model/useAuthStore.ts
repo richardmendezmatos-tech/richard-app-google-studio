@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { AppUser, UserRole } from '@/entities/shared';
+import { persist } from 'zustand/middleware';
+import { AppUser, UserRole } from '@/shared/types/types';
 
 interface AuthState {
   user: AppUser | null;

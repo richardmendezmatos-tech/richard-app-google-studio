@@ -1,4 +1,4 @@
-import { Lead } from '../../model/entities';
+import { Lead } from '../model/types';
 
 export interface LeadRepository {
   getLeads(dealerId: string, limitCount: number): Promise<Lead[]>;

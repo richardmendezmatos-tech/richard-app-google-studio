@@ -9,8 +9,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Car as CarType } from '@/entities/shared';
-import { AnalyticsService } from '@/entities/shared';
+import { Car as CarType } from '@/shared/lib/analytics/AnalyticsService';
+import { AnalyticsService } from '@/shared/lib/analytics/AnalyticsService';
 
 interface Props {
   inventory: CarType[];

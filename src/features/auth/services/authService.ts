@@ -14,7 +14,7 @@ import {
   User,
 } from 'firebase/auth';
 import { DI } from '@/app/di/registry';
-import { UserRole, AppUser } from '@/entities/shared';
+import { UserRole, AppUser } from '@/shared/lib/analytics/AnalyticsService';
 import { auth, getAnalyticsService } from '@/shared/api/firebase/firebaseService';
 
 // --- Types & Constants ---

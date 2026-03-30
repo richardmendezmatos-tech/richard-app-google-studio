@@ -9,8 +9,8 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { Lead } from '@/entities/shared';
-import { AnalyticsService } from '@/entities/shared';
+import { Lead } from '@/entities/lead';
+import { AnalyticsService } from '@/entities/lead';
 
 interface Props {
   leads: Lead[];

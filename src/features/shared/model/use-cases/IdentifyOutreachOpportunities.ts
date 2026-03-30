@@ -1,6 +1,6 @@
-import { Lead, OutreachOpportunity } from '@/entities/shared';
-import { PredictiveRepository } from '@/entities/shared';
-import { LeadRepository } from '@/entities/shared';
+import { Lead, OutreachOpportunity } from '@/entities/lead';
+import { PredictiveRepository } from '@/entities/lead';
+import { LeadRepository } from '@/entities/lead';
 
 /**
  * Audit RA-SENTINEL: Performance & Pattern Standards

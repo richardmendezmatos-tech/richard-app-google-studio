@@ -26,7 +26,7 @@ export const verifyGoogleToken = functions.https.onRequest((req, res) => {
         }
 
         try {
-            // "Senior" Step: Verify the token
+            // Core Integrity Step: Verify the token
             const ticket = await client.verifyIdToken({
                 idToken: credential,
                 audience: process.env.GOOGLE_CLIENT_ID, // Specify Client ID to prevent "confused deputy" attacks

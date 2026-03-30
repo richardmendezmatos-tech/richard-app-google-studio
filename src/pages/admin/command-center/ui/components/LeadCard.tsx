@@ -22,7 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lead, getSecureLeadData } from '@/shared/api/adapters/leads/crmService';
 import { decryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
-import { maskName, UserRole } from '@/shared/lib/utils/privacyUtils';
+import { maskName } from '@/shared/lib/utils/privacyUtils';
 import { useLeadScoring } from '@/features/leads';
 import { useVehicleHealth } from '@/shared/api/metrics/telemetryService';
 import * as whatsappService from '@/features/leads/model/whatsappService';

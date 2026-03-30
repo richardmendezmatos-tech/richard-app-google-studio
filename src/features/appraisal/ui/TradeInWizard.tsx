@@ -13,7 +13,7 @@ import {
   Sparkles,
   Loader2
 } from 'lucide-react';
-import { useSaveAppraisal } from '@/features/garage/hooks/useAppraisals';
+import { useSaveAppraisal } from '@/entities/appraisal';
 import { Appraisal } from '@/shared/types/types';
 import { v4 as uuidv4 } from 'uuid';
 

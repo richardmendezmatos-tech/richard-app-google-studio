@@ -38,7 +38,7 @@ export class ProcesarTradeInFinanciado {
     // 2. Determinar Monto a Financiar
     const montoAFinanciar = precioUnidadNueva - equidadTradeIn - prontoCash;
 
-    // 3. Determinar APR sugerido (Alineado con Elegibilidad de Plenitud)
+    // 3. Determinar APR sugerido (Basado en Score de Crédito)
     let apr = REGLAS_FINANCIAMIENTO.TASA_INTERES_MINIMA;
     if (creditScore < REGLAS_FINANCIAMIENTO.PUNTUACION_CREDITO_ELITE) apr = 8.95;
     if (creditScore < 680) apr = 12.5;
@@ -54,7 +54,7 @@ export class ProcesarTradeInFinanciado {
         (Math.pow(1 + tasaMensual, terminoMeses) - 1);
     }
 
-    // Integración con raSentinel para Operational Score e IFF (Fire & Forget para latencia cero)
+    // Integración con raSentinel para Operational Score (Fire & Forget para latencia cero)
     const operationalScore = raSentinel.calculateBusinessHealthScore('trade_in_calculation', {
       montoAFinanciar,
       creditScore,

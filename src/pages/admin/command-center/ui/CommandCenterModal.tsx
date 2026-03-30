@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
-import { Car, CarType } from '@/entities/shared';
+import { Car, CarType } from '@/entities/inventory';
 import { useDealer } from '@/entities/dealer';
 import { ImageUploader, type UploadResult } from './ImageUploader';
 import { blobToBase64 } from '@/shared/api/media/imageOptimizationService';

@@ -1,4 +1,9 @@
-export type CarType = 'suv' | 'sedan' | 'luxury' | 'pickup';
+import { Lead } from '@/entities/lead';
+import { Car, CarType } from '@/entities/inventory';
+import { Appraisal } from '@/entities/appraisal';
+import { FirestoreTimestamp } from './firestore';
+
+export type { Lead, Car, CarType, Appraisal, FirestoreTimestamp };
 
 export type UserRole = 'admin' | 'user';
 
@@ -19,31 +24,6 @@ export interface AppUser {
   role?: UserRole;
   privacySettings?: PrivacySettings;
   [key: string]: unknown;
-}
-
-export interface Car {
-  id: string;
-  name: string;
-  price: number;
-  type: CarType;
-  badge?: string;
-  img: string;
-  webpSrc?: string;
-  blurPlaceholder?: string;
-  images?: string[];
-  year?: number;
-  make?: string;
-  model?: string;
-  mileage?: number;
-  featured?: boolean;
-  description?: string;
-  features?: string[];
-  // Analytics
-  views?: number;
-  leads_count?: number;
-  dealerId?: string;
-  createdAt?: FirestoreTimestamp | Date | number;
-  seoFaqs?: { question: string; answer: string }[];
 }
 
 export enum ViewMode {
@@ -99,148 +79,12 @@ export interface BlogPost {
   metaDescription?: string;
 }
 
-export interface FirestoreTimestamp {
-  seconds: number;
-  nanoseconds: number;
-}
-
-export interface Lead {
-  id: string;
-  type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai' | 'chat' | 'finance' | 'general';
-  status: 'new' | 'contacted' | 'negotiation' | 'sold' | 'lost' | 'negotiating';
-  name?: string; // Legacy 'name' instead of firstName/lastName
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  ssn?: string;
-  ssn_encrypted?: string;
-  carId?: string;
-  notes?: string;
-  hasCreditApplication?: boolean;
-  hasPronto?: boolean;
-  dealerId?: string;
-  category?: string;
-  monthlyIncome?: number;
-  createdAt?: FirestoreTimestamp;
-  timestamp?: FirestoreTimestamp; // Support both for backward compatibility
-
-  // Context
-  vehicleOfInterest?: string; // Car Name
-  vehicleId?: string;
-  tradeInDetails?: string; // "2018 Toyota Camry"
-  tradeInPhotos?: string[]; // Array of photo URLs
-  message?: string; // Chat summary or initial message
-
-  // AI Metrics
-  aiScore?: number; // 0-100
-  aiSummary?: string; // "High intent, good credit"
-  aiAnalysis?: {
-    score: number;
-    category: string;
-    insights: string[];
-    nextAction: string;
-    reasoning: string;
-    unidad_interes: string;
-  };
-
-  // Automation Status
-  emailSent?: boolean;
-  nudgeSent?: boolean;
-  lastContacted?: FirestoreTimestamp;
-  chatInteractions?: number;
-  responded?: boolean;
-  documentsSent?: boolean;
-  dealClosed?: boolean;
-  appointmentCompleted?: boolean;
-
-  // Phase 21: Marketing Intelligence
-  acquisitionCost?: number; // In USD
-  source?: 'facebook' | 'google' | 'direct' | 'referral' | 'instagram' | string;
-  sourceCampaign?: string;
-
-  // Phase 22: Ad Predictive Capture
-  marketingData?: {
-    utm_source?: string;
-    utm_medium?: string;
-    utm_campaign?: string;
-    utm_term?: string;
-    utm_content?: string;
-    fbclid?: string;
-    gclid?: string;
-    fbp?: string;
-    fbc?: string;
-    sessionEntryTimestamp?: number;
-    landingPage?: string;
-  };
-
-  // Nivel 14: Predictive Scaling
-  predictiveScore?: number;
-  behavioralMetrics?: {
-    timeOnSite?: number;
-    inventoryViews?: number;
-    highValueInteractions?: number;
-    lastActive?: number;
-    intentTrajectory?: 'improving' | 'stable' | 'declining';
-  };
-
-  // Continuum Memory System (CMS) - Nested Learning
-  customerMemory?: {
-    l1_reactive?: {
-      lastClick?: string;
-      currentTopic?: string;
-      activeContext: boolean;
-    };
-    l2_contextual?: {
-      interestPatterns: string[];
-      intentScore: number;
-      detectedPreferences: Record<string, string>;
-    };
-    l3_evolutivo?: {
-      lifecycleStage: 'discovery' | 'consideration' | 'decision' | 'trade-in' | 'loyal';
-      historicalInsights: string[];
-      nextMilestone?: string;
-    };
-    // Legacy support
-    preferences?: {
-      models?: string[];
-      colors?: string[];
-      features?: string[];
-      budgetRange?: string;
-    };
-    objections?: string[];
-    lifestyle?: string;
-    lastInteractionSummary?: string;
-    historicalContext?: string[];
-  };
-}
+// Lead types moved to @/entities/lead
 
 export interface Subscriber {
   id?: string;
   email: string;
   timestamp?: FirestoreTimestamp | { seconds: number };
-}
-
-export interface Appraisal {
-  id: string;
-  date: string;
-  vehicle: {
-    make: string;
-    model: string;
-    year: number;
-    mileage: number;
-    vin?: string;
-  };
-  condition: {
-    overall: 'excellent' | 'good' | 'fair' | 'poor';
-    details: string[];
-  };
-  value: {
-    estimated: number;
-    currency: string;
-    validUntil: string; // ISO string
-  };
-  status: 'valid' | 'expired' | 'certified';
 }
 
 export interface FinancialApplication {

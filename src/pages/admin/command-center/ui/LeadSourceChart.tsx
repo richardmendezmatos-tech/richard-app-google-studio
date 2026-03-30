@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Lead } from '@/entities/shared';
-import { AnalyticsService } from '@/entities/shared';
+import { Lead } from '@/entities/lead';
+import { AnalyticsService } from '@/entities/lead';
 
 interface Props {
   leads: Lead[];
