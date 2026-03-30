@@ -2,7 +2,7 @@
  * Strategic CEO Engine: Predictive Sales Analytics (DTS Engine)
  * Heuristic based on price deviation, feature density, vehicle age, mileage and lead momentum.
  */
-import { Car } from '@/entities/lead';
+import { Car } from '../model/types';
 
 export interface PredictionResult {
   daysToSale: number;

@@ -4,8 +4,8 @@ import { getAIResponse } from '@/shared/api/ai';
 import { AI_LEGAL_DISCLAIMER } from '@/shared/api/firebase/firebaseShared';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { sendWhatsAppMessage } from '@/features/leads';
-import { getPaginatedCars } from '@/entities/lead/api/adapters/inventoryService';
-import { Car, Lead } from '@/entities/lead';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 
 type ChatMessage = {
   role: 'user' | 'bot';

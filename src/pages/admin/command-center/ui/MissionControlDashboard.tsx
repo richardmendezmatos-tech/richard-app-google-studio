@@ -14,7 +14,7 @@ import {
   Radio,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Car, Lead } from '@/entities/lead';
+import { Car } from '@/entities/inventory';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { NeuralInsightsHeadlines } from './components/NeuralInsightsHeadlines';
 

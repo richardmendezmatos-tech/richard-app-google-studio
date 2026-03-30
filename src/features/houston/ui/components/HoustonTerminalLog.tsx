@@ -16,7 +16,7 @@ export const HoustonTerminalLog: React.FC = () => {
       'Syncing with Google Studio Brain...',
       'Analyzing market trends in Houston...',
       'Predictive model: Toyota Tacoma demand +15%',
-      'Sentinel status: Monitoring dealer traffic...',
+      'RA Sentinel: Monitoring dealer traffic...',
       'RA Intelligence: Strategy Lab active.',
     ];
 

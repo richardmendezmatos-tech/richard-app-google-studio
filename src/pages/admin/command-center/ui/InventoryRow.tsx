@@ -1,5 +1,5 @@
 import React from 'react';
-import { Car, Lead } from '@/entities/lead';
+import { Car } from '@/entities/inventory';
 import { Sparkles, Edit3, Trash2, Clock } from 'lucide-react';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';

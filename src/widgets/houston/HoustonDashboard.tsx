@@ -52,7 +52,8 @@ import {
   Car as CarIcon
 } from 'lucide-react';
 import { DI } from '@/app/di/registry';
-import { HoustonTelemetry, OutreachOpportunity } from '@/entities/lead';
+import { HoustonTelemetry } from '@/entities/houston';
+import { OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 
 /**
@@ -160,7 +161,7 @@ const HoustonDashboard: React.FC = () => {
             />
             Houston
             <span className="text-cyan-500 text-xl font-mono tracking-[0.5em] ml-4 opacity-70 group-hover:opacity-100 transition-opacity">
-              SENTINEL
+              RA SENTINEL
             </span>
           </h1>
           <div className="flex items-center gap-8 text-[11px] text-slate-500 uppercase tracking-[0.2em] font-black">

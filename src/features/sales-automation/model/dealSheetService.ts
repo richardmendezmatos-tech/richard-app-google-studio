@@ -1,4 +1,4 @@
-import { Car } from '@/entities/lead';
+import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 

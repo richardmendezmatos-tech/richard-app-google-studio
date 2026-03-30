@@ -1,5 +1,6 @@
 import React from 'react';
-import { Car as CarType, Lead } from '@/entities/lead';
+import { Car, calculatePredictiveDTS } from '@/entities/inventory';
+import { Lead } from '@/entities/lead';
 import {
   Plus,
   Package,
@@ -20,7 +21,7 @@ import {
 } from 'lucide-react';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
-import { calculatePredictiveDTS } from '@/entities/inventory';
+import { InventoryHeatmap } from '@/features/inventory';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';
 import { useCommandCenterData } from '../hooks/useCommandCenterData';
@@ -30,8 +31,8 @@ import { useCars } from '@/features/inventory';
 interface AdminInventoryTabProps {
   onDelete: (id: string) => void;
   onCreateNew: () => void;
-  onEdit: (car: CarType) => void;
-  onPlanContent: (car: CarType) => void;
+  onEdit: (car: Car) => void;
+  onPlanContent: (car: Car) => void;
   onInitializeDb?: () => Promise<void>;
   handleInitClick: () => void;
   isInitializing: boolean;

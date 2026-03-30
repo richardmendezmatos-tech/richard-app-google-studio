@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { useNavigate, Outlet } from 'react-router-dom';
-import { Car, Lead } from '@/entities/lead';
+import { Car } from '@/entities/inventory';
 import { Subscriber } from '@/shared/types/types';
 import { ShieldCheck, Plus, DatabaseZap, User as UserIcon, Radio, Zap, Scale } from 'lucide-react';
 import { auth } from '@/shared/api/firebase/firebaseService';
