@@ -6,8 +6,8 @@ import { jsPDF } from 'jspdf';
  * Diseñado para crear los "Bill of Sale" inmutables a partir de renderizados del Command Center.
  */
 export const generatePDFFromDOM = async (
-  elementId: string, 
-  filename: string = 'Documento_RichardAutomotive.pdf'
+  elementId: string,
+  filename: string = 'Documento_RichardAutomotive.pdf',
 ): Promise<void> => {
   const element = document.getElementById(elementId);
   if (!element) {

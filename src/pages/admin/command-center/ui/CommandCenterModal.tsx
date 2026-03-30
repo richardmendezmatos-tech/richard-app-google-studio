@@ -109,7 +109,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
       const { functions } = await import('@/shared/api/firebase/client');
       const { httpsCallable } = await import('firebase/functions');
       const askGemini = httpsCallable<any, string>(functions, 'askGemini');
-      
+
       const response = await askGemini({
         contents,
         model: 'gemini-1.5-flash',

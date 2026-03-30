@@ -7,7 +7,10 @@ const CreditAppPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto mb-8">
-        <Link to="/" className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">
+        <Link
+          to="/"
+          className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+        >
           <ChevronLeft size={16} className="mr-1" /> Volver a la Vitrina
         </Link>
       </div>

@@ -45,7 +45,11 @@ const GenUICarCard: React.FC<Props> = ({ cars }) => {
                 <span className="text-blue-500 font-black text-sm">
                   ${car.price?.toLocaleString()}
                 </span>
-                <button aria-label={`Ver detalles de ${car.name}`} title={`Ver detalles de ${car.name}`} className="p-1.5 bg-slate-50 dark:bg-slate-700 rounded-full text-slate-400 group-hover:text-blue-500 transition-colors">
+                <button
+                  aria-label={`Ver detalles de ${car.name}`}
+                  title={`Ver detalles de ${car.name}`}
+                  className="p-1.5 bg-slate-50 dark:bg-slate-700 rounded-full text-slate-400 group-hover:text-blue-500 transition-colors"
+                >
                   <ExternalLink size={12} />
                 </button>
               </div>

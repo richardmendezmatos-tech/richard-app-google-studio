@@ -45,7 +45,7 @@ describe('Lead Zod Schema Validation', () => {
       name: 'Hacker',
       email: 'hacker@example.com',
       isAdmin: true, // Should be stripped
-      hiddenConfig: { dbUrl: '...' } // Should be stripped
+      hiddenConfig: { dbUrl: '...' }, // Should be stripped
     };
 
     const result = leadSchema.safeParse(maliciousLead);

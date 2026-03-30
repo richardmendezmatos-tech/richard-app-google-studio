@@ -158,7 +158,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* Trust pills */}
           <div className="ra-hero__pills">
-            <span className="ra-hero__pill" title="Todas nuestras unidades pasan por estrictos controles">
+            <span
+              className="ra-hero__pill"
+              title="Todas nuestras unidades pasan por estrictos controles"
+            >
               <Shield size={11} /> 100% Certified
             </span>
             <span className="ra-hero__pill" title="Decisiones rápidas para que no pierdas tiempo">
@@ -179,7 +182,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 <span className="ra-hero__panel-dot" />
                 <span>3 Especialistas Libres</span>
               </div>
-              <span className="ra-hero__panel-label text-orange-400 opacity-90">Atención Inmediata</span>
+              <span className="ra-hero__panel-label text-orange-400 opacity-90">
+                Atención Inmediata
+              </span>
             </div>
 
             {/* CTA buttons */}

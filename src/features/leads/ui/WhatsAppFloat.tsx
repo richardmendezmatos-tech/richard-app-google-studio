@@ -23,17 +23,23 @@ const INITIAL_MESSAGES: { text: string; sender: 'user' | 'bot' }[] = [
 type QuickAction = { icon: string; label: string; message: string };
 type VehicleContext = { id?: string; make?: string; model?: string; year?: string | number };
 
-const getContextActions = (pathname: string, vehicle?: VehicleContext | null, inventory: Car[] = []): QuickAction[] => {
+const getContextActions = (
+  pathname: string,
+  vehicle?: VehicleContext | null,
+  inventory: Car[] = [],
+): QuickAction[] => {
   let activeVehicle = vehicle;
   if (!activeVehicle && pathname.includes('/vehicle/')) {
     const slug = pathname.split('/').pop();
-    const found = inventory.find(c => c.id === slug || c.name.toLowerCase().replace(/\s+/g, '-') === slug);
+    const found = inventory.find(
+      (c) => c.id === slug || c.name.toLowerCase().replace(/\s+/g, '-') === slug,
+    );
     if (found) {
       activeVehicle = {
         id: found.id,
         make: found.make,
         model: found.model,
-        year: found.year
+        year: found.year,
       };
     }
   }
@@ -45,58 +51,133 @@ const getContextActions = (pathname: string, vehicle?: VehicleContext | null, in
         label: `Consultar seguridad de este ${activeVehicle.make}`,
         message: `Hola Richard IA, busco seguridad y paz mental. ¿Este ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model} está listo para una prueba de manejo protegida?`,
       },
-      { icon: '💰', label: 'Ver plan de pagos cómodo', message: `Hola! Me interesa un plan de financiamiento tranquilo para el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.` },
-      { icon: '📅', label: 'Agendar cita privada', message: `Hola! Me gustaría coordinar una visita privada para ver el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.` },
+      {
+        icon: '💰',
+        label: 'Ver plan de pagos cómodo',
+        message: `Hola! Me interesa un plan de financiamiento tranquilo para el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.`,
+      },
+      {
+        icon: '📅',
+        label: 'Agendar cita privada',
+        message: `Hola! Me gustaría coordinar una visita privada para ver el ${activeVehicle.year} ${activeVehicle.make} ${activeVehicle.model}.`,
+      },
     ];
   }
-  if (pathname.includes('financiamiento') || pathname.includes('prequal') || pathname.includes('prequalify')) {
+  if (
+    pathname.includes('financiamiento') ||
+    pathname.includes('prequal') ||
+    pathname.includes('prequalify')
+  ) {
     return [
-      { icon: '✅', label: 'Quiero pre-cualificarme', message: 'Hola! Quiero comenzar mi proceso de pre-cualificación para un auto.' },
-      { icon: '💳', label: 'Tengo crédito bajo', message: 'Necesito ayuda con financiamiento, tengo historial de crédito limitado.' },
-      { icon: '🏦', label: 'Comparar bancos', message: 'Quiero comparar las opciones de tasas de interés disponibles.' },
+      {
+        icon: '✅',
+        label: 'Quiero pre-cualificarme',
+        message: 'Hola! Quiero comenzar mi proceso de pre-cualificación para un auto.',
+      },
+      {
+        icon: '💳',
+        label: 'Tengo crédito bajo',
+        message: 'Necesito ayuda con financiamiento, tengo historial de crédito limitado.',
+      },
+      {
+        icon: '🏦',
+        label: 'Comparar bancos',
+        message: 'Quiero comparar las opciones de tasas de interés disponibles.',
+      },
     ];
   }
-  if (pathname.includes('usados-en') || pathname.includes('bayamon') || pathname.includes('vega-alta')) {
-    const city = pathname.includes('bayamon') ? 'Bayamón' : pathname.includes('vega-alta') ? 'Vega Alta' : 'Puerto Rico';
+  if (
+    pathname.includes('usados-en') ||
+    pathname.includes('bayamon') ||
+    pathname.includes('vega-alta')
+  ) {
+    const city = pathname.includes('bayamon')
+      ? 'Bayamón'
+      : pathname.includes('vega-alta')
+        ? 'Vega Alta'
+        : 'Puerto Rico';
     return [
-      { icon: '📍', label: `Dealer en ${city}`, message: `Hola! Estoy en ${city} y quiero saber más sobre su inventario.` },
-      { icon: '🚗', label: 'Ver inventario disponible', message: 'Me gustaría ver los autos disponibles cerca de mí.' },
-      { icon: '💰', label: 'Preguntar por financiamiento', message: `Quiero financiar un auto desde ${city}.` },
+      {
+        icon: '📍',
+        label: `Dealer en ${city}`,
+        message: `Hola! Estoy en ${city} y quiero saber más sobre su inventario.`,
+      },
+      {
+        icon: '🚗',
+        label: 'Ver inventario disponible',
+        message: 'Me gustaría ver los autos disponibles cerca de mí.',
+      },
+      {
+        icon: '💰',
+        label: 'Preguntar por financiamiento',
+        message: `Quiero financiar un auto desde ${city}.`,
+      },
     ];
   }
   if (pathname.includes('vender') || pathname.includes('appraisal') || pathname.includes('trade')) {
     return [
-      { icon: '🏷️', label: 'Tasar mi auto ahora', message: 'Hola! Quiero una tasación de mi auto. ¿Me pueden ayudar?' },
-      { icon: '🔄', label: 'Trade-in por uno nuevo', message: 'Quiero hacer trade-in de mi auto por uno del inventario.' },
-      { icon: '📸', label: 'Enviar fotos de mi auto', message: 'Me gustaría enviar fotos de mi auto para una tasación rápida.' },
+      {
+        icon: '🏷️',
+        label: 'Tasar mi auto ahora',
+        message: 'Hola! Quiero una tasación de mi auto. ¿Me pueden ayudar?',
+      },
+      {
+        icon: '🔄',
+        label: 'Trade-in por uno nuevo',
+        message: 'Quiero hacer trade-in de mi auto por uno del inventario.',
+      },
+      {
+        icon: '📸',
+        label: 'Enviar fotos de mi auto',
+        message: 'Me gustaría enviar fotos de mi auto para una tasación rápida.',
+      },
     ];
   }
   return [
-    { icon: '🛡️', label: 'Ver Inventario Seguro', message: 'Hola Richard IA! Me gustaría conocer su inventario de autos certificados y seguros.' },
-    { icon: '✅', label: 'Prequalificación sin compromiso', message: 'Hola! Me interesa saber mis opciones de financiamiento de forma privada y sin compromiso.' },
-    { icon: '🤝', label: 'Hablar con un asesor', message: 'Hola! Necesito asesoría para encontrar el auto ideal que me brinde tranquilidad.' },
+    {
+      icon: '🛡️',
+      label: 'Ver Inventario Seguro',
+      message:
+        'Hola Richard IA! Me gustaría conocer su inventario de autos certificados y seguros.',
+    },
+    {
+      icon: '✅',
+      label: 'Prequalificación sin compromiso',
+      message:
+        'Hola! Me interesa saber mis opciones de financiamiento de forma privada y sin compromiso.',
+    },
+    {
+      icon: '🤝',
+      label: 'Hablar con un asesor',
+      message: 'Hola! Necesito asesoría para encontrar el auto ideal que me brinde tranquilidad.',
+    },
   ];
 };
 
 const getPreviewMessage = (pathname: string): string => {
   if (pathname.includes('financiamiento') || pathname.includes('prequal'))
     return '💳 ¿Dudas sobre financiamiento? Te ayudo en segundos.';
-  if (pathname.includes('usados-en'))
-    return '📍 ¿Quieres un dealer cerca de ti? Escríbenos.';
+  if (pathname.includes('usados-en')) return '📍 ¿Quieres un dealer cerca de ti? Escríbenos.';
   if (pathname.includes('vender') || pathname.includes('appraisal'))
     return '🏷️ ¿Cuánto vale tu auto? Te damos precio hoy.';
   return '👋 ¿Buscas un auto? Escríbenos, respondemos en minutos.';
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false, inventory = [] }) => {
+export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({
+  isEmbedded = false,
+  inventory = [],
+}) => {
   const [isOpen, setIsOpen] = useState(isEmbedded);
   const [showPreview, setShowPreview] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [messages, setMessages] = useState<{ text: string; sender: 'bot' | 'user' }[]>([
     { text: '¡Hola! 👋 Soy Richard IA, tu asesor digital.', sender: 'bot' },
-    { text: 'Selecciona una opción y te conectamos en segundos con nuestro equipo. 🚀', sender: 'bot' },
+    {
+      text: 'Selecciona una opción y te conectamos en segundos con nuestro equipo. 🚀',
+      sender: 'bot',
+    },
   ]);
 
   const phoneNumber = SITE_CONFIG.contact.whatsapp;
@@ -108,9 +189,10 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
     return state?.vehicle;
   }, [location.state]);
 
-  const quickActions = useMemo(() => 
-    getContextActions(location.pathname, vehicle, inventory),
-  [location.pathname, vehicle, inventory]);
+  const quickActions = useMemo(
+    () => getContextActions(location.pathname, vehicle, inventory),
+    [location.pathname, vehicle, inventory],
+  );
 
   const previewMsg = getPreviewMessage(location.pathname);
 
@@ -122,7 +204,10 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
       sessionStorage.setItem(key, 'true');
     }, 4000);
     const hide = setTimeout(() => setShowPreview(false), 12000);
-    return () => { clearTimeout(show); clearTimeout(hide); };
+    return () => {
+      clearTimeout(show);
+      clearTimeout(hide);
+    };
   }, [isOpen, dismissed]);
 
   const [prevPath, setPrevPath] = useState(location.pathname);
@@ -141,7 +226,8 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
     setTimeout(() => {
       setIsTyping(false);
       let finalMsg = action.message;
-      if (vehicle) finalMsg += ` [Auto: ${vehicle.year} ${vehicle.make} ${vehicle.model} #${vehicle.id}]`;
+      if (vehicle)
+        finalMsg += ` [Auto: ${vehicle.year} ${vehicle.make} ${vehicle.model} #${vehicle.id}]`;
 
       addLead({
         type: 'whatsapp',
@@ -171,7 +257,6 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
 
   return (
     <div className={containerClasses}>
-      
       {/* ── Preview Bubble ─────────────────────────────────────────────── */}
       {showPreview && !isOpen && !isEmbedded && (
         <div className={styles.previewBubble} onClick={handleToggle}>
@@ -201,11 +286,7 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
                   <span className={styles.statusLabel}>EN LÍNEA AHORA</span>
                 </div>
               </div>
-              <button 
-                className={styles.closeButton}
-                onClick={handleToggle}
-                title="Cerrar chat"
-              >
+              <button className={styles.closeButton} onClick={handleToggle} title="Cerrar chat">
                 <X size={16} />
               </button>
             </div>
@@ -264,9 +345,7 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({ isEmbedded = false
           title="Chat con Richard IA"
         >
           {isOpen ? <X size={24} /> : <WhatsAppIcon size={30} />}
-          {!isOpen && (
-            <span className={styles.badge}>1</span>
-          )}
+          {!isOpen && <span className={styles.badge}>1</span>}
         </button>
       )}
     </div>

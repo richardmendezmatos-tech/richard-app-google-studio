@@ -41,11 +41,11 @@ export const AILabPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0d2232] text-white">
-      <SEO 
-        title="Richard AI Lab" 
-        description="Centro experimental de inteligencia artificial generativa, asistentes de voz y visión computacional." 
+      <SEO
+        title="Richard AI Lab"
+        description="Centro experimental de inteligencia artificial generativa, asistentes de voz y visión computacional."
       />
-      
+
       {/* Header FSD */}
       <header className="px-6 py-4 bg-slate-900/80 border-b border-white/5 backdrop-blur-xl sticky top-0 z-50 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div>
@@ -86,12 +86,16 @@ export const AILabPage: React.FC = () => {
         {/* Futuristic Background overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px] pointer-events-none opacity-20"></div>
         <div className="relative z-10 w-full h-full">
-          <React.Suspense fallback={
-            <div className="flex flex-col items-center justify-center h-[50vh] text-primary animate-pulse space-y-4">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-xs font-black uppercase tracking-widest text-primary/70">Instanciando Motor IA...</p>
-            </div>
-          }>
+          <React.Suspense
+            fallback={
+              <div className="flex flex-col items-center justify-center h-[50vh] text-primary animate-pulse space-y-4">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-xs font-black uppercase tracking-widest text-primary/70">
+                  Instanciando Motor IA...
+                </p>
+              </div>
+            }
+          >
             {renderContent()}
           </React.Suspense>
         </div>

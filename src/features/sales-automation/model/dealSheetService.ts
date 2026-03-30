@@ -23,7 +23,7 @@ export interface DealSheetData {
 
 export const generateSmartDealSheet = async (
   lead: Lead,
-  inventory: Car[]
+  inventory: Car[],
 ): Promise<DealSheetData> => {
   const systemInstruction = `
     Eres un Senior F&I Manager estratégico. 
@@ -36,7 +36,7 @@ export const generateSmartDealSheet = async (
     id: c.id,
     name: c.name,
     price: c.price,
-    type: c.type
+    type: c.type,
   }));
 
   const prompt = `
@@ -79,15 +79,15 @@ export const generateSmartDealSheet = async (
       psychologicalProfile: {
         buyerType: 'Desconocido',
         keyMotivators: ['Valor por dinero'],
-        dealBreakers: ['Precio muy alto']
+        dealBreakers: ['Precio muy alto'],
       },
       recommendedPitch: 'Ofrezca un trato transparente basado en las necesidades del cliente.',
       financialStrategy: {
         suggestedDownPayment: 0,
         targetMonthly: 0,
-        talkingPoints: ['Pregunte por el presupuesto mensual primero']
+        talkingPoints: ['Pregunte por el presupuesto mensual primero'],
       },
-      vehicleAlternatives: []
+      vehicleAlternatives: [],
     };
   }
 };

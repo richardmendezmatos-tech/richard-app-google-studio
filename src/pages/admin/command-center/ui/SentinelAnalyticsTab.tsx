@@ -33,10 +33,13 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
             <div className="p-2 bg-emerald-500/10 rounded-xl">
               <Award className="text-emerald-400" size={20} />
             </div>
-            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Cierres Mensuales</h4>
+            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+              Cierres Mensuales
+            </h4>
           </div>
           <div className="text-3xl font-black text-white mt-4 flex items-baseline gap-2">
-            {leads.filter(l => l.status === 'sold').length} <span className="text-sm text-emerald-500 font-bold uppercase">unidades</span>
+            {leads.filter((l) => l.status === 'sold').length}{' '}
+            <span className="text-sm text-emerald-500 font-bold uppercase">unidades</span>
           </div>
         </div>
 
@@ -46,7 +49,9 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
             <div className="p-2 bg-blue-500/10 rounded-xl">
               <TrendingUp className="text-blue-400" size={20} />
             </div>
-            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">ROI Estimado (Ads)</h4>
+            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+              ROI Estimado (Ads)
+            </h4>
           </div>
           <div className="text-3xl font-black text-white mt-4 flex items-baseline gap-2">
             345<span className="text-sm text-blue-500 font-bold">%</span>
@@ -59,10 +64,16 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
             <div className="p-2 bg-purple-500/10 rounded-xl">
               <Target className="text-purple-400" size={20} />
             </div>
-            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Proyección Ingresos</h4>
+            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+              Proyección Ingresos
+            </h4>
           </div>
           <div className="text-3xl font-black text-white mt-4 flex items-baseline gap-2">
-            ${(inventory.reduce((sum, c) => sum + (Number(c.price) || 0), 0) * 0.15).toLocaleString('en-US')}<span className="text-sm text-purple-500 font-bold uppercase">GP</span>
+            $
+            {(inventory.reduce((sum, c) => sum + (Number(c.price) || 0), 0) * 0.15).toLocaleString(
+              'en-US',
+            )}
+            <span className="text-sm text-purple-500 font-bold uppercase">GP</span>
           </div>
         </div>
       </div>

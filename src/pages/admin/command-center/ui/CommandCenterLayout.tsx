@@ -13,11 +13,21 @@ import { TacticalSidebar } from './components/TacticalSidebar';
 import { CommandCenterWidget } from '@/widgets/houston/CommandCenterWidget';
 
 // Lazy load modals & status bars that remain in layout
-const CommandCenterModal = React.lazy(() => import('./CommandCenterModal').then((m) => ({ default: m.CommandCenterModal })));
-const EnterpriseStatus = React.lazy(() => import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })));
-const MarketingCreativeStudio = React.lazy(() => import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })));
-const ViralGeneratorModal = React.lazy(() => import('@/features/marketing').then((m) => ({ default: m.ViralGeneratorModal })));
-const SentinelStatusBar = React.lazy(() => import('./SentinelStatusBar').then((m) => ({ default: m.SentinelStatusBar })));
+const CommandCenterModal = React.lazy(() =>
+  import('./CommandCenterModal').then((m) => ({ default: m.CommandCenterModal })),
+);
+const EnterpriseStatus = React.lazy(() =>
+  import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })),
+);
+const MarketingCreativeStudio = React.lazy(() =>
+  import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })),
+);
+const ViralGeneratorModal = React.lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.ViralGeneratorModal })),
+);
+const SentinelStatusBar = React.lazy(() =>
+  import('./SentinelStatusBar').then((m) => ({ default: m.SentinelStatusBar })),
+);
 
 interface Props {
   inventory: Car[];
@@ -44,7 +54,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
   const navigate = useNavigate();
   const { status: antigravityStatus, refresh: refreshAntigravity } = useAntigravity();
   const { containerRef } = useMouseGlow();
-  
+
   const { onInitializeDb, onUpdate, onAdd, onDelete, inventory } = props;
 
   // React Query Fetch Hook
@@ -92,7 +102,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
     setEditingCar,
     setIsModalOpen,
     handleInitClick,
-    isInitializing
+    isInitializing,
   };
 
   return (
@@ -118,7 +128,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
                 {currentDealer.name}
               </h1>
             </div>
-            
+
             <div className="h-8 w-px bg-white/10 hidden lg:block" />
 
             <div className="flex items-center gap-3">
@@ -146,7 +156,8 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
               className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 rounded-lg border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none ring-1 ring-white/5 shadow-2xl transition-all hover:bg-slate-800"
               title="Nodo Houston Sentinel"
             >
-              <Zap size={14} className="text-purple-400" /> <span className="hidden sm:inline">Strategy Lab</span>
+              <Zap size={14} className="text-purple-400" />{' '}
+              <span className="hidden sm:inline">Strategy Lab</span>
             </button>
             <button
               onClick={() => {
@@ -167,11 +178,16 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
           </div>
         </header>
 
-
         {/* NESTED ROUTES OUTLET */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pt-0 bg-transparent relative z-0 hide-scrollbar overflow-x-hidden min-h-[400px]">
           <BrandErrorBoundary>
-            <Suspense fallback={<div className="p-12 text-center text-slate-500 font-black animate-pulse">CARGANDO MÓDULO...</div>}>
+            <Suspense
+              fallback={
+                <div className="p-12 text-center text-slate-500 font-black animate-pulse">
+                  CARGANDO MÓDULO...
+                </div>
+              }
+            >
               <Outlet context={layoutContext} />
             </Suspense>
           </BrandErrorBoundary>
@@ -198,7 +214,11 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
       )}
       {viralCar && (
         <Suspense fallback={<div className="fixed inset-0 z-100 bg-black/60" />}>
-          <ViralGeneratorModal car={viralCar as any} isOpen={!!viralCar} onClose={() => setViralCar(null)} />
+          <ViralGeneratorModal
+            car={viralCar as any}
+            isOpen={!!viralCar}
+            onClose={() => setViralCar(null)}
+          />
         </Suspense>
       )}
       <Suspense fallback={null}>

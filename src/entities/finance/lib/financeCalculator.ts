@@ -54,19 +54,19 @@ export const calculateOTD = (
   // 1. Net Trade-In (Equidad)
   const netTradeIn = tradeInValue - tradeInPayoff;
 
-  // 2. Taxable Amount (El IVU en PR suele aplicar al valor del auto descontando Trade-In, 
+  // 2. Taxable Amount (El IVU en PR suele aplicar al valor del auto descontando Trade-In,
   // pero asumamos un escenario conservador donde el Tax se calcula sobre la diferencia)
   // Nota legal: Según el Dept Hacienda de PR, el "Trade In" reduce la base tributable.
   const baseForTax = Math.max(0, vehiclePrice - tradeInValue);
-  
+
   const stateTax = baseForTax * CONSTANTES_PR.IVU_STATE_RATE;
   const municipalTax = baseForTax * CONSTANTES_PR.IVU_MUNICIPAL_RATE;
   const totalTaxes = stateTax + municipalTax;
 
   // 3. Dealer Fees (Fixed / Hard Costs)
-  const dealerFees = 
-    CONSTANTES_PR.DOC_FEE_STANDARDIZED + 
-    CONSTANTES_PR.REGISTRATION_FEE_BASE + 
+  const dealerFees =
+    CONSTANTES_PR.DOC_FEE_STANDARDIZED +
+    CONSTANTES_PR.REGISTRATION_FEE_BASE +
     CONSTANTES_PR.TITLE_TRANSFER_FEE;
 
   // 4. Backend Products
@@ -75,7 +75,8 @@ export const calculateOTD = (
   // 5. Out The Door (OTD) Computation
   // OTD = Auto + Taxes + Fees + Products - NetTradeIn
   // Note: Down payment is applied against the OTD later when calculating the loan.
-  const outTheDoorPrice = vehiclePrice + totalTaxes + dealerFees + totalBackendProducts - netTradeIn;
+  const outTheDoorPrice =
+    vehiclePrice + totalTaxes + dealerFees + totalBackendProducts - netTradeIn;
 
   return {
     vehiclePrice,
@@ -88,16 +89,14 @@ export const calculateOTD = (
     totalTaxes,
     dealerFees,
     totalBackendProducts,
-    outTheDoorPrice
+    outTheDoorPrice,
   };
 };
 
 /**
  * Calculates auto loan amortization and LTV.
  */
-export const calculateLoan = (
-  structure: FinancingStructure
-): PaymentResult => {
+export const calculateLoan = (structure: FinancingStructure): PaymentResult => {
   const {
     vehiclePrice,
     tradeInValue = 0,
@@ -108,13 +107,18 @@ export const calculateLoan = (
     gapInsurance = 0,
     extendedWarranty = 0,
     paintProtection = 0,
-    creditLife = 0
+    creditLife = 0,
   } = structure;
 
   // Calculate strict OTD first
   const otdResult = calculateOTD(
-    vehiclePrice, tradeInValue, tradeInPayoff, 
-    gapInsurance, extendedWarranty, paintProtection, creditLife
+    vehiclePrice,
+    tradeInValue,
+    tradeInPayoff,
+    gapInsurance,
+    extendedWarranty,
+    paintProtection,
+    creditLife,
   );
 
   // Apply down payment to OTD to formulate the True Principal
@@ -136,7 +140,14 @@ export const calculateLoan = (
   const ltvRatio = principalFinanced / (vehiclePrice * 0.9);
 
   if (principalFinanced === 0) {
-    return { monthlyPayment: 0, totalInterest: 0, totalCost: 0, aprUsed: annualRate, principalFinanced: 0, ltvRatio: 0 };
+    return {
+      monthlyPayment: 0,
+      totalInterest: 0,
+      totalCost: 0,
+      aprUsed: annualRate,
+      principalFinanced: 0,
+      ltvRatio: 0,
+    };
   }
 
   // Amortization Formula: P * (r(1+r)^n) / ((1+r)^n - 1)
@@ -152,7 +163,7 @@ export const calculateLoan = (
     totalCost: Math.round(totalCost),
     aprUsed: annualRate,
     principalFinanced: Math.round(principalFinanced),
-    ltvRatio: Number(ltvRatio.toFixed(2))
+    ltvRatio: Number(ltvRatio.toFixed(2)),
   };
 };
 

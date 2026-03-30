@@ -5,7 +5,7 @@ export const CommandCenterWidget: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
       <HoustonDashboard />
-      
+
       {/* Decorative details for Premium feel */}
       <div className="mt-4 flex justify-between px-8">
         <div className="flex gap-4">

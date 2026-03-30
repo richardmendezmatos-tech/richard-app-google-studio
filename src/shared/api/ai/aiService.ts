@@ -61,7 +61,7 @@ export const analyzeCarVisuals = async (file: File): Promise<VisualSearchResult>
     const { functions } = await import('@/shared/api/firebase/client');
     const { httpsCallable } = await import('firebase/functions');
     const askGemini = httpsCallable<any, string>(functions, 'askGemini');
-    
+
     const response = await askGemini({
       contents: [prompt, imagePart],
       model: 'gemini-1.5-flash',

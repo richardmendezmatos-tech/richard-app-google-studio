@@ -55,7 +55,10 @@ const DevOpsView: React.FC = () => {
 
       <div className="bg-slate-900 border border-slate-800 rounded-[35px] p-8 shadow-2xl space-y-6">
         <div className="space-y-4">
-          <label htmlFor="devops-description" className="text-xs font-black text-primary uppercase tracking-widest block ml-2">
+          <label
+            htmlFor="devops-description"
+            className="text-xs font-black text-primary uppercase tracking-widest block ml-2"
+          >
             ¿Qué cambios realizaste?
           </label>
           <textarea

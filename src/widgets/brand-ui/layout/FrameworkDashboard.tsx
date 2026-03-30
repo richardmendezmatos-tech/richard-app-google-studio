@@ -261,7 +261,9 @@ const MetricCard = ({ label, value, icon: Icon, color, chartColor, detail }: Met
         {BARS_DATA.map((_, i) => (
           <div
             key={i}
-            ref={(el) => { barsRef.current[i] = el; }}
+            ref={(el) => {
+              barsRef.current[i] = el;
+            }}
             className={`flex-1 rounded-full ${chartColor}`}
           />
         ))}

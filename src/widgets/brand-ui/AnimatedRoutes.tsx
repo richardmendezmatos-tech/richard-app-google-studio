@@ -24,7 +24,11 @@ interface AdminRoutesProps {
   onInitializeDb: () => Promise<void>;
 }
 const AdminRoutes = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/AdminRoutes').then(m => ({ default: m.AdminRoutes || m.default }))),
+  lazyRetry(() =>
+    import('@/pages/admin/command-center/ui/AdminRoutes').then((m) => ({
+      default: m.AdminRoutes || m.default,
+    })),
+  ),
 ) as unknown as React.ComponentType<AdminRoutesProps>;
 const DigitalTwinDashboard = React.lazy(() =>
   lazyRetry(() => import('@/pages/digital-twin/ui/DigitalTwinDashboard')),
@@ -43,12 +47,8 @@ interface VehicleDetailProps {
 const VehicleDetail = React.lazy(() =>
   lazyRetry(() => import('@/pages/storefront/ui/VehicleDetail')),
 ) as unknown as React.ComponentType<VehicleDetailProps>;
-const TradeInView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/leads/ui/TradeInView')),
-);
-const AppraisalView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/leads/ui/AppraisalView')),
-);
+const TradeInView = React.lazy(() => lazyRetry(() => import('@/pages/leads/ui/TradeInView')));
+const AppraisalView = React.lazy(() => lazyRetry(() => import('@/pages/leads/ui/AppraisalView')));
 const ComparisonView = React.lazy(() =>
   lazyRetry(() => import('@/pages/comparison/ui/ComparisonView')),
 );
@@ -65,9 +65,7 @@ const CollectionPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/storefront/ui/CollectionPage')),
 ) as unknown as React.ComponentType<CollectionProps>;
 
-const ProfilePage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/profile/ui/ProfilePage')),
-);
+const ProfilePage = React.lazy(() => lazyRetry(() => import('@/pages/profile/ui/ProfilePage')));
 interface DigitalGarageProps {
   inventory: Car[];
   onExit: () => void;
@@ -81,9 +79,7 @@ interface PreQualifyViewProps {
 const PreQualifyView = React.lazy(() =>
   lazyRetry(() => import('@/pages/leads/ui/PreQualifyView')),
 ) as unknown as React.ComponentType<PreQualifyViewProps>;
-const PrivacyView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/privacy/ui/PrivacyView')),
-);
+const PrivacyView = React.lazy(() => lazyRetry(() => import('@/pages/privacy/ui/PrivacyView')));
 const TermsView = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/TermsView')));
 const NotFound = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/NotFound')));
 const FrameworkDashboard = React.lazy(() =>
@@ -99,27 +95,23 @@ const B2BBillingDashboard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/B2BBillingDashboard')),
 );
 const LeadAnalyticsPage = React.lazy(() =>
-  lazyRetry(() => import('@/features/leads').then(m => ({ default: m.LeadAnalyticsPage }))),
+  lazyRetry(() => import('@/features/leads').then((m) => ({ default: m.LeadAnalyticsPage }))),
 );
 const HoustonDashboard = React.lazy(() =>
   lazyRetry(() => import('@/widgets/houston/HoustonDashboard')),
 );
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/ChaosTest')));
 const LocalClusterView = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory').then(m => ({ default: m.LocalClusterView }))),
+  lazyRetry(() => import('@/features/inventory').then((m) => ({ default: m.LocalClusterView }))),
 );
-const CreditAppPage = React.lazy(() => 
+const CreditAppPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/storefront/ui/CreditAppPage')),
 );
 const FinanciamientoPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/financiamiento/ui/FinanciamientoPage')),
 );
-const ContactoPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/contacto/ui/ContactoPage')),
-);
-const CitySEOPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/storefront/ui/CitySEOPage')),
-);
+const ContactoPage = React.lazy(() => lazyRetry(() => import('@/pages/contacto/ui/ContactoPage')));
+const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/pages/storefront/ui/CitySEOPage')));
 
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
@@ -362,8 +354,8 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <AuthGuard>
                 <PageWrapper>
-                <DigitalGaragePage inventory={inventory} onExit={() => navigate('/')} />
-              </PageWrapper>
+                  <DigitalGaragePage inventory={inventory} onExit={() => navigate('/')} />
+                </PageWrapper>
               </AuthGuard>
             }
           />
@@ -399,12 +391,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
               </PageWrapper>
             }
           />
-          <Route
-            path="/blog"
-            element={
-              <BlogPage />
-            }
-          />
+          <Route path="/blog" element={<BlogPage />} />
           <Route
             path="/profile"
             element={

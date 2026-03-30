@@ -88,16 +88,23 @@ const AudiencesView: React.FC = () => {
               className="w-full bg-[#0b1116] border border-white/5 rounded-xl pl-12 pr-4 py-3 text-sm text-white focus:border-primary transition-all"
             />
           </div>
-          <button title="Refinar y Filtrar" className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all">
+          <button
+            title="Refinar y Filtrar"
+            className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all"
+          >
             <Filter size={20} />
           </button>
         </div>
 
         <div className="overflow-x-auto">
           {isLoading ? (
-            <div className="p-12 text-center text-slate-500"><Loader2 className="animate-spin mx-auto" /></div>
+            <div className="p-12 text-center text-slate-500">
+              <Loader2 className="animate-spin mx-auto" />
+            </div>
           ) : subscribers.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 font-medium">No hay suscriptores aún.</div>
+            <div className="p-12 text-center text-slate-500 font-medium">
+              No hay suscriptores aún.
+            </div>
           ) : (
             <table className="w-full text-left text-sm text-slate-300">
               <thead className="bg-[#0b1116]/50 text-xs uppercase font-bold text-slate-500 tracking-wider">

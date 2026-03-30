@@ -40,11 +40,13 @@ export class CalculateDynamicMargin {
     if (!car.createdAt) return 0;
 
     const now = Date.now();
-    const createdMillis = 
-      typeof car.createdAt === 'number' ? car.createdAt :
-      'seconds' in car.createdAt ? car.createdAt.seconds * 1000 :
-      (car.createdAt as Date).getTime();
-    
+    const createdMillis =
+      typeof car.createdAt === 'number'
+        ? car.createdAt
+        : 'seconds' in car.createdAt
+          ? car.createdAt.seconds * 1000
+          : (car.createdAt as Date).getTime();
+
     const diffTime = Math.abs(now - createdMillis);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 

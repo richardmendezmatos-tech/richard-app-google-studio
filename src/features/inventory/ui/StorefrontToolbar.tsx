@@ -108,7 +108,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Results Banner */}
       <div className="mb-7 mt-6 flex flex-wrap items-end justify-between gap-3 px-2 sm:mt-8">
         <div>
@@ -135,8 +135,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
           <div className="flex items-center gap-3 rounded-r-xl border-l-4 border-primary bg-primary/10 p-3 backdrop-blur-md">
             <Sparkles size={16} className="text-primary" />
             <p className="text-xs text-slate-300">
-              <span className="font-bold text-primary">IA:</span> Resultados visuales
-              activos.
+              <span className="font-bold text-primary">IA:</span> Resultados visuales activos.
             </p>
             <button
               onClick={() => {

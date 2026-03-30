@@ -1,5 +1,8 @@
 import { Lead } from '@/shared/api/adapters/leads/crmService';
-import { antigravityFetch, getAntigravityConfig } from '@/shared/api/antigravity/antigravityService';
+import {
+  antigravityFetch,
+  getAntigravityConfig,
+} from '@/shared/api/antigravity/antigravityService';
 
 export type OutreachChannel = 'whatsapp' | 'email';
 

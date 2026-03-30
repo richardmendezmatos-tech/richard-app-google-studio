@@ -234,7 +234,10 @@ const UserLogin: React.FC = () => {
                   aria-label="Continuar con Google"
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-all group"
                 >
-                  <Chrome size={20} className="text-slate-400 group-hover:text-blue-400 transition-colors" />
+                  <Chrome
+                    size={20}
+                    className="text-slate-400 group-hover:text-blue-400 transition-colors"
+                  />
                   <span>Continuar con Google</span>
                 </button>
 
@@ -244,7 +247,10 @@ const UserLogin: React.FC = () => {
                   aria-label="Continuar con Facebook"
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-all group"
                 >
-                  <Globe size={20} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+                  <Globe
+                    size={20}
+                    className="text-slate-400 group-hover:text-blue-500 transition-colors"
+                  />
                   <span>Continuar con Facebook</span>
                 </button>
 
@@ -267,7 +273,10 @@ const UserLogin: React.FC = () => {
           <input type="hidden" name="authType" value={isRegistering ? 'register' : 'login'} />
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label htmlFor="login-email" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <label
+                htmlFor="login-email"
+                className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1"
+              >
                 Correo Electrónico
               </label>
               <div className="relative group">
@@ -289,7 +298,10 @@ const UserLogin: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="login-password" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+              <label
+                htmlFor="login-password"
+                className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1"
+              >
                 Contraseña
               </label>
               <div className="relative group">
@@ -335,7 +347,10 @@ const UserLogin: React.FC = () => {
               ) : (
                 <>
                   <span>{isRegistering ? 'Crear Cuenta Segura' : 'Acceso Autorizado'}</span>
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
                 </>
               )}
             </div>

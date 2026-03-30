@@ -10,7 +10,7 @@ import { useAuthStore } from '@/entities/session';
 export function useStorefrontState(
   inventory: Car[],
   onOpenGarage?: () => void,
-  onMagicFix?: () => Promise<void>
+  onMagicFix?: () => Promise<void>,
 ) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<CarType | 'all'>('all');
@@ -22,7 +22,6 @@ export function useStorefrontState(
   const [visualContext, setVisualContext] = useState<string | null>(null);
   const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Car[]>([]);
-
 
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -197,7 +196,7 @@ export function useStorefrontState(
       status,
       error,
       hasNextPage,
-      isFetchingNextPage
+      isFetchingNextPage,
     },
     actions: {
       handleToggleSave,
@@ -210,7 +209,7 @@ export function useStorefrontState(
       jumpToInventory,
       fetchNextPage,
       handleSelectCar,
-      onOpenGarage
-    }
+      onOpenGarage,
+    },
   };
 }

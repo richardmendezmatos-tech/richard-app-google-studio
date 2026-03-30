@@ -1,7 +1,5 @@
 import React from 'react';
-import { 
-  ShieldCheck, Radio, Scale, Zap, User as UserIcon, Plus, DatabaseZap 
-} from 'lucide-react';
+import { ShieldCheck, Radio, Scale, Zap, User as UserIcon, Plus, DatabaseZap } from 'lucide-react';
 import { Car as CarType } from '@/shared/types/types';
 
 interface Props {
@@ -25,7 +23,7 @@ export const AdminHeader: React.FC<Props> = ({
   setEditingCar,
   setIsModalOpen,
   fetchDashboardData,
-  EnterpriseStatus
+  EnterpriseStatus,
 }) => {
   return (
     <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-8">
@@ -122,8 +120,7 @@ export const AdminHeader: React.FC<Props> = ({
           }}
           className="h-[44px] px-6 bg-primary hover:bg-cyan-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
-          <Plus size={18} strokeWidth={3} />{' '}
-          <span className="hidden sm:inline">Nueva Unidad</span>
+          <Plus size={18} strokeWidth={3} /> <span className="hidden sm:inline">Nueva Unidad</span>
           <span className="sm:hidden">Nuevo</span>
         </button>
 

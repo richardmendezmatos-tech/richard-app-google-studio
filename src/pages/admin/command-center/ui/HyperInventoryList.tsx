@@ -111,14 +111,8 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
       </div>
 
       {/* SPACER FOR SCROLL */}
-      <div
-        ref={scrollSpacerRef}
-        className="inventory-scroll-container"
-      >
-        <div
-          ref={visibleWindowRef}
-          className="inventory-visible-window"
-        >
+      <div ref={scrollSpacerRef} className="inventory-scroll-container">
+        <div ref={visibleWindowRef} className="inventory-visible-window">
           {visibleItems.map(({ car, leadCount }) => (
             <InventoryRow
               key={car.id}

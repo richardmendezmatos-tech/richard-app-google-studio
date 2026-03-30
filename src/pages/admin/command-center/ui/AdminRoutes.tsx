@@ -10,10 +10,18 @@ import CommandCenterLayout, { CommandCenterContextType } from './CommandCenterLa
 // Lazy imports for admin tabs
 const SentinelInventoryTab = React.lazy(() => import('./SentinelInventoryTab'));
 const IntakeView = React.lazy(() => import('./IntakeView'));
-const SentinelAnalyticsTab = React.lazy(() => import('./SentinelAnalyticsTab').then((m) => ({ default: m.SentinelAnalyticsTab })));
-const MissionControlDashboard = React.lazy(() => import('./MissionControlDashboard').then((m) => ({ default: m.MissionControlDashboard })));
-const AuditLogViewer = React.lazy(() => import('./AuditLogViewer').then((m) => ({ default: m.AuditLogViewer })));
-const HoustonTelemetryTab = React.lazy(() => import('./HoustonTelemetryTab').then((m) => ({ default: m.HoustonTelemetryTab })));
+const SentinelAnalyticsTab = React.lazy(() =>
+  import('./SentinelAnalyticsTab').then((m) => ({ default: m.SentinelAnalyticsTab })),
+);
+const MissionControlDashboard = React.lazy(() =>
+  import('./MissionControlDashboard').then((m) => ({ default: m.MissionControlDashboard })),
+);
+const AuditLogViewer = React.lazy(() =>
+  import('./AuditLogViewer').then((m) => ({ default: m.AuditLogViewer })),
+);
+const HoustonTelemetryTab = React.lazy(() =>
+  import('./HoustonTelemetryTab').then((m) => ({ default: m.HoustonTelemetryTab })),
+);
 const B2BBillingDashboard = React.lazy(() => import('./B2BBillingDashboard'));
 const AILabPage = React.lazy(() => import('@/pages/ai-lab/ui/AILabPage'));
 const CRMBoard = React.lazy(() => import('./CRMBoard'));
@@ -22,12 +30,20 @@ const DealDesker = React.lazy(() => import('./DealDesker'));
 const NewsroomPage = React.lazy(() => import('@/pages/admin/newsroom/ui/NewsroomPage'));
 const AudiencesView = React.lazy(() => import('@/pages/admin/audiences/ui/AudiencesView'));
 
-const LeadAnalyticsPage = React.lazy(() => import('@/features/leads').then(m => ({ default: m.LeadAnalyticsPage })));
+const LeadAnalyticsPage = React.lazy(() =>
+  import('@/features/leads').then((m) => ({ default: m.LeadAnalyticsPage })),
+);
 
 // Wrappers binding Layout Context to Components
 const DashboardWrapper = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
-  return <MissionControlDashboard inventory={ctx.inventory} leads={ctx.leads} deviceType={ctx.deviceType} />;
+  return (
+    <MissionControlDashboard
+      inventory={ctx.inventory}
+      leads={ctx.leads}
+      deviceType={ctx.deviceType}
+    />
+  );
 };
 
 const InventoryWrapper = () => {
@@ -35,8 +51,14 @@ const InventoryWrapper = () => {
   return (
     <SentinelInventoryTab
       onDelete={ctx.onDelete}
-      onCreateNew={() => { ctx.setEditingCar(null); ctx.setIsModalOpen(true); }}
-      onEdit={(car) => { ctx.setEditingCar(car); ctx.setIsModalOpen(true); }}
+      onCreateNew={() => {
+        ctx.setEditingCar(null);
+        ctx.setIsModalOpen(true);
+      }}
+      onEdit={(car) => {
+        ctx.setEditingCar(car);
+        ctx.setIsModalOpen(true);
+      }}
       onPlanContent={(car) => ctx.setViralCar(car)}
       onInitializeDb={ctx.onInitializeDb}
       handleInitClick={ctx.handleInitClick}
@@ -68,11 +90,13 @@ const MarketingWrapper = () => {
         <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.2em]">
           <Sparkles size={20} /> Content Engine
         </div>
-        <h3 className="text-2xl font-black text-white uppercase tracking-tight">Estrategia Semántica</h3>
+        <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+          Estrategia Semántica
+        </h3>
         <p className="text-slate-400 text-sm leading-relaxed">
-          Richard IA utiliza búsqueda semántica para identificar qué modelos de tu
-          inventario tienen más "momentum" basado en las consultas de los usuarios.
-          Selecciona una unidad abajo para generar contenido viral.
+          Richard IA utiliza búsqueda semántica para identificar qué modelos de tu inventario tienen
+          más "momentum" basado en las consultas de los usuarios. Selecciona una unidad abajo para
+          generar contenido viral.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {ctx.inventory.slice(0, 4).map((car) => (
@@ -81,10 +105,22 @@ const MarketingWrapper = () => {
               onClick={() => ctx.setMarketingCar(car)}
               className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-primary hover:bg-slate-800 transition-all text-left group"
             >
-              <img src={optimizeImage(car.img, 100)} alt={car.name} className="w-12 h-12 rounded-lg object-cover" loading="lazy" decoding="async" width={48} height={48} />
+              <img
+                src={optimizeImage(car.img, 100)}
+                alt={car.name}
+                className="w-12 h-12 rounded-lg object-cover"
+                loading="lazy"
+                decoding="async"
+                width={48}
+                height={48}
+              />
               <div>
-                <div className="text-sm font-black text-white uppercase tracking-tight">{car.name}</div>
-                <div className="text-[10px] text-primary font-bold uppercase tracking-widest">Planear Post ✨</div>
+                <div className="text-sm font-black text-white uppercase tracking-tight">
+                  {car.name}
+                </div>
+                <div className="text-[10px] text-primary font-bold uppercase tracking-widest">
+                  Planear Post ✨
+                </div>
               </div>
             </button>
           ))}
@@ -109,7 +145,9 @@ const MarketingWrapper = () => {
         </button>
       </div>
       <div className="min-h-[600px]">
-        <Suspense fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}>
+        <Suspense
+          fallback={<div className="p-12 text-center text-slate-500">Cargando auditoria...</div>}
+        >
           <AuditLogViewer />
         </Suspense>
       </div>
@@ -131,9 +169,34 @@ export const AdminRoutes = (props: any) => {
         <Route path="lab" element={<AILabPage />} />
         <Route path="telemetry" element={<HoustonTelemetryTab />} />
         <Route path="pipeline" element={<CRMBoardWrapper />} />
-        <Route path="newsroom" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando Newsroom...</div>}><NewsroomPage /></Suspense>} />
-        <Route path="audiences" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando audiencias...</div>}><AudiencesView /></Suspense>} />
-        <Route path="desker" element={<Suspense fallback={<div className="p-8 text-slate-500">Cargando herramienta financiera...</div>}><DealDesker /></Suspense>} />
+        <Route
+          path="newsroom"
+          element={
+            <Suspense fallback={<div className="p-8 text-slate-500">Cargando Newsroom...</div>}>
+              <NewsroomPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="audiences"
+          element={
+            <Suspense fallback={<div className="p-8 text-slate-500">Cargando audiencias...</div>}>
+              <AudiencesView />
+            </Suspense>
+          }
+        />
+        <Route
+          path="desker"
+          element={
+            <Suspense
+              fallback={
+                <div className="p-8 text-slate-500">Cargando herramienta financiera...</div>
+              }
+            >
+              <DealDesker />
+            </Suspense>
+          }
+        />
         <Route path="marketing" element={<MarketingWrapper />} />
         <Route path="houston" element={<HoustonDashboard />} />
       </Route>

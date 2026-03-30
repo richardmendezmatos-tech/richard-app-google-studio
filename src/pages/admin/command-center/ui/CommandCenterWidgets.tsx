@@ -45,12 +45,14 @@ const Sparkline: React.FC<{ data: number[]; color: string }> = ({ data, color })
   const range = max - min || 1;
   const width = 60;
   const height = 20;
-  
-  const points = data.map((d, i) => {
-    const x = (i / (data.length - 1)) * width;
-    const y = height - ((d - min) / range) * height;
-    return `${x},${y}`;
-  }).join(' ');
+
+  const points = data
+    .map((d, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((d - min) / range) * height;
+      return `${x},${y}`;
+    })
+    .join(' ');
 
   return (
     <svg width={width} height={height} className="opacity-50">
@@ -98,9 +100,7 @@ export const StatusWidget: React.FC<StatusWidgetProps> = ({
         <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.2em] mb-1">
           {label}
         </h4>
-        <div className="text-3xl font-black text-white leading-none tracking-tighter">
-          {value}
-        </div>
+        <div className="text-3xl font-black text-white leading-none tracking-tighter">{value}</div>
         {subValue && (
           <div className="flex items-center gap-1.5 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
@@ -112,7 +112,18 @@ export const StatusWidget: React.FC<StatusWidgetProps> = ({
       </div>
     </div>
     <div className="hidden xl:block">
-      <Sparkline data={trendData} color={color.includes('cyan') ? '#22d3ee' : color.includes('emerald') ? '#10b981' : color.includes('purple') ? '#a855f7' : '#f59e0b'} />
+      <Sparkline
+        data={trendData}
+        color={
+          color.includes('cyan')
+            ? '#22d3ee'
+            : color.includes('emerald')
+              ? '#10b981'
+              : color.includes('purple')
+                ? '#a855f7'
+                : '#f59e0b'
+        }
+      />
     </div>
   </div>
 );

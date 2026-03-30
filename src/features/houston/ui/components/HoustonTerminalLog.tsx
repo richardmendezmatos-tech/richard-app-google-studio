@@ -3,26 +3,26 @@ import { Terminal as TerminalIcon, ChevronRight } from 'lucide-react';
 
 export const HoustonTerminalLog: React.FC = () => {
   const [logs, setLogs] = useState<string[]>([
-    "[SYSTEM] RA OS v3.2 initialized.",
-    "[INTEL] Neural sync with Richard AI complete.",
-    "[NETWORK] Sentinel nodes 04/04 online.",
-    "[SECURITY] Firewall at 100% efficiency."
+    '[SYSTEM] RA OS v3.2 initialized.',
+    '[INTEL] Neural sync with Richard AI complete.',
+    '[NETWORK] Sentinel nodes 04/04 online.',
+    '[SECURITY] Firewall at 100% efficiency.',
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const messages = [
-      "Optimizing inventory metadata...",
-      "Syncing with Google Studio Brain...",
-      "Analyzing market trends in Houston...",
-      "Predictive model: Toyota Tacoma demand +15%",
-      "Sentinel status: Monitoring dealer traffic...",
-      "RA Intelligence: Strategy Lab active."
+      'Optimizing inventory metadata...',
+      'Syncing with Google Studio Brain...',
+      'Analyzing market trends in Houston...',
+      'Predictive model: Toyota Tacoma demand +15%',
+      'Sentinel status: Monitoring dealer traffic...',
+      'RA Intelligence: Strategy Lab active.',
     ];
 
     const interval = setInterval(() => {
       const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-      setLogs(prev => [...prev.slice(-15), `[${new Date().toLocaleTimeString()}] ${randomMsg}`]);
+      setLogs((prev) => [...prev.slice(-15), `[${new Date().toLocaleTimeString()}] ${randomMsg}`]);
     }, 4000);
 
     return () => clearInterval(interval);

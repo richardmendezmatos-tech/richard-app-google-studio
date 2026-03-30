@@ -454,7 +454,7 @@ const CRMBoard: React.FC = () => {
     setIsNurturing(true);
     try {
       addNotification('info', 'Iniciando escaneo IA de Nurturing...');
-      const eligibleLeads = leads.filter(l => l.status === 'new' || l.status === 'contacted');
+      const eligibleLeads = leads.filter((l) => l.status === 'new' || l.status === 'contacted');
       let processedCount = 0;
       for (const lead of eligibleLeads) {
         await automationService.processLeadNurturing(lead);
@@ -506,42 +506,44 @@ const CRMBoard: React.FC = () => {
           className="flex gap-6 overflow-x-auto pb-4 px-1 custom-scrollbar scroll-smooth flex-1"
         >
           {COLUMNS.map((col) => {
-          const colLeads = groupedLeads[col.id] || [];
-          return (
-            <div
-              key={col.id}
-              className="min-w-[360px] w-full bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-6 flex flex-col h-full border border-white/5 shadow-2xl"
-            >
-              <div className="flex items-center gap-3 mb-6 px-2">
-                <div className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.2)]`} />
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                  {col.title}
-                </h3>
-                <span className="ml-auto bg-slate-800/80 border border-white/5 px-3 py-1 rounded-full text-[10px] font-black text-white shadow-inner">
-                  {colLeads.length}
-                </span>
+            const colLeads = groupedLeads[col.id] || [];
+            return (
+              <div
+                key={col.id}
+                className="min-w-[360px] w-full bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-6 flex flex-col h-full border border-white/5 shadow-2xl"
+              >
+                <div className="flex items-center gap-3 mb-6 px-2">
+                  <div
+                    className={`w-3 h-3 rounded-full ${col.color} animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.2)]`}
+                  />
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                    {col.title}
+                  </h3>
+                  <span className="ml-auto bg-slate-800/80 border border-white/5 px-3 py-1 rounded-full text-[10px] font-black text-white shadow-inner">
+                    {colLeads.length}
+                  </span>
+                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-[100px]">
+                  <SortableContext
+                    items={colLeads.map((l) => l.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {colLeads.map((lead) => (
+                      <SortableLeadItem key={lead.id} lead={lead} userRole={userRole} />
+                    ))}
+                  </SortableContext>
+                  {colLeads.length === 0 && (
+                    <div className="h-32 flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-3xl opacity-50 bg-slate-900/20">
+                      <GripVertical size={24} className="text-slate-600 mb-2" />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        Arrastrar Aquí
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-[100px]">
-                <SortableContext
-                  items={colLeads.map((l) => l.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {colLeads.map((lead) => (
-                    <SortableLeadItem key={lead.id} lead={lead} userRole={userRole} />
-                  ))}
-                </SortableContext>
-                {colLeads.length === 0 && (
-                  <div className="h-32 flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-3xl opacity-50 bg-slate-900/20">
-                    <GripVertical size={24} className="text-slate-600 mb-2" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                      Arrastrar Aquí
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </div>
       </div>
       {createPortal(

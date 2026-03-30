@@ -132,7 +132,13 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
               </div>
             ) : preview ? (
               <div className="relative w-full h-full group">
-                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src={preview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-black/50 invisible group-hover:visible flex items-center justify-center transition-all opacity-0 group-hover:opacity-100">
                   <button
                     onClick={reset}

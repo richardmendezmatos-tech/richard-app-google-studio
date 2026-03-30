@@ -75,7 +75,9 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
         {/* Sales Velocity */}
         <div className="w-board-column-sm flex items-center gap-2">
           <Clock size={12} className="text-slate-600" />
-          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">14 Días</span>
+          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+            14 Días
+          </span>
         </div>
 
         {/* Acciones */}

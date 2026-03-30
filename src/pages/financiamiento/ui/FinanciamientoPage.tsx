@@ -1,37 +1,56 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/shared/ui/seo/SEO';
-import { CheckCircle, Clock, FileText, Phone, ChevronRight, Zap, Shield, TrendingDown } from 'lucide-react';
+import {
+  CheckCircle,
+  Clock,
+  FileText,
+  Phone,
+  ChevronRight,
+  Zap,
+  Shield,
+  TrendingDown,
+} from 'lucide-react';
 import { CreditCalculator } from '@/features/loans/ui/CreditCalculator';
 
-const WHATSAPP_LINK = 'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20financiamiento';
+const WHATSAPP_LINK =
+  'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20financiamiento';
 
 const faqs = [
   {
     question: '¿Qué necesito para solicitar financiamiento?',
-    answer: 'Identificación válida (licencia de conducir o pasaporte), comprobante de ingresos (talonario o carta de empleo), comprobante de residencia y número de seguro social.',
+    answer:
+      'Identificación válida (licencia de conducir o pasaporte), comprobante de ingresos (talonario o carta de empleo), comprobante de residencia y número de seguro social.',
   },
   {
     question: '¿Cuánto tiempo tarda la aprobación?',
-    answer: 'Nuestra pre-aprobación en línea toma solo 24 horas. Con documentos completos, la aprobación final puede ser el mismo día.',
+    answer:
+      'Nuestra pre-aprobación en línea toma solo 24 horas. Con documentos completos, la aprobación final puede ser el mismo día.',
   },
   {
     question: '¿Aceptan personas con crédito bajo o sin historial?',
-    answer: 'Sí. Trabajamos con múltiples entidades financieras en Puerto Rico para encontrar la opción que mejor se adapte a tu situación crediticia.',
+    answer:
+      'Sí. Trabajamos con múltiples entidades financieras en Puerto Rico para encontrar la opción que mejor se adapte a tu situación crediticia.',
   },
   {
     question: '¿Puedo hacer trade-in como parte del pago inicial?',
-    answer: 'Absolutamente. Tasamos tu vehículo actual a precio justo de mercado y lo aplicamos directamente al enganche de tu próximo auto.',
+    answer:
+      'Absolutamente. Tasamos tu vehículo actual a precio justo de mercado y lo aplicamos directamente al enganche de tu próximo auto.',
   },
   {
     question: '¿Cuáles son los plazos de financiamiento disponibles?',
-    answer: 'Ofrecemos plazos flexibles de 24, 36, 48, 60 y hasta 72 meses para que tu pago mensual se ajuste a tu presupuesto.',
+    answer:
+      'Ofrecemos plazos flexibles de 24, 36, 48, 60 y hasta 72 meses para que tu pago mensual se ajuste a tu presupuesto.',
   },
 ];
 
 const benefits = [
   { icon: Zap, title: 'Pre-Aprobación en 24h', desc: 'Respuesta rápida sin salir de casa' },
-  { icon: TrendingDown, title: 'Tasas Competitivas', desc: 'Negociamos las mejores opciones para ti' },
+  {
+    icon: TrendingDown,
+    title: 'Tasas Competitivas',
+    desc: 'Negociamos las mejores opciones para ti',
+  },
   { icon: Shield, title: 'Sin Penalidad de Pago', desc: 'Paga antes sin costos adicionales' },
   { icon: Clock, title: 'Proceso 100% Digital', desc: 'Aplica desde tu teléfono en minutos' },
 ];
@@ -75,9 +94,9 @@ const FinanciamientoPage: React.FC = () => {
         <section className="relative min-h-[60vh] flex items-center overflow-hidden py-24 px-6">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
-            <img 
-              src="/assets/seo/financing-hero.png" 
-              alt="Luxury car financing in Puerto Rico" 
+            <img
+              src="/assets/seo/financing-hero.png"
+              alt="Luxury car financing in Puerto Rico"
               className="w-full h-full object-cover opacity-40 scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/60 to-[#0a0f1e]" />
@@ -87,7 +106,9 @@ const FinanciamientoPage: React.FC = () => {
           <div className="relative z-10 max-w-4xl mx-auto text-center md:text-left">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-6">
               <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
-              <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">Richard Automotive — Bayamón</span>
+              <span className="text-xs font-black text-cyan-400 uppercase tracking-widest">
+                Richard Automotive — Bayamón
+              </span>
             </div>
 
             <h1 className="text-4xl md:text-7xl font-black tracking-tight mb-6 leading-tight">
@@ -99,8 +120,9 @@ const FinanciamientoPage: React.FC = () => {
             </h1>
 
             <p className="text-lg text-slate-300 max-w-2xl mb-10 leading-relaxed">
-              Pre-aprobación en <strong className="text-white">24 horas</strong>, tasas competitivas y proceso 100% digital.
-              Hacemos que el camino hacia tu próximo auto sea tan premium como el vehículo mismo.
+              Pre-aprobación en <strong className="text-white">24 horas</strong>, tasas competitivas
+              y proceso 100% digital. Hacemos que el camino hacia tu próximo auto sea tan premium
+              como el vehículo mismo.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -164,7 +186,10 @@ const FinanciamientoPage: React.FC = () => {
                 'Número de seguro social',
                 'Carta de referencia bancaria (opcional, pero mejora la tasa)',
               ].map((req) => (
-                <div key={req} className="flex items-center gap-3 bg-slate-800/30 border border-white/5 rounded-2xl px-5 py-4">
+                <div
+                  key={req}
+                  className="flex items-center gap-3 bg-slate-800/30 border border-white/5 rounded-2xl px-5 py-4"
+                >
                   <CheckCircle size={18} className="text-cyan-400 shrink-0" />
                   <span className="text-slate-200">{req}</span>
                 </div>
@@ -187,7 +212,10 @@ const FinanciamientoPage: React.FC = () => {
                 >
                   <summary className="flex items-center justify-between px-6 py-5 cursor-pointer font-bold text-white list-none">
                     {faq.question}
-                    <ChevronRight size={16} className="text-slate-400 group-open:rotate-90 transition-transform" />
+                    <ChevronRight
+                      size={16}
+                      className="text-slate-400 group-open:rotate-90 transition-transform"
+                    />
                   </summary>
                   <div className="px-6 pb-6 text-slate-300 text-sm leading-relaxed">
                     {faq.answer}

@@ -28,7 +28,7 @@ export const useToggleSavedCar = () => {
     onMutate: async (carId) => {
       await queryClient.cancelQueries({ queryKey: GARAGE_KEYS.savedCars() });
       const previousIds = queryClient.getQueryData<string[]>(GARAGE_KEYS.savedCars());
-      
+
       queryClient.setQueryData<string[]>(GARAGE_KEYS.savedCars(), (old = []) => {
         return old.includes(carId) ? old.filter((id) => id !== carId) : [...old, carId];
       });

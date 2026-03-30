@@ -27,10 +27,10 @@ if (isBrowser) {
     }
     initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_KEY || 'dummy_key'),
-      isTokenAutoRefreshEnabled: true
+      isTokenAutoRefreshEnabled: true,
     });
   } catch (err) {
-    console.warn("Firebase App Check failed to initialize:", err);
+    console.warn('Firebase App Check failed to initialize:', err);
   }
 
   // Best effort: persistence is optional in constrained environments.

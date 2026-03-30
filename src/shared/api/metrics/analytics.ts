@@ -1,5 +1,5 @@
 import ReactGA from 'react-ga4';
-import { initMetaPixel, trackMetaEvent } from "@/shared/lib/analytics/useMetaPixel";
+import { initMetaPixel, trackMetaEvent } from '@/shared/lib/analytics/useMetaPixel';
 
 // Safety wrapper to handle Vite/Rollup CommonJS to ESM transpilation quirks in production
 const getGA = () => (ReactGA as any).default || ReactGA;
@@ -17,7 +17,7 @@ const createAnalyticsService = () => {
         getGA().initialize(measurementId);
         isInitialized = true;
         console.log('[Analytics] GA4 initialized via Closure Engine');
-        
+
         const pixelId = import.meta.env.VITE_META_PIXEL_ID;
         if (pixelId) {
           initMetaPixel(pixelId);
@@ -77,7 +77,13 @@ export const trackEvent = (cat: string, act: string, lab?: string, val?: number)
 // Specialized Trackers using Currying/Partial Application
 export const trackCarView = (id: string, name: string, price: number) => {
   analytics.engagement('view_car')(`${id}-${name}`)(price);
-  trackMetaEvent('ViewContent', { content_ids: [id], content_name: name, value: price, currency: 'USD', content_type: 'product' });
+  trackMetaEvent('ViewContent', {
+    content_ids: [id],
+    content_name: name,
+    value: price,
+    currency: 'USD',
+    content_type: 'product',
+  });
 };
 
 export const trackAddToGarage = (id: string, name: string) => {

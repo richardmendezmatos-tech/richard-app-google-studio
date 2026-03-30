@@ -408,7 +408,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                           __html: DOMPurify.sanitize(
                             aiPitch
                               .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
-                              .replace(/\n/g, '<br/>')
+                              .replace(/\n/g, '<br/>'),
                           ),
                         }}
                       />
@@ -428,7 +428,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               <MessageCircle size={18} /> Consultar por WhatsApp
             </button>
             <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
-              <ShieldCheck size={12} className="text-emerald-500" /> Respuesta inmediata. Sin compromiso de compra.
+              <ShieldCheck size={12} className="text-emerald-500" /> Respuesta inmediata. Sin
+              compromiso de compra.
             </p>
           </div>
         </div>

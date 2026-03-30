@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from '@/entities/shared';
-import {
-  generateCarMarketingContent,
-  MarketingContent,
-} from '@/features/leads';
+import { generateCarMarketingContent, MarketingContent } from '@/features/leads';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
 import {
   X,

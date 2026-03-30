@@ -208,9 +208,7 @@ const AIChatWidget: React.FC<Props> = () => {
             <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#173d57] rounded-full animate-pulse"></div>
           </div>
           <div>
-            <h3 className="font-black text-lg tracking-tight leading-none">
-              {activeAgent.name}
-            </h3>
+            <h3 className="font-black text-lg tracking-tight leading-none">{activeAgent.name}</h3>
             <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest mt-1 opacity-80 flex items-center gap-1">
               {activeAgent.role}
             </p>

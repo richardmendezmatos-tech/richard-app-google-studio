@@ -22,7 +22,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from '@/App';
 import './index.css'; // Premium UI Styles
 
-
 import './i18n'; // i18n setup
 import '@/app/di/container'; // Hydrate DI Container
 import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
@@ -234,7 +233,9 @@ window.addEventListener('unhandledrejection', (e) => {
     msg.includes('send was called before connect') ||
     msg.includes('send before connect')
   ) {
-    console.warn('[Bootstrap] Analytics/Firebase promise rejection suppressed (API Restriction/Connect)');
+    console.warn(
+      '[Bootstrap] Analytics/Firebase promise rejection suppressed (API Restriction/Connect)',
+    );
     return;
   }
 

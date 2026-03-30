@@ -139,9 +139,7 @@ const HoustonDashboard: React.FC = () => {
       {/* Premium Ambient Glow Layers - Refined for depth */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/5 blur-[160px] rounded-full animate-pulse" />
-        <div
-          className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/5 blur-[160px] rounded-full animate-pulse [animation-delay:3s]"
-        />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/5 blur-[160px] rounded-full animate-pulse [animation-delay:3s]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-cyan-900/5 blur-[200px] rounded-full" />
       </div>
 

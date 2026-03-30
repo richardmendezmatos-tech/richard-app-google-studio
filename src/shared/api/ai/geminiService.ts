@@ -230,8 +230,10 @@ export const getAIResponse = async (
     .map((msg) => `${msg.role === 'user' ? 'CLIENTE' : 'AGENTE'}: ${msg.text}`)
     .join('\n');
 
-      const { RICHARD_KNOWLEDGE_BASE } = await import('@/entities/knowledge');
-      const systemInstruction = customSystemPrompt || `
+  const { RICHARD_KNOWLEDGE_BASE } = await import('@/entities/knowledge');
+  const systemInstruction =
+    customSystemPrompt ||
+    `
         ROL: Eres el Asistente Virtual de "Richard Automotive", experto en F&I.
         OBJETIVO: Asesorar clientes y capturar LEADS.
         
@@ -272,15 +274,17 @@ export const getAIResponse = async (
       );
 
       // Async Logging using dynamic import
-      import('@/entities/sales').then(({ logUsageEvent }) => {
-        logUsageEvent({
-          dealerId: 'richard-automotive',
-          eventType: 'ai_call',
-          count: (userPrompt.length + text.length) / 4,
-          costEstimate: 0,
-          metadata: { model: 'gemini-2.0-flash-tools' },
-        }).catch(console.error);
-      }).catch(console.error);
+      import('@/entities/sales')
+        .then(({ logUsageEvent }) => {
+          logUsageEvent({
+            dealerId: 'richard-automotive',
+            eventType: 'ai_call',
+            count: (userPrompt.length + text.length) / 4,
+            costEstimate: 0,
+            metadata: { model: 'gemini-2.0-flash-tools' },
+          }).catch(console.error);
+        })
+        .catch(console.error);
 
       return text;
     };
@@ -361,7 +365,11 @@ export const generateText = async (prompt: string, instruction?: string): Promis
   return await callGeminiProxy(prompt, instruction, 'gemini-1.5-flash');
 };
 
-export const generateStructuredJSON = async (prompt: string, instruction?: string, modelName: string = 'gemini-2.0-flash'): Promise<any> => {
+export const generateStructuredJSON = async (
+  prompt: string,
+  instruction?: string,
+  modelName: string = 'gemini-2.0-flash',
+): Promise<any> => {
   const text = await callGeminiProxy(prompt, instruction, modelName, {
     responseMimeType: 'application/json',
   });
@@ -575,7 +583,7 @@ export const generateCoverImage = async (prompt: string): Promise<string> => {
   try {
     const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (!apiKey) {
-      console.warn("No VITE_OPENAI_API_KEY found. Falling back to Unsplash.");
+      console.warn('No VITE_OPENAI_API_KEY found. Falling back to Unsplash.');
       return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600';
     }
 
@@ -684,4 +692,3 @@ export const generateEmbedding = async (text: string): Promise<number[]> => {
     throw error;
   }
 };
-

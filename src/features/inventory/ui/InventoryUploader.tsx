@@ -76,7 +76,13 @@ export const InventoryUploader: React.FC<InventoryUploaderProps> = ({ onDataExtr
         <div className="flex flex-col items-center justify-center space-y-4">
           {preview ? (
             <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-              <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+              <img
+                loading="lazy"
+                decoding="async"
+                src={preview}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
               {isProcessing && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 text-white animate-spin" />

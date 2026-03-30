@@ -7,11 +7,11 @@ export const CONSTANTES_PR = {
   // Costos Provisionales de Richard Automotive Command Center
   DOC_FEE_STANDARDIZED: 595.0, // El "Doc Fee" o Cargo por Documentación y Processing
   REGISTRATION_FEE_BASE: 295.0, // Tablilla, Marbete, Arbitrios Menores
-  TITLE_TRANSFER_FEE: 55.0,     // Traspaso de título oficial
-  
+  TITLE_TRANSFER_FEE: 55.0, // Traspaso de título oficial
+
   // Benchmark para LTV (Loan-To-Value) y DTI (Debt-To-Income)
   MAX_LTV_RATIO: 1.25, // Los bancos en PR rara vez prestan más del 125% del valor real
-  MAX_DTI_RATIO: 0.45,  // 45% DTI máximo para Aprobación Elite
+  MAX_DTI_RATIO: 0.45, // 45% DTI máximo para Aprobación Elite
 };
 
 export const PRODUCTOS_BACKEND_RANGOS = {

@@ -49,13 +49,15 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   const { currentDealer } = useDealer();
   const { leads, isLoadingLeads } = useCommandCenterData(currentDealer.id || 'richard-automotive');
   const { data: carData, isLoading: isLoadingCars } = useCars(12);
-  
+
   const inventory = React.useMemo(() => {
     return carData?.pages.flatMap((page) => page.cars) || [];
   }, [carData]);
 
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = React.useState<'todo' | 'premium' | 'oportunidad' | 'baja'>('todo');
+  const [activeTab, setActiveTab] = React.useState<'todo' | 'premium' | 'oportunidad' | 'baja'>(
+    'todo',
+  );
   const [searchTerm, setSearchTerm] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
 
@@ -70,18 +72,18 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
   const filteredInventory = React.useMemo(() => {
     let items = (inventory || []).filter((c) =>
-      (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
+      (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase()),
     );
 
     if (activeTab === 'premium') {
-      items = items.filter(c => c.price && Number(c.price) > 50000 || c.type === 'luxury');
+      items = items.filter((c) => (c.price && Number(c.price) > 50000) || c.type === 'luxury');
     } else if (activeTab === 'oportunidad') {
-      items = items.filter(c => {
+      items = items.filter((c) => {
         const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
         return calculatePredictiveDTS(c, leadsForCar).advantageScore > 80;
       });
     } else if (activeTab === 'baja') {
-      items = items.filter(c => {
+      items = items.filter((c) => {
         const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
         return calculatePredictiveDTS(c, leadsForCar).advantageScore < 40;
       });
@@ -141,14 +143,14 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
               { id: 'todo', label: 'Todo', icon: Filter },
               { id: 'premium', label: 'Premium', icon: Flame },
               { id: 'oportunidad', label: 'Oportunidad', icon: CheckCircle2 },
-              { id: 'baja', label: 'Baja Tracción', icon: AlertTriangle }
-            ].map(tab => (
+              { id: 'baja', label: 'Baja Tracción', icon: AlertTriangle },
+            ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
-                  activeTab === tab.id 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                  activeTab === tab.id
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
                     : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                 }`}
               >

@@ -40,7 +40,9 @@
   user-select: none;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border: 1px solid rgba(37, 211, 102, 0.35);
-  box-shadow: 0 8px 32px rgba(37, 211, 102, 0.2), 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 8px 32px rgba(37, 211, 102, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.4);
   animation: waSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -72,7 +74,9 @@
   font-family: var(--font-sans, sans-serif);
   background: #0f0f1a;
   border: 1px solid rgba(37, 211, 102, 0.25);
-  box-shadow: 0 24px 80px rgba(37, 211, 102, 0.18), 0 8px 32px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 24px 80px rgba(37, 211, 102, 0.18),
+    0 8px 32px rgba(0, 0, 0, 0.6);
   animation: waOpen 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transform-origin: bottom right;
 }
@@ -351,7 +355,9 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 32px rgba(37, 211, 102, 0.5);
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+  transition:
+    transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.2s;
   color: #fff;
   position: relative;
 }
@@ -383,37 +389,80 @@
   font-size: 9px;
   font-weight: 800;
   color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Animations ─────────────────────────────────────────────── */
 @keyframes waRing {
-  0%   { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 0 rgba(37,211,102,0.4); }
-  70%  { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 16px rgba(37,211,102,0); }
-  100% { box-shadow: 0 4px 24px rgba(37,211,102,0.5), 0 0 0 0 rgba(37,211,102,0); }
+  0% {
+    box-shadow:
+      0 4px 24px rgba(37, 211, 102, 0.5),
+      0 0 0 0 rgba(37, 211, 102, 0.4);
+  }
+  70% {
+    box-shadow:
+      0 4px 24px rgba(37, 211, 102, 0.5),
+      0 0 0 16px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow:
+      0 4px 24px rgba(37, 211, 102, 0.5),
+      0 0 0 0 rgba(37, 211, 102, 0);
+  }
 }
 
 @keyframes waPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.6; transform: scale(0.85); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
 }
 
 @keyframes waBounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30%            { transform: translateY(-5px); }
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes waOpen {
-  from { opacity: 0; transform: scale(0.85) translateY(12px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes waSlideIn {
-  from { opacity: 0; transform: translateX(20px) scale(0.92); }
-  to   { opacity: 1; transform: translateX(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 @keyframes waMsgIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

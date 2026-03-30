@@ -50,7 +50,7 @@ const ProgressiveForm: React.FC<ProgressiveFormProps> = ({ type, onSubmit }) => 
         {config.icon}
         <span className="text-xs font-black uppercase tracking-widest">{config.title}</span>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <div className="flex gap-2">
           <input
@@ -73,7 +73,7 @@ const ProgressiveForm: React.FC<ProgressiveFormProps> = ({ type, onSubmit }) => 
             <Send size={18} className="transform group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
-        
+
         {/* Inline Error Validation */}
         {error && (
           <div className="flex items-center gap-1 text-[11px] text-red-400 mt-1 animate-in fade-in">
@@ -85,9 +85,10 @@ const ProgressiveForm: React.FC<ProgressiveFormProps> = ({ type, onSubmit }) => 
 
       <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
         <p className="text-[11px] text-slate-400 font-medium">
-          Toma <strong className="text-white">5 segundos</strong> y nos ayuda a darte la mejor oferta.
+          Toma <strong className="text-white">5 segundos</strong> y nos ayuda a darte la mejor
+          oferta.
         </p>
-        
+
         {/* CRO Trust Signal */}
         <div className="flex items-center gap-1 xl:gap-2 text-[11px] text-slate-300 font-bold bg-slate-800/50 px-2 py-1 rounded-md">
           <ShieldCheck size={14} className="text-emerald-400" />

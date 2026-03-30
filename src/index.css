@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   --brand-cyan: #00e5ff;
   --brand-cyan-strong: #00b8cc;
@@ -31,11 +30,16 @@
   --mesh-2: #7000ff;
   --mesh-3: #ff0070;
   --mesh-4: #00ffaa;
-  
+
   /* Glass V2 Tokens */
   --glass-bg: rgba(8, 18, 30, 0.45);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-reflection: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+  --glass-reflection: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
 }
 
 html {
@@ -433,8 +437,17 @@ body {
 }
 
 @keyframes kineticPulse {
-  0%, 100% { transform: scale(1); opacity: 1; filter: brightness(1); }
-  50% { transform: scale(1.1); opacity: 0.8; filter: brightness(1.2); }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+    filter: brightness(1.2);
+  }
 }
 
 .animate-kinetic-pulse {

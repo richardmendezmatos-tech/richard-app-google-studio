@@ -21,7 +21,9 @@ import { NeuralInsightsHeadlines } from './components/NeuralInsightsHeadlines';
 // Lazy components used within the tab
 const MissionControlWidget = React.lazy(() => import('./MissionControlWidget'));
 const InventoryProfitabilityWidget = React.lazy(() => import('./InventoryProfitabilityWidget'));
-const QuickQualifyCard = React.lazy(() => import('@/features/loans').then(m => ({ default: m.QuickQualifyCard })));
+const QuickQualifyCard = React.lazy(() =>
+  import('@/features/loans').then((m) => ({ default: m.QuickQualifyCard })),
+);
 
 interface Props {
   inventory: Car[];
@@ -38,18 +40,18 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.6, cubicBezier: [0.16, 1, 0.3, 1] }
-    }
+      transition: { duration: 0.6, cubicBezier: [0.16, 1, 0.3, 1] },
+    },
   };
 
   return (
@@ -74,8 +76,8 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       </React.Suspense>
 
       {/* KPI WIDGETS ROW */}
-      <motion.div 
-        variants={itemVariants} 
+      <motion.div
+        variants={itemVariants}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
         <StatusWidget
@@ -118,8 +120,8 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       </motion.div>
 
       {/* QUICK ACCESS GRID */}
-      <motion.div 
-        variants={itemVariants} 
+      <motion.div
+        variants={itemVariants}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
         {/* Strategy Lab Card */}
@@ -132,12 +134,15 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
             className="text-primary mb-4 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700"
             size={32}
           />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Strategy Lab</h3>
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            Strategy Lab
+          </h3>
           <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
             Ingeniería de marketing y simulación de demanda con tu avatar IA.
           </p>
           <div className="flex items-center gap-2 text-primary font-black text-[9px] uppercase tracking-[0.2em]">
-            RA PROTOCOL <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            RA PROTOCOL{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 
@@ -151,10 +156,15 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
             className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
             size={32}
           />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">In-Take Digital</h3>
-          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">Evalúa nuevas unidades con visión artificial computarizada.</p>
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            In-Take Digital
+          </h3>
+          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            Evalúa nuevas unidades con visión artificial computarizada.
+          </p>
           <div className="flex items-center gap-2 text-emerald-500 font-black text-[9px] uppercase tracking-widest">
-            Protocolo <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            Protocolo{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 
@@ -168,10 +178,15 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
             className="text-cyan-500 mb-4 group-hover:scale-110 transition-transform duration-500"
             size={32}
           />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Pipeline Central</h3>
-          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">Gestión de oportunidades y cierre de ventas omnicanal.</p>
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            Pipeline Central
+          </h3>
+          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            Gestión de oportunidades y cierre de ventas omnicanal.
+          </p>
           <div className="flex items-center gap-2 text-cyan-500 font-black text-[9px] uppercase tracking-widest">
-            Tablero <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            Tablero{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 
@@ -185,10 +200,15 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
             className="text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-500"
             size={32}
           />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Framework Lab</h3>
-          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">Configuración de integraciones y despliegues experimentales.</p>
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            Framework Lab
+          </h3>
+          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            Configuración de integraciones y despliegues experimentales.
+          </p>
           <div className="flex items-center gap-2 text-purple-500 font-black text-[9px] uppercase tracking-widest">
-            Terminal <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            Terminal{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 
@@ -202,10 +222,15 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
             className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform duration-500"
             size={32}
           />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Analytics Pro</h3>
-          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">Inteligencia predictiva sobre inventario y tendencias locales.</p>
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            Analytics Pro
+          </h3>
+          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            Inteligencia predictiva sobre inventario y tendencias locales.
+          </p>
           <div className="flex items-center gap-2 text-emerald-500 font-black text-[9px] uppercase tracking-widest">
-            Ver Datos <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            Ver Datos{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
 
@@ -215,14 +240,16 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           onClick={() => navigate('/admin/houston')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
-          <Radio
-            className="text-cyan-400 mb-4 group-hover:animate-pulse"
-            size={32}
-          />
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Houston Hub</h3>
-          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">Terminal de telemetría avanzada y control maestro.</p>
+          <Radio className="text-cyan-400 mb-4 group-hover:animate-pulse" size={32} />
+          <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
+            Houston Hub
+          </h3>
+          <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            Terminal de telemetría avanzada y control maestro.
+          </p>
           <div className="flex items-center gap-2 text-cyan-400 font-black text-[9px] uppercase tracking-widest">
-            Terminal <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            Terminal{' '}
+            <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
           </div>
         </div>
       </motion.div>

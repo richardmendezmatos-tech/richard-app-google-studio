@@ -30,16 +30,20 @@ export class WorkspaceManager {
     try {
       const today = new Date().toISOString().split('T')[0];
       const documentId = `${today}_${category.toUpperCase()}_${sessionId}`;
-      
+
       const docRef = doc(db, this.collectionName, documentId);
-      
+
       // Upsert the workspace checkpoint
-      await setDoc(docRef, {
-        sessionId,
-        category,
-        data,
-        updatedAt: serverTimestamp(),
-      }, { merge: true });
+      await setDoc(
+        docRef,
+        {
+          sessionId,
+          category,
+          data,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true },
+      );
 
       console.log(`[WorkspaceManager] Checkpoint Guardado: ${documentId}`);
       return documentId;

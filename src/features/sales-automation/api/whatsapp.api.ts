@@ -31,7 +31,7 @@ export class WhatsAppService {
       template: {
         name: 'welcome_lead', // Replace with exact template name configured in Meta
         language: {
-          code: 'es_US' // Adjust based on target demographic
+          code: 'es_US', // Adjust based on target demographic
         },
         components: [
           {
@@ -39,27 +39,27 @@ export class WhatsAppService {
             parameters: [
               {
                 type: 'text',
-                text: lead.firstName // Dynamic variable for the template greeting
-              }
-            ]
-          }
-        ]
-      }
+                text: lead.firstName, // Dynamic variable for the template greeting
+              },
+            ],
+          },
+        ],
+      },
     };
 
     try {
       const response = await fetch(`${this.baseUrl}/${this.phoneNumberId}/messages`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${this.token}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-          const errbody = await response.text();
-          throw new Error(`WhatsApp API Error: ${response.status} - ${errbody}`);
+        const errbody = await response.text();
+        throw new Error(`WhatsApp API Error: ${response.status} - ${errbody}`);
       }
     } catch (error) {
       console.error('[WhatsAppService] Failed to send message:', error);

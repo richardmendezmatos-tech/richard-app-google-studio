@@ -2,7 +2,7 @@
  * Marketing Predictive Capture (Phase 22)
  * Automatically extracts UTM tags, Pixel tracking IDs, and session data
  * from URLs and Cookies without manual UI intervention.
- * 
+ *
  * RA OS v3.2 - Richard Intelligence
  */
 
@@ -42,7 +42,9 @@ export const extractMarketingData = (): MarketingCaptureData => {
     fbclid: params.get('fbclid') || undefined,
     gclid: params.get('gclid') || undefined,
     fbp: getCookie('_fbp'),
-    fbc: getCookie('_fbc') || (params.get('fbclid') ? `fb.1.${Date.now()}.${params.get('fbclid')}` : undefined),
+    fbc:
+      getCookie('_fbc') ||
+      (params.get('fbclid') ? `fb.1.${Date.now()}.${params.get('fbclid')}` : undefined),
     sessionEntryTimestamp: Date.now(),
     landingPage: window.location.pathname,
   };

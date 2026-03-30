@@ -3,9 +3,21 @@
 }
 
 /* ESLint Linter Corrections - Disabling Inline CSS */
-.delay-0 { animation-delay: 0ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-250 { animation-delay: 250ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-750 { animation-delay: 750ms; }
+.delay-0 {
+  animation-delay: 0ms;
+}
+.delay-150 {
+  animation-delay: 150ms;
+}
+.delay-250 {
+  animation-delay: 250ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+.delay-750 {
+  animation-delay: 750ms;
+}

@@ -61,9 +61,9 @@ const ContactoPage: React.FC = () => {
         <section className="relative min-h-[50vh] flex items-center overflow-hidden py-24 px-6">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
-            <img 
-              src="/assets/seo/contact-hero.png" 
-              alt="Richard Automotive Dealership in Bayamón, Puerto Rico" 
+            <img
+              src="/assets/seo/contact-hero.png"
+              alt="Richard Automotive Dealership in Bayamón, Puerto Rico"
               className="w-full h-full object-cover opacity-50"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
@@ -82,7 +82,8 @@ const ContactoPage: React.FC = () => {
             </h1>
 
             <p className="text-lg text-slate-300 max-w-xl mx-auto mb-10">
-              Estamos listos para ayudarte a encontrar tu próximo auto. Escríbenos o llámanos — respondemos rápido desde nuestro concesionario en Bayamón.
+              Estamos listos para ayudarte a encontrar tu próximo auto. Escríbenos o llámanos —
+              respondemos rápido desde nuestro concesionario en Bayamón.
             </p>
 
             <a
@@ -109,7 +110,9 @@ const ContactoPage: React.FC = () => {
                 <Phone size={22} className="text-cyan-400" />
               </div>
               <div>
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Teléfono</p>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
+                  Teléfono
+                </p>
                 <p className="text-xl font-black text-white">{PHONE_NUMBER}</p>
                 <p className="text-sm text-slate-400 mt-1 flex items-center gap-1">
                   Llamar ahora <ChevronRight size={14} />
@@ -128,7 +131,9 @@ const ContactoPage: React.FC = () => {
                 <MessageCircle size={22} className="text-green-400" />
               </div>
               <div>
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
+                  WhatsApp
+                </p>
                 <p className="text-xl font-black text-white">17873682880</p>
                 <p className="text-sm text-slate-400 mt-1 flex items-center gap-1">
                   Escribir ahora <ChevronRight size={14} />
@@ -142,7 +147,9 @@ const ContactoPage: React.FC = () => {
                 <MapPin size={22} className="text-purple-400" />
               </div>
               <div>
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Ubicación</p>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
+                  Ubicación
+                </p>
                 <p className="text-xl font-black text-white">Bayamón, Puerto Rico</p>
                 <p className="text-sm text-slate-400 mt-1">Con servicio a toda la isla</p>
               </div>
@@ -154,7 +161,9 @@ const ContactoPage: React.FC = () => {
                 <Clock size={22} className="text-amber-400" />
               </div>
               <div>
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Horario</p>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
+                  Horario
+                </p>
                 <p className="text-xl font-black text-white">Lun — Sáb</p>
                 <p className="text-sm text-slate-400 mt-1">9:00 AM a 6:00 PM</p>
               </div>
@@ -169,7 +178,8 @@ const ContactoPage: React.FC = () => {
               ¿Tienes alguna pregunta rápida?
             </h2>
             <p className="text-slate-400 mb-8">
-              Nuestro equipo responde consultas de inventario, financiamiento y trade-in por WhatsApp.
+              Nuestro equipo responde consultas de inventario, financiamiento y trade-in por
+              WhatsApp.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left mb-10">

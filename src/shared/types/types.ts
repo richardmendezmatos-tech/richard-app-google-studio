@@ -158,7 +158,7 @@ export interface Lead {
   acquisitionCost?: number; // In USD
   source?: 'facebook' | 'google' | 'direct' | 'referral' | 'instagram' | string;
   sourceCampaign?: string;
-  
+
   // Phase 22: Ad Predictive Capture
   marketingData?: {
     utm_source?: string;
@@ -280,7 +280,6 @@ declare global {
     aistudio?: AIStudio;
   }
 }
-
 
 export interface CommandIntent {
   action: {

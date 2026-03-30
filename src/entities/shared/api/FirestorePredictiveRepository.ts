@@ -1,5 +1,16 @@
 import { db } from '@/shared/api/firebase/client';
-import { collection, doc, getDoc, setDoc, query, where, getDocs, limit, orderBy, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  where,
+  getDocs,
+  limit,
+  orderBy,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { Lead, PredictiveInsight, PredictiveInsightSchema } from '@/entities/shared/model/entities';
 import { PredictiveRepository } from '@/entities/shared/api/repositories/PredictiveRepository';
 
@@ -47,10 +58,10 @@ export class FirestorePredictiveRepository implements PredictiveRepository {
     try {
       const leadsRef = collection(db, 'leads');
       const q = query(
-        leadsRef, 
-        where('predictiveScore', '>=', threshold), 
+        leadsRef,
+        where('predictiveScore', '>=', threshold),
         orderBy('predictiveScore', 'desc'),
-        limit(20)
+        limit(20),
       );
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Lead);

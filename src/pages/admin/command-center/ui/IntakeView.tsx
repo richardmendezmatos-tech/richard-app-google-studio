@@ -12,10 +12,7 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react';
-import {
-  recibirNuevaUnidad,
-  RecibirUnidadParams,
-} from '@/features/inventory';
+import { recibirNuevaUnidad, RecibirUnidadParams } from '@/features/inventory';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 
 const IntakeView: React.FC = () => {
@@ -251,8 +248,8 @@ const IntakeView: React.FC = () => {
                 Unidad Integrada con Éxito
               </h2>
               <p className="text-slate-400 max-w-md mx-auto mb-12">
-                La unidad con VIN <span className="text-primary font-mono">{formData.vin}</span>{' '}
-                ha sido registrada y el informe de rentabilidad está disponible en el Dashboard
+                La unidad con VIN <span className="text-primary font-mono">{formData.vin}</span> ha
+                sido registrada y el informe de rentabilidad está disponible en el Dashboard
                 Central.
               </p>
               <button

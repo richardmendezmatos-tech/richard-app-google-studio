@@ -80,7 +80,9 @@ const NotFound: React.FC = () => {
         {particles.map((p, i) => (
           <div
             key={p.id}
-            ref={(el) => { particlesRef.current[i] = el; }}
+            ref={(el) => {
+              particlesRef.current[i] = el;
+            }}
             className="absolute rounded-full bg-primary animate-pulse"
           />
         ))}

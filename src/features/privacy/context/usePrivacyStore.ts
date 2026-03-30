@@ -28,7 +28,7 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
   _initialize: async () => {
     let savedConsent = null;
     let savedSettingsStr = null;
-    
+
     if (typeof window !== 'undefined') {
       savedConsent = localStorage.getItem('privacy_consented');
       savedSettingsStr = localStorage.getItem('privacy_settings');
@@ -58,7 +58,7 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
           const dbSettings = userDoc.data().privacySettings as PrivacySettings;
           const syncedSettings = { ...dbSettings, essential: true };
           set({ settings: syncedSettings, hasConsented: true });
-          
+
           if (typeof window !== 'undefined') {
             localStorage.setItem('privacy_consented', 'true');
             localStorage.setItem('privacy_settings', JSON.stringify(syncedSettings));

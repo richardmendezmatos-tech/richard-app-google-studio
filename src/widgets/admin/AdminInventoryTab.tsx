@@ -97,7 +97,9 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
             key={i}
             className="group relative glass-premium p-6 rounded-3xl overflow-hidden hover-kinetic flex flex-col justify-center gap-3 cursor-default shadow-xl border border-white/5 bg-slate-900/40 backdrop-blur-xl"
           >
-            <div className={`p-4 rounded-2xl bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${stat.color} z-10 inline-flex self-start`}>
+            <div
+              className={`p-4 rounded-2xl bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${stat.color} z-10 inline-flex self-start`}
+            >
               <stat.icon size={22} strokeWidth={2.5} />
             </div>
             <div className="z-10 mt-1">
@@ -109,7 +111,9 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
               </div>
             </div>
             {/* Ambient background glow based on icon color */}
-            <div className={`absolute -right-8 -bottom-8 w-32 h-32 rounded-full blur-[60px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 ${stat.color.replace('text-', 'bg-')}`} />
+            <div
+              className={`absolute -right-8 -bottom-8 w-32 h-32 rounded-full blur-[60px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 ${stat.color.replace('text-', 'bg-')}`}
+            />
           </div>
         ))}
       </div>
@@ -155,7 +159,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
               className="px-8 h-[56px] bg-gradient-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-              <Plus size={18} strokeWidth={3} className="relative z-10" /> 
+              <Plus size={18} strokeWidth={3} className="relative z-10" />
               <span className="relative z-10">Nueva Unidad</span>
             </button>
 

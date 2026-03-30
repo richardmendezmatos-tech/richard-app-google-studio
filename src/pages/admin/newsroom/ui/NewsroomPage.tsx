@@ -61,21 +61,22 @@ const NewsroomPage: React.FC = () => {
 
     try {
       const newPost = await generateBlogPost(topic, tone, postType);
-      
+
       const draftPost = { ...newPost, id: 'draft_new' };
       setSelectedPost(draftPost);
       setEditedPost(draftPost);
       setIsEditing(true);
-      
+
       addNotification('success', '¡Texto listo! Pintando portada con DALL-E 3...');
 
       // Async image generation so user can start reading/editing text immediately
-      generateCoverImage(topic).then((coverUrl) => {
-        setEditedPost((prev) => ({ ...prev, imageUrl: coverUrl }));
-        setSelectedPost((prev) => prev ? { ...prev, imageUrl: coverUrl } : null);
-        addNotification('success', '¡Portada Magistral Generada!');
-      }).catch(e => console.error("Cover Image Gen Error", e));
-      
+      generateCoverImage(topic)
+        .then((coverUrl) => {
+          setEditedPost((prev) => ({ ...prev, imageUrl: coverUrl }));
+          setSelectedPost((prev) => (prev ? { ...prev, imageUrl: coverUrl } : null));
+          addNotification('success', '¡Portada Magistral Generada!');
+        })
+        .catch((e) => console.error('Cover Image Gen Error', e));
     } catch (error) {
       console.error(error);
       addNotification('error', 'No se pudo generar el artículo. Intenta otro tema.');
@@ -92,14 +93,14 @@ const NewsroomPage: React.FC = () => {
     try {
       const { id: _ignore, ...postDataToSave } = editedPost as BlogPost;
       await createPostMutation.mutateAsync(postDataToSave as Omit<BlogPost, 'id'>);
-      
+
       setTopic('');
       setSelectedPost(null);
       setIsEditing(false);
       addNotification('success', '¡Artículo publicado y en vivo en el Newsroom!');
     } catch (error) {
-       console.error(error);
-       addNotification('error', 'Hubo un error al publicar.');
+      console.error(error);
+      addNotification('error', 'Hubo un error al publicar.');
     }
   };
 
@@ -428,7 +429,10 @@ const NewsroomPage: React.FC = () => {
               </div>
 
               <div className="absolute top-8 right-8 z-50">
-                <button title="Bookmark" className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl text-white transition-all border border-white/20 shadow-xl">
+                <button
+                  title="Bookmark"
+                  className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl text-white transition-all border border-white/20 shadow-xl"
+                >
                   <Bookmark size={20} />
                 </button>
               </div>
@@ -436,7 +440,10 @@ const NewsroomPage: React.FC = () => {
               {/* Modal Content - Side Image */}
               <div className="w-full md:w-5/12 h-board-column-lg md:h-full relative shrink-0">
                 <img
-                  src={selectedPost.imageUrl || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600'}
+                  src={
+                    selectedPost.imageUrl ||
+                    'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600'
+                  }
                   alt={selectedPost.title}
                   className="w-full h-full object-cover"
                 />
@@ -463,39 +470,50 @@ const NewsroomPage: React.FC = () => {
                 {isEditing ? (
                   <div className="max-w-2xl mx-auto space-y-8 pb-12">
                     <div className="flex items-center justify-between pb-6 border-b border-slate-100 dark:border-slate-800/50">
-                      <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">Modo Edición <span className="text-amber-500 text-sm ml-2 bg-amber-500/10 px-3 py-1 rounded-full">Borrador</span></h2>
+                      <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
+                        Modo Edición{' '}
+                        <span className="text-amber-500 text-sm ml-2 bg-amber-500/10 px-3 py-1 rounded-full">
+                          Borrador
+                        </span>
+                      </h2>
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-xs font-bold uppercase tracking-widest text-primary">Título</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                        Título
+                      </label>
                       <input
                         type="text"
                         title="Título"
                         placeholder="Título del artículo..."
                         value={editedPost.title || ''}
-                        onChange={(e) => setEditedPost({...editedPost, title: e.target.value})}
+                        onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })}
                         className="w-full xl:text-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-slate-900 dark:text-white font-bold outline-none focus:border-primary transition-all"
                       />
                     </div>
-                    
+
                     <div className="space-y-4">
-                      <label className="text-xs font-bold uppercase tracking-widest text-primary">Extracto Corto (Excerpt)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                        Extracto Corto (Excerpt)
+                      </label>
                       <textarea
                         title="Extracto"
                         placeholder="Añade un extracto o resumen corto..."
                         value={editedPost.excerpt || ''}
-                        onChange={(e) => setEditedPost({...editedPost, excerpt: e.target.value})}
+                        onChange={(e) => setEditedPost({ ...editedPost, excerpt: e.target.value })}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-slate-700 dark:text-slate-300 min-h-[100px] outline-none focus:border-primary transition-all"
                       />
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-xs font-bold uppercase tracking-widest text-primary">Contenido Principal (Markdown)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                        Contenido Principal (Markdown)
+                      </label>
                       <textarea
                         title="Contenido"
                         placeholder="Escribe el contenido en formato Markdown..."
                         value={editedPost.content || ''}
-                        onChange={(e) => setEditedPost({...editedPost, content: e.target.value})}
+                        onChange={(e) => setEditedPost({ ...editedPost, content: e.target.value })}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-slate-700 dark:text-slate-300 min-h-[400px] font-mono text-sm leading-relaxed outline-none focus:border-primary transition-all"
                       />
                     </div>
@@ -503,29 +521,43 @@ const NewsroomPage: React.FC = () => {
                     {/* SEO & METADATA PANEL */}
                     <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-6">
                       <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                        <Sparkles size={16} className="text-primary"/> SEO & Metadata Panel
+                        <Sparkles size={16} className="text-primary" /> SEO & Metadata Panel
                       </h3>
-                      
+
                       <div className="space-y-4">
-                        <label className="text-xs font-bold uppercase tracking-widest text-primary">URL Slug</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                          URL Slug
+                        </label>
                         <input
                           type="text"
                           title="URL Slug"
                           placeholder="ejemplo-de-articulo-seo"
                           value={editedPost.slug || ''}
-                          onChange={(e) => setEditedPost({...editedPost, slug: e.target.value.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^\w-]/g, '')})}
+                          onChange={(e) =>
+                            setEditedPost({
+                              ...editedPost,
+                              slug: e.target.value
+                                .toLowerCase()
+                                .replace(/[\s_]+/g, '-')
+                                .replace(/[^\w-]/g, ''),
+                            })
+                          }
                           className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-slate-700 dark:text-slate-300 outline-none focus:border-primary transition-all font-mono text-sm"
                         />
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-xs font-bold uppercase tracking-widest text-primary">Meta Description</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                          Meta Description
+                        </label>
                         <textarea
                           title="Meta Description"
                           placeholder="Descripción breve y persuasiva para los resultados de Google (Max. 160 caracteres)"
                           maxLength={160}
                           value={editedPost.metaDescription || ''}
-                          onChange={(e) => setEditedPost({...editedPost, metaDescription: e.target.value})}
+                          onChange={(e) =>
+                            setEditedPost({ ...editedPost, metaDescription: e.target.value })
+                          }
                           className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-slate-700 dark:text-slate-300 outline-none focus:border-primary transition-all min-h-[80px] text-sm"
                         />
                         <div className="text-[10px] text-slate-400 font-bold text-right">
@@ -534,13 +566,23 @@ const NewsroomPage: React.FC = () => {
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-xs font-bold uppercase tracking-widest text-primary">Tags (Separados por coma)</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-primary">
+                          Tags (Separados por coma)
+                        </label>
                         <input
                           type="text"
                           title="Tags"
                           placeholder="EV, Tecnología, Futuro..."
                           value={editedPost.tags?.join(', ') || ''}
-                          onChange={(e) => setEditedPost({...editedPost, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
+                          onChange={(e) =>
+                            setEditedPost({
+                              ...editedPost,
+                              tags: e.target.value
+                                .split(',')
+                                .map((t) => t.trim())
+                                .filter(Boolean),
+                            })
+                          }
                           className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-slate-700 dark:text-slate-300 outline-none focus:border-primary transition-all text-sm"
                         />
                       </div>
@@ -551,7 +593,11 @@ const NewsroomPage: React.FC = () => {
                       disabled={createPostMutation.status === 'pending'}
                       className="w-full py-4 bg-primary hover:bg-[#009ac0] text-slate-900 font-black uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center gap-2"
                     >
-                      {createPostMutation.status === 'pending' ? <Loader2 className="animate-spin" /> : 'Publicar al Newsroom'}
+                      {createPostMutation.status === 'pending' ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        'Publicar al Newsroom'
+                      )}
                     </button>
                     <button
                       onClick={() => setIsEditing(false)}
@@ -567,53 +613,56 @@ const NewsroomPage: React.FC = () => {
                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-primary">
                           RA
                         </div>
-                      <div>
-                        <p className="font-black text-sm text-slate-800 dark:text-white uppercase leading-none mb-1">
-                          {selectedPost.author}
-                        </p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                          {selectedPost.date} • 4 min read
-                        </p>
+                        <div>
+                          <p className="font-black text-sm text-slate-800 dark:text-white uppercase leading-none mb-1">
+                            {selectedPost.author}
+                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {selectedPost.date} • 4 min read
+                          </p>
+                        </div>
                       </div>
+                      <button
+                        title="Share Post"
+                        onClick={() => handleSharePost(selectedPost)}
+                        className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary transition-all"
+                      >
+                        <Share2 size={20} className="text-primary" />
+                      </button>
                     </div>
-                    <button
-                      title="Share Post"
-                      onClick={() => handleSharePost(selectedPost)}
-                      className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary transition-all"
-                    >
-                      <Share2 size={20} className="text-primary" />
-                    </button>
-                  </div>
 
-                  <div className="prose prose-lg dark:prose-invert max-w-none">
-                    <p className="text-xl font-bold text-primary italic mb-8 border-l-4 border-primary pl-6 py-2">
-                      {selectedPost.excerpt}
-                    </p>
-                    <div
-                      className="text-slate-700 dark:text-slate-300 font-light leading-relaxed space-y-6 text-lg"
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(
-                          selectedPost.content
-                            .replace(
-                              /\*\*(.*?)\*\*/g,
-                              '<strong class="font-black text-slate-900 dark:text-white">$1</strong>',
-                            )
-                            .replace(/\n/g, '<br/>')
-                            .replace(
-                              /## (.*)/g,
-                              '<h2 class="text-3xl font-black mt-12 mb-6 text-slate-800 dark:text-white uppercase tracking-tighter border-b border-primary/20 pb-2">$1</h2>',
-                            )
-                        ),
-                      }}
-                    />
-                  </div>
+                    <div className="prose prose-lg dark:prose-invert max-w-none">
+                      <p className="text-xl font-bold text-primary italic mb-8 border-l-4 border-primary pl-6 py-2">
+                        {selectedPost.excerpt}
+                      </p>
+                      <div
+                        className="text-slate-700 dark:text-slate-300 font-light leading-relaxed space-y-6 text-lg"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(
+                            selectedPost.content
+                              .replace(
+                                /\*\*(.*?)\*\*/g,
+                                '<strong class="font-black text-slate-900 dark:text-white">$1</strong>',
+                              )
+                              .replace(/\n/g, '<br/>')
+                              .replace(
+                                /## (.*)/g,
+                                '<h2 class="text-3xl font-black mt-12 mb-6 text-slate-800 dark:text-white uppercase tracking-tighter border-b border-primary/20 pb-2">$1</h2>',
+                              ),
+                          ),
+                        }}
+                      />
+                    </div>
 
                     <div className="bg-slate-50 dark:bg-slate-900/50 p-10 rounded-[40px] border border-slate-100 dark:border-slate-800/50 text-center space-y-6">
                       <h4 className="font-black text-xl text-slate-800 dark:text-white uppercase tracking-tighter">
                         Did you find this insightful?
                       </h4>
                       <div className="flex justify-center gap-4">
-                        <button onClick={() => setIsEditing(true)} className="px-8 py-3 bg-primary text-white rounded-full font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                        <button
+                          onClick={() => setIsEditing(true)}
+                          className="px-8 py-3 bg-primary text-white rounded-full font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+                        >
                           Edit Article
                         </button>
                         <button className="px-8 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">

@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 export type { Lead, Car, CarType, UserRole, AppUser } from '@/shared/types/types';
 
-
 export interface HoustonMetric {
   label: string;
   value: number | string;

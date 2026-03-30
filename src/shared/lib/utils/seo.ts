@@ -23,13 +23,16 @@ export function slugify(text: string): string {
  * @param includeModifiers - Opcional para inyectar long-tail keywords
  * @returns Slug final ej: "2023-honda-civic-pre-aprobado"
  */
-export function generateVehicleSlug(car: Pick<Car, 'name'>, includeModifiers: boolean = true): string {
+export function generateVehicleSlug(
+  car: Pick<Car, 'name'>,
+  includeModifiers: boolean = true,
+): string {
   const baseSlug = slugify(car.name);
-  
+
   if (includeModifiers) {
     // Ejemplo de long-tail para SEO Transaccional local
     return `${baseSlug}-puerto-rico`;
   }
-  
+
   return baseSlug;
 }

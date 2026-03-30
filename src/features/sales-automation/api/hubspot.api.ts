@@ -13,7 +13,9 @@ export class HubSpotService {
   async createContactAndDeal(lead: Lead): Promise<void> {
     if (!this.apiKey) {
       console.warn('⚠️ [HubSpotService] Missing VITE_HUBSPOT_TOKEN. Running in Mock Mode.');
-      console.info(`[HubSpot Mock] Would create Contact/Deal for: ${lead.firstName} ${lead.lastName}`);
+      console.info(
+        `[HubSpot Mock] Would create Contact/Deal for: ${lead.firstName} ${lead.lastName}`,
+      );
       return;
     }
 
@@ -38,17 +40,17 @@ export class HubSpotService {
         email: lead.email,
         phone: lead.phone,
         lifecyclestage: 'lead',
-        lead_source: lead.source || 'Website'
-      }
+        lead_source: lead.source || 'Website',
+      },
     };
 
     const response = await fetch(`${this.baseUrl}/contacts`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -66,28 +68,28 @@ export class HubSpotService {
         dealname: `Nuevo Lead: ${lead.firstName} ${lead.lastName}`,
         pipeline: 'default',
         dealstage: 'appointmentscheduled', // adjust based on actual pipeline
-        amount: '0'
+        amount: '0',
       },
       associations: [
         {
           to: { id: contactId },
-          types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 3 }] // Contact to Deal
-        }
-      ]
+          types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 3 }], // Contact to Deal
+        },
+      ],
     };
 
     const response = await fetch(`${this.baseUrl}/deals`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-        const errbody = await response.text();
-        throw new Error(`HubSpot Deal Error: ${response.status} - ${errbody}`);
+      const errbody = await response.text();
+      throw new Error(`HubSpot Deal Error: ${response.status} - ${errbody}`);
     }
 
     const data = await response.json();

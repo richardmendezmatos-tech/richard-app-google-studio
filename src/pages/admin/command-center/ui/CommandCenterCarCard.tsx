@@ -73,7 +73,8 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
             {car.name}
           </h3>
           <div className="flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-            <Gauge size={10} /> {car.type === 'luxury' ? 'Premium' : 'Standard'} • {car.badge || 'N/A'}
+            <Gauge size={10} /> {car.type === 'luxury' ? 'Premium' : 'Standard'} •{' '}
+            {car.badge || 'N/A'}
           </div>
         </div>
 
@@ -97,7 +98,9 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
             </div>
             <div className="text-xl font-black text-white">
               <AnimatedCounter value={prediction.daysToSale} />{' '}
-              <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">DAYS</span>
+              <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">
+                DAYS
+              </span>
             </div>
           </div>
         </div>
@@ -122,7 +125,10 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
             onClick={onPlanContent}
             className="flex-1 h-10 bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group/btn"
           >
-            <Sparkles size={14} className="group-hover/btn:rotate-12 transition-transform duration-500" />
+            <Sparkles
+              size={14}
+              className="group-hover/btn:rotate-12 transition-transform duration-500"
+            />
             Strategy Lab
           </button>
           <div className="flex gap-2">

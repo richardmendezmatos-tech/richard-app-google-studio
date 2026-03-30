@@ -49,7 +49,7 @@ export class FirestoreLeadRepository implements LeadRepository {
     return withSecureErrorHandling(async () => {
       const data = LeadMapper.toPersistence(lead);
       const safeData = leadSchema.parse(data); // Security Validation
-      
+
       const docRef = await addDoc(collection(db, this.collectionName), {
         ...safeData,
         timestamp: serverTimestamp(),
@@ -60,10 +60,11 @@ export class FirestoreLeadRepository implements LeadRepository {
       // productivo real aquí usaríamos un EventBus o Cloud Function (Trigger).
       import('@/features/sales-automation/model/sales-orchestrator.service')
         .then(({ salesOrchestrator }) => {
-           salesOrchestrator.processNewLead({ ...safeData, id: docRef.id } as Lead).catch((e) => {
-             console.error('[Sync Error] Failed to execute background sales automation:', e);
-           });
-        }).catch(err => console.error('Failed to load orchestrator dynamically', err));
+          salesOrchestrator.processNewLead({ ...safeData, id: docRef.id } as Lead).catch((e) => {
+            console.error('[Sync Error] Failed to execute background sales automation:', e);
+          });
+        })
+        .catch((err) => console.error('Failed to load orchestrator dynamically', err));
 
       return docRef.id;
     });
@@ -77,4 +78,3 @@ export class FirestoreLeadRepository implements LeadRepository {
     });
   }
 }
-

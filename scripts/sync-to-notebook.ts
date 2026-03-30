@@ -15,7 +15,7 @@ async function sync() {
 
     // 1. Obtener Inventario
     // Nota: Usamos el contenedor para mantener el Nivel 12
-    const cars = await container.getGetInventoryUseCase().execute(dealerId);
+    const cars = await container.getInventoryUseCase().execute(dealerId);
 
     let markdown = `# INVENTARIO RICHARD AUTOMOTIVE - ${new Date().toLocaleDateString()}\n\n`;
     markdown += `Este documento es la fuente oficial de verdad para el inventario del dealer.\n\n`;

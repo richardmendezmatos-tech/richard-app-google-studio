@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  ShieldCheck, 
-  Zap, 
-  Activity, 
-  Database, 
-  Globe, 
-  Lock, 
+import {
+  ShieldCheck,
+  Zap,
+  Activity,
+  Database,
+  Globe,
+  Lock,
   RefreshCcw,
   Wifi,
   Server,
@@ -21,16 +21,16 @@ export const HoustonDashboard: React.FC = () => {
     connectivity: 'stable',
     activeNodes: 4,
     apiLatency: 12,
-    securityScore: 100
+    securityScore: 100,
   });
 
   // Simulamos telemetría en tiempo real para dar vida al dashboard
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setMetrics(prev => ({
+      setMetrics((prev) => ({
         ...prev,
         apiLatency: Math.floor(Math.random() * (15 - 8 + 1) + 8),
-        systemHealth: Math.random() > 0.9 ? 97 : 98
+        systemHealth: Math.random() > 0.9 ? 97 : 98,
       }));
     }, 3000);
     return () => clearInterval(interval);
@@ -68,7 +68,6 @@ export const HoustonDashboard: React.FC = () => {
       {/* Main Grid */}
       {/* Main Grid: Telemetry + Terminal */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-        
         {/* Terminal Section */}
         <div className="lg:col-span-8">
           <HoustonTerminalLog />
@@ -82,12 +81,14 @@ export const HoustonDashboard: React.FC = () => {
                 <ShieldCheck className="text-primary" size={18} />
               </div>
               <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">ESTADO</div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
+                  ESTADO
+                </div>
                 <div className="text-xl font-black text-white">{metrics.systemHealth}% Health</div>
               </div>
             </div>
             <div className="w-16 h-1.5 bg-slate-900 rounded-full overflow-hidden">
-               <div className="h-full bg-primary" style={{ width: `${metrics.systemHealth}%` }} />
+              <div className="h-full bg-primary" style={{ width: `${metrics.systemHealth}%` }} />
             </div>
           </div>
 
@@ -97,13 +98,18 @@ export const HoustonDashboard: React.FC = () => {
                 <Zap className="text-cyan-400" size={18} />
               </div>
               <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">LATENCIA</div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
+                  LATENCIA
+                </div>
                 <div className="text-xl font-black text-white">{metrics.apiLatency}ms</div>
               </div>
             </div>
             <div className="flex gap-0.5">
-              {[1,2,3,4,5].map(i => (
-                <div key={i} className={`w-1 h-3 rounded-full ${i <= 3 ? 'bg-cyan-500' : 'bg-slate-800'}`} />
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className={`w-1 h-3 rounded-full ${i <= 3 ? 'bg-cyan-500' : 'bg-slate-800'}`}
+                />
               ))}
             </div>
           </div>
@@ -114,7 +120,9 @@ export const HoustonDashboard: React.FC = () => {
                 <Lock className="text-emerald-400" size={18} />
               </div>
               <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">SEGURIDAD</div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
+                  SEGURIDAD
+                </div>
                 <div className="text-xl font-black text-white">ACTIVE</div>
               </div>
             </div>
@@ -129,12 +137,16 @@ export const HoustonDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <Server size={14} className="text-slate-500" />
             <span className="text-[10px] font-bold text-slate-400 uppercase">Nodo: </span>
-            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">US-EAST-1</span>
+            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">
+              US-EAST-1
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Globe size={14} className="text-slate-500" />
             <span className="text-[10px] font-bold text-slate-400 uppercase">Tráfico: </span>
-            <span className="text-[10px] font-black text-white uppercase tracking-widest">Global CDN</span>
+            <span className="text-[10px] font-black text-white uppercase tracking-widest">
+              Global CDN
+            </span>
           </div>
         </div>
         <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">

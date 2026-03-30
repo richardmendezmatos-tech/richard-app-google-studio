@@ -8,8 +8,12 @@ import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
 
-const DealBuilder = React.lazy(() => import('@/features/inventory').then(m => ({ default: m.DealBuilder })));
-const Viewer360 = React.lazy(() => import('@/features/inventory').then(m => ({ default: m.Viewer360 })));
+const DealBuilder = React.lazy(() =>
+  import('@/features/inventory').then((m) => ({ default: m.DealBuilder })),
+);
+const Viewer360 = React.lazy(() =>
+  import('@/features/inventory').then((m) => ({ default: m.Viewer360 })),
+);
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
@@ -135,18 +139,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
         url={`/v/${slug || generateVehicleSlug(car)}/${car.id}`}
         type="product"
         schema={[
-          ...(car.seoFaqs && car.seoFaqs.length > 0 ? [{
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: car.seoFaqs.map(faq => ({
-              '@type': 'Question',
-              name: faq.question,
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: faq.answer
-              }
-            }))
-          }] : []),
+          ...(car.seoFaqs && car.seoFaqs.length > 0
+            ? [
+                {
+                  '@context': 'https://schema.org',
+                  '@type': 'FAQPage',
+                  mainEntity: car.seoFaqs.map((faq) => ({
+                    '@type': 'Question',
+                    name: faq.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: faq.answer,
+                    },
+                  })),
+                },
+              ]
+            : []),
           {
             '@context': 'https://schema.org/',
             '@type': 'Car',
@@ -163,13 +171,15 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             modelDate: year.toString(),
             bodyType: car.type,
             vehicleConfiguration: car.features?.join(', '),
-            ...(car.mileage ? {
-              mileageFromOdometer: {
-                '@type': 'QuantitativeValue',
-                value: car.mileage,
-                unitCode: 'SMI'
-              }
-            } : {}),
+            ...(car.mileage
+              ? {
+                  mileageFromOdometer: {
+                    '@type': 'QuantitativeValue',
+                    value: car.mileage,
+                    unitCode: 'SMI',
+                  },
+                }
+              : {}),
             offers: {
               '@type': 'Offer',
               url: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
@@ -247,7 +257,11 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
         <div className="space-y-6">
           {/* 360 Viewer Integration */}
           <div className="relative z-10 w-full min-h-[300px]">
-            <React.Suspense fallback={<div className="w-full h-[300px] lg:h-[400px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-3xl" />}>
+            <React.Suspense
+              fallback={
+                <div className="w-full h-[300px] lg:h-[400px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-3xl" />
+              }
+            >
               <Viewer360
                 images={car.images && car.images.length > 0 ? car.images : [car.img]}
                 alt={car.name}
@@ -278,7 +292,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                   __html: DOMPurify.sanitize(
                     (aiPitch || '')
                       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
-                      .replace(/\n/g, '<br/>')
+                      .replace(/\n/g, '<br/>'),
                   ),
                 }}
               />
@@ -352,7 +366,11 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
 
           {/* Deal Builder Engine */}
           <div id="deal-builder-section" className="scroll-mt-24 min-h-[500px]">
-            <React.Suspense fallback={<div className="w-full h-[500px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-[40px]" />}>
+            <React.Suspense
+              fallback={
+                <div className="w-full h-[500px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-[40px]" />
+              }
+            >
               <DealBuilder
                 vehicleId={car.id}
                 vehiclePrice={car.price}
@@ -367,10 +385,14 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
       {/* Mobile Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] z-50 lg:hidden flex items-center justify-between">
         <div>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{car.name}</p>
-          <p className="text-xl font-black text-slate-800 dark:text-white leading-none mt-1">${car.price.toLocaleString()}</p>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            {car.name}
+          </p>
+          <p className="text-xl font-black text-slate-800 dark:text-white leading-none mt-1">
+            ${car.price.toLocaleString()}
+          </p>
         </div>
-        <button 
+        <button
           onClick={() => {
             document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
           }}

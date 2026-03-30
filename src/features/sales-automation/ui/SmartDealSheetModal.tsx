@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { FileText, Loader2, Sparkles, Target, Brain, DollarSign, X, Car as CarIcon, Download } from 'lucide-react';
+import {
+  FileText,
+  Loader2,
+  Sparkles,
+  Target,
+  Brain,
+  DollarSign,
+  X,
+  Car as CarIcon,
+  Download,
+} from 'lucide-react';
 import { Lead, Car } from '@/shared/types/types';
 import { generateSmartDealSheet, DealSheetData } from '../model/dealSheetService';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
@@ -11,7 +21,11 @@ interface SmartDealSheetModalProps {
   onExportPDF?: (data: DealSheetData, lead: Lead) => void;
 }
 
-const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose, onExportPDF }) => {
+const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
+  lead,
+  onClose,
+  onExportPDF,
+}) => {
   const [dealData, setDealData] = useState<DealSheetData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,20 +87,23 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                   Smart Deal Sheet <Sparkles className="text-amber-400" size={20} />
                 </h2>
                 <p className="text-xs sm:text-sm font-medium text-slate-500">
-                  Estrategia Generativa para: <span className="text-primary font-bold">{lead.firstName} {lead.lastName}</span>
+                  Estrategia Generativa para:{' '}
+                  <span className="text-primary font-bold">
+                    {lead.firstName} {lead.lastName}
+                  </span>
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
-               {dealData && (
+              {dealData && (
                 <button
                   onClick={() => onExportPDF?.(dealData, lead)}
                   className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors text-sm font-bold"
                 >
                   <Download size={16} /> Exportar
                 </button>
-               )}
+              )}
               <button
                 onClick={onClose}
                 aria-label="Cerrar modal"
@@ -103,14 +120,20 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
             {loading ? (
               <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-4">
                 <Loader2 size={48} className="animate-spin text-primary" />
-                <p className="text-sm font-medium animate-pulse">Analizando psicología del comprador con Gemini Flash...</p>
+                <p className="text-sm font-medium animate-pulse">
+                  Analizando psicología del comprador con Gemini Flash...
+                </p>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center justify-center h-64 text-rose-500 gap-4">
                 <Brain size={48} className="opacity-50" />
                 <p className="text-sm font-bold bg-rose-500/10 px-4 py-2 rounded-xl">{error}</p>
-                <button 
-                  onClick={() => { setDealData(null); setError(null); setLoading(false); }}
+                <button
+                  onClick={() => {
+                    setDealData(null);
+                    setError(null);
+                    setLoading(false);
+                  }}
                   className="px-6 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700"
                 >
                   Reintentar
@@ -135,7 +158,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-500 mb-5 flex items-center gap-2">
                         <Brain size={14} /> Perfil Psicológico
                       </h3>
-                      
+
                       <div className="mb-4 flex items-center gap-3">
                         <span className="text-xs font-bold text-slate-500">Arquetipo:</span>
                         <span className="px-3 py-1 bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 rounded-full text-sm font-black tracking-tight">
@@ -145,20 +168,30 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
 
                       <div className="space-y-4">
                         <div>
-                          <span className="text-xs font-bold text-emerald-500 mb-2 block">Motivadores Clave (Botones Calientes):</span>
+                          <span className="text-xs font-bold text-emerald-500 mb-2 block">
+                            Motivadores Clave (Botones Calientes):
+                          </span>
                           <ul className="space-y-2">
                             {dealData.psychologicalProfile.keyMotivators.map((m, i) => (
-                              <li key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                              <li
+                                key={i}
+                                className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2"
+                              >
                                 <span className="text-emerald-500 mt-0.5">•</span> {m}
                               </li>
                             ))}
                           </ul>
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-rose-500 mb-2 block">Deal Breakers (Puntos de Fricción):</span>
+                          <span className="text-xs font-bold text-rose-500 mb-2 block">
+                            Deal Breakers (Puntos de Fricción):
+                          </span>
                           <ul className="space-y-2">
                             {dealData.psychologicalProfile.dealBreakers.map((d, i) => (
-                              <li key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                              <li
+                                key={i}
+                                className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2"
+                              >
                                 <span className="text-rose-500 mt-0.5">•</span> {d}
                               </li>
                             ))}
@@ -172,20 +205,24 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                   <div className="space-y-6">
                     <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl" />
-                      
+
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-5 flex items-center gap-2">
                         <DollarSign size={14} /> Estrategia Financiera
                       </h3>
-                      
+
                       <div className="flex gap-4 mb-6">
                         <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Pronto Ideal</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                            Pronto Ideal
+                          </span>
                           <span className="text-2xl font-black text-slate-800 dark:text-white">
                             ${dealData.financialStrategy.suggestedDownPayment.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex-1 bg-emerald-50 dark:bg-emerald-500/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
-                          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">Cierre Mensual</span>
+                          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">
+                            Cierre Mensual
+                          </span>
                           <span className="text-2xl font-black text-emerald-700 dark:text-emerald-300">
                             ${dealData.financialStrategy.targetMonthly.toLocaleString()}
                           </span>
@@ -193,9 +230,14 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-xs font-bold text-slate-500">Argumentos de Estructuración:</span>
+                        <span className="text-xs font-bold text-slate-500">
+                          Argumentos de Estructuración:
+                        </span>
                         {dealData.financialStrategy.talkingPoints.map((tp, i) => (
-                          <div key={i} className="text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                          <div
+                            key={i}
+                            className="text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700"
+                          >
                             {tp}
                           </div>
                         ))}
@@ -222,8 +264,13 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({ lead, onClose
                     </h3>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {dealData.vehicleAlternatives.map((alt, i) => (
-                        <div key={i} className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                          <span className="font-bold text-slate-800 dark:text-white mb-2">{alt.name}</span>
+                        <div
+                          key={i}
+                          className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm"
+                        >
+                          <span className="font-bold text-slate-800 dark:text-white mb-2">
+                            {alt.name}
+                          </span>
                           <span className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
                             {alt.reason}
                           </span>

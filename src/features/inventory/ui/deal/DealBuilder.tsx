@@ -28,7 +28,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
       vehiclePrice,
       downPayment,
       termMonths: term,
-      creditTier
+      creditTier,
     });
     return result.monthlyPayment;
   }, [vehiclePrice, downPayment, term, creditTier]);

@@ -1,6 +1,9 @@
 import { Lead } from '@/shared/api/adapters/leads/crmService';
 import { OrchestrationAction } from '@/features/ai-hub/ai-orchestration/api/orchestrationService';
-import { antigravityFetch, getAntigravityConfig } from '@/shared/api/antigravity/antigravityService';
+import {
+  antigravityFetch,
+  getAntigravityConfig,
+} from '@/shared/api/antigravity/antigravityService';
 
 interface AntigravityLeadActionResponse {
   action: OrchestrationAction;

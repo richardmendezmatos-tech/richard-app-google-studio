@@ -78,7 +78,8 @@ const BlogPage: React.FC = () => {
     }
   };
 
-  const publishedPosts = posts.length > 0 ? posts.filter(p => !p.id.includes('draft_')) : dummyPosts;
+  const publishedPosts =
+    posts.length > 0 ? posts.filter((p) => !p.id.includes('draft_')) : dummyPosts;
 
   return (
     <div className="p-6 lg:p-12 max-w-[1700px] mx-auto min-h-screen space-y-16">
@@ -103,7 +104,8 @@ const BlogPage: React.FC = () => {
             The <span className="text-gradient-premium">Automotive</span> Daily
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-xl font-light leading-relaxed">
-            Explora noticias exclusivas, reseñas a fondo y análisis del mercado automotriz curados por nuestro equipo.
+            Explora noticias exclusivas, reseñas a fondo y análisis del mercado automotriz curados
+            por nuestro equipo.
           </p>
         </motion.div>
       </header>
@@ -318,9 +320,7 @@ const BlogPage: React.FC = () => {
                           <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                             Por {selectedPost.author}
                           </p>
-                          <p className="text-[10px] uppercase tracking-widest">
-                            Staff Editorial
-                          </p>
+                          <p className="text-[10px] uppercase tracking-widest">Staff Editorial</p>
                         </div>
                       </div>
                     </div>

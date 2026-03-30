@@ -183,7 +183,7 @@ const TradeInView: React.FC = () => {
                 onChange={(e) => handleInputChange('mileage', e.target.value)}
               />
             </div>
-            
+
             <div className="pt-2">
               <label className="text-xs font-bold uppercase tracking-widest text-primary block mb-3">
                 Condición del Vehículo
@@ -200,7 +200,9 @@ const TradeInView: React.FC = () => {
                     onClick={() => handleInputChange('condition', c.id as any)}
                     className={`p-4 rounded-xl border text-left transition-all ${formData.condition === c.id ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-slate-800 border-slate-700 hover:border-slate-600'}`}
                   >
-                    <h4 className={`text-base font-bold ${formData.condition === c.id ? 'text-primary' : 'text-white'}`}>
+                    <h4
+                      className={`text-base font-bold ${formData.condition === c.id ? 'text-primary' : 'text-white'}`}
+                    >
                       {c.label}
                     </h4>
                     <p className="text-xs text-slate-400 mt-1">{c.desc}</p>
@@ -230,10 +232,14 @@ const TradeInView: React.FC = () => {
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-right duration-500">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-black text-white tracking-tight mb-2">¡Tu oferta está lista!</h3>
-              <p className="text-slate-400 text-sm">¿A qué WhatsApp te enviamos los detalles de la tasación?</p>
+              <h3 className="text-2xl font-black text-white tracking-tight mb-2">
+                ¡Tu oferta está lista!
+              </h3>
+              <p className="text-slate-400 text-sm">
+                ¿A qué WhatsApp te enviamos los detalles de la tasación?
+              </p>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-primary">
@@ -277,7 +283,8 @@ const TradeInView: React.FC = () => {
               </button>
             </div>
             <p className="text-center text-[10px] text-slate-500 font-medium pt-2">
-              <span className="text-emerald-500">🔒</span> Información 100% segura. Solo para tu oferta.
+              <span className="text-emerald-500">🔒</span> Información 100% segura. Solo para tu
+              oferta.
             </p>
           </div>
         );
@@ -301,7 +308,10 @@ const TradeInView: React.FC = () => {
               <button
                 onClick={() => {
                   const message = `¡Hola! Acabo de tasar mi ${formData.year} ${formData.make} ${formData.model} por un valor estimado de $${offerValue.toLocaleString()}. Me gustaría agendar la inspección física.`;
-                  window.open(`https://wa.me/17875550000?text=${encodeURIComponent(message)}`, '_blank');
+                  window.open(
+                    `https://wa.me/17875550000?text=${encodeURIComponent(message)}`,
+                    '_blank',
+                  );
                 }}
                 className="flex-1 py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-black rounded-xl shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
               >

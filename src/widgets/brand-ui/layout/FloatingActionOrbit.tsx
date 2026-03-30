@@ -122,24 +122,24 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
                   <motion.button
                     key={item.id}
                     initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
-                    animate={{ 
-                      opacity: 1, 
-                      x, 
-                      y, 
+                    animate={{
+                      opacity: 1,
+                      x,
+                      y,
                       scale: 1,
-                      transition: { 
-                        delay: index * 0.08, 
-                        type: 'spring', 
-                        stiffness: 260, 
-                        damping: 20 
-                      }
+                      transition: {
+                        delay: index * 0.08,
+                        type: 'spring',
+                        stiffness: 260,
+                        damping: 20,
+                      },
                     }}
-                    exit={{ 
-                      opacity: 0, 
-                      x: 0, 
-                      y: 0, 
+                    exit={{
+                      opacity: 0,
+                      x: 0,
+                      y: 0,
                       scale: 0,
-                      transition: { delay: (orbitItems.length - index) * 0.05 }
+                      transition: { delay: (orbitItems.length - index) * 0.05 },
                     }}
                     onClick={() => {
                       onWidgetSelect(item.id);
@@ -199,7 +199,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
                 initial={{ rotate: -180, opacity: 0, scale: 0.5 }}
                 animate={{ rotate: 0, opacity: 1, scale: 1 }}
                 exit={{ rotate: 180, opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.4, ease: "backOut" }}
+                transition={{ duration: 0.4, ease: 'backOut' }}
               >
                 <X size={28} />
               </motion.div>
@@ -209,7 +209,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
                 initial={{ rotate: 180, opacity: 0, scale: 0.5 }}
                 animate={{ rotate: 0, opacity: 1, scale: 1 }}
                 exit={{ rotate: -180, opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.4, ease: "backOut" }}
+                transition={{ duration: 0.4, ease: 'backOut' }}
               >
                 <Zap size={28} className="fill-current" />
               </motion.div>

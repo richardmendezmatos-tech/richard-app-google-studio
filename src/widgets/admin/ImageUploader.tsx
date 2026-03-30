@@ -1,7 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 import { getStorageService } from '@/shared/api/firebase/firebaseService';
-import { validateImageFile, generateBlurPlaceholder } from '@/shared/api/media/imageOptimizationService';
+import {
+  validateImageFile,
+  generateBlurPlaceholder,
+} from '@/shared/api/media/imageOptimizationService';
 import ImageOptimizerWorker from '@/shared/lib/workers/imageOptimizer.worker?worker';
 
 interface WorkerResponse {
@@ -344,7 +347,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           <div
             className={`p-6 bg-primary/10 border border-primary/20 rounded-2xl transition-all duration-300 ${isDragging ? 'scale-110 rotate-6 shadow-[0_0_20px_rgba(0,174,217,0.2)]' : 'scale-100 rotate-0 group-hover:shadow-[0_0_15px_rgba(0,174,217,0.1)]'}`}
           >
-            <Upload className="text-primary drop-shadow-[0_0_8px_rgba(0,174,217,0.5)]" size={48} strokeWidth={1.5} />
+            <Upload
+              className="text-primary drop-shadow-[0_0_8px_rgba(0,174,217,0.5)]"
+              size={48}
+              strokeWidth={1.5}
+            />
           </div>
 
           <div>
@@ -391,7 +398,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             >
               {/* Preview */}
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 shrink-0">
-                <img src={file.preview} alt="Preview" className="w-full h-full object-cover" />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src={file.preview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Info */}

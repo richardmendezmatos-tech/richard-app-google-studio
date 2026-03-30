@@ -193,7 +193,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() => import('@/pages/admin/command-center/ui/MissionControlDashboard').catch(() => {})}
+              onMouseEnter={() =>
+                import('@/pages/admin/command-center/ui/MissionControlDashboard').catch(() => {})
+              }
               icon={<Monitor size={19} />}
               label="Mission Control"
               isCollapsed={isCollapsed}
@@ -206,7 +208,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/inventory');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() => import('@/pages/admin/command-center/ui/SentinelInventoryTab').catch(() => {})}
+              onMouseEnter={() =>
+                import('@/pages/admin/command-center/ui/SentinelInventoryTab').catch(() => {})
+              }
               icon={<Warehouse size={19} />}
               label="Unidades"
               isCollapsed={isCollapsed}
@@ -217,7 +221,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/pipeline');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() => import('@/pages/admin/command-center/ui/CRMBoard').catch(() => {})}
+              onMouseEnter={() =>
+                import('@/pages/admin/command-center/ui/CRMBoard').catch(() => {})
+              }
               icon={<Activity size={19} />}
               label="CRM Leads"
               isCollapsed={isCollapsed}
@@ -239,7 +245,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/audiences');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() => import('@/pages/admin/audiences/ui/AudiencesView').catch(() => {})}
+              onMouseEnter={() =>
+                import('@/pages/admin/audiences/ui/AudiencesView').catch(() => {})
+              }
               icon={<UserIcon size={19} />}
               label="Audiencias"
               isCollapsed={isCollapsed}
@@ -346,7 +354,15 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 text-white">
                 {user.photoURL ? (
-                  <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" loading="lazy" decoding="async" width={40} height={40} />
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    width={40}
+                    height={40}
+                  />
                 ) : (
                   <UserIcon size={18} />
                 )}

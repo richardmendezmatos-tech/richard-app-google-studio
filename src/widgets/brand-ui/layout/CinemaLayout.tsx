@@ -35,7 +35,8 @@ function safeLazy<T extends React.ComponentType<any>>(
 }
 
 const AIChatWidget = safeLazy(
-  () => import('@/widgets/ai-chat/AIChatWidget').then((m) => ({ default: (m as any).default || m })),
+  () =>
+    import('@/widgets/ai-chat/AIChatWidget').then((m) => ({ default: (m as any).default || m })),
   'chat_chunk_reloaded',
 ) as any;
 
@@ -62,7 +63,9 @@ interface CinemaLayoutProps {
 
 export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeFloatingWidget, setActiveFloatingWidget] = useState<'chat' | 'voice' | 'whatsapp' | null>(null);
+  const [activeFloatingWidget, setActiveFloatingWidget] = useState<
+    'chat' | 'voice' | 'whatsapp' | null
+  >(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('sidebar_collapsed') === 'true';
@@ -136,7 +139,6 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
       >
         {/* Global Floating Widgets */}
         <OfflineIndicator />
-        
 
         {/* Dynamic Content */}
         <div className="relative z-10 min-h-full">{children}</div>
@@ -144,7 +146,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
 
       {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}
       {showDeferredWidgets && (
-        <FloatingActionOrbit 
+        <FloatingActionOrbit
           activeWidget={activeFloatingWidget}
           onWidgetSelect={handleWidgetSelect}
           chatWidget={

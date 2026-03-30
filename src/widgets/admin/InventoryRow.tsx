@@ -56,7 +56,9 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
 
         {/* Advantage */}
         <div className="w-board-column-sm flex items-center">
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm ${predictiveStats.advantageScore > 75 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10' : 'bg-primary/10 text-primary border-primary/20 shadow-primary/10'}`}>
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm ${predictiveStats.advantageScore > 75 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10' : 'bg-primary/10 text-primary border-primary/20 shadow-primary/10'}`}
+          >
             +{predictiveStats.advantageScore.toFixed(0)}%
           </span>
         </div>
@@ -66,7 +68,9 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
           <Clock size={14} className="text-amber-500" />
           <div className="flex flex-col">
             <span className="text-sm font-black text-white">{predictiveStats.daysToSale}</span>
-            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Días</span>
+            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+              Días
+            </span>
           </div>
         </div>
 

@@ -6,22 +6,22 @@ export const NeuralInsightsHeadlines: React.FC = () => {
   const insights = [
     {
       icon: TrendingUp,
-      text: "Momentum alto en SUVs; 12 nuevos leads en las últimas 4h.",
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10"
+      text: 'Momentum alto en SUVs; 12 nuevos leads en las últimas 4h.',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10',
     },
     {
       icon: Zap,
       text: "Richard IA sugiere potenciar 'Toyota Tacoma' para el fin de semana.",
-      color: "text-primary",
-      bg: "bg-primary/10"
+      color: 'text-primary',
+      bg: 'bg-primary/10',
     },
     {
       icon: AlertCircle,
-      text: "3 Tasaciones pendientes de revisión urgente.",
-      color: "text-amber-400",
-      bg: "bg-amber-500/10"
-    }
+      text: '3 Tasaciones pendientes de revisión urgente.',
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+    },
   ];
 
   return (

@@ -1,7 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 import { getStorageService } from '@/shared/api/firebase/firebaseService';
-import { validateImageFile, generateBlurPlaceholder } from '@/shared/api/media/imageOptimizationService';
+import {
+  validateImageFile,
+  generateBlurPlaceholder,
+} from '@/shared/api/media/imageOptimizationService';
 import ImageOptimizerWorker from '@/shared/lib/workers/imageOptimizer.worker?worker';
 
 interface WorkerResponse {
@@ -391,7 +394,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             >
               {/* Preview */}
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 shrink-0">
-                <img src={file.preview} alt="Preview" className="w-full h-full object-cover" />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src={file.preview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Info */}

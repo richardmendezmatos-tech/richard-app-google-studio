@@ -8,7 +8,10 @@ import { useCarMutations } from '@/features/inventory';
 import { startGeofenceMonitoring } from '@/shared/api/location/geofenceService';
 import { uploadInitialInventory } from '@/entities/inventory/api/adapters/inventoryService';
 import { initialInventoryData } from '@/entities/inventory';
-import { requestNotificationPermission, onForegroundMessage } from '@/shared/api/communications/notificationService';
+import {
+  requestNotificationPermission,
+  onForegroundMessage,
+} from '@/shared/api/communications/notificationService';
 
 export const useAppController = () => {
   console.log('🌟 [AppController] Initializing...');

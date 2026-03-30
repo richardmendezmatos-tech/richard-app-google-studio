@@ -103,8 +103,16 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
                   </button>
                 ) : (
                   <div className="mt-6 flex flex-col items-center gap-4">
-                    <p className="text-slate-400 mb-2 max-w-sm text-center text-sm">Nuestros asesores VIP pueden encontrar el modelo exacto que buscas en nuestra red extendida.</p>
-                    <a href="https://wa.me/17871234567" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] transition-all flex items-center gap-3">
+                    <p className="text-slate-400 mb-2 max-w-sm text-center text-sm">
+                      Nuestros asesores VIP pueden encontrar el modelo exacto que buscas en nuestra
+                      red extendida.
+                    </p>
+                    <a
+                      href="https://wa.me/17871234567"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] transition-all flex items-center gap-3"
+                    >
                       Contactar Asesor VIP
                     </a>
                   </div>

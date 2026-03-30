@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { Lead } from '@/shared/api/adapters/leads/crmService';
-import { X, Send, Bot, User, Phone, Mail, MessageCircle, Clock, Wand2, ShieldCheck } from 'lucide-react';
+import {
+  X,
+  Send,
+  Bot,
+  User,
+  Phone,
+  Mail,
+  MessageCircle,
+  Clock,
+  Wand2,
+  ShieldCheck,
+} from 'lucide-react';
 
 interface Props {
   lead: Lead;
@@ -63,7 +74,7 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-6 bg-slate-900/60 backdrop-blur-sm">
-      <div 
+      <div
         className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-300"
         onClick={(e) => e.stopPropagation()}
       >
@@ -119,17 +130,20 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
                       <MessageCircle size={10} className="text-purple-500" />
                     )}
                     <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                      {isUser ? 'Cliente' : isAi ? 'Asistente IA' : 'Asesor'} • {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {isUser ? 'Cliente' : isAi ? 'Asistente IA' : 'Asesor'} •{' '}
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  
-                  <div className={`p-4 rounded-2xl shadow-sm ${
-                    isMe 
-                      ? 'bg-slate-800 text-white rounded-tr-sm dark:bg-primary dark:text-slate-900 font-medium' 
-                      : isAi
-                        ? 'bg-purple-100 text-purple-900 rounded-tl-sm dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50'
-                        : 'bg-white text-slate-700 rounded-tl-sm border border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
-                  }`}>
+
+                  <div
+                    className={`p-4 rounded-2xl shadow-sm ${
+                      isMe
+                        ? 'bg-slate-800 text-white rounded-tr-sm dark:bg-primary dark:text-slate-900 font-medium'
+                        : isAi
+                          ? 'bg-purple-100 text-purple-900 rounded-tl-sm dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50'
+                          : 'bg-white text-slate-700 rounded-tl-sm border border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                    }`}
+                  >
                     {msg.text}
                   </div>
                 </div>
@@ -140,28 +154,29 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
 
         {/* Input Area */}
         <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-          
           {/* Channel Selector */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Responder vía:</span>
-            <button 
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Responder vía:
+            </span>
+            <button
               onClick={() => setActiveChannel('whatsapp')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${activeChannel === 'whatsapp' ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500/20' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800'}`}
             >
               <MessageCircle size={12} /> WhatsApp
             </button>
-            <button 
+            <button
               onClick={() => setActiveChannel('email')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${activeChannel === 'email' ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-500/20' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800'}`}
             >
               <Mail size={12} /> Email
             </button>
             <div className="flex-1" />
-            <button 
+            <button
               onClick={() => setAiAssist(!aiAssist)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all border ${aiAssist ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800' : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-50 dark:bg-slate-900'}`}
             >
-              <Bot size={12} className={aiAssist ? "animate-pulse" : ""} /> IA Copilot
+              <Bot size={12} className={aiAssist ? 'animate-pulse' : ''} /> IA Copilot
             </button>
           </div>
 
@@ -170,7 +185,11 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={aiAssist ? "El Asistente IA está sugiriendo una respuesta..." : `Escribe tu mensaje para ${lead.name || 'el cliente'}...`}
+                placeholder={
+                  aiAssist
+                    ? 'El Asistente IA está sugiriendo una respuesta...'
+                    : `Escribe tu mensaje para ${lead.name || 'el cliente'}...`
+                }
                 className={`w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-2xl py-3 px-4 text-sm resize-none focus:ring-2 transition-all ${aiAssist ? 'focus:ring-purple-500 placeholder-purple-300' : 'focus:ring-primary'}`}
                 rows={2}
                 onKeyDown={(e) => {
@@ -182,7 +201,8 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
               />
               {aiAssist && !inputText && (
                 <div className="absolute top-3 left-4 text-sm text-purple-500/50 italic pointer-events-none flex items-center gap-2">
-                  <Wand2 size={14} className="animate-spin-slow" /> Sugiriendo respuesta basada en score {lead.aiScore}...
+                  <Wand2 size={14} className="animate-spin-slow" /> Sugiriendo respuesta basada en
+                  score {lead.aiScore}...
                 </div>
               )}
             </div>

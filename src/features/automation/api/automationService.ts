@@ -3,7 +3,6 @@ import { sendTransactionalEmail } from '@/shared/api/communications/emailService
 import nurtureRules from '@/features/automation/data/nurtureRules.json';
 import { DI } from '@/app/di/registry';
 
-
 /**
  * Automation Service
  * Handles background nurturing sequences for leads.

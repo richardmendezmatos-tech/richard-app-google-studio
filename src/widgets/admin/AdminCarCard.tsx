@@ -72,7 +72,8 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
             {car.name}
           </h3>
           <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <Gauge size={12} className="text-primary" /> {car.type === 'luxury' ? 'Premium Trim' : 'Standard Trim'} •{' '}
+            <Gauge size={12} className="text-primary" />{' '}
+            {car.type === 'luxury' ? 'Premium Trim' : 'Standard Trim'} •{' '}
             {car.badge || 'No special badge'}
           </div>
         </div>
@@ -97,7 +98,9 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
             </div>
             <div className="text-2xl font-black text-white tracking-tighter">
               <AnimatedCounter value={prediction.daysToSale} />{' '}
-              <span className="text-[10px] opacity-50 uppercase tracking-widest font-bold">Días</span>
+              <span className="text-[10px] opacity-50 uppercase tracking-widest font-bold">
+                Días
+              </span>
             </div>
           </div>
         </div>

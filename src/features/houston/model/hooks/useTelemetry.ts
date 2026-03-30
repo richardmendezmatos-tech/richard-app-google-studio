@@ -28,7 +28,7 @@ export function useTelemetry(connectionState: string): HoustonTelemetry {
         const quality = Math.floor(Math.random() * 2) + 98; // 98-100% (High Quality)
         const packetLoss = Math.random() > 0.98 ? 0.01 : 0;
         const securityScore = Math.floor(Math.random() * 5) + 95; // 95-100%
-        
+
         const status = latency > 100 || quality < 80 ? 'warning' : 'optimal';
 
         setTelemetry({

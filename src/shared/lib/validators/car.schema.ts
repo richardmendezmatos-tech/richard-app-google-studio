@@ -13,7 +13,11 @@ export const carSchema = z.object({
   webpSrc: z.string().optional(),
   blurPlaceholder: z.string().optional(),
   images: z.array(z.string()).optional(),
-  year: z.number().min(1900).max(new Date().getFullYear() + 1).optional(),
+  year: z
+    .number()
+    .min(1900)
+    .max(new Date().getFullYear() + 1)
+    .optional(),
   make: z.string().optional(),
   model: z.string().optional(),
   mileage: z.number().min(0).optional(),
@@ -23,12 +27,14 @@ export const carSchema = z.object({
   views: z.number().min(0).optional(),
   leads_count: z.number().min(0).optional(),
   dealerId: z.string().optional(),
-  seoFaqs: z.array(
-    z.object({
-      question: z.string(),
-      answer: z.string(),
-    })
-  ).optional(),
+  seoFaqs: z
+    .array(
+      z.object({
+        question: z.string(),
+        answer: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 export type CarInput = z.infer<typeof carSchema>;

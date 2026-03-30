@@ -145,13 +145,13 @@ const DigitalTwinDashboard: React.FC = () => {
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(false);
-  
+
   // New Toggles for Omnichannel Integration
   const [whatsappEnabled, setWhatsappEnabled] = useState(
-    () => localStorage.getItem('digital_twin_whatsapp') === 'true'
+    () => localStorage.getItem('digital_twin_whatsapp') === 'true',
   );
   const [hubspotEnabled, setHubspotEnabled] = useState(
-    () => localStorage.getItem('digital_twin_hubspot') === 'true'
+    () => localStorage.getItem('digital_twin_hubspot') === 'true',
   );
 
   const [faceMode, setFaceMode] = useState<FaceMode>(
@@ -497,7 +497,8 @@ const DigitalTwinDashboard: React.FC = () => {
               </div>
             </label>
             <p className="text-[10px] text-slate-500 leading-tight">
-              Activar Composio Sync enviará los datos recopilados por el Digital Twin (Leads y Preferencias) al CRM externo automáticamente.
+              Activar Composio Sync enviará los datos recopilados por el Digital Twin (Leads y
+              Preferencias) al CRM externo automáticamente.
             </p>
           </div>
         </div>
@@ -559,7 +560,13 @@ const DigitalTwinDashboard: React.FC = () => {
                 className="w-full h-56 object-cover"
               />
             ) : faceMode === 'photo' && facePhoto ? (
-              <img src={facePhoto} alt="Tu rostro digital" className="w-full h-56 object-cover" />
+              <img
+                loading="lazy"
+                decoding="async"
+                src={facePhoto}
+                alt="Tu rostro digital"
+                className="w-full h-56 object-cover"
+              />
             ) : (
               <div className="w-full h-56 flex flex-col items-center justify-center text-slate-400 gap-2">
                 <UserCircle2 size={44} />

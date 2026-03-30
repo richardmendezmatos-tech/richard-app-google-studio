@@ -42,57 +42,61 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
           url="/"
           type="website"
           schema={{
-            "@context": "https://schema.org",
-            "@type": "AutoDealer",
-            "name": "Richard Automotive",
-            "image": SITE_CONFIG.seo.ogImage,
-            "@id": SITE_CONFIG.url,
-            "url": SITE_CONFIG.url,
-            "telephone": "+1-787-368-2880",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Bayamón",
-              "addressLocality": "Bayamón",
-              "addressRegion": "PR",
-              "postalCode": "00961",
-              "addressCountry": "US"
+            '@context': 'https://schema.org',
+            '@type': 'AutoDealer',
+            name: 'Richard Automotive',
+            image: SITE_CONFIG.seo.ogImage,
+            '@id': SITE_CONFIG.url,
+            url: SITE_CONFIG.url,
+            telephone: '+1-787-368-2880',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'Bayamón',
+              addressLocality: 'Bayamón',
+              addressRegion: 'PR',
+              postalCode: '00961',
+              addressCountry: 'US',
             },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": 18.3990,
-              "longitude": -66.1573
+            geo: {
+              '@type': 'GeoCoordinates',
+              latitude: 18.399,
+              longitude: -66.1573,
             },
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-              "opens": "09:00",
-              "closes": "18:00"
+            openingHoursSpecification: {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+              opens: '09:00',
+              closes: '18:00',
             },
-            "priceRange": "$$",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "5.0",
-              "reviewCount": "3"
+            priceRange: '$$',
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: '5.0',
+              reviewCount: '3',
             },
-            "review": [
+            review: [
               {
-                "@type": "Review",
-                "author": { "@type": "Person", "name": "Carlos Rodríguez" },
-                "reviewRating": { "@type": "Rating", "ratingValue": "5" },
-                "reviewBody": "La experiencia con Richard Automotive fue increíble. La IA me ayudó a elegir la SUV perfecta."
+                '@type': 'Review',
+                author: { '@type': 'Person', name: 'Carlos Rodríguez' },
+                reviewRating: { '@type': 'Rating', ratingValue: '5' },
+                reviewBody:
+                  'La experiencia con Richard Automotive fue increíble. La IA me ayudó a elegir la SUV perfecta.',
               },
               {
-                "@type": "Review",
-                "author": { "@type": "Person", "name": "Sofía Méndez" },
-                "reviewRating": { "@type": "Rating", "ratingValue": "5" },
-                "reviewBody": "Nunca pensé que comprar un auto eléctrico fuera tan fácil. El Neural Match acertó totalmente."
-              }
-            ]
+                '@type': 'Review',
+                author: { '@type': 'Person', name: 'Sofía Méndez' },
+                reviewRating: { '@type': 'Rating', ratingValue: '5' },
+                reviewBody:
+                  'Nunca pensé que comprar un auto eléctrico fuera tan fácil. El Neural Match acertó totalmente.',
+              },
+            ],
           }}
         />
 
         {/* Visually hidden H1 for search engine crawlers — matches SEO keyword strategy */}
-        <h1 className="sr-only">Autos Nuevos y Usados de Lujo en Puerto Rico — Richard Automotive Bayamón</h1>
+        <h1 className="sr-only">
+          Autos Nuevos y Usados de Lujo en Puerto Rico — Richard Automotive Bayamón
+        </h1>
 
         {/* Hero Section */}
         <HeroSection

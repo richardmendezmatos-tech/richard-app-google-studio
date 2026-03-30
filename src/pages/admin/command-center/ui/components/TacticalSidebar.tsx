@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  CarFront, 
-  Activity, 
-  BarChart3, 
-  Newspaper, 
-  Users, 
+import {
+  LayoutDashboard,
+  CarFront,
+  Activity,
+  BarChart3,
+  Newspaper,
+  Users,
   Zap,
   Settings,
   LogOut,
   ShieldCheck,
-  LayoutGrid
+  LayoutGrid,
 } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
 
@@ -54,8 +54,12 @@ export const TacticalSidebar: React.FC = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="flex flex-col whitespace-nowrap"
               >
-                <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">Richard</span>
-                <span className="text-[10px] font-black text-primary leading-none uppercase tracking-widest">Sentinel 3.2</span>
+                <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">
+                  Richard
+                </span>
+                <span className="text-[10px] font-black text-primary leading-none uppercase tracking-widest">
+                  Sentinel 3.2
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -70,15 +74,20 @@ export const TacticalSidebar: React.FC = () => {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 className={`relative group flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-primary/20 text-white' 
+                  isActive
+                    ? 'bg-primary/20 text-white'
                     : 'text-slate-500 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <div className="relative flex-shrink-0">
-                  <item.icon size={20} className={isActive ? 'text-primary' : 'group-hover:scale-110 transition-transform'} />
+                  <item.icon
+                    size={20}
+                    className={
+                      isActive ? 'text-primary' : 'group-hover:scale-110 transition-transform'
+                    }
+                  />
                 </div>
-                
+
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -109,14 +118,21 @@ export const TacticalSidebar: React.FC = () => {
             className="relative group flex items-center gap-4 w-full p-4 rounded-2xl text-slate-500 hover:text-white hover:bg-white/5 transition-all"
           >
             <Settings size={20} className="flex-shrink-0" />
-            {!isCollapsed && <span className="text-[10px] font-black uppercase tracking-[0.2em]">Config</span>}
+            {!isCollapsed && (
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Config</span>
+            )}
           </button>
           <button
-            onClick={() => { logout(); navigate('/'); }}
+            onClick={() => {
+              logout();
+              navigate('/');
+            }}
             className="relative group flex items-center gap-4 w-full p-4 rounded-2xl text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-all"
           >
             <LogOut size={20} className="flex-shrink-0" />
-            {!isCollapsed && <span className="text-[10px] font-black uppercase tracking-[0.2em]">Exit</span>}
+            {!isCollapsed && (
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Exit</span>
+            )}
           </button>
         </div>
       </motion.aside>
@@ -133,15 +149,15 @@ export const TacticalSidebar: React.FC = () => {
                 isActive ? 'text-primary' : 'text-slate-500'
               }`}
             >
-              <item.icon 
-                size={isActive ? 22 : 20} 
+              <item.icon
+                size={isActive ? 22 : 20}
                 className={`transition-all duration-300 ${isActive ? 'scale-110' : 'group-active:scale-90'}`}
               />
               <span className="text-[8px] font-black uppercase tracking-widest leading-none">
                 {item.label.split(' ')[0]}
               </span>
               {isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="mobile-active-pill"
                   className="absolute inset-x-2 -bottom-1 h-1 bg-primary rounded-full shadow-[0_0_10px_#22d3ee]"
                 />

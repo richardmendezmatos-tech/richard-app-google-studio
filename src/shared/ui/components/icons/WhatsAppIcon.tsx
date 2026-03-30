@@ -4,12 +4,18 @@ import React from 'react';
  * Premium WhatsApp SVG Icon for Richard Automotive Brand UI.
  * Used in floating buttons, CTA menus, and contact sections.
  */
-export const WhatsAppIcon = ({ size = 28, className = "" }: { size?: number, className?: string }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 32 32" 
-    fill="none" 
+export const WhatsAppIcon = ({
+  size = 28,
+  className = '',
+}: {
+  size?: number;
+  className?: string;
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >

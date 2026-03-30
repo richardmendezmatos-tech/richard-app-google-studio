@@ -122,7 +122,8 @@ DI.getUserRepository = container.getUserRepository.bind(container);
 DI.getSubscriberRepository = container.getSubscriberRepository.bind(container);
 DI.getSurveyRepository = container.getSurveyRepository.bind(container);
 DI.getHoustonTelemetryUseCase = container.getHoustonTelemetryUseCase.bind(container);
-DI.getIdentifyOutreachOpportunitiesUseCase = container.getIdentifyOutreachOpportunitiesUseCase.bind(container);
+DI.getIdentifyOutreachOpportunitiesUseCase =
+  container.getIdentifyOutreachOpportunitiesUseCase.bind(container);
 DI.getCalculateDynamicMarginUseCase = container.getCalculateDynamicMarginUseCase.bind(container);
 DI.getPredictiveRepository = container.getPredictiveRepository.bind(container);
 DI.getEvaluarAprobacionVentaUseCase = container.getEvaluarAprobacionVentaUseCase.bind(container);

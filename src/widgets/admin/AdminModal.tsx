@@ -109,7 +109,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       const { functions } = await import('@/shared/api/firebase/client');
       const { httpsCallable } = await import('firebase/functions');
       const askGemini = httpsCallable<any, string>(functions, 'askGemini');
-      
+
       const response = await askGemini({
         contents,
         model: 'gemini-1.5-flash',
@@ -201,13 +201,13 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       <div className="bg-slate-900/95 backdrop-blur-3xl w-full sm:max-w-7xl sm:rounded-4xl rounded-t-4xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-white/5 max-h-[92vh] flex flex-col relative">
         {/* Glow effect back */}
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-70" />
-        
+
         {/* Header */}
         <div className="p-8 border-b border-white/5 flex justify-between items-center bg-transparent z-10 sticky top-0 backdrop-blur-xl">
           <div>
             <div className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 mb-1">
-               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,174,217,0.8)]" />
-               Editor de Inventario
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,174,217,0.8)]" />
+              Editor de Inventario
             </div>
             <h2 className="text-2xl font-black text-white uppercase tracking-tight">
               {car ? 'Editar Unidad' : 'Nueva Unidad'}
@@ -247,9 +247,9 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed relative z-10">
-                  Las unidades con más de 5 fotos de alta calidad tienen un <strong className="text-white">40% más de
-                  probabilidad</strong> de ser vendidas en la primera semana. Asegúrate de incluir
-                  interiores y motor.
+                  Las unidades con más de 5 fotos de alta calidad tienen un{' '}
+                  <strong className="text-white">40% más de probabilidad</strong> de ser vendidas en
+                  la primera semana. Asegúrate de incluir interiores y motor.
                 </p>
               </div>
             </div>
@@ -280,7 +280,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               {/* Basic Info */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2 group">
-                  <label htmlFor="admin-car-name" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label
+                    htmlFor="admin-car-name"
+                    className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
+                  >
                     Nombre de la Unidad
                   </label>
                   <input
@@ -294,7 +297,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2 group">
-                    <label htmlFor="admin-car-price" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                    <label
+                      htmlFor="admin-car-price"
+                      className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
+                    >
                       Precio (USD)
                     </label>
                     <input
@@ -308,7 +314,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                     />
                   </div>
                   <div className="space-y-2 group">
-                    <label htmlFor="admin-car-badge" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                    <label
+                      htmlFor="admin-car-badge"
+                      className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
+                    >
                       Etiqueta (Badge)
                     </label>
                     <input
@@ -324,7 +333,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2 group">
-                  <label htmlFor="admin-car-type" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label
+                    htmlFor="admin-car-type"
+                    className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
+                  >
                     Categoría
                   </label>
                   <div className="relative">
@@ -334,10 +346,18 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                       defaultValue={car?.type || 'suv'}
                       className="w-full h-[56px] px-5 bg-slate-900/50 rounded-2xl font-bold outline-none border border-white/5 focus:bg-slate-900 focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,174,217,0.15)] transition-all text-white appearance-none"
                     >
-                      <option value="suv" className="bg-slate-800 text-white">🚙 SUV / Crossover</option>
-                      <option value="sedan" className="bg-slate-800 text-white">🚗 Sedan / Coupe</option>
-                      <option value="pickup" className="bg-slate-800 text-white">🛻 Pickup / Truck</option>
-                      <option value="luxury" className="bg-slate-800 text-white">💎 Luxury / Sport</option>
+                      <option value="suv" className="bg-slate-800 text-white">
+                        🚙 SUV / Crossover
+                      </option>
+                      <option value="sedan" className="bg-slate-800 text-white">
+                        🚗 Sedan / Coupe
+                      </option>
+                      <option value="pickup" className="bg-slate-800 text-white">
+                        🛻 Pickup / Truck
+                      </option>
+                      <option value="luxury" className="bg-slate-800 text-white">
+                        💎 Luxury / Sport
+                      </option>
                     </select>
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 text-white">
                       <X size={16} className="rotate-45" />
@@ -345,7 +365,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   </div>
                 </div>
                 <div className="space-y-2 group">
-                  <label htmlFor="admin-car-features" className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1">
+                  <label
+                    htmlFor="admin-car-features"
+                    className="text-[10px] font-black text-slate-500 group-focus-within:text-primary transition-colors uppercase tracking-widest ml-1"
+                  >
                     Características (Separadas por coma)
                   </label>
                   <input

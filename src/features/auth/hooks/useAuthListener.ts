@@ -22,7 +22,7 @@ export const useAuthListener = () => {
         if (user) {
           const role = await getUserRole(user.uid);
           if (!mounted) return;
-          
+
           setRole(role);
           setUser({
             uid: user.uid,

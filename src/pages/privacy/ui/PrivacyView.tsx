@@ -130,8 +130,8 @@ const PrivacyView: React.FC = () => {
               <p className="m-0 text-sm">
                 Si tiene preguntas sobre esta política, contáctenos en:
                 <br />
-                <span className="font-bold text-primary">legal@richardautomotive.com</span> |
-                (787) 555-0123
+                <span className="font-bold text-primary">legal@richardautomotive.com</span> | (787)
+                555-0123
               </p>
             </div>
           </div>

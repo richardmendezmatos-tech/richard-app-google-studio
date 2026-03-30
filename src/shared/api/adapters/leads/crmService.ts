@@ -13,6 +13,7 @@ import {
 import { Lead } from '@/shared/types/types';
 import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
 import { extractMarketingData } from './marketingCaptureService';
+import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookService';
 
 export type { Lead };
 
@@ -34,10 +35,14 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>) =
     console.log('Lead added successfully');
 
     // HubSpot Sync
-    const newLead = { ...lead, id: docRef.id } as Lead;
+    const newLead = { ...lead, marketingData, id: docRef.id, status: 'new' } as Lead;
+
     hubspotService
       .syncLeadToHubSpot(newLead)
       .catch((e) => console.error('HubSpot async sync failed', e));
+
+    // Automation / Meta CAPI Webhook Sync
+    dispatchLeadToWebhook(newLead).catch((e) => console.error('Webhook async sync failed', e));
   } catch (error) {
     console.error('Error adding lead:', error);
   }

@@ -18,12 +18,14 @@ export const AdminDashboardTab: React.FC<Props> = ({
   deviceType,
   navigate,
   setActiveTab,
-  MissionControlWidget
+  MissionControlWidget,
 }) => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <React.Suspense
-        fallback={<div className="h-48 rounded-4xl bg-slate-900/40 animate-pulse border border-white/5" />}
+        fallback={
+          <div className="h-48 rounded-4xl bg-slate-900/40 animate-pulse border border-white/5" />
+        }
       >
         <MissionControlWidget />
       </React.Suspense>
@@ -99,7 +101,9 @@ export const AdminDashboardTab: React.FC<Props> = ({
               size={44}
               strokeWidth={1.5}
             />
-            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-purple-400 transition-colors">Framework Lab</h3>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-purple-400 transition-colors">
+              Framework Lab
+            </h3>
             <p className="text-slate-400 text-sm mb-8 leading-relaxed">
               Gestiona despliegues, workers, e integraciones experimentales (Vercel, AI Servers).
             </p>
@@ -120,7 +124,9 @@ export const AdminDashboardTab: React.FC<Props> = ({
               size={44}
               strokeWidth={1.5}
             />
-            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-emerald-400 transition-colors">Analytics Pro</h3>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-emerald-400 transition-colors">
+              Analytics Pro
+            </h3>
             <p className="text-slate-400 text-sm mb-8 leading-relaxed">
               Mapa de calor de inventario, retención de leads y métricas de ROI.
             </p>
