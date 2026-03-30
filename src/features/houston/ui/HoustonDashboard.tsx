@@ -8,9 +8,12 @@ import {
   Lock, 
   RefreshCcw,
   Wifi,
-  Server
+  Server,
+  Terminal,
+  Brain,
 } from 'lucide-react';
 import styles from './HoustonDashboard.module.css';
+import { HoustonTerminalLog } from './components/HoustonTerminalLog';
 
 export const HoustonDashboard: React.FC = () => {
   const [metrics, setMetrics] = React.useState({
@@ -41,98 +44,83 @@ export const HoustonDashboard: React.FC = () => {
 
       {/* Header */}
       <div className="flex items-center justify-between mb-8 relative">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
-            <Activity className="text-cyan-400 animate-kinetic-pulse" size={24} />
+        <div className="flex items-center gap-5">
+          <div className="p-4 bg-primary/10 rounded-[1.5rem] border border-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+            <Brain className="text-primary animate-pulse" size={28} />
           </div>
           <div>
-            <h3 className="text-xs font-black text-cyan-500 uppercase tracking-[0.2em] mb-1">
-              Mission Control
+            <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
+              Richard Intelligence
             </h3>
-            <h2 className="text-2xl font-black text-white tracking-tight">
-              Houston <span className="text-cyan-400">Command Center</span>
+            <h2 className="text-3xl font-black text-white tracking-tighter">
+              Houston <span className="text-primary/70">Terminal</span>
             </h2>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 rounded-full border border-white/5 ring-1 ring-white/5">
-          <div className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
-          <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
-            En Vivo 24/7
+        <div className="hidden sm:flex items-center gap-3 px-5 py-2.5 bg-slate-950/50 rounded-2xl border border-white/5 shadow-2xl backdrop-blur-3xl">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">
+            RA SYNC: <span className="text-emerald-500">OPTIMAL</span>
           </span>
         </div>
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+      {/* Main Grid: Telemetry + Terminal */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
         
-        {/* Metric 1: System Health */}
-        <div className="glass-premium p-6 border border-white/5 hover:border-cyan-500/30 transition-all duration-500">
-          <div className="flex justify-between items-start mb-4">
-            <ShieldCheck className="text-cyan-400" size={20} />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Estado</span>
-          </div>
-          <div className="text-3xl font-black text-white mb-2">{metrics.systemHealth}%</div>
-          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-            <div 
-              className={`h-full bg-gradient-to-r from-cyan-500 to-indigo-500 transition-all duration-1000 ${styles.healthBar}`} 
-              style={{ '--health-width': `${metrics.systemHealth}%` } as React.CSSProperties} 
-            />
-          </div>
-          <div className="mt-2 text-[10px] font-bold text-cyan-500/60 uppercase">Estructura Óptima</div>
+        {/* Terminal Section */}
+        <div className="lg:col-span-8">
+          <HoustonTerminalLog />
         </div>
 
-        {/* Metric 2: API Latency */}
-        <div className="glass-premium p-6 border border-white/5 hover:border-indigo-500/30 transition-all duration-500">
-          <div className="flex justify-between items-start mb-4">
-            <Zap className="text-indigo-400" size={20} />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Latencia</span>
+        {/* Telemetry Section */}
+        <div className="lg:col-span-4 grid grid-cols-1 gap-4">
+          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-primary/20 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <ShieldCheck className="text-primary" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">ESTADO</div>
+                <div className="text-xl font-black text-white">{metrics.systemHealth}% Health</div>
+              </div>
+            </div>
+            <div className="w-16 h-1.5 bg-slate-900 rounded-full overflow-hidden">
+               <div className="h-full bg-primary" style={{ width: `${metrics.systemHealth}%` }} />
+            </div>
           </div>
-          <div className="text-3xl font-black text-white mb-2">{metrics.apiLatency}ms</div>
-          <div className="flex items-center gap-1">
-            {[1,2,3,4,5,6,7,8,9,10].map(i => (
-              <div 
-                key={i} 
-                className={`w-1 h-3 rounded-full transition-all duration-300 ${i <= metrics.apiLatency/1.5 ? 'bg-indigo-500' : 'bg-slate-800'}`} 
-              />
-            ))}
-          </div>
-          <div className="mt-2 text-[10px] font-bold text-indigo-500/60 uppercase">Respuesta en milisegundos</div>
-        </div>
 
-        {/* Metric 3: Security */}
-        <div className="glass-premium p-6 border border-white/5 hover:border-emerald-500/30 transition-all duration-500">
-          <div className="flex justify-between items-start mb-4">
-            <Lock className="text-emerald-400" size={20} />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seguridad</span>
+          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-cyan-500/20 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-cyan-500/10 rounded-xl">
+                <Zap className="text-cyan-400" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">LATENCIA</div>
+                <div className="text-xl font-black text-white">{metrics.apiLatency}ms</div>
+              </div>
+            </div>
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className={`w-1 h-3 rounded-full ${i <= 3 ? 'bg-cyan-500' : 'bg-slate-800'}`} />
+              ))}
+            </div>
           </div>
-          <div className="text-3xl font-black text-white mb-2">{metrics.securityScore}%</div>
-          <div className="text-[10px] font-bold text-emerald-500/80 uppercase flex items-center gap-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Encriptación de Máxima Precisión
-          </div>
-          <div className="mt-3 text-[10px] text-slate-500 font-medium leading-relaxed">
-            Protección activa contra intrusiones y fuga de datos.
-          </div>
-        </div>
 
-        {/* Metric 4: Multi-Tenant Sync */}
-        <div className="glass-premium p-6 border border-white/5 hover:border-amber-500/30 transition-all duration-500">
-          <div className="flex justify-between items-start mb-4">
-            <RefreshCcw className="text-amber-400 animate-spin-slow" size={20} />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sinc</span>
-          </div>
-          <div className="text-3xl font-black text-white mb-2">Sync</div>
-          <div className="flex items-center gap-2">
-            <Wifi size={14} className="text-amber-500/50" />
-            <span className="text-[10px] font-bold text-amber-500/80 uppercase">Firebase Realtime</span>
-          </div>
-          <div className="mt-3 grid grid-cols-4 gap-1">
-            {[1,2,3,4].map(i => (
-              <div key={i} className="h-1 bg-amber-500/40 rounded-full" />
-            ))}
+          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-emerald-500/20 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-emerald-500/10 rounded-xl">
+                <Lock className="text-emerald-400" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">SEGURIDAD</div>
+                <div className="text-xl font-black text-white">ACTIVE</div>
+              </div>
+            </div>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
           </div>
         </div>
-
       </div>
 
       {/* Footer / Status Bar */}

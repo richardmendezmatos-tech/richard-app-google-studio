@@ -17,18 +17,20 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
   ({ car, leadCount, onEdit, onDelete, onPlanContent, style }) => {
     const predictiveStats = calculatePredictiveDTS(car, leadCount);
 
+    const rowRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+      if (rowRef.current && style) {
+        rowRef.current.style.setProperty('--translate', (style as any).transform || 'none');
+        rowRef.current.style.setProperty('--transition', (style as any).transition || 'none');
+        rowRef.current.style.setProperty('--drag-opacity', String((style as any).opacity || 1));
+        rowRef.current.style.setProperty('--drag-z-index', String((style as any).zIndex || 0));
+      }
+    }, [style]);
+
     return (
       <div
-        style={
-          style
-            ? ({
-                '--translate': (style as any).transform,
-                '--transition': (style as any).transition,
-                '--drag-opacity': (style as any).opacity,
-                '--drag-z-index': (style as any).zIndex,
-              } as React.CSSProperties)
-            : undefined
-        }
+        ref={rowRef}
         className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-20 ${style ? 'dnd-sortable' : ''}`}
       >
         {/* Unidad */}

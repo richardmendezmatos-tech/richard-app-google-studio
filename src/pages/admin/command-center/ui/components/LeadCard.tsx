@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -12,7 +12,13 @@ import {
   FileText,
   TrendingUp,
   GripVertical,
+  Activity,
+  Info,
+  MoreHorizontal,
+  Printer,
+  ChevronRight,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Lead,
   getSecureLeadData,
@@ -32,19 +38,36 @@ interface LeadCardProps {
   onPrint: () => void;
   onOpenDealSheet: (lead: Lead) => void;
   onOpenInbox: (lead: Lead) => void;
+  onOpenDetail: (lead: Lead) => void;
   userRole: UserRole;
   isOverlay?: boolean;
 }
 
-const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onOpenInbox, userRole, isOverlay }) => {
+const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onOpenInbox, onOpenDetail, userRole, isOverlay }) => {
   const [revealedSSN, setRevealedSSN] = useState<string | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
+  const progressRef = useRef<HTMLDivElement>(null);
   const { health } = useVehicleHealth(lead.carId || '');
   const { addNotification } = useNotification();
   const scoringHook = useLeadScoring(lead, health);
   const scoring = lead.id === 'e2e-mock-lead' ? { score: 95 } : scoringHook;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Pattern de Ref-based CSS Variables para eliminar inline styles y mejorar fluidez en re-renders
+  useLayoutEffect(() => {
+    if (progressRef.current) {
+      progressRef.current.style.setProperty('--progress-width', `${scoring.score}%`);
+      
+      const color = scoring.score > 80 
+        ? '#22d3ee' 
+        : scoring.score > 50 
+          ? '#fbbf24' 
+          : '#f43f5e';
+      progressRef.current.style.setProperty('--progress-color', color);
+    }
+  }, [scoring.score]);
 
   const handleWhatsAppSend = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -91,26 +114,36 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onO
       return;
     }
 
-    if (lead.ssn_encrypted) {
-      const masterKey = window.prompt('Ingresa la Master Key para desencriptar este SSN:');
-      if (!masterKey) return;
-
-      const decrypted = await decryptSSN(lead.ssn_encrypted, masterKey);
-      if (decrypted === 'DECRYPTION_ERROR') {
-        addNotification('error', 'Llave incorrecta. No se pudo desencriptar.');
-      } else {
-        setRevealedSSN(decrypted);
-      }
-      return;
-    }
+    const masterKey = window.prompt('Ingresa la Master Key para desencriptar este registro:');
+    if (!masterKey) return;
 
     setIsRevealing(true);
     try {
-      const data = await getSecureLeadData(lead.id);
-      if (data?.ssn) setRevealedSSN(data.ssn);
-    } catch (error) {
-      console.error(error);
-      addNotification('error', 'Acceso denegado a la bóveda.');
+      if (lead.ssn_encrypted) {
+        const decrypted = await decryptSSN(lead.ssn_encrypted, masterKey);
+        if (decrypted === 'DECRYPTION_ERROR') {
+          addNotification('error', 'Llave incorrecta. Acceso Denegado.');
+        } else {
+          setRevealedSSN(decrypted);
+          addNotification('success', 'Bóveda Segura: Acceso concedido.');
+        }
+      } else {
+        const secureData = await getSecureLeadData(lead.id);
+        if (secureData && secureData.ssn) {
+          const decrypted = await decryptSSN(secureData.ssn, masterKey);
+          if (decrypted === 'DECRYPTION_ERROR') {
+            addNotification('error', 'Llave incorrecta. Acceso Denegado.');
+          } else {
+            setRevealedSSN(decrypted);
+            addNotification('success', 'Bóveda Segura: Acceso concedido.');
+          }
+        } else {
+          addNotification('error', 'No se encontró información en la Bóveda Segura.');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      addNotification('error', 'Error al acceder a la bóveda.');
     } finally {
       setIsRevealing(false);
     }
@@ -120,144 +153,188 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, onOpenDealSheet, onO
     <div
       className={`glass-card glass-premium group transition-all duration-500 relative ${
         isOverlay 
-          ? 'shadow-2xl scale-105 rotate-2 cursor-grabbing z-50 ring-2 ring-primary bg-slate-900/40' 
-          : 'p-6 rounded-[32px] hover-border-primary hover:-translate-y-1 hover-kinetic-glow'
+          ? 'shadow-2xl scale-105 rotate-2 cursor-grabbing z-50 ring-2 ring-cyan-500/50 bg-slate-900/40 p-6 rounded-[32px]' 
+          : 'p-6 rounded-[32px] hover:border-cyan-500/30 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(34,211,238,0.15)] overflow-hidden'
       }`}
     >
-      {!isOverlay && (
-        <div className="absolute top-5 right-5 text-slate-300 dark:text-slate-600">
-          <GripVertical size={16} />
+      {/* Background Decorator - Grid Subraya el ADN de Richard Intelligence */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none grid-bg group-hover:opacity-[0.05] transition-opacity" />
+
+      {/* Engagement Heatmap Dot */}
+      {scoring.score > 70 && (
+        <div className="absolute -top-1 -right-1 w-8 h-8 flex items-center justify-center">
+          <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+          <div className="absolute w-full h-full border border-cyan-500/20 rounded-full animate-ping opacity-20" />
         </div>
       )}
 
-      <div className="flex justify-between mb-3 pr-6">
-        <span
-          className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${lead.type === 'trade-in' ? 'bg-purple-100 text-purple-600' : lead.type === 'finance' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-primary'}`}
-        >
-          {lead.type || 'Standard'}
-        </span>
-        {scoring.score > 80 && (
-          <span className="px-2.5 py-1 bg-amber-100 text-amber-600 rounded-full text-[9px] font-black uppercase tracking-widest animate-pulse">
-            Alta Prioridad
+      <div className="flex justify-between items-start mb-6 pr-4 relative z-10">
+        <div className="flex flex-col gap-1.5">
+          <span
+            className={`w-fit px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-[0.2em] border border-white/5 ${
+              lead.type === 'finance'
+                ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'
+            }`}
+          >
+            {lead.type === 'finance' ? 'Credit App' : 'Lead'}
           </span>
-        )}
-        {lead.hasCreditApplication && (
-          <span className="px-2.5 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm">
-            <ShieldCheck size={10} /> Credit App
+          <h3 className="text-sm font-black text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">
+            {maskName(
+              lead.name || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Lead Anonizado',
+              userRole
+            )}
+          </h3>
+          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+            <Clock size={10} className="text-slate-600" />
+            {lead.createdAt?.seconds
+              ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })
+              : 'Recent Signal'}
           </span>
-        )}
-        <span className="text-[10px] text-slate-400 flex items-center gap-1">
-          <Clock size={10} />
-          {lead.createdAt?.seconds
-            ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString()
-            : 'Reciente'}
-        </span>
-      </div>
-
-      <div className="font-black text-slate-800 dark:text-white text-md mb-1 tracking-tight pr-4 flex items-center gap-2">
-        {maskName(lead.name || `${lead.firstName} ${lead.lastName}`, userRole)}
-        {userRole !== 'admin' && (
-          <span title="Protección PII Activa">
-            <ShieldCheck size={12} className="text-emerald-500 opacity-50" />
-          </span>
-        )}
-      </div>
-
-      <div className="text-xs font-bold text-slate-500 truncate mb-4 uppercase tracking-[0.05em] flex items-center gap-2">
-        <Car size={12} className="text-primary/50" />
-        {lead.vehicleOfInterest || lead.message || 'Asset Identification Pending'}
-      </div>
-
-      {scoring.score > 0 && (
-        <div className="mb-4 p-4 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl border border-primary/10 shadow-inner relative overflow-hidden group/gauge">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
-              AI Opportunity Signal
-            </span>
-            <span className={`text-[11px] font-black tracking-tighter ${scoring.score > 80 ? 'text-emerald-500' : 'text-amber-500'}`}>
-              {scoring.score}%
-            </span>
-          </div>
-
-          <div className="relative h-1 w-full bg-slate-800/40 rounded-full overflow-hidden mb-1">
-            <div
-              className={`h-full transition-all duration-[1500ms] ease-[cubic-bezier(0.23,1,0.32,1)] ${
-                scoring.score > 80
-                  ? 'shadow-[0_0_15px_rgba(16,185,129,0.5)] bg-gradient-to-r from-emerald-500 to-cyan-400'
-                  : scoring.score > 50
-                    ? 'shadow-[0_0_15px_rgba(251,191,36,0.3)] bg-gradient-to-r from-amber-400 to-orange-500'
-                    : 'shadow-[0_0_15px_rgba(244,63,94,0.3)] bg-gradient-to-r from-rose-500 to-pink-600'
-              }`}
-              style={{ width: `${scoring.score}%` }}
-            />
-          </div>
-          
-          <div className="flex justify-between items-center text-[7px] font-black uppercase tracking-[0.2em] text-slate-500">
-            <span>Critical Path</span>
-            <span className="text-primary animate-pulse">Scanning Agent Active</span>
-          </div>
         </div>
-      )}
+        
+        {!isOverlay && (
+          <div className="text-slate-600 dark:text-slate-700/50 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
+            <GripVertical size={16} />
+          </div>
+        )}
+      </div>
 
-      <div className="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-white/5">
-        <div className="flex gap-2" onPointerDown={(e) => e.stopPropagation()}>
+      <div className="relative z-10">
+        <div className="font-black text-white text-lg mb-1.5 tracking-tighter flex items-center gap-2 group/name">
+          {maskName(lead.name || `${lead.firstName} ${lead.lastName}`, userRole)}
+          {scoring.score > 85 && <Zap size={14} className="text-cyan-400 animate-pulse" />}
+        </div>
+
+        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-start gap-2.5 mb-5 bg-white/3 p-2.5 rounded-2xl border border-white/5">
+          <Car size={14} className="text-cyan-500/50 mt-0.5" />
+          <span className="leading-relaxed line-clamp-2">
+            {lead.vehicleOfInterest || lead.message || 'Asset Identification in Analysis...'}
+          </span>
+        </div>
+
+        {scoring.score >= 0 && (
+          <div className="mb-6 p-4 bg-slate-900/40 rounded-2xl border border-white/5 relative overflow-hidden group/gauge shadow-inner">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <Activity size={10} className="text-cyan-400" />
+                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-400">
+                  Opportunity Vector
+                </span>
+              </div>
+              <span className={`text-[11px] font-black tracking-tighter tabular-nums ${scoring.score > 80 ? 'text-cyan-400' : 'text-amber-400'}`}>
+                {scoring.score}%
+              </span>
+            </div>
+
+            <div className="relative h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div
+                ref={progressRef}
+                className="h-full opacity-60 transition-all duration-[1500ms] ease-[cubic-bezier(0.23,1,0.32,1)] bg-[var(--progress-color)] shadow-[0_0_15px_var(--progress-color)] w-[var(--progress-width,0%)]"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center relative gap-3">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onOpenInbox(lead);
             }}
-            className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500/20 transition-colors"
-            title="Abrir Buzón Omnicanal"
+            className="flex-1 py-3 bg-cyan-500 text-slate-950 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-cyan-400 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] active:scale-95"
+            title="Atender este lead ahora"
           >
-            <MessageCircle size={14} />
+            Atender Lead
           </button>
           
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/admin/analytics/${lead.id}`);
-            }}
-            className="p-2.5 bg-purple-500/10 text-purple-500 rounded-xl hover:bg-purple-500/20"
-            title="Analytics"
-          >
-            <TrendingUp size={14} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDealSheet(lead);
-            }}
-            className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20"
-            title="Smart Deal Sheet"
-          >
-            <FileText size={14} />
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          {(lead.ssn_encrypted || lead.ssn) && (
-            <div className="flex items-center gap-2">
-              {revealedSSN && (
-                <span className="text-[10px] font-mono font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                  {revealedSSN}
-                </span>
+          <div className="relative" onMouseLeave={() => setIsMenuOpen(false)}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              className={`p-3 rounded-2xl border transition-all ${
+                isMenuOpen 
+                  ? 'bg-white/10 border-white/20 text-white' 
+                  : 'bg-white/5 border-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+              }`}
+              title="Más opciones de gestión"
+            >
+              <MoreHorizontal size={16} />
+            </button>
+
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="absolute bottom-full right-0 mb-3 w-56 bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-2 z-50"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex flex-col gap-1">
+                    {[
+                      { 
+                        id: 'sheet', 
+                        label: 'Deal Sheet', 
+                        icon: FileText, 
+                        onClick: () => onOpenDealSheet(lead),
+                        color: 'text-indigo-400'
+                      },
+                      { 
+                        id: 'analytics', 
+                        label: 'Neural Insights', 
+                        icon: TrendingUp, 
+                        onClick: () => navigate(`/admin/analytics/${lead.id}`),
+                        color: 'text-cyan-400'
+                      },
+                      { 
+                        id: 'detail', 
+                        label: 'Full Record', 
+                        icon: Info, 
+                        onClick: () => onOpenDetail(lead),
+                        color: 'text-slate-400'
+                      },
+                      { 
+                        id: 'print', 
+                        label: 'Print Report', 
+                        icon: Printer, 
+                        onClick: onPrint,
+                        color: 'text-slate-500' 
+                      },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          item.onClick();
+                          setIsMenuOpen(false);
+                        }}
+                        className="flex items-center justify-between w-full p-4 hover:bg-white/5 rounded-2xl transition-all group/item"
+                      >
+                        <div className="flex items-center gap-3">
+                          <item.icon size={14} className={item.color} />
+                          <span className="text-[10px] font-bold text-white uppercase tracking-wider">{item.label}</span>
+                        </div>
+                        <ChevronRight size={10} className="text-slate-700 group-hover/item:text-white group-hover/item:translate-x-1 transition-all" />
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
               )}
-              <button
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={handleReveal}
-                className="p-2 text-slate-400 hover:text-amber-500 transition-colors"
-                title="Ver SSN Segura"
-              >
-                {isRevealing ? (
-                  <Loader2 size={12} className="animate-spin" />
-                ) : revealedSSN ? (
-                  <EyeOff size={12} />
-                ) : (
-                  <Eye size={12} />
-                )}
-              </button>
-            </div>
-          )}
+            </AnimatePresence>
+          </div>
         </div>
+        
+        {revealedSSN && (
+          <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-between">
+            <span className="text-[10px] font-mono font-black text-cyan-400 tracking-widest">
+              VAULT_ID: {revealedSSN}
+            </span>
+            <ShieldCheck size={12} className="text-cyan-400/50" />
+          </div>
+        )}
       </div>
     </div>
   );

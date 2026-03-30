@@ -9,6 +9,7 @@ import { useAntigravity } from '@/features/automation';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
 import { useCommandCenterData } from '../hooks/useCommandCenterData';
+import { TacticalSidebar } from './components/TacticalSidebar';
 import { CommandCenterWidget } from '@/widgets/houston/CommandCenterWidget';
 
 // Lazy load modals & status bars that remain in layout
@@ -99,65 +100,69 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
       ref={containerRef as any}
       className="min-h-screen bg-transparent text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden bg-noise"
     >
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none" />
-      <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/10 to-transparent pointer-events-none" />
+      <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="max-w-[1600px] mx-auto p-4 lg:p-10 space-y-8 relative z-10 flex flex-col h-full">
+      <TacticalSidebar />
+
+      <div className="px-4 md:pl-24 md:pr-10 pb-32 md:pb-6 max-w-[1800px] mx-auto py-6 space-y-6 relative z-10 flex flex-col h-full min-h-screen">
         {/* HEADER AREA */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-8 shrink-0">
-          <div>
-            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-3 opacity-80">
-              <ShieldCheck size={12} className="animate-pulse" />
-              <span>RA MISSION CONTROL v3.0</span>
+        <header className="flex flex-col md:flex-row justify-between items-center gap-6 pb-6 shrink-0 bg-slate-900/40 backdrop-blur-md p-6 rounded-[2rem] border border-white/5">
+          <div className="flex items-center gap-6">
+            <div className="hidden lg:block">
+              <div className="flex items-center gap-2 text-primary font-black text-[8px] uppercase tracking-[0.4em] mb-1 opacity-60">
+                <ShieldCheck size={10} />
+                <span>MISSION CONTROL</span>
+              </div>
+              <h1 className="text-3xl font-black text-white tracking-tighter leading-none">
+                {currentDealer.name}
+              </h1>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-slate-500 tracking-tightest leading-none pb-2">
-              {currentDealer.name}
-            </h1>
+            
+            <div className="h-8 w-px bg-white/10 hidden lg:block" />
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={refreshAntigravity}
+                className={`h-8 rounded-lg border px-3 text-[9px] font-black uppercase tracking-widest transition-all ${
+                  antigravityStatus === 'online'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                    : antigravityStatus === 'checking'
+                      ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                      : antigravityStatus === 'disabled'
+                        ? 'border-slate-600 bg-slate-800 text-slate-300'
+                        : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
+                }`}
+              >
+                AG: {antigravityStatus}
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 hidden md:flex">
-            <button
-              type="button"
-              onClick={refreshAntigravity}
-              className={`h-10 rounded-xl border px-4 text-[10px] font-black uppercase tracking-widest transition-all ${
-                antigravityStatus === 'online'
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-                  : antigravityStatus === 'checking'
-                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
-                    : antigravityStatus === 'disabled'
-                      ? 'border-slate-600 bg-slate-800 text-slate-300'
-                      : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
-              }`}
-            >
-              AG: {antigravityStatus}
-            </button>
-            <Suspense fallback={<div className="h-10 w-40 rounded-xl bg-white/5 animate-pulse" />}>
-              <EnterpriseStatus />
-            </Suspense>
-          </div>
-
-          <div className="flex gap-3 w-full md:w-auto">
+          <div className="flex gap-2 w-full md:w-auto">
             <button
               onClick={() => navigate('/strategy-lab')}
-              className="h-[44px] px-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-95"
+              className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 rounded-lg border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none ring-1 ring-white/5 shadow-2xl transition-all hover:bg-slate-800"
+              title="Nodo Houston Sentinel"
             >
-              <UserIcon size={16} /> Strategy Lab
+              <Zap size={14} className="text-purple-400" /> <span className="hidden sm:inline">Strategy Lab</span>
             </button>
             <button
               onClick={() => {
                 setEditingCar(null);
                 setIsModalOpen(true);
               }}
-              className="h-[44px] px-6 bg-primary hover:bg-cyan-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
+              className="h-[38px] px-4 bg-primary hover:bg-cyan-500 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
             >
-              <Plus size={18} strokeWidth={3} /> <span className="hidden sm:inline">Nueva Unidad</span>
+              <Plus size={14} strokeWidth={3} /> <span className="hidden sm:inline">Unidad</span>
             </button>
             <button
               onClick={() => refetchLeads()}
-              className="w-[44px] h-[44px] bg-slate-800 hover:text-white rounded-xl flex items-center justify-center transition-all group"
+              className="w-[38px] h-[38px] bg-slate-800 hover:text-white rounded-xl flex items-center justify-center transition-all group"
               title="Recargar Datos"
             >
-              <DatabaseZap size={18} className="group-active:rotate-180 duration-500" />
+              <DatabaseZap size={16} className="group-active:rotate-180 duration-500" />
             </button>
           </div>
         </header>

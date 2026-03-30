@@ -27,7 +27,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
     car.type === 'luxury';
 
   return (
-    <div className="group relative glass-premium overflow-hidden shadow-xl hover-kinetic flex flex-col h-full route-fade-in">
+    <div className="group relative rounded-[2rem] glass-premium overflow-hidden shadow-2xl hover:bg-white/5 transition-all duration-500 border border-white/5 flex flex-col h-full route-fade-in group/card">
       {/* Image Section */}
       <div className="relative h-72 overflow-hidden">
         <img
@@ -57,10 +57,10 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
 
         {/* Price Display */}
         <div className="absolute bottom-6 left-8">
-          <div className="text-[9px] font-black text-primary/70 uppercase tracking-[0.3em] mb-1">
-            Asset Valuation
+          <div className="text-[8px] font-black text-primary/60 uppercase tracking-[0.4em] mb-1">
+            UNIT VALUATION
           </div>
-          <div className="text-4xl font-black text-white tracking-tightest leading-none text-glow">
+          <div className="text-3xl font-black text-white tracking-tighter leading-none">
             <AnimatedCounter value={car.price || 0} format="currency" />
           </div>
         </div>
@@ -69,21 +69,20 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       {/* Content Section */}
       <div className="p-8 space-y-6 flex-1 flex flex-col">
         <div>
-          <h3 className="text-xl font-black text-white uppercase tracking-tight truncate mb-1">
+          <h3 className="text-lg font-black text-white uppercase tracking-tight truncate mb-1 group-hover/card:text-primary transition-colors">
             {car.name}
           </h3>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            <Gauge size={12} /> {car.type === 'luxury' ? 'Premium Trim' : 'Standard Trim'} •{' '}
-            {car.badge || 'No special badge'}
+          <div className="flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+            <Gauge size={10} /> {car.type === 'luxury' ? 'Premium' : 'Standard'} • {car.badge || 'N/A'}
           </div>
         </div>
 
         {/* Predictive Metrics */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/5 p-4 rounded-3xl border border-white/5 space-y-2">
-            <div className="flex items-center gap-2 text-slate-400">
-              <TrendingUp size={14} className="text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-wider">Advantage</span>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div className="flex items-center gap-2 text-slate-500">
+              <TrendingUp size={12} />
+              <span className="text-[8px] font-black uppercase tracking-widest">ADVANTAGE</span>
             </div>
             <div
               className={`text-xl font-black ${prediction.advantageScore > 75 ? 'text-emerald-500' : 'text-amber-500'}`}
@@ -91,14 +90,14 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
               <AnimatedCounter value={prediction.advantageScore} format="percent" />
             </div>
           </div>
-          <div className="bg-white/5 p-4 rounded-3xl border border-white/5 space-y-2">
-            <div className="flex items-center gap-2 text-slate-400">
-              <Clock size={14} className="text-amber-500" />
-              <span className="text-[10px] font-black uppercase tracking-wider">Exp. Sales</span>
+          <div className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div className="flex items-center gap-2 text-slate-500">
+              <Clock size={12} />
+              <span className="text-[8px] font-black uppercase tracking-widest">EXP. SALE</span>
             </div>
             <div className="text-xl font-black text-white">
               <AnimatedCounter value={prediction.daysToSale} />{' '}
-              <span className="text-[10px] opacity-40 uppercase tracking-widest">Días</span>
+              <span className="text-[9px] opacity-40 uppercase tracking-widest font-black">DAYS</span>
             </div>
           </div>
         </div>
@@ -118,28 +117,28 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
         )}
 
         {/* Professional Actions */}
-        <div className="flex gap-4 pt-4 mt-auto relative z-10">
+        <div className="flex gap-3 pt-2 mt-auto relative z-10">
           <button
             onClick={onPlanContent}
-            className="flex-1 h-12 bg-primary/5 hover:bg-primary text-primary hover:text-white border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 group/btn shadow-lg hover:shadow-primary/20"
+            className="flex-1 h-10 bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group/btn"
           >
-            <Sparkles size={16} className="group-hover/btn:rotate-12 transition-transform duration-500" />
+            <Sparkles size={14} className="group-hover/btn:rotate-12 transition-transform duration-500" />
             Strategy Lab
           </button>
           <div className="flex gap-2">
             <button
               onClick={() => onEdit(car)}
-              className="w-12 h-12 bg-white/5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all border border-white/10 group/edit"
-              title="Editar Unidad"
+              className="w-10 h-10 bg-white/5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all border border-white/10 group/edit"
+              title="Editar descripción de unidad"
             >
-              <Edit3 size={18} className="group-hover/edit:scale-110 transition-transform" />
+              <Edit3 size={16} />
             </button>
             <button
               onClick={() => onDelete(car.id)}
-              className="w-12 h-12 bg-rose-500/5 text-rose-500/60 hover:text-white hover:bg-rose-600 rounded-xl flex items-center justify-center transition-all border border-rose-500/10 group/del"
-              title="Eliminar Unidad"
+              className="w-10 h-10 bg-rose-500/5 text-rose-500/50 hover:text-white hover:bg-rose-600 rounded-xl flex items-center justify-center transition-all border border-rose-500/10 group/del"
+              title="Eliminar unidad del inventario"
             >
-              <Trash2 size={18} className="group-hover/del:scale-110 transition-transform" />
+              <Trash2 size={16} />
             </button>
           </div>
         </div>

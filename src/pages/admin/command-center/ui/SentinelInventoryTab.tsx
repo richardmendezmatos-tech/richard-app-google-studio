@@ -13,7 +13,12 @@ import {
   Clock,
   TrendingUp,
   Zap,
+  Filter,
+  CheckCircle2,
+  AlertTriangle,
+  Flame,
 } from 'lucide-react';
+import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
 import { calculatePredictiveDTS } from '@/entities/car';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
@@ -50,25 +55,39 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   }, [carData]);
 
   const searchInputRef = React.useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = React.useState<'todo' | 'premium' | 'oportunidad' | 'baja'>('todo');
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
 
   React.useEffect(() => {
     searchInputRef.current?.focus();
     const voiceFilter = localStorage.getItem('inventory_filter');
     if (voiceFilter) {
       setSearchTerm(voiceFilter);
-      localStorage.removeItem('inventory_filter'); // Clear once used
+      localStorage.removeItem('inventory_filter');
     }
   }, []);
 
-  const filteredInventory = React.useMemo(
-    () =>
-      (inventory || []).filter((c) =>
-        (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase()),
-      ),
-    [inventory, searchTerm],
-  );
+  const filteredInventory = React.useMemo(() => {
+    let items = (inventory || []).filter((c) =>
+      (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
+    );
+
+    if (activeTab === 'premium') {
+      items = items.filter(c => c.price && Number(c.price) > 50000 || c.type === 'luxury');
+    } else if (activeTab === 'oportunidad') {
+      items = items.filter(c => {
+        const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
+        return calculatePredictiveDTS(c, leadsForCar).advantageScore > 80;
+      });
+    } else if (activeTab === 'baja') {
+      items = items.filter(c => {
+        const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
+        return calculatePredictiveDTS(c, leadsForCar).advantageScore < 40;
+      });
+    }
+
+    return items;
+  }, [inventory, searchTerm, activeTab, leads]);
 
   const totalStats = React.useMemo(() => {
     const units = inventory.length;
@@ -83,59 +102,70 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
   return (
     <div className="flex flex-col gap-8 min-h-[600px]">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-        {[
-          { label: 'Unidades', value: totalStats.units, icon: Package, color: 'from-blue-600 to-cyan-500' },
-          {
-            label: 'Capital Total',
-            value: `$${(totalStats.totalValue / 1000000).toFixed(1)}M`,
-            icon: DollarSign,
-            color: 'from-emerald-600 to-teal-500',
-          },
-          {
-            label: 'Score Advantage',
-            value: `${totalStats.avgAdvantage.toFixed(1)}%`,
-            icon: TrendingUp,
-            color: 'from-primary to-indigo-600',
-          },
-          { label: 'Expectativa Venta', value: '12', icon: Zap, color: 'from-amber-600 to-orange-500' },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="glass-premium p-6 flex flex-col gap-4 hover-kinetic cursor-default border border-white/5 relative overflow-hidden group"
-          >
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-5 blur-2xl group-hover:opacity-20 transition-opacity`} />
-            <div className="flex justify-between items-start relative z-10">
-              <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
-                <stat.icon size={18} />
-              </div>
-              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
-                Live Telemetry
-              </div>
-            </div>
-            <div className="relative z-10">
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
-                {stat.label}
-              </div>
-              <div className="text-3xl font-black text-white tracking-tightest leading-none text-glow">
-                {stat.value}
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatusWidget
+          icon={Package}
+          label="Unidades en Stock"
+          value={<CountUp end={totalStats.units} />}
+          color="bg-blue-500/20 text-cyan-400 border border-cyan-500/30"
+          subValue="CAPACIDAD OPTIMA"
+        />
+        <StatusWidget
+          icon={DollarSign}
+          label="Capital de Inventario"
+          value={`$${(totalStats.totalValue / 1000000).toFixed(1)}M`}
+          color="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+          subValue="ASSET VALUATION"
+        />
+        <StatusWidget
+          icon={TrendingUp}
+          label="Advantage Global"
+          value={`${totalStats.avgAdvantage.toFixed(1)}%`}
+          color="bg-primary/20 text-primary border border-primary/30"
+          subValue="VENTA PREDICTIVA"
+        />
+        <StatusWidget
+          icon={Zap}
+          label="Exp. Ventas (Mes)"
+          value="12"
+          color="bg-amber-500/20 text-amber-500 border border-amber-500/30"
+          subValue="PROYECCIÓN HOUSTON"
+        />
       </div>
 
       <div className="flex-1 bg-white/5 backdrop-blur-md rounded-[2.5rem] shadow-xl border border-white/10 overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-900/50">
-          <div className="relative w-full md:w-96 group">
+        <div className="p-4 border-b border-white/5 flex flex-col lg:flex-row justify-between items-center gap-6 bg-slate-900/60 backdrop-blur-xl">
+          <div className="flex items-center gap-2 bg-slate-950/50 p-1.5 rounded-[1.5rem] border border-white/5 w-full lg:w-auto overflow-x-auto no-scrollbar">
+            {[
+              { id: 'todo', label: 'Todo', icon: Filter },
+              { id: 'premium', label: 'Premium', icon: Flame },
+              { id: 'oportunidad', label: 'Oportunidad', icon: CheckCircle2 },
+              { id: 'baja', label: 'Baja Tracción', icon: AlertTriangle }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                  activeTab === tab.id 
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                }`}
+              >
+                <tab.icon size={12} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full lg:w-72 group">
             <Search
               className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors"
-              size={20}
+              size={18}
             />
             <input
               type="text"
-              placeholder="Buscar vehículo..."
-              className="w-full pl-12 pr-4 h-board-header bg-slate-950 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-medium text-white placeholder:text-slate-600"
+              placeholder="Buscar por nombre..."
+              className="w-full pl-12 pr-4 h-[44px] bg-slate-950 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-transparent outline-none transition-all text-[11px] font-bold text-white placeholder:text-slate-600 uppercase tracking-widest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               ref={searchInputRef}

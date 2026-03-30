@@ -39,12 +39,40 @@ export const CountUp: React.FC<CountUpProps> = ({
   );
 };
 
+const Sparkline: React.FC<{ data: number[]; color: string }> = ({ data, color }) => {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const width = 60;
+  const height = 20;
+  
+  const points = data.map((d, i) => {
+    const x = (i / (data.length - 1)) * width;
+    const y = height - ((d - min) / range) * height;
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <svg width={width} height={height} className="opacity-50">
+      <polyline
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={points}
+      />
+    </svg>
+  );
+};
+
 interface StatusWidgetProps {
   icon: React.ElementType;
   label: string;
   value: string | React.ReactNode;
   color: string;
   subValue?: string;
+  trendData?: number[];
 }
 
 export const StatusWidget: React.FC<StatusWidgetProps> = ({
@@ -53,32 +81,38 @@ export const StatusWidget: React.FC<StatusWidgetProps> = ({
   value,
   color,
   subValue,
+  trendData = [30, 40, 35, 50, 45, 60, 55],
 }) => (
-  <div className="glass-premium p-6 rounded-[2rem] flex items-center gap-5 group cursor-default route-fade-in hover:-translate-y-1 hover:scale-[1.01] transition-transform">
-    <div
-      className={`p-4 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center transition-transform group-hover:rotate-12 duration-500`}
-    >
-      <Icon
-        className={color.replace('bg-', 'text-').replace('text-opacity-100', '')}
-        size={32}
-        strokeWidth={2.5}
-      />
-    </div>
-    <div>
-      <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.2em] mb-1">
-        {label}
-      </h4>
-      <div className="text-3xl font-black text-slate-800 dark:text-white leading-none tracking-tighter text-glow">
-        {value}
+  <div className="glass-premium p-6 rounded-[2.5rem] flex items-center justify-between group cursor-default transition-all hover:bg-white/5 border border-white/5">
+    <div className="flex items-center gap-5">
+      <div
+        className={`p-4 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center transition-transform group-hover:rotate-12 duration-500`}
+      >
+        <Icon
+          className={color.replace('bg-', 'text-').replace('text-opacity-100', '')}
+          size={32}
+          strokeWidth={2.5}
+        />
       </div>
-      {subValue && (
-        <div className="flex items-center gap-1.5 mt-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-            {subValue}
-          </div>
+      <div>
+        <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.2em] mb-1">
+          {label}
+        </h4>
+        <div className="text-3xl font-black text-white leading-none tracking-tighter">
+          {value}
         </div>
-      )}
+        {subValue && (
+          <div className="flex items-center gap-1.5 mt-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+            <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              {subValue}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+    <div className="hidden xl:block">
+      <Sparkline data={trendData} color={color.includes('cyan') ? '#22d3ee' : color.includes('emerald') ? '#10b981' : color.includes('purple') ? '#a855f7' : '#f59e0b'} />
     </div>
   </div>
 );
