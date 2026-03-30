@@ -158,6 +158,21 @@ export interface Lead {
   acquisitionCost?: number; // In USD
   source?: 'facebook' | 'google' | 'direct' | 'referral' | 'instagram' | string;
   sourceCampaign?: string;
+  
+  // Phase 22: Ad Predictive Capture
+  marketingData?: {
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+    fbclid?: string;
+    gclid?: string;
+    fbp?: string;
+    fbc?: string;
+    sessionEntryTimestamp?: number;
+    landingPage?: string;
+  };
 
   // Nivel 14: Predictive Scaling
   predictiveScore?: number;

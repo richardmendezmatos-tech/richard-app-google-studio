@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { Lead } from '@/shared/types/types';
 import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
+import { extractMarketingData } from './marketingCaptureService';
 
 export type { Lead };
 
@@ -22,8 +23,11 @@ const LEADS_COLLECTION = 'applications';
  */
 export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>) => {
   try {
+    const marketingData = extractMarketingData();
+
     const docRef = await addDoc(collection(db, LEADS_COLLECTION), {
       ...lead,
+      marketingData,
       status: 'new',
       createdAt: serverTimestamp(),
     });
