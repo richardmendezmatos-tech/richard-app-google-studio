@@ -22,6 +22,11 @@ export const HoustonDashboard: React.FC = () => {
     activeNodes: 4,
     apiLatency: 12,
     securityScore: 100,
+    salesPulse: {
+      pendingQuotes: 14,
+      conversionRate: 4.2,
+      inventoryViews: 842,
+    }
   });
 
   // Simulamos telemetría en tiempo real para dar vida al dashboard
@@ -114,19 +119,42 @@ export const HoustonDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-emerald-500/20 transition-all">
+          <div className="glass-premium p-4 border border-emerald-500/10 flex items-center justify-between group hover:border-emerald-500/20 transition-all">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-emerald-500/10 rounded-xl">
                 <Lock className="text-emerald-400" size={18} />
               </div>
               <div>
                 <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  SEGURIDAD
+                  SECURITY
                 </div>
-                <div className="text-xl font-black text-white">ACTIVE</div>
+                <div className="text-xl font-black text-white">ENCRYPTED</div>
               </div>
             </div>
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          </div>
+
+          {/* Sales Pulse (Strictly Automotive) */}
+          <div className="glass-premium p-4 border border-primary/20 bg-primary/5 flex items-center justify-between group hover:border-primary/40 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-primary/20 rounded-xl">
+                <Activity className="text-primary" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-primary uppercase tracking-widest mb-0.5">
+                  SALES PULSE
+                </div>
+                <div className="text-xl font-black text-white">+{metrics.salesPulse.pendingQuotes} Leads</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter">
+                {metrics.salesPulse.conversionRate}% CONV
+              </div>
+              <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">
+                {metrics.salesPulse.inventoryViews} VIEWS
+              </div>
+            </div>
           </div>
         </div>
       </div>

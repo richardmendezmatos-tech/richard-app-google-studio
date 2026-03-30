@@ -40,3 +40,17 @@ export const calculateMonthlyPayment = (
   
   return Math.round(payment);
 };
+
+/**
+ * Genera el mensaje estratégico para WhatsApp de alta conversión.
+ */
+export const generateWhatsAppQuoteUrl = (
+  carName: string,
+  price: number,
+  monthly: number,
+  pronto: number,
+  phone: string = '17873682880'
+): string => {
+  const message = `Hola Richard! 👋 Vi esta unidad en el Command Center y me interesa cotizarla comercialmente:\n\n🚗 *${carName}*\n💰 Precio: $${price.toLocaleString()}\n📉 Pago Est.: *$${monthly}/mes*\n🤝 Pronto: $${pronto.toLocaleString()}\n\n¿Cuándo puedo pasar para una prueba de manejo?`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+};

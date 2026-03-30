@@ -64,17 +64,22 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
           <div className="scrollbar-hide flex w-full items-center gap-3 overflow-x-auto pb-1 lg:w-auto lg:pb-0">
             {/* Car Type Filter */}
             <div className="flex gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-xl">
-              {['all', 'suv', 'sedan', 'pickup'].map((type) => (
+              {[
+                { id: 'all', label: 'Todos' },
+                { id: 'suv', label: 'Luxury SUVs' },
+                { id: 'sedan', label: 'Premium Sedans' },
+                { id: 'pickup', label: 'High-End Pickups' },
+              ].map((type) => (
                 <button
-                  key={type}
-                  onClick={() => state.setFilter(type as CarType | 'all')}
+                  key={type.id}
+                  onClick={() => state.setFilter(type.id as CarType | 'all')}
                   className={`px-5 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${
-                    state.filter === type
+                    state.filter === type.id
                       ? 'bg-primary text-white shadow-lg shadow-primary/20'
                       : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
                   }`}
                 >
-                  {type === 'all' ? 'Todos' : type}
+                  {type.label}
                 </button>
               ))}
             </div>

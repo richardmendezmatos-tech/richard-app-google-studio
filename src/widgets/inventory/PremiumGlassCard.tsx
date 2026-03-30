@@ -7,7 +7,7 @@ import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-import { calculateMonthlyPayment, calculateSuggestedPronto } from '@/shared/lib/utils/financing';
+import { calculateMonthlyPayment, calculateSuggestedPronto, generateWhatsAppQuoteUrl } from '@/shared/lib/utils/financing';
 
 interface PremiumGlassCardProps {
   car: Car;
@@ -56,6 +56,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   // F&I Logic (Expert Decision: real amortization > simple division)
   const suggestedPronto = calculateSuggestedPronto(car.price);
   const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
+  const whatsappUrl = generateWhatsAppQuoteUrl(car.name, car.price, estimatedMonthly, suggestedPronto);
 
   return (
     <div
@@ -164,8 +165,18 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
               </p>
             </div>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.5)] transition-transform group-hover:scale-110">
-            <ChevronRight size={20} />
+          <div className="flex items-center gap-3">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              className="flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-5 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all hover:scale-105 hover:bg-[#20ba59] active:scale-95"
+            >
+               Cotizar
+            </a>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.5)] transition-transform group-hover:scale-110">
+              <ChevronRight size={22} />
+            </div>
           </div>
         </div>
         <p className="text-[7px] text-slate-500 mt-4 leading-tight">
