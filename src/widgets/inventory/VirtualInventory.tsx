@@ -133,6 +133,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
               isSaved={isSaved(car.id)}
               onToggleSave={(e) => onToggleSave(e, car.id)}
               isRecommended={checkRecommendation(car)}
+              priority={index < 2}
             />
           </article>
         ))}

@@ -73,18 +73,30 @@ export function useStorefrontState(
   const isSearching = !!searchTerm || !!visualContext;
 
   const filteredAndSorted = useMemo(() => {
+    const normalizedSearch = searchTerm.toLowerCase().trim();
+    const isGuagua = normalizedSearch === 'guagua';
+    const isPickup = normalizedSearch === 'pickup' || normalizedSearch === 'pick-up';
+
     return inventory
       .filter((c) => {
         if (semanticResultIds.length > 0) {
           return semanticResultIds.includes(c.id);
         }
 
+        const type = (c.type || '').toLowerCase();
+        const name = (c.name || '').toLowerCase();
+
+        // Local Semantic Logic
+        if (isGuagua) return type === 'suv' || type === 'truck';
+        if (isPickup) return type === 'truck';
+
         const matchesSearch = visualContext
-          ? (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (visualContext || '').toLowerCase().includes(c.type || '') ||
-            c.type.includes(visualContext.split(' ')[0] || '')
-          : (c.name || '').toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesType = filter === 'all' || c.type === filter;
+          ? name.includes(normalizedSearch) ||
+            (visualContext || '').toLowerCase().includes(type) ||
+            type.includes(visualContext.split(' ')[0] || '')
+          : name.includes(normalizedSearch) || type.includes(normalizedSearch);
+
+        const matchesType = filter === 'all' || type === filter;
 
         return matchesSearch && matchesType;
       })

@@ -7,6 +7,8 @@ import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
+import { calculateMonthlyPayment, calculateSuggestedPronto } from '@/shared/lib/utils/financing';
+
 interface PremiumGlassCardProps {
   car: Car;
   onSelect?: () => void;
@@ -15,6 +17,7 @@ interface PremiumGlassCardProps {
   isSaved: boolean;
   onToggleSave: (e: React.MouseEvent) => void;
   isRecommended?: boolean;
+  priority?: boolean;
 }
 
 const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
@@ -23,6 +26,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   isSaved,
   onToggleSave,
   isRecommended,
+  priority = false,
 }) => {
   const navigate = useNavigate();
   const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
@@ -49,7 +53,9 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
     cardRef.current.style.setProperty('--mouse-y', `${y}px`);
   };
 
-  const estimatedMonthly = Math.round(car.price / 72);
+  // F&I Logic (Expert Decision: real amortization > simple division)
+  const suggestedPronto = calculateSuggestedPronto(car.price);
+  const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
 
   return (
     <div
@@ -108,6 +114,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
         <OptimizedImage
           src={car.img}
           alt={car.name}
+          priority={priority}
           className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-1"
         />
       </div>
@@ -147,15 +154,23 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
             <p className="font-cinematic text-4xl tracking-[0.03em] text-white text-glow">
               <AnimatedCounter value={car.price || 0} format="currency" />
             </p>
-            <p className="font-tech mt-1 flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
-              Est. <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
-              /mo
-            </p>
+            <div className="mt-1">
+              <p className="font-tech flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
+                Desde <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
+                /mes *
+              </p>
+              <p className="font-tech text-[8px] uppercase tracking-[0.1em] text-slate-500 mt-0.5">
+                Con pronto de ${suggestedPronto.toLocaleString()}
+              </p>
+            </div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.5)] transition-transform group-hover:scale-110">
             <ChevronRight size={20} />
           </div>
         </div>
+        <p className="text-[7px] text-slate-500 mt-4 leading-tight">
+          * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
+        </p>
       </div>
     </div>
   );

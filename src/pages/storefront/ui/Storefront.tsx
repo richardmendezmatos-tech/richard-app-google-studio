@@ -37,8 +37,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
     <>
       <div className="h-full w-full bg-transparent">
         <SEO
-          title="Autos Nuevos y Usados de Lujo en Puerto Rico | Richard Automotive"
-          description="Compra autos nuevos y usados de lujo en Bayamón, Puerto Rico. Financiamiento expreso en 24h, trade-in a precio justo y entrega inmediata. El dealer más tecnológico de PR con IA para encontrar tu auto ideal."
+          title="Autos, Guaguas y Pickups de Lujo en Puerto Rico | Richard Automotive"
+          description="Compra autos, guaguas y pickups de lujo en Bayamón, Puerto Rico. El inventario más exclusivo: SUVs, Sedanes y Trucks con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."
           url="/"
           type="website"
           schema={{

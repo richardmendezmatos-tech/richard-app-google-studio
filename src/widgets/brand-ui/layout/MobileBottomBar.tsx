@@ -15,8 +15,8 @@ export const MobileBottomBar: React.FC = () => {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full pb-[env(safe-area-inset-bottom)]">
-      <div className="bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl border-t border-white/20 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex items-center justify-around px-2 py-3">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-white/10 dark:bg-slate-900/60 backdrop-blur-2xl border-t border-white/20 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-around px-2 py-3 pb-5">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
           const Icon = item.icon;
