@@ -5,6 +5,7 @@ import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { calculatePredictiveDTS } from '@/entities/car';
+import { calculateMonthlyPayment, calculateSuggestedPronto } from '@/shared/lib/utils/financing';
 
 interface CarCardProps {
   car: Car;
@@ -26,8 +27,9 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     // DTS Engine Integration (Expert Decision: Real Business Logic > Placeholders)
     const predictiveStats = calculatePredictiveDTS(car, 0); 
     const isScarce = predictiveStats.advantageScore > 70;
-    const estimatedMonthly = Math.round(car.price / 72); 
-
+    // F&I Logic (Expert Decision: real amortization > simple division)
+    const suggestedPronto = calculateSuggestedPronto(car.price);
+    const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
     // CRO Heuristics
     const idHash = car.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const peopleViewing = (idHash % 5) + 2; 
@@ -129,13 +131,19 @@ const CarCard: React.FC<CarCardProps> = React.memo(
                 ${car.price.toLocaleString()}
               </p>
               <p className="text-[10px] font-bold text-primary mt-1">
-                Est. ${estimatedMonthly}/mes
+                Desde ${estimatedMonthly.toLocaleString()}/mes
+              </p>
+              <p className="text-[8px] text-slate-400 dark:text-slate-500 font-medium">
+                Con pronto de ${suggestedPronto.toLocaleString()} *
               </p>
             </div>
             <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors text-center shadow-xs">
               Solicitar Prueba
             </div>
           </div>
+          <p className="text-[7px] text-slate-400 mt-4 leading-tight">
+            * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
+          </p>
         </div>
       </div>
     );
