@@ -1,4 +1,7 @@
+import { z } from 'zod';
+
 export type { Lead, Car, CarType, UserRole, AppUser } from '@/shared/types/types';
+
 
 export interface HoustonMetric {
   label: string;
@@ -26,14 +29,20 @@ export interface HoustonTelemetry {
   }>;
 }
 
-export interface PredictiveInsight {
-  leadId: string;
-  score: number;
-  confidence: number;
-  factors: string[];
-  predictedAction: string;
-  timestamp: number;
-}
+export const PredictiveInsightSchema = z.object({
+  leadId: z.string(),
+  score: z.number(),
+  confidence: z.number(),
+  factors: z.array(z.string()),
+  predictedAction: z.string(),
+  timestamp: z.any().transform((val) => {
+    if (typeof val === 'number') return val;
+    if (val && typeof val.toMillis === 'function') return val.toMillis();
+    return Date.now();
+  }),
+});
+
+export type PredictiveInsight = z.infer<typeof PredictiveInsightSchema>;
 
 export interface OutreachOpportunity {
   leadId: string;
