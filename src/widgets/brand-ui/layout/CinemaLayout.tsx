@@ -5,6 +5,7 @@ import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
+import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
 
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { useLocation } from 'react-router-dom';
@@ -135,7 +136,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
       {/* Main Content Area */}
       <main
         id="main-content"
-        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
+        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
       >
         {/* Global Floating Widgets */}
         <OfflineIndicator />
@@ -172,6 +173,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
           }
         />
       )}
+      <MobileBottomBar />
     </div>
   );
 };

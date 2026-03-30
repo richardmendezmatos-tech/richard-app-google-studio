@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Car } from '@/entities/shared';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
-
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import { calculatePredictiveDTS } from '@/entities/car';
 
 interface CarCardProps {
   car: Car;
-  onSelect?: () => void; // Optional now, or remove if unused elsewhere
+  onSelect?: () => void;
   onCompare: (e: React.MouseEvent) => void;
   isComparing: boolean;
   isSaved: boolean;
@@ -23,12 +23,14 @@ const CarCard: React.FC<CarCardProps> = React.memo(
       onCompare(e);
     };
 
-    const estimatedMonthly = Math.round(car.price / 72); // Rough 72 month calculation
+    // DTS Engine Integration (Expert Decision: Real Business Logic > Placeholders)
+    const predictiveStats = calculatePredictiveDTS(car, 0); 
+    const isScarce = predictiveStats.advantageScore > 70;
+    const estimatedMonthly = Math.round(car.price / 72); 
 
-    // CRO Heuristics: Pseudo-random deterministic values based on car ID (Zero layout shift, zero API cost)
+    // CRO Heuristics
     const idHash = car.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const peopleViewing = (idHash % 5) + 2; // 2 to 6 people
-    const isScarce = car.badge?.toLowerCase().includes('luxury') || idHash % 3 === 0;
+    const peopleViewing = (idHash % 5) + 2; 
 
     return (
       <div
@@ -40,7 +42,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
         }}
         role="button"
         tabIndex={0}
-        className="group bg-white dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
+        className="group content-auto bg-white dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
       >
         <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
           {/* Badges Container */}
