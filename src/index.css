@@ -93,6 +93,7 @@ body {
   animation: meshGradient 15s ease infinite;
   opacity: 0.15;
   filter: blur(60px);
+  will-change: background-position;
 }
 
 .glass-premium {
@@ -107,6 +108,7 @@ body {
     inset 0 1px 1px rgba(255, 255, 255, 0.03);
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  will-change: transform, background;
 }
 
 .glass-premium::after {

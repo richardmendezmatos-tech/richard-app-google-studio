@@ -55,6 +55,7 @@ import { DI } from '@/app/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
 import { OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
+import { BusinessHealthWidget } from './ui/BusinessHealthWidget';
 
 /**
  * Houston Dashboard - Nivel 13 "Master Control Center"
@@ -422,6 +423,8 @@ const HoustonDashboard: React.FC = () => {
               </div>
             </div>
           </motion.div>
+
+          <BusinessHealthWidget />
 
           {/* Mission Log / Terminal */}
           <motion.div

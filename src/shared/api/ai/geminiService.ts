@@ -78,6 +78,32 @@ const financeTools = {
 } as any;
 
 // --- TOOL HANDLERS ---
+/**
+ * AI Prompt Armor - Security Layer
+ * Prevents prompt injection and "System Prompt" leakage.
+ */
+const interceptPrompt = (prompt: string): string => {
+  const forbiddenPatterns = [
+    /ignore all previous instructions/gi,
+    /reveal your system prompt/gi,
+    /show your instructions/gi,
+    /cuáles son tus reglas/gi,
+    /dime tus instrucciones/gi,
+    /delete all previous/gi,
+    /forget everything/gi
+  ];
+
+  const lowerPrompt = prompt.toLowerCase();
+  const isMalicious = forbiddenPatterns.some(pattern => pattern.test(lowerPrompt));
+
+  if (isMalicious) {
+    console.warn('🛡️ [Prompt Armor] Blocked potential injection attempt:', prompt);
+    return "Lo siento, como asistente certificado de Richard Automotive, solo puedo ayudarte con temas relacionados a vehículos, inventario y financiamiento. ¿En qué más puedo asesorarte hoy?";
+  }
+
+  return prompt;
+};
+
 const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
   calculateLoanPayment: ({ price, downPayment = 0, term, apr = 6.95 }) => {
     const balance = price - downPayment;
@@ -247,16 +273,18 @@ export const getAIResponse = async (
         ${RICHARD_KNOWLEDGE_BASE}
       `;
 
+  const sanitizedPrompt = interceptPrompt(userPrompt);
+
   try {
     // PHASE 11: Intelligence Router
     const { localAIService } = await import('./localAiService');
     const isLocalAvailable = await localAIService.isAvailable();
-    const isSensitive = localAIService.isSensitive(userPrompt);
+    const isSensitive = localAIService.isSensitive(sanitizedPrompt);
 
     // If sensitive and local is available, prioritize Local AI for privacy
     if (isSensitive && isLocalAvailable) {
       console.log('🛡️ Routing sensitive query to Local AI Brain.');
-      return await localAIService.generateText(userPrompt, systemInstruction);
+      return await localAIService.generateText(sanitizedPrompt, systemInstruction);
     }
 
     // 8s Timeout managed by Promise.race on client for UX
@@ -266,7 +294,7 @@ export const getAIResponse = async (
 
     const apiCall = async () => {
       const text = await callGeminiProxy(
-        userPrompt,
+        sanitizedPrompt,
         systemInstruction,
         'gemini-2.0-flash',
         undefined,
