@@ -1,13 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { VehicleData } from '../../model/appraisalStore';
 import { ChevronRight, Gauge, Camera } from 'lucide-react';
 
 interface Step2ConditionMileageProps {
-  formData: {
-    mileage: string;
-    condition: string;
-  };
-  setFormData: (data: any) => void;
+  formData: VehicleData;
+  setFormData: (data: Partial<VehicleData>) => void;
   onNext: () => void;
   onPrev: () => void;
   inputClasses: string;
@@ -36,10 +34,10 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
           <div className="relative">
             <input 
               type="number" 
-              placeholder="25000" 
+              placeholder="Ej: 45000" 
               className={inputClasses}
               value={formData.mileage}
-              onChange={(e) => setFormData((prev: any) => ({...prev, mileage: e.target.value}))}
+              onChange={(e) => setFormData({ mileage: e.target.value })}
             />
             <Gauge size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500" />
           </div>
@@ -49,12 +47,13 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
           <select 
             className={inputClasses}
             value={formData.condition}
-            onChange={(e) => setFormData((prev: any) => ({...prev, condition: e.target.value}))}
+            onChange={(e) => setFormData({ condition: e.target.value as any })}
             title="Estado General"
           >
             <option value="excelente">Excelente (Como nuevo)</option>
             <option value="bueno">Bueno (Uso normal)</option>
             <option value="regular">Regular (Requiere atención)</option>
+            <option value="pobre">Pobre (Daños visibles)</option>
           </select>
         </div>
       </div>
@@ -62,7 +61,7 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
       <div className="p-6 bg-primary/5 rounded-3xl border border-primary/20 flex gap-4 items-start">
          <Camera className="text-primary mt-1" size={24} />
          <div>
-            <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1">Próximo paso: Análisis Visual</h4>
+            <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1">Análisis de Condición</h4>
             <p className="text-[10px] text-slate-400 leading-relaxed uppercase">
               Nuestra IA analizará tu unidad para validar el estado clínico y darte el mejor valor de retoma de Puerto Rico.
             </p>

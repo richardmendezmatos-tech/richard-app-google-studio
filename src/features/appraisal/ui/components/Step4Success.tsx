@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Zap } from 'lucide-react';
+import { CheckCircle2, Zap, Calendar } from 'lucide-react';
 
 interface Step4SuccessProps {
   result: number | null;
@@ -38,7 +38,7 @@ export const Step4Success: React.FC<Step4SuccessProps> = ({ result, onReset }) =
          <button 
           className="py-5 bg-[#25D366] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-[#25D366]/20 flex items-center justify-center gap-2 hover:scale-105 transition-all font-tech"
          >
-           <Zap size={14} fill="white" /> Reservar Inspección
+           <Calendar size={14} /> Reservar Inspección
          </button>
       </div>
     </motion.div>

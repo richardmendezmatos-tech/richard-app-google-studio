@@ -1,17 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, Zap } from 'lucide-react';
+import { VehicleData } from '../../model/appraisalStore';
 
 interface Step1VehicleInfoProps {
-  formData: {
-    year: string;
-    make: string;
-    model: string;
-    mileage: string;
-    condition: string;
-    vin: string;
-  };
-  setFormData: (data: any) => void;
+  formData: VehicleData;
+  setFormData: (data: Partial<VehicleData>) => void;
   onNext: () => void;
   inputClasses: string;
   labelClasses: string;
@@ -40,7 +34,7 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
             placeholder="2022" 
             className={inputClasses}
             value={formData.year}
-            onChange={(e) => setFormData({...formData, year: e.target.value})}
+            onChange={(e) => setFormData({ year: e.target.value })}
           />
         </div>
         <div>
@@ -50,7 +44,7 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
             placeholder="Ej: Porsche 911" 
             className={inputClasses}
             value={formData.model}
-            onChange={(e) => setFormData({...formData, model: e.target.value})}
+            onChange={(e) => setFormData({ model: e.target.value, make: e.target.value.split(' ')[0] })}
           />
         </div>
         <div className="md:col-span-2">
@@ -61,7 +55,7 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
               placeholder="WPOZZZ..." 
               className={`${inputClasses} font-mono`}
               value={formData.vin}
-              onChange={(e) => setFormData({...formData, vin: e.target.value})}
+              onChange={(e) => setFormData({ vin: e.target.value })}
             />
             <Zap size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-primary animate-pulse" />
           </div>

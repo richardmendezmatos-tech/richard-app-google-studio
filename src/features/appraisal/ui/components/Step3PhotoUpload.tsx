@@ -24,7 +24,7 @@ export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onSimulate, 
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Sube fotos de tu auto</h3>
             <p className="text-[10px] text-slate-500 mt-2 uppercase tracking-widest max-w-[200px] mx-auto">
-              Frontal, Laterales y Tacómetro (Opcional para este demo)
+              Frontal, Laterales y Tacómetro (Recomendado para Richard Certified)
             </p>
           </div>
         </div>
@@ -37,7 +37,7 @@ export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onSimulate, 
       >
         {loading ? (
           <span className="flex items-center justify-center gap-3">
-             <Zap size={18} className="animate-spin" /> Procesando Tasación RA...
+             <Zap size={18} className="animate-spin text-white" /> Analizando con Richard Intelligence...
           </span>
         ) : (
           "Obtener Oferta Digital"

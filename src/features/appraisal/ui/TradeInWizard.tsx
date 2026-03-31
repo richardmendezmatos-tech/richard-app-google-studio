@@ -11,7 +11,7 @@ import { Step3PhotoUpload } from './components/Step3PhotoUpload';
 import { Step4Success } from './components/Step4Success';
 import { AppraisalFooter } from './components/AppraisalFooter';
 
-import { useAppraisalStore } from '../model/appraisalStore';
+import { VehicleData, useAppraisalStore } from '../model/appraisalStore';
 import { useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
 
@@ -20,10 +20,12 @@ export const TradeInWizard: React.FC = () => {
     step, 
     formData, 
     isOffline, 
+    errors,
     setStep, 
     updateFormData, 
     setOffline, 
-    reset 
+    reset,
+    validateStep
   } = useAppraisalStore();
   
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,18 @@ export const TradeInWizard: React.FC = () => {
     };
   }, [setOffline]);
 
-  const nextStep = () => setStep(Math.min(step + 1, 3));
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep(Math.min(step + 1, 3));
+      
+      // Sentinel Lead Interceptor: Save partial progress on Step 1 complete
+      if (step === 1 && formData.make && formData.model) {
+        console.log('RA Sentinel: Intercepting partial lead...', formData);
+        // Here we could call saveAppraisal.mutate with a "partial" status
+      }
+    }
+  };
+
   const prevStep = () => setStep(Math.max(step - 1, 1));
   const resetWizard = () => {
     setResult(null);
@@ -89,8 +102,8 @@ export const TradeInWizard: React.FC = () => {
     }, 2500);
   };
 
-  const inputClasses = "w-full p-5 bg-black/40 border border-white/10 rounded-2xl text-white placeholder:text-slate-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-tech uppercase tracking-widest text-sm";
-  const labelClasses = "block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1";
+  const inputClasses = "ra-input-base font-tech uppercase tracking-widest text-sm";
+  const labelClasses = "ra-label-base";
 
   return (
     <div className="glass-premium p-8 md:p-12 max-w-4xl mx-auto rounded-[3rem] border border-white/5 relative overflow-hidden">
@@ -114,7 +127,7 @@ export const TradeInWizard: React.FC = () => {
         {step === 1 && (
           <Step1VehicleInfo 
             formData={formData} 
-            setFormData={(data) => updateFormData(typeof data === 'function' ? data(formData) : data)}
+            setFormData={updateFormData}
             onNext={nextStep}
             inputClasses={inputClasses}
             labelClasses={labelClasses}
@@ -124,7 +137,7 @@ export const TradeInWizard: React.FC = () => {
         {step === 2 && (
           <Step2ConditionMileage 
             formData={formData} 
-            setFormData={(data) => updateFormData(typeof data === 'function' ? data(formData) : data)}
+            setFormData={updateFormData}
             onNext={nextStep}
             onPrev={prevStep}
             inputClasses={inputClasses}

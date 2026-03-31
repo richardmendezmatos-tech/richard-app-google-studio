@@ -1,0 +1,57 @@
+:root {
+  /* Richard Automotive Branding Tokens */
+  --ra-primary: #00f2ff; /* Sentinel Cyan */
+  --ra-secondary: #0d2232; /* Deep Space Blue */
+  --ra-accent: #ffd700; /* Formula Gold */
+  
+  --ra-bg-dark: #050b10;
+  --ra-bg-surface: rgba(13, 34, 50, 0.7);
+  
+  /* Glassmorphism Variants */
+  --ra-glass: rgba(255, 255, 255, 0.03);
+  --ra-glass-border: rgba(255, 255, 255, 0.1);
+  --ra-glass-blur: blur(20px);
+  
+  /* Typography */
+  --ra-font-main: 'Inter', sans-serif;
+  --ra-font-tech: 'Roboto Mono', monospace;
+  
+  /* Shadows & Depth */
+  --ra-shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --ra-glow-cyan: 0 0 20px rgba(0, 242, 255, 0.2);
+}
+
+.glass-premium {
+  background: var(--ra-glass-surface, rgba(13, 34, 50, 0.4));
+  backdrop-filter: var(--ra-glass-blur);
+  -webkit-backdrop-filter: var(--ra-glass-blur);
+  border: 1px solid var(--ra-glass-border);
+  box-shadow: var(--ra-shadow-premium);
+}
+
+.ra-input-base {
+  width: 100%;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ra-input-base:focus {
+  border-color: var(--ra-primary);
+  box-shadow: var(--ra-glow-cyan);
+  outline: none;
+}
+
+.ra-label-base {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+  margin-left: 0.25rem;
+}

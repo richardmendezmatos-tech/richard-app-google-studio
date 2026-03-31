@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './shared/styles/ra-tokens.css';
+
 :root {
   --brand-cyan: #00e5ff;
   --brand-cyan-strong: #00b8cc;
