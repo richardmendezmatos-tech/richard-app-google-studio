@@ -116,7 +116,7 @@ const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/pages/storefront/
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
 ) as unknown as React.ComponentType<any>;
-import { uploadInitialInventory } from '@/entities/lead/api/adapters/inventoryService';
+import { uploadInitialInventory } from '@/entities/inventory';
 import { initialInventoryData } from '@/entities/inventory';
 import { lazyRetry } from '@/shared/lib/utils/lazyRetry';
 

@@ -1,17 +1,16 @@
 import { GetLeads } from '@/features/shared';
 import { GetInventory } from '@/features/shared';
 import { GetHoustonTelemetry } from '@/features/shared';
-import { FirestoreLeadRepository } from '@/entities/lead';
-import { FirestoreInventoryRepository } from '@/entities/lead/api/repositories/FirestoreInventoryRepository';
-import { FirestoreHoustonRepository } from '@/entities/lead';
+import { FirestoreLeadRepository, FirestorePredictiveRepository } from '@/entities/lead';
+import { FirestoreInventoryRepository } from '@/entities/inventory';
+import { FirestoreHoustonRepository } from '@/entities/houston';
+import { FirestoreUserRepository } from '@/entities/user';
 import { FirestoreApplicationRepository } from '@/shared/api/repositories/FirestoreApplicationRepository';
 import { FirestoreStorageRepository } from '@/shared/api/repositories/FirestoreStorageRepository';
-import { FirestoreUserRepository } from '@/entities/lead';
 import { FirestoreSubscriberRepository } from '@/shared/api/repositories/FirestoreSubscriberRepository';
 import { FirestoreSurveyRepository } from '@/shared/api/repositories/FirestoreSurveyRepository';
 import { IdentifyOutreachOpportunities } from '@/features/shared';
 import { CalculateDynamicMargin } from '@/features/shared';
-import { FirestorePredictiveRepository } from '@/entities/lead';
 import { EvaluarAprobacionVenta } from '@/features/loans';
 import { FirestoreLoanRepository } from '@/features/loans';
 
@@ -29,8 +28,6 @@ class DIContainer {
   private houstonRepository = new FirestoreHoustonRepository();
   private predictiveRepository = new FirestorePredictiveRepository();
   private loanRepository = new FirestoreLoanRepository();
-
-  // Services
 
   // Use Cases
   private leadsUseCase = new GetLeads(this.leadRepository);
@@ -112,7 +109,6 @@ import { getAntigravityOutreachAction } from '@/features/omnichannel';
 export const container = DIContainer.getInstance();
 
 // Hydrate static registry for FSD compliance
-// Note: Manual assignment since class methods are not enumerable in Object.assign
 DI.getLeadsUseCase = container.getLeadsUseCase.bind(container);
 DI.getInventoryUseCase = container.getInventoryUseCase.bind(container);
 DI.getLeadRepository = container.getLeadRepository.bind(container);
