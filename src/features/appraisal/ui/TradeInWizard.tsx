@@ -11,34 +11,43 @@ import { Step3PhotoUpload } from './components/Step3PhotoUpload';
 import { Step4Success } from './components/Step4Success';
 import { AppraisalFooter } from './components/AppraisalFooter';
 
+import { useAppraisalStore } from '../model/appraisalStore';
+import { useEffect } from 'react';
+import { WifiOff } from 'lucide-react';
+
 export const TradeInWizard: React.FC = () => {
-  const [step, setStep] = useState(1);
+  const { 
+    step, 
+    formData, 
+    isOffline, 
+    setStep, 
+    updateFormData, 
+    setOffline, 
+    reset 
+  } = useAppraisalStore();
+  
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const saveAppraisal = useSaveAppraisal();
 
-  const [formData, setFormData] = useState({
-    year: '',
-    make: '',
-    model: '',
-    mileage: '',
-    condition: 'excelente',
-    vin: ''
-  });
+  useEffect(() => {
+    const handleOnline = () => setOffline(false);
+    const handleOffline = () => setOffline(true);
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 3));
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [setOffline]);
+
+  const nextStep = () => setStep(Math.min(step + 1, 3));
+  const prevStep = () => setStep(Math.max(step - 1, 1));
   const resetWizard = () => {
     setResult(null);
-    setStep(1);
-    setFormData({
-      year: '',
-      make: '',
-      model: '',
-      mileage: '',
-      condition: 'excelente',
-      vin: ''
-    });
+    reset();
   };
 
   const handleSimulateAppraisal = () => {
@@ -90,11 +99,22 @@ export const TradeInWizard: React.FC = () => {
       
       <AppraisalHeader step={step} />
 
+      {isOffline && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center gap-4 text-amber-500 text-xs font-black uppercase tracking-widest"
+        >
+          <WifiOff size={18} />
+          Richard Sentinel: Offline Mode Active. Progress will be saved locally.
+        </motion.div>
+      )}
+
       <AnimatePresence mode="wait">
         {step === 1 && (
           <Step1VehicleInfo 
             formData={formData} 
-            setFormData={setFormData}
+            setFormData={(data) => updateFormData(typeof data === 'function' ? data(formData) : data)}
             onNext={nextStep}
             inputClasses={inputClasses}
             labelClasses={labelClasses}
@@ -104,7 +124,7 @@ export const TradeInWizard: React.FC = () => {
         {step === 2 && (
           <Step2ConditionMileage 
             formData={formData} 
-            setFormData={setFormData}
+            setFormData={(data) => updateFormData(typeof data === 'function' ? data(formData) : data)}
             onNext={nextStep}
             onPrev={prevStep}
             inputClasses={inputClasses}

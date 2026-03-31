@@ -75,6 +75,36 @@ export default defineConfig(({ mode }) => {
         ext: '.br',
       }),
       visualizer({ filename: 'stats.html' }),
+      VitePWA({
+        registerType: 'autoUpdate',
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        manifest: {
+          name: 'Richard Automotive SENTINEL',
+          short_name: 'RA Sentinel',
+          description: 'Master Control Center for Richard Automotive Inventory & Appraisal',
+          theme_color: '#02060a',
+          background_color: '#02060a',
+          display: 'standalone',
+          icons: [
+            {
+              src: '/pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: '/pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            },
+            {
+              src: '/pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
+            }
+          ]
+        }
+      })
     ],
   };
 });
