@@ -13,6 +13,7 @@ import {
   MicOff,
   ShieldCheck,
   Calculator,
+  Banknote,
 } from 'lucide-react';
 import { AI_LEGAL_DISCLAIMER } from '@/shared/api/firebase/firebaseShared';
 import GenUICarCard from '@/shared/brand-ui/layout/chat/GenUICarCard';
@@ -315,6 +316,62 @@ const AIChatWidget: React.FC<Props> = () => {
                           <span>Status: Secured</span>
                           <RefreshCw size={10} className="animate-spin-slow" />
                         </div>
+                      </div>
+                    </div>
+                  );
+                }
+                if (toolName === 'generatePreQualEstimate') {
+                  const result = toolInvocation.result as any;
+                  return (
+                    <div key={toolCallId} className="flex justify-start">
+                      <div className="bg-gradient-to-br from-[#0d2232] to-[#173d57] p-6 rounded-[30px] border border-primary/30 flex flex-col gap-4 max-w-[300px] shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                          <Banknote size={80} className="text-white" />
+                        </div>
+                        <div className="flex items-center gap-3 relative z-10">
+                          <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                            <ShieldCheck size={24} />
+                          </div>
+                          <div>
+                            <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
+                              Richard Financial
+                            </div>
+                            <div className="text-sm font-black text-white italic">
+                              Pre-aprobación IA
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-3 relative z-10">
+                          <div className="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Poder de Pago</span>
+                            <span className="text-lg font-black text-white">${result.buyingPower.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Pago Estimado</span>
+                            <span className="text-md font-bold text-primary">${result.maxMonthlyPayment}/mes</span>
+                          </div>
+                          <div className="flex justify-between items-end">
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Interés (APR)</span>
+                            <span className="text-sm font-mono text-emerald-400">{result.apr}%</span>
+                          </div>
+                        </div>
+
+                        <p className="text-[10px] text-slate-400 leading-tight italic relative z-10">
+                          *Análisis preliminar basado en crédito {result.creditTier}.
+                        </p>
+
+                        <button 
+                          onClick={() => {
+                            // Event to open formal pre-qual view
+                            window.dispatchEvent(new CustomEvent('ra_open_formal_prequal', { 
+                              detail: { creditTier: result.creditTier, monthlyIncome: 1 } 
+                            }));
+                          }}
+                          className="w-full py-3 bg-primary hover:bg-cyan-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 relative z-10"
+                        >
+                          Formalizar en Bóveda Segura
+                        </button>
                       </div>
                     </div>
                   );

@@ -88,6 +88,23 @@ const financeTools = {
         },
         required: ['firstName', 'phone'],
       },
+    },
+    {
+      name: 'generatePreQualEstimate',
+      description: 'Genera un análisis financiero preliminar basado en el ingreso y crédito auto-reportado del cliente.',
+      parameters: {
+        type: SchemaType.OBJECT,
+        properties: {
+          creditTier: { 
+            type: SchemaType.STRING, 
+            enum: ['Excellent', 'Good', 'Fair', 'Poor'],
+            description: 'Rango de crédito del cliente (800+, 700+, 600+, <600).' 
+          },
+          monthlyIncome: { type: SchemaType.NUMBER, description: 'Ingreso bruto mensual ($).' },
+          monthlyDebt: { type: SchemaType.NUMBER, description: 'Pagos mensuales de vivienda (renta/hipoteca).' },
+        },
+        required: ['creditTier', 'monthlyIncome'],
+      },
     }
   ],
 } as any;
@@ -162,6 +179,39 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
       status: 'success',
       message: `Lead de ${firstName} guardado en RA Cloud.`,
       followUp: 'Richard será notificado de inmediato.'
+    };
+  },
+  generatePreQualEstimate: ({ creditTier, monthlyIncome, monthlyDebt = 0 }) => {
+    console.log('📊 [Finance Analyst] Analyzing:', { creditTier, monthlyIncome, monthlyDebt });
+    
+    // APR Mapping based on Credit Tier
+    const aprMap: Record<string, number> = {
+      Excellent: 6.95,
+      Good: 8.95,
+      Fair: 12.95,
+      Poor: 18.95
+    };
+    
+    const apr = aprMap[creditTier] || 12.95;
+    
+    // DTI/PTI Logic (Simple heuristic)
+    // Richard's Rule: Max 15% of gross income for car payment
+    const maxPayment = Math.round(monthlyIncome * 0.15);
+    
+    // Estimate total loan amount (approx 72 months term)
+    const term = 72;
+    const monthlyRate = apr / 100 / 12;
+    const estimatedLoan = Math.round(
+      (maxPayment * (1 - Math.pow(1 + monthlyRate, -term))) / monthlyRate
+    );
+
+    return {
+      apr,
+      maxMonthlyPayment: maxPayment,
+      buyingPower: estimatedLoan,
+      creditTier,
+      recommendation: `Basado en un ingreso de $${monthlyIncome}, calificas para una unidad de hasta $${estimatedLoan.toLocaleString()}.`,
+      disclaimer: 'Análisis actuarial preliminar. Sujeto a validación de SSN en bóveda segura.'
     };
   },
 };
