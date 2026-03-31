@@ -7,10 +7,11 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "dotenvx run -- vite",
-    "bun:dev": "bun x dotenvx run -- vite",
-    "build": "dotenvx run -- vite build",
-    "bun:build": "bun x dotenvx run -- vite build",
+    "dev": "dotenvx run -- next dev",
+    "build": "next build",
+    "start": "next start",
+    "bun:dev": "bun --bun next dev",
+    "bun:build": "bun --bun next build",
     "build:gh-pages": "dotenvx run -- vite build --base=/richard-app-google-studio/ && cp temp_404.html dist/404.html",
     "deploy:gh-pages": "npm run build:gh-pages && gh-pages -d dist",
     "deploy:vercel": "dotenvx run -- npx vercel --prod",
@@ -85,7 +86,12 @@
     "rxjs": "^7.8.2",
     "twilio": "^5.12.2",
     "zod": "^3.25.76",
-    "zustand": "^5.0.12"
+    "zustand": "^5.0.12",
+    "next": "latest",
+    "sharp": "latest",
+    "firebase-admin": "^13.7.0",
+    "cookie": "^1.0.2",
+    "js-cookie": "^3.0.5"
   },
   "config": {
     "commitizen": {

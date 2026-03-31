@@ -1,7 +1,16 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { getRealtimeDbService } from '@/shared/api/firebase/firebaseService';
 import { VehicleHealthStatus } from '@/shared/types/types';
 import type { DataSnapshot } from 'firebase/database';
+import telemetry from '@/shared/api/metrics/analytics';
+
+if (typeof window !== 'undefined') {
+  telemetry.add({
+    event: 'page_view',
+    url: window.location.href,
+    title: document.title
+  });
+}
 
 interface TelemetryContextType {
   telemetryMap: Record<string, VehicleHealthStatus>;
@@ -12,68 +21,57 @@ interface TelemetryContextType {
 
 const TelemetryContext = createContext<TelemetryContextType | undefined>(undefined);
 
-const TELEMETRY_PATH = 'telemetry';
-
 export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [telemetryMap, setTelemetryMap] = useState<Record<string, VehicleHealthStatus>>({});
-  const [activeSubscriptions] = useState(
-    new Map<string, { count: number; unsubscribe: () => void }>(),
-  );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const activeSubscriptions = useRef<Set<string>>(new Set());
 
-  const subscribeToVehicle = useCallback(
-    async (vehicleId: string) => {
-      if (!vehicleId) return;
+  const subscribeToVehicle = useCallback(async (vehicleId: string) => {
+    if (activeSubscriptions.current.has(vehicleId)) return;
+    activeSubscriptions.current.add(vehicleId);
 
-      const current = activeSubscriptions.get(vehicleId);
-      if (current) {
-        activeSubscriptions.set(vehicleId, { ...current, count: current.count + 1 });
-        return;
-      }
+    try {
+      const rtdb = await getRealtimeDbService();
+      if (!rtdb) return;
 
-      try {
-        const rtdb = await getRealtimeDbService();
-        const { ref, onValue, off } = await import('firebase/database');
-        const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${vehicleId}`);
+      const { ref, onValue } = await import('firebase/database');
+      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
 
-        const unsub = onValue(vehicleRef, (snapshot: DataSnapshot) => {
-          const data = snapshot.exists() ? snapshot.val() : null;
-          if (data) {
-            // Import inside to avoid circular deps if needed, but analyzeVehicleHealth is pure
-            import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
-              const health = analyzeVehicleHealth(data);
-              setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
-            });
-          }
-        });
+      onValue(vehicleRef, (snapshot: DataSnapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // Import analyzeVehicleHealth dynamically to avoid circular dependencies
+          import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
+            const health = analyzeVehicleHealth(data);
+            setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
+          });
+        }
+      });
+    } catch (error) {
+      console.warn('[TelemetryProvider] Sync error:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-        activeSubscriptions.set(vehicleId, { count: 1, unsubscribe: () => off(vehicleRef) });
-      } catch (err) {
-        console.error(`[TelemetryContext] Subscription failed for ${vehicleId}:`, err);
-      }
-    },
-    [activeSubscriptions],
-  );
-
-  const unsubscribeFromVehicle = useCallback(
-    (vehicleId: string) => {
-      const current = activeSubscriptions.get(vehicleId);
-      if (!current) return;
-
-      if (current.count > 1) {
-        activeSubscriptions.set(vehicleId, { ...current, count: current.count - 1 });
-      } else {
-        current.unsubscribe();
-        activeSubscriptions.delete(vehicleId);
-        setTelemetryMap((prev) => {
-          const next = { ...prev };
-          delete next[vehicleId];
-          return next;
-        });
-      }
-    },
-    [activeSubscriptions],
-  );
+  const unsubscribeFromVehicle = useCallback(async (vehicleId: string) => {
+    activeSubscriptions.current.delete(vehicleId);
+    try {
+      const rtdb = await getRealtimeDbService();
+      if (!rtdb) return;
+      const { ref, off } = await import('firebase/database');
+      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
+      off(vehicleRef);
+      
+      setTelemetryMap((prev) => {
+        const next = { ...prev };
+        delete next[vehicleId];
+        return next;
+      });
+    } catch (error) {
+      console.warn('[TelemetryProvider] Unsubscribe error:', error);
+    }
+  }, []);
 
   return (
     <TelemetryContext.Provider
@@ -86,6 +84,8 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
 export const useTelemetry = () => {
   const context = useContext(TelemetryContext);
-  if (!context) throw new Error('useTelemetry must be used within a TelemetryProvider');
+  if (context === undefined) {
+    throw new Error('useTelemetry must be used within a TelemetryProvider');
+  }
   return context;
 };
