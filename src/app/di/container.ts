@@ -17,28 +17,32 @@ import { FirestoreLoanRepository } from '@/features/loans';
 class DIContainer {
   private static instance: DIContainer;
 
-  // Repositories
-  private leadRepository = new FirestoreLeadRepository();
-  private inventoryRepository = new FirestoreInventoryRepository();
-  private applicationRepository = new FirestoreApplicationRepository();
-  private storageRepository = new FirestoreStorageRepository();
-  private userRepository = new FirestoreUserRepository();
-  private subscriberRepository = new FirestoreSubscriberRepository();
-  private surveyRepository = new FirestoreSurveyRepository();
-  private houstonRepository = new FirestoreHoustonRepository();
-  private predictiveRepository = new FirestorePredictiveRepository();
-  private loanRepository = new FirestoreLoanRepository();
+  // Repositories (Lazy Loaded)
+  private _repos = {
+    lead: new FirestoreLeadRepository(),
+    inventory: new FirestoreInventoryRepository(),
+    application: new FirestoreApplicationRepository(),
+    storage: new FirestoreStorageRepository(),
+    user: new FirestoreUserRepository(),
+    subscriber: new FirestoreSubscriberRepository(),
+    survey: new FirestoreSurveyRepository(),
+    houston: new FirestoreHoustonRepository(),
+    predictive: new FirestorePredictiveRepository(),
+    loan: new FirestoreLoanRepository(),
+  };
 
-  // Use Cases
-  private leadsUseCase = new GetLeads(this.leadRepository);
-  private inventoryUseCase = new GetInventory(this.inventoryRepository);
-  private houstonTelemetryUseCase = new GetHoustonTelemetry(this.houstonRepository);
-  private identifyOutreachOpportunitiesUseCase = new IdentifyOutreachOpportunities(
-    this.predictiveRepository,
-    this.leadRepository,
-  );
-  private calculateDynamicMarginUseCase = new CalculateDynamicMargin();
-  private evaluarAprobacionVentaUseCase = new EvaluarAprobacionVenta(this.loanRepository);
+  // Use Cases (Lazy Loaded)
+  private _useCases = {
+    leads: new GetLeads(this._repos.lead),
+    inventory: new GetInventory(this._repos.inventory),
+    houstonTelemetry: new GetHoustonTelemetry(this._repos.houston),
+    identifyOutreachOpportunities: new IdentifyOutreachOpportunities(
+      this._repos.predictive,
+      this._repos.lead,
+    ),
+    calculateDynamicMargin: new CalculateDynamicMargin(),
+    evaluarAprobacionVenta: new EvaluarAprobacionVenta(this._repos.loan),
+  };
 
   private constructor() {}
 
@@ -49,57 +53,21 @@ class DIContainer {
     return DIContainer.instance;
   }
 
-  public getLeadsUseCase(): GetLeads {
-    return this.leadsUseCase;
-  }
+  // Getters (Clean API)
+  public getLeadsUseCase() { return this._useCases.leads; }
+  public getInventoryUseCase() { return this._useCases.inventory; }
+  public getHoustonTelemetryUseCase() { return this._useCases.houstonTelemetry; }
+  public getIdentifyOutreachOpportunitiesUseCase() { return this._useCases.identifyOutreachOpportunities; }
+  public getCalculateDynamicMarginUseCase() { return this._useCases.calculateDynamicMargin; }
+  public getEvaluarAprobacionVentaUseCase() { return this._useCases.evaluarAprobacionVenta; }
 
-  public getInventoryUseCase(): GetInventory {
-    return this.inventoryUseCase;
-  }
-
-  public getLeadRepository() {
-    return this.leadRepository;
-  }
-
-  public getApplicationRepository() {
-    return this.applicationRepository;
-  }
-
-  public getStorageRepository() {
-    return this.storageRepository;
-  }
-
-  public getUserRepository() {
-    return this.userRepository;
-  }
-
-  public getSubscriberRepository() {
-    return this.subscriberRepository;
-  }
-
-  public getSurveyRepository() {
-    return this.surveyRepository;
-  }
-
-  public getHoustonTelemetryUseCase(): GetHoustonTelemetry {
-    return this.houstonTelemetryUseCase;
-  }
-
-  public getIdentifyOutreachOpportunitiesUseCase(): IdentifyOutreachOpportunities {
-    return this.identifyOutreachOpportunitiesUseCase;
-  }
-
-  public getCalculateDynamicMarginUseCase(): CalculateDynamicMargin {
-    return this.calculateDynamicMarginUseCase;
-  }
-
-  public getPredictiveRepository() {
-    return this.predictiveRepository;
-  }
-
-  public getEvaluarAprobacionVentaUseCase(): EvaluarAprobacionVenta {
-    return this.evaluarAprobacionVentaUseCase;
-  }
+  public getLeadRepository() { return this._repos.lead; }
+  public getApplicationRepository() { return this._repos.application; }
+  public getStorageRepository() { return this._repos.storage; }
+  public getUserRepository() { return this._repos.user; }
+  public getSubscriberRepository() { return this._repos.subscriber; }
+  public getSurveyRepository() { return this._repos.survey; }
+  public getPredictiveRepository() { return this._repos.predictive; }
 }
 
 import { DI } from '@/app/di/registry';

@@ -116,11 +116,14 @@ service cloud.firestore {
       allow update, delete: if false; 
     }
 
-    // Login Security
+    // Login Security: Hardened to prevent billing attacks
     match /login_attempts/{attemptId} {
-      allow read: if isAdmin();
-      allow create, update: if true; // rate limiting relies on frontend/cloud functions
-      allow delete: if isAdmin();
+      allow create: if isAuthenticated() && 
+                      isValidPublicPayload() &&
+                      request.resource.data.keys().hasOnly(['uid', 'timestamp', 'email', 'ip', 'status', 'userAgent']) &&
+                      isSafeString('ip', 45) &&
+                      isSafeString('userAgent', 500);
+      allow read, update, delete: if isAdmin();
     }
   }
 }
