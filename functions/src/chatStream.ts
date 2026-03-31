@@ -16,14 +16,15 @@ interface Car {
 }
 
 const SYSTEM_PROMPT = `
-ROL: Eres el Asistente Virtual de "Richard Automotive", experto en F&I (Finanzas y Seguros) en Puerto Rico. Eres un asistente conversacional avanzado, proactivo y altamente resiliente.
-OBJETIVO: Asesorar, calificar clientes y agendar citas, manteniendo una experiencia fluida y natural.
+ROL: Eres el Motor de Inteligencia "RA Sentinel", que orquesta a tres expertos: Ricardo (Ventas), Sofia (Finanzas) y Jordan (Cierre).
+OBJETIVO: Convertir cada interacción en una oportunidad de negocio estructurada mediante Tool Calling nativo.
 
-PROTOCOLOS:
-1. NO inventes inventario. Usa la herramienta 'checkInventory'.
-2. NO inventes pagos. Usa la herramienta 'calculatePayment'.
-3. SIEMPRE que obtengas Nombre y Teléfono, usa la herramienta 'saveLead'.
-4. RESILIENCIA Y RETRASOS: Si necesitas más tiempo para procesar o usar herramientas, utiliza frases puente naturales (ej. "Dame un segundo mientras analizo esto a fondo...", "Estoy recopilando la mejor información para ti..."). NUNCA envíes mensajes de error crudos o robóticos.
+PROTOCOLOS DE EXPERTO:
+1. RICARDO (Ventas): Usa 'checkInventory' para mostrar unidades reales. Atento a SUVs y Sedanes.
+2. SOFIA (Analista Senior): Usa 'generatePreQualEstimate' si el cliente menciona ingresos o crédito. NUNCA pide SSN en el chat.
+3. JORDAN (The Closer): Tan pronto el cliente muestre interés serio, usa 'captureCustomerLead'.
+4. RESILIENCIA: Usa frases puente ("Analizando viabilidad en la red bancaria...", "Verificando inventario en tiempo real...") para ocultar latencias.
+5. MEMORIA: Si el 'leadId' indica un cliente recurrente, personaliza la bienvenida.
 `;
 
 export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async (req, res) => {
@@ -81,68 +82,62 @@ export const chatStream = onRequest({ cors: true, region: 'us-central1' }, async
           },
         }),
         calculatePayment: tool({
-          description: 'Calcula el pago mensual estimado de un auto.',
+          description: 'Calcula el pago mensual estimado de un auto basándose en crédito estimado.',
           inputSchema: z.object({
             price: z.number(),
             downPayment: z.number(),
             months: z.number().default(72),
-            creditScore: z.enum(['excellent', 'good', 'fair', 'poor']).default('good'),
+            creditTier: z.enum(['Excellent', 'Good', 'Fair', 'Poor']).default('Good'),
           }),
-          execute: async ({
-            price,
-            downPayment,
-            months,
-            creditScore,
-          }: {
-            price: number;
-            downPayment: number;
-            months: number;
-            creditScore: string;
-          }) => {
-            // Use the new localized finance service logic
-            const creditScoreMap: Record<string, number> = {
-              excellent: 750,
-              good: 700,
-              fair: 640,
-              poor: 580,
-            };
-            const score = creditScoreMap[creditScore] || 700;
-            const simulations = await simulateLoan(price, downPayment, months, score);
-
+          execute: async ({ price, downPayment, months, creditTier }) => {
+            const aprMap: Record<string, number> = { Excellent: 6.95, Good: 8.95, Fair: 12.95, Poor: 18.95 };
+            const scoreMap: Record<string, number> = { Excellent: 750, Good: 700, Fair: 640, Poor: 580 };
+            const apr = aprMap[creditTier] || 8.95;
+            const simulations = await simulateLoan(price, downPayment, months, scoreMap[creditTier] || 700); 
             return {
-              simulations,
-              bestOption: simulations[0],
-              disclaimer:
-                'Sujeto a aprobación de crédito por instituciones locales (Popular/BPPR/Coop).',
+              apr,
+              monthlyPayment: simulations[0]?.monthlyPayment || 0,
+              disclaimer: 'Sujeto a aprobación crediticia formal.'
             };
           },
         }),
-        saveLead: tool({
-          description: 'Guarda el lead en la base de datos.',
+        captureCustomerLead: tool({
+          description: 'Registra un prospecto de alta prioridad en el CRM de Richard Automotive.',
           inputSchema: z.object({
-            name: z.string(),
-            phone: z.string(),
-            interest: z.string().optional(),
-            summary: z.string().optional(),
+            firstName: z.string().describe('Nombre del cliente.'),
+            phone: z.string().describe('Número de teléfono.'),
+            email: z.string().optional().describe('Email opcional.'),
+            vehicleOfInterest: z.string().optional().describe('Auto interesado.'),
           }),
-          execute: async (data: {
-            name: string;
-            phone: string;
-            interest?: string;
-            summary?: string;
-          }) => {
-            const [firstName, ...last] = data.name.split(' ');
+          execute: async (data) => {
             await db.collection('applications').add({
-              firstName,
-              lastName: last.join(' ') || 'Lead',
-              phone: data.phone,
-              vehicleOfInterest: data.interest || 'General',
-              aiSummary: data.summary || '',
+              ...data,
+              type: 'sentinel_chat',
               timestamp: new Date(),
-              dealerId: 'richard-automotive',
               status: 'new',
             });
-            return { success: true };
+            return { success: true, message: `Lead de ${data.firstName} asegurado.` };
+          },
+        }),
+        generatePreQualEstimate: tool({
+          description: 'Genera un certificado de pre-cualificación preliminar basado en ingresos y crédito.',
+          inputSchema: z.object({
+            creditTier: z.enum(['Excellent', 'Good', 'Fair', 'Poor']),
+            monthlyIncome: z.number(),
+            monthlyDebt: z.number().optional(),
+          }),
+          execute: async ({ creditTier, monthlyIncome }) => {
+            const aprMap: Record<string, number> = { Excellent: 6.95, Good: 8.95, Fair: 12.95, Poor: 18.95 };
+            const apr = aprMap[creditTier] || 12.95;
+            const maxPayment = Math.round(monthlyIncome * 0.15);
+            const buyingPower = Math.round(maxPayment * 50); // Heuristic for car value
+            return {
+              apr,
+              maxMonthlyPayment: maxPayment,
+              buyingPower,
+              creditTier,
+              recommendation: `Basado en tus ingresos, calificas para unidades hasta $${buyingPower.toLocaleString()}.`
+            };
           },
         }),
         updateMemory: tool({
