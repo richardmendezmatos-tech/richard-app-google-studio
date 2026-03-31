@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import styles from './HoustonDashboard.module.css';
 import { HoustonTerminalLog } from './components/HoustonTerminalLog';
+import { BusinessHealthWidget } from './components/BusinessHealthWidget';
 
 export const HoustonDashboard: React.FC = () => {
   const [metrics, setMetrics] = React.useState({
@@ -145,28 +146,8 @@ export const HoustonDashboard: React.FC = () => {
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
           </div>
 
-          {/* Sales Pulse (Strictly Automotive) */}
-          <div className="glass-premium p-4 border border-primary/20 bg-primary/5 flex items-center justify-between group hover:border-primary/40 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-primary/20 rounded-xl">
-                <Activity className="text-primary" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-primary uppercase tracking-widest mb-0.5">
-                  SALES PULSE
-                </div>
-                <div className="text-xl font-black text-white">+{metrics.salesPulse.pendingQuotes} Leads</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter">
-                {metrics.salesPulse.conversionRate}% CONV
-              </div>
-              <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">
-                {metrics.salesPulse.inventoryViews} VIEWS
-              </div>
-            </div>
-          </div>
+          {/* Nivel 14: Business Health Pulse */}
+          <BusinessHealthWidget />
         </div>
       </div>
 

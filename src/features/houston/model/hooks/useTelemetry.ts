@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
 
 export interface HoustonTelemetry {
+  // Technical Metrics (Nivel 13)
   latency: number;
   quality: number;
   packetLoss: number;
-  securityScore: number; // New: Paz Mental indicator
+  securityScore: number;
+
+  // Business Health Metrics (Nivel 14: Orquestación Predictiva)
+  leadVelocity: number; // Leads per hour
+  inventoryTurnover: number; // Days to sell (predictive)
+  closureProbability: number; // 0-100 (Aggregate)
+  businessHealthScore: number; // 0-100 (Synthetic)
+
   status: 'optimal' | 'warning' | 'critical';
 }
 
 /**
  * Advanced Telemetry Hook for Houston Command Center.
- * Provides real-time system health and 'Peace of Mind' metrics.
+ * Evolution to Nivel 14: Predictive Business Intelligence.
  */
 export function useTelemetry(connectionState: string): HoustonTelemetry {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry>({
@@ -18,24 +26,39 @@ export function useTelemetry(connectionState: string): HoustonTelemetry {
     quality: 100,
     packetLoss: 0,
     securityScore: 100,
+    leadVelocity: 0,
+    inventoryTurnover: 45,
+    closureProbability: 0,
+    businessHealthScore: 100,
     status: 'optimal',
   });
 
   useEffect(() => {
     if (connectionState === 'connected') {
       const interval = setInterval(() => {
-        const latency = Math.floor(Math.random() * 15) + 35; // 35-50ms (Premium Speed)
-        const quality = Math.floor(Math.random() * 2) + 98; // 98-100% (High Quality)
-        const packetLoss = Math.random() > 0.98 ? 0.01 : 0;
-        const securityScore = Math.floor(Math.random() * 5) + 95; // 95-100%
+        // Technical
+        const latency = Math.floor(Math.random() * 10) + 30; // 30-40ms (Ultra-Premium)
+        const quality = 100;
+        const packetLoss = 0;
+        const securityScore = 100;
 
-        const status = latency > 100 || quality < 80 ? 'warning' : 'optimal';
+        // Business (Nivel 14 Mocks - to be connected to Firestore aggregation)
+        const leadVelocity = parseFloat((Math.random() * 2 + 1.5).toFixed(1)); // 1.5 - 3.5 LPH
+        const inventoryTurnover = Math.floor(Math.random() * 5) + 32; // 32-37 days
+        const closureProbability = Math.floor(Math.random() * 10) + 75; // 75-85%
+        const businessHealthScore = Math.floor((leadVelocity / 4) * 50 + (closureProbability / 100) * 50);
+
+        const status = businessHealthScore < 60 ? 'warning' : 'optimal';
 
         setTelemetry({
           latency,
           quality,
           packetLoss,
           securityScore,
+          leadVelocity,
+          inventoryTurnover,
+          closureProbability,
+          businessHealthScore,
           status,
         });
       }, 3000);

@@ -1,6 +1,14 @@
 import { z } from 'zod';
 import { FirestoreTimestamp } from '@/shared/types/firestore';
 
+export interface BehavioralFingerprint {
+  scrollVelocity: number;
+  imageDwellTime: Record<string, number>;
+  featureInteractions: string[];
+  lastMicroInteraction: number;
+  interactionIntensity: number;
+}
+
 export interface Lead {
   id: string;
   type: 'whatsapp' | 'form' | 'trade-in' | 'visual_ai' | 'chat' | 'finance' | 'general';
@@ -71,8 +79,17 @@ export interface Lead {
     landingPage?: string;
   };
 
-  // Nivel 14: Predictive Scaling
-  predictiveScore?: number;
+  // Nivel 14: Predictive Scaling (Orquestación Predictiva)
+  closureProbability?: number; // 0-100 (Probability of closing sale)
+  intentTrajectory?: 'improving' | 'stable' | 'declining';
+  behavioralFingerprint?: {
+    scrollVelocity: number; // Pixels per second
+    imageDwellTime: Record<string, number>; // imageId -> milliseconds
+    featureInteractions: string[]; // ['compare', 'share', 'specs']
+    lastMicroInteraction: number;
+    interactionIntensity: number; // 0-10 (Weighted activity)
+  };
+
   behavioralMetrics?: {
     timeOnSite?: number;
     inventoryViews?: number;
@@ -97,6 +114,7 @@ export interface Lead {
       lifecycleStage: 'discovery' | 'consideration' | 'decision' | 'trade-in' | 'loyal';
       historicalInsights: string[];
       nextMilestone?: string;
+      predictedIntent: string; // New for Nivel 14
     };
     // Legacy support
     preferences?: {
