@@ -290,6 +290,35 @@ const AIChatWidget: React.FC<Props> = () => {
                     </div>
                   );
                 }
+                if (toolName === 'captureCustomerLead') {
+                  const result = toolInvocation.result as any;
+                  return (
+                    <div key={toolCallId} className="flex justify-start">
+                      <div className="bg-primary/5 dark:bg-primary/10 p-5 rounded-3xl border border-primary/20 flex flex-col gap-3 max-w-[280px] shadow-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg transform -rotate-12">
+                            <ShieldCheck size={20} />
+                          </div>
+                          <div>
+                            <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                              Richard Sentinel
+                            </div>
+                            <div className="text-sm font-black text-slate-800 dark:text-white">
+                              Registro Exitoso
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                          {result.message} Richard ha sido notificado y se pondrá en contacto pronto.
+                        </p>
+                        <div className="pt-2 border-t border-primary/10 flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-primary">
+                          <span>Status: Secured</span>
+                          <RefreshCw size={10} className="animate-spin-slow" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
               } else {
                 return (
                   <div

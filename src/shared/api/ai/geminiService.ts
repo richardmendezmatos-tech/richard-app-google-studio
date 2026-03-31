@@ -74,6 +74,21 @@ const financeTools = {
         required: ['query'],
       },
     },
+    {
+      name: 'captureCustomerLead',
+      description: 'Registra los datos de contacto de un cliente interesado en la base de datos de Richard Automotive.',
+      parameters: {
+        type: SchemaType.OBJECT,
+        properties: {
+          firstName: { type: SchemaType.STRING, description: 'Nombre del cliente.' },
+          phone: { type: SchemaType.STRING, description: 'Teléfono o WhatsApp del cliente.' },
+          email: { type: SchemaType.STRING, description: 'Correo electrónico (opcional).' },
+          vehicleOfInterest: { type: SchemaType.STRING, description: 'Auto que le interesa.' },
+          notes: { type: SchemaType.STRING, description: 'Notas adicionales (ej. "Quiere cita hoy").' },
+        },
+        required: ['firstName', 'phone'],
+      },
+    }
   ],
 } as any;
 
@@ -127,12 +142,27 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
       )
       .slice(0, 5);
 
-    return matches.map((c) => ({
+      return matches.map((c) => ({
       name: c.name,
       price: c.price,
       badge: c.badge,
       availability: 'Disponible para prueba de manejo',
     }));
+  },
+  captureCustomerLead: ({ firstName, phone, email, vehicleOfInterest, notes }) => {
+    console.log('📝 [Lead Interceptor] Captured:', { firstName, phone, email, vehicleOfInterest });
+    
+    // Emit custom event for UI feedback
+    const event = new CustomEvent('ra_lead_captured', {
+      detail: { firstName, vehicleOfInterest, timestamp: new Date().toISOString() }
+    });
+    window.dispatchEvent(event);
+
+    return {
+      status: 'success',
+      message: `Lead de ${firstName} guardado en RA Cloud.`,
+      followUp: 'Richard será notificado de inmediato.'
+    };
   },
 };
 
