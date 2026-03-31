@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSaveAppraisal } from '@/entities/appraisal';
 import { Appraisal } from '@/shared/types/types';
 
@@ -14,6 +14,7 @@ import { AppraisalFooter } from './components/AppraisalFooter';
 import { VehicleData, useAppraisalStore } from '../model/appraisalStore';
 import { useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
+import { leadService } from '@/entities/lead/api/leadService';
 
 export const TradeInWizard: React.FC = () => {
   const { 
@@ -52,7 +53,17 @@ export const TradeInWizard: React.FC = () => {
       // Sentinel Lead Interceptor: Save partial progress on Step 1 complete
       if (step === 1 && formData.make && formData.model) {
         console.log('RA Sentinel: Intercepting partial lead...', formData);
-        // Here we could call saveAppraisal.mutate with a "partial" status
+        
+        // Richard Intelligence: Create a passive lead for follow-up
+        leadService.saveLead({
+          firstName: 'Sentinel',
+          lastName: 'Interceptor',
+          email: 'sentinel.ra@richardautomotive.com', // Internal sentinel tag
+          phone: '',
+          notes: `RA-Elite Lead Intercepted: ${formData.year} ${formData.make} ${formData.model}`,
+          status: 'new',
+          source: 'ra-elite-wizard'
+        });
       }
     }
   };

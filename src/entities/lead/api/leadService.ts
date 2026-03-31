@@ -23,4 +23,13 @@ export const leadService = {
       throw error;
     }
   },
+
+  async saveLead(data: any) {
+    try {
+      return await DI.getLeadRepository().saveLead(data);
+    } catch (error) {
+      console.error('[leadService.saveLead] Error:', error);
+      throw error;
+    }
+  },
 };
