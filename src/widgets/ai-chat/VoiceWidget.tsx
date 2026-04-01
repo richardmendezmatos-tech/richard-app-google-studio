@@ -59,7 +59,7 @@ interface VoiceWidgetProps {
 }
 
 import { VoiceCommandService } from '@/features/ai-hub/voice-command/api/VoiceCommandService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 
 export const VoiceWidget = ({ onMessage }: VoiceWidgetProps) => {
   const [state, setState] = useState<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');

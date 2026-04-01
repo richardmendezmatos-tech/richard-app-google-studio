@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { CarType } from '@/shared/types/types';
 import { Car } from '@/entities/inventory';
 import SEO from '@/shared/ui/seo/SEO';

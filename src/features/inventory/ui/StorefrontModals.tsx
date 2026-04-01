@@ -3,6 +3,7 @@ import { Car } from '@/entities/inventory';
 import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
 import CarDetailModal from './CarDetailModal';
+import telemetry from '@/shared/api/metrics/analytics';
 
 const VisualSearchModal = React.lazy(() => import('./VisualSearchModal'));
 
@@ -46,6 +47,12 @@ const StorefrontModals: React.FC<StorefrontModalsProps> = ({
           onSelectCar={(car) => {
             setSelectedCar(car);
             setIsNeuralMatchOpen(false);
+            if (telemetry && typeof telemetry.add === 'function') {
+              telemetry.add({
+                event: 'neural_match_select',
+                carId: car.id,
+              });
+            }
           }}
         />
       )}

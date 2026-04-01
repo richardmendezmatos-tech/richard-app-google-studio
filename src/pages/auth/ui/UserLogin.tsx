@@ -10,7 +10,7 @@ import {
 } from '@/features/auth';
 import { auth, getRedirectResult } from '@/shared/api/firebase/firebaseService';
 import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
 import SEO from '@/shared/ui/seo/SEO';
 import { motion, AnimatePresence } from 'motion/react';
@@ -52,7 +52,7 @@ const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/';
+  const from = (location as any).state?.from?.pathname || '/';
 
   // React 19: useActionState for login/signup
   const [formState, formAction, isPending] = useActionState(
@@ -98,7 +98,7 @@ const UserLogin: React.FC = () => {
       if (!google) return;
 
       google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        client_id: process.env.VITE_GOOGLE_CLIENT_ID,
         callback: async (response: GoogleCredentialResponse) => {
           setLoading(true);
           setStoreLoading(true);
@@ -179,6 +179,8 @@ const UserLogin: React.FC = () => {
       return 'Credenciales incorrectas.';
     } else if (authError.code === 'auth/popup-closed-by-user') {
       return 'La ventana de inicio de sesión se cerró.';
+    } else if (authError.message?.toLowerCase().includes('referer') || authError.message?.toLowerCase().includes('blocked')) {
+      return 'Dominio local bloqueado en Firebase. Añada http://localhost:3000 a los dominios autorizados de Google Cloud.';
     } else {
       return `Error (${authError.code || 'unknown'}): ${authError.message || 'Intente nuevamente'}`;
     }
@@ -378,6 +380,7 @@ const UserLogin: React.FC = () => {
           </Link>
         </div>
       </motion.div>
+      <div id="recaptcha-container" className="hidden"></div>
     </div>
   );
 };

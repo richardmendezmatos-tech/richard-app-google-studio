@@ -4,6 +4,17 @@ import { Sun, Moon } from 'lucide-react';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return (
+      <div className="rounded-full border border-cyan-300/20 bg-white/5 p-2 w-9 h-9" />
+    );
+  }
 
   return (
     <button

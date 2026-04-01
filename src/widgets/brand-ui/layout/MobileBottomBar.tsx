@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { motion } from 'motion/react';
 import { Home, Compass, ShieldCheck, User } from 'lucide-react';
 

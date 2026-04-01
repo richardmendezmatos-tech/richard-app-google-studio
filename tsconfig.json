@@ -12,6 +12,7 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "incremental": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
@@ -20,11 +21,17 @@
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["vite/client"],
+    "types": ["next", "@types/node"],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@infra/*": ["src/infra/*"],
+      "@/app/*": ["src/app/*"],
       "@app/*": ["src/app/*"]
     }
   },

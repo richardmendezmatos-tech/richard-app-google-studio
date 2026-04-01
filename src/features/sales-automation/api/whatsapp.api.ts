@@ -5,8 +5,8 @@ import { Lead } from '@/entities/lead';
  * Production calls should be made from a cloud function or backend to protect the token.
  */
 export class WhatsAppService {
-  private readonly token = import.meta.env.VITE_WHATSAPP_TOKEN;
-  private readonly phoneNumberId = import.meta.env.VITE_WHATSAPP_PHONE_ID;
+  private readonly token = process.env.VITE_WHATSAPP_TOKEN;
+  private readonly phoneNumberId = process.env.VITE_WHATSAPP_PHONE_ID;
   private readonly baseUrl = 'https://graph.facebook.com/v19.0';
 
   async sendWelcomeTemplate(lead: Lead): Promise<void> {

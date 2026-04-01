@@ -1,3 +1,5 @@
+'use client';
+
 // CinemaLayout.tsx
 import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } from 'react';
 import { Menu } from 'lucide-react';
@@ -6,9 +8,8 @@ import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
 import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
-
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { Car } from '@/shared/types/types';
 
 /**
@@ -27,7 +28,7 @@ function safeLazy<T extends React.ComponentType<any>>(
 
         if (isChunkError && !sessionStorage.getItem(sessionKey)) {
           sessionStorage.setItem(sessionKey, '1');
-          window.location.reload();
+          if (typeof window !== 'undefined') window.location.reload();
         }
 
         return { default: (() => null) as unknown as T };
@@ -75,20 +76,24 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
   });
   const [showDeferredWidgets, setShowDeferredWidgets] = useState(false);
   const { theme } = useContext(ThemeContext);
-  const location = useLocation();
+  const pathname = usePathname();
 
   // Theme Sync
   useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
+    if (typeof window !== 'undefined') {
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
+    }
   }, [theme]);
 
   // Scroll to top on route change
   useEffect(() => {
-    const main = document.getElementById('main-content');
-    if (main) main.scrollTo(0, 0);
-  }, [location.pathname]);
+    if (typeof document !== 'undefined') {
+      const main = document.getElementById('main-content');
+      if (main) main.scrollTo(0, 0);
+    }
+  }, [pathname]);
 
   // Defer non-critical floating widgets
   useEffect(() => {

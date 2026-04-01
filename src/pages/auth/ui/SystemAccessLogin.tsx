@@ -12,7 +12,7 @@ import {
   Command,
   Cpu,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/shared/api/firebase/firebaseService';
 import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
@@ -95,7 +95,7 @@ const SystemAccessLogin: FC = () => {
     const params = new URLSearchParams(window.location.search);
     const key = params.get('richard_key');
     // Ghost Protocol: Auto-access via richard_key (DEV only)
-    if (key && import.meta.env.DEV) {
+    if (key && process.env.DEV) {
       handleGhostLogin(key);
     }
   }, [handleGhostLogin]);
@@ -124,10 +124,10 @@ const SystemAccessLogin: FC = () => {
 
       if (result) {
         // MOAT: Secure Device Correlation Success
-        if (import.meta.env.DEV) {
+        if (process.env.DEV) {
           console.log('Passkey verified (DEV override):', result.credential);
-          const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
-          const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
+          const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
+          const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
           await signInWithEmailAndPassword(auth, devEmail, devPass);
         } else {
           const profile = await loginAdmin(result.email, 'PASSKEY_SECURED_SESSION');
@@ -161,7 +161,7 @@ const SystemAccessLogin: FC = () => {
   };
 
   const handleDevQuickAccess = async () => {
-    if (!import.meta.env.DEV) {
+    if (!process.env.DEV) {
       setLocalError('⛔️ Acceso rápido deshabilitado en Producción.');
       return;
     }
@@ -172,8 +172,8 @@ const SystemAccessLogin: FC = () => {
       const { signInWithEmailAndPassword } = await import('firebase/auth');
       const { auth } = await import('@/shared/api/firebase/firebaseService');
 
-      const devEmail = import.meta.env.VITE_DEV_ADMIN_EMAIL || 'admin@richard.com';
-      const devPass = import.meta.env.VITE_DEV_ADMIN_PASS || '123456';
+      const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'admin@richard.com';
+      const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
 
       await signInWithEmailAndPassword(auth, devEmail, devPass);
       const normalized = normalizeUser(auth.currentUser!, 'admin');
@@ -381,7 +381,7 @@ const SystemAccessLogin: FC = () => {
           </div>
 
           {/* Dev Mode Strip */}
-          {import.meta.env.DEV && (
+          {process.env.DEV && (
             <div className="border-t border-white/5 bg-amber-500/5 p-2 flex justify-center">
               <button
                 onClick={handleDevQuickAccess}
@@ -395,6 +395,7 @@ const SystemAccessLogin: FC = () => {
           )}
         </div>
       </motion.div>
+      <div id="recaptcha-container" className="hidden"></div>
     </div>
   );
 };

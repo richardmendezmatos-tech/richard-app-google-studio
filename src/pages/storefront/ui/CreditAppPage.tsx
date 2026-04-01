@@ -1,6 +1,6 @@
 import React from 'react';
 import { CreditApplicationForm } from '@/features/lead-capture/ui/CreditApplicationForm';
-import { Link } from 'react-router-dom';
+import { Link } from '@/shared/lib/next-route-adapter';
 import { ChevronLeft } from 'lucide-react';
 
 const CreditAppPage: React.FC = () => {

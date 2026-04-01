@@ -61,7 +61,7 @@ export const trackMetaEvent = (eventName: string, data = {}) => {
 
     // Send to CAPI (Server-Side) for redundancy
     // Only fire if not in dev mode to save quota/noise, or if explicitly testing
-    if (!import.meta.env.DEV) {
+    if (!process.env.DEV) {
       fetch('/api/meta-conversion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,7 +72,7 @@ export const trackMetaEvent = (eventName: string, data = {}) => {
 };
 
 export const useMetaPixel = () => {
-  const pixelId = import.meta.env.VITE_META_PIXEL_ID;
+  const pixelId = process.env.VITE_META_PIXEL_ID;
 
   const initPixel = useCallback(() => {
     if (pixelId) initMetaPixel(pixelId);

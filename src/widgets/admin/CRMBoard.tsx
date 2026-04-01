@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import confetti from 'canvas-confetti';
 import {
   Phone,

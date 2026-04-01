@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
 
 import { submitApplication } from '@/shared/api/firebase/firebaseService';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useDealer } from '@/entities/dealer';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { Subscriber } from '@/shared/types/types';
 import { ShieldCheck, Plus, DatabaseZap, User as UserIcon, Radio, Zap, Scale } from 'lucide-react';

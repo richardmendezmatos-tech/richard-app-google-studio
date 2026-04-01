@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft, Home } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 

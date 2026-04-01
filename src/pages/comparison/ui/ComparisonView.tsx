@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useComparison } from '@/features/comparison';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
 import { useInventoryAnalytics } from '@/features/inventory';
 import DOMPurify from 'dompurify';

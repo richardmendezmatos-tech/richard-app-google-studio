@@ -4,9 +4,9 @@ export interface TransactionalEmailInput {
   html: string;
 }
 
-const RESEND_API_KEY = (import.meta.env.VITE_RESEND_API_KEY || '').trim();
+const RESEND_API_KEY = (process.env.VITE_RESEND_API_KEY || '').trim();
 const RESEND_FROM = (
-  import.meta.env.VITE_RESEND_FROM_EMAIL || 'Richard Auto News <hola@richard-automotive.com>'
+  process.env.VITE_RESEND_FROM_EMAIL || 'Richard Auto News <hola@richard-automotive.com>'
 ).trim();
 const RESEND_API_URL = 'https://api.resend.com/emails';
 

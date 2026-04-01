@@ -46,6 +46,13 @@ export interface Car {
   seoFaqs?: { question: string; answer: string }[];
 }
 
+export const calculatePredictiveDTS = (car: any) => {
+  const baseRate = 45;
+  const priceAdjustment = car.price < 25000 ? -5 : 5;
+  const brandAdjustment = car.make === 'Toyota' || car.make === 'Honda' ? -10 : 0;
+  return Math.max(15, baseRate + priceAdjustment + brandAdjustment);
+};
+
 export const CarSchema = z.object({
   id: z.string(),
   name: z.string(),

@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, Navigate } from '@/shared/lib/next-route-adapter';
 import { ShieldAlert } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
 import { motion, AnimatePresence } from 'motion/react';
@@ -247,7 +247,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                   inventory={inventory}
                   initialVisualSearch={pendingVisualSearch}
                   onClearVisualSearch={() => setPendingVisualSearch(null)}
-                  onMagicFix={import.meta.env.DEV ? handleMagicFix : undefined}
+                  onMagicFix={process.env.DEV ? handleMagicFix : undefined}
                   onOpenGarage={() => navigate('/garage')}
                 />
               </PageWrapper>

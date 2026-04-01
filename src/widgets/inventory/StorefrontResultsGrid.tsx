@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { DatabaseZap, Loader2, Wrench, Heart, Sparkles } from 'lucide-react';
 import { Car } from '@/entities/inventory';

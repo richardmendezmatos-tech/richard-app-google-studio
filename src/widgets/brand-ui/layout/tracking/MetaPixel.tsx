@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/shared/lib/next-route-adapter';
 
 export const MetaPixel = () => {
   const { initPixel, trackEvent } = useMetaPixel();

@@ -1,5 +1,5 @@
 import { useState, useContext, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car, CarType } from '@/shared/types/types';
 import { useVisualSearch } from './useVisualSearch';
 import { useCars } from './useCars';

@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import ProgressiveForm from '@/widgets/brand-ui/chat/ProgressiveForm';
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.VITE_GEMINI_API_KEY || '');
 
 interface ChatMessage {
   id: string;

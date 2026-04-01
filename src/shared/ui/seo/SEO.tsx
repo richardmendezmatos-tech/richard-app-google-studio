@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import telemetry from '@/shared/api/metrics/analytics';
 
 interface SEOProps {
   title?: string;
@@ -8,7 +9,7 @@ interface SEOProps {
   image?: string;
   url?: string;
   type?: string;
-  schema?: object | object[]; // JSON-LD structured data or array of objects
+  schema?: object | object[];
   keywords?: string;
   noIndex?: boolean;
   noFollow?: boolean;
@@ -26,6 +27,20 @@ const SEO: React.FC<SEOProps> = ({
   noFollow = false,
 }) => {
   const siteUrl = SITE_CONFIG.url;
+  const fullTitle = title.includes('Richard Automotive') ? title : `${title} | Richard Automotive`;
+
+  React.useEffect(() => {
+    // [HOUSTON CIRCUIT BREAKER]: Safe telemetry execution
+    if (typeof window === 'undefined') return;
+    try {
+      if (telemetry && typeof telemetry.add === 'function') {
+        telemetry.add({ event: 'seo_view', title: fullTitle });
+      }
+    } catch (e) {
+      console.warn('Telemetry deferred (Hydration safe):', e);
+    }
+  }, [fullTitle]);
+
   const normalizePath = (value?: string) => {
     if (!value) return `${siteUrl}/`;
     if (value.startsWith('http')) return value;
@@ -37,14 +52,13 @@ const SEO: React.FC<SEOProps> = ({
   const defaultImage = SITE_CONFIG.seo.ogImage.startsWith('http')
     ? SITE_CONFIG.seo.ogImage
     : `${siteUrl}${SITE_CONFIG.seo.ogImage}`;
+  
   const imageUrl = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : defaultImage;
   const currentUrl = normalizePath(url);
-  const fullTitle = title.includes('Richard Automotive') ? title : `${title} | Richard Automotive`;
   const robotsValue = `${noIndex ? 'noindex' : 'index'},${noFollow ? 'nofollow' : 'follow'},max-image-preview:large,max-snippet:-1,max-video-preview:-1`;
 
   return (
     <Helmet>
-      {/* Standard Metadata */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords || SITE_CONFIG.seo.keywords.join(', ')} />
@@ -54,7 +68,6 @@ const SEO: React.FC<SEOProps> = ({
       <link rel="alternate" hrefLang="es-PR" href={currentUrl} />
       <link rel="alternate" hrefLang="x-default" href={currentUrl} />
 
-      {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:title" content={fullTitle} />
@@ -63,14 +76,12 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:locale" content={SITE_CONFIG.seo.locale} />
       <meta property="og:site_name" content={SITE_CONFIG.name} />
 
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={currentUrl} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
 
-      {/* Structured Data (JSON-LD) */}
       {schema && <script type="application/ld+json">{JSON.stringify(schema)}</script>}
     </Helmet>
   );

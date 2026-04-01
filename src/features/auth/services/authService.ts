@@ -180,6 +180,14 @@ export async function signInWithGoogle(useRedirect: boolean = false) {
       console.warn('Popup blocked/closed, falling back to redirect...');
       return await signInWithRedirect(auth, provider);
     }
+
+    if (errorMessage?.includes('requests-from-referer') || errorMessage?.includes('blocked')) {
+      console.error(
+        'CRITICAL: Firebase API Key restricted. Add http://localhost:3000 to Authorized Domains in Google Cloud Console.',
+      );
+      console.info('Troubleshoot at: https://console.cloud.google.com/apis/credentials');
+    }
+
     console.error('Error signing in with Google:', errorMessage);
     throw error;
   }

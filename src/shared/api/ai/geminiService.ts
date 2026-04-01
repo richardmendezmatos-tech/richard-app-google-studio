@@ -224,7 +224,7 @@ const callGeminiProxy = async (
   inventory?: Car[],
 ): Promise<string> => {
   try {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY;
+    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.VITE_FIREBASE_API_KEY;
     if (!apiKey) throw new Error('No Valid API Key found');
 
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -689,7 +689,7 @@ export const analyzeTradeInImages = async (images: string[]): Promise<Record<str
 
 export const generateCoverImage = async (prompt: string): Promise<string> => {
   try {
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const apiKey = process.env.VITE_OPENAI_API_KEY;
     if (!apiKey) {
       console.warn('No VITE_OPENAI_API_KEY found. Falling back to Unsplash.');
       return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1600';
@@ -787,7 +787,7 @@ export const generateBlogPost = async (
 
 export const generateEmbedding = async (text: string): Promise<number[]> => {
   try {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY;
+    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.VITE_FIREBASE_API_KEY;
     if (!apiKey) throw new Error('No API Key for embeddings');
 
     const genAI = new GoogleGenerativeAI(apiKey);

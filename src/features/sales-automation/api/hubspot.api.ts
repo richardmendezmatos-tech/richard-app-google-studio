@@ -7,7 +7,7 @@ import { Lead } from '@/entities/lead';
  * For this integration, we support a mock mode when keys are missing.
  */
 export class HubSpotService {
-  private readonly apiKey = import.meta.env.VITE_HUBSPOT_TOKEN;
+  private readonly apiKey = process.env.VITE_HUBSPOT_TOKEN;
   private readonly baseUrl = 'https://api.hubapi.com/crm/v3/objects';
 
   async createContactAndDeal(lead: Lead): Promise<void> {

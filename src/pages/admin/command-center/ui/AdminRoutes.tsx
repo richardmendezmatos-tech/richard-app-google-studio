@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate, useOutletContext } from 'react-router-dom';
+import { Routes, Route, Navigate, useOutletContext } from '@/shared/lib/next-route-adapter';
 import { motion } from 'motion/react';
 import { Smartphone, Sparkles } from 'lucide-react';
 import { auth } from '@/shared/api/firebase/firebaseService';

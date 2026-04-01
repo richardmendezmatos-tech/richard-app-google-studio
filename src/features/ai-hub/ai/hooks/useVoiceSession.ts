@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { connectToVoiceSession } from '@/shared/api/ai';
 import { VoiceCommandService } from '@/features/ai-hub/voice-command/api/VoiceCommandService';
 import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';

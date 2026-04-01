@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, Mic, Phone, X, Zap } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/shared/lib/next-route-adapter';
 
 interface FloatingActionOrbitProps {
   activeWidget: 'chat' | 'voice' | 'whatsapp' | null;

@@ -3,7 +3,7 @@ import { useDealer } from '@/entities/dealer';
 import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';
 import { CarType } from '@/shared/types/types';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 
 const BetaOnboard = () => {
   const { setDealer } = useDealer();

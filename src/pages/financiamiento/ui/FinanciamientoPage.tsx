@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
 import {
   CheckCircle,

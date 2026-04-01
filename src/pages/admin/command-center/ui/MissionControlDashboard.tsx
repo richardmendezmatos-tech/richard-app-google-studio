@@ -13,7 +13,7 @@ import {
   ArrowRight,
   Radio,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { NeuralInsightsHeadlines } from './components/NeuralInsightsHeadlines';

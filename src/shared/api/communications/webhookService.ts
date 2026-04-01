@@ -6,7 +6,7 @@ import { Lead } from '@/shared/types/types';
  * like Make.com, Zapier, or Meta Conversion API proxies.
  */
 
-const WEBHOOK_URL = import.meta.env.VITE_AUTOMATION_WEBHOOK_URL || '';
+const WEBHOOK_URL = process.env.VITE_AUTOMATION_WEBHOOK_URL || '';
 
 export const dispatchLeadToWebhook = async (lead: Lead): Promise<void> => {
   if (!WEBHOOK_URL) {

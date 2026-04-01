@@ -17,7 +17,7 @@ export interface ToolResultData {
 }
 
 export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptions = {}) {
-  const isDev = import.meta.env.DEV;
+  const isDev = process.env.DEV;
   // Local firebase emulators usually run regional functions differently
   const apiEndpoint = isDev
     ? 'http://127.0.0.1:5001/richard-automotive/us-central1/chatStream'

@@ -16,18 +16,16 @@ export interface AntigravityConfig {
 
 const trimTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 
+import { getAntigravityEnv } from '@/shared/lib/env';
+
 export const getAntigravityConfig = (): AntigravityConfig => {
-  const edgeUrl = (import.meta.env.VITE_ANTIGRAVITY_EDGE_URL || '').trim();
-  const apiUrl = (import.meta.env.VITE_ANTIGRAVITY_API_URL || '').trim();
-  const apiKey = (import.meta.env.VITE_ANTIGRAVITY_API_KEY || '').trim();
-  const healthPath = (import.meta.env.VITE_ANTIGRAVITY_HEALTH_PATH || DEFAULT_HEALTH_PATH).trim();
-  const imagePath = (import.meta.env.VITE_ANTIGRAVITY_IMAGE_PATH || DEFAULT_IMAGE_PATH).trim();
-  const leadActionPath = (
-    import.meta.env.VITE_ANTIGRAVITY_LEAD_ACTION_PATH || DEFAULT_LEAD_ACTION_PATH
-  ).trim();
-  const outreachActionPath = (
-    import.meta.env.VITE_ANTIGRAVITY_OUTREACH_ACTION_PATH || DEFAULT_OUTREACH_ACTION_PATH
-  ).trim();
+  const edgeUrl = getAntigravityEnv('EDGE_URL');
+  const apiUrl = getAntigravityEnv('API_URL');
+  const apiKey = getAntigravityEnv('API_KEY');
+  const healthPath = getAntigravityEnv('HEALTH_PATH', DEFAULT_HEALTH_PATH);
+  const imagePath = getAntigravityEnv('IMAGE_PATH', DEFAULT_IMAGE_PATH);
+  const leadActionPath = getAntigravityEnv('LEAD_ACTION_PATH', DEFAULT_LEAD_ACTION_PATH);
+  const outreachActionPath = getAntigravityEnv('OUTREACH_ACTION_PATH', DEFAULT_OUTREACH_ACTION_PATH);
 
   return {
     enabled: Boolean(edgeUrl || apiUrl),

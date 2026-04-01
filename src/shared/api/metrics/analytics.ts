@@ -18,7 +18,7 @@ const createAnalyticsService = () => {
         isInitialized = true;
         console.log('[Analytics] GA4 initialized via Closure Engine');
 
-        const pixelId = import.meta.env.VITE_META_PIXEL_ID;
+        const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
         if (pixelId) {
           initMetaPixel(pixelId);
           console.log('[Analytics] Meta Pixel initialized');
@@ -63,6 +63,17 @@ const createAnalyticsService = () => {
     engagement: trackEvent('Engagement'),
     conversion: trackEvent('Conversion'),
     user: trackEvent('User'),
+    /**
+     * Unified event tracker for legacy compatibility
+     */
+    add: (params: { event: string; [key: string]: any }) => {
+      const { event, ...rest } = params;
+      if (event === 'page_view') {
+        trackPageView(rest.url || window.location.pathname);
+      } else {
+        trackEvent('General')(event)(JSON.stringify(rest))();
+      }
+    },
   };
 };
 
@@ -132,3 +143,12 @@ export const trackInterestIndex = (carId: string, source: 'hero' | 'blog' | 'gal
   analytics.engagement('interest_index')(`${carId}-${source}`)();
   trackMetaEvent('InterestIndex', { content_id: carId, source });
 };
+
+export const telemetry = analytics;
+
+// Houston Bridge: Attach to window for global access/debugging
+if (typeof window !== 'undefined') {
+  (window as any).telemetry = analytics;
+}
+
+export default analytics;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/entities/session';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Menu, X, User, LogOut, Car } from 'lucide-react';
 
 const Navbar: React.FC = () => {

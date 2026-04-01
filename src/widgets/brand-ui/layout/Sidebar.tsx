@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
 import ThemeToggle from './ThemeToggle';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +44,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuthStore();
+  const [hasMounted, setHasMounted] = React.useState(false);
   const role = user?.role || 'user';
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -122,6 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<ShoppingBag size={19} />}
           label={t('sidebar.storefront')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
         <NavButton
           active={currentMode === ViewMode.DIGITAL_GARAGE}
@@ -133,6 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<Warehouse size={19} />}
           label={t('sidebar.garage')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
         <NavButton
           active={currentMode === ViewMode.PRE_QUALIFY}
@@ -144,6 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<FileCheck2 size={19} />}
           label={t('sidebar.qualify')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
         <NavButton
           active={currentMode === ViewMode.TRADE_IN}
@@ -155,6 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<CarIcon size={19} />}
           label={t('sidebar.tradeIn')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
         <NavButton
           active={currentMode === ViewMode.AI_CONSULTANT}
@@ -166,6 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<BotMessageSquare size={19} />}
           label={t('sidebar.consultant')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
         <NavButton
           active={currentMode === ViewMode.BLOG}
@@ -177,6 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           icon={<Newspaper size={19} />}
           label={t('sidebar.blog')}
           isCollapsed={isCollapsed}
+          hasMounted={hasMounted}
         />
 
         {currentMode === ViewMode.ADMIN && (
@@ -315,6 +326,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               icon={<FlaskConical size={19} />}
               label="Laboratorio"
               isCollapsed={isCollapsed}
+              hasMounted={hasMounted}
             />
           </>
         )}
@@ -339,6 +351,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             }}
             icon={<FlaskConical size={19} />}
             label={t('sidebar.digitalTwin')}
+            hasMounted={hasMounted}
           />
         )}
 
@@ -428,6 +441,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             label={t('auth.login')}
             isAction
             isCollapsed={isCollapsed}
+            hasMounted={hasMounted}
           />
         )}
       </div>
@@ -454,6 +468,7 @@ interface NavButtonProps {
   label: string;
   isAction?: boolean;
   isCollapsed?: boolean;
+  hasMounted?: boolean;
 }
 
 const NavButton: React.FC<NavButtonProps> = ({
@@ -464,6 +479,7 @@ const NavButton: React.FC<NavButtonProps> = ({
   label,
   isAction = false,
   isCollapsed = false,
+  hasMounted = false,
 }) => {
   const base = `group relative flex w-full items-center transition-all duration-200 ${isCollapsed ? 'justify-center px-0 py-3 rounded-xl' : 'gap-3 rounded-2xl px-4 py-3 text-left'}`;
   const stateClass = active
@@ -481,7 +497,7 @@ const NavButton: React.FC<NavButtonProps> = ({
       title={isCollapsed ? label : undefined}
     >
       <span className="relative z-10 shrink-0">{icon}</span>
-      {!isCollapsed && (
+      {!isCollapsed && hasMounted && (
         <span className="relative z-10 text-sm font-bold tracking-wide truncate">{label}</span>
       )}
       {active && (

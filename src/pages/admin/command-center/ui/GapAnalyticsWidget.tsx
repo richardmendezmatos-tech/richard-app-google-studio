@@ -11,8 +11,8 @@ interface Gap {
 export const GapAnalyticsWidget: React.FC = () => {
   const [gaps, setGaps] = useState<Gap[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  const supabaseUrl = process.env.VITE_SUPABASE_URL as string | undefined;
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
   const fetchGaps = async (signal?: AbortSignal) => {
     if (!supabaseUrl || !supabaseAnonKey) {

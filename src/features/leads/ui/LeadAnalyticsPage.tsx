@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Lead, subscribeToLeads } from '@/shared/api/adapters/leads/crmService';
 import { LeadLifecycleAnalytics } from './LeadLifecycleAnalytics';
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';

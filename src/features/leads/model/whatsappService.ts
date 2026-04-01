@@ -173,7 +173,7 @@ export const generateAutoResponse = async (context: MessageContext): Promise<str
     INTENCIÓN DETECTADA: ${intent}
     ${Object.keys(entities).length > 0 ? `ENTIDADES: ${JSON.stringify(entities)}` : ''}
     
-    CTA WHATSAPP: https://wa.me/${(import.meta.env.VITE_TWILIO_PHONE_NUMBER || '17873682880').replace('+', '')}
+    CTA WHATSAPP: https://wa.me/${(process.env.VITE_TWILIO_PHONE_NUMBER || '17873682880').replace('+', '')}
   `;
 
   try {
@@ -189,7 +189,7 @@ export const generateAutoResponse = async (context: MessageContext): Promise<str
     return validation.sanitizedResponse;
   } catch (error) {
     console.error('Auto-response error:', error);
-    return `Disculpa, estoy teniendo problemas técnicos. ¿Puedes llamarnos al ${import.meta.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}? 📞`;
+    return `Disculpa, estoy teniendo problemas técnicos. ¿Puedes llamarnos al ${process.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}? 📞`;
   }
 };
 
@@ -372,7 +372,7 @@ export const processMenuSelection = async (
       return '📸 *Evaluación de Trade-In*\n\nPerfecto! Para darte el mejor valor:\n\n1. Envíame fotos de tu auto (exterior e interior)\n2. Dime marca, modelo y año\n3. Millaje aproximado\n\n¿Listo para empezar?';
 
     case '5':
-      return `👤 *Contacto Directo*\n\nPuedes llamar a Richard directamente:\n📞 ${import.meta.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}\n\nO déjame tu nombre y te contactamos en breve.`;
+      return `👤 *Contacto Directo*\n\nPuedes llamar a Richard directamente:\n📞 ${process.env.VITE_TWILIO_PHONE_NUMBER || '787-368-2880'}\n\nO déjame tu nombre y te contactamos en breve.`;
 
     default:
       // Use AI for natural language

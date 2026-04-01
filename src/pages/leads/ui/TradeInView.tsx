@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
 import { TradeInWizard } from '@/features/appraisal/ui/TradeInWizard';

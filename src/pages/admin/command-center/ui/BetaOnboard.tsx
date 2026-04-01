@@ -4,7 +4,7 @@ import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventor
 import { CarType } from '@/shared/types/types';
 import { Car } from '@/entities/inventory';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 
 const BetaOnboard = () => {
   const { setDealer } = useDealer();

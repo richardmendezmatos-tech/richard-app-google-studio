@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from '@/shared/lib/next-route-adapter';
 import confetti from 'canvas-confetti';
 import {
   Activity,
@@ -208,6 +208,10 @@ const CRMBoard: React.FC = () => {
 
   // Metrics Logic
   const metrics = useMemo(() => {
+    if (!ctx?.inventory) {
+      return { totalPipelineValue: 0, avgScore: 100, soldCount: 0 };
+    }
+
     const totalPipelineValue = leads.reduce((sum, lead) => {
       const vehicle = ctx.inventory.find(
         (v) => v.id === lead.carId || v.name === lead.vehicleOfInterest,

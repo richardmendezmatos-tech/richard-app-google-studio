@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Shield } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
 
 const PrivacyView: React.FC = () => {

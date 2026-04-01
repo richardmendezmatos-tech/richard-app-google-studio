@@ -1,6 +1,6 @@
 import React from 'react';
 import { useComparison } from '@/features/comparison';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { X, ArrowRight, GitCompare } from 'lucide-react';
 
 const ComparisonBar: React.FC = () => {

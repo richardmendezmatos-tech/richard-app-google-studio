@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronRight, X } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/shared/lib/next-route-adapter';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { createInteractiveMenu } from '@/features/leads/model/whatsappService';
 import { Car } from '@/shared/types/types';
