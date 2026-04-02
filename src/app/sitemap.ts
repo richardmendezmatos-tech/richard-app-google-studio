@@ -30,10 +30,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // Configuration Check for SEO Health
+  const hasConfig = process.env.INTERNAL_API_URL && 
+                   process.env.INTERNAL_API_KEY && 
+                   process.env.INTERNAL_API_KEY !== 'PLACEHOLDER_CHANGE_ME';
+
+  if (!hasConfig) {
+    console.warn('⚠️ Sitemap Generation: Internal API Configuration is missing or using placeholder. Dynamic routes skipped.');
+    return staticRoutes;
+  }
+
   try {
-    // Inventory from Java Backend (App Router allows fetching during sitemap generation)
+    // Inventory from Java Backend
     const inventory = await fetchInventoryFromJava(100);
     
+    if (!Array.isArray(inventory) || inventory.length === 0) {
+      console.warn('⚠️ Sitemap Generation: Inventory fetch returned no items.');
+      return staticRoutes;
+    }
+
     const inventoryRoutes: MetadataRoute.Sitemap = inventory.map((car) => ({
       url: `${SITE_URL}/v/${generateVehicleSlug(car)}/${car.id}`,
       lastModified: new Date(),
@@ -43,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticRoutes, ...inventoryRoutes];
   } catch (error) {
-    console.error('Sitemap Error:', error);
+    console.error('🚨 Sitemap Critical Error:', error);
     return staticRoutes;
   }
 }

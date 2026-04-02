@@ -60,8 +60,11 @@ export const getAntigravityHeaders = (): HeadersInit => {
 export const optimizeWithAntigravity = (url: string, width: number = 800): string => {
   if (!url) return '';
 
-  // Preserve Firebase direct URLs by default to avoid auth token breakage on signed links.
-  if (url.includes('firebasestorage.googleapis.com')) return url;
+  // Allow Firebase optimization if explicitly enabled via environment variable
+  const shouldProxyStorage = getAntigravityEnv('PROXY_STORAGE', 'false') === 'true';
+  const isFirebaseStorage = url.includes('firebasestorage.googleapis.com');
+  
+  if (isFirebaseStorage && !shouldProxyStorage) return url;
 
   // Keep Unsplash optimization path as fallback if Antigravity is not configured.
   const cfg = getAntigravityConfig();
