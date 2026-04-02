@@ -33,7 +33,8 @@ export function useStorefrontState(
   const handleToggleSave = (e: React.MouseEvent, carId: string) => {
     e.stopPropagation();
     if (!user) {
-      navigate('/login', { state: { from: location } });
+      const redirectPath = encodeURIComponent(location.pathname);
+      navigate(`/login?redirect=${redirectPath}`);
       return;
     }
     savedCars.toggleSave(carId);

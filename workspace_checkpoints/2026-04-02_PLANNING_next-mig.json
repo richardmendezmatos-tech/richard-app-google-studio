@@ -1,0 +1,35 @@
+{
+  "id": "2026-04-02_PLANNING_next-mig",
+  "project": "Richard Automotive",
+  "phase": "Finalize Next.js Migration",
+  "timestamp": "2026-04-02T03:21:30Z",
+  "tasks": [
+    {
+      "id": "antigravity-edge-integration",
+      "description": "Integrate Antigravity Edge into OptimizedImage.tsx for all domains",
+      "status": "pending"
+    },
+    {
+      "id": "env-config",
+      "description": "Setup .env.local with INTERNAL_API_KEY",
+      "status": "pending"
+    },
+    {
+      "id": "sitemap-validation",
+      "description": "Verify sitemap.ts generation logic",
+      "status": "pending"
+    },
+    {
+      "id": "lighthouse-audit",
+      "description": "Lighthouse Performance Audit for Storefront",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "feature_flags": {
+      "sentinel_vision": true,
+      "houston_orbit": true
+    },
+    "branding": "Richard Automotive / Sentinel 3.2 Omega"
+  }
+}

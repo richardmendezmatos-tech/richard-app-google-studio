@@ -159,7 +159,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           {showHeavyContent ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full">
                 <Viewer360
-                    images={car.images && car.images.length > 0 ? car.images : [car.img]}
+                    images={(car.images && car.images.length > 0 ? car.images : [car.img]).filter((img): img is string => !!img)}
                     alt={car.name}
                     badge={car.badge}
                     carPrice={car.price}

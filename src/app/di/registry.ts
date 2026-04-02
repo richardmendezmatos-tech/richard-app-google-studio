@@ -33,5 +33,17 @@ export const DI = {
 
   getUserRepository: () => {
     return new FirestoreUserRepository();
+  },
+
+  // Sentinel Outreach & Communications
+  getAntigravityOutreachAction: (lead: any, context: any) => {
+    // Import dynamically to avoid circular dependencies in registry
+    return import('@/features/omnichannel/api/antigravityOmnichannelService')
+      .then(m => m.getAntigravityOutreachAction(lead, context));
+  },
+
+  sendWhatsAppMessage: (to: string, message: string) => {
+    return import('@/features/leads/model/whatsappService')
+      .then(m => m.sendWhatsAppMessage(to, message));
   }
 };
