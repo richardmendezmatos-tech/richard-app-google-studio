@@ -74,13 +74,50 @@ export const MESSAGE_TEMPLATES: WhatsAppTemplate[] = [
     variables: [],
   },
   {
-    id: 'follow_up',
-    name: 'Seguimiento',
+    id: 'sentinel_nudge',
+    name: 'Sentinel Nudge (Rescate)',
     content:
-      'Hola {{customerName}}! 👋\n\nVi que estabas interesado en {{carName}}. ¿Aún te interesa? Tengo una oferta especial que podría gustarte 🎉',
-    variables: ['customerName', 'carName'],
+      'Hola {{customerName}}! 👋 Vimos que tenías interés en una unidad con nosotros 🚗.\n\nTuvimos un pequeño inconveniente técnico procesando tu solicitud, pero tu espacio de pre-aprobación está reservado.\n\n¿Te gustaría que te ayude a completarla por aquí? 💳✨',
+    variables: ['customerName'],
   },
 ];
+
+/**
+ * Trigger Sentinel 3.2 Autonomous Nudge
+ * Used by the LeadHealthSensor to rescue high-value leads.
+ */
+export const triggerSentinelNudge = async (
+  leadId: string,
+  customerName: string,
+  phoneNumber: string,
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const template = MESSAGE_TEMPLATES.find((t) => t.id === 'sentinel_nudge');
+    if (!template) throw new Error('Sentinel nudge template not found');
+
+    const message = renderTemplate(template, { customerName });
+
+    const result = await sendWhatsAppMessage(phoneNumber, message, {
+      template: 'sentinel_nudge',
+    });
+
+    if (result.success) {
+      await trackWhatsAppConversion(phoneNumber, 'lead', {
+        leadId,
+        source: 'sentinel-auto-healing',
+        timestamp: new Date(),
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error('🔴 Sentinel: Fallo al disparar Nudge de Rescate.', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+};
 
 /**
  * Render template with variables

@@ -8,11 +8,11 @@ const OfflineIndicator = () => {
   const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
-    // Richard Sentinel: Hydration sync
-    setMounted(true);
-    
-    // Connectivity Monitoring
-    setIsOffline(!navigator.onLine);
+    // Richard Sentinel: Hydration sync (Deferred to avoid cascading renders)
+    const timer = setTimeout(() => {
+      setMounted(true);
+      setIsOffline(!navigator.onLine);
+    }, 0);
 
     const syncStatus = () => setIsOffline(!navigator.onLine);
 
@@ -20,6 +20,7 @@ const OfflineIndicator = () => {
     window.addEventListener('offline', syncStatus);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('online', syncStatus);
       window.removeEventListener('offline', syncStatus);
     };

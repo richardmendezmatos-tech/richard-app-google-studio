@@ -123,7 +123,11 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       url: window.location.href,
     };
     if (navigator.share) {
-      try { await navigator.share(shareData); } catch {}
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        console.debug('Share cancelled or failed', error);
+      }
     } else {
       window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text)}`, '_blank');
     }

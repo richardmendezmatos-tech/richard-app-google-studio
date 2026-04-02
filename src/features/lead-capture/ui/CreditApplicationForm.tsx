@@ -11,46 +11,63 @@ import {
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
+import { LeadHealthSensor } from '../../leads/model/health/LeadHealthSensor';
 
 export const CreditApplicationForm: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [lastInteraction, setLastInteraction] = useState(Date.now());
 
   // Form State
   const [formData, setFormData] = useState({
-    // Step 1
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     ssn: '',
-    // Step 2
     addressLine1: '',
     city: '',
     state: 'PR',
     zipCode: '',
     housingType: 'Rent',
     timeAtAddress: '',
-    // Step 3
     employer: '',
     jobTitle: '',
     timeAtEmployer: '',
     monthlyIncome: '',
   });
 
+  // Track behavior for Auto-healing Sensor
+  React.useEffect(() => {
+    const trackInteraction = () => setLastInteraction(Date.now());
+    window.addEventListener('mousemove', trackInteraction);
+    return () => window.removeEventListener('mousemove', trackInteraction);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setLastInteraction(Date.now());
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleNext = () => setStep((prev) => Math.min(prev + 1, 3));
-  const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
+  const handleNext = () => {
+    setLastInteraction(Date.now());
+    setStep((prev: number) => Math.min(prev + 1, 3));
+  };
+  const handleBack = () => setStep((prev: number) => Math.max(prev - 1, 1));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) return handleNext();
 
     setIsSubmitting(true);
+    const leadData = {
+      ...formData,
+      id: `emergency_${Date.now()}`,
+      status: 'new' as const,
+      type: 'finance' as const,
+    };
+
     try {
       if (!db) throw new Error('Firebase DB not initialized');
 
@@ -63,7 +80,10 @@ export const CreditApplicationForm: React.FC = () => {
 
       setIsSuccess(true);
     } catch (error) {
-      console.error('Error saving credit application: ', error);
+      console.error('🔴 Sentinel: Error detectado. Activando Autocuración...', error);
+      // Auto-healing Action: Emergency Save
+      await LeadHealthSensor.emergencySave(leadData as any);
+      setIsSuccess(true); // Mostrar éxito al usuario mientras el sensor gestiona el fallo
     } finally {
       setIsSubmitting(false);
     }
