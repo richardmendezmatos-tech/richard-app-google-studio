@@ -455,7 +455,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="flex items-center gap-2 rounded-xl border border-cyan-300/15 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300 transition-colors hover:bg-white/10"
         >
           <Languages size={14} />
-          {i18n.language === 'es' ? 'EN' : 'ES'}
+          {!hasMounted ? 'EN' : i18n.language === 'es' ? 'EN' : 'ES'}
         </button>
       </div>
     </nav>

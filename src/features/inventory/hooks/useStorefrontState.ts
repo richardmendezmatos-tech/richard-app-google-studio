@@ -167,7 +167,10 @@ export function useStorefrontState(
 
   const jumpToInventory = (source: string) => {
     analytics.trackInteraction('jump_inventory', { source, route: location.pathname });
-    document.getElementById('inventory-grid')?.scrollIntoView({ behavior: 'smooth' });
+    // Sentinel Performance: Delay para asegurar que el navegador procese el focus/clic antes del scroll suave
+    setTimeout(() => {
+      document.getElementById('inventory-grid')?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
   };
 
   const handleSelectCar = (car: Car) => {

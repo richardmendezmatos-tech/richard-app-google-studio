@@ -300,7 +300,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 }
                 .ra-hero__vignette {
                     position: absolute; inset: 0;
-                    background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,5,10,0.85) 100%);
+                    background: 
+                        radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,5,10,0.8) 100%),
+                        linear-gradient(to right, rgba(2,5,10,0.5) 0%, transparent 40%);
                 }
 
                 /* Grid lines */
@@ -379,10 +381,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 }
                 @media (min-width: 1024px) {
                     .ra-hero__content {
-                        grid-template-columns: 1.15fr 0.85fr;
+                        grid-template-columns: 1.22fr 0.78fr;
                         align-items: end;
-                        padding: 7rem 3rem 7.5rem;
-                        gap: 3rem;
+                        padding: 7rem 4rem 7.5rem 3rem;
+                        gap: 4rem;
                     }
                 }
 
@@ -425,7 +427,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 /* Headline */
                 .ra-hero__headline {
                     display: flex; flex-direction: column;
-                    line-height: 0.88;
+                    line-height: 0.92;
+                    letter-spacing: -0.01em;
                     transition: opacity 0.4s ease, transform 0.4s ease;
                 }
                 .ra-hero__headline--in { opacity: 1; transform: translateY(0); }
@@ -435,9 +438,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     display: block;
                     font-family: 'Bebas Neue', 'Arial Black', sans-serif;
                     font-weight: 900;
-                    letter-spacing: 0.02em;
                     color: #fff;
-                    text-shadow: 0 0 80px rgba(0,174,217,0.3);
+                    text-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 80px rgba(0,174,217,0.3);
                     font-size: clamp(3.5rem, 10vw, 9rem);
                     animation: line-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
                 }

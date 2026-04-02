@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Users, TrendingUp } from 'lucide-react';
+import { Users, TrendingUp, Activity } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const ACTIVITY_MESSAGES = [
   { icon: Users, text: 'Juan de Santo Domingo guardó un Toyota Corolla', time: '2 min' },
@@ -23,7 +24,7 @@ export const SocialProofWidget: React.FC = () => {
         setCurrentIndex((prev) => (prev + 1) % ACTIVITY_MESSAGES.length);
         setIsVisible(true);
       }, 500);
-    }, 8000);
+    }, 12000); // 12s per message for better readability
 
     return () => clearInterval(interval);
   }, []);
@@ -31,26 +32,59 @@ export const SocialProofWidget: React.FC = () => {
   const currentActivity = ACTIVITY_MESSAGES[currentIndex];
   const Icon = currentActivity.icon;
 
-  if (!isVisible) return null;
-
   return (
-    <div className="fixed right-6 bottom-6 z-40 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl route-fade-in sm:block sm:max-w-sm dark:border-slate-700 dark:bg-slate-800">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cyan-600 shadow-lg shadow-cyan-500/20">
-          <Icon size={18} className="text-white" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold leading-snug text-slate-800 dark:text-white">
-            {currentActivity.text}
-          </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Hace {currentActivity.time}
-          </p>
-        </div>
-        <div className="shrink-0">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-        </div>
-      </div>
-    </div>
+    <AnimatePresence mode="wait">
+      {isVisible && (
+        <motion.div 
+          initial={{ opacity: 0, x: 50, scale: 0.95 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: 20, scale: 0.98 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="ra-social-proof fixed right-6 top-24 z-40 hidden sm:block w-fit max-w-[340px]"
+        >
+          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-black/40 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <div className="flex items-start gap-3">
+              <div className="relative">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-900 to-black border border-cyan-500/30">
+                  <Icon size={18} className="text-cyan-400" />
+                </div>
+                <motion.div 
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-cyan-400 blur-[2px]" 
+                />
+              </div>
+              
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-0.5">
+                    <Activity size={10} className="text-cyan-500/70" />
+                    <span className="font-tech text-[9px] uppercase tracking-[0.16em] text-cyan-500/70">
+                        Live Activity Protocol
+                    </span>
+                </div>
+                <p className="text-[0.85rem] font-medium leading-tight text-white/90">
+                  {currentActivity.text}
+                </p>
+                <p className="mt-1.5 font-tech text-[10px] text-white/40 uppercase tracking-widest">
+                  Hace {currentActivity.time}
+                </p>
+              </div>
+
+              <div className="shrink-0 pt-1">
+                <div className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)] animate-pulse" />
+              </div>
+            </div>
+
+            {/* Subtle scanning light effect */}
+            <motion.div 
+                initial={{ left: '-100%' }}
+                animate={{ left: '100%' }}
+                transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                className="absolute top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent skew-x-12"
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
