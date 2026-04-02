@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock } from 'lucide-react';
-import { motion } from 'motion/react';
-import { AnimatePresence } from 'motion/react';
+"use client";
+
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 
@@ -13,35 +14,35 @@ interface HeroSectionProps {
 
 const HEADLINES = [
   {
-    eyebrow: 'Autoridad en Puerto Rico',
+    eyebrow: 'PROTOCOL: DOMINANCE',
     line1: 'EL AUTO DE',
     line2: 'TUS SUEÑOS',
-    accent: 'ESTÁ AQUÍ',
-    sub: 'Garantizamos la mejor estructura de financiamiento. Descubre unidades exclusivas y sal montado hoy.',
+    accent: 'READY TO LAUNCH',
+    sub: 'Garantizamos la estructura de financiamiento más agresiva de Puerto Rico. Unidades exclusivas, aprobaciones blindadas.',
   },
   {
-    eyebrow: 'Aprobación VIP',
+    eyebrow: 'PROTOCOL: APPROVAL',
     line1: 'TU CRÉDITO',
-    line2: 'NO ES',
-    accent: 'PROBLEMA',
-    sub: 'Nuestros especialistas pelean tu aprobación incluso con $0 pronto. Transparencia total, cero trucos.',
+    line2: 'ESTÁ PROTEGIDO',
+    accent: 'ZERO DOWN',
+    sub: 'Nuestros especialistas ejecutan aprobaciones de alta velocidad incluso con desafíos crediticios. Transparencia Richard.',
   },
   {
-    eyebrow: 'Bono de Trade-In',
-    line1: 'PAGAMOS MÁS',
-    line2: 'POR TU',
-    accent: 'TRADE-IN',
-    sub: 'Cotiza tu vehículo actual en 90 segundos. Úsalo como pronto y llévate una unidad superior hoy mismo.',
+    eyebrow: 'PROTOCOL: TRADE-IN',
+    line1: 'PAGAMOS EL',
+    line2: 'MAX TOTAL',
+    accent: 'EXCHANGE NOW',
+    sub: 'Valora tu activo en 90 segundos con nuestro motor de tasación neural. Sal montado en una unidad superior hoy.',
   },
 ];
 
 const TICKER_ITEMS = [
-  '⚡ Financiamiento desde 4.9% APR',
-  '🛡 Garantía certificada incluida',
-  '🔁 Trade-In digital en 90 segundos',
-  '📍 Bayamón, Puerto Rico',
-  '🤖 Richard AI disponible 24/7',
-  '✅ Sin costos ocultos',
+  '⚡ ESTRUCTURAS DESDE 4.9% APR',
+  '🛡 SEGURIDAD SENTINEL CERTIFICADA',
+  '🔁 VALORACIÓN NEURAL EN 90S',
+  '📍 HUB CENTRAL: BAYAMÓN, PR',
+  '🤖 RICHARD AI ADVISOR: ONLINE',
+  '✅ SIN TRUCOS, SIN COSTOS OCULTOS',
 ];
 
 const HeroSection: React.FC<HeroSectionProps> = ({
@@ -50,23 +51,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onSellCar,
 }) => {
   const [idx, setIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
-  const [tickerPos, setTickerPos] = useState(0);
   const tickerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number>(0);
 
-  /* ── Headline carousel ── */
   useEffect(() => {
     const iv = setInterval(() => {
       setIdx((p) => (p + 1) % HEADLINES.length);
-    }, 7000);
+    }, 8000);
     return () => clearInterval(iv);
   }, []);
 
-  /* ── Continuous ticker ── */
   useEffect(() => {
     let pos = 0;
-    const speed = 0.45;
+    const speed = 0.5;
     const step = () => {
       if (tickerRef.current) {
         const w = tickerRef.current.scrollWidth / 2;
@@ -83,580 +80,200 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const h = HEADLINES[idx];
 
   return (
-    <section className="ra-hero">
-      {/* ── Background ── */}
-      <div className="ra-hero__bg">
+    <section className="relative min-h-[95vh] w-full overflow-hidden bg-slate-950 flex flex-col">
+      {/* ── Cinematic Background Engine ── */}
+      <div className="absolute inset-0 z-0">
         <OptimizedImage
           src="https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=2400&auto=format&fit=crop"
-          alt="Richard Automotive Hero"
-          className="ra-hero__img"
+          alt="Richard Automotive Universe"
+          className="h-full w-full object-cover object-[center_35%] opacity-25 scale-105"
           priority
         />
-        <div className="ra-hero__overlay" />
-        <div className="ra-hero__vignette" />
-
-        {/* Decorative grid lines */}
-        <div className="ra-hero__grid-line ra-hero__grid-line--v1" />
-        <div className="ra-hero__grid-line ra-hero__grid-line--v2" />
-        <div className="ra-hero__grid-line ra-hero__grid-line--h1" />
-
-        {/* Glowing orbs & Mesh */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/80 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent" />
+        
+        {/* Ambient Tech Elements */}
         <div className="absolute inset-0 mesh-bg-elite z-[1]" />
-        <div className="ra-hero__orb ra-hero__orb--tl" />
-        <div className="ra-hero__orb ra-hero__orb--br" />
-
-        {/* Animated speed lines */}
-        <div className="ra-hero__speedlines">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className={`ra-hero__speedline ra-hero__speedline--${i}`} />
-          ))}
-        </div>
+        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
+        <div className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
       </div>
 
-      {/* ── Main content ── */}
-      <div className="ra-hero__content">
-        {/* Left: Typography */}
-        <div className="ra-hero__left">
-          {/* Live badge */}
-          <div className="ra-hero__badge">
-            <span className="ra-hero__badge-dot" />
-            <span>LIVE SHOWROOM</span>
-            <span className="ra-hero__badge-sep">·</span>
-            <span className="ra-hero__badge-eyebrow">{h.eyebrow}</span>
-          </div>
+      {/* ── Tactical Content Grid ── */}
+      <div className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0">
+        
+        {/* Left: Intelligence & Branding */}
+        <div className="flex-1 space-y-8 text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4"
+          >
+            <div className="flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 backdrop-blur-xl">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+              <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">
+                SENTINEL HUB ACTIVE
+              </span>
+            </div>
+            <span className="font-tech text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              {h.eyebrow}
+            </span>
+          </motion.div>
 
-          {/* Headline with Motion */}
-          <div className="ra-hero__headline h-[18rem] md:h-[22rem] lg:h-[28rem]">
+          <div className="min-h-[300px] lg:min-h-[400px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30, skewY: 2 }}
+                initial={{ opacity: 0, y: 40, skewY: 3 }}
                 animate={{ opacity: 1, y: 0, skewY: 0 }}
-                exit={{ opacity: 0, y: -30, skewY: -2 }}
+                exit={{ opacity: 0, y: -40, skewY: -3 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col"
+                className="flex flex-col gap-0"
               >
-                <span className="ra-hero__line ra-hero__line--1 text-gradient-cyan">{h.line1}</span>
-                <span className="ra-hero__line ra-hero__line--2">{h.line2}</span>
-                <span className="ra-hero__line ra-hero__line--accent">{h.accent}</span>
+                <h1 className="flex flex-col">
+                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-white leading-[0.85]">{h.line1}</span>
+                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-white opacity-80 leading-[0.85]">{h.line2}</span>
+                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-primary leading-[0.85] drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                    {h.accent}
+                  </span>
+                </h1>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={idx}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="ra-hero__sub"
-            >
-              {h.sub}
-            </motion.p>
-          </AnimatePresence>
+          <motion.p 
+            key={`sub-${idx}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-sm md:text-lg text-slate-400 max-w-xl leading-relaxed font-medium transition-all"
+          >
+            {h.sub}
+          </motion.p>
 
-          {/* Trust pills */}
-          <div className="ra-hero__pills">
-            <span
-              className="ra-hero__pill"
-              title="Todas nuestras unidades pasan por estrictos controles"
-            >
-              <Shield size={11} /> 100% Certified
-            </span>
-            <span className="ra-hero__pill" title="Decisiones rápidas para que no pierdas tiempo">
-              <Clock size={11} /> Aprobación en 15 Min
-            </span>
-            <span className="ra-hero__pill" title="Sin trucos, compra hoy, maneja hoy">
-              <Zap size={11} /> Entrega el Mismo Día
-            </span>
+          <div className="flex flex-wrap gap-4 pt-4">
+            {[
+              { icon: <Shield size={14} />, label: "Certified" },
+              { icon: <Clock size={14} />, label: "Express Approval" },
+              { icon: <Zap size={14} />, label: "Same Day" }
+            ].map((p, i) => (
+              <span key={i} className="flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:border-cyan-500/20 hover:text-slate-300">
+                {p.icon} {p.label}
+              </span>
+            ))}
           </div>
         </div>
 
-        {/* Right: CTA panel */}
-        <div className="ra-hero__right">
-          <div className="ra-hero__panel">
-            {/* Panel header: Scarcity & Urgency */}
-            <div className="ra-hero__panel-header">
-              <div className="ra-hero__panel-status">
-                <span className="ra-hero__panel-dot" />
-                <span>3 Especialistas Libres</span>
-              </div>
-              <span className="ra-hero__panel-label text-orange-400 opacity-90">
-                Atención Inmediata
-              </span>
+        {/* Right: Command Panel CTAs */}
+        <div className="w-full lg:w-[450px] space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-premium p-8 space-y-6 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-4">
+              <Sparkles className="text-cyan-400/20 animate-pulse" size={40} />
             </div>
 
-            {/* CTA buttons */}
-            <button
-              onClick={() => {
-                trackInterestIndex('browse_inventory_intent', 'hero');
-                onBrowseInventory();
-              }}
-              className="ra-cta ra-cta--primary"
-            >
-              <div className="ra-cta__shine" />
-              <div className="ra-cta__text">
-                <span className="ra-cta__tag">Acceso Exclusivo</span>
-                <span className="ra-cta__label">EXPLORAR INVENTARIO </span>
-              </div>
-              <div className="ra-cta__icon">
-                <ArrowRight size={18} />
-              </div>
-            </button>
-
-            <button
-              onClick={() => {
-                trackInterestIndex('neural_match_intent', 'hero');
-                onNeuralMatch();
-              }}
-              className="ra-cta ra-cta--secondary"
-            >
-              <div className="ra-cta__text">
-                <span className="ra-cta__tag">Inteligencia Artificial</span>
-                <span className="ra-cta__label">DESCUBRE TU AUTO IDEAL</span>
-              </div>
-              <div className="ra-cta__icon ra-cta__icon--cyan">
-                <BrainCircuit size={18} />
-              </div>
-            </button>
-
-            <button
-              onClick={() => {
-                trackInterestIndex('sell_car_intent', 'hero');
-                onSellCar();
-              }}
-              className="ra-cta ra-cta--tertiary"
-            >
-              <div className="ra-cta__text">
-                <span className="ra-cta__tag">Cotización VIP</span>
-                <span className="ra-cta__label">COTIZA TU AUTO EN 90S</span>
-              </div>
-              <div className="ra-cta__icon ra-cta__icon--green">
-                <DollarSign size={18} />
-              </div>
-            </button>
-
-            {/* Stat bar */}
-            <div className="ra-hero__stats">
-              <div className="ra-hero__stat">
-                <span className="ra-hero__stat-num">500+</span>
-                <span className="ra-hero__stat-lbl">Familias Montadas</span>
-              </div>
-              <div className="ra-hero__stat-div" />
-              <div className="ra-hero__stat">
-                <span className="ra-hero__stat-num">4.9%</span>
-                <span className="ra-hero__stat-lbl">Tasa Desde</span>
-              </div>
-              <div className="ra-hero__stat-div" />
-              <div className="ra-hero__stat">
-                <span className="ra-hero__stat-num">24/7</span>
-                <span className="ra-hero__stat-lbl">Asesoría IA</span>
-              </div>
+            <div className="space-y-2">
+              <p className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
+                DIRECT ACTION HUB
+              </p>
+              <div className="h-1 w-12 bg-cyan-500/30 rounded-full" />
             </div>
-          </div>
+
+            <div className="space-y-3">
+              <HeroCTA 
+                label="EXPLORAR INVENTARIO" 
+                tag="UNIT DATABASE" 
+                icon={<ArrowRight size={20} />} 
+                variant="primary" 
+                onClick={onBrowseInventory}
+              />
+              <HeroCTA 
+                label="NEURAL MATCH" 
+                tag="AI DISCOVERY" 
+                icon={<BrainCircuit size={20} />} 
+                variant="secondary" 
+                onClick={onNeuralMatch}
+              />
+              <HeroCTA 
+                label="COTIZAR MI AUTO" 
+                tag="TRADE-IN EVAL" 
+                icon={<DollarSign size={20} />} 
+                variant="tertiary" 
+                onClick={onSellCar}
+              />
+            </div>
+
+            {/* Micro Dashboard */}
+            <div className="grid grid-cols-3 gap-2 pt-6 border-t border-white/5">
+              {[
+                { val: "500+", lbl: "Families" },
+                { val: "4.9%", lbl: "APR" },
+                { val: "24/7", lbl: "Support" }
+              ].map((s, i) => (
+                <div key={i} className="text-center">
+                  <div className="font-tech text-lg font-black text-white">{s.val}</div>
+                  <div className="font-tech text-[8px] uppercase tracking-widest text-slate-500">{s.lbl}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* ── Bottom ticker ── */}
-      <div className="ra-hero__ticker-wrap" aria-hidden>
-        <div className="ra-hero__ticker-inner" ref={tickerRef}>
+      {/* ── Global Ticker Protocol ── */}
+      <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4">
+        <div className="flex overflow-hidden whitespace-nowrap" ref={tickerRef}>
           {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-            <span key={i} className="ra-hero__ticker-item">
+            <span key={i} className="mx-8 font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 hover:text-cyan-400 transition-colors cursor-default">
               {item}
             </span>
           ))}
         </div>
       </div>
 
-      {/* ── Embedded styles ── */}
       <style>{`
-                /* === HERO SECTION === */
-                .ra-hero {
-                    position: relative;
-                    min-height: 92vh;
-                    width: 100%;
-                    overflow: hidden;
-                    background: #03060c;
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                /* --- Background --- */
-                .ra-hero__bg { position: absolute; inset: 0; z-index: 0; }
-                .ra-hero__img {
-                    width: 100%; height: 100%;
-                    object-fit: cover;
-                    object-position: center 30%;
-                    opacity: 0.28;
-                    transform: scale(1.08);
-                }
-                .ra-hero__overlay {
-                    position: absolute; inset: 0;
-                    background:
-                        radial-gradient(ellipse 70% 60% at 80% 20%, rgba(0,180,220,0.18), transparent 60%),
-                        radial-gradient(ellipse 60% 50% at 10% 80%, rgba(0,80,120,0.15), transparent 55%),
-                        linear-gradient(175deg, rgba(3,6,12,0.1) 0%, rgba(3,6,12,0.98) 78%);
-                }
-                .ra-hero__vignette {
-                    position: absolute; inset: 0;
-                    background: 
-                        radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(2,5,10,0.8) 100%),
-                        linear-gradient(to right, rgba(2,5,10,0.5) 0%, transparent 40%);
-                }
-
-                /* Grid lines */
-                .ra-hero__grid-line {
-                    position: absolute;
-                    background: linear-gradient(to bottom, transparent, rgba(0,200,240,0.12) 40%, rgba(0,200,240,0.12) 60%, transparent);
-                }
-                .ra-hero__grid-line--v1 { top: 0; bottom: 0; left: 60%; width: 1px; }
-                .ra-hero__grid-line--v2 { top: 0; bottom: 0; right: 18%; width: 1px; opacity: 0.4; }
-                .ra-hero__grid-line--h1 {
-                    left: 0; right: 0; top: 62%; height: 1px;
-                    background: linear-gradient(to right, transparent, rgba(0,200,240,0.08) 20%, rgba(0,200,240,0.08) 80%, transparent);
-                }
-
-                /* Orbs */
-                .ra-hero__orb {
-                    position: absolute; border-radius: 50%;
-                    filter: blur(80px); pointer-events: none;
-                }
-                .ra-hero__orb--tl {
-                    top: -80px; left: -80px;
-                    width: 400px; height: 400px;
-                    background: radial-gradient(circle, rgba(0,174,217,0.22) 0%, transparent 70%);
-                    animation: orb-pulse 8s ease-in-out infinite;
-                }
-                .ra-hero__orb--br {
-                    bottom: -100px; right: 200px;
-                    width: 500px; height: 500px;
-                    background: radial-gradient(circle, rgba(0,100,180,0.14) 0%, transparent 70%);
-                    animation: orb-pulse 11s ease-in-out infinite reverse;
-                }
-                @keyframes orb-pulse {
-                    0%, 100% { transform: scale(1); opacity: 1; }
-                    50% { transform: scale(1.15); opacity: 0.7; }
-                }
-
-                /* Speed lines */
-                .ra-hero__speedlines {
-                    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-                }
-                .ra-hero__speedline {
-                    position: absolute;
-                    left: -10%; right: 50%;
-                    top: var(--top);
-                    height: 1px;
-                    background: linear-gradient(to right, transparent, rgba(0,200,240,0.35), transparent);
-                    animation: speedline 4s ease-out infinite;
-                    animation-delay: var(--delay);
-                    transform-origin: left center;
-                }
-                .ra-hero__speedline--0 { --delay: 0s; --top: 10%; }
-                .ra-hero__speedline--1 { --delay: 0.4s; --top: 20%; }
-                .ra-hero__speedline--2 { --delay: 0.8s; --top: 30%; }
-                .ra-hero__speedline--3 { --delay: 1.2s; --top: 40%; }
-                .ra-hero__speedline--4 { --delay: 1.6s; --top: 50%; }
-                .ra-hero__speedline--5 { --delay: 2.0s; --top: 60%; }
-                .ra-hero__speedline--6 { --delay: 2.4s; --top: 70%; }
-                .ra-hero__speedline--7 { --delay: 2.8s; --top: 80%; }
-                @keyframes speedline {
-                    0% { opacity: 0; transform: scaleX(0); }
-                    30% { opacity: 1; transform: scaleX(1); }
-                    100% { opacity: 0; transform: scaleX(1) translateX(60%); }
-                }
-
-                /* --- Content layout --- */
-                .ra-hero__content {
-                    position: relative; z-index: 10;
-                    flex: 1;
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    gap: 2rem;
-                    max-width: 1400px;
-                    width: 100%;
-                    margin: 0 auto;
-                    padding: 5.5rem 1.25rem 6rem;
-                }
-                @media (min-width: 1024px) {
-                    .ra-hero__content {
-                        grid-template-columns: 1.22fr 0.78fr;
-                        align-items: end;
-                        padding: 7rem 4rem 7.5rem 3rem;
-                        gap: 4rem;
-                    }
-                }
-
-                /* --- Left: Typography --- */
-                .ra-hero__left { display: flex; flex-direction: column; gap: 1.5rem; }
-
-                /* Badge */
-                .ra-hero__badge {
-                    display: inline-flex; align-items: center; gap: 0.5rem;
-                    padding: 0.375rem 1.1rem;
-                    border: 1px solid rgba(0,200,240,0.25);
-                    border-radius: 50px;
-                    background: rgba(0,20,35,0.6);
-                    backdrop-filter: blur(12px);
-                    font-size: 0.625rem;
-                    font-weight: 700;
-                    letter-spacing: 0.22em;
-                    text-transform: uppercase;
-                    color: rgba(200,240,255,0.8);
-                    width: fit-content;
-                    animation: badge-in 0.8s cubic-bezier(0.16,1,0.3,1) both;
-                }
-                .ra-hero__badge-dot {
-                    width: 6px; height: 6px; border-radius: 50%;
-                    background: #00d4ff;
-                    box-shadow: 0 0 8px #00d4ff;
-                    animation: blink 2s ease-in-out infinite;
-                }
-                @keyframes blink {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.3; }
-                }
-                .ra-hero__badge-sep { opacity: 0.4; }
-                .ra-hero__badge-eyebrow { color: #00d4ff; }
-                @keyframes badge-in {
-                    from { opacity: 0; transform: translateY(-12px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-
-                /* Headline */
-                .ra-hero__headline {
-                    display: flex; flex-direction: column;
-                    line-height: 0.92;
-                    letter-spacing: -0.01em;
-                    transition: opacity 0.4s ease, transform 0.4s ease;
-                }
-                .ra-hero__headline--in { opacity: 1; transform: translateY(0); }
-                .ra-hero__headline--out { opacity: 0; transform: translateY(-16px); }
-
-                .ra-hero__line {
-                    display: block;
-                    font-family: 'Bebas Neue', 'Arial Black', sans-serif;
-                    font-weight: 900;
-                    color: #fff;
-                    text-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 80px rgba(0,174,217,0.3);
-                    font-size: clamp(3.5rem, 10vw, 9rem);
-                    animation: line-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
-                }
-                .ra-hero__line--2 { animation-delay: 0.07s; }
-                .ra-hero__line--accent {
-                    animation-delay: 0.14s;
-                    color: transparent;
-                    -webkit-text-stroke: 1.5px rgba(0,210,255,0.6);
-                }
-                @keyframes line-in {
-                    from { opacity: 0; transform: translateX(-24px) skewX(-4deg); }
-                    to { opacity: 1; transform: translateX(0) skewX(0deg); }
-                }
-
-                /* Sub */
-                .ra-hero__sub {
-                    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-                    line-height: 1.6;
-                    color: rgba(200,220,235,0.78);
-                    max-width: 560px;
-                    transition: opacity 0.5s ease 0.15s, transform 0.5s ease 0.15s;
-                }
-                .ra-hero__sub--in { opacity: 1; transform: translateY(0); }
-                .ra-hero__sub--out { opacity: 0; transform: translateY(8px); }
-
-                /* Pills */
-                .ra-hero__pills {
-                    display: flex; flex-wrap: wrap; gap: 0.5rem;
-                    animation: pills-in 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s both;
-                }
-                .ra-hero__pill {
-                    display: inline-flex; align-items: center; gap: 0.35rem;
-                    padding: 0.35rem 0.9rem;
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 50px;
-                    background: rgba(255,255,255,0.04);
-                    font-size: 0.625rem;
-                    font-weight: 700;
-                    letter-spacing: 0.18em;
-                    text-transform: uppercase;
-                    color: rgba(180,210,230,0.7);
-                }
-                @keyframes pills-in {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-
-                /* --- Right: Panel --- */
-                .ra-hero__right {
-                    animation: panel-in 0.9s cubic-bezier(0.16,1,0.3,1) 0.15s both;
-                }
-                @keyframes panel-in {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .ra-hero__panel {
-                    border: 1px solid rgba(0,200,240,0.15);
-                    border-radius: 1.75rem;
-                    background: linear-gradient(160deg, rgba(5,14,25,0.95), rgba(3,8,16,0.92));
-                    backdrop-filter: blur(28px);
-                    padding: 1rem;
-                    box-shadow: 0 40px 80px -20px rgba(0,120,200,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.6rem;
-                }
-
-                /* Panel header */
-                .ra-hero__panel-header {
-                    display: flex; align-items: center; justify-content: space-between;
-                    padding: 0.5rem 0.75rem;
-                    border-radius: 0.9rem;
-                    border: 1px solid rgba(255,255,255,0.07);
-                    background: rgba(0,0,0,0.3);
-                    margin-bottom: 0.25rem;
-                }
-                .ra-hero__panel-status {
-                    display: flex; align-items: center; gap: 0.5rem;
-                    font-size: 0.625rem; font-weight: 700;
-                    letter-spacing: 0.2em; text-transform: uppercase;
-                    color: #34d399;
-                }
-                .ra-hero__panel-dot {
-                    width: 6px; height: 6px; border-radius: 50%;
-                    background: #34d399; box-shadow: 0 0 8px #34d399;
-                    animation: blink 1.8s ease-in-out infinite;
-                }
-                .ra-hero__panel-label {
-                    font-size: 0.625rem; font-weight: 700;
-                    letter-spacing: 0.24em; text-transform: uppercase;
-                    color: rgba(0,200,240,0.6);
-                }
-
-                /* CTA buttons */
-                .ra-cta {
-                    position: relative; overflow: hidden;
-                    display: flex; align-items: center; justify-content: space-between;
-                    padding: 1.1rem 1.25rem;
-                    border-radius: 1.25rem;
-                    border: none; cursor: pointer;
-                    transition: transform 0.18s ease, box-shadow 0.18s ease;
-                    text-align: left;
-                }
-                .ra-cta:hover { transform: translateY(-2px); }
-                .ra-cta:active { transform: scale(0.98); }
-
-                .ra-cta--primary {
-                    background: linear-gradient(130deg, #00b4d8 0%, #0077a8 100%);
-                    box-shadow: 0 12px 32px -8px rgba(0,180,216,0.55);
-                    color: #fff;
-                }
-                .ra-cta--primary:hover { box-shadow: 0 18px 40px -8px rgba(0,180,216,0.7); }
-
-                .ra-cta--secondary {
-                    background: rgba(0,30,50,0.8);
-                    border: 1px solid rgba(0,200,240,0.2);
-                    color: #fff;
-                }
-                .ra-cta--secondary:hover { background: rgba(0,40,65,0.9); border-color: rgba(0,200,240,0.4); }
-
-                .ra-cta--tertiary {
-                    background: rgba(6,35,20,0.8);
-                    border: 1px solid rgba(52,211,153,0.2);
-                    color: #fff;
-                }
-                .ra-cta--tertiary:hover { background: rgba(6,45,25,0.9); border-color: rgba(52,211,153,0.4); }
-
-                /* Shine overlay for primary */
-                .ra-cta__shine {
-                    position: absolute; top: 0; left: -75%;
-                    width: 50%; height: 100%;
-                    background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
-                    transform: skewX(-20deg);
-                    animation: shine 4s ease-in-out infinite 1s;
-                }
-                @keyframes shine {
-                    0%, 85%, 100% { left: -75%; }
-                    50% { left: 125%; }
-                }
-
-                .ra-cta__text { display: flex; flex-direction: column; gap: 0.2rem; position: relative; }
-                .ra-cta__tag {
-                    font-size: 0.6rem; font-weight: 700;
-                    letter-spacing: 0.22em; text-transform: uppercase;
-                    opacity: 0.65;
-                }
-                .ra-cta--primary .ra-cta__tag { color: rgba(200,240,255,0.9); }
-                .ra-cta--secondary .ra-cta__tag { color: #00d4ff; }
-                .ra-cta--tertiary .ra-cta__tag { color: #34d399; }
-
-                .ra-cta__label {
-                    font-family: 'Bebas Neue', 'Arial Black', sans-serif;
-                    font-size: 1.4rem;
-                    letter-spacing: 0.06em;
-                    line-height: 1;
-                }
-
-                .ra-cta__icon {
-                    display: flex; align-items: center; justify-content: center;
-                    width: 40px; height: 40px; border-radius: 50%;
-                    background: rgba(255,255,255,0.15);
-                    flex-shrink: 0;
-                    position: relative;
-                }
-                .ra-cta__icon--cyan { background: rgba(0,200,240,0.15); color: #00d4ff; }
-                .ra-cta__icon--green { background: rgba(52,211,153,0.15); color: #34d399; }
-
-                /* Stats bar */
-                .ra-hero__stats {
-                    display: flex; align-items: center; justify-content: space-around;
-                    padding: 0.75rem 0.5rem 0.25rem;
-                }
-                .ra-hero__stat { text-align: center; }
-                .ra-hero__stat-num {
-                    display: block;
-                    font-family: 'Bebas Neue', sans-serif;
-                    font-size: 1.5rem; letter-spacing: 0.04em;
-                    color: #fff;
-                    line-height: 1;
-                }
-                .ra-hero__stat-lbl {
-                    display: block;
-                    font-size: 0.575rem; font-weight: 700;
-                    letter-spacing: 0.18em; text-transform: uppercase;
-                    color: rgba(150,200,220,0.5);
-                    margin-top: 0.2rem;
-                }
-                .ra-hero__stat-div {
-                    width: 1px; height: 28px;
-                    background: rgba(255,255,255,0.08);
-                }
-
-                /* --- Ticker --- */
-                .ra-hero__ticker-wrap {
-                    position: relative; z-index: 10;
-                    overflow: hidden;
-                    border-top: 1px solid rgba(255,255,255,0.07);
-                    background: rgba(0,0,0,0.45);
-                    backdrop-filter: blur(12px);
-                    padding: 0.5rem 0;
-                }
-                .ra-hero__ticker-inner {
-                    display: flex; align-items: center;
-                    gap: 2.5rem;
-                    white-space: nowrap;
-                    will-change: transform;
-                    padding: 0.2rem 0;
-                }
-                .ra-hero__ticker-item {
-                    font-size: 0.65rem; font-weight: 700;
-                    letter-spacing: 0.18em; text-transform: uppercase;
-                    color: rgba(160,210,230,0.65);
-                    flex-shrink: 0;
-                }
-                .ra-hero__ticker-item:nth-child(odd) { color: rgba(0,210,255,0.55); }
-            `}</style>
+        .mesh-bg-elite {
+          background: linear-gradient(-45deg, #00e5ff22, #7000ff22, #ff007011, #00ffaa11);
+          background-size: 400% 400%;
+          animation: meshGradient 20s ease infinite;
+          opacity: 0.3;
+          filter: blur(100px);
+        }
+        @keyframes meshGradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
     </section>
+  );
+};
+
+const HeroCTA = ({ label, tag, icon, variant, onClick }: any) => {
+  const styles: any = {
+    primary: "bg-cyan-500 text-slate-950 hover:bg-cyan-400 shadow-[0_10px_30px_-5px_rgba(0,229,255,0.4)]",
+    secondary: "bg-white/5 text-white border border-white/10 hover:bg-white/10",
+    tertiary: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
+  };
+
+  return (
+    <button 
+      onClick={onClick}
+      className={`group w-full flex items-center justify-between p-5 rounded-2xl transition-all duration-300 transform active:scale-95 ${styles[variant]}`}
+    >
+      <div className="flex flex-col items-start text-left">
+        <span className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1 opacity-60 ${variant === 'primary' ? 'text-slate-900' : ''}`}>
+          {tag}
+        </span>
+        <span className="font-cinematic text-xl tracking-wider leading-none">
+          {label}
+        </span>
+      </div>
+      <div className={`p-2 rounded-xl transition-transform group-hover:translate-x-1 ${variant === 'primary' ? 'bg-slate-950/10' : 'bg-white/5'}`}>
+        {icon}
+      </div>
+    </button>
   );
 };
 

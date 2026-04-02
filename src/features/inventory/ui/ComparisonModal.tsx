@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useMemo } from 'react';
 import { Car } from '@/shared/types/types';
 import { compareCars } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-
-import { X, Trophy, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X, Trophy, Zap, ShieldCheck, Cpu, Gauge, Star, Sparkles } from 'lucide-react';
 
 interface Props {
   cars: Car[];
@@ -11,11 +13,10 @@ interface Props {
 }
 
 const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
-  const [result, setResult] = useState<any>(null); // Ideally this would be typed, but keeping it simple for now
+  const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const analytics = useInventoryAnalytics();
 
-  // Ensure we have exactly 2 cars
   const car1 = cars[0];
   const car2 = cars[1];
 
@@ -35,214 +36,240 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
   if (!car1 || !car2) return null;
 
   return (
-    <div className="fixed inset-0 z-100 bg-[#0d2232] flex items-center justify-center animate-in fade-in duration-300">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-blue-900/20 to-transparent transform -skew-x-12 -translate-x-20"></div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-red-900/20 to-transparent transform -skew-x-12 translate-x-20"></div>
+    <div className="fixed inset-0 z-[110] flex items-center justify-center overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-slate-950/95 backdrop-blur-3xl"
+        onClick={onClose}
+      />
+
+      {/* Richard VS Arena Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-30">
+        <div className="absolute top-0 left-1/4 w-[500px] h-full bg-cyan-500/5 -skew-x-12 blur-[120px]" />
+        <div className="absolute top-0 right-1/4 w-[500px] h-full bg-primary/5 skew-x-12 blur-[120px]" />
       </div>
 
       <button
         onClick={onClose}
-        title="Cerrar Arena"
-        className="absolute top-6 right-6 z-50 text-slate-500 hover:text-white transition-colors"
+        className="absolute top-8 right-8 z-[120] flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
       >
-        <X size={32} />
+        <X size={24} />
       </button>
 
-      <div className="w-full h-full max-w-[1800px] flex flex-col relative z-10 p-4 lg:p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">
-            Richard{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
-              VS
-            </span>{' '}
-            Arena
-          </h2>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.3em] mt-2">
-            Simulación Comparativa IA
-          </p>
+      <div className="relative z-10 flex h-full w-full flex-col p-6 lg:p-12">
+        {/* Header Protocol */}
+        <div className="mb-12 text-center">
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="flex items-center gap-4">
+              <div className="h-px w-12 bg-cyan-500/30" />
+              <span className="font-tech text-xs uppercase tracking-[0.5em] text-cyan-400">
+                SENTINEL COMPARISON PROTOCOL
+              </span>
+              <div className="h-px w-12 bg-cyan-500/30" />
+            </div>
+            <h2 className="font-cinematic text-4xl lg:text-5xl text-white tracking-tight">
+              Richard <span className="italic text-slate-500">Neural Combat</span>
+            </h2>
+          </motion.div>
         </div>
 
-        {/* Main Arena */}
-        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0 relative">
-          {/* Car 1 (Left) */}
-          <div
-            className={`flex-1 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ${result?.winnerId === car1.id ? 'scale-105' : result && result.winnerId !== car1.id ? 'scale-95 opacity-50 grayscale-[0.5]' : ''}`}
-          >
-            <div className="relative w-full max-w-lg aspect-[4/3]">
-              <img
-                src={car1.img}
-                alt={car1.name}
-                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(59,130,246,0.3)]"
-              />
-              {result?.winnerId === car1.id && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce">
-                  <Trophy
-                    size={48}
-                    className="text-yellow-400 drop-shadow-lg"
-                    fill="currentColor"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="mt-6 text-center">
-              <h3 className="text-3xl font-black text-white uppercase tracking-tight">
-                {car1.name}
-              </h3>
-              <p className="text-2xl font-bold text-blue-400">${car1.price.toLocaleString()}</p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                <span className="px-3 py-1 bg-slate-800 rounded-full text-xs font-bold text-slate-300 uppercase">
-                  {car1.type}
-                </span>
-                {car1.badge && (
-                  <span className="px-3 py-1 bg-blue-600 rounded-full text-xs font-bold text-white uppercase">
-                    {car1.badge}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+        {/* Binary Arena */}
+        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-0 relative">
+          
+          {/* Unit Alpha */}
+          <UnitPanel 
+            car={car1} 
+            side="left" 
+            isWinner={result?.winnerId === car1.id}
+            isLoser={result && result.winnerId !== car1.id}
+            stats={mockStats(car1)}
+          />
 
-          {/* VS Center / Controls */}
-          <div className="w-24 lg:w-96 flex flex-col items-center justify-center z-20 shrink-0">
-            {!result && !loading && (
-              <button
-                onClick={handleBattle}
-                className="group relative w-24 h-24 lg:w-32 lg:h-32 bg-slate-900 border-4 border-primary rounded-full flex items-center justify-center hover:scale-110 hover:shadow-[0_0_50px_rgba(0,174,217,0.6)] transition-all cursor-pointer"
-              >
-                <span className="text-4xl lg:text-5xl font-black text-white italic group-hover:animate-pulse">
-                  VS
-                </span>
-                <div className="absolute inset-0 rounded-full border-t-4 border-primary animate-spin [animation-duration:3s]"></div>
-              </button>
-            )}
-
-            {loading && (
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-24 h-24 border-4 border-slate-700 border-t-primary rounded-full animate-spin"></div>
-                <p className="text-primary font-bold text-xs uppercase tracking-widest animate-pulse">
-                  Simulando...
-                </p>
-              </div>
-            )}
-
-            {result && (
-              <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
-                <div className="px-6 py-2 bg-primary rounded-full shadow-lg shadow-cyan-500/50">
-                  <span className="text-white font-black uppercase tracking-widest text-sm">
-                    Análisis Completo
-                  </span>
-                </div>
-                <button
-                  onClick={() => setResult(null)}
-                  className="text-slate-500 hover:text-white text-xs font-bold underline"
+          {/* Central Command / VS Node */}
+          <div className="relative z-50 flex w-full flex-col items-center justify-center lg:w-48">
+            <AnimatePresence mode="wait">
+              {!result && !loading ? (
+                <motion.button
+                  key="battle-btn"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.1, boxShadow: "0 0 40px rgba(0, 174, 217, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleBattle}
+                  className="group relative flex h-28 w-28 items-center justify-center rounded-full border-2 border-cyan-500/50 bg-slate-900 shadow-2xl transition-all"
                 >
-                  Reiniciar Batalla
-                </button>
-              </div>
-            )}
+                  <span className="font-tech text-3xl font-black italic text-white group-hover:text-cyan-400">VS</span>
+                  <div className="absolute inset-0 rounded-full border-t-2 border-cyan-400 animate-spin-slow" />
+                </motion.button>
+              ) : loading ? (
+                <motion.div 
+                  key="loading-node"
+                  className="flex flex-col items-center gap-6"
+                >
+                  <div className="relative h-24 w-24">
+                    <motion.div 
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="h-full w-full rounded-full border-4 border-white/5 border-t-cyan-500"
+                    />
+                    <Cpu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-cyan-400 animate-pulse" size={32} />
+                  </div>
+                  <p className="font-tech text-[10px] uppercase tracking-[0.4em] text-cyan-400 animate-pulse">
+                    Computing Vectors...
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="result-node"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex flex-col items-center gap-4"
+                >
+                  <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-6 py-2 backdrop-blur-xl">
+                    <span className="font-tech text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                      Sync Complete
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => setResult(null)}
+                    className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors underline underline-offset-4"
+                  >
+                    Reset Simulation
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Car 2 (Right) */}
-          <div
-            className={`flex-1 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ${result?.winnerId === car2.id ? 'scale-105' : result && result.winnerId !== car2.id ? 'scale-95 opacity-50 grayscale-[0.5]' : ''}`}
-          >
-            <div className="relative w-full max-w-lg aspect-[4/3]">
-              <img
-                src={car2.img}
-                alt={car2.name}
-                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(239,68,68,0.3)] transform -scale-x-100"
-              />
-              {result?.winnerId === car2.id && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce">
-                  <Trophy
-                    size={48}
-                    className="text-yellow-400 drop-shadow-lg"
-                    fill="currentColor"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="mt-6 text-center">
-              <h3 className="text-3xl font-black text-white uppercase tracking-tight">
-                {car2.name}
-              </h3>
-              <p className="text-2xl font-bold text-red-400">${car2.price.toLocaleString()}</p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                <span className="px-3 py-1 bg-slate-800 rounded-full text-xs font-bold text-slate-300 uppercase">
-                  {car2.type}
-                </span>
-                {car2.badge && (
-                  <span className="px-3 py-1 bg-red-600 rounded-full text-xs font-bold text-white uppercase">
-                    {car2.badge}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+          {/* Unit Beta */}
+          <UnitPanel 
+            car={car2} 
+            side="right" 
+            isWinner={result?.winnerId === car2.id}
+            isLoser={result && result.winnerId !== car2.id}
+            stats={mockStats(car2)}
+          />
+
         </div>
 
-        {/* Results Section */}
-        {result && (
-          <div className="mt-12 max-w-5xl mx-auto w-full animate-in slide-in-from-bottom-10 fade-in duration-500">
-            <div className="bg-slate-800/50 backdrop-blur-md rounded-[40px] border border-slate-700 p-8 lg:p-10">
-              {/* Final Verdict */}
-              <div className="text-center mb-10">
-                <h4 className="text-primary font-black uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2">
-                  <Zap size={18} /> Veredicto de Richard IA
-                </h4>
-                <p className="text-2xl lg:text-3xl font-medium text-white leading-tight max-w-3xl mx-auto">
-                  "{result.verdict}"
-                </p>
-              </div>
+        {/* Richard's Strategic Verdict Overlay */}
+        <AnimatePresence>
+          {result && (
+            <motion.div 
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              className="mt-12 max-w-6xl mx-auto w-full z-50"
+            >
+              <div className="rounded-[40px] border border-white/5 bg-slate-900/60 p-10 backdrop-blur-2xl shadow-[0_-20px_80px_-20px_rgba(0,0,0,0.5)]">
+                <div className="mb-10 flex flex-col items-center text-center">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles size={16} className="text-cyan-400" />
+                    <span className="font-tech text-[10px] uppercase tracking-[0.4em] text-cyan-400">
+                      INTELLIGENCE HUB VERDICT
+                    </span>
+                  </div>
+                  <p className="font-cinematic text-2xl lg:text-3xl text-white leading-tight max-w-4xl">
+                    "{result.verdict}"
+                  </p>
+                </div>
 
-              {/* Categories Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {result.categories.map(
-                  (cat: { winnerId: string; name: string; reason: string }, idx: number) => {
-                    const winnerName =
-                      cat.winnerId === car1.id
-                        ? car1.name
-                        : cat.winnerId === car2.id
-                          ? car2.name
-                          : 'Empate';
-                    const winnerColor =
-                      cat.winnerId === car1.id
-                        ? 'text-blue-400'
-                        : cat.winnerId === car2.id
-                          ? 'text-red-400'
-                          : 'text-yellow-400';
-                    const borderColor =
-                      cat.winnerId === car1.id
-                        ? 'border-blue-500/30 bg-blue-500/5'
-                        : cat.winnerId === car2.id
-                          ? 'border-red-500/30 bg-red-500/5'
-                          : 'border-yellow-500/30 bg-yellow-500/5';
-
-                    return (
-                      <div
-                        key={idx}
-                        className={`p-6 rounded-3xl border ${borderColor} flex flex-col items-center text-center transition-all hover:scale-105`}
-                      >
-                        <span className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-2">
-                          {cat.name}
-                        </span>
-                        <div className={`text-lg font-black ${winnerColor} mb-2`}>{winnerName}</div>
-                        <p className="text-slate-300 text-sm leading-snug">"{cat.reason}"</p>
-                      </div>
-                    );
-                  },
-                )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {result.categories.map((cat: any, i: number) => (
+                    <VerdictCard key={i} cat={cat} car1={car1} car2={car2} />
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
 };
+
+const UnitPanel = ({ car, side, isWinner, isLoser, stats }: any) => {
+  return (
+    <motion.div 
+      animate={{ 
+        scale: isWinner ? 1.05 : isLoser ? 0.95 : 1,
+        opacity: isLoser ? 0.4 : 1,
+        filter: isLoser ? 'grayscale(1)' : 'grayscale(0)'
+      }}
+      className={`flex-1 flex flex-col items-center transition-all duration-700 w-full ${side === 'left' ? 'lg:pr-12' : 'lg:pl-12'}`}
+    >
+      <div className="relative mb-8 w-full max-w-xl group">
+        <motion.img
+          layoutId={`car-img-${car.id}`}
+          src={car.img}
+          alt={car.name}
+          className={`w-full object-contain drop-shadow-[0_30px_60px_rgba(34,211,238,0.2)] ${side === 'right' ? '-scale-x-100' : ''}`}
+        />
+        {isWinner && (
+          <motion.div 
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            className="absolute -top-12 left-1/2 -translate-x-1/2"
+          >
+            <div className="flex flex-col items-center">
+              <Trophy size={56} className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]" fill="currentColor" />
+              <span className="mt-2 font-tech text-[10px] font-black uppercase tracking-[0.3em] text-amber-400">Dominio Richard</span>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      <div className="text-center w-full">
+        <h3 className="font-tech text-3xl font-black uppercase tracking-tight text-white mb-2">{car.name}</h3>
+        <p className="font-cinematic text-2xl text-cyan-400 mb-8">${car.price.toLocaleString()}</p>
+        
+        {/* Simplified Radar/Stats Bar */}
+        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+          {stats.map((s: any, i: number) => (
+            <div key={i} className="rounded-2xl border border-white/5 bg-white/5 p-4 flex flex-col items-center gap-2">
+              <div className="text-slate-500">{s.icon}</div>
+              <span className="font-tech text-[9px] uppercase tracking-widest text-slate-400">{s.label}</span>
+              <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${s.value}%` }}
+                  transition={{ delay: 0.5, duration: 1 }}
+                  className="h-full bg-cyan-500/50"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const VerdictCard = ({ cat, car1, car2 }: any) => {
+  const winner = cat.winnerId === car1.id ? car1 : car2;
+  return (
+    <div className="group relative rounded-3xl border border-white/5 bg-white/5 p-6 transition-all hover:bg-white/10">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="font-tech text-[9px] uppercase tracking-[0.2em] text-slate-500">{cat.name}</span>
+        <div className={`h-2 w-2 rounded-full ${cat.winnerId === car1.id ? 'bg-cyan-500' : 'bg-primary'}`} />
+      </div>
+      <div className="mb-3 font-tech text-xs font-black uppercase text-white">{winner.name}</div>
+      <p className="text-xs leading-relaxed text-slate-400 italic">"{cat.reason}"</p>
+    </div>
+  );
+};
+
+const mockStats = (car: any) => [
+  { label: 'Power', value: 75 + (car.id.length % 20), icon: <Gauge size={14} /> },
+  { label: 'Aero', value: 60 + (car.name.length % 35), icon: <Sparkles size={14} /> },
+  { label: 'Security', value: 90 + (car.price % 10), icon: <ShieldCheck size={14} /> },
+  { label: 'Tech', value: 85 + (car.type === 'suv' ? 10 : 0), icon: <Cpu size={14} /> },
+];
 
 export default ComparisonModal;

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { Car } from '@/entities/inventory';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface VirtualInventoryProps {
   cars: Car[];
@@ -13,6 +14,36 @@ interface VirtualInventoryProps {
   onToggleSave: (e: React.MouseEvent, id: string) => void;
   customerMemory?: any;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      type: 'spring', 
+      damping: 20, 
+      stiffness: 100 
+    } 
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.9, 
+    transition: { duration: 0.2 } 
+  }
+};
 
 const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   cars,
@@ -25,30 +56,46 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 });
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 12 });
 
   // Grid configuration
-  const itemHeight = 450; // Estimated height of PremiumGlassCard + gap
-  const columns =
-    typeof window !== 'undefined' && window.innerWidth >= 1280
-      ? 3
-      : window.innerWidth >= 768
-        ? 2
-        : 1;
+  const itemHeight = 480; 
+  const [columns, setColumns] = useState(1);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1280) setColumns(3);
+      else if (width >= 768) setColumns(2);
+      else setColumns(1);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const rowCount = Math.ceil(cars.length / columns);
   const totalHeight = rowCount * itemHeight;
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.style.height = totalHeight > 0 ? `${totalHeight}px` : 'auto';
+    }
+  }, [totalHeight]);
 
   useEffect(() => {
     const updateVisibleRange = () => {
       if (!containerRef.current) return;
 
-      const gridTop = containerRef.current.getBoundingClientRect().top;
+      const gridRect = containerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const offset = Math.max(0, -gridTop);
-
-      const startRow = Math.floor(offset / itemHeight);
+      
+      // Calculate how much of the grid is above the viewport
+      const scrolled = Math.max(0, -gridRect.top);
+      
+      const startRow = Math.floor(scrolled / itemHeight);
       const visibleRows = Math.ceil(viewportHeight / itemHeight) + 1;
-      const endRow = Math.min(rowCount, startRow + visibleRows + 1);
+      const endRow = Math.min(rowCount, startRow + visibleRows + 2);
 
       setVisibleRange({
         start: Math.max(0, startRow * columns),
@@ -56,98 +103,63 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
       });
     };
 
-    window.addEventListener('scroll', updateVisibleRange);
-    window.addEventListener('resize', updateVisibleRange);
+    window.addEventListener('scroll', updateVisibleRange, { passive: true });
+    updateVisibleRange(); 
 
-    updateVisibleRange();
-
-    return () => {
-      window.removeEventListener('scroll', updateVisibleRange);
-      window.removeEventListener('resize', updateVisibleRange);
-    };
+    return () => window.removeEventListener('scroll', updateVisibleRange);
   }, [cars.length, columns, rowCount]);
 
   const visibleCars = useMemo(() => {
     return cars.slice(visibleRange.start, visibleRange.end);
   }, [cars, visibleRange]);
 
-  /**
-   * Recommendation Engine (Phase 17)
-   * Checks if a car matches the customer's persisted preferences.
-   */
   const checkRecommendation = (car: Car): boolean => {
     if (!customerMemory?.preferences) return false;
-
     const { models, colors, features } = customerMemory.preferences;
-
-    // 1. Model Match
     if (models?.some((m: string) => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
-
-    // 2. Color Match
     if (colors?.some((c: string) => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
-
-    // 3. Feature Match
-    if (features?.some((f: string) => car.name.toLowerCase().includes(f.toLowerCase())))
-      return true;
-
-    // 4. Lifestyle Match
-    const lifestyle = customerMemory.lifestyle?.toLowerCase() || '';
-    if (lifestyle.includes('off-road') && car.name.toLowerCase().includes('4x4')) return true;
-    if (
-      lifestyle.includes('family') &&
-      (car.type === 'suv' || car.name.toLowerCase().includes('tucson'))
-    )
-      return true;
-
+    if (features?.some((f: string) => car.name.toLowerCase().includes(f.toLowerCase()))) return true;
     return false;
   };
 
   const translateY = Math.floor(visibleRange.start / columns) * itemHeight;
 
-  // Ref-based style application to comply with "No Inline Styles" lint while maintaining virtualization performance
-  useLayoutEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.style.setProperty('--total-height', totalHeight > 0 ? `${totalHeight}px` : 'auto');
-    }
-  }, [totalHeight]);
-
-  useLayoutEffect(() => {
-    if (gridRef.current) {
-      gridRef.current.style.setProperty('--offset-y', `${translateY}px`);
-    }
-  }, [translateY]);
-
   return (
-    <div ref={containerRef} className="relative inventory-scroll-container">
-      <div
+    <div 
+      ref={containerRef} 
+      className="relative w-full"
+    >
+      <motion.div
         ref={gridRef}
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute top-0 left-0 right-0 inventory-visible-window"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 absolute left-0 right-0"
+        style={{ transform: `translateY(${translateY}px)` }}
       >
-        {visibleCars.map((car, index) => (
-          <article
-            key={car.id}
-            data-delay={Math.min(index * 55, 300)}
-            className="h-[450px] route-fade-in reveal-up delay-var virtualization-item"
-            aria-labelledby={`car-title-${car.id}`}
-          >
-            <PremiumGlassCard
-              car={car}
-              onSelect={() => onSelectCar(car)}
-              onCompare={(e) => onCompare(e, car)}
-              isComparing={isComparing(car.id)}
-              isSaved={isSaved(car.id)}
-              onToggleSave={(e) => onToggleSave(e, car.id)}
-              isRecommended={checkRecommendation(car)}
-              priority={index < 2}
-            />
-          </article>
-        ))}
-      </div>
-      {cars.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          {/* Placeholder handled by parent */}
-        </div>
-      )}
+        <AnimatePresence mode="popLayout">
+          {visibleCars.map((car, index) => (
+            <motion.article
+              key={car.id}
+              variants={itemVariants}
+              layout
+              className="h-[480px] w-full"
+              aria-labelledby={`car-title-${car.id}`}
+            >
+              <PremiumGlassCard
+                car={car}
+                onSelect={() => onSelectCar(car)}
+                onCompare={(e) => onCompare(e, car)}
+                isComparing={isComparing(car.id)}
+                isSaved={isSaved(car.id)}
+                onToggleSave={(e) => onToggleSave(e, car.id)}
+                isRecommended={checkRecommendation(car)}
+                priority={index < 4}
+              />
+            </motion.article>
+          ))}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };

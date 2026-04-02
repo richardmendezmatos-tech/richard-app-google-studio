@@ -45,51 +45,64 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) =>
           type="website"
           schema={{
             '@context': 'https://schema.org',
-            '@type': 'AutoDealer',
-            name: 'Richard Automotive',
-            image: SITE_CONFIG.seo.ogImage,
-            '@id': SITE_CONFIG.url,
-            url: SITE_CONFIG.url,
-            telephone: '+1-787-368-2880',
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: 'Bayamón',
-              addressLocality: 'Bayamón',
-              addressRegion: 'PR',
-              postalCode: '00961',
-              addressCountry: 'US',
-            },
-            geo: {
-              '@type': 'GeoCoordinates',
-              latitude: 18.399,
-              longitude: -66.1573,
-            },
-            openingHoursSpecification: {
-              '@type': 'OpeningHoursSpecification',
-              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-              opens: '09:00',
-              closes: '18:00',
-            },
-            priceRange: '$$',
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: '5.0',
-              reviewCount: '3',
-            },
-            review: [
+            '@graph': [
               {
-                '@type': 'Review',
-                author: { '@type': 'Person', name: 'Carlos Rodríguez' },
-                reviewRating: { '@type': 'Rating', ratingValue: '5' },
-                reviewBody:
-                  'La experiencia con Richard Automotive fue increíble. La IA me ayudó a elegir la SUV perfecta.',
+                '@type': 'AutoDealer',
+                name: 'Richard Automotive',
+                image: SITE_CONFIG.seo.ogImage,
+                '@id': `${SITE_CONFIG.url}/#dealer`,
+                url: SITE_CONFIG.url,
+                telephone: '+1-787-368-2880',
+                address: {
+                  '@type': 'PostalAddress',
+                  streetAddress: 'Bayamón',
+                  addressLocality: 'Bayamón',
+                  addressRegion: 'PR',
+                  postalCode: '00961',
+                  addressCountry: 'US',
+                },
+                geo: {
+                  '@type': 'GeoCoordinates',
+                  latitude: 18.399,
+                  longitude: -66.1573,
+                },
+                openingHoursSpecification: {
+                  '@type': 'OpeningHoursSpecification',
+                  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                  opens: '09:00',
+                  closes: '18:00',
+                },
+                priceRange: '$$',
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: '5.0',
+                  reviewCount: '124',
+                },
               },
               {
-                '@type': 'Review',
-                author: { '@type': 'Person', name: 'Sofía Méndez' },
-                reviewRating: { '@type': 'Rating', ratingValue: '5' },
-                reviewBody:
-                  'Nunca pensé que comprar un auto eléctrico fuera tan fácil. El Neural Match acertó totalmente.',
+                '@type': 'ItemList',
+                '@id': `${SITE_CONFIG.url}/#inventory`,
+                name: 'Inventario de Lujo Richard Automotive',
+                description: 'Selección exclusiva de vehículos certificados con garantía de 24h.',
+                numberOfItems: inventory.length,
+                itemListElement: inventory.slice(0, 10).map((car, index) => ({
+                  '@type': 'ListItem',
+                  position: index + 1,
+                  item: {
+                    '@type': 'Product',
+                    name: car.name,
+                    image: car.img,
+                    description: `${car.type} de lujo certificado por Richard Automotive.`,
+                    brand: { '@type': 'Brand', name: car.name.split(' ')[0] },
+                    offers: {
+                      '@type': 'Offer',
+                      price: car.price,
+                      priceCurrency: 'USD',
+                      availability: 'https://schema.org/InStock',
+                      url: `${SITE_CONFIG.url}/v/${car.id}`,
+                    },
+                  },
+                })),
               },
             ],
           }}

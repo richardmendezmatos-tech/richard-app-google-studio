@@ -85,6 +85,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
               Recomendado para ti
             </span>
           )}
+          {car.type === 'suv' && (
+            <span className="font-tech flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-900/40 px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)] backdrop-blur-md">
+              <Sparkles size={10} className="animate-spin-slow" /> Richard's Pick: Confort Familiar
+            </span>
+          )}
           {car.badge && (
             <span className="font-tech rounded-full border border-white/10 bg-primary/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur-md">
               {car.badge}

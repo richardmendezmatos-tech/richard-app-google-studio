@@ -1,96 +1,124 @@
+"use client";
+
 import React from 'react';
-import { Globe, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
+import { Globe, Instagram, Facebook, Twitter, Youtube, ShieldCheck, Cpu, Zap, Activity } from 'lucide-react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import { motion } from 'motion/react';
 
 const SocialFooter: React.FC = () => {
   return (
     <footer
-      aria-label="Contacto y Redes Sociales"
-      className="group relative mt-12 overflow-hidden rounded-[40px] border border-cyan-100/15 bg-[linear-gradient(135deg,#10283b,#08111d)] px-8 py-12 text-white shadow-2xl shadow-cyan-900/10 lg:px-16"
+      aria-label="Capa de Salida Táctica de Richard Automotive"
+      className="group relative mt-24 overflow-hidden rounded-[50px] border border-white/5 bg-slate-950 p-12 lg:p-20 text-white shadow-3xl lg:mx-6 mb-6"
     >
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
-      <div className="pointer-events-none absolute -right-20 -top-20 rotate-12 p-20 opacity-5 transition-transform duration-[2s] group-hover:rotate-45">
-        <Globe size={400} />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center justify-between gap-10 md:flex-row">
-        <div className="text-center md:text-left">
-          <h2 className="font-cinematic flex items-center justify-center gap-2 text-3xl uppercase tracking-[0.08em] md:justify-start">
-            Richard<span className="text-primary">Automotive</span>
-          </h2>
-          <p className="mt-2 max-w-md text-sm text-slate-300">
-            Redefiniendo la compra de autos en Puerto Rico con Inteligencia Artificial y
-            transparencia total.
+      {/* Cinematic Overlays */}
+      <div className="absolute inset-0 bg-[linear-gradient(160deg,#0a1929,#02060a)] opacity-95"></div>
+      <div className="absolute inset-0 mesh-bg-elite opacity-10 pointer-events-none"></div>
+      
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+        
+        {/* Brand Command */}
+        <div className="space-y-6 lg:col-span-1">
+          <motion.h2 
+            whileHover={{ scale: 1.02 }}
+            className="font-cinematic flex items-center gap-2 text-3xl uppercase tracking-widest text-white"
+          >
+            Richard<span className="text-cyan-400">Automotive</span>
+          </motion.h2>
+          <p className="text-sm font-medium leading-relaxed text-slate-500 max-w-xs">
+            Redefiniendo la soberanía automotriz en Puerto Rico a través de Inteligencia Artificial y transparencia de Command Center.
           </p>
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+              <ShieldCheck size={20} className="text-cyan-400" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="font-tech text-[10px] font-black uppercase tracking-widest text-white">Sentinel Certified</p>
+              <p className="text-[9px] text-slate-600">Enterprise Security v2.0</p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex gap-4">
-          {SITE_CONFIG.social.instagram && (
-            <SocialButton
-              icon={<Instagram size={20} />}
-              label="Instagram"
-              href={SITE_CONFIG.social.instagram}
-            />
-          )}
-          {SITE_CONFIG.social.facebook && (
-            <SocialButton
-              icon={<Facebook size={20} />}
-              label="Facebook"
-              href={SITE_CONFIG.social.facebook}
-            />
-          )}
-          {SITE_CONFIG.social.youtube && (
-            <SocialButton
-              icon={<Youtube size={20} />}
-              label="YouTube"
-              href={SITE_CONFIG.social.youtube}
-            />
-          )}
-          {SITE_CONFIG.social.twitter && (
-            <SocialButton
-              icon={<Twitter size={20} />}
-              label="X / Twitter"
-              href={SITE_CONFIG.social.twitter}
-            />
-          )}
+        {/* Strategic Links */}
+        <div className="space-y-6">
+          <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">OPERATIONS</h3>
+          <ul className="space-y-3 font-tech text-sm">
+            <li><FooterLink label="Inventario Elite" /></li>
+            <li><FooterLink label="Neural Appraisal" /></li>
+            <li><FooterLink label="Mission: Financials" /></li>
+            <li><FooterLink label="Richard AI Portal" /></li>
+          </ul>
+        </div>
+
+        <div className="space-y-6">
+          <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">COMMAND HUB</h3>
+          <ul className="space-y-3 font-tech text-sm">
+            <li><FooterLink label="Bayamón HQ" /></li>
+            <li><FooterLink label="Fleet Solutions" /></li>
+            <li><FooterLink label="VIP Concierge" /></li>
+            <li><FooterLink label="Tech Support" /></li>
+          </ul>
+        </div>
+
+        {/* Intelligence Pulse */}
+        <div className="space-y-6">
+          <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">LIVE PULSE</h3>
+          <div className="rounded-3xl border border-white/5 bg-white/5 p-6 backdrop-blur-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="font-tech text-[10px] font-bold text-slate-400">AI SERVER</span>
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                <span className="font-tech text-[10px] text-emerald-500">ONLINE</span>
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-cinematic text-3xl text-white">2,842</span>
+              <span className="font-tech text-[10px] text-slate-600">QUERIES / DAY</span>
+            </div>
+            <div className="flex gap-3">
+              <SocialIcon icon={<Instagram size={16} />} href={SITE_CONFIG.social.instagram} />
+              <SocialIcon icon={<Facebook size={16} />} href={SITE_CONFIG.social.facebook} />
+              <SocialIcon icon={<Youtube size={16} />} href={SITE_CONFIG.social.youtube} />
+              <SocialIcon icon={<Twitter size={16} />} href={SITE_CONFIG.social.twitter} />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 text-xs font-bold text-slate-400 md:flex-row">
-        <p>&copy; 2025 Richard Automotive. Todos los derechos reservados.</p>
+      <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-10 font-tech text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 md:flex-row">
+        <p>&copy; 2026 Richard Automotive. Strategic Dominance Protocol.</p>
         <div className="flex gap-8">
-          <a href="#" className="hover:text-white transition-colors">
-            Política de Privacidad
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Términos de Servicio
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Mapa del Sitio
-          </a>
+          <a href="#" className="hover:text-cyan-400 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-cyan-400 transition-colors">Terms</a>
+          <a href="#" className="hover:text-cyan-400 transition-colors">Sitemap</a>
         </div>
       </div>
+      
+      <style>{`
+        .mesh-bg-elite {
+          background: linear-gradient(-45deg, #00e5ff11, #7000ff11, #ff007005, #00ffaa05);
+          background-size: 400% 400%;
+          animation: meshGradient 15s ease infinite;
+        }
+      `}</style>
     </footer>
   );
 };
 
-const SocialButton = ({
-  icon,
-  label,
-  href,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-}) => (
-  <a
-    href={href}
+const FooterLink = ({ label }: { label: string }) => (
+  <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-all group">
+    <div className="h-1 w-0 bg-cyan-400 group-hover:w-3 transition-all duration-300" />
+    {label}
+  </a>
+);
+
+const SocialIcon = ({ icon, href }: { icon: any; href?: string }) => (
+  <a 
+    href={href} 
     target="_blank"
-    rel="noopener noreferrer"
-    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-cyan-200/40 hover:bg-primary"
-    title={label}
+    className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:bg-cyan-500 hover:text-slate-950 hover:border-cyan-500 transition-all active:scale-90"
   >
-    <span className="text-white group-hover:animate-bounce">{icon}</span>
+    {icon}
   </a>
 );
 

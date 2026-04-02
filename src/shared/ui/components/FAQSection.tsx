@@ -1,87 +1,112 @@
+"use client";
+
 import React from 'react';
-import { HelpCircle, ChevronDown } from 'lucide-react';
+import { HelpCircle, ChevronDown, Cpu, Activity, ShieldCheck, Zap } from 'lucide-react';
 import Script from 'next/script';
+import { motion } from 'motion/react';
 
 const faqData = [
   {
     question: '¿Puedo comprar un auto 100% en línea sin visitar el concesionario?',
     answer:
-      "Sí, absolutamente. Nuestra plataforma 'Richard Automotive Direct' le permite seleccionar su vehículo, personalizar su financiamiento, valorar su trade-in y firmar documentos digitalmente. Entregamos el auto directamente en la puerta de su casa u oficina.",
+      "Sí, absolutamente. Nuestra plataforma 'Richard Automotive Direct' le permite seleccionar su vehículo, personalizar su financiamiento, valorar su trade-in y firmar documentos digitalmente con encriptación de grado militar. Entregamos el activo directamente en la ubicación que nos indique.",
   },
   {
     question: '¿Cómo funciona la aprobación de crédito en línea?',
     answer:
-      'Es instantánea y segura. Complete nuestro formulario de Pre-Cualificación encriptado (SSL 256-bit). Nuestro sistema AI analiza su perfil con múltiples bancos simultáneamente para ofrecerle los términos reales (APR, mensualidad y pronto) en minutos, sin afectar su puntaje crediticio inicial (Soft Pull).',
+      'Es instantánea y de alta velocidad. Nuestro motor AI Sentinel analiza su perfil con múltiples nodos bancarios simultáneamente para ofrecerle los términos reales (APR, mensualidad y pronto) en minutos, sin afectar su puntaje crediticio inicial (Soft Pull).',
   },
   {
     question: "¿Aceptan autos en 'Trade-In' aunque deba dinero?",
     answer:
-      'Sí. Aceptamos su auto actual como parte de pago. Si todavía tiene balance pendiente, nosotros nos encargamos de liquidar el préstamo anterior con su banco. Si el valor de su auto es mayor a la deuda, usamos el excedente a favor de su nueva compra.',
+      'Sí. Ejecutamos liquidaciones estratégicas de balances pendientes. Si el valor de su activo supera el gravamen, aplicamos el equity a favor de su nueva unidad Richard de forma inmediata.',
   },
   {
     question: '¿Qué garantía tienen los vehículos usados certificados?',
     answer:
-      'Todos nuestros vehículos certificados pasan una inspección multipunto y se entregan con garantía limitada. Los detalles varían según el modelo; te mostramos la cobertura exacta antes de comprar.',
+      'Cada unidad bajo el Protocolo 150+ de Richard pasa una auditoría técnica exhaustiva. Se entregan con garantía limitada y 72 horas de prueba de satisfacción total. Si no es su sueño, el retorno es parte de nuestra garantía de autoridad.',
   },
 ];
 
 const schemaData = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: faqData
-    .filter((item) => item.question && item.answer)
-    .map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
+  mainEntity: faqData.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
 };
 
 const FAQSection: React.FC = () => {
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-cyan-100/15 bg-[linear-gradient(145deg,rgba(7,18,30,0.95),rgba(4,10,18,0.94))] py-16 sm:rounded-[40px] sm:py-20">
-      <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full border border-cyan-200/15" />
-      <div className="pointer-events-none absolute -right-20 bottom-10 h-64 w-64 rounded-full border border-white/10" />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        {/* SEO Schema Injection */}
-        {/* SEO Schema Injection (RA-Sentinel Approved) */}
+    <section className="relative overflow-hidden rounded-[50px] border border-white/5 bg-slate-950 py-24 mx-6">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
         <Script
           id="faq-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />
 
-        <div className="text-center mb-16">
-          <span className="font-tech mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-200/30 bg-primary/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-cyan-100">
-            <HelpCircle size={14} /> Soporte al Cliente
-          </span>
-          <h2 className="font-cinematic text-4xl uppercase tracking-[0.08em] text-slate-50 md:text-6xl">
-            Preguntas Frecuentes
+        <div className="text-center mb-20 space-y-6">
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-8 bg-cyan-500/50" />
+            <div className="flex items-center gap-2">
+              <Cpu size={12} className="text-cyan-400 animate-pulse" />
+              <span className="font-tech text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400">
+                SENTINEL SUPPORT NODE
+              </span>
+            </div>
+            <div className="h-px w-8 bg-cyan-500/50" />
+          </div>
+          
+          <h2 className="font-cinematic text-5xl md:text-7xl text-white tracking-widest leading-none">
+            CENTRO DE <span className="text-cyan-400">INTELIGENCIA</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-slate-300">
-            Resolvemos sus dudas sobre el proceso de compra digital más avanzado del mercado.
+          <p className="mx-auto max-w-xl font-tech text-xs uppercase tracking-widest text-slate-500">
+            Protocolos de soporte Richard Automotive. Transparencia total.
           </p>
         </div>
 
         <div className="space-y-4">
           {faqData.map((item, index) => (
-            <details
+            <motion.details
               key={index}
-              className="group overflow-hidden rounded-2xl border border-white/10 bg-[#071524]/65 transition-all duration-300 hover:border-primary/50 open:border-primary/35 open:bg-[#091a2c]"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="group overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/30 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/20 hover:bg-slate-900/50 open:border-cyan-500/40 open:bg-slate-900/60"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between p-6 text-lg font-bold text-white transition-colors select-none group-hover:bg-white/5">
-                <span>{item.question}</span>
-                <span className="transform group-open:rotate-180 transition-transform duration-300 text-primary">
+              <summary className="flex cursor-pointer list-none items-center justify-between p-8 text-base md:text-lg font-bold text-white transition-colors select-none">
+                <span className="flex items-center gap-4">
+                  <div className="h-2 w-2 rounded-full bg-cyan-500/20 group-open:bg-cyan-400 transition-colors shadow-[0_0_8px_transparent] group-open:shadow-[0_0_8px_#22d3ee]" />
+                  {item.question}
+                </span>
+                <span className="transform group-open:rotate-180 transition-transform duration-500 text-cyan-500">
                   <ChevronDown />
                 </span>
               </summary>
-              <div className="border-t border-white/10 px-6 pb-6 pt-2 leading-relaxed text-slate-300">
+              <div className="border-t border-white/5 px-8 pb-8 pt-4 text-sm md:text-base leading-relaxed text-slate-400">
                 {item.answer}
+                <div className="mt-6 flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-cyan-400">
+                    <ShieldCheck size={10} /> Verified Protocol
+                  </div>
+                  <div className="flex items-center gap-1.5 rounded-full bg-slate-500/10 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-slate-500">
+                    <Activity size={10} /> Live Auth
+                  </div>
+                </div>
               </div>
-            </details>
+            </motion.details>
           ))}
         </div>
       </div>

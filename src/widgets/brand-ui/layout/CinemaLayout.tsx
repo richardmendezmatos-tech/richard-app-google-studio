@@ -5,6 +5,7 @@ import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } f
 import { Menu } from 'lucide-react';
 import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
+import SentinelFlashTicker from '@/widgets/brand-ui/layout/SentinelFlashTicker';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
 import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
@@ -143,11 +144,16 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         id="main-content"
         className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
       >
-        {/* Global Floating Widgets */}
-        <OfflineIndicator />
+        {/* Global Floating Notification Layer */}
+        <div className="sticky top-0 z-50 pointer-events-none">
+          <div className="pointer-events-auto">
+            <OfflineIndicator />
+            <SentinelFlashTicker />
+          </div>
+        </div>
 
         {/* Dynamic Content */}
-        <div className="relative z-10 min-h-full">{children}</div>
+        <div className="relative z-10 min-h-full transition-all duration-500">{children}</div>
       </main>
 
       {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}
