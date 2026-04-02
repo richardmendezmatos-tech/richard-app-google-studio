@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
 import { getAIResponse } from '@/shared/api/ai';

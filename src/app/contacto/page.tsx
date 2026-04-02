@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ContactPage from '@/pages/contacto/ui/ContactPage';
+import ContactoPage from '@/pages/contacto/ui/ContactoPage';
 
 /**
  * Next.js App Router entry point for /contacto
@@ -10,7 +10,7 @@ import ContactPage from '@/pages/contacto/ui/ContactPage';
 export default function ContactRoute() {
   return (
     <div className="min-h-screen bg-slate-950 pt-20">
-      <ContactPage />
+      <ContactoPage />
     </div>
   );
 }

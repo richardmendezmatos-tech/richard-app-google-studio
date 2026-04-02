@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import Script from 'next/script';
 import { Car } from '@/shared/types/types';
 
 interface VehicleSchemaProps {
@@ -40,8 +40,12 @@ export const VehicleSchema: React.FC<VehicleSchemaProps> = ({ car }) => {
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
-    </Helmet>
+    <>
+      <Script
+        id={`vehicle-schema-${car.id}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+    </>
   );
 };

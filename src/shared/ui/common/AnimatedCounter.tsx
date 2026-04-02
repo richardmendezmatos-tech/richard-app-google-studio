@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, animate } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 
 interface AnimatedCounterProps {
   value: number;
@@ -33,7 +33,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     return () => controls.stop();
   }, [value, duration, delay, motionValue]);
 
-  const displayValue = useTransform(springValue, (latest) => {
+  const displayValue = useTransform(springValue, (latest: number) => {
     const rounded = Math.round(latest);
     if (format === 'currency') {
       return new Intl.NumberFormat('en-US', {

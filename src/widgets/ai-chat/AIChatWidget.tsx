@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Car } from '@/shared/types/types';
 import { AGENTS, detectIntent, AgentPersona } from '@/features/ai-hub';

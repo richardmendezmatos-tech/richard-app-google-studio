@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { User, DollarSign, Car, Send, ShieldCheck, AlertCircle } from 'lucide-react';
 

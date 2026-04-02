@@ -2,28 +2,14 @@ import { Lead } from '@/entities/lead';
 import { Car, CarType } from '@/entities/inventory';
 import { Appraisal } from '@/entities/appraisal';
 import { FirestoreTimestamp } from './firestore';
+import { UserRole, AppUser } from '@/entities/user';
 
-export type { Lead, Car, CarType, Appraisal, FirestoreTimestamp };
-
-export type UserRole = 'admin' | 'user';
+export type { Lead, Car, CarType, Appraisal, FirestoreTimestamp, UserRole, AppUser };
 
 export interface PrivacySettings {
-  essential: boolean;
-  analytics: boolean;
-  marketing: boolean;
-  aiData: boolean;
-  partnerSharing: boolean;
-  lastUpdated: number;
-}
-
-export interface AppUser {
-  uid: string;
-  email: string | null;
-  displayName?: string | null;
-  photoURL?: string | null;
-  role?: UserRole;
-  privacySettings?: PrivacySettings;
-  [key: string]: unknown;
+  language: 'es' | 'en';
+  darkMode: boolean;
+  notifications: boolean;
 }
 
 export enum ViewMode {

@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import { useQuery } from '@tanstack/react-query';
 import { DI } from '@/app/di/registry';
 import { getSubscribers } from '@/shared/api/firebase/firebaseService';

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback, useEffect, FC, useActionState } from 'react';
 import { loginAdmin, loginWithPasskey } from '@/features/auth';
 import {

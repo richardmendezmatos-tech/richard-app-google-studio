@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef } from 'react';
 import { useAuthStore } from '@/entities/session';
 import { updateUserProfile, updateUserPassword } from '@/features/auth';

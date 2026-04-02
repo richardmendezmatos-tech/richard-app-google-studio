@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';

@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';

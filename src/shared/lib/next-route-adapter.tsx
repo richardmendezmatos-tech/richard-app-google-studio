@@ -42,7 +42,7 @@ export const useLocation = () => {
 };
 
 export const useParams = () => ({});
-export const useOutletContext = <T = any>(): T => ({} as T);
+export const useOutletContext = <T,>(): T => ({} as T);
 
 export const Link: React.FC<any> = ({ to, ...props }) => (
   <NextLink href={to || '#'} {...props} />
@@ -52,9 +52,10 @@ export const NavLink: React.FC<any> = ({ to, ...props }) => (
   <NextLink href={to || '#'} {...props} />
 );
 
-// --- Compatibility Mocks for <Routes> and <Route> ---
+// --- Compatibility Mocks for <Routes>, <Route>, and <Outlet> ---
 export const Routes: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
 export const Route: React.FC<{ path: string; element: React.ReactNode }> = ({ element }) => <>{element}</>;
+export const Outlet: React.FC = () => null; // Next.js uses children prop in layouts, so Outlet is usually null in bridged layouts.
 
 export const Navigate: React.FC<{ to: string; replace?: boolean; state?: any }> = ({ to, replace }) => {
   const router = useNextRouter();

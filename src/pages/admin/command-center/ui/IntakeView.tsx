@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState } from 'react';
 import {
   Camera,
@@ -13,6 +17,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { recibirNuevaUnidad, RecibirUnidadParams } from '@/features/inventory';
+import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
+import { ImageUploader, UploadResult } from './ImageUploader';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 
 const IntakeView: React.FC = () => {
@@ -27,6 +33,7 @@ const IntakeView: React.FC = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAnalysing, setIsAnalysing] = useState(false);
   const [step, setStep] = useState(1);
 
   const { addNotification } = useNotification();
@@ -57,6 +64,45 @@ const IntakeView: React.FC = () => {
           ? Number(value)
           : value,
     }));
+  };
+
+  const handleMagicFill = async (results: UploadResult[]) => {
+    if (results.length === 0) return;
+    
+    setIsAnalysing(true);
+    addNotification('info', 'IA Sentinel analizando documento... No cierres esta ventana.');
+    
+    try {
+      // Usamos la URL optimizada para el análisis (o el base64 si el servicio lo requiere)
+      // Nota: El servicio actual espera base64, pero ImageUploader ya subió a Firebase.
+      // Para velocidad, utilizaremos el proxy de Gemini que acepte URL si es posible, 
+      // o convertiremos la URL de nuevo a base64 (menos óptimo) o usaremos la imagen local si estuviera disponible.
+      
+      // OPTIMIZACIÓN: ImageUploader sube a Firebase, pero para el análisis Vision necesitamos el base64 original 
+      // o la URL de Firebase. El servicio 'inventoryIngestionService' usa Gemini 1.5-flash.
+      // Modificaremos el servicio para aceptar URL opcionalmente.
+      
+      const data = await inventoryIngestionService.processInventoryImage(results[0].url);
+      
+      // Mapeo seguro con casting para evitar fricción de tipos en Sentinel 3.2
+      const carData = data as any;
+      
+      setFormData(prev => ({
+        ...prev,
+        vin: carData.vin || prev.vin,
+        marca: carData.make || prev.marca,
+        modelo: carData.model || prev.modelo,
+        anio: carData.year || prev.anio,
+        millaje: carData.mileage || prev.millaje,
+        color: carData.color || prev.color,
+      }));
+      
+      addNotification('success', '¡Datos extraídos con éxito! Revisa los campos antes de continuar.');
+    } catch (err) {
+      addNotification('error', 'Fallo en análisis IA. Por favor, ingresa los datos manualmente.');
+    } finally {
+      setIsAnalysing(false);
+    }
   };
 
   return (
@@ -103,7 +149,25 @@ const IntakeView: React.FC = () => {
         <div className="relative z-10 max-w-4xl mx-auto">
           {step === 1 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Magic Intake Section */}
+              <div className="mb-12">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    Asistente de Carga por Visión (Gemini 2.0)
+                  </h3>
+                </div>
+                <div className={isAnalysing ? 'pointer-events-none' : ''}>
+                  <ImageUploader 
+                    maxFiles={1} 
+                    onUploadComplete={handleMagicFill} 
+                    storagePath="temp-intake"
+                    onLog={(msg) => console.log(`[MagicIntake] ${msg}`)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 mt-8">
                 <div className="space-y-4">
                   <InputGroup
                     icon={Hash}

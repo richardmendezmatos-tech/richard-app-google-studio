@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { TrendingDown, AlertCircle, RefreshCw } from 'lucide-react';
 

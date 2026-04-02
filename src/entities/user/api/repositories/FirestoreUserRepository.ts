@@ -1,6 +1,6 @@
 import { db } from '@/shared/api/firebase/firebaseService';
 import { doc, getDoc, setDoc, deleteDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-import { UserProfile, UserRole } from '../model/types';
+import { UserProfile, UserRole } from '../../model/types';
 
 export class FirestoreUserRepository {
   private USERS_COLLECTION = 'users';

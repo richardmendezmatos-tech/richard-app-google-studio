@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 import { getStorageService } from '@/shared/api/firebase/firebaseService';

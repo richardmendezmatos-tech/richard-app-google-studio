@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from 'react';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { useLocation } from '@/shared/lib/next-route-adapter';

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { frameworkService, FrameworkState } from '@/shared/api/core/frameworkService';
 import { useTranslation } from 'react-i18next';

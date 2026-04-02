@@ -10,7 +10,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'suv',
     badge: 'Rediseñado',
-    img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: true,
   },
   {
@@ -22,7 +23,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'sedan',
     badge: 'Deportivo',
-    img: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: true,
   },
   {
@@ -34,7 +36,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'suv',
     badge: 'Compacto',
-    img: 'https://images.unsplash.com/photo-1672820415487-c534a8ee22ff?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1672820415487-c534a8ee22ff?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: false,
   },
   {
@@ -46,7 +49,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'suv',
     badge: 'Más Espacio',
-    img: 'https://images.unsplash.com/photo-1646728502468-06d9c7b3c2c2?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1646728502468-06d9c7b3c2c2?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: true,
   },
   {
@@ -58,7 +62,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'luxury',
     badge: 'Flagship',
-    img: 'https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: true,
   },
   {
@@ -70,7 +75,8 @@ export const initialInventoryData: Omit<Car, 'id'>[] = [
     mileage: 0,
     type: 'suv',
     badge: 'Electrizante',
-    img: 'https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=1200&auto=format&fit=crop',
+    status: 'available',
     featured: false,
   },
 ];

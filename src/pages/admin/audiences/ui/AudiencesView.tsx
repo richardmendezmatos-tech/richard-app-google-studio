@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { getSubscribers } from '@/shared/api/firebase/firebaseService';
 import { Subscriber } from '@/shared/types/types';

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { generateBlogPost, generateCoverImage } from '@/shared/api/ai';
 import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';

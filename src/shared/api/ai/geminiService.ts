@@ -489,12 +489,23 @@ export const generateCode = async (prompt: string, instruction?: string): Promis
 };
 
 export const analyzeImageWithPrompt = async (
-  base64Image: string,
+  imageSource: string, // Can be base64 or URL
   promptText: string,
 ): Promise<Record<string, unknown>> => {
-  const mimeMatch = base64Image.match(/^data:(image\/\w+);base64,/);
-  const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-  const cleanBase64 = base64Image.replace(/^data:image\/\w+;base64,/, '');
+  let mimeType: string;
+  let cleanBase64: string;
+
+  if (imageSource.startsWith('http')) {
+    // Fetch image from URL and convert to Base64
+    const response = await fetch(imageSource);
+    const buffer = await response.arrayBuffer();
+    cleanBase64 = Buffer.from(buffer).toString('base64');
+    mimeType = response.headers.get('content-type') || 'image/jpeg';
+  } else {
+    const mimeMatch = imageSource.match(/^data:(image\/\w+);base64,/);
+    mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    cleanBase64 = imageSource.replace(/^data:image\/\w+;base64,/, '');
+  }
 
   const imagePart = {
     inlineData: { data: cleanBase64, mimeType },

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, Mic, Phone, X, Zap } from 'lucide-react';

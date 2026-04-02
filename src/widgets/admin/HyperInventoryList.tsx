@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Car, Lead } from '@/shared/types/types';
 import InventoryRow from './InventoryRow';

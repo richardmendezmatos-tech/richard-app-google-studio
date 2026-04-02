@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
 import { FirestoreTimestamp } from '@/shared/types/types';

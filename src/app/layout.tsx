@@ -42,7 +42,9 @@ export default function RootLayout({
 
   return (
     <html lang="es" className={`${inter.className} ${outfit.variable}`}>
-      <head>
+      {/* Metadata is handled by Next.js Metadata API */}
+      <head />
+      <body className="bg-slate-950 text-white min-h-screen">
         <Script
           id="person-jsonld"
           type="application/ld+json"
@@ -51,14 +53,11 @@ export default function RootLayout({
         {process.env.NODE_ENV === 'development' && (
           <Script
             id="e2e-bypass-script"
-            strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
               __html: `if (!localStorage.getItem('e2e_bypass')) localStorage.setItem('e2e_bypass', 'true');`,
             }}
           />
         )}
-      </head>
-      <body className="bg-slate-950 text-white min-h-screen">
         <AppProviders>
           <CinemaLayout inventory={[]}>
             {children}

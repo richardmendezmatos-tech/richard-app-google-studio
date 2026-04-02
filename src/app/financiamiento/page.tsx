@@ -1,25 +1,16 @@
 'use client';
 
 import React from 'react';
-import FinancingPage from '@/pages/financiamiento/ui/FinancingPage';
+import FinanciamientoPage from '@/pages/financiamiento/ui/FinanciamientoPage';
 
+/**
+ * Next.js App Router entry point for /financiamiento
+ * Bridges to the FSD Financing layer component.
+ */
 export default function FinancingRoute() {
   return (
     <div className="min-h-screen bg-slate-950 pt-20">
-      <FinancingPage />
-    </div>
-  );
-}
-// <!-- slide -->
-'use client';
-
-import React from 'react';
-import ContactPage from '@/pages/contacto/ui/ContactPage';
-
-export default function ContactRoute() {
-  return (
-    <div className="min-h-screen bg-slate-950 pt-20">
-      <ContactPage />
+      <FinanciamientoPage />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { db } from '@/shared/api/firebase/firebaseService';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore/lite';

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from 'react';
 import { useComparison } from '@/features/comparison';
 import { useNavigate } from '@/shared/lib/next-route-adapter';

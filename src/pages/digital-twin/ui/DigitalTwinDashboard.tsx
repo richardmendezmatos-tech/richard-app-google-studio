@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Send, Save, RotateCcw, Trash2, Mic, MicOff, Camera, UserCircle2 } from 'lucide-react';
 import { getAIResponse } from '@/shared/api/ai';

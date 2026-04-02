@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { useVehicleTelemetry, useVehicleHealth } from '@/shared/api/metrics/telemetryService';
 import { TelemetrySimulator } from '@/shared/lib/utils/TelemetrySimulator';
@@ -336,7 +340,7 @@ const StatCard = ({
             '--progress-width': `${Math.min(100, Math.max(0, percentage))}%`,
           } as React.CSSProperties
         }
-        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(var(--tw-color-${color}-500-rgb),0.5)] progress-bar-width`}
+        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] progress-bar-width`}
       />
     </div>
   </div>

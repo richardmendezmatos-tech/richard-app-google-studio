@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import Script from 'next/script';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import telemetry from '@/shared/api/metrics/analytics';
 
@@ -57,33 +57,18 @@ const SEO: React.FC<SEOProps> = ({
   const currentUrl = normalizePath(url);
   const robotsValue = `${noIndex ? 'noindex' : 'index'},${noFollow ? 'nofollow' : 'follow'},max-image-preview:large,max-snippet:-1,max-video-preview:-1`;
 
+  // Note: Head tags (title, meta, link) are now managed via Next.js Metadata API in page.tsx
+  // This component now only handles JSON-LD injections to avoid Helmet Invariant Violations.
   return (
-    <Helmet>
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords || SITE_CONFIG.seo.keywords.join(', ')} />
-      <meta name="robots" content={robotsValue} />
-      <meta name="googlebot" content={robotsValue} />
-      <link rel="canonical" href={currentUrl} />
-      <link rel="alternate" hrefLang="es-PR" href={currentUrl} />
-      <link rel="alternate" hrefLang="x-default" href={currentUrl} />
-
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:locale" content={SITE_CONFIG.seo.locale} />
-      <meta property="og:site_name" content={SITE_CONFIG.name} />
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={currentUrl} />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={imageUrl} />
-
-      {schema && <script type="application/ld+json">{JSON.stringify(schema)}</script>}
-    </Helmet>
+    <>
+      {schema && (
+        <Script
+          id="seo-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      )}
+    </>
   );
 };
 

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { generateImage } from '@/shared/api/ai';
 import { GeneratedImage } from '@/shared/types/types';

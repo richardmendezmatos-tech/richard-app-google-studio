@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useCallback, useMemo } from 'react';
 import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';

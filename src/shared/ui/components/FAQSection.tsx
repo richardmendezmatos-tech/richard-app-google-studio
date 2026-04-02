@@ -1,5 +1,6 @@
 import React from 'react';
 import { HelpCircle, ChevronDown } from 'lucide-react';
+import Script from 'next/script';
 
 const faqData = [
   {
@@ -46,7 +47,9 @@ const FAQSection: React.FC = () => {
       <div className="pointer-events-none absolute -right-20 bottom-10 h-64 w-64 rounded-full border border-white/10" />
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* SEO Schema Injection */}
-        <script
+        {/* SEO Schema Injection (RA-Sentinel Approved) */}
+        <Script
+          id="faq-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />

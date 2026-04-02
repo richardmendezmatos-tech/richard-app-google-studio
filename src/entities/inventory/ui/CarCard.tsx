@@ -25,7 +25,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     };
 
     // DTS Engine Integration (Expert Decision: Real Business Logic > Placeholders)
-    const predictiveStats = calculatePredictiveDTS(car, 0); 
+    const predictiveStats = calculatePredictiveDTS(car); 
     const isScarce = predictiveStats.advantageScore > 70;
     // F&I Logic (Expert Decision: real amortization > simple division)
     const suggestedPronto = calculateSuggestedPronto(car.price);
@@ -90,7 +90,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           </div>
 
           <OptimizedImage
-            src={car.img}
+            src={car.image}
             alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
             className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
             aspectRatio="aspect-[4/3]"

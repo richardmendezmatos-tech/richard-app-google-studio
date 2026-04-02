@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';

@@ -39,6 +39,7 @@ export interface Lead {
 
   // AI Metrics
   aiScore?: number; // 0-100
+  predictiveScore?: number; // Legacy/Mapping support
   aiSummary?: string; // "High intent, good credit"
   aiAnalysis?: {
     score: number;

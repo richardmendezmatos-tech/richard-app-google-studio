@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import {
   BarChart,
@@ -10,7 +12,7 @@ import {
   Cell,
 } from 'recharts';
 import { Lead } from '@/entities/lead';
-import { AnalyticsService } from '@/entities/lead';
+import { AnalyticsService } from '@/shared/lib/analytics/AnalyticsService';
 
 interface Props {
   leads: Lead[];

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 import { getStorageService } from '@/shared/api/firebase/firebaseService';
@@ -5,7 +7,8 @@ import {
   validateImageFile,
   generateBlurPlaceholder,
 } from '@/shared/api/media/imageOptimizationService';
-import ImageOptimizerWorker from '@/shared/lib/workers/imageOptimizer.worker?worker';
+// We use the standard new URL() syntax for workers for Next.js/Turbopack compatibility.
+const WORKER_URL = new URL('@/shared/lib/workers/imageOptimizer.worker.ts', import.meta.url);
 
 interface WorkerResponse {
   id: string;
@@ -58,7 +61,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    workerRef.current = new ImageOptimizerWorker();
+    workerRef.current = new Worker(WORKER_URL);
     return () => {
       workerRef.current?.terminate();
     };

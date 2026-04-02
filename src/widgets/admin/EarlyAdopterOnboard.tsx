@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
 import { motion, AnimatePresence } from 'motion/react';

@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React from 'react';
 import { Car } from '@/entities/inventory';
 import { Sparkles, Edit3, Trash2, Clock } from 'lucide-react';

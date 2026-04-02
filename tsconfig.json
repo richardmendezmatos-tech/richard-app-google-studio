@@ -36,7 +36,7 @@
     }
   },
   "include": ["src", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", "functions", "richard-qwik-marketplace", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", ".next", "scripts", "src/App.tsx", "functions", "richard-qwik-marketplace", "vite.config.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

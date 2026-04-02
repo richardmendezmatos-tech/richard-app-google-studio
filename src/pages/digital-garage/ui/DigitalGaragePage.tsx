@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/entities/inventory';
 // Feature FSD imports

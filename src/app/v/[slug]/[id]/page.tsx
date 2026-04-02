@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function VehicleDetailPage({ params }: Props) {
   const { id } = await params;
-  let inventory = [];
+  let inventory: any[] = [];
 
   try {
     inventory = await fetchInventoryFromJava(20);

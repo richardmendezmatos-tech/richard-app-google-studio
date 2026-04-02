@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState, useRef } from 'react';
 import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
 import { Car, CarType } from '@/entities/inventory';

@@ -7,7 +7,7 @@ import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
  * Bridges to the AI Chat widget.
  */
 export default async function ConsultantRoute() {
-  let inventory = [];
+  let inventory: any[] = [];
   
   try {
     // SSR: Fetching data from GCP Java Backend

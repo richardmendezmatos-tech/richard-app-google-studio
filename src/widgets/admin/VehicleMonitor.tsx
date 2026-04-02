@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 import { useVehicleTelemetry, useVehicleHealth } from '@/shared/api/metrics/telemetryService';
 import { TelemetrySimulator } from '@/shared/lib/utils/TelemetrySimulator';
 import {
@@ -329,7 +332,7 @@ const StatCard = ({
     <div className="w-full h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full mt-4 overflow-hidden">
       <div
         style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
-        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(var(--tw-color-${color}-500-rgb),0.5)]`}
+        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]`}
       />
     </div>
   </div>

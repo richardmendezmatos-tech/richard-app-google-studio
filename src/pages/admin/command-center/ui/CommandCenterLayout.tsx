@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { useNavigate, Outlet } from '@/shared/lib/next-route-adapter';

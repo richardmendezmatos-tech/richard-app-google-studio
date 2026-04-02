@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Bot, Mic, Image as ImageIcon, Video, Code2, ArrowLeft } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';

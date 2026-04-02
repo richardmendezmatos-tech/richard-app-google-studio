@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React from 'react';
 import { Car, calculatePredictiveDTS } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';

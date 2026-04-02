@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Database } from 'lucide-react';
 import { enterpriseService, SystemHealth } from '@/shared/api/enterprise/EnterpriseClient';

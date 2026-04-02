@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Car as CarType, Lead } from '@/shared/types/types';
 import {

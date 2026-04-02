@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';
 import { BlogPost } from '@/shared/types/types';

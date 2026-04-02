@@ -19,7 +19,7 @@ import {
 } from 'firebase/firestore';
 import { dbLite as db } from '@/shared/api/firebase/client';
 import { getStorageService, getAnalyticsService } from '@/shared/api/firebase/optionalServices';
-import { Car } from '@/shared/lib/analytics/AnalyticsService';
+import { Car } from '../../model/types';
 import { carSchema } from '@/shared/lib/validators/car.schema';
 const CARS_COLLECTION = 'cars';
 

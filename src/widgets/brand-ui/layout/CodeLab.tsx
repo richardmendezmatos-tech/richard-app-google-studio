@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCode } from '@/shared/api/ai';
 import hljs from 'highlight.js';

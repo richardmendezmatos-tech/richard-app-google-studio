@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AiLabPage from '@/pages/ai-lab/ui/AiLabPage';
+import AILabPage from '@/pages/ai-lab/ui/AILabPage';
 
 /**
  * Next.js App Router entry point for /ai-lab
@@ -10,7 +10,7 @@ import AiLabPage from '@/pages/ai-lab/ui/AiLabPage';
 export default function AiLabRoute() {
   return (
     <div className="min-h-screen bg-slate-950 pt-20">
-      <AiLabPage />
+      <AILabPage />
     </div>
   );
 }

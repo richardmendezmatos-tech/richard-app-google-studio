@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Zap, ShieldCheck, Wifi } from 'lucide-react';
 import { enterpriseService, SystemHealth } from '@/features/enterprise';

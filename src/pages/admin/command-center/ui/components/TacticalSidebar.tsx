@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { motion, AnimatePresence } from 'framer-motion';

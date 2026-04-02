@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft, Home } from 'lucide-react';

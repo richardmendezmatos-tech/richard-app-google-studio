@@ -8,6 +8,8 @@ export interface Car {
   make: string;
   model: string;
   year: number;
+  vin: string;
+  color: string;
   price: number;
   image: string; // Lead image
   img?: string; // Legacy field support
@@ -50,7 +52,8 @@ export const calculatePredictiveDTS = (car: any) => {
   const baseRate = 45;
   const priceAdjustment = car.price < 25000 ? -5 : 5;
   const brandAdjustment = car.make === 'Toyota' || car.make === 'Honda' ? -10 : 0;
-  return Math.max(15, baseRate + priceAdjustment + brandAdjustment);
+  const score = Math.max(15, baseRate + priceAdjustment + brandAdjustment);
+  return { advantageScore: score };
 };
 
 export const CarSchema = z.object({

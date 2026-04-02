@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { useLocation } from '@/shared/lib/next-route-adapter';
 import {

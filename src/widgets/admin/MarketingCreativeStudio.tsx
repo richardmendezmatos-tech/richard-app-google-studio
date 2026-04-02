@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Car } from '@/shared/types/types';
 import { generateCarMarketingContent, MarketingContent } from '@/features/leads';
