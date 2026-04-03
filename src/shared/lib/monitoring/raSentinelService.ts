@@ -2,10 +2,11 @@ import { db } from '@/shared/api/firebase/client';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface SentinelMetric {
-  type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated' | 'conversion_friction';
+  type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated' | 'conversion_friction' | 'neuro_persuasion_attempt';
   data: any;
   operationalScore: number;
   frictionPoint?: string;
+  persuasionProfile?: string;
   metadata?: Record<string, any>;
 }
 
@@ -43,6 +44,19 @@ export class RaSentinelService {
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
         url: typeof window !== 'undefined' ? window.location.href : 'unknown'
       }
+    });
+  }
+
+  /**
+   * Registra un intento de persuasión neuro-cognitiva (Nivel 16).
+   */
+  async reportNeuroPersuasion(profile: string, component: string, data?: any): Promise<void> {
+    await this.reportActivity({
+      type: 'neuro_persuasion_attempt',
+      persuasionProfile: profile,
+      data: { component, ...data },
+      operationalScore: 100, // Se considera positivo el intento de personalización
+      metadata: { source: 'PersuasionWrapper' }
     });
   }
 

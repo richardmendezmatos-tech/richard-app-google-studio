@@ -3,12 +3,15 @@ import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/
 import { generateEmbedding } from '@/shared/api/ai';
 import { vectorStoreService } from '@/features/ai-hub';
 
+export type PersuasionProfile = 'Analytical' | 'Impulsive' | 'Conservative' | 'Unknown';
+
 export interface CustomerPreference {
   brands: string[];
   carTypes: string[];
   priceRange: { min: number; max: number };
   lastSeen: Date;
   intentScore: number;
+  persuasionProfile: PersuasionProfile;
 }
 
 export interface CustomerMemory {
@@ -23,6 +26,20 @@ export interface CustomerMemory {
  */
 export class CustomerMemoryService {
   private collection = 'customer_memory';
+
+  /**
+   * Analiza el perfil cognitivo basado en interacciones.
+   * Nivel 16: Hyper-Personalization.
+   */
+  async analyzeCognitiveProfile(leadId: string, interaction: string): Promise<PersuasionProfile> {
+    // Aquí se llamaría a un modelo de IA (Vertex/Gemini) para clasificar el texto.
+    // Lógica determinista simulada por ahora:
+    const text = interaction.toLowerCase();
+    if (text.includes('precio') || text.includes('ahorro') || text.includes('comparar')) return 'Analytical';
+    if (text.includes('entrega') || text.includes('estatus') || text.includes('ya')) return 'Impulsive';
+    if (text.includes('seguro') || text.includes('familia') || text.includes('garantia')) return 'Conservative';
+    return 'Unknown';
+  }
 
   /**
    * Updates customer memory based on a new interaction.
@@ -50,6 +67,12 @@ export class CustomerMemoryService {
       const timestamp = new Date().toLocaleDateString();
       const noteEntry = `[${timestamp}] ${data.interactionSnippet}`;
       updates.notes = arrayUnion(noteEntry);
+
+      // Nivel 16: Perfilado Dinámico
+      const newProfile = await this.analyzeCognitiveProfile(leadId, data.interactionSnippet);
+      if (newProfile !== 'Unknown') {
+        updates['preferences.persuasionProfile'] = newProfile;
+      }
 
       // AI Vector Integration: Generate embedding and store in Supabase
       try {
@@ -111,6 +134,7 @@ export class CustomerMemoryService {
         priceRange: { min: 0, max: 0 },
         lastSeen: new Date(),
         intentScore: 0,
+        persuasionProfile: 'Unknown',
       },
       history: [],
       notes: [],
