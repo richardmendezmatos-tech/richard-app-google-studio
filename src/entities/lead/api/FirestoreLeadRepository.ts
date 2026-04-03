@@ -16,6 +16,13 @@ import { Lead } from '@/entities/lead';
 import { LeadMapper } from '@/entities/lead/lib/mappers/LeadMapper';
 import { leadSchema } from '@/entities/lead/lib/schemas/leadSchema';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
+import { CircuitBreaker } from '@/shared/lib/resilience/CircuitBreaker';
+import { LeadHealthSensor } from '@/features/leads/model/health/LeadHealthSensor';
+
+const dbBreaker = new CircuitBreaker({
+  failureThreshold: 5,
+  resetTimeout: 30000, // 30s
+});
 
 export class FirestoreLeadRepository implements LeadRepository {
   private collectionName = 'applications';
@@ -46,28 +53,38 @@ export class FirestoreLeadRepository implements LeadRepository {
   }
 
   async saveLead(lead: Partial<Lead>): Promise<string> {
-    return withSecureErrorHandling(async () => {
-      const data = LeadMapper.toPersistence(lead);
-      const safeData = leadSchema.parse(data); // Security Validation
+    const action = async () => {
+      return withSecureErrorHandling(async () => {
+        const data = LeadMapper.toPersistence(lead);
+        const safeData = leadSchema.parse(data); // Security Validation
 
-      const docRef = await addDoc(collection(db, this.collectionName), {
-        ...safeData,
-        timestamp: serverTimestamp(),
+        const docRef = await addDoc(collection(db, this.collectionName), {
+          ...safeData,
+          timestamp: serverTimestamp(),
+        });
+
+        // Fire-and-forget CRM / Messaging synchronization
+        import('@/features/sales-automation/model/sales-orchestrator.service')
+          .then(({ salesOrchestrator }) => {
+            salesOrchestrator.processNewLead({ ...safeData, id: docRef.id } as Lead).catch((e) => {
+              console.error('[Sync Error] Failed to execute background sales automation:', e);
+            });
+          })
+          .catch((err) => console.error('Failed to load orchestrator dynamically', err));
+
+        return docRef.id;
       });
+    };
 
-      // Fire-and-forget CRM / Messaging synchronization
-      // Se castea as Lead garantizando que tiene al menos los datos base, en un entorno
-      // productivo real aquí usaríamos un EventBus o Cloud Function (Trigger).
-      import('@/features/sales-automation/model/sales-orchestrator.service')
-        .then(({ salesOrchestrator }) => {
-          salesOrchestrator.processNewLead({ ...safeData, id: docRef.id } as Lead).catch((e) => {
-            console.error('[Sync Error] Failed to execute background sales automation:', e);
-          });
-        })
-        .catch((err) => console.error('Failed to load orchestrator dynamically', err));
+    const fallback = async (error: any) => {
+      console.error('[Sentinel:Resilience] Firestore save failed. Triggering Emergency Save.', error);
+      // Transform partial lead to a dummy lead if necessary for the sensor
+      const emergencyLead = { ...lead, id: `pending_${Date.now()}` } as Lead;
+      await LeadHealthSensor.emergencySave(emergencyLead);
+      return emergencyLead.id;
+    };
 
-      return docRef.id;
-    });
+    return dbBreaker.fire(action, fallback);
   }
 
   async updateLead(id: string, data: Partial<Lead>): Promise<void> {

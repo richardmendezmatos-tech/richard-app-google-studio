@@ -47,7 +47,7 @@ export const generateSitemap = onRequest({ timeoutSeconds: 60, memory: '256MiB' 
     xml += `</urlset>`;
 
     res.set('Content-Type', 'application/xml');
-    res.set('Cache-Control', 'public, max-age=3600, s-maxage=14400'); // Cache for 1 hr in browser, 4 hrs in CDN
+    res.set('Cache-Control', 'public, max-age=3600, s-maxage=86400'); // Cache for 1 hr in browser, 24 hrs in CDN
     res.status(200).send(xml);
   } catch (error) {
     console.error('Error generating sitemap:', error);

@@ -3,6 +3,7 @@ import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 const SITE_URL = 'https://richard-automotive.com';
+export const revalidate = 86400; // Revalidate sitemap every 24 hours
 
 /**
  * Dynamic Sitemap Generator for Richard Automotive.

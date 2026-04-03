@@ -4,6 +4,7 @@ set -euo pipefail
 TARGET="none"
 SKIP_TESTS="false"
 DRY_RUN="false"
+CLEAN="false"
 
 usage() {
   cat <<'EOF'
@@ -19,6 +20,7 @@ Options:
                     firebase-full
   --skip-tests      Skip npm test step
   --dry-run         Print commands without executing them
+  --clean           Remove build artifacts (dist, functions/lib, .next) before build
   -h, --help        Show this help message
 EOF
 }
@@ -39,6 +41,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --dry-run)
       DRY_RUN="true"
+      shift
+      ;;
+    --clean)
+      CLEAN="true"
       shift
       ;;
     -h|--help)
@@ -91,6 +97,11 @@ main() {
   if command -v bun >/dev/null 2>&1 && { [[ -f "bun.lockb" ]] || [[ -f "bun.lock" ]]; }; then
     PKG_MANAGER="bun run"
     echo "⚡ Bun detected! Using Bun for faster execution."
+  fi
+  
+  if [[ "$CLEAN" == "true" ]]; then
+    echo "🧹 Clean mode: Removing old artifacts..."
+    run_cmd "rm -rf dist functions/lib .next node_modules/.cache"
   fi
 
   run_cmd "$PKG_MANAGER lint"

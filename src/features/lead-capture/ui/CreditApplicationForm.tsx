@@ -18,6 +18,7 @@ export const CreditApplicationForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
+  const [hasRescued, setHasRescued] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -41,9 +42,38 @@ export const CreditApplicationForm: React.FC = () => {
   // Track behavior for Auto-healing Sensor
   React.useEffect(() => {
     const trackInteraction = () => setLastInteraction(Date.now());
-    window.addEventListener('mousemove', trackInteraction);
-    return () => window.removeEventListener('mousemove', trackInteraction);
-  }, []);
+    const events = ['mousemove', 'keydown', 'touchstart', 'scroll'];
+    events.forEach(e => window.addEventListener(e, trackInteraction));
+    
+    // Sentinel Watcher: Vigilancia de Abandono de Nivel 13
+    const watcher = setInterval(async () => {
+      // Solo rescatar si no se ha enviado con éxito y tiene datos mínimos
+      if (!isSuccess && !hasRescued && formData.firstName && formData.phone) {
+        const leadData = { ...formData, id: `rescue_${Date.now()}`, status: 'new' as const, type: 'finance' as const };
+        
+        if (LeadHealthSensor.isAbandoned(leadData as any, lastInteraction)) {
+          console.warn('🛡️ Sentinel Watcher: Abandono detectado. Iniciando Protocolo de Rescate...');
+          setHasRescued(true);
+          
+          // 1. Guardado de Emergencia
+          await LeadHealthSensor.emergencySave(leadData as any);
+          
+          // 2. Sentinel Nudge (WhatsApp)
+          const { triggerSentinelNudge } = await import('../../leads/model/whatsappService');
+          await triggerSentinelNudge(
+            leadData.id, 
+            leadData.firstName, 
+            leadData.phone
+          );
+        }
+      }
+    }, 30000); // Revisión cada 30s
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, trackInteraction));
+      clearInterval(watcher);
+    };
+  }, [formData, lastInteraction, isSuccess, hasRescued]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setLastInteraction(Date.now());

@@ -22,7 +22,7 @@ const LEADS_COLLECTION = 'applications';
 /**
  * Adds a new lead to Firestore
  */
-export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>) => {
+export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): Promise<string> => {
   try {
     const marketingData = extractMarketingData();
 
@@ -43,8 +43,11 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>) =
 
     // Automation / Meta CAPI Webhook Sync
     dispatchLeadToWebhook(newLead).catch((e) => console.error('Webhook async sync failed', e));
+
+    return docRef.id;
   } catch (error) {
     console.error('Error adding lead:', error);
+    throw error;
   }
 };
 

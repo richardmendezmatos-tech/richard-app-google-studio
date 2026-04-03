@@ -9,6 +9,8 @@ import SentinelFlashTicker from '@/widgets/brand-ui/layout/SentinelFlashTicker';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
 import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
+import { NeuroTrajectoryDriver } from '@/features/predictive/ui/NeuroTrajectoryDriver';
+import { NeuroUIAdapter } from '@/widgets/brand-ui/layout/NeuroUIAdapter';
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { usePathname } from 'next/navigation';
 import { Car } from '@/shared/types/types';
@@ -154,6 +156,10 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
 
         {/* Dynamic Content */}
         <div className="relative z-10 min-h-full transition-all duration-500">{children}</div>
+
+        {/* Nivel 13: Autonomous Drivers & Adaptive UI */}
+        <NeuroTrajectoryDriver />
+        <NeuroUIAdapter />
       </main>
 
       {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}

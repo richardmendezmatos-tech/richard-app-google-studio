@@ -17,6 +17,12 @@ export interface AntigravityConfig {
 const trimTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 
 import { getAntigravityEnv } from '@/shared/lib/env';
+import { CircuitBreaker } from '@/shared/lib/resilience/CircuitBreaker';
+
+const antigravityBreaker = new CircuitBreaker({
+  failureThreshold: 3, // Fallo agresivo para protección de API
+  resetTimeout: 10000, // 10s para intentar re-conexión
+});
 
 export const getAntigravityConfig = (): AntigravityConfig => {
   const edgeUrl = getAntigravityEnv('EDGE_URL');
@@ -91,21 +97,23 @@ export const antigravityFetch = async <T = unknown>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> => {
-  const cfg = getAntigravityConfig();
-  if (!cfg.apiUrl) {
-    throw new Error('Antigravity API URL is not configured.');
-  }
+  return antigravityBreaker.fire(async () => {
+    const cfg = getAntigravityConfig();
+    if (!cfg.apiUrl) {
+      throw new Error('Antigravity API URL is not configured.');
+    }
 
-  const url = `${trimTrailingSlash(cfg.apiUrl)}${path.startsWith('/') ? path : `/${path}`}`;
-  const headers: HeadersInit = {
-    ...getAntigravityHeaders(),
-    ...(init.headers || {}),
-  };
+    const url = `${trimTrailingSlash(cfg.apiUrl)}${path.startsWith('/') ? path : `/${path}`}`;
+    const headers: HeadersInit = {
+      ...getAntigravityHeaders(),
+      ...(init.headers || {}),
+    };
 
-  const response = await fetch(url, { ...init, headers });
-  if (!response.ok) {
-    throw new Error(`Antigravity request failed (${response.status})`);
-  }
+    const response = await fetch(url, { ...init, headers });
+    if (!response.ok) {
+      throw new Error(`Antigravity request failed (${response.status})`);
+    }
 
-  return (await response.json()) as T;
+    return (await response.json()) as T;
+  });
 };

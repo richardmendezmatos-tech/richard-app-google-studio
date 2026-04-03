@@ -26,8 +26,8 @@ export const DI = {
   
   getLeadRepository: () => {
     return {
-      updateLead: (id: string, data: any) => updateLead(id, data),
-      saveLead: (data: any) => addLead(data)
+      updateLead: (id: string, data: any): Promise<void> => updateLead(id, data),
+      saveLead: (data: any): Promise<string> => addLead(data)
     };
   },
 

@@ -38,6 +38,9 @@ export const leadSchema = z
     behavioralMetrics: z.any().optional(),
     aiAnalysis: z.any().optional(),
     predictiveScore: z.number().optional(),
+    intentTrajectory: z.enum(['improving', 'stable', 'declining']).optional(),
+    neuroScore: z.number().min(0).max(100).optional(),
+    customerMemory: z.any().optional(),
     timestamp: z.any().optional(),
     createdAt: z.any().optional(),
   })
