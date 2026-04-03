@@ -13,11 +13,18 @@ interface TrajectoryState {
   dwellTimes: Record<string, number>; // path -> ms
   lastInteraction: number;
   currentScore: number;
+  factors: {
+    interaction: number;
+    velocity: number;
+    formFocus: boolean;
+    dwellTime: number;
+  };
   
   // Actions
   addEvent: (event: Omit<TrajectoryEvent, 'timestamp'>) => void;
   updateDwellTime: (path: string, duration: number) => void;
   setScore: (score: number) => void;
+  setFactors: (factors: Partial<TrajectoryState['factors']>) => void;
   reset: () => void;
 }
 
@@ -28,6 +35,12 @@ export const useTrajectoryStore = create<TrajectoryState>()(
       dwellTimes: {},
       lastInteraction: Date.now(),
       currentScore: 0,
+      factors: {
+        interaction: 0,
+        velocity: 0,
+        formFocus: false,
+        dwellTime: 0,
+      },
 
       addEvent: (event) => set((state) => {
         const newEvent = { ...event, timestamp: Date.now() };
@@ -48,7 +61,17 @@ export const useTrajectoryStore = create<TrajectoryState>()(
 
       setScore: (currentScore) => set({ currentScore }),
 
-      reset: () => set({ events: [], dwellTimes: {}, currentScore: 0, lastInteraction: Date.now() }),
+      setFactors: (newFactors) => set((state) => ({ 
+        factors: { ...state.factors, ...newFactors } 
+      })),
+
+      reset: () => set({ 
+        events: [], 
+        dwellTimes: {}, 
+        currentScore: 0, 
+        lastInteraction: Date.now(),
+        factors: { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 }
+      }),
     }),
     {
       name: 'sentinel_trajectory_vault',

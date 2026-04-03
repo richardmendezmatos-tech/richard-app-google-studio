@@ -6,6 +6,12 @@ export interface ScoreInsight {
   score: number;
   category: IntentCategory;
   factors: string[];
+  signals: {
+    interaction: number;
+    velocity: number;
+    formFocus: boolean;
+    dwellTime: number;
+  };
 }
 
 export class TrajectoryAnalyzer {
@@ -22,35 +28,45 @@ export class TrajectoryAnalyzer {
    */
   static analyze(events: TrajectoryEvent[], dwellTimes: Record<string, number>): ScoreInsight {
     let score = 0;
-    const factors: string[] = [];
+    const factorLabels: string[] = [];
+    const signals = { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 };
+    
     const uniqueVisits = new Set(events.filter(e => e.type === 'page_view').map(e => e.path));
 
-    // 1. Scoring por volumen de exploración
+    // 1. Scoring por volumen de exploración (Velocity Signal)
+    signals.velocity = Math.min(10, uniqueVisits.size);
     if (uniqueVisits.size > 5) {
       score += 10;
-      factors.push('Exploración profunda del catálogo');
+      factorLabels.push('Exploración profunda del catálogo');
     }
 
-    // 2. Scoring por interacciones de valor (Calculadora / Financiamiento)
-    const calculations = events.filter(e => e.type === 'calculation_run').length;
-    if (calculations > 0) {
+    // 2. Scoring por interacciones (Interaction Signal)
+    const calculationEvents = events.filter(e => e.type === 'calculation_run');
+    signals.interaction = Math.min(10, calculationEvents.length * 2);
+    if (calculationEvents.length > 0) {
       score += this.WEIGHTS.CALCULATION_RUN;
-      factors.push('Cálculo de financiamiento activo');
+      factorLabels.push('Cálculo de financiamiento activo');
     }
 
-    // 3. Scoring por atención prolongada (Dwell Time)
+    // 3. Scoring por atención prolongada (Dwell Signal)
+    let totalDwell = 0;
     Object.entries(dwellTimes).forEach(([path, duration]) => {
+      totalDwell += duration;
       if (path.includes('/trade-in') && duration > 45000) {
         score += this.WEIGHTS.LONG_DWELL_TIME;
-        factors.push('Alta atención en Tasación de Trade-In');
+        factorLabels.push('Alta atención en Tasación de Trade-In');
       }
       if (path.includes('/inventory/') && duration > 60000) {
         score += this.WEIGHTS.PAGE_VIEW_DETAIL;
-        factors.push('Interés sostenido en unidad específica');
+        factorLabels.push('Interés sostenido en unidad específica');
       }
     });
+    signals.dwellTime = Math.min(10, totalDwell / 60000); // 1 pt por minuto
 
-    // 4. Categorización
+    // 4. Form Focus Signal (Búsqueda de financiamiento)
+    signals.formFocus = events.some(e => e.path.includes('credit') || e.path.includes('apply'));
+
+    // 5. Categorización
     let category: IntentCategory = 'discovery';
     if (score >= 60) category = 'decision';
     else if (score >= 30) category = 'consideration';
@@ -58,7 +74,8 @@ export class TrajectoryAnalyzer {
     return {
       score: Math.min(100, score),
       category,
-      factors
+      factors: factorLabels,
+      signals
     };
   }
 }

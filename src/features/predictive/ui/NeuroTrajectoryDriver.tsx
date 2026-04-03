@@ -40,13 +40,18 @@ export const NeuroTrajectoryDriver: React.FC = () => {
     // 2. Análisis de Intención al cambiar de página
     const insight = TrajectoryAnalyzer.analyze(events, dwellTimes);
     
+    // Sincronizar con el store para telemetría
+    const { setScore, setFactors } = useTrajectoryStore.getState();
+    setScore(insight.score);
+    setFactors(insight.signals);
+
     // Si la intención es alta, emitir evento global
     if (insight.score >= 60) {
         houstonBus.emit(HoustonEventType.PREDICTIVE_HIGH_INTENT, insight, 'NeuroTrajectoryDriver');
         
-        const currentLeadId = localStorage.getItem('last_lead_id');
-        const leadPhone = localStorage.getItem('last_lead_phone');
-        const leadName = localStorage.getItem('last_lead_name');
+        const currentLeadId = typeof window !== 'undefined' ? localStorage.getItem('last_lead_id') : null;
+        const leadPhone = typeof window !== 'undefined' ? localStorage.getItem('last_lead_phone') : null;
+        const leadName = typeof window !== 'undefined' ? localStorage.getItem('last_lead_name') : null;
 
         if (currentLeadId && leadPhone && leadName) {
             NudgeService.evaluateAndDispatch(currentLeadId, leadPhone, leadName, insight)
@@ -57,7 +62,7 @@ export const NeuroTrajectoryDriver: React.FC = () => {
                 });
         }
     }
-  }, [pathname, addEvent, dwellTimes, events, updateDwellTime]);
+  }, [pathname, events, dwellTimes, addEvent, updateDwellTime]);
 
   // Handle Visibility Change for Dwell Time
   useEffect(() => {
