@@ -3,7 +3,7 @@
  * Designed for Richard Automotive - Exit Readiness Hardening
  */
 
-export type UserRole = 'admin' | 'user' | 'auditor' | 'sales';
+export type UserRole = 'admin' | 'user' | 'sales' | 'manager' | 'auditor' | string;
 
 /**
  * Masks an email address: richard@gmail.com -> r******@gmail.com

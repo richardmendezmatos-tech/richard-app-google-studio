@@ -8,6 +8,9 @@ export const DEFAULT_SETTINGS: PrivacySettings = {
   marketing: false,
   aiData: false,
   partnerSharing: false,
+  language: 'es',
+  darkMode: true,
+  notifications: true,
   lastUpdated: Date.now(),
 };
 

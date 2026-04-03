@@ -157,7 +157,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                 <div className="lg:col-span-5 space-y-6">
                   <div className="group relative rounded-[40px] overflow-hidden border border-white/10 shadow-2xl bg-black">
                     <img
-                      src={optimizeImage(car.img, 800)}
+                      src={optimizeImage(car.img || '', 800)}
                       alt={car.name}
                       className="w-full aspect-4/5 object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
                     />

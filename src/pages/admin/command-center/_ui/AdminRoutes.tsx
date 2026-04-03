@@ -108,7 +108,7 @@ const MarketingWrapper = () => {
               className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-primary hover:bg-slate-800 transition-all text-left group"
             >
               <img
-                src={optimizeImage(car.img, 100)}
+                src={optimizeImage(car.img || '', 100)}
                 alt={car.name}
                 className="w-12 h-12 rounded-lg object-cover"
                 loading="lazy"

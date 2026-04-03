@@ -42,8 +42,15 @@ const EarlyAdopterOnboard = () => {
           type: 'luxury' as CarType,
           badge: 'Prestige Certified',
           img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
+          image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
+          status: 'available',
+          vin: 'BMWM4-COMP-2024-PRESTIGE',
+          color: 'Black Sapphire Metallic',
           featured: true,
           description: 'Full carbon package, zero miles.',
+          images: ['https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop'],
+          features: ['Full Carbon Package', 'M Sport Exhaust', 'Laser Lights'],
+          dealerId: 'prestige-auto-001',
         },
       ];
 

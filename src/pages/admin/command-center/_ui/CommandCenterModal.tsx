@@ -187,10 +187,14 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
         type: fd.get('type') as CarType,
         badge: fd.get('badge') as string,
         img: mainImage, // Main thumbnail for backward compatibility
+        image: mainImage,
         images: finalImageUrls, // New Gallery Array
         description: description,
         features: (fd.get('features') as string).split(',').map((f) => f.trim()),
         dealerId: currentDealer.id || 'richard-automotive', // Enforcement
+        status: car?.status || 'available',
+        vin: car?.vin || 'PENDING-' + Date.now(),
+        color: car?.color || 'Not Specified',
       });
       logDebug('✅ SUCCESS: Document saved successfully.');
       onClose(); // Close only after success

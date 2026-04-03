@@ -31,7 +31,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
       {/* Image Section */}
       <div className="relative h-64 overflow-hidden">
         <img
-          src={optimizeImage(car.img, 600)}
+          src={optimizeImage(car.img || '', 600)}
           alt={car.name}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />

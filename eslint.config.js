@@ -19,7 +19,8 @@ export default tseslint.config(
             'ios',
             'tools',
             'vite-env.d.ts',
-            'public/sitemap.xml'
+            'public/sitemap.xml',
+            '.next'
         ]
     },
     {

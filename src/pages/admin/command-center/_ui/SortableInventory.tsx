@@ -56,7 +56,7 @@ const SortableCarCard: React.FC<SortableItemProps> = ({ car }) => {
 
       <div className="w-16 h-12 rounded-lg overflow-hidden bg-slate-800">
         <img
-          src={optimizeImage(car.img, 100)}
+          src={optimizeImage(car.img || '', 100)}
           className="w-full h-full object-cover"
           alt={car.name}
         />

@@ -1,45 +1,46 @@
-# Command Center Ops Playbook
+# 🏁 Richard Automotive: Operations Playbook (Sentinel Precision)
 
-## Prerequisitos
+Este documento define la **secuencia de ensamblaje** para garantizar que cada actualización del ecosistema Sentinel cumpla con los estándares de ingeniería Nivel 13.
 
-- Ejecutar desde la raiz del repo:
-  `/Users/richardmendez/richard-automotive-_-command-center`
-- Tener dependencias instaladas: `npm install`
-- Tener configuracion de entorno para `dotenvx` (`.env`, `.env.local` o equivalente)
+## 🩺 Inspección Técnica Pre-Vuelo (Prerequisites)
 
-## Pipeline estandar
+Antes de iniciar la línea de ensamblaje, asegúrese de que el entorno esté afinado:
 
-1. `npm run lint`
-2. `npm run test`
-3. `npm run build`
-4. Deploy segun target
+- **Raíz del Circuito**: Ejecutar comandos siempre desde `/Users/richardmendez/richard-automotive-_-command-center`.
+- **Octanaje de Dependencias**: `bun install` (recomendado) o `npm install`.
+- **Inyección de Entorno**: Configuración activa vía `dotenvx` o archivos `.env` locales.
 
-Detener el flujo si falla cualquier paso.
+## 🚜 Línea de Ensamblaje de Precisión (Standard Pipeline)
 
-## Targets de deploy
+Cada commit o despliegue debe superar la inspección automatizada:
 
-- `vercel`:
+1. **Escaneo de Integridad (`npm run lint`)**: Verificación de sensores (código) para detectar anomalías o variables sin uso.
+2. **Prueba de Seguridad ADAS (`npm run test`)**: Validación de componentes en entornos de estrés controlado.
+3. **Puesta a Punto del Motor (`npm run build`)**: Compilación optimizada para alto rendimiento.
+4. **Entrega de Llaves (Deployment)**: Lanzamiento al target especificado.
+
+> [!WARNING]
+> **Parad el Motor**: Si se detecta un fallo en cualquier paso del pipeline, la línea de ensamblaje se detiene automáticamente para proteger la integridad del sistema.
+
+## 📍 Puntos de Lanzamiento (Deploy Targets)
+
+- **Vercel (Visual Layer)**:
   - Comando: `npm run deploy:vercel`
-  - Requiere acceso autenticado a Vercel.
+  - *Propósito*: Publicación de la interfaz de usuario con Glassmorphism y latencia optimizada.
 
-- `firebase-functions`:
-  - Comando: `npm run deploy:firebase:functions`
-  - Requiere `firebase` autenticado y proyecto `richard-automotive` accesible.
+- **Firebase (Core Engine)**:
+  - **Functions**: `npm run deploy:firebase:functions` (Cerebro IA).
+  - **Rules**: `npm run deploy:firebase:rules` (Seguridad del Chasis).
+  - **Indexes**: `npm run deploy:firebase:indexes` (Eficiencia de Tracción).
+  - **Full Overhaul**: `npm run deploy:firebase:full` (Sincronización total).
 
-- `firebase-rules`:
-  - Comando: `npm run deploy:firebase:rules`
+## ⚙️ Estrategia de Mantenimiento de Competición
 
-- `firebase-indexes`:
-  - Comando: `npm run deploy:firebase:indexes`
+- **Diagnóstico Rápido**: Si el pedido es ambiguo, ejecute un escaneo sin impacto:
+  `.agents/skills/command-center-ops/scripts/release_ops.sh --dry-run --target none`
+- **Tensión de Cadena**: Realice una validación real antes de cualquier lanzamiento crítico:
+  `.agents/skills/command-center-ops/scripts/release_ops.sh --target none`
+- **Lanzamiento Confirmado**: Solo proceda al despliegue con tracción final verificada.
 
-- `firebase-full`:
-  - Comando: `npm run deploy:firebase:full`
-  - Impacto mayor; usar solo cuando el usuario lo pida de forma explicita.
-
-## Estrategia recomendada
-
-- Si el pedido es ambiguo ("hazlo todo"), ejecutar primero:
-  - `.agents/skills/command-center-ops/scripts/release_ops.sh --dry-run --target none`
-- Luego ejecutar checks reales sin deploy:
-  - `.agents/skills/command-center-ops/scripts/release_ops.sh --target none`
-- Desplegar solo con target confirmado.
+---
+*Manual de Ingeniería © 2024 Richard Automotive*

@@ -44,7 +44,7 @@ export const MarketingTabView: React.FC<MarketingTabViewProps> = ({
               className="flex items-center gap-4 p-4 bg-slate-800/40 rounded-2xl border border-white/5 hover:border-primary/50 hover:bg-slate-800/80 hover:shadow-[0_0_20px_rgba(0,174,217,0.15)] hover:-translate-y-1 transition-all duration-300 text-left group"
             >
               <img
-                src={optimizeImage(car.img, 100)}
+                src={optimizeImage(car.img || car.image || '', 100)}
                 alt={car.name}
                 className="w-14 h-14 rounded-xl object-cover shadow-lg"
               />

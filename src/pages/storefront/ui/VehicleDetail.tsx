@@ -265,7 +265,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
               }
             >
               <Viewer360
-                images={car.images && car.images.length > 0 ? car.images : [car.img]}
+                images={(car.images && car.images.length > 0 ? car.images : [car.img || '']).filter(Boolean) as string[]}
                 alt={car.name}
                 badge={car.badge}
                 carPrice={car.price}

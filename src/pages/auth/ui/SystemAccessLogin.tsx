@@ -21,7 +21,7 @@ import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { useAuthStore } from '@/entities/session';
-import { AppUser, UserRole } from '@/entities/inventory';
+import { AppUser, UserRole } from '@/entities/user/model/types';
 import { normalizeUser } from '@/features/auth';
 import SEO from '@/shared/ui/seo/SEO';
 

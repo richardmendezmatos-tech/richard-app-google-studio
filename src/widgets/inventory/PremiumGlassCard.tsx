@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ShieldCheck, Heart, GitCompare, ChevronRight } from 'lucide-react';
+import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
@@ -118,7 +118,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
         {/* Image */}
         <OptimizedImage
-          src={car.img}
+          src={car.img || '/placeholder-car.webp'}
           alt={car.name}
           priority={priority}
           className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-1"

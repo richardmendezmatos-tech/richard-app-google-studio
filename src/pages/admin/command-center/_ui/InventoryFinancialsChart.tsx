@@ -13,7 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Car as CarType } from '@/shared/lib/analytics/AnalyticsService';
+import { Car as CarType } from '@/entities/inventory';
 import { AnalyticsService } from '@/shared/lib/analytics/AnalyticsService';
 
 interface Props {

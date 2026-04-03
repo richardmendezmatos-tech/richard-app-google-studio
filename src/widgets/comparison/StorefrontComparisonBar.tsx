@@ -25,7 +25,7 @@ const StorefrontComparisonBar: React.FC<StorefrontComparisonBarProps> = ({
             className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-[#0b1c2a] bg-white"
           >
             <OptimizedImage
-              src={c.img}
+              src={c.img || c.image || ''}
               alt={c.name}
               className="w-full h-full object-cover"
               width={40}

@@ -99,8 +99,12 @@ const UserLogin: React.FC = () => {
       const google = (window as Window & { google?: GoogleGlobal }).google;
       if (!google) return;
 
+      if (!process.env.VITE_GOOGLE_CLIENT_ID) {
+        console.warn('[AUTH] Missing VITE_GOOGLE_CLIENT_ID');
+      }
+
       google.accounts.id.initialize({
-        client_id: process.env.VITE_GOOGLE_CLIENT_ID,
+        client_id: process.env.VITE_GOOGLE_CLIENT_ID || '',
         callback: async (response: GoogleCredentialResponse) => {
           setLoading(true);
           setStoreLoading(true);

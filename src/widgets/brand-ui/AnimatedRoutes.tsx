@@ -27,7 +27,7 @@ interface AdminRoutesProps {
 }
 const AdminRoutes = React.lazy(() =>
   lazyRetry(() =>
-    import('@/pages/admin/command-center/ui/AdminRoutes').then((m) => ({
+    import('@/pages/admin/command-center/_ui/AdminRoutes').then((m) => ({
       default: m.AdminRoutes || m.default,
     })),
   ),
@@ -88,13 +88,13 @@ const FrameworkDashboard = React.lazy(() =>
   lazyRetry(() => import('@/widgets/brand-ui/layout/FrameworkDashboard')),
 );
 const BetaOnboard = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/BetaOnboard')),
+  lazyRetry(() => import('@/pages/admin/command-center/_ui/BetaOnboard')),
 );
 const EarlyAdopterOnboard = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/EarlyAdopterOnboard')),
+  lazyRetry(() => import('@/pages/admin/command-center/_ui/EarlyAdopterOnboard')),
 );
 const B2BBillingDashboard = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/B2BBillingDashboard')),
+  lazyRetry(() => import('@/pages/admin/command-center/_ui/B2BBillingDashboard')),
 );
 const LeadAnalyticsPage = React.lazy(() =>
   lazyRetry(() => import('@/features/leads').then((m) => ({ default: m.LeadAnalyticsPage }))),
@@ -116,7 +116,7 @@ const ContactoPage = React.lazy(() => lazyRetry(() => import('@/pages/contacto/u
 const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/pages/storefront/ui/CitySEOPage')));
 
 const CRMBoard = React.lazy(() =>
-  lazyRetry(() => import('@/pages/admin/command-center/ui/CRMBoard')),
+  lazyRetry(() => import('@/pages/admin/command-center/_ui/CRMBoard')),
 ) as unknown as React.ComponentType<any>;
 import { uploadInitialInventory } from '@/entities/inventory';
 import { initialInventoryData } from '@/entities/inventory';

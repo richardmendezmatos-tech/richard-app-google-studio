@@ -10,6 +10,12 @@ export interface PrivacySettings {
   language: 'es' | 'en';
   darkMode: boolean;
   notifications: boolean;
+  analytics: boolean;
+  aiData: boolean;
+  marketing: boolean;
+  partnerSharing: boolean;
+  lastUpdated?: number;
+  essential?: boolean;
 }
 
 export enum ViewMode {

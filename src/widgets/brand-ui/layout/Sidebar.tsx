@@ -207,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               onMouseEnter={() =>
-                import('@/pages/admin/command-center/ui/MissionControlDashboard').catch(() => {})
+                import('@/pages/admin/command-center/_ui/MissionControlDashboard').catch(() => {})
               }
               icon={<Monitor size={19} />}
               label="Mission Control"
@@ -222,7 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               onMouseEnter={() =>
-                import('@/pages/admin/command-center/ui/SentinelInventoryTab').catch(() => {})
+                import('@/pages/admin/command-center/_ui/SentinelInventoryTab').catch(() => {})
               }
               icon={<Warehouse size={19} />}
               label="Unidades"
@@ -235,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               onMouseEnter={() =>
-                import('@/pages/admin/command-center/ui/CRMBoard').catch(() => {})
+                import('@/pages/admin/command-center/_ui/CRMBoard').catch(() => {})
               }
               icon={<Activity size={19} />}
               label="CRM Leads"

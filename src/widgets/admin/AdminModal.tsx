@@ -177,14 +177,24 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       logDebug('Persisting document to Firestore...');
       await onSave({
         name: fd.get('name') as string,
+        make: (fd.get('name') as string)?.split(' ')[0] || 'Unknown',
+        model: (fd.get('name') as string)?.split(' ').slice(1).join(' ') || 'Model',
+        year: new Date().getFullYear(),
+        vin: `VIN-${Math.random().toString(36).substring(7).toUpperCase()}`,
+        color: 'N/A',
         price: Number(fd.get('price')),
         type: fd.get('type') as CarType,
-        badge: fd.get('badge') as string,
-        img: mainImage, // Main thumbnail for backward compatibility
-        images: finalImageUrls, // New Gallery Array
+        status: 'available',
+        badge: (fd.get('badge') as string) || '',
+        image: mainImage,
+        img: mainImage,
+        images: finalImageUrls,
         description: description,
         features: (fd.get('features') as string).split(',').map((f) => f.trim()),
-        dealerId: currentDealer.id || 'richard-automotive', // Enforcement
+        dealerId: (currentDealer as any)?.id || 'richard-automotive',
+        mileage: 0,
+        fuel: 'Gasoline',
+        transmission: 'Automatic'
       });
       logDebug('✅ SUCCESS: Document saved successfully.');
       onClose(); // Close only after success

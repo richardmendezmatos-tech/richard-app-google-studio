@@ -31,7 +31,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       {/* Image Section */}
       <div className="relative h-72 overflow-hidden">
         <img
-          src={optimizeImage(car.img, 800)}
+          src={optimizeImage(car.img || '', 800)}
           alt={car.name}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />

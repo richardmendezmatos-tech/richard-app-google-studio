@@ -47,6 +47,7 @@ import {
   updateLeadStatus,
   getSecureLeadData,
 } from '@/shared/api/adapters/leads/crmService';
+import { UserRole } from '@/shared/types/types';
 import { automationService } from '@/features/automation/api/automationService';
 import { decryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
