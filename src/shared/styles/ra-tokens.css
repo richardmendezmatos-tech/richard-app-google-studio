@@ -7,10 +7,15 @@
   --ra-bg-dark: #050b10;
   --ra-bg-surface: rgba(13, 34, 50, 0.7);
   
-  /* Glassmorphism Variants */
+  /* Glassmorphism Dynamic Variables (Nivel 18) */
   --ra-glass: rgba(255, 255, 255, 0.03);
   --ra-glass-border: rgba(255, 255, 255, 0.1);
   --ra-glass-blur: blur(20px);
+  --ra-glass-intensity: 1; /* Multiplier for blur/opacity */
+  
+  /* Adaptive Motion (Nivel 18) */
+  --ra-motion-duration: 0.5s; 
+  --ra-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Typography */
   --ra-font-main: 'Inter', sans-serif;
@@ -22,11 +27,12 @@
 }
 
 .glass-premium {
-  background: var(--ra-glass-surface, rgba(13, 34, 50, 0.4));
-  backdrop-filter: var(--ra-glass-blur);
-  -webkit-backdrop-filter: var(--ra-glass-blur);
+  background: rgba(13, 34, 50, calc(0.4 * var(--ra-glass-intensity)));
+  backdrop-filter: blur(calc(20px * var(--ra-glass-intensity)));
+  -webkit-backdrop-filter: blur(calc(20px * var(--ra-glass-intensity)));
   border: 1px solid var(--ra-glass-border);
   box-shadow: var(--ra-shadow-premium);
+  transition: all var(--ra-motion-duration) var(--ra-motion-ease);
 }
 
 .ra-input-base {
