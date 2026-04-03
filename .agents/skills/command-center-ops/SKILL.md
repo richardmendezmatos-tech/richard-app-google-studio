@@ -53,5 +53,6 @@ El flujo de lanzamiento sigue una secuencia de precisión absoluta:
 * **Especificaciones Técnicas**: `references/ops-playbook.md`
 * **Métrica de Victoria**: Estabilidad Sentinel (Latencia < 300ms, Error Rate < 0.1%).
 
----
+## Registro de Propiedad
+
 *© 2026 Richard Automotive | Ingeniería Nivel 13*

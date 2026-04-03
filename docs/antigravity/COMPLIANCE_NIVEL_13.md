@@ -32,14 +32,14 @@ Inspirado en **ISO 27001** (Seguridad de la Información).
 - **Latencia de Circuit (UX)**: El tiempo de respuesta percibido (TBT) debe ser inferior a **300ms**. Animaciones y transiciones de Glassmorphism deben fluir a 60fps.
 - **Combustible Eficiente**: Optimización de bundles (Tree Shaking) y carga diferida (Lazy Loading) para asegurar que el "peso" del sitio no afecte la tracción del dispositivo del usuario.
 
----
-
 ## 🛰️ Métrica de Victoria: Uptime & Precision Index (UPI)
 
 El éxito de Richard Automotive no se mide en líneas de código, sino en el **UPI**:
+
 - **Disponibilidad**: > 99.9% Uptime.
 - **Precisión Financiera**: 100% de coincidencia entre cotización de IA y cierre bancario.
 - **Velocidad de Cierre**: Reducción del tiempo de asesoría mediante agentes autónomos.
 
----
+## Registro de Propiedad
+
 *Certificación Interna Richard Automotive | Houston Engineering*

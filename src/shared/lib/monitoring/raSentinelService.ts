@@ -2,9 +2,11 @@ import { db } from '@/shared/api/firebase/client';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface SentinelMetric {
-  type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated';
+  type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated' | 'conversion_friction';
   data: any;
   operationalScore: number;
+  frictionPoint?: string;
+  metadata?: Record<string, any>;
 }
 
 /**
@@ -21,11 +23,27 @@ export class RaSentinelService {
         timestamp: serverTimestamp(),
       });
       console.log(
-        `[Sentinel] Actividad registrada: ${metric.type} | Business Health Score: ${metric.operationalScore}`,
+        `[Sentinel] Actividad registrada: ${metric.type} | Score: ${metric.operationalScore}`,
       );
     } catch (error) {
       console.error('[Sentinel] Error al persistir reporte:', error);
     }
+  }
+
+  /**
+   * Registra puntos de fricción para el auto-evolución (Nivel 14).
+   */
+  async reportFriction(step: string, reason: string, data?: any): Promise<void> {
+    await this.reportActivity({
+      type: 'conversion_friction',
+      frictionPoint: step,
+      data: { reason, ...data },
+      operationalScore: 0, // La fricción reduce la salud operativa
+      metadata: { 
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown'
+      }
+    });
   }
 
   /**

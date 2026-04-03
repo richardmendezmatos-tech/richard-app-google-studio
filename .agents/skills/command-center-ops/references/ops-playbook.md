@@ -42,5 +42,6 @@ Cada commit o despliegue debe superar la inspección automatizada:
   `.agents/skills/command-center-ops/scripts/release_ops.sh --target none`
 - **Lanzamiento Confirmado**: Solo proceda al despliegue con tracción final verificada.
 
----
+## Registro de Auditoría
+
 *Manual de Ingeniería © 2024 Richard Automotive*

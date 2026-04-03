@@ -6,8 +6,8 @@ import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
 import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 import Script from 'next/script';
 
-const inter = Inter({ subsets: ['latin'] });
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Master Control Center',
@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     images: ['https://richard-automotive.com/og-image.jpg'],
   },
 };
+
+import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceInitializer';
+import { Suspense } from 'react';
 
 export default function RootLayout({
   children,
@@ -45,23 +48,28 @@ export default function RootLayout({
       {/* Metadata is handled by Next.js Metadata API */}
       <head />
       <body className="bg-slate-950 text-white min-h-screen">
+        <PerformanceInitializer />
         <Script
           id="person-jsonld"
           type="application/ld+json"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {process.env.NODE_ENV === 'development' && (
           <Script
             id="e2e-bypass-script"
+            strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `if (!localStorage.getItem('e2e_bypass')) localStorage.setItem('e2e_bypass', 'true');`,
             }}
           />
         )}
         <AppProviders>
-          <CinemaLayout inventory={[]}>
-            {children}
-          </CinemaLayout>
+          <Suspense fallback={<div className="min-h-screen bg-slate-950 animate-pulse" />}>
+            <CinemaLayout inventory={[]}>
+              {children}
+            </CinemaLayout>
+          </Suspense>
         </AppProviders>
       </body>
     </html>
