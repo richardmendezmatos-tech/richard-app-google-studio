@@ -2,6 +2,7 @@ import { db } from '@/shared/api/firebase/firebaseService';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
 import { generateEmbedding } from '@/shared/api/ai';
 import { vectorStoreService } from '@/features/ai-hub';
+import { intentAnalysisService, IntentMatrix } from './scoring/IntentAnalysisService';
 
 export type PersuasionProfile = 'Analytical' | 'Impulsive' | 'Conservative' | 'Unknown';
 
@@ -12,6 +13,8 @@ export interface CustomerPreference {
   lastSeen: Date;
   intentScore: number;
   persuasionProfile: PersuasionProfile;
+  intentMatrix?: IntentMatrix;
+  sentimentVelocity?: number;
 }
 
 export interface CustomerMemory {
@@ -55,6 +58,8 @@ export class CustomerMemoryService {
       await setDoc(memoryRef, this.getDefaultMemory(leadId));
     }
 
+    const currentMemory = docSnap.exists() ? docSnap.data() as CustomerMemory : this.getDefaultMemory(leadId);
+
     const updates: Record<string, unknown> = {
       'preferences.lastSeen': Timestamp.now(),
     };
@@ -72,6 +77,23 @@ export class CustomerMemoryService {
       const newProfile = await this.analyzeCognitiveProfile(leadId, data.interactionSnippet);
       if (newProfile !== 'Unknown') {
         updates['preferences.persuasionProfile'] = newProfile;
+      }
+
+      // Nivel 17: Matriz de Intención Semántica (Gemini 1.5 Flash)
+      try {
+        const newMatrix = await intentAnalysisService.extractIntent(data.interactionSnippet);
+        updates['preferences.intentMatrix'] = newMatrix;
+
+        // Sentiment Velocity
+        if (currentMemory.preferences.intentMatrix) {
+          const velocity = intentAnalysisService.calculateVelocity(
+            currentMemory.preferences.intentMatrix,
+            newMatrix
+          );
+          updates['preferences.sentimentVelocity'] = velocity;
+        }
+      } catch (err) {
+        console.error('Failed to extract intent matrix:', err);
       }
 
       // AI Vector Integration: Generate embedding and store in Supabase
