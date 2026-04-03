@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { calculateLoan, CreditTier, getCreditTierLabel } from '@/entities/finance';
-import { DollarSign, TrendingUp, CheckCircle, AlertCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, CheckCircle, AlertCircle, ShieldCheck, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { generarPersuasionVenta } from '@/features/sales/application/GenerarPersuasionVenta';
 
 interface DealBuilderProps {
   vehicleId: string;
@@ -52,9 +53,9 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
   const getPowerLabel = (score: number) => {
     if (score > 80)
-      return { text: '¡Aprobación Inmediata!', color: 'text-emerald-400', bg: 'bg-emerald-500' };
-    if (score > 50) return { text: 'Muy Probable', color: 'text-primary', bg: 'bg-primary' };
-    return { text: 'Requiere Revisión', color: 'text-amber-400', bg: 'bg-amber-500' };
+      return { text: 'Viabilidad Óptima (Sentinel Approved)', color: 'text-emerald-400', bg: 'bg-emerald-500' };
+    if (score > 50) return { text: 'Alta Probabilidad', color: 'text-primary', bg: 'bg-primary' };
+    return { text: 'Análisis de Riesgo Requerido', color: 'text-amber-400', bg: 'bg-amber-500' };
   };
 
   const power = getPowerLabel(purchasePowerScore);
@@ -86,19 +87,19 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <TrendingUp size={20} />
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/30 shadow-[0_0_15px_rgba(0,174,217,0.2)]">
+            <ShieldCheck size={20} />
           </div>
           <div>
-            <h3 className="text-xl font-black text-white">Diseña tu Trato</h3>
-            <p className="text-slate-400 text-xs">Personaliza tu plan sin compromiso.</p>
+            <h3 className="text-xl font-black text-white uppercase tracking-tighter">Briefing Estratégico F&I</h3>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Optimización de Capital & Paz Mental</p>
           </div>
         </div>
 
         {/* MONTHLY PAYMENT HERO */}
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 text-center border border-slate-700 shadow-inner relative group">
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-2">
-            Tu Mensualidad Estimada
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+            Inversión Mensual Estimada
           </p>
           <div className="flex items-start justify-center gap-1 text-white">
             <span className="text-2xl mt-2 font-bold opacity-50">$</span>
@@ -106,8 +107,8 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
               {payment.toLocaleString()}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            *Impuestos y tasas no incluidos. Sujeto a aprobación.
+          <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">
+            *Análisis de Inversión F&I. Sujeto a validación bancaria.
           </p>
 
           {/* "Hidden" APR Notice */}
@@ -186,10 +187,10 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
         {/* DESERVE IT METER / PURCHASE POWER */}
         <div className="mt-10 pt-8 border-t border-slate-700">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Poder de Compra
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              Viabilidad de Aprobación F&I
             </span>
-            <span className={`text-sm font-black ${power.color}`}>{power.text}</span>
+            <span className={`text-[10px] font-black uppercase tracking-widest ${power.color}`}>{power.text}</span>
           </div>
           <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
             <motion.div
@@ -201,14 +202,42 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
           </div>
         </div>
 
-        <div className="mt-8 flex gap-3">
+        <div className="mt-8 flex flex-col gap-4">
+          {/* AI Strategy Briefing */}
+          <div className="bg-slate-950/50 rounded-2xl p-5 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Zap size={40} className="text-primary" />
+            </div>
+            <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Estrategia de Cierre Sentinel
+            </h4>
+            <div className="space-y-3">
+              {generarPersuasionVenta.execute({
+                cotizacion: {
+                  valorTradeIn: downPayment, // Simple mapping for demo
+                  pagoDeudaTradeIn: 0,
+                  pagoMensualEstimado: payment,
+                  apr: creditTier === 'excellent' ? 5.95 : 8.95
+                },
+                nombreCliente: 'Cliente'
+              }).points.slice(0, 2).map((point, idx) => (
+                <div key={idx} className="flex gap-3 items-start">
+                  <div className="mt-1 w-1 h-1 rounded-full bg-slate-700 shrink-0" />
+                  <p className="text-[11px] leading-relaxed text-slate-400 font-medium italic">
+                    {point}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <button
             onClick={handlePreQualify}
-            className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
+            className="w-full bg-primary hover:bg-cyan-500 text-white font-black uppercase tracking-[0.3em] text-[10px] py-5 rounded-2xl shadow-2xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95"
           >
-            <CheckCircle size={16} /> Pre-Aprobarme Ahora
+            <CheckCircle size={18} /> Ejecutar Cierre Estratégico
           </button>
-          {/* Optional secondary action */}
         </div>
       </div>
     </div>

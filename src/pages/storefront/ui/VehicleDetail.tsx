@@ -337,27 +337,19 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 ml-2">
               Potencia y Desempeño
             </h3>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <ProgressRing
                 label="Caballos (HP)"
                 value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180}
                 max={600}
-                size={100}
+                size={110}
                 strokeWidth={8}
-              />
-              <ProgressRing
-                label="Eficiencia"
-                value={car.type === 'sedan' ? 92 : car.type === 'suv' ? 84 : 76}
-                max={100}
-                size={100}
-                strokeWidth={8}
-                color="#10b981"
               />
               <ProgressRing
                 label="Tech Score"
                 value={car.type === 'luxury' ? 98 : car.price > 40000 ? 90 : 85}
                 max={100}
-                size={100}
+                size={110}
                 strokeWidth={8}
                 color="#f59e0b"
               />

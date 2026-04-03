@@ -45,7 +45,6 @@ const Viewer360: React.FC<Props> = ({
   // AI Metrics (Simulated based on car data)
   const metrics = {
     hp: carPrice > 60000 ? 525 : carPrice > 35000 ? 310 : 185,
-    efficiency: carType === 'sedan' ? '92%' : carType === 'suv' ? '84%' : '76%',
     tech: carType === 'luxury' ? 98 : carPrice > 40000 ? 94 : 88,
   };
 
@@ -209,19 +208,6 @@ const Viewer360: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="absolute bottom-[30%] right-[15%] animate-in zoom-in slide-in-from-right-4 duration-700 delay-150">
-          <div className="bg-slate-900/90 backdrop-blur border border-emerald-500/30 p-3 rounded-2xl shadow-xl flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-              <Cpu size={16} className="text-emerald-400" />
-            </div>
-            <div>
-              <p className="text-[8px] text-emerald-400 font-bold uppercase tracking-tight">
-                Eficiencia
-              </p>
-              <p className="text-xs text-white font-black">{metrics.efficiency}</p>
-            </div>
-          </div>
-        </div>
 
         <div className="absolute top-[40%] right-[10%] animate-in zoom-in slide-in-from-top-4 duration-700 delay-300">
           <div className="bg-slate-900/90 backdrop-blur border border-amber-500/30 p-3 rounded-2xl shadow-xl flex items-center gap-3">

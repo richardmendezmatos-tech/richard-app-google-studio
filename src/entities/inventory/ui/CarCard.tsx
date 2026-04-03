@@ -102,7 +102,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
               {car.type}
             </span>
-            <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter mt-1 group-hover:text-primary transition-colors line-clamp-1">
+            <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white tracking-tighter uppercase leading-none mt-1 group-hover:text-primary transition-colors">
               {car.name}
             </h3>
           </div>

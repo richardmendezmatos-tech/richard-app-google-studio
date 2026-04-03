@@ -24,25 +24,25 @@ export class GenerarPersuasionVenta {
 
     if (esEquidadPositiva) {
       points.push(
-        `Optimización de Capital: Su unidad actual genera un beneficio líquido de $${netoEquidad.toLocaleString()} aplicable a su nueva inversión.`,
+        `Optimización de Capital: Su unidad actual genera un beneficio líquido de $${netoEquidad.toLocaleString()} que acelera su camino hacia la plenitud con esta nueva inversión.`,
       );
     } else {
       points.push(
-        `Eficiencia de Deuda: Hemos estructurado una consolidación estratégica para eliminar su balance anterior y facilitar el estreno hoy.`,
+        `Paz Mental Financiera: Hemos diseñado una estructura de consolidación para eliminar balances anteriores, garantizando su autonomía desde el primer día.`,
       );
     }
 
     points.push(
-      `Protección de Flujo: Su pago de $${cotizacion.pagoMensualEstimado.toLocaleString()} con una tasa preferencial del ${cotizacion.apr}% asegura su estabilidad financiera a largo plazo.`,
+      `Protección de Flujo: Su pago de $${cotizacion.pagoMensualEstimado.toLocaleString()} asegura la tranquilidad de su familia mediante una tasa preferencial estratégica del ${cotizacion.apr}%.`,
     );
     points.push(
-      `En Richard Automotive, maximizamos su ROI operativo. Este negocio está diseñado bajo los más altos estándares de eficiencia del Command Center.`,
+      `Esta propuesta ha sido diseñada bajo los estándares Sentinel para asegurar una conexión total con su nuevo estilo de vida.`,
     );
 
     return {
-      headline: `Propuesta Estratégica de Inversión - ${nombreCliente}`,
+      headline: `Diseño de Inversión Inteligente - ${nombreCliente}`,
       points,
-      callToAction: `Ejecutar Cierre y Entrega de Unidad`,
+      callToAction: `Ejecutar Cierre Estratégico`,
     };
   }
 }

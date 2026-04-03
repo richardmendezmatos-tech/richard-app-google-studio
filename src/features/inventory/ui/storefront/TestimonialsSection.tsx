@@ -32,7 +32,7 @@ const TestimonialsSection: React.FC = () => {
       name: 'Miguel Ángel',
       role: 'DUEÑO DE GENESIS GV80',
       comment:
-        'Eficiencia pura. Me trajeron el auto a la oficina para el briefing final y cerramos en tiempo récord. Autoridad absoluta en el mercado.',
+        'Plenitud total. Me trajeron el auto a la oficina para el briefing final y cerramos en tiempo récord. Autoridad absoluta en el mercado.',
       rating: 5,
       location: 'Guaynabo, PR',
       img: 'https://randomuser.me/api/portraits/men/85.jpg',

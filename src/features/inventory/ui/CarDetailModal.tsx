@@ -16,6 +16,7 @@ import {
   MessageCircle,
   ShieldCheck,
   Activity,
+  Zap,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateCarPitch } from '@/shared/api/ai';
@@ -182,15 +183,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           </div>
           
           {/* Stats Bar (Liberando espacio del panel derecho) */}
-          <div className="hidden lg:flex justify-around items-center py-4 px-8 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-[32px] border border-white/10">
+          <div className="hidden lg:flex justify-between items-center py-4 px-8 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-[32px] border border-white/10">
             <div className="flex items-center gap-4">
               <ProgressRing label="HP" value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180} max={600} size={48} strokeWidth={4} />
-              <div className="h-8 w-px bg-white/10" />
-              <ProgressRing label="EF%" value={car.type === 'sedan' ? 92 : car.type === 'suv' ? 84 : 76} max={100} size={48} strokeWidth={4} color="#10b981" />
             </div>
             <div className="flex flex-col text-right">
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Inventory Status</span>
-              <span className="text-xs font-black text-emerald-500 uppercase tracking-tighter">Ready for delivery</span>
+              <span className="text-xs font-black text-primary uppercase tracking-tighter italic">Sentinel Verified & Mission Ready</span>
             </div>
           </div>
         </div>
@@ -202,7 +201,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               <div className="flex items-center gap-2">
                 <Activity size={10} className="text-cyan-500 animate-pulse" />
                 <span className="font-tech text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em]">
-                {car.type} Unit Protocol
+                {car.type} Sentinel Protocol
                 </span>
               </div>
               <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -219,7 +218,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="space-y-1">
                 <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <Calculator size={12} className="text-cyan-500" /> Mensualidad Estimada
+                  <Calculator size={12} className="text-cyan-500" /> Inversión Mensual Estratégica
                 </div>
                 <div className="text-4xl lg:text-5xl font-black text-slate-800 dark:text-white tracking-tighter tabular-nums">
                   ${calculatedPayment}
@@ -232,8 +231,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                     onClick={() => handleTabChange(tab)}
                     className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
                   >
-                    {tab === 'insight' ? <Sparkles size={12} /> : <Calculator size={12} />}
-                    {tab === 'calculator' ? 'Finas' : 'IA'}
+                    {tab === 'insight' ? <Sparkles size={12} /> : <Zap size={12} />}
+                    {tab === 'calculator' ? 'F&I Strategy' : 'AI Analysis'}
                   </button>
                 ))}
               </div>
@@ -315,9 +314,9 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                 >
                   <div className="bg-white/5 dark:bg-black/20 p-4 rounded-2xl border border-cyan-500/10">
                     {loadingPitch ? (
-                      <div className="flex flex-col items-center justify-center py-4 gap-2">
+                      <div className="flex flex-col items-center justify-center py-4 gap-2 text-center">
                         <Loader2 className="animate-spin text-cyan-500" size={24} />
-                        <span className="font-tech text-[8px] font-bold uppercase tracking-widest text-cyan-500/50">IA Analizando...</span>
+                        <span className="font-tech text-[8px] font-bold uppercase tracking-widest text-cyan-500/50">Analizando Estrategia F&I...</span>
                       </div>
                     ) : (
                       <div className="text-[11px] leading-relaxed text-slate-300 pointer-events-none">
@@ -355,9 +354,9 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <div className="mt-4 flex flex-col items-center shrink-0 w-full gap-3 bg-white dark:bg-slate-900 pt-4 border-t border-slate-100 dark:border-white/5">
             <button
               onClick={handleRequestApproval}
-              className="w-full py-5 bg-gradient-to-r from-cyan-600 to-blue-700 text-white rounded-[28px] font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+              className="w-full py-5 bg-gradient-to-r from-primary to-blue-700 text-white rounded-[28px] font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <MessageCircle size={18} /> Consultar Disponibilidad
+              <Zap size={18} className="fill-white" /> Ejecutar Cierre Estratégico
             </button>
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.1em] flex items-center gap-1 opacity-60">
               <ShieldCheck size={12} className="text-cyan-500" /> Richard Automotive Priority Unit
