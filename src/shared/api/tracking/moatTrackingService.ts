@@ -23,7 +23,7 @@ export const logIntentSignal = async (signal: IntentSignal) => {
     });
 
     // Optimization: Atomic update of the Lead's intent score if session is linked
-    const leadId = localStorage.getItem('current_lead_id');
+    const leadId = typeof window !== 'undefined' ? localStorage.getItem('current_lead_id') : null;
     if (leadId) {
       const leadRef = doc(db, 'leads', leadId);
       await updateDoc(leadRef, {

@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
+import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import DOMPurify from 'dompurify';
 
@@ -151,10 +152,10 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         className="bg-slate-50 dark:bg-slate-900 w-full max-w-6xl h-[92vh] rounded-[48px] md:rounded-[64px] shadow-2xl p-4 md:p-6 relative flex flex-col lg:flex-row gap-6 overflow-hidden border border-white/10"
       >
         <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-30 flex gap-2">
-          <button onClick={handleShare} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-cyan-500 hover:text-white transition-all shadow-lg">
+          <button onClick={handleShare} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-cyan-500 hover:text-white transition-all shadow-lg" title="Compartir este vehículo">
             <Share2 size={18} />
           </button>
-          <button onClick={onClose} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-lg">
+          <button onClick={onClose} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-lg" title="Cerrar detalles">
             <X size={18} />
           </button>
         </div>
@@ -179,8 +180,9 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           )}
         </div>
 
-        <div className="w-full lg:w-2/5 flex flex-col h-full overflow-hidden">
-          <div className="mb-6 px-2">
+        <div className="w-full lg:w-[45%] flex flex-col h-full overflow-hidden p-2">
+          {/* Header Area */}
+          <div className="mb-6">
             <div className="flex items-center gap-2 mb-1">
                 <Activity size={12} className="text-cyan-500 animate-pulse" />
                 <span className="font-tech text-[10px] font-black text-cyan-500 uppercase tracking-[0.3em]">
@@ -190,24 +192,50 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             <h2 className="text-3xl lg:text-5xl font-black text-slate-800 dark:text-white tracking-tighter leading-tight">
               {car.name}
             </h2>
-            <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">
-              ${car.price.toLocaleString()}
-            </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-6 lg:p-8 rounded-[40px] text-center shadow-xl dark:shadow-none border border-slate-100 dark:border-white/5 mb-6 shrink-0 transition-all">
-            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-              <Calculator size={14} /> Mensualidad Estimada
+          {/* Payment Summary & Critical Controls (Nivel 18 Glassmorphism) */}
+          <GlassContainer intensity="high" className="p-6 lg:p-8 rounded-[40px] text-center shadow-xl mb-6 relative overflow-hidden group">
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2 mb-2">
+              <Calculator size={14} className="text-cyan-500" /> Mensualidad Estimada
             </div>
-            <div className="text-5xl lg:text-7xl font-black text-slate-800 dark:text-white tracking-tighter my-1">
+            <div className="text-5xl lg:text-7xl font-black text-slate-800 dark:text-white tracking-tighter tabular-nums drop-shadow-sm">
               ${calculatedPayment}
             </div>
-
-            <div className="flex justify-around mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
-              <ProgressRing label="HP" value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180} max={600} size={64} strokeWidth={5} />
-              <ProgressRing label="EF%" value={car.type === 'sedan' ? 92 : car.type === 'suv' ? 84 : 76} max={100} size={64} strokeWidth={5} color="#10b981" />
+            
+            {/* Direct Inputs - NO TABS - Above the Fold */}
+            <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-center gap-1">
+                    <Banknote size={10} /> Pronto
+                  </label>
+                  <input
+                    type="number" id="down-payment-input" value={downPayment}
+                    onChange={(e) => setDownPayment(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="w-full px-3 py-3 bg-white/5 dark:bg-black/20 dark:text-white border border-white/10 rounded-2xl text-center font-bold outline-none focus:border-cyan-500/50 transition-all text-sm"
+                    placeholder="0"
+                    title="Ingresa el pago pronto"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="trade-in-input" className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-center gap-1">
+                    <CreditCard size={10} /> Trade-In
+                  </label>
+                  <input
+                    type="number" id="trade-in-input" value={tradeIn}
+                    onChange={(e) => setTradeIn(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="w-full px-3 py-3 bg-white/5 dark:bg-black/20 dark:text-white border border-white/10 rounded-2xl text-center font-bold outline-none focus:border-cyan-500/50 transition-all text-sm"
+                    placeholder="0"
+                    title="Ingresa el valor del trade-in"
+                  />
+                </div>
             </div>
-          </div>
+
+            <div className="flex justify-around mt-6 pt-6 border-t border-white/10">
+              <ProgressRing label="HP" value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180} max={600} size={54} strokeWidth={4} />
+              <ProgressRing label="EF%" value={car.type === 'sedan' ? 92 : car.type === 'suv' ? 84 : 76} max={100} size={54} strokeWidth={4} color="#10b981" />
+            </div>
+          </GlassContainer>
 
           <div className="flex bg-slate-200 dark:bg-slate-800 p-1.5 rounded-2xl mb-4 shrink-0 shadow-inner">
             {(['calculator', 'insight'] as const).map((tab) => (
@@ -225,41 +253,35 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             {activeTab === 'calculator' ? (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
-                      <Banknote size={12} /> Pronto ($)
-                    </label>
-                    <input
-                      type="number" value={downPayment}
-                      onChange={(e) => setDownPayment(e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[24px] focus:ring-4 focus:ring-cyan-500/20 text-lg font-bold outline-none transition-all"
-                    />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Crédito Estimado</label>
+                    <div className="flex gap-2">
+                        {[0.029, 0.059, 0.099, 0.129].map((rate) => (
+                            <button
+                                key={rate}
+                                onClick={() => setCreditRate(rate)}
+                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all border ${creditRate === rate ? 'bg-cyan-500 border-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-100 dark:bg-slate-800 border-transparent text-slate-400'}`}
+                            >
+                                {rate === 0.029 ? 'Excel' : rate === 0.059 ? 'Bueno' : rate === 0.099 ? 'Justo' : 'Trabajado'}
+                            </button>
+                        ))}
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 flex items-center gap-1">
-                      <CreditCard size={12} /> Trade-In ($)
-                    </label>
-                    <input
-                      type="number" value={tradeIn}
-                      onChange={(e) => setTradeIn(e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-full px-5 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white border-2 border-transparent rounded-[24px] focus:ring-4 focus:ring-cyan-500/20 text-lg font-bold outline-none transition-all"
-                    />
+                    <label htmlFor="term-select" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Plazo (Meses)</label>
+                    <select
+                      id="term-select"
+                      value={term}
+                      onChange={(e) => setTerm(Number(e.target.value))}
+                      className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white rounded-[24px] focus:ring-4 focus:ring-cyan-500/20 text-sm font-bold appearance-none cursor-pointer outline-none border-2 border-transparent"
+                      title="Selecciona el plazo en meses"
+                    >
+                      {[48, 60, 72, 84].map(t => (
+                          <option key={t} value={t}>{t} Meses</option>
+                      ))}
+                    </select>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Crédito Estimado</label>
-                  <select
-                    value={creditRate}
-                    onChange={(e) => setCreditRate(Number(e.target.value))}
-                    className="w-full px-6 py-4 bg-slate-100 dark:bg-slate-800 dark:text-white rounded-[24px] focus:ring-4 focus:ring-cyan-500/20 text-sm font-bold appearance-none cursor-pointer outline-none border-2 border-transparent"
-                  >
-                    <option value={0.029}>Excelente (720+)</option>
-                    <option value={0.059}>Bueno (660+)</option>
-                    <option value={0.099}>Justo (600+)</option>
-                    <option value={0.129}>Trabajado (580+)</option>
-                  </select>
                 </div>
               </motion.div>
             ) : (

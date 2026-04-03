@@ -137,31 +137,19 @@ const loadInitialChat = (): ChatMessage[] => {
 };
 
 const DigitalTwinDashboard: React.FC = () => {
-  const [personaName, setPersonaName] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.personaName) || DEFAULT_PERSONA_NAME,
-  );
-  const [instructions, setInstructions] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.instructions) || DEFAULT_INSTRUCTIONS,
-  );
-  const [messages, setMessages] = useState<ChatMessage[]>(() => loadInitialChat());
+  const [personaName, setPersonaName] = useState(DEFAULT_PERSONA_NAME);
+  const [instructions, setInstructions] = useState(DEFAULT_INSTRUCTIONS);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(false);
 
   // New Toggles for Omnichannel Integration
-  const [whatsappEnabled, setWhatsappEnabled] = useState(
-    () => localStorage.getItem('digital_twin_whatsapp') === 'true',
-  );
-  const [hubspotEnabled, setHubspotEnabled] = useState(
-    () => localStorage.getItem('digital_twin_hubspot') === 'true',
-  );
+  const [whatsappEnabled, setWhatsappEnabled] = useState(false);
+  const [hubspotEnabled, setHubspotEnabled] = useState(false);
 
-  const [faceMode, setFaceMode] = useState<FaceMode>(
-    () => (localStorage.getItem(STORAGE_KEYS.faceMode) as FaceMode) || 'bot',
-  );
-  const [facePhoto, setFacePhoto] = useState<string | null>(() =>
-    localStorage.getItem(STORAGE_KEYS.facePhoto),
-  );
+  const [faceMode, setFaceMode] = useState<FaceMode>('bot');
+  const [facePhoto, setFacePhoto] = useState<string | null>(null);
   const [faceError, setFaceError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -171,16 +159,43 @@ const DigitalTwinDashboard: React.FC = () => {
     [personaName, instructions],
   );
 
+  // Nivel 18 Hydration Bridge: Carga de localStorage segura en cliente.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.personaName, personaName);
+    if (typeof window === 'undefined') return;
+
+    const savedName = localStorage.getItem(STORAGE_KEYS.personaName);
+    const savedInst = localStorage.getItem(STORAGE_KEYS.instructions);
+    const savedChat = loadInitialChat();
+    const savedWhatsApp = localStorage.getItem('digital_twin_whatsapp') === 'true';
+    const savedHubSpot = localStorage.getItem('digital_twin_hubspot') === 'true';
+    const savedFaceMode = (localStorage.getItem(STORAGE_KEYS.faceMode) as FaceMode) || 'bot';
+    const savedFacePhoto = localStorage.getItem(STORAGE_KEYS.facePhoto);
+
+    if (savedName) setPersonaName(savedName);
+    if (savedInst) setInstructions(savedInst);
+    if (savedChat.length > 0) setMessages(savedChat);
+    setWhatsappEnabled(savedWhatsApp);
+    setHubspotEnabled(savedHubSpot);
+    setFaceMode(savedFaceMode);
+    if (savedFacePhoto) setFacePhoto(savedFacePhoto);
+  }, []);
+
+  useEffect(() => {
+    if (personaName !== DEFAULT_PERSONA_NAME) {
+      localStorage.setItem(STORAGE_KEYS.personaName, personaName);
+    }
   }, [personaName]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.instructions, instructions);
+    if (instructions !== DEFAULT_INSTRUCTIONS) {
+      localStorage.setItem(STORAGE_KEYS.instructions, instructions);
+    }
   }, [instructions]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.chat, JSON.stringify(messages.slice(-40)));
+    if (messages.length > 0) {
+      localStorage.setItem(STORAGE_KEYS.chat, JSON.stringify(messages.slice(-40)));
+    }
   }, [messages]);
 
   useEffect(() => {

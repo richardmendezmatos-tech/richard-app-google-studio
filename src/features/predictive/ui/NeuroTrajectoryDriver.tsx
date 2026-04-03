@@ -62,7 +62,7 @@ export const NeuroTrajectoryDriver: React.FC = () => {
                 });
         }
     }
-  }, [pathname, events, dwellTimes, addEvent, updateDwellTime]);
+  }, [pathname, addEvent, updateDwellTime]);
 
   // Handle Visibility Change for Dwell Time
   useEffect(() => {

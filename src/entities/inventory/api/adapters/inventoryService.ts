@@ -102,7 +102,7 @@ export const getCarById = async (id: string): Promise<Car | null> => {
 // --- CRUD Operations (Admin) ---
 
 export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
-  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const currentDealerId = (typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
 
   const validatedData = carSchema.parse({
     ...carData,
@@ -135,12 +135,12 @@ export const deleteVehicle = async (id: string) => {
 };
 
 export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
-  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
+  const currentDealerId = (typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
   const batch = writeBatch(db);
 
   inventory.forEach((car) => {
     // Create an idempotent ID: brand-model-year slug
-    const idSlug = car.name
+    const idSlug = `${car.name}-${car.year}`
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');

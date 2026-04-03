@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect } from 'react';
 import { create } from 'zustand';
 
 export interface DealerConfig {
@@ -18,29 +19,32 @@ const DEFAULT_DEALER: DealerConfig = {
 interface DealerState {
   currentDealer: DealerConfig;
   setDealer: (config: DealerConfig) => void;
+  hydrate: () => void;
 }
 
-const getInitialDealer = (): DealerConfig => {
-  if (typeof window === 'undefined') return DEFAULT_DEALER;
-
-  const savedId = localStorage.getItem('current_dealer_id');
-  const savedName = localStorage.getItem('current_dealer_name');
-  const savedLogo = localStorage.getItem('current_dealer_logo');
-  const savedWelcome = localStorage.getItem('current_dealer_welcome');
-
-  if (savedId && savedName) {
-    return {
-      id: savedId,
-      name: savedName,
-      logo: savedLogo || undefined,
-      welcomeMessage: savedWelcome || undefined,
-    };
-  }
-  return DEFAULT_DEALER;
-};
+// Removiendo getInitialDealer síncrono para evitar hydration mismatches
 
 export const useDealerStore = create<DealerState>((set) => ({
-  currentDealer: getInitialDealer(),
+  currentDealer: DEFAULT_DEALER,
+  hydrate: () => {
+    if (typeof window === 'undefined') return;
+
+    const savedId = localStorage.getItem('current_dealer_id');
+    const savedName = localStorage.getItem('current_dealer_name');
+    const savedLogo = localStorage.getItem('current_dealer_logo');
+    const savedWelcome = localStorage.getItem('current_dealer_welcome');
+
+    if (savedId && savedName) {
+      set({
+        currentDealer: {
+          id: savedId,
+          name: savedName,
+          logo: savedLogo || undefined,
+          welcomeMessage: savedWelcome || undefined,
+        },
+      });
+    }
+  },
   setDealer: (config: DealerConfig) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('current_dealer_id', config.id);
@@ -54,4 +58,12 @@ export const useDealerStore = create<DealerState>((set) => ({
   },
 }));
 
-export const useDealer = () => useDealerStore();
+export const useDealer = () => {
+  const store = useDealerStore();
+
+  useEffect(() => {
+    store.hydrate();
+  }, [store]);
+
+  return store;
+};

@@ -71,13 +71,17 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
   const [activeFloatingWidget, setActiveFloatingWidget] = useState<
     'chat' | 'voice' | 'whatsapp' | null
   >(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebar_collapsed') === 'true';
-    }
-    return false;
-  });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showDeferredWidgets, setShowDeferredWidgets] = useState(false);
+
+  // Nivel 18 Hydration Bridge: Carga de sidebar_collapsed segura en cliente.
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebar_collapsed');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved !== null) setIsSidebarCollapsed(saved === 'true');
+    }
+  }, []);
   const { theme } = useContext(ThemeContext);
   const pathname = usePathname();
 
