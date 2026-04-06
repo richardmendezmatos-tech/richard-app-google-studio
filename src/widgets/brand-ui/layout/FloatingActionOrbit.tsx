@@ -149,6 +149,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
                     }}
                     className="absolute flex items-center justify-center w-14 h-14 rounded-full glass-premium border border-cyan-400/30 text-cyan-400 hover:text-white hover:border-cyan-400 shadow-[0_0_20px_rgba(0,229,255,0.15)] hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] transition-all group"
                     title={item.label}
+                    aria-label={item.label}
                   >
                     {item.icon}
                     {/* Floating Label */}
@@ -167,6 +168,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           onClick={handleMainClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          aria-label={isOpen || activeWidget ? "Cerrar menú de acciones" : "Abrir centro de mando"}
           className={`relative z-50 w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 group/main ${
             isOpen || activeWidget
               ? 'bg-cyan-500 shadow-[0_0_40px_rgba(0,229,255,0.6)]'

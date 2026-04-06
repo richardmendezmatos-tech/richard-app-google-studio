@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
+    formats: ['image/avif', 'image/webp'],
     // Next.js Image Optimization
     remotePatterns: [
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
@@ -9,6 +10,15 @@ const nextConfig = {
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'api-java-gcp.richard-automotive.com' },
       { protocol: 'https', hostname: 'randomuser.me' },
+    ],
+  },
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      'motion/react',
+      'framer-motion',
+      'clsx',
+      'tailwind-merge',
     ],
   },
   // Ensure the project root is correctly identified

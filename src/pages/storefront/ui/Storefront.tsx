@@ -30,17 +30,19 @@ interface Props {
   onClearVisualSearch?: () => void;
   onMagicFix?: () => Promise<void>;
   onOpenGarage?: () => void;
+  customTitle?: string;
+  customDescription?: string;
 }
 
-const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) => {
+const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, customTitle, customDescription }) => {
   const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix);
 
   return (
     <>
       <div className="h-full w-full bg-transparent">
         <SEO
-          title="Autos, Guaguas y Pickups de Lujo en Puerto Rico | Richard Automotive"
-          description="Compra autos, guaguas y pickups de lujo en Bayamón, Puerto Rico. El inventario más exclusivo: SUVs, Sedanes y Trucks con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."
+          title={customTitle || "Autos, Guaguas y Pickups de Lujo en Puerto Rico | Richard Automotive"}
+          description={customDescription || "Compra autos, guaguas y pickups de lujo en Bayamón, Puerto Rico. El inventario más exclusivo: SUVs, Sedanes y Trucks con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."}
           url="/"
           type="website"
           schema={{

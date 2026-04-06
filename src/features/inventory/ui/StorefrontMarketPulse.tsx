@@ -1,19 +1,46 @@
 "use client";
 
-import React from 'react';
-import { Activity, LineChart, ScanSearch, TrendingUp, Cpu, Gauge } from 'lucide-react';
-import { motion } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { Activity, ScanSearch, TrendingUp, Cpu, Gauge } from 'lucide-react';
+import { motion, useSpring, useTransform, animate } from 'motion/react';
+
+interface AnimatedNumberProps {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+}
+
+const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, prefix = "", suffix = "" }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const controls = animate(0, value, {
+      duration: 2,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
+    });
+    return () => controls.stop();
+  }, [value]);
+
+  return (
+    <span className="font-cinematic tabular-nums">
+      {prefix}{displayValue.toLocaleString('en-US')}{suffix}
+    </span>
+  );
+};
 
 interface PulseCardProps {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
   tone: 'cyan' | 'slate' | 'emerald';
   trend?: string;
   delay?: number;
 }
 
-const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, tone, trend, delay = 0 }) => {
+const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffix, tone, trend, delay = 0 }) => {
   const toneStyles = {
     cyan: 'border-cyan-500/20 bg-cyan-500/5 text-cyan-400',
     slate: 'border-slate-500/20 bg-slate-500/5 text-slate-400',
@@ -28,6 +55,11 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, tone, trend, 
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
       className={`group relative overflow-hidden rounded-[32px] border p-8 backdrop-blur-2xl transition-all hover:scale-[1.02] hover:bg-slate-900/60 shadow-xl ${toneStyles[tone]}`}
     >
+      {/* Holographic Scanning Line */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-[20%] w-full animate-sweep" />
+      </div>
+
       <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
         <Cpu size={48} />
       </div>
@@ -53,9 +85,9 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, tone, trend, 
         </div>
 
         <div className="space-y-1">
-          <p className="font-cinematic text-4xl lg:text-5xl text-white tracking-widest leading-none">
-            {value}
-          </p>
+          <div className="text-4xl lg:text-5xl text-white tracking-widest leading-none">
+            <AnimatedNumber value={value} prefix={prefix} suffix={suffix} />
+          </div>
           <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
@@ -66,6 +98,16 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, tone, trend, 
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes sweep {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(500%); }
+        }
+        .animate-sweep {
+          animation: sweep 4s linear infinite;
+        }
+      `}</style>
     </motion.div>
   );
 };
@@ -86,7 +128,8 @@ const StorefrontMarketPulse: React.FC<StorefrontMarketPulseProps> = ({
       <PulseCard
         icon={<Gauge size={24} />}
         label="RICHARD MARKET INDEX"
-        value={`$${avgPrice.toLocaleString('en-US')}`}
+        value={avgPrice}
+        prefix="$"
         trend="+2.4% EOY"
         tone="cyan"
         delay={0.1}
@@ -94,7 +137,8 @@ const StorefrontMarketPulse: React.FC<StorefrontMarketPulseProps> = ({
       <PulseCard
         icon={<Activity size={24} />}
         label="PREMIUM FLOW RATE"
-        value={`${premiumUnits} UNITS`}
+        value={premiumUnits}
+        suffix=" U"
         trend="HIGH DEMAND"
         tone="slate"
         delay={0.2}
@@ -102,7 +146,8 @@ const StorefrontMarketPulse: React.FC<StorefrontMarketPulseProps> = ({
       <PulseCard
         icon={<ScanSearch size={24} />}
         label="STRATEGIC OPPORTUNITY"
-        value={`${compactUnits} UNITS`}
+        value={compactUnits}
+        suffix=" U"
         trend="READY TO SHIP"
         tone="emerald"
         delay={0.3}

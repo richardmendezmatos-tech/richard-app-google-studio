@@ -9,7 +9,7 @@ import {
   Activity,
   ShieldCheck,
 } from 'lucide-react';
-import { animate, stagger } from 'motion/react';
+import { motion, AnimatePresence, animate } from 'motion/react';
 interface Props {
   images: string[];
   alt: string;
@@ -133,6 +133,38 @@ const Viewer360: React.FC<Props> = ({
     }
   }, [currentFrame, images.length, activeMode]);
 
+  const [loadedIndices, setLoadedIndices] = useState<Set<number>>(new Set());
+
+  // 360 Nitro-Load: Progressive Preloading Engine
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    // Phase 1: Cardinal Angles (0, 90, 180, 270 degrees approx)
+    const cardinalIndices = [0, Math.floor(images.length / 4), Math.floor(images.length / 2), Math.floor((3 * images.length) / 4)];
+    
+    cardinalIndices.forEach(idx => {
+      if (!loadedIndices.has(idx)) {
+        const img = new Image();
+        img.src = images[idx];
+        img.onload = () => setLoadedIndices(prev => new Set(prev).add(idx));
+      }
+    });
+
+    // Phase 2: Background full sequence loading (Low Priority)
+    const timer = setTimeout(() => {
+      images.forEach((src, idx) => {
+        if (!cardinalIndices.includes(idx)) {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => setLoadedIndices(prev => new Set(prev).add(idx));
+        }
+      });
+    }, 2000); // Wait 2s for critical UI thread to breathe
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images]);
+
   // Auto-hide hint after 3s
   useEffect(() => {
     const timer = setTimeout(() => setHintVisible(false), 4000);
@@ -229,11 +261,26 @@ const Viewer360: React.FC<Props> = ({
         ref={cinematicRef}
         className={`cinematic-layer ${isScanning ? 'animate-pulse' : ''} ${activeMode === 'cinematic' ? 'cinematic-parallax-layer' : ''}`}
       >
+        <AnimatePresence mode="wait">
+          {!loadedIndices.has(currentFrame) && (
+            <motion.div
+              key="loader"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex items-center justify-center bg-slate-900/10 backdrop-blur-sm z-10"
+            >
+              <Activity className="text-cyan-500 animate-pulse" size={40} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
         <img
           src={images[currentFrame]}
           alt={alt}
-          className={`max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''}`}
+          className={`max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           draggable={false}
+          onLoad={() => setLoadedIndices(prev => new Set(prev).add(currentFrame))}
         />
       </div>
 

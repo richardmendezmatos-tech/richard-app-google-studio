@@ -4,6 +4,7 @@ import NeuralMatchModal from './NeuralMatchModal';
 import ComparisonModal from './ComparisonModal';
 import telemetry from '@/shared/api/metrics/analytics';
 import { AnimatePresence } from 'motion/react';
+import { Portal } from '@/shared/ui/common/Portal';
 
 // Sentinel Performance: Lazy loading of heavy modals to optimize main thread
 const VisualSearchModal = React.lazy(() => import('./VisualSearchModal'));
@@ -44,45 +45,52 @@ const StorefrontModals: React.FC<StorefrontModalsProps> = ({
     <>
       <AnimatePresence>
         {isNeuralMatchOpen && (
+          <Portal>
             <NeuralMatchModal
-            inventory={inventory}
-            onClose={() => setIsNeuralMatchOpen(false)}
-            onSelectCar={(car) => {
+              inventory={inventory}
+              onClose={() => setIsNeuralMatchOpen(false)}
+              onSelectCar={(car) => {
                 setSelectedCar(car);
                 setIsNeuralMatchOpen(false);
                 if (telemetry && typeof telemetry.add === 'function') {
-                telemetry.add({
+                  telemetry.add({
                     event: 'neural_match_select',
                     carId: car.id,
-                });
+                  });
                 }
-            }}
+              }}
             />
+          </Portal>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
         {isComparisonOpen && (
+          <Portal>
             <ComparisonModal cars={compareList} onClose={() => setIsComparisonOpen(false)} />
+          </Portal>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
         {isVisualSearchOpen && (
+          <Portal>
             <Suspense fallback={null}>
-            <VisualSearchModal
+              <VisualSearchModal
                 isOpen={isVisualSearchOpen}
                 onClose={() => setIsVisualSearchOpen(false)}
                 onAnalyze={handleVisualAnalyze}
                 isAnalyzing={isAnalyzing}
                 error={visualError}
-            />
+              />
             </Suspense>
+          </Portal>
         )}
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
         {selectedCar && (
+          <Portal>
             <Suspense fallback={
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl">
                     <div className="flex flex-col items-center gap-4">
@@ -95,6 +103,7 @@ const StorefrontModals: React.FC<StorefrontModalsProps> = ({
             }>
                 <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
             </Suspense>
+          </Portal>
         )}
       </AnimatePresence>
     </>

@@ -29,6 +29,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    // Programmatic SEO: Top PR Cities (Dominio de Mercado)
+    ...['bayamon', 'san-juan', 'guaynabo', 'ponce', 'caguas'].map(city => ({
+      url: `${SITE_URL}/autos-usados/${city}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    })),
   ];
 
   // Configuration Check for SEO Health
