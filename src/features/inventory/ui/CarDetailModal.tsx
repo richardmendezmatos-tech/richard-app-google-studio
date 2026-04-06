@@ -42,7 +42,7 @@ const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
       onUpdate: (latest) => setDisplayValue(Math.round(latest)),
     });
     return () => controls.stop();
-  }, [value]);
+  }, [value, displayValue]);
 
   return <span className="tabular-nums">{displayValue.toLocaleString()}</span>;
 };
@@ -176,10 +176,10 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         </div>
 
         <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-30 flex gap-4">
-          <button onClick={handleShare} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-cyan-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Compartir este vehículo">
+          <button onClick={handleShare} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-cyan-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Compartir este vehículo" aria-label="Compartir este vehículo">
             <Share2 size={18} />
           </button>
-          <button onClick={onClose} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Cerrar detalles">
+          <button onClick={onClose} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Cerrar detalles" aria-label="Cerrar detalles">
             <X size={18} />
           </button>
         </div>
@@ -326,6 +326,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                     <select
                       value={term}
                       onChange={(e) => setTerm(Number(e.target.value))}
+                      aria-label="Seleccionar término de financiamiento en meses"
+                      title="Seleccionar término de financiamiento"
                       className="w-full bg-transparent text-white font-black outline-none text-sm appearance-none cursor-pointer"
                     >
                       {[48, 60, 72, 84].map(t => (
@@ -380,11 +382,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
             <button
               onClick={handleRequestApproval}
-              className="group relative w-full py-6 bg-gradient-to-r from-primary to-cyan-600 text-white rounded-[32px] font-black text-base uppercase tracking-[0.3em] flex items-center justify-center gap-3 overflow-hidden shadow-[0_20px_50px_rgba(34,211,238,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="group relative w-full py-6 bg-gradient-to-r from-primary to-cyan-600 text-white rounded-[32px] font-black text-base uppercase tracking-[0.3em] flex items-center justify-center gap-3 overflow-hidden shadow-[0_20px_50px_rgba(34,211,238,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all hover:shadow-[0_0_40px_rgba(0,229,255,0.4)]"
             >
+                {/* Nivel 13 Adaptive CTA Pulse */}
+                <div className="absolute inset-0 bg-cyan-400/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
-                <Zap size={20} className="fill-white group-hover:animate-bounce" /> 
-                Authorize Mission
+                <Zap size={20} className="fill-white group-hover:animate-bounce relative z-10" /> 
+                <span className="relative z-10">Authorize Mission</span>
             </button>
             <div className="flex items-center justify-center gap-6 opacity-40">
                 <div className="flex items-center gap-2">

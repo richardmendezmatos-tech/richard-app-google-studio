@@ -6,6 +6,8 @@ import { useCars } from './useCars';
 import { useSavedCars } from './useSavedCars';
 import { useInventoryAnalytics } from './useInventoryAnalytics';
 import { useAuthStore } from '@/entities/session';
+import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore';
+import { TrajectoryAnalyzer } from '@/features/predictive/model/TrajectoryAnalyzer';
 
 export function useStorefrontState(
   inventory: Car[],
@@ -73,14 +75,23 @@ export function useStorefrontState(
   const serverCars = data?.pages.flatMap((page) => page.cars) || [];
   const isSearching = !!searchTerm || !!visualContext;
 
+  // Nivel 13: Neuro-Adaptive Intelligence
+  const trajectoryEvents = useTrajectoryStore((s) => s.events);
+  const dwellTimes = useTrajectoryStore((s) => s.dwellTimes);
+  
+  const preferredCategory = useMemo(() => 
+    TrajectoryAnalyzer.getPreferredCategory(trajectoryEvents), 
+  [trajectoryEvents]);
+
   const filteredAndSorted = useMemo(() => {
     const normalizedSearch = searchTerm.toLowerCase().trim();
     const isGuagua = normalizedSearch === 'guagua';
     const isPickup = normalizedSearch === 'pickup' || normalizedSearch === 'pick-up';
 
-    return inventory
+    return [...inventory] // Copy to avoid mutation
       .filter((c) => {
         if (semanticResultIds.length > 0) {
+          if (semanticResultIds.includes('NO_MATCHES')) return false;
           return semanticResultIds.includes(c.id);
         }
 
@@ -102,13 +113,21 @@ export function useStorefrontState(
         return matchesSearch && matchesType;
       })
       .sort((a, b) => {
+        // Nivel 13 Adaptive Boost
+        if (preferredCategory) {
+          const aMatch = a.type?.toLowerCase() === preferredCategory;
+          const bMatch = b.type?.toLowerCase() === preferredCategory;
+          if (aMatch && !bMatch) return -1;
+          if (!aMatch && bMatch) return 1;
+        }
+
         if (sortOrder === 'asc') return a.price - b.price;
         if (sortOrder === 'desc') return b.price - a.price;
         return 0;
       });
-  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory]);
+  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory, preferredCategory]);
 
-  const displayCars = isSearching ? filteredAndSorted : serverCars;
+  const displayCars = isSearching || preferredCategory ? filteredAndSorted : serverCars;
 
   const marketPulse = useMemo(() => {
     const source = displayCars.length > 0 ? displayCars : inventory;

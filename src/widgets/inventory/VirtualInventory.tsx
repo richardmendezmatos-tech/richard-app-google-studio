@@ -5,6 +5,9 @@ import { Car } from '@/entities/inventory';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore';
+import { TrajectoryAnalyzer } from '@/features/predictive/model/TrajectoryAnalyzer';
+
 interface VirtualInventoryProps {
   cars: Car[];
   onSelectCar: (car: Car) => void;
@@ -57,6 +60,10 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 12 });
+
+  // Nivel 13 Adaptive Intelligence: Analizar intención en tiempo real
+  const trajectory = useTrajectoryStore((s: any) => s.trajectory);
+  const preferences = useMemo(() => TrajectoryAnalyzer.analyze(trajectory), [trajectory]);
 
   // Grid configuration
   const itemHeight = 480; 
@@ -114,6 +121,11 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   }, [cars, visibleRange]);
 
   const checkRecommendation = (car: Car): boolean => {
+    // Priority 1: Trajectory Match (Neuromarketing)
+    const score = TrajectoryAnalyzer.scoreCar(car, preferences);
+    if (score > 0.6) return true;
+
+    // Priority 2: Traditional memory
     if (!customerMemory?.preferences) return false;
     const { models, colors, features } = customerMemory.preferences;
     if (models?.some((m: string) => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
@@ -138,26 +150,32 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
         style={{ transform: `translateY(${translateY}px)` }}
       >
         <AnimatePresence mode="popLayout">
-          {visibleCars.map((car, index) => (
-            <motion.article
-              key={car.id}
-              variants={itemVariants}
-              layout
-              className="h-[480px] w-full"
-              aria-labelledby={`car-title-${car.id}`}
-            >
-              <PremiumGlassCard
-                car={car}
-                onSelect={() => onSelectCar(car)}
-                onCompare={(e) => onCompare(e, car)}
-                isComparing={isComparing(car.id)}
-                isSaved={isSaved(car.id)}
-                onToggleSave={(e) => onToggleSave(e, car.id)}
-                isRecommended={checkRecommendation(car)}
-                priority={index < 4}
-              />
-            </motion.article>
-          ))}
+          {visibleCars.map((car, index) => {
+            const intentScore = TrajectoryAnalyzer.scoreCar(car, preferences);
+            const isHighInterest = intentScore > 0.75;
+            
+            return (
+              <motion.article
+                key={car.id}
+                variants={itemVariants}
+                layout
+                className="h-[480px] w-full"
+                aria-labelledby={`car-title-${car.id}`}
+              >
+                <PremiumGlassCard
+                  car={car}
+                  onSelect={() => onSelectCar(car)}
+                  onCompare={(e) => onCompare(e, car)}
+                  isComparing={isComparing(car.id)}
+                  isSaved={isSaved(car.id)}
+                  onToggleSave={(e) => onToggleSave(e, car.id)}
+                  isRecommended={checkRecommendation(car)}
+                  isHighInterest={isHighInterest}
+                  priority={index < 4}
+                />
+              </motion.article>
+            );
+          })}
         </AnimatePresence>
       </motion.div>
     </div>

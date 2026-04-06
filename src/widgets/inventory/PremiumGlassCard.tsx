@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles } from 'lucide-react';
+import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
@@ -20,6 +20,7 @@ interface PremiumGlassCardProps {
   onToggleSave: (e: React.MouseEvent) => void;
   isRecommended?: boolean;
   priority?: boolean;
+  isHighInterest?: boolean;
 }
 
 const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
@@ -29,6 +30,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   onToggleSave,
   isRecommended,
   priority = false,
+  isHighInterest,
 }) => {
   const navigate = useNavigate();
   const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
@@ -98,6 +100,16 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           <span className="font-tech flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/60 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-slate-200 shadow-sm backdrop-blur-md">
             <ShieldCheck size={12} className="text-primary" /> Richard Certified
           </span>
+          
+          {/* Nivel 13: Neuro-Badge Predictive Social Proof */}
+          {isHighInterest && (
+            <div className="animate-in fade-in slide-in-from-left-2 duration-700">
+              <span className="font-tech flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-xl">
+                <Activity size={10} className="animate-pulse" />
+                Pulso de Mercado: Alta Demanda
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Actions */}

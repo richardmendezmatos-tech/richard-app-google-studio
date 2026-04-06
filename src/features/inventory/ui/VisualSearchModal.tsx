@@ -96,10 +96,12 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
 
             {/* Header */}
             <div className="relative z-10 p-10 pb-6">
-              <button
-                onClick={onClose}
-                className="absolute top-8 right-8 flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-white/5 text-slate-400 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
-              >
+          <button
+            onClick={onClose}
+            aria-label="Cerrar Búsqueda Visual"
+            title="Cerrar Búsqueda Visual"
+            className="absolute top-8 right-8 flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-white/5 text-slate-400 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
+          >
                 <X size={20} />
               </button>
               

@@ -15,7 +15,7 @@ export const Portal: React.FC<PortalProps> = ({ children }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
     return () => setMounted(false);
   }, []);
 
