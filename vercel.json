@@ -1,23 +1,5 @@
 {
     "version": 2,
-    "framework": "vite",
-    "installCommand": "npm install --legacy-peer-deps",
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist",
-    "rewrites": [
-        {
-            "source": "/sitemap.xml",
-            "destination": "/sitemap.xml"
-        },
-        {
-            "source": "/robots.txt",
-            "destination": "/robots.txt"
-        },
-        {
-            "source": "/((?!sitemap\\.xml|robots\\.txt|assets/).*)",
-            "destination": "/index.html"
-        }
-    ],
     "cleanUrls": true,
     "headers": [
         {
