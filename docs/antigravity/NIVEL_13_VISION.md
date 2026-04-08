@@ -34,8 +34,13 @@ Desplazamos la inteligencia lo más cerca posible del usuario:
 
 ---
 
-> [!IMPORTANT]
-> **Estado Actual**: Richard Automotive ha alcanzado la madurez del Nivel 12. La transición al **Nivel 13** es el paso definitivo hacia un **Cerebro de Negocio Autónomo**, donde la estabilidad es la base de la innovación.
+## 🏗️ Hito Operativo: Central Ford Vega Alta (Deployment Alpha)
+
+La transición al Nivel 13 se materializa con la integración de la operación de Richard en **Central Ford, Vega Alta**. El Command Center ahora orquesta:
+
+- **Ecosistema Multi-Brand**: Ford, Hyundai y Trucks Freightliner.
+- **Floorplan Control Financing**: Lógica optimizada para banca local prioritaria (Popular/FirstBank) con cooperativas como opción de reserva.
+- **F&I Management Hub**: Registro directo de leads cualificados bajo la gerencia de Richard Méndez.
 
 ## Próximo Objetivo: Houston Dashboard (Telemetry Level 13)
 

@@ -66,9 +66,10 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
             <div className="flex gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-xl">
               {[
                 { id: 'all', label: 'Todos' },
-                { id: 'suv', label: 'Luxury SUVs' },
-                { id: 'sedan', label: 'Premium Sedans' },
-                { id: 'pickup', label: 'High-End Pickups' },
+                { id: 'ford', label: 'Ford' },
+                { id: 'hyundai', label: 'Hyundai' },
+                { id: 'truck', label: 'Trucks / Pro' },
+                { id: 'suv', label: 'SUVs' },
               ].map((type) => (
                 <button
                   key={type.id}

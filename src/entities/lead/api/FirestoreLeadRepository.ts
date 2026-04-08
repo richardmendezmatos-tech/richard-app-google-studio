@@ -9,6 +9,8 @@ import {
   addDoc,
   updateDoc,
   serverTimestamp,
+  Timestamp,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
 import { LeadRepository } from '@/entities/lead';
@@ -18,6 +20,7 @@ import { leadSchema } from '@/entities/lead/lib/schemas/leadSchema';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
 import { CircuitBreaker } from '@/shared/lib/resilience/CircuitBreaker';
 import { LeadHealthSensor } from '@/features/leads/model/health/LeadHealthSensor';
+import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 const dbBreaker = new CircuitBreaker({
   failureThreshold: 5,
@@ -63,6 +66,14 @@ export class FirestoreLeadRepository implements LeadRepository {
           timestamp: serverTimestamp(),
         });
 
+        // Nivel 14 Traceability
+        auditRepository.log({
+          type: 'conversion',
+          message: `Nuevo Lead capturado: ${lead.firstName} ${lead.lastName}`,
+          source: 'FirestoreLeadRepository',
+          metadata: { leadId: docRef.id, dealerId: lead.dealerId }
+        });
+
         // Fire-and-forget CRM / Messaging synchronization
         import('@/features/sales-automation/model/sales-orchestrator.service')
           .then(({ salesOrchestrator }) => {
@@ -78,6 +89,15 @@ export class FirestoreLeadRepository implements LeadRepository {
 
     const fallback = async (error: any) => {
       console.error('[Sentinel:Resilience] Firestore save failed. Triggering Emergency Save.', error);
+      
+      // Nivel 14 Critical Alert
+      auditRepository.log({
+        type: 'critical',
+        message: 'Fallo crítico en guardado de Lead. Activando Emergency Save.',
+        source: 'FirestoreLeadRepository',
+        metadata: { error: error.message }
+      });
+
       // Transform partial lead to a dummy lead if necessary for the sensor
       const emergencyLead = { ...lead, id: `pending_${Date.now()}` } as Lead;
       await LeadHealthSensor.emergencySave(emergencyLead);
@@ -92,6 +112,21 @@ export class FirestoreLeadRepository implements LeadRepository {
       const docRef = doc(db, this.collectionName, id);
       const safeData = leadSchema.parse(data);
       await updateDoc(docRef, safeData);
+    });
+  }
+
+  async getLeadVelocity(dealerId: string, hours: number): Promise<number> {
+    return withSecureErrorHandling(async () => {
+      const startTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+      const q = query(
+        collection(db, this.collectionName),
+        where('dealerId', '==', dealerId),
+        where('timestamp', '>=', Timestamp.fromDate(startTime))
+      );
+      
+      const snapshot = await getCountFromServer(q);
+      const count = snapshot.data().count;
+      return parseFloat((count / hours).toFixed(2));
     });
   }
 }

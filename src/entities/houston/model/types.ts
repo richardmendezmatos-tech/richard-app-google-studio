@@ -16,11 +16,15 @@ export interface HoustonTelemetry {
     autonomyRate: HoustonMetric;
     apiStability: HoustonMetric;
     
-    // Nivel 13: Structural Purity & Resilience
     structuralHealth: HoustonMetric;
     dbLatency: HoustonMetric;
     activeBreakers: HoustonMetric;
     resilienceIndex: HoustonMetric;
+
+    // Nivel 14: Predictive Portfolio & Business Health
+    leadVelocity: HoustonMetric;
+    inventoryTurnover: HoustonMetric;
+    closureProbability: HoustonMetric;
   };
   recentEvents: Array<{
     id: string;

@@ -15,10 +15,10 @@ interface Props {
 
 export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
   const bootLogs = [
-    '[SYSTEM] RA OS v4.5_N13 initialized.',
-    '[INTEL] Structural Purity sync complete.',
+    '[SYSTEM] RA OS v4.5_N14 initialized.',
+    '[INTEL] Structural Observability sync complete.',
     '[NETWORK] Sentinel AP-01 online.',
-    '[SECURITY] Level 13 protocols active.',
+    '[SECURITY] Level 14 protocols active.',
   ];
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -38,6 +38,7 @@ export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
   const getLogColor = (log: string) => {
     if (log.includes('[ERROR]') || log.includes('[CRITICAL]')) return 'text-rose-500';
     if (log.includes('[WARNING]')) return 'text-amber-500';
+    if (log.includes('[CONVERSION]')) return 'text-emerald-400 font-bold';
     if (log.includes('[SYSTEM]') || log.includes('[INTEL]')) return 'text-cyan-400';
     return 'text-slate-400';
   };
@@ -45,7 +46,7 @@ export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
   return (
     <div className="bg-black/40 rounded-2xl border border-white/5 p-4 font-mono text-[10px] h-[180px] overflow-hidden flex flex-col">
       <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5 text-cyan-500/50 uppercase tracking-[0.2em] font-black">
-        <TerminalIcon size={12} /> Live RA Terminal • N13
+        <TerminalIcon size={12} /> Live RA Terminal • N14
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1 no-scrollbar scroll-smooth">
         {allLogs.map((log, i) => (

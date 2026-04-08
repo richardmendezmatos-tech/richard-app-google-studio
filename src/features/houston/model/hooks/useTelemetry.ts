@@ -1,65 +1,66 @@
 import { useState, useEffect } from 'react';
-
-export interface HoustonTelemetry {
-  // Technical Metrics (Nivel 13)
-  latency: number;
-  quality: number;
-  packetLoss: number;
-  securityScore: number;
-
-  // Business Health Metrics (Nivel 14: Orquestación Predictiva)
-  leadVelocity: number; // Leads per hour
-  inventoryTurnover: number; // Days to sell (predictive)
-  closureProbability: number; // 0-100 (Aggregate)
-  businessHealthScore: number; // 0-100 (Synthetic)
-
-  status: 'optimal' | 'warning' | 'critical';
-}
+import { HoustonTelemetry } from '@/entities/houston/model/types';
+import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 /**
  * Advanced Telemetry Hook for Houston Command Center.
- * Evolution to Nivel 14: Predictive Business Intelligence.
+ * Evolution to Nivel 14: Structural Observability & Predictive Intelligence.
  */
 export function useTelemetry(connectionState: string): HoustonTelemetry {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry>({
-    latency: 0,
-    quality: 100,
-    packetLoss: 0,
-    securityScore: 100,
-    leadVelocity: 0,
-    inventoryTurnover: 45,
-    closureProbability: 0,
-    businessHealthScore: 100,
-    status: 'optimal',
+    systemHealth: 'online',
+    lastUpdate: 0,
+    metrics: {
+      inferenceLatency: { label: 'Inference', value: 350, unit: 'ms', status: 'healthy' },
+      tokenUsage: { label: 'Token Usage', value: 0, unit: 'tok', status: 'healthy' },
+      autonomyRate: { label: 'Autonomy', value: 92, unit: '%', status: 'healthy' },
+      apiStability: { label: 'API Uptime', value: 99.9, unit: '%', status: 'healthy' },
+      structuralHealth: { label: 'Structural', value: 100, unit: '%', status: 'healthy' },
+      dbLatency: { label: 'DB Latency', value: 35, unit: 'ms', status: 'healthy' },
+      activeBreakers: { label: 'Breakers', value: 0, status: 'healthy' },
+      resilienceIndex: { label: 'Resilience', value: 95, unit: '%', status: 'healthy' },
+      leadVelocity: { label: 'Lead Velocity', value: 0, unit: 'LPH', status: 'healthy' },
+      inventoryTurnover: { label: 'Inventory Turnover', value: 45, unit: 'days', status: 'healthy' },
+      closureProbability: { label: 'Closure Prob', value: 0, unit: '%', status: 'healthy' },
+    },
+    recentEvents: []
   });
 
   useEffect(() => {
     if (connectionState === 'connected') {
       const interval = setInterval(() => {
-        // Technical
-        const latency = Math.floor(Math.random() * 10) + 30; // 30-40ms (Ultra-Premium)
-        const quality = 100;
-        const packetLoss = 0;
-        const securityScore = 100;
-
         // Business (Nivel 14 Mocks - to be connected to Firestore aggregation)
-        const leadVelocity = parseFloat((Math.random() * 2 + 1.5).toFixed(1)); // 1.5 - 3.5 LPH
-        const inventoryTurnover = Math.floor(Math.random() * 5) + 32; // 32-37 days
-        const closureProbability = Math.floor(Math.random() * 10) + 75; // 75-85%
-        const businessHealthScore = Math.floor((leadVelocity / 4) * 50 + (closureProbability / 100) * 50);
+        const leadVelocity = parseFloat((Math.random() * 2 + 1.5).toFixed(1)); 
+        const inventoryTurnover = Math.floor(Math.random() * 5) + 32; 
+        const closureProbability = Math.floor(Math.random() * 10) + 75; 
+        
+        // Structural (Nivel 14)
+        const dbLatency = Math.floor(Math.random() * 10) + 30;
+        const inferenceLatency = 300 + Math.random() * 100;
+        const structuralHealth = 98 + Math.random() * 2;
 
-        const status = businessHealthScore < 60 ? 'warning' : 'optimal';
-
-        setTelemetry({
-          latency,
-          quality,
-          packetLoss,
-          securityScore,
-          leadVelocity,
-          inventoryTurnover,
-          closureProbability,
-          businessHealthScore,
-          status,
+        // Fetch real logs (Nivel 14)
+        auditRepository.getRecentLogs(10).then(logs => {
+          setTelemetry(prev => ({
+            ...prev,
+            lastUpdate: Date.now(),
+            recentEvents: logs.map(l => ({
+              id: l.id || Math.random().toString(),
+              timestamp: l.timestamp?.toMillis() || Date.now(),
+              type: l.type as any,
+              message: l.message,
+              source: l.source
+            })),
+            metrics: {
+              ...prev.metrics,
+              leadVelocity: { ...prev.metrics.leadVelocity, value: leadVelocity },
+              inventoryTurnover: { ...prev.metrics.inventoryTurnover, value: inventoryTurnover },
+              closureProbability: { ...prev.metrics.closureProbability, value: closureProbability },
+              dbLatency: { ...prev.metrics.dbLatency, value: dbLatency },
+              inferenceLatency: { ...prev.metrics.inferenceLatency, value: Math.round(inferenceLatency) },
+              structuralHealth: { ...prev.metrics.structuralHealth, value: Math.round(structuralHealth) },
+            }
+          }));
         });
       }, 3000);
       return () => clearInterval(interval);

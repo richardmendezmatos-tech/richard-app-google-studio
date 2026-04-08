@@ -102,13 +102,22 @@ export function useStorefrontState(
         if (isGuagua) return type === 'suv' || type === 'truck';
         if (isPickup) return type === 'truck';
 
+        const make = (c.make || '').toLowerCase();
+
         const matchesSearch = visualContext
           ? name.includes(normalizedSearch) ||
             (visualContext || '').toLowerCase().includes(type) ||
             type.includes(visualContext.split(' ')[0] || '')
-          : name.includes(normalizedSearch) || type.includes(normalizedSearch);
+          : name.includes(normalizedSearch) || type.includes(normalizedSearch) || make.includes(normalizedSearch);
 
-        const matchesType = filter === 'all' || type === filter;
+        let matchesType = filter === 'all' || type === filter;
+        
+        // Multi-brand & Industrial Logic (N14)
+        if (filter === 'ford' || filter === 'hyundai') {
+          matchesType = make === filter;
+        } else if (filter === 'truck') {
+          matchesType = type === 'truck' || make === 'freightliner';
+        }
 
         return matchesSearch && matchesType;
       })

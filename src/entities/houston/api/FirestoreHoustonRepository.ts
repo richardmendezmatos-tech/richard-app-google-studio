@@ -61,6 +61,11 @@ export class FirestoreHoustonRepository implements HoustonRepository {
         dbLatency: data.metrics?.dbLatency || { label: 'DB Latency', value: 0, unit: 'ms', status: 'healthy' },
         activeBreakers: data.metrics?.activeBreakers || { label: 'Breakers', value: 0, status: 'healthy' },
         resilienceIndex: data.metrics?.resilienceIndex || { label: 'Resilience', value: '100%', status: 'healthy' },
+
+        // Nivel 14: Predictive Portfolio & Business Health
+        leadVelocity: data.metrics?.leadVelocity || { label: 'Lead Velocity', value: 0, unit: 'LPH', status: 'healthy' },
+        inventoryTurnover: data.metrics?.inventoryTurnover || { label: 'Inventory Turnover', value: 0, unit: 'days', status: 'healthy' },
+        closureProbability: data.metrics?.closureProbability || { label: 'Closure Prob', value: 0, unit: '%', status: 'healthy' },
       },
       recentEvents: data.recentEvents || [],
     };

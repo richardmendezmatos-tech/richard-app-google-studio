@@ -6,7 +6,7 @@
 
 **Transformando la experiencia de financiamiento de autos en Puerto Rico a través de la Autonomía Sentinel.**
 
-Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**. Utiliza modelos de lenguaje avanzados para asesorar a clientes sobre F&I (Finance & Insurance), seguros de vida y cierres de préstamos vehiculares.
+Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**, Gerente de Financiamiento en **Central Ford, Vega Alta**. Utiliza modelos de lenguaje avanzados para asesorar a clientes sobre F&I (Finance & Insurance), seguros de vida y cierres de préstamos vehiculares para marcas como **Ford, Hyundai y Trucks Freightliner**.
 
 ---
 
@@ -79,5 +79,5 @@ Este repositorio opera bajo el **Protocolo Antigravity**. La inteligencia estrat
 - **Protocolo de Ejecución:** [Protocolo Antigravity 5](file:///Users/richardmendez/richard-automotive-_-command-center/docs/antigravity/PROTOCOL_ANTIGRAVITY_5.md)
 
 ---
-© 2026 Richard Automotive | Richard O. Méndez Matos
-*Expertise en F&I, Seguros y Financiamiento Automotriz.*
+© 2026 Richard Automotive | Richard O. Méndez Matos | Central Ford, Vega Alta
+*Gerente de F&I, Seguros y Financiamiento Automotriz.*

@@ -2,6 +2,8 @@ import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { Blob as GeminiBlob } from '@google/genai';
 import { Car, BlogPost } from '@/shared/types/types';
 import { z } from 'zod';
+import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
+import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 // Helper: Call Vercel Serverless Function (Hides API Key)
 // Helper: Direct Client-Side Call (Restored and Hardened)
@@ -138,14 +140,22 @@ const interceptPrompt = (prompt: string): string => {
 
 const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
   calculateLoanPayment: ({ price, downPayment = 0, term, apr = 6.95 }) => {
+    // Pro/Industrial Logic (Freightliner / Commercial)
+    const isCommercial = price > 100000;
+    const defaultAPR = isCommercial ? 8.95 : 6.95;
+    const effectiveAPR = apr || defaultAPR;
+    
     const balance = price - downPayment;
-    const monthlyRate = apr / 100 / 12;
+    const monthlyRate = effectiveAPR / 100 / 12;
     const payment = (balance * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
     return {
       monthlyPayment: Math.round(payment),
       totalInterest: Math.round(payment * term - balance),
       balanceToFinance: balance,
-      disclaimer: 'Estimado basado en crédito excelente. Sujeto a aprobación bancaria.',
+      type: isCommercial ? 'Comercial/Pro' : 'Personal',
+      disclaimer: isCommercial 
+        ? 'Basado en financiamiento comercial (Freightliner Pro). Sujeto a flujo de caja del negocio.' 
+        : 'Estimado basado en crédito excelente. Sujeto a aprobación bancaria.',
     };
   },
   searchInventoryByDetails: ({ query, maxPrice }, inventory) => {
@@ -184,12 +194,13 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
   generatePreQualEstimate: ({ creditTier, monthlyIncome, monthlyDebt = 0 }) => {
     console.log('📊 [Finance Analyst] Analyzing:', { creditTier, monthlyIncome, monthlyDebt });
     
-    // APR Mapping based on Credit Tier
+    // APR Mapping based on PR Local Banks (Primary Floorplan)
+    const bestBank = FINANCIAL_ENTITIES_PR.find(e => e.id === 'banco-popular' && e.tier === 1);
     const aprMap: Record<string, number> = {
-      Excellent: 6.95,
-      Good: 8.95,
-      Fair: 12.95,
-      Poor: 18.95
+      Excellent: bestBank?.baseRate || 6.95,
+      Good: 7.95,
+      Fair: 11.95,
+      Poor: 17.95
     };
     
     const apr = aprMap[creditTier] || 12.95;
@@ -240,6 +251,7 @@ const callGeminiProxy = async (
 
     const model = genAI.getGenerativeModel(modelOptions);
 
+    const startTime = Date.now();
     const chat = model.startChat();
     let result = await chat.sendMessage(
       prompt as unknown as Parameters<typeof chat.sendMessage>[0],
@@ -272,9 +284,27 @@ const callGeminiProxy = async (
       response = result.response;
     }
 
+    const duration = Date.now() - startTime;
+    
+    // Nivel 14 AI Traceability
+    auditRepository.log({
+      type: 'info',
+      message: `IA Inferencia completada (${modelName})`,
+      source: 'GeminiService',
+      metadata: { latency: duration, model: modelName }
+    });
+
     return response.text();
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI Proxy Error:', error);
+    
+    auditRepository.log({
+      type: 'error',
+      message: `Fallo en IA Inferencia: ${error.message}`,
+      source: 'GeminiService',
+      metadata: { model: modelName }
+    });
+    
     throw error;
   }
 };
@@ -340,17 +370,12 @@ export const getAIResponse = async (
   const systemInstruction =
     customSystemPrompt ||
     `
-        ROL: Eres el Asistente Virtual de "Richard Automotive", experto en F&I.
-        OBJETIVO: Asesorar clientes y capturar LEADS.
-        
-        OPTIMIZACIÓN DE TOKENS:
-        - NO tienes el inventario completo cargado para ahorrar tokens.
-        - Si el cliente pregunta por un auto, marca o tipo específico, USA la herramienta 'searchInventoryByDetails'.
-        - Si el cliente necesita números exactos de pago, USA la herramienta 'calculateLoanPayment'.
-        
-        TONO: Profesional de Puerto Rico.
-        
         ${RICHARD_KNOWLEDGE_BASE}
+
+        ESTRATEGIA FINANCIERA PUERTO RICO:
+        - Prioriza bancos locales: Banco Popular de PR y FirstBank PR. Son los socios principales para cierres rápidos.
+        - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter(e => e.tier === 1).map(e => `${e.name} (${e.baseRate}% APR)`).join(', ')}.
+        - Las cooperativas son la última opción y solo se mencionan si el cliente las solicita específicamente.
       `;
 
   const sanitizedPrompt = interceptPrompt(userPrompt);

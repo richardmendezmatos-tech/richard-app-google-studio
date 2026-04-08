@@ -13,6 +13,9 @@ import {
   Brain,
   Layers,
   CircleDot,
+  TrendingUp,
+  BarChart,
+  Target,
 } from 'lucide-react';
 import styles from './HoustonDashboard.module.css';
 import { HoustonTerminalLog } from './components/HoustonTerminalLog';
@@ -161,23 +164,100 @@ export const HoustonDashboard: React.FC = () => {
             <div className={`w-2 h-2 rounded-full ${telemetry.metrics.activeBreakers.value === 0 ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
           </div>
 
-          {/* Resilience Index (N13) */}
-          <div className="glass-premium p-4 border border-emerald-500/10 flex items-center justify-between group hover:border-emerald-500/20 transition-all">
+          {/* AI Inference Latency (N14) */}
+          <div className="glass-premium p-4 border border-indigo-500/10 flex items-center justify-between group hover:border-indigo-500/20 transition-all">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-emerald-500/10 rounded-xl">
-                <Layers className="text-emerald-400" size={18} />
+              <div className="p-2 bg-indigo-500/10 rounded-xl">
+                <Brain className="text-indigo-400" size={18} />
               </div>
               <div>
                 <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  RESILIENCE INDEX
+                  IA INFERENCE (N14)
                 </div>
-                <div className="text-xl font-black text-white">{telemetry.metrics.resilienceIndex.value}</div>
+                <div className="text-xl font-black text-white">
+                  {telemetry.metrics.inferenceLatency.value} <span className="text-[10px] text-slate-500">{telemetry.metrics.inferenceLatency.unit}</span>
+                </div>
               </div>
             </div>
-            <Activity className="text-emerald-500/40 animate-pulse" size={16} />
+            <Activity className="text-indigo-500/40 animate-pulse" size={16} />
+          </div>
+
+          {/* Lead Velocity (N14) */}
+          <div className="glass-premium p-4 border border-blue-500/10 flex items-center justify-between group hover:border-blue-500/20 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-blue-500/10 rounded-xl">
+                <TrendingUp className="text-blue-400" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
+                  LEAD VELOCITY (REAL)
+                </div>
+                <div className="text-xl font-black text-white">
+                  {telemetry.metrics.leadVelocity.value} <span className="text-[10px] text-slate-500">{telemetry.metrics.leadVelocity.unit}</span>
+                </div>
+              </div>
+            </div>
+            <div className={`w-2 h-2 rounded-full ${telemetry.metrics.leadVelocity.status === 'healthy' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
+          </div>
+
+          {/* Closure Probability (N14) */}
+          <div className="glass-premium p-4 border border-purple-500/10 flex items-center justify-between group hover:border-purple-500/20 transition-all">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-purple-500/10 rounded-xl">
+                <Target className="text-purple-400" size={18} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
+                  CLOSURE PROBABILITY
+                </div>
+                <div className="text-xl font-black text-white">
+                  {telemetry.metrics.closureProbability.value}{telemetry.metrics.closureProbability.unit}
+                </div>
+              </div>
+            </div>
+            <Activity className="text-purple-500/40 animate-pulse" size={16} />
           </div>
 
           <BusinessHealthWidget />
+
+          {/* Repository Integrity Grid (N14) */}
+          <div className="glass-premium p-6 border border-white/5 group hover:border-emerald-500/20 transition-all">
+            <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+              <Layers size={14} /> REPOSITORY INTEGRITY GRID
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { label: 'Inventory', value: 99.8, color: 'text-cyan-400' },
+                { label: 'Leads', value: 98.5, color: 'text-emerald-400' },
+                { label: 'Finance', value: 100, color: 'text-purple-400' }
+              ].map((repo) => (
+                <div key={repo.label} className="flex flex-col items-center">
+                  <div className="relative w-12 h-12 flex items-center justify-center mb-2">
+                    <svg className="w-full h-full -rotate-90">
+                      <circle
+                        cx="24" cy="24" r="20"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        fill="transparent"
+                        className="text-slate-800"
+                      />
+                      <circle
+                        cx="24" cy="24" r="20"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        fill="transparent"
+                        strokeDasharray={126}
+                        strokeDashoffset={126 - (126 * repo.value) / 100}
+                        className={repo.color}
+                      />
+                    </svg>
+                    <span className="absolute text-[9px] font-bold text-white">{Math.floor(repo.value)}%</span>
+                  </div>
+                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{repo.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -195,7 +275,7 @@ export const HoustonDashboard: React.FC = () => {
             <Globe size={14} className="text-slate-500" />
             <span className="text-[10px] font-bold text-slate-400 uppercase">Estado: </span>
             <span className="text-[10px] font-black text-white uppercase tracking-widest">
-              NIVEL 13 • STRUCTURAL PURITY
+              NIVEL 14 • STRUCTURAL OBSERVABILITY
             </span>
           </div>
         </div>
