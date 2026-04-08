@@ -1,42 +1,44 @@
 # 🚀 Arquitectura Nivel 13: El Ecosistema Autónomo (Visión Houston)
 
-El **Nivel 13** trasciende la pureza estructural (Nivel 12) para entrar en el dominio de la **Inteligencia Operativa Proactiva**. Ya no solo tenemos un código limpio; tenemos un sistema que "piensa" y "se adapta" por sí mismo.
+El **Nivel 13** trasciende la pureza estructural (Nivel 12) para entrar en el dominio de la **Inteligencia Operativa Proactiva**. Ya no solo tenemos un código limpio; tenemos un sistema que "piensa" y "se adapta" por sí mismo dentro de un marco de ingeniería de alta competición.
 
-## Pilares del Nivel 13
+## Pilares de Pureza Nivel 13
 
-### 1. Autocuración Digital (Self-Healing)
+### 1. Registro Zero-Logic (Arquitectura de Inyección)
+
+El `registry.ts` es el sistema nervioso del Sentinel. Para alcanzar el Nivel 13, este debe estar libre de lógica de infraestructura:
+
+- **Prohibición de Leaks**: Ninguna llamada directa a Firestore (`collection`, `query`) o APIs debe existir en el registro.
+- **Delegación Total**: El registro solo instancia y orquesta Casos de Uso y Repositorios.
+
+### 2. Contrato Único de Ejecución (Use Case Standard)
+
+Sustituimos la dispersión de patrones por un contrato de ejecución sólido:
+
+- **Interfáz `execute`**: Todos los flujos de negocio deben seguir la estructura `{ execute: (input: T) => Promise<R> }`.
+- **Pre-Validación**: El Caso de Uso es responsable de la integridad de los datos antes de tocar el repositorio.
+
+### 3. Autocuración Digital (Self-Healing Infra)
 
 El sistema detecta fallos en los adaptadores de infraestructura (ej. Firestore inestable) y activa automáticamente:
 
-- **Fallback Automático**: Conmutación a caché local o proveedores secundarios.
-- **Circuit Breakers Inteligentes**: Aislamiento de módulos ruidosos para proteger el núcleo.
+- **Fallback Automático**: Conmutación a caché local-first o proveedores secundarios.
+- **Circuit Breakers**: Aislamiento de módulos ruidosos para proteger el núcleo.
 
-### 2. Motor de Intención Predictiva
+### 4. Edge Intelligence (Procesamiento Perimetral)
 
-Sustituimos el "Score Reactivo" por un **Análisis de Trayectoria**:
+Desplazamos la inteligencia lo más cerca posible del usuario:
 
-- **Pre-Scoring**: Identificación de leads de alta conversión antes de que completen el formulario, basándose en patrones de navegación.
-- **Nudge Autónomo**: El sistema decide, sin intervención humana, cuándo enviar el "empujón" perfecto (email/WhatsApp) basado en el momento neuro-cognitivo óptimo del usuario.
-
-### 3. Bus de Eventos "Houston"
-
-Despliegue de una arquitectura **Event-Driven** pura:
-
-- Cada acción en el dealer (una foto nueva, un cambio de precio, un mensaje) es un evento que dispara una reacción en cadena de agentes (re-indexación, re-scoring, notificación).
-
-### 4. Interfaz Adaptativa (Neuro-UI)
-
-El Dashboard y el Frontend se reconfiguran dinámicamente:
-
-- Si el sistema detecta un volumen alto de leads de "Trade-In", el Kanban prioriza visualmente esas herramientas.
-- La interfaz "respira" con el estado del negocio.
+- **Middleware Optimization**: Cálculos de pre-aprobación y filtros de inventario en la capa de borde (Edge/Lambda) para latencias <100ms.
+- **Hydration Mastery**: Carga instantánea de estados críticos mediante almacenamiento local sincronizado.
 
 ---
 
 > [!IMPORTANT]
-> **Estado Actual**: Richard Automotive está en la cúspide del **Nivel 12**. El camino al **Nivel 13** es la transición de una herramienta de gestión a un **Cerebro de Negocio Autónomo**.
+> **Estado Actual**: Richard Automotive ha alcanzado la madurez del Nivel 12. La transición al **Nivel 13** es el paso definitivo hacia un **Cerebro de Negocio Autónomo**, donde la estabilidad es la base de la innovación.
 
 ## Próximo Objetivo: Houston Dashboard (Telemetry Level 13)
 
-- Implementar observabilidad en tiempo real.
-- Visualización de la toma de decisiones de la IA en vivo.
+- Implementar observabilidad estructural en tiempo real.
+- Visualización de la salud de los repositories y latencia de red.
+- Panel de Auditoría de Procesos (Traceability).

@@ -2,7 +2,8 @@ import {
   doc,
   onSnapshot,
   getDoc,
-  Timestamp,
+  setDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
 import { HoustonRepository } from './HoustonRepository';
@@ -26,6 +27,14 @@ export class FirestoreHoustonRepository implements HoustonRepository {
     });
   }
 
+  async pushTelemetry(telemetry: Partial<HoustonTelemetry>): Promise<void> {
+    const docRef = doc(db, this.collectionName, this.docId);
+    await setDoc(docRef, {
+      ...telemetry,
+      lastUpdate: serverTimestamp()
+    }, { merge: true });
+  }
+
   subscribeToTelemetry(callback: (telemetry: HoustonTelemetry) => void): () => void {
     const docRef = doc(db, this.collectionName, this.docId);
     
@@ -41,10 +50,17 @@ export class FirestoreHoustonRepository implements HoustonRepository {
       systemHealth: data.systemHealth || 'online',
       lastUpdate: data.lastUpdate?.toMillis?.() || Date.now(),
       metrics: {
+        // Phase 1 Metrics
         inferenceLatency: data.metrics?.inferenceLatency || { label: 'Inference', value: 0, status: 'healthy' },
         tokenUsage: data.metrics?.tokenUsage || { label: 'Tokens', value: 0, status: 'healthy' },
         autonomyRate: data.metrics?.autonomyRate || { label: 'Autonomy', value: 0, status: 'healthy' },
         apiStability: data.metrics?.apiStability || { label: 'API', value: 0, status: 'healthy' },
+        
+        // Nivel 13 Metrics
+        structuralHealth: data.metrics?.structuralHealth || { label: 'Structural', value: '100%', status: 'healthy' },
+        dbLatency: data.metrics?.dbLatency || { label: 'DB Latency', value: 0, unit: 'ms', status: 'healthy' },
+        activeBreakers: data.metrics?.activeBreakers || { label: 'Breakers', value: 0, status: 'healthy' },
+        resilienceIndex: data.metrics?.resilienceIndex || { label: 'Resilience', value: '100%', status: 'healthy' },
       },
       recentEvents: data.recentEvents || [],
     };

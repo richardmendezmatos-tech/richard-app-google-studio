@@ -1,49 +1,57 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Terminal as TerminalIcon, ChevronRight } from 'lucide-react';
 
-export const HoustonTerminalLog: React.FC = () => {
-  const [logs, setLogs] = useState<string[]>([
-    '[SYSTEM] RA OS v3.2 initialized.',
-    '[INTEL] Neural sync with Richard AI complete.',
-    '[NETWORK] Sentinel nodes 04/04 online.',
-    '[SECURITY] Firewall at 100% efficiency.',
-  ]);
+interface TerminalEvent {
+  id: string;
+  timestamp: number;
+  type: 'info' | 'warning' | 'error' | 'critical';
+  message: string;
+  source: string;
+}
+
+interface Props {
+  events?: TerminalEvent[];
+}
+
+export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
+  const bootLogs = [
+    '[SYSTEM] RA OS v4.5_N13 initialized.',
+    '[INTEL] Structural Purity sync complete.',
+    '[NETWORK] Sentinel AP-01 online.',
+    '[SECURITY] Level 13 protocols active.',
+  ];
+  
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const messages = [
-      'Optimizing inventory metadata...',
-      'Syncing with Google Studio Brain...',
-      'Analyzing market trends in Houston...',
-      'Predictive model: Toyota Tacoma demand +15%',
-      'RA Sentinel: Monitoring dealer traffic...',
-      'RA Intelligence: Strategy Lab active.',
-    ];
-
-    const interval = setInterval(() => {
-      const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-      setLogs((prev) => [...prev.slice(-15), `[${new Date().toLocaleTimeString()}] ${randomMsg}`]);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Derive current logs from props + boot logs
+  const allLogs = [
+    ...bootLogs,
+    ...(events || []).map(e => `[${new Date(e.timestamp).toLocaleTimeString()}] [${e.type.toUpperCase()}] ${e.message}`)
+  ].slice(-20);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [logs]);
+  }, [allLogs]);
+
+  const getLogColor = (log: string) => {
+    if (log.includes('[ERROR]') || log.includes('[CRITICAL]')) return 'text-rose-500';
+    if (log.includes('[WARNING]')) return 'text-amber-500';
+    if (log.includes('[SYSTEM]') || log.includes('[INTEL]')) return 'text-cyan-400';
+    return 'text-slate-400';
+  };
 
   return (
     <div className="bg-black/40 rounded-2xl border border-white/5 p-4 font-mono text-[10px] h-[180px] overflow-hidden flex flex-col">
       <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5 text-cyan-500/50 uppercase tracking-[0.2em] font-black">
-        <TerminalIcon size={12} /> Live RA Terminal
+        <TerminalIcon size={12} /> Live RA Terminal • N13
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1 no-scrollbar scroll-smooth">
-        {logs.map((log, i) => (
+        {allLogs.map((log, i) => (
           <div key={i} className="flex gap-2">
-            <ChevronRight size={10} className="text-primary flex-shrink-0 mt-0.5" />
-            <span className={log.includes('[SYSTEM]') ? 'text-cyan-400' : 'text-slate-400'}>
+            <ChevronRight size={10} className="text-primary flex-shrink-0 mt-0.5 shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]" />
+            <span className={getLogColor(log)}>
               {log}
             </span>
           </div>

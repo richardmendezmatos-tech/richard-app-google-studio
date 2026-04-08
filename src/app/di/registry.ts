@@ -1,14 +1,20 @@
 // Repository Registry for Dependency Injection
 import { FirestoreInventoryRepository } from '@/entities/inventory/api/repositories/FirestoreInventoryRepository';
 import { FirestoreUserRepository } from '@/entities/user/api/repositories/FirestoreUserRepository';
-import { updateLead, addLead, Lead } from '@/shared/api/adapters/leads/crmService';
-import { db } from '@/shared/api/firebase/firebaseService';
-import { collection, getDocs, addDoc, query, orderBy, limit, doc, onSnapshot } from 'firebase/firestore';
+import { Lead } from '@/entities/lead';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getStorageService } from '@/shared/api/firebase/optionalServices';
 import { FirestoreHoustonRepository } from '@/entities/houston/api/FirestoreHoustonRepository';
 import { FirestorePredictiveRepository } from '@/entities/lead/api/FirestorePredictiveRepository';
+import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
+import { FirestoreApplicationRepository } from '@/entities/lead/api/FirestoreApplicationRepository';
+import { FirestoreSubscriberRepository, FirestoreSurveyRepository } from '@/entities/lead/api/FirestoreCaptureRepositories';
 
+/**
+ * DI Registry - Richard Automotive Sentinel (Nivel 13)
+ * Centralizes all dependencies and enforces the Repository Pattern.
+ * Zero-Logic Policy: This file only wires components, never queries DB.
+ */
 export const DI = {
   getInventoryUseCase: () => {
     const repository = new FirestoreInventoryRepository();
@@ -18,21 +24,14 @@ export const DI = {
   },
   
   getLeadsUseCase: () => {
+    const repository = new FirestoreLeadRepository();
     return {
-      execute: async (dealerId: string, limitCount: number = 100) => {
-        // Fetch leads from 'applications' collection
-        const q = query(collection(db, 'applications'), orderBy('createdAt', 'desc'), limit(limitCount));
-        const snap = await getDocs(q);
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Lead[];
-      }
+      execute: (dealerId: string, limitCount: number = 100) => repository.getLeads(dealerId, limitCount)
     };
   },
   
   getLeadRepository: () => {
-    return {
-      updateLead: (id: string, data: any): Promise<void> => updateLead(id, data),
-      saveLead: (data: any): Promise<string> => addLead(data)
-    };
+    return new FirestoreLeadRepository();
   },
 
   getStorageRepository: () => {
@@ -47,42 +46,15 @@ export const DI = {
   },
 
   getApplicationRepository: () => {
-    return {
-      submitApplication: async (data: any, dealerId: string): Promise<string> => {
-        const docRef = await addDoc(collection(db, 'applications'), {
-          ...data,
-          dealerId,
-          createdAt: new Date().toISOString()
-        });
-        return docRef.id;
-      }
-    };
+    return new FirestoreApplicationRepository();
   },
 
   getSubscriberRepository: () => {
-    return {
-      subscribe: async (email: string): Promise<void> => {
-        await addDoc(collection(db, 'subscribers'), {
-          email,
-          subscribedAt: new Date().toISOString()
-        });
-      },
-      getSubscribers: async (): Promise<any[]> => {
-        const snap = await getDocs(collection(db, 'subscribers'));
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      }
-    };
+    return new FirestoreSubscriberRepository();
   },
 
   getSurveyRepository: () => {
-    return {
-      submitSurvey: async (data: any): Promise<void> => {
-        await addDoc(collection(db, 'surveys'), {
-          ...data,
-          submittedAt: new Date().toISOString()
-        });
-      }
-    };
+    return new FirestoreSurveyRepository();
   },
 
   getUserRepository: () => {
