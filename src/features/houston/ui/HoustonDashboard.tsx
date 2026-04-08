@@ -71,7 +71,7 @@ export const HoustonDashboard: React.FC = () => {
           </div>
           <div>
             <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
-              Richard Intelligence • Sentinel N13
+              Richard Intelligence • Sentinel N15
             </h3>
             <h2 className="text-3xl font-black text-white tracking-tighter">
               Houston <span className="text-primary/70">Terminal</span>
@@ -200,6 +200,47 @@ export const HoustonDashboard: React.FC = () => {
             <div className={`w-2 h-2 rounded-full ${telemetry.metrics.leadVelocity.status === 'healthy' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
           </div>
 
+          {/* RUM Sentinel (Nivel 15 Core Web Vitals) */}
+          <div className="glass-premium p-6 border border-cyan-500/10 group hover:border-cyan-500/20 transition-all">
+            <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+              <Zap size={14} className="animate-pulse" /> RUM SENTINEL • PERFORMANCE
+            </div>
+            <div className="space-y-4">
+              {/* LCP Overlay */}
+              <div>
+                <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5">
+                  <span>LCP (Carga)</span>
+                  <span className={telemetry.metrics.lcp.status === 'healthy' ? 'text-emerald-400' : 'text-amber-400'}>
+                    {telemetry.metrics.lcp.value}{telemetry.metrics.lcp.unit}
+                  </span>
+                </div>
+                <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-1000 ${telemetry.metrics.lcp.status === 'healthy' ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                    style={{ width: `${Math.min(100, (2500 / (telemetry.metrics.lcp.value as number)) * 100)}%` }}
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                {/* FID */}
+                <div className="p-2.5 bg-slate-950/50 rounded-xl border border-white/5">
+                  <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">FID</div>
+                  <div className={`text-sm font-black ${telemetry.metrics.fid.status === 'healthy' ? 'text-white' : 'text-amber-400'}`}>
+                    {telemetry.metrics.fid.value}ms
+                  </div>
+                </div>
+                {/* CLS */}
+                <div className="p-2.5 bg-slate-950/50 rounded-xl border border-white/5">
+                  <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">CLS</div>
+                  <div className={`text-sm font-black ${telemetry.metrics.cls.status === 'healthy' ? 'text-white' : 'text-amber-400'}`}>
+                    {telemetry.metrics.cls.value}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Closure Probability (N14) */}
           <div className="glass-premium p-4 border border-purple-500/10 flex items-center justify-between group hover:border-purple-500/20 transition-all">
             <div className="flex items-center gap-4">
@@ -275,7 +316,7 @@ export const HoustonDashboard: React.FC = () => {
             <Globe size={14} className="text-slate-500" />
             <span className="text-[10px] font-bold text-slate-400 uppercase">Estado: </span>
             <span className="text-[10px] font-black text-white uppercase tracking-widest">
-              NIVEL 14 • STRUCTURAL OBSERVABILITY
+              NIVEL 15 • ZERO-GRAVITY PERFORMANCE
             </span>
           </div>
         </div>

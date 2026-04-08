@@ -1,62 +1,50 @@
-import { PersuasionProfile } from '@/features/leads/model/customerMemoryService';
-import { IntentMatrix } from '@/features/leads/model/scoring/IntentAnalysisService';
+'use client';
+
+import React, { ReactNode, useEffect } from 'react';
+import { useCustomerMemory, CognitiveProfile } from '@/shared/lib/persuasion/customerMemory';
+import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 interface PersuasionWrapperProps {
-  profile: PersuasionProfile;
-  intentMatrix?: IntentMatrix;
-  sentimentVelocity?: number;
-  variants: {
-    Analytical: React.ReactNode;
-    Impulsive: React.ReactNode;
-    Conservative: React.ReactNode;
-    HighUrgency?: React.ReactNode; // Nivel 17
-    Unknown?: React.ReactNode;
-  };
+  analytical: ReactNode;
+  impulsive: ReactNode;
+  conservative: ReactNode;
+  neutral?: ReactNode;
+  componentId: string;
 }
 
 /**
- * PersuasionWrapper: El corazón de la UI Adaptativa (Nivel 16/17).
- * Inyecta variaciones de contenido basadas en el perfil cognitivo y la matriz de intención.
+ * PersuasionWrapper (Nivel 16): Interfaz Adaptativa.
+ * Renderiza condicionalmente el contenido basado en el perfil psicológico del lead.
+ * Richard Automotive habla el idioma de la mente.
  */
 export const PersuasionWrapper: React.FC<PersuasionWrapperProps> = ({
-  profile,
-  intentMatrix,
-  sentimentVelocity = 0,
-  variants,
+  analytical,
+  impulsive,
+  conservative,
+  neutral,
+  componentId,
 }) => {
-  // Nivel 18: Adaptive Motion Calculation
-  // A mayor urgencia, menor duración (más rápido). Rango: 0.2s - 0.7s
-  const motionDuration = intentMatrix 
-    ? `${Math.max(0.2, 0.7 - intentMatrix.urgency * 0.5)}s`
-    : '0.5s';
+  const { profile } = useCustomerMemory();
+  
+  // Registrar intento de persuasión neuro-cognitiva (Nivel 16)
+  useEffect(() => {
+    if (profile !== 'neutral') {
+      raSentinel.reportNeuroPersuasion(profile, componentId, {
+        timestamp: Date.now(),
+        location: typeof window !== 'undefined' ? window.location.pathname : 'unknown'
+      });
+    }
+  }, [profile, componentId]);
 
-  const containerStyle = {
-    '--ra-motion-duration': motionDuration,
-  } as React.CSSProperties;
-
-  // Lógica de Nivel 17: Prioridad por Urgencia Crítica
-  if (intentMatrix && intentMatrix.urgency > 0.8 && variants.HighUrgency) {
-    return (
-      <div 
-        className="animate-in zoom-in-95 duration-500 border-2 border-primary/20 rounded-xl p-1 bg-primary/5"
-        style={containerStyle}
-      >
-        {variants.HighUrgency}
-      </div>
-    );
+  // Selección de variante basada en el perfil
+  switch (profile) {
+    case 'analytical':
+      return <>{analytical}</>;
+    case 'impulsive':
+      return <>{impulsive}</>;
+    case 'conservative':
+      return <>{conservative}</>;
+    default:
+      return <>{neutral || analytical}</>; // Por defecto usamos analítico si Richard prefiere dar datos
   }
-
-  // Sentiment Velocity Feedback (Visual subtle)
-  const velocityClass = sentimentVelocity > 0.2 ? 'ring-1 ring-green-500/30' : '';
-
-  const content = variants[profile as keyof typeof variants] || variants.Unknown || variants.Analytical;
-
-  return (
-    <div 
-      className={`animate-in fade-in ${velocityClass}`}
-      style={containerStyle}
-    >
-      {content}
-    </div>
-  );
 };

@@ -9,10 +9,8 @@ import { observerPerformance } from './performanceObserver';
  */
 export function PerformanceInitializer() {
   useEffect(() => {
-    // Solo en producción o bajo demanda para evitar ruido en desarrollo
-    if (process.env.NODE_ENV === 'production') {
-      observerPerformance();
-    }
+    // Inicialización universal del Sentinel RUM (Nivel 15)
+    observerPerformance();
   }, []);
 
   return null;

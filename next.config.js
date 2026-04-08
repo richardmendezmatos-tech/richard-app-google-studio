@@ -13,12 +13,16 @@ const nextConfig = {
     ],
   },
   experimental: {
+    ppr: 'incremental',
     optimizePackageImports: [
       'lucide-react',
       'motion/react',
       'framer-motion',
       'clsx',
       'tailwind-merge',
+      '@tanstack/react-query',
+      'date-fns',
+      'recharts',
     ],
   },
   // Ensure the project root is correctly identified

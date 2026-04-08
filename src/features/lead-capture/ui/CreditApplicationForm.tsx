@@ -12,6 +12,8 @@ import {
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
 import { LeadHealthSensor } from '../../leads/model/health/LeadHealthSensor';
+import { PersuasionWrapper } from '@/shared/ui/containers/PersuasionWrapper';
+import { useCustomerMemory } from '@/shared/lib/persuasion/customerMemory';
 
 export const CreditApplicationForm: React.FC = () => {
   const [step, setStep] = useState<number>(1);
@@ -75,9 +77,15 @@ export const CreditApplicationForm: React.FC = () => {
     };
   }, [formData, lastInteraction, isSuccess, hasRescued]);
 
+  const recordSignal = useCustomerMemory(state => state.recordInteraction);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setLastInteraction(Date.now());
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+    // Registrar señales cognitivas (Nivel 16)
+    if (e.target.name === 'monthlyIncome') recordSignal('roi_check');
+    if (e.target.name === 'ssn') recordSignal('safety_friction');
   };
 
   const handleNext = () => {
@@ -161,9 +169,13 @@ export const CreditApplicationForm: React.FC = () => {
           <ShieldCheck size={32} />
         </div>
         <div>
-          <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
-            Bóveda de Pre-Cualificación
-          </h2>
+          <PersuasionWrapper
+            componentId="credit-vault-title"
+            analytical={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Análisis de ROI</h2>}
+            impulsive={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Aprobación Instantánea VIP</h2>}
+            conservative={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Seguridad Garantizada</h2>}
+            neutral={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Pre-Cualificación</h2>}
+          />
           <p className="text-xs md:text-sm font-bold text-slate-400 flex items-center gap-2 mt-2 uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></span>
             Túnel SSL 256-Bit • Cero Impacto Inicial a tu Crédito
@@ -208,10 +220,13 @@ export const CreditApplicationForm: React.FC = () => {
                 <div className="text-cyan-400 mt-1">
                   <ShieldCheck size={20} />
                 </div>
-                <p className="text-sm font-medium text-slate-300">
-                  Protegemos tu identidad civil rigurosamente. Usa tu nombre legal exactamente como
-                  aparece en tu Licencia de Conducir.
-                </p>
+                <PersuasionWrapper
+                  componentId="credit-step1-callout"
+                  analytical={<p className="text-sm font-medium text-slate-300">Minimizamos el impacto en tu perfil crediticio mediante un análisis puramente algorítmico y técnico.</p>}
+                  impulsive={<p className="text-sm font-medium text-slate-300">Acelera tu proceso ahora. Tus datos fluyen directo a la aprobación sin esperas innecesarias.</p>}
+                  conservative={<p className="text-sm font-medium text-slate-300">Protegemos tu identidad civil rigurosamente. Encriptación bancaria de grado militar para tu paz mental.</p>}
+                  neutral={<p className="text-sm font-medium text-slate-300">Protegemos tu identidad civil rigurosamente. Usa tu nombre legal exactamente como aparece en tu Licencia de Conducir.</p>}
+                />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -464,11 +479,13 @@ export const CreditApplicationForm: React.FC = () => {
               disabled={isSubmitting}
               className="flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all focus:ring-4 focus:ring-cyan-500/30 disabled:opacity-50 disabled:hover:scale-100 shadow-[0_0_30px_rgba(0,200,240,0.3)] w-full"
             >
-              {isSubmitting
-                ? 'Bunker Procesando...'
-                : step < 3
-                  ? 'Avanzar al Paso ' + (step + 1)
-                  : 'Ejecutar Solicitud VIP'}
+              <PersuasionWrapper
+                componentId="credit-submit-cta"
+                analytical={isSubmitting ? 'Optimizando...' : step < 3 ? 'Continuar Análisis' : 'Ejecutar Inversión'}
+                impulsive={isSubmitting ? 'Acelerando...' : step < 3 ? 'Asegurar Bono' : '¡Cerrar Trato Ahora!'}
+                conservative={isSubmitting ? 'Protegiendo...' : step < 3 ? 'Validar Seguridad' : 'Finalizar con Garantía'}
+                neutral={isSubmitting ? 'Bunker Procesando...' : step < 3 ? 'Avanzar al Paso ' + (step + 1) : 'Ejecutar Solicitud VIP'}
+              />
               {!isSubmitting && <ChevronRight size={22} />}
             </button>
             {step === 3 && (

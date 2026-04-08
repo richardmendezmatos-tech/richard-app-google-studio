@@ -1,4 +1,5 @@
 import { raSentinel } from './raSentinelService';
+import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 /**
  * PerformanceObserver: El ojo clínico del Nivel 15.
@@ -18,6 +19,13 @@ export const observerPerformance = () => {
       operationalScore: lastEntry.startTime < 1200 ? 100 : 70,
       metadata: { metric: 'LCP', unit: 'ms' }
     });
+
+    auditRepository.log({
+      type: lastEntry.startTime < 2500 ? 'info' : 'warning',
+      message: `RUM LCP Detectado: ${Math.round(lastEntry.startTime)}ms`,
+      source: 'Sentinel-Vitals',
+      metadata: { lcp: lastEntry.startTime }
+    });
   });
 
   lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -32,6 +40,13 @@ export const observerPerformance = () => {
         data: { fid },
         operationalScore: fid < 100 ? 100 : 50,
         metadata: { metric: 'FID', unit: 'ms' }
+      });
+
+      auditRepository.log({
+        type: fid < 100 ? 'info' : 'warning',
+        message: `RUM FID Detectado: ${Math.round(fid)}ms`,
+        source: 'Sentinel-Vitals',
+        metadata: { fid }
       });
     });
   });
@@ -53,6 +68,15 @@ export const observerPerformance = () => {
       operationalScore: clsValue < 0.1 ? 100 : 40,
       metadata: { metric: 'CLS' }
     });
+
+    if (clsValue > 0) {
+      auditRepository.log({
+        type: clsValue < 0.1 ? 'info' : 'warning',
+        message: `RUM CLS Detectado: ${clsValue.toFixed(4)}`,
+        source: 'Sentinel-Vitals',
+        metadata: { cls: clsValue }
+      });
+    }
   });
 
   clsObserver.observe({ type: 'layout-shift', buffered: true });

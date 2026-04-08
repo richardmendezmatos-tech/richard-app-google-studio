@@ -25,6 +25,11 @@ export interface HoustonTelemetry {
     leadVelocity: HoustonMetric;
     inventoryTurnover: HoustonMetric;
     closureProbability: HoustonMetric;
+
+    // Nivel 15: Zero-Gravity Performance (RUM Sentinel)
+    lcp: HoustonMetric;
+    fid: HoustonMetric;
+    cls: HoustonMetric;
   };
   recentEvents: Array<{
     id: string;
