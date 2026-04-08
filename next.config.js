@@ -36,7 +36,7 @@ const nextConfig = {
       '@/entities': './src/entities',
       '@/features': './src/features',
       '@/widgets': './src/widgets',
-      '@/pages': './src/pages',
+      '@/pages': './src/views',
       '@/processes': './src/processes',
     },
   },
@@ -48,7 +48,7 @@ const nextConfig = {
       '@/entities': '/Users/richardmendez/richard-automotive-_-command-center/src/entities',
       '@/features': '/Users/richardmendez/richard-automotive-_-command-center/src/features',
       '@/widgets': '/Users/richardmendez/richard-automotive-_-command-center/src/widgets',
-      '@/pages': '/Users/richardmendez/richard-automotive-_-command-center/src/pages',
+      '@/pages': '/Users/richardmendez/richard-automotive-_-command-center/src/views',
       '@/processes': '/Users/richardmendez/richard-automotive-_-command-center/src/processes',
     };
     return config;

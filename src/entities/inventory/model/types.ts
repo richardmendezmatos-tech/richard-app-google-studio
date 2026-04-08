@@ -8,6 +8,7 @@ export interface Car {
   make: string;
   model: string;
   year: number;
+  trim?: string;
   vin: string;
   color: string;
   price: number;
@@ -16,6 +17,7 @@ export interface Car {
   type: CarType;
   transmission?: string;
   fuel?: string;
+  fuelType?: string;
   engine?: string;
   hp?: number;
   acceleration?: string;
