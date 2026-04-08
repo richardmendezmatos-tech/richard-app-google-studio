@@ -4,20 +4,26 @@ import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
 import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
 import { Car } from '@/entities/inventory';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string; slug: string }>;
 }
 
-// ISR: Revalidar cada 60 segundos
-export const revalidate = 60;
+
 
 // SSG: Generar las rutas más populares estáticamente (opcional, basado en Java)
 export async function generateStaticParams() {
-  const inventory = await fetchInventoryFromJava(20);
-  return inventory.map((car: Car) => ({
-    id: car.id,
-    slug: `${car.year}-${car.make}-${car.model}`.toLowerCase().replace(/\s+/g, '-'),
-  }));
+  try {
+    const inventory = await fetchInventoryFromJava(20);
+    return inventory.map((car: Car) => ({
+      id: car.id,
+      slug: `${car.year}-${car.make}-${car.model}`.toLowerCase().replace(/\s+/g, '-'),
+    }));
+  } catch (error) {
+    console.warn('[Build] Java API unreachable for v/[slug]/[id]. Falling back to on-demand rendering.');
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

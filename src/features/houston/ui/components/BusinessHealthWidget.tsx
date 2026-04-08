@@ -11,15 +11,15 @@ export const BusinessHealthWidget: React.FC = () => {
 
   useLayoutEffect(() => {
     if (velocityRef.current) {
-      velocityRef.current.style.width = `${(telemetry.leadVelocity / 5) * 100}%`;
+      velocityRef.current.style.width = `${(telemetry.metrics.leadVelocity.value as number / 5) * 100}%`;
     }
     if (closureRef.current) {
-      closureRef.current.style.width = `${telemetry.closureProbability}%`;
+      closureRef.current.style.width = `${telemetry.metrics.closureProbability.value}%`;
     }
     if (turnoverRef.current) {
-      turnoverRef.current.style.width = `${(1 - (telemetry.inventoryTurnover / 60)) * 100}%`;
+      turnoverRef.current.style.width = `${(1 - (telemetry.metrics.inventoryTurnover.value as number / 60)) * 100}%`;
     }
-  }, [telemetry.leadVelocity, telemetry.closureProbability, telemetry.inventoryTurnover]);
+  }, [telemetry.metrics.leadVelocity, telemetry.metrics.closureProbability, telemetry.metrics.inventoryTurnover]);
 
   return (
     <div className="glass-premium p-6 border border-primary/20 bg-primary/5 flex flex-col gap-6 group hover:border-primary/40 transition-all">
@@ -48,7 +48,7 @@ export const BusinessHealthWidget: React.FC = () => {
             <TrendingUp size={12} className="text-cyan-400" />
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Lead Velocity</span>
           </div>
-          <div className="text-lg font-black text-white">{telemetry.leadVelocity} LPH</div>
+          <div className="text-lg font-black text-white">{telemetry.metrics.leadVelocity.value} LPH</div>
           <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
             <div 
               ref={velocityRef}
@@ -62,7 +62,7 @@ export const BusinessHealthWidget: React.FC = () => {
             <PieChart size={12} className="text-emerald-400" />
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Closure Prob</span>
           </div>
-          <div className="text-lg font-black text-white">{telemetry.closureProbability}%</div>
+          <div className="text-lg font-black text-white">{telemetry.metrics.closureProbability.value}%</div>
           <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
             <div 
               ref={closureRef}
@@ -77,7 +77,7 @@ export const BusinessHealthWidget: React.FC = () => {
               <BarChart3 size={12} className="text-indigo-400" />
               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Inventory Turnover (Predictive)</span>
             </div>
-            <span className="text-[10px] font-black text-white">{telemetry.inventoryTurnover} Days</span>
+            <span className="text-[10px] font-black text-white">{telemetry.metrics.inventoryTurnover.value} Days</span>
           </div>
           <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
             <div 

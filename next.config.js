@@ -12,8 +12,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'randomuser.me' },
     ],
   },
+  cacheComponents: false,
   experimental: {
-    ppr: 'incremental',
     optimizePackageImports: [
       'lucide-react',
       'motion/react',

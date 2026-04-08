@@ -165,7 +165,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 1.02, y: -10 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300, delay: 0.1 }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
         className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl h-[92vh] rounded-[48px] md:rounded-[64px] shadow-[0_32px_120px_rgba(0,0,0,0.8)] p-4 md:p-6 relative flex flex-col lg:flex-row gap-6 overflow-hidden border border-white/10"
       >
         {/* Holographic Mesh Layer */}

@@ -102,9 +102,9 @@ export class TrajectoryAnalyzer {
 
     // Match por nombre / marca mencionado en la trayectoria
     const carName = car.name.toLowerCase();
-    const uniquePaths = new Set((preferences.events || []).map((e: any) => e.path.toLowerCase()));
+    const uniquePaths = new Set<string>((preferences.events || []).map((e: any) => e.path.toLowerCase()));
     
-    uniquePaths.forEach((path: string) => {
+    uniquePaths.forEach((path) => {
       if (path.includes(carName.split(' ')[0])) { // Match simple por marca
         score += 0.2;
       }

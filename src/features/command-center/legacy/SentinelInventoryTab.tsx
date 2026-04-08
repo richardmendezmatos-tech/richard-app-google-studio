@@ -28,7 +28,7 @@ import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
 import { InventoryHeatmap } from '@/features/inventory';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';
-import { useCommandCenterData } from '../_hooks/useCommandCenterData';
+import { useCommandCenterData } from './_hooks/useCommandCenterData';
 import { useDealer } from '@/entities/dealer';
 import { useCars } from '@/features/inventory';
 

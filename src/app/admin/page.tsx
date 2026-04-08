@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import CRMBoard from '@/pages/admin/command-center/_ui/CRMBoard';
+import CRMBoard from '@/features/command-center/legacy/CRMBoard';
 import HoustonDashboard from '@/widgets/houston/HoustonDashboard';
 import SEO from '@/shared/ui/seo/SEO';
 

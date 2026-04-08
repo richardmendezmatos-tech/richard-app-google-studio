@@ -157,11 +157,11 @@ export const updateLeadStatus = async (leadId: string, newStatus: string) => {
 };
 
 export const subscribeToNewsletter = async (email: string) => {
-  await DI.getSubscriberRepository().subscribe(email);
+  await DI.getSubscriberRepository().subscribe({ email } as any);
 };
 
 export const submitSurvey = async (data: Record<string, unknown>) => {
-  await DI.getSurveyRepository().submitSurvey(data);
+  await DI.getSurveyRepository().submitSurvey(data as any);
 };
 
 export const getSubscribers = async (): Promise<SubscriberRecord[]> => {

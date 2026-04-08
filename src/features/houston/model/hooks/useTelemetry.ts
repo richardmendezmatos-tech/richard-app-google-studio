@@ -9,7 +9,10 @@ import { auditRepository } from '@/shared/api/houston/AuditRepository';
 export function useTelemetry(connectionState: string): HoustonTelemetry {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry>({
     systemHealth: 'online',
+    businessHealthScore: 100,
     lastUpdate: 0,
+    latency: 350,
+    quality: 100,
     metrics: {
       inferenceLatency: { label: 'Inference', value: 350, unit: 'ms', status: 'healthy' },
       tokenUsage: { label: 'Token Usage', value: 0, unit: 'tok', status: 'healthy' },
@@ -52,6 +55,8 @@ export function useTelemetry(connectionState: string): HoustonTelemetry {
           setTelemetry(prev => ({
             ...prev,
             lastUpdate: Date.now(),
+            latency: Math.round(inferenceLatency),
+            quality: Math.round(structuralHealth),
             recentEvents: logs.map(l => ({
               id: l.id || Math.random().toString(),
               timestamp: l.timestamp?.toMillis() || Date.now(),

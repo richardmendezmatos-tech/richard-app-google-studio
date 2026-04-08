@@ -13,7 +13,7 @@ import { auth } from '@/shared/api/firebase/firebaseService';
 import { useAntigravity } from '@/features/automation';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
-import { useCommandCenterData } from '../_hooks/useCommandCenterData';
+import { useCommandCenterData } from './_hooks/useCommandCenterData';
 import { TacticalSidebar } from './components/TacticalSidebar';
 import { CommandCenterWidget } from '@/widgets/houston/CommandCenterWidget';
 

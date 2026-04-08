@@ -48,7 +48,10 @@ export class FirestoreHoustonRepository implements HoustonRepository {
   private mapToTelemetry(data: any): HoustonTelemetry {
     return {
       systemHealth: data.systemHealth || 'online',
+      businessHealthScore: data.businessHealthScore || 100,
       lastUpdate: data.lastUpdate?.toMillis?.() || Date.now(),
+      latency: data.latency || data.metrics?.inferenceLatency?.value || 350,
+      quality: data.quality || data.metrics?.structuralHealth?.value || 100,
       metrics: {
         // Phase 1 Metrics
         inferenceLatency: data.metrics?.inferenceLatency || { label: 'Inference', value: 0, status: 'healthy' },
@@ -66,6 +69,11 @@ export class FirestoreHoustonRepository implements HoustonRepository {
         leadVelocity: data.metrics?.leadVelocity || { label: 'Lead Velocity', value: 0, unit: 'LPH', status: 'healthy' },
         inventoryTurnover: data.metrics?.inventoryTurnover || { label: 'Inventory Turnover', value: 0, unit: 'days', status: 'healthy' },
         closureProbability: data.metrics?.closureProbability || { label: 'Closure Prob', value: 0, unit: '%', status: 'healthy' },
+        
+        // Nivel 15: Zero-Gravity Performance
+        lcp: data.metrics?.lcp || { label: 'LCP', value: 0, unit: 'ms', status: 'healthy' },
+        fid: data.metrics?.fid || { label: 'FID', value: 0, unit: 'ms', status: 'healthy' },
+        cls: data.metrics?.cls || { label: 'CLS', value: 0, status: 'healthy' },
       },
       recentEvents: data.recentEvents || [],
     };

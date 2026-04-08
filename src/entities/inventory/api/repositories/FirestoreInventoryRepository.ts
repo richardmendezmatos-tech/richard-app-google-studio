@@ -28,4 +28,20 @@ export class FirestoreInventoryRepository implements InventoryRepository {
     if (!docSnap.exists()) return null;
     return { id: docSnap.id, ...docSnap.data() } as Car;
   }
+
+  async getInventoryTurnover(dealerId: string): Promise<number> {
+    const q = query(
+      collection(db, this.collectionName),
+      where('dealerId', '==', dealerId)
+    );
+    const snapshot = await getDocs(q);
+    const cars = snapshot.docs.map(d => d.data());
+    
+    const total = cars.length;
+    if (total === 0) return 0;
+    
+    const sold = cars.filter(c => c.status === 'sold').length;
+    // Turnover formula: (Sold / Total) * 100 as percentage of current portfolio efficiency
+    return parseFloat(((sold / total) * 100).toFixed(2));
+  }
 }

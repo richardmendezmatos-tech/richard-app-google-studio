@@ -29,8 +29,8 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
   loading: true,
 
   _initialize: async () => {
-    let savedConsent = null;
-    let savedSettingsStr = null;
+    let savedConsent: string | null = null;
+    let savedSettingsStr: string | null = null;
 
     if (typeof window !== 'undefined') {
       savedConsent = localStorage.getItem('privacy_consented');

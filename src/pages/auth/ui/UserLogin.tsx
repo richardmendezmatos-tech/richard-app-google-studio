@@ -96,7 +96,7 @@ const UserLogin: React.FC = () => {
     if (loading || isRegistering) return;
 
     const initializeOneTap = () => {
-      const google = (window as Window & { google?: GoogleGlobal }).google;
+      const google = (window as any).google;
       if (!google) return;
 
       if (!process.env.VITE_GOOGLE_CLIENT_ID) {

@@ -129,4 +129,21 @@ export class FirestoreLeadRepository implements LeadRepository {
       return parseFloat((count / hours).toFixed(2));
     });
   }
+
+  async getAverageAIScore(dealerId: string): Promise<number> {
+    return withSecureErrorHandling(async () => {
+      const q = query(
+        collection(db, this.collectionName),
+        where('dealerId', '==', dealerId),
+        limit(50) // Analizamos los últimos 50 para velocidad
+      );
+      const snapshot = await getDocs(q);
+      const leads = snapshot.docs.map(doc => doc.data());
+      
+      if (leads.length === 0) return 0;
+      
+      const totalScore = leads.reduce((sum, lead) => sum + (lead.aiScore || 0), 0);
+      return parseFloat((totalScore / leads.length).toFixed(2));
+    });
+  }
 }

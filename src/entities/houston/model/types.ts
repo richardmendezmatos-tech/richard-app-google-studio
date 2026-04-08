@@ -8,7 +8,10 @@ export interface HoustonMetric {
 
 export interface HoustonTelemetry {
   systemHealth: 'online' | 'degraded' | 'offline';
+  businessHealthScore: number;
   lastUpdate: number;
+  latency: number;
+  quality: number;
   metrics: {
     // Phase 1: AI & Performance (Legacy/Evolution)
     inferenceLatency: HoustonMetric;

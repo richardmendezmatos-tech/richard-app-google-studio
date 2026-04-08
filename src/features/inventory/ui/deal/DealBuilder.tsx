@@ -215,7 +215,11 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
             <div className="space-y-3">
               {generarPersuasionVenta.execute({
                 cotizacion: {
-                  valorTradeIn: downPayment, // Simple mapping for demo
+                  precioUnidadDestino: vehiclePrice,
+                  prontoCash: downPayment,
+                  montoAFinanciar: vehiclePrice - downPayment,
+                  terminoMeses: term,
+                  valorTradeIn: 0, 
                   pagoDeudaTradeIn: 0,
                   pagoMensualEstimado: payment,
                   apr: creditTier === 'excellent' ? 5.95 : 8.95
