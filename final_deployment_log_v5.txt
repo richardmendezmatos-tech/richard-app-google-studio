@@ -1,0 +1,141 @@
+Loading scopes…
+Searching for existing projects…
+Linked to richardmendezmatos-techs-projects/richard-automotive-_-command-center (created .vercel)
+Retrieving project…
+> Downloading `development` Environment Variables for richardmendezmatos-techs-projects/richard-automotive-_-command-center
+Downloading
+
+Changes:
++ TWILIO_ACCOUNT_SID
++ TWILIO_AUTH_TOKEN
++ TWILIO_PHONE_NUMBER
++ VERCEL_OIDC_TOKEN
++ VITE_SENTRY_ENV
++ VITE_SENTRY_TRACES_SAMPLE_RATE
+- INTERNAL_API_KEY
+- INTERNAL_API_URL
+- NEXT_PUBLIC_ANTIGRAVITY_PROXY_STORAGE
+- VITE_ANTIGRAVITY_PROXY_STORAGE
+
+Updated .env.local file  [213ms]
+Deploying richardmendezmatos-techs-projects/richard-automotive-_-command-center
+Uploading [--------------------] (0.0B/678B)
+Uploading [====================] (678.0B/678B)
+Inspect: https://vercel.com/richardmendezmatos-techs-projects/richard-automotive-_-command-center/4Qw15s8qhADaDDNxvrSp3PXu4h4d [5s]
+Production: https://richard-automotive-command-center-fsfj4va04.vercel.app [5s]
+https://richard-automotive-command-center-fsfj4va04.vercel.appBuilding...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 3251 deployment files...
+Building: Downloading 3251 deployment files...
+Building: Restored build cache from previous deployment (5opAPbdAWCnM2bRiwjo4ZuJyPMBc)
+Building: Warning: "vercel" found in project dependencies and will be ignored.
+Building: Running "vercel build"
+Building: Vercel CLI 50.38.2
+Building: Running "install" command: `npm install --legacy-peer-deps`...
+Building: > richard-automotive@1.0.3 prepare
+Building: > husky
+Building: .git can't be found
+Building: added 18 packages, removed 3 packages, changed 39 packages, and audited 2145 packages in 14s
+Building: 410 packages are looking for funding
+Building: run `npm fund` for details
+Building: 54 vulnerabilities (14 low, 13 moderate, 27 high)
+Building: To address issues that do not require attention, run:
+Building: npm audit fix
+Building: To address all issues (including breaking changes), run:
+Building: npm audit fix --force
+Building: Run `npm audit` for details.
+Building: Running "npm run build"
+Building: > richard-automotive@1.0.3 build
+Building: > dotenvx run -- next build --webpack
+Building: [dotenvx@1.57.2] injecting env (13) from .env
+Building: Attention: Next.js now collects completely anonymous telemetry regarding usage.
+Building: This information is used to shape Next.js' roadmap and prioritize features.
+Building: You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+Building: https://nextjs.org/telemetry
+Building: ▲ Next.js 16.2.1 (webpack)
+Building: - Environments: .env
+Building: - Experiments (use with caution):
+Building: · optimizePackageImports
+Building: Creating an optimized production build ...
+Building: ✓ Compiled successfully in 39.5s
+Building: Running TypeScript ...
+Building: Finished TypeScript in 20.7s ...
+Building: Collecting page data using 1 worker ...
+Building: Java Backend Unreachable (ENOTFOUND/Timeout), falling back to empty list for build stability: TypeError: fetch failed
+Building: at async e (.next/server/app/sitemap.xml/route.js:1:508)
+Building: at async h (.next/server/app/v/[slug]/[id]/page.js:2:12661) {
+Building: [cause]: Error: getaddrinfo ENOTFOUND api-java-gcp.richard-automotive.com
+Building: at ignore-listed frames {
+Building: errno: -3008,
+Building: code: 'ENOTFOUND',
+Building: syscall: 'getaddrinfo',
+Building: hostname: 'api-java-gcp.richard-automotive.com'
+Building: }
+Building: }
+Building: Generating static pages using 1 worker (0/27) ...
+Building: Generating static pages using 1 worker (6/27)
+Building: Java Backend Unreachable (ENOTFOUND/Timeout), falling back to empty list for build stability: TypeError: fetch failed
+Building: at async e (.next/server/app/sitemap.xml/route.js:1:508)
+Building: at async g (.next/server/app/consultant/page.js:2:11131) {
+Building: [cause]: Error: getaddrinfo ENOTFOUND api-java-gcp.richard-automotive.com
+Building: at ignore-listed frames {
+Building: errno: -3008,
+Building: code: 'ENOTFOUND',
+Building: syscall: 'getaddrinfo',
+Building: hostname: 'api-java-gcp.richard-automotive.com'
+Building: }
+Building: }
+Building: Generating static pages using 1 worker (13/27)
+Building: Java Backend Unreachable (ENOTFOUND/Timeout), falling back to empty list for build stability: TypeError: fetch failed
+Building: at async e (.next/server/app/sitemap.xml/route.js:1:508)
+Building: at async i (.next/server/app/page.js:1:758) {
+Building: [cause]: Error: getaddrinfo ENOTFOUND api-java-gcp.richard-automotive.com
+Building: at ignore-listed frames {
+Building: errno: -3008,
+Building: code: 'ENOTFOUND',
+Building: syscall: 'getaddrinfo',
+Building: hostname: 'api-java-gcp.richard-automotive.com'
+Building: }
+Building: }
+Building: Generating static pages using 1 worker (20/27)
+Building: ⚠️ Sitemap Generation: Internal API Configuration is missing or using placeholder. Dynamic routes skipped.
+Building: ✓ Generating static pages using 1 worker (27/27) in 763ms
+Building: Finalizing page optimization ...
+Building: Collecting build traces ...
+Building: Route (app)                 Revalidate  Expire
+Building: ┌ ○ /                               1m      1y
+Building: ├ ○ /_not-found
+Building: ├ ○ /admin
+Building: ├ ○ /admin-login
+Building: ├ ○ /ai-lab
+Building: ├ ƒ /api/auth/session
+Building: ├ ○ /appraisal
+Building: ├ ● /autos-usados/[city]
+Building: │ ├ /autos-usados/bayamon
+Building: │ ├ /autos-usados/san-juan
+Building: │ ├ /autos-usados/guaynabo
+Building: │ └ [+2 more paths]
+Building: ├ ○ /blog
+Building: ├ ○ /compare
+Building: ├ ○ /consultant                     1m      1y
+Building: ├ ○ /contacto
+Building: ├ ○ /financiamiento
+Building: ├ ○ /garage
+Building: ├ ○ /login
+Building: ├ ○ /precualificacion
+Building: ├ ○ /privacidad
+Building: ├ ○ /profile
+Building: ├ ○ /qualify
+Building: ├ ○ /sitemap.xml                    1d      1y
+Building: ├ ○ /terminos
+Building: ├ ○ /trade-in
+Building: └ ● /v/[slug]/[id]
+Building: ƒ Proxy (Middleware)
+Building: ○  (Static)   prerendered as static content
+Building: ●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+Building: ƒ  (Dynamic)  server-rendered on demand
+Building: Error: No Output Directory named "dist" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+Building: Learn More: https://vercel.link/missing-public-directory
+Error: No Output Directory named "dist" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.

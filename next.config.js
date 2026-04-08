@@ -24,11 +24,9 @@ const nextConfig = {
       'recharts',
     ],
   },
-  // Ensure the project root is correctly identified
-  outputFileTracingRoot: '/Users/richardmendez/richard-automotive-_-command-center/',
+  // outputFileTracingRoot removed for CI/CD compatibility
   
   // Turbopack configuration for Next.js 16+
-  // The 'turbopack' key is at the root level of the nextConfig object.
   turbopack: {
     resolveAlias: {
       '@/shared': './src/shared',
@@ -43,12 +41,12 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@/shared': '/Users/richardmendez/richard-automotive-_-command-center/src/shared',
-      '@/entities': '/Users/richardmendez/richard-automotive-_-command-center/src/entities',
-      '@/features': '/Users/richardmendez/richard-automotive-_-command-center/src/features',
-      '@/widgets': '/Users/richardmendez/richard-automotive-_-command-center/src/widgets',
-      '@/pages': '/Users/richardmendez/richard-automotive-_-command-center/src/views',
-      '@/processes': '/Users/richardmendez/richard-automotive-_-command-center/src/processes',
+      '@/shared': './src/shared',
+      '@/entities': './src/entities',
+      '@/features': './src/features',
+      '@/widgets': './src/widgets',
+      '@/pages': './src/views',
+      '@/processes': './src/processes',
     };
     return config;
   },
