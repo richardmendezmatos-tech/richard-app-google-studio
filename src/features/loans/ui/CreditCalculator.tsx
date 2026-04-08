@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Calculator, DollarSign, Calendar, TrendingUp, ArrowRight, Info } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 const INTEREST_RATES = {
   excellent: 5.99, // 740+

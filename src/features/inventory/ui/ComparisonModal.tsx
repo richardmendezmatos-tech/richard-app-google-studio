@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Car } from '@/shared/types/types';
 import { compareCars } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Zap, ShieldCheck, Cpu, Gauge, Star, Sparkles } from 'lucide-react';
 
 interface Props {

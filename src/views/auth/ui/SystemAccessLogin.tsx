@@ -18,7 +18,7 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/shared/api/firebase/firebaseService';
 import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAuthStore } from '@/entities/session';
 import { AppUser, UserRole } from '@/entities/user/model/types';

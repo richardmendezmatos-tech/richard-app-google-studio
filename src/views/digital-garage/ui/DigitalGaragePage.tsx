@@ -6,7 +6,7 @@ import { Car } from '@/entities/inventory';
 import { useSavedCarIds, useToggleSavedCar } from '@/features/garage/hooks/useGarage';
 import { analyzeGarageSelection } from '@/shared/api/ai';
 import { BiometricService } from '@/shared/api/security/biometricService';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import {
   ArrowLeft,

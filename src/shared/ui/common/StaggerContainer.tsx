@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { animate, stagger } from 'motion/react';
+import { animate, stagger } from 'framer-motion';
 
 interface StaggerContainerProps {
   children: React.ReactNode;

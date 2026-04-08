@@ -3,7 +3,7 @@
 import React from 'react';
 import { HelpCircle, ChevronDown, Cpu, Activity, ShieldCheck, Zap } from 'lucide-react';
 import Script from 'next/script';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 const faqData = [
   {

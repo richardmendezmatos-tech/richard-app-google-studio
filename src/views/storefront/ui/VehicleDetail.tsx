@@ -23,7 +23,7 @@ import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import DOMPurify from 'dompurify';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   inventory: Car[];

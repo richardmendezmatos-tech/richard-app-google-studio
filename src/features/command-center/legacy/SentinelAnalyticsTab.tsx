@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Zap, Activity, DollarSign } from 'lucide-react';
 import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { calculateLoan, CreditTier, getCreditTierLabel } from '@/entities/finance';
 import { DollarSign, TrendingUp, CheckCircle, AlertCircle, ShieldCheck, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { generarPersuasionVenta } from '@/features/sales/application/GenerarPersuasionVenta';
 
 interface DealBuilderProps {

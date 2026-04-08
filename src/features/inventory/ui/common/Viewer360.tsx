@@ -9,7 +9,7 @@ import {
   Activity,
   ShieldCheck,
 } from 'lucide-react';
-import { motion, AnimatePresence, animate } from 'motion/react';
+import { motion, AnimatePresence, animate } from 'framer-motion';
 interface Props {
   images: string[];
   alt: string;

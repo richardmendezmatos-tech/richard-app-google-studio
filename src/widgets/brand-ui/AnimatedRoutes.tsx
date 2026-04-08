@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from '@/shared/lib/next-route-adapter';
 import { ShieldAlert } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Car } from '@/entities/inventory';
 
 // --- Lazy Imports ---

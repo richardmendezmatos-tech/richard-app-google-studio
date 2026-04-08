@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useOutletContext } from '@/shared/lib/next-route-adapter';
 import confetti from 'canvas-confetti';
 import {

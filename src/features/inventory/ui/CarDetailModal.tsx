@@ -19,7 +19,7 @@ import {
   Zap,
   Cpu,
 } from 'lucide-react';
-import { motion, AnimatePresence, animate } from 'motion/react';
+import { motion, AnimatePresence, animate } from 'framer-motion';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';

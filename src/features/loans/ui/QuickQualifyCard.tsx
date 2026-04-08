@@ -11,7 +11,7 @@ import {
   Image as ImageIcon,
   Loader2,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
 import { DI } from '@/app/di/registry';
 import {

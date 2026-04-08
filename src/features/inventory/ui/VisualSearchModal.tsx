@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { X, UploadCloud, Camera, AlertCircle, ScanLine, Sparkles, Binary } from 'lucide-react';
 import { Car } from '@/entities/inventory';
 import { VisualSearchResult } from '@/shared/api/ai/aiService';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   isOpen: boolean;

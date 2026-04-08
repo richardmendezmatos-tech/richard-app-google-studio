@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Activity, ScanSearch, TrendingUp, Cpu, Gauge } from 'lucide-react';
-import { motion, useSpring, useTransform, animate } from 'motion/react';
+import { motion, useSpring, useTransform, animate } from 'framer-motion';
 
 interface AnimatedNumberProps {
   value: number;

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Users, TrendingUp, Activity } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ACTIVITY_MESSAGES = [
   { icon: Users, text: 'Juan de Santo Domingo guardó un Toyota Corolla', time: '2 min' },

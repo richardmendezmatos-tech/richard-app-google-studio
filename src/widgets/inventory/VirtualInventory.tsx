@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { Car } from '@/entities/inventory';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore';
 import { TrajectoryAnalyzer } from '@/features/predictive/model/TrajectoryAnalyzer';

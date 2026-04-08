@@ -16,7 +16,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SEO from '@/shared/ui/seo/SEO';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';

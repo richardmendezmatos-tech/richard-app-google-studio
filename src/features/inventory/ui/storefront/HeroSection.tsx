@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';

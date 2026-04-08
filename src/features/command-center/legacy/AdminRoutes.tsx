@@ -2,7 +2,7 @@
 
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate, useOutletContext } from '@/shared/lib/next-route-adapter';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Smartphone, Sparkles } from 'lucide-react';
 import { auth } from '@/shared/api/firebase/firebaseService';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';

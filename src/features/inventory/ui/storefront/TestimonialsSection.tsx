@@ -3,7 +3,7 @@
 import React from 'react';
 import { Star, ShieldCheck, Quote, BadgeCheck, Zap } from 'lucide-react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 const TestimonialsSection: React.FC = () => {
   const testimonials = [

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Mic, Phone, X, Zap } from 'lucide-react';
 import { useLocation } from '@/shared/lib/next-route-adapter';
 

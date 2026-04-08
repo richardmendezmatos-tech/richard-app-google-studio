@@ -3,7 +3,7 @@
 import React from 'react';
 import { Globe, Instagram, Facebook, Twitter, Youtube, ShieldCheck, Cpu, Zap, Activity } from 'lucide-react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 const SocialFooter: React.FC = () => {
   return (

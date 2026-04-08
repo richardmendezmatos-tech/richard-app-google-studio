@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { ShieldCheck, Zap, Globe, BadgeCheck, Sparkles, Activity } from 'lucide-react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const TrustBar: React.FC = () => {
   return (

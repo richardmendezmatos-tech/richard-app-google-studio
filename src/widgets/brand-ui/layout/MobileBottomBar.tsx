@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Home, Compass, ShieldCheck, User } from 'lucide-react';
 
 export const MobileBottomBar: React.FC = () => {
