@@ -122,20 +122,35 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-transparent overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Premium Glass Mobile Header */}
-      <header className="z-50 flex items-center justify-between p-4 text-white lg:hidden glass-premium m-2">
-        <span className="font-cinematic text-3xl tracking-[0.16em] text-cyan-400 text-glow">
-          RICHARD AUTO
+      {/* Premium Glass Mobile Header (Nivel 18 Refinement) */}
+      <header className="z-50 flex items-center justify-between p-5 text-white lg:hidden glass-premium m-4 border-white/20 shadow-[0_0_40px_rgba(0,229,255,0.15)]">
+        <span className="font-cinematic text-3xl tracking-[0.2em] text-white text-glow">
+          RICHARD<span className="text-primary italic">AUTO</span>
         </span>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           title="Abrir menú"
           aria-label="Abrir menú"
-          className="rounded-lg p-2 transition-colors hover:bg-white/10"
+          className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-primary/20 hover:border-primary/40 active:scale-95"
         >
-          <Menu />
+          <Menu className="text-primary" />
         </button>
       </header>
+
+      {/* Nivel 18: Living Background Parallax Layer */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+        <div 
+          className="absolute inset-[-10%] opacity-40 blur-[120px] transition-transform duration-1000 ease-out animate-spin-slow"
+          style={{
+            background: `
+              radial-gradient(circle at 20% 30%, hsla(var(--cyber-cyan), 0.15), transparent 40%),
+              radial-gradient(circle at 80% 70%, hsla(var(--plasma-purple), 0.15), transparent 40%),
+              radial-gradient(circle at 50% 50%, hsla(var(--sentinel-amber), 0.05), transparent 60%)
+            `
+          }}
+        />
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'var(--texture-grain)' }} />
+      </div>
 
       {/* Main Sidebar Component */}
       <Sidebar

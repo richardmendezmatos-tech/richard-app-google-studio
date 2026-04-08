@@ -22,6 +22,8 @@ import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import DOMPurify from 'dompurify';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
+import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface Props {
   inventory: Car[];
@@ -133,7 +135,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-20 lg:pt-0">
+    <div className="min-h-screen bg-[#020617] pb-24 pt-24 lg:pt-0 selection:bg-primary/30">
       <SEO
         title={`${car.name} | Richard Automotive`}
         description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
@@ -179,10 +181,12 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
                     '@type': 'QuantitativeValue',
                     value: car.mileage,
                     unitCode: 'SMI',
+                    unitText: 'miles',
                   },
                 }
               : {}),
             offers: {
+              '@id': `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}#offer`,
               '@type': 'Offer',
               url: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
               priceCurrency: 'USD',
@@ -223,49 +227,52 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
       />
       {/* VehicleSchema removed to avoid duplicate JSON-LD injection */}
 
-      {/* Navigation Bar (Mobile) / Breadcrumb */}
-      <div className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 z-40 flex justify-between items-center lg:hidden border-b border-slate-200 dark:border-slate-800">
+      {/* Navigation Bar (Mobile) / Breadcrumb (Nivel 18: Liquid Glass) */}
+      <div className="fixed top-0 left-0 right-0 bg-[#020617]/80 backdrop-blur-3xl p-5 z-40 flex justify-between items-center lg:hidden border-b border-white/10 shadow-lg">
         <button
           onClick={() => navigate(-1)}
           aria-label="Volver atrás"
-          className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-primary/20 hover:border-primary/40 transition-all active:scale-90"
         >
-          <ChevronLeft className="text-slate-800 dark:text-white" />
+          <ChevronLeft className="text-white" />
         </button>
-        <span className="font-bold text-slate-800 dark:text-white text-sm truncate max-w-[200px]">
+        <span className="font-tech text-xs font-black uppercase tracking-[0.3em] text-white truncate max-w-[180px]">
           {car.name}
         </span>
         <button
           onClick={handleShare}
           aria-label="Compartir vehículo"
-          className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
         >
-          <Share2 className="text-slate-800 dark:text-white" size={20} />
+          <Share2 className="text-white" size={20} />
         </button>
       </div>
 
-      {/* Desktop Back Button */}
-      <div className="hidden lg:block max-w-7xl mx-auto px-8 py-6">
+      {/* Desktop Back Button (Nivel 18 Precision) */}
+      <div className="hidden lg:block max-w-[1400px] mx-auto px-12 py-10">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-slate-500 hover:text-primary font-bold transition-colors"
+          className="group flex items-center gap-3 text-slate-500 hover:text-primary font-black text-xs uppercase tracking-[0.4em] transition-all"
         >
-          <ChevronLeft size={20} /> Volver al Inventario
+          <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-primary/40 group-hover:bg-primary/10 transition-all">
+            <ChevronLeft size={16} />
+          </div>
+          VOLVER AL HUB CENTRAL
         </button>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <main className="max-w-[1400px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Left Column: Media Gallery */}
-        <div className="space-y-6">
-          {/* 360 Viewer Integration */}
-          <div className="relative z-10 w-full min-h-[300px]">
+        <div className="space-y-10">
+          {/* 360 Viewer Integration (Nivel 18 Cinema) */}
+          <div className="relative z-10 w-full min-h-[400px] lg:min-h-[500px]">
             <React.Suspense
               fallback={
-                <div className="w-full h-[300px] lg:h-[400px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-3xl" />
+                <div className="w-full h-[400px] lg:h-[500px] animate-pulse bg-white/5 rounded-[40px] border border-white/10" />
               }
             >
               <Viewer360
-                images={(car.images && car.images.length > 0 ? car.images : [car.img || '']).filter(Boolean) as string[]}
+                images={(car.images || [car.img]).filter(Boolean) as string[]}
                 alt={car.name}
                 badge={car.badge}
                 carPrice={car.price}
@@ -275,114 +282,109 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
             </React.Suspense>
           </div>
 
-          {/* AI Insight Card */}
-          <div className="bg-primary/5 border border-primary/20 rounded-[30px] p-6 lg:p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <Sparkles className="text-primary" />
-              <h3 className="font-black text-[#173d57] dark:text-cyan-400 uppercase tracking-widest text-sm">
-                Richard's AI Insight
+          <GlassContainer intensity="medium" opacity={0.06} className="p-8 group relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_20px_#00e5ff] opacity-0 group-hover:opacity-100 animate-scan transition-opacity" />
+            <div className="flex items-center gap-3 mb-6 relative z-10">
+              <Sparkles className="text-primary animate-pulse" size={20} />
+              <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
+                RICHARD'S <span className="text-primary">AI INSIGHT</span>
               </h3>
             </div>
             {loadingPitch ? (
-              <div className="h-20 flex items-center justify-center text-primary animate-pulse font-bold text-sm uppercase tracking-widest">
-                Analizando auto...
+              <div className="h-32 flex flex-col items-center justify-center gap-4 text-primary relative z-10">
+                <Loader2 className="w-8 h-8 animate-spin" />
+                <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
+                  NEURAL SCAN IN PROGRESS...
+                </span>
               </div>
             ) : (
-              <div
-                className="prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-300 leading-relaxed"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    (aiPitch || '')
-                      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
-                      .replace(/\n/g, '<br/>'),
-                  ),
-                }}
-              />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="relative z-10">
+                <div
+                  className="prose prose-sm dark:prose-invert text-slate-300 leading-relaxed font-medium"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      (aiPitch || '')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary font-black">$1</strong>')
+                        .replace(/\n/g, '<br/>'),
+                    ),
+                  }}
+                />
+              </motion.div>
             )}
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+          </GlassContainer>
         </div>
 
         {/* Right Column: Details & Finance */}
-        <div className="space-y-8">
-          {/* Header */}
-          <div>
-            <span className="text-primary font-black uppercase tracking-[0.2em] text-xs">
-              {car.type} • 2025
-            </span>
-            <h1 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tighter mt-2 leading-none">
+        <div className="space-y-12">
+          {/* Header (Nivel 18 Precision) */}
+          <div className="space-y-4">
+            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px]">
+                {car.type} • {year} • DATABASE-RECOGNIZED
+              </span>
+            </motion.div>
+            <h1 className="font-cinematic text-5xl lg:text-8xl text-white tracking-tighter leading-none text-glow uppercase">
               {car.name}
             </h1>
-            <div className="mt-4 flex items-baseline gap-4">
-              <span className="text-3xl font-bold text-slate-700 dark:text-slate-200">
+            <div className="flex items-baseline gap-6 mt-4">
+              <span className="font-tech text-5xl font-black text-white decoration-primary/30 underline-offset-8">
                 ${car.price.toLocaleString()}
               </span>
-              <span className="text-sm text-green-500 font-bold bg-green-500/10 px-3 py-1 rounded-full">
-                Precio Online
-              </span>
+              <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400">
+                  MARKET-VALIDATED
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Trust Badges Simple */}
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-              <ShieldCheck size={16} className="text-emerald-500" /> Garantía Incluida
-            </div>
-            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-              <Zap size={16} className="text-amber-500" /> Entrega Rápida
-            </div>
+            {[
+              { icon: <ShieldCheck size={16} className="text-emerald-500" />, label: "SENTINEL WARRANTY" },
+              { icon: <Zap size={16} className="text-amber-500" />, label: "EXPRESS DELIVERY" }
+            ].map((b, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap">
+                {b.icon} {b.label}
+              </div>
+            ))}
           </div>
 
-          {/* Potencia & Desempeño (Recommendation #3) */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[40px] p-6 shadow-xl">
-            <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 ml-2">
-              Potencia y Desempeño
-            </h3>
-            <div className="grid grid-cols-2 gap-2">
-              <ProgressRing
-                label="Caballos (HP)"
-                value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180}
-                max={600}
-                size={110}
-                strokeWidth={8}
-              />
-              <ProgressRing
-                label="Tech Score"
-                value={car.type === 'luxury' ? 98 : car.price > 40000 ? 90 : 85}
-                max={100}
-                size={110}
-                strokeWidth={8}
-                color="#f59e0b"
-              />
+          <GlassContainer intensity="high" opacity={0.04} className="p-8 group shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-8 bg-primary rounded-full group-hover:w-12 transition-all" />
+              <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                POTENCIA Y DESEMPEÑO <span className="text-white">/ LAB MODE</span>
+              </h3>
             </div>
-          </div>
+            <div className="grid grid-cols-2 gap-8">
+              <ProgressRing label="CABALLOS (HP)" value={car.price > 60000 ? 550 : car.price > 40000 ? 380 : 250} max={600} size={140} strokeWidth={12} />
+              <ProgressRing label="TECH SCORE" value={car.type === 'luxury' ? 98 : 92} max={100} size={140} strokeWidth={12} color="#f59e0b" />
+            </div>
+            <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-primary/5 blur-3xl" />
+          </GlassContainer>
 
-          <div className="h-px bg-slate-200 dark:bg-slate-800" />
+          <div className="h-px bg-white/5" />
 
-          {/* Deal Builder Engine */}
-          <div id="deal-builder-section" className="scroll-mt-24 min-h-[500px]">
-            <React.Suspense
-              fallback={
-                <div className="w-full h-[500px] animate-pulse bg-slate-200 dark:bg-slate-800 rounded-[40px]" />
-              }
-            >
-              <DealBuilder
-                vehicleId={car.id}
-                vehiclePrice={car.price}
-                vehicleName={car.name}
-                vehicleImage={car.img}
-              />
+          <div id="deal-builder-section" className="scroll-mt-32">
+            <React.Suspense fallback={<div className="w-full h-[600px] animate-pulse bg-white/5 rounded-[40px] border border-white/10" />}>
+              <GlassContainer intensity="medium" opacity={0.02} className="p-1">
+                <DealBuilder vehicleId={car.id} vehiclePrice={car.price} vehicleName={car.name} vehicleImage={car.img} />
+              </GlassContainer>
             </React.Suspense>
           </div>
         </div>
       </main>
 
-      {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] z-50 lg:hidden flex items-center justify-between">
-        <div>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+      {/* Mobile Sticky CTA (Nivel 18: Kinetic Bar) */}
+      <div className="fixed bottom-0 left-0 right-0 p-5 bg-[#020617]/90 backdrop-blur-3xl border-t border-white/10 shadow-2xl z-50 lg:hidden flex items-center justify-between">
+        <div className="space-y-1">
+          <p className="font-tech text-[9px] text-slate-500 font-black uppercase tracking-widest">
             {car.name}
           </p>
-          <p className="text-xl font-black text-slate-800 dark:text-white leading-none mt-1">
+          <p className="text-2xl font-black text-white leading-none tracking-tighter decoration-primary decoration-4">
             ${car.price.toLocaleString()}
           </p>
         </div>
@@ -390,9 +392,9 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
           onClick={() => {
             document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
           }}
-          className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-primary/30 transition-all active:scale-95"
+          className="bg-primary hover:bg-primary/90 text-slate-900 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
         >
-          Me Interesa
+          ME INTERESA
         </button>
       </div>
     </div>

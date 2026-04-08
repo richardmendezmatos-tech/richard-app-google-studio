@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 
 interface HeroSectionProps {
@@ -80,38 +81,43 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const h = HEADLINES[idx];
 
   return (
-    <section className="relative min-h-[95vh] w-full overflow-hidden bg-slate-950 flex flex-col">
-      {/* ── Cinematic Background Engine ── */}
+    <section className="relative min-h-[96vh] w-full overflow-hidden bg-slate-950 flex flex-col">
+      {/* ── Cinematic Engine (Nivel 18) ── */}
       <div className="absolute inset-0 z-0">
-        <OptimizedImage
-          src="https://images.unsplash.com/photo-1672278374378-8ef184d2e685?q=80&w=2400&auto=format&fit=crop"
-          alt="Richard Automotive Universe"
-          className="h-full w-full object-cover object-[center_35%] opacity-25 scale-105"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/80 to-slate-950" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent" />
+        <div className="absolute inset-0 bg-slate-950 z-[1]" />
         
-        {/* Ambient Tech Elements */}
-        <div className="absolute inset-0 mesh-bg-elite z-[1]" />
-        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
-        <div className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent" />
+        {/* Living Video Layer */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover opacity-30 scale-105"
+        >
+          <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
+        </video>
+
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
+        
+        {/* Ambient Holographic Layer */}
+        <div className="absolute inset-0 mesh-bg-elite z-[3]" />
       </div>
 
       {/* ── Tactical Content Grid ── */}
       <div className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0">
         
         {/* Left: Intelligence & Branding */}
-        <div className="flex-1 space-y-8 text-left">
+        <div className="flex-1 space-y-10 text-left">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4"
+            className="flex items-center gap-6"
           >
-            <div className="flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 backdrop-blur-xl">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
-              <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">
-                SENTINEL HUB ACTIVE
+            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-2 backdrop-blur-3xl shadow-[0_0_20px_rgba(0,229,255,0.1)]">
+              <span className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_12px_#00e5ff]" />
+              <span className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
+                SENTINEL<span className="text-primary/70">.PRO</span>
               </span>
             </div>
             <span className="font-tech text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
@@ -123,16 +129,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <AnimatePresence mode="wait">
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 40, skewY: 3 }}
-                animate={{ opacity: 1, y: 0, skewY: 0 }}
-                exit={{ opacity: 0, y: -40, skewY: -3 }}
+                initial={{ opacity: 0, y: 60, scale: 0.98, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -60, scale: 1.02, filter: 'blur(10px)' }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col gap-0"
               >
                 <h1 className="flex flex-col">
-                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-white leading-[0.85]">{h.line1}</span>
-                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-white opacity-80 leading-[0.85]">{h.line2}</span>
-                  <span className="font-cinematic text-5xl md:text-7xl lg:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-primary leading-[0.85] drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter">{h.line1}</span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter">{h.line2}</span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none">
                     {h.accent}
                   </span>
                 </h1>
@@ -163,61 +169,62 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Right: Command Panel CTAs */}
-        <div className="w-full lg:w-[450px] space-y-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-premium p-8 space-y-6 relative overflow-hidden"
+        <div className="w-full lg:w-[460px]">
+          <GlassContainer 
+            intensity="high"
+            opacity={0.07}
+            className="p-10 space-y-8 relative group"
           >
-            <div className="absolute top-0 right-0 p-4">
-              <Sparkles className="text-cyan-400/20 animate-pulse" size={40} />
-            </div>
-
-            <div className="space-y-2">
-              <p className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-                DIRECT ACTION HUB
+            {/* Holographic scanner effect */}
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            
+            <div className="space-y-3 relative">
+              <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">
+                COMMAND HUB / <span className="text-primary animate-pulse">DIRECT ACTION</span>
               </p>
-              <div className="h-1 w-12 bg-cyan-500/30 rounded-full" />
+              <div className="h-1 w-16 bg-gradient-to-r from-primary to-transparent rounded-full shadow-[0_0_10px_#00e5ff]" />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4 relative">
               <HeroCTA 
                 label="EXPLORAR INVENTARIO" 
                 tag="UNIT DATABASE" 
-                icon={<ArrowRight size={20} />} 
+                icon={<ArrowRight size={22} />} 
                 variant="primary" 
                 onClick={onBrowseInventory}
               />
               <HeroCTA 
                 label="NEURAL MATCH" 
                 tag="AI DISCOVERY" 
-                icon={<BrainCircuit size={20} />} 
+                icon={<BrainCircuit size={22} />} 
                 variant="secondary" 
                 onClick={onNeuralMatch}
               />
               <HeroCTA 
                 label="COTIZAR MI AUTO" 
                 tag="TRADE-IN EVAL" 
-                icon={<DollarSign size={20} />} 
+                icon={<DollarSign size={22} />} 
                 variant="tertiary" 
                 onClick={onSellCar}
               />
             </div>
 
             {/* Micro Dashboard */}
-            <div className="grid grid-cols-3 gap-2 pt-6 border-t border-white/5">
+            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 relative">
               {[
-                { val: "500+", lbl: "Families" },
-                { val: "4.9%", lbl: "APR" },
-                { val: "24/7", lbl: "Support" }
+                { val: "500+", lbl: "FAMILIES" },
+                { val: "4.9%", lbl: "MIN APR" },
+                { val: "24/7", lbl: "LIVE OPS" }
               ].map((s, i) => (
-                <div key={i} className="text-center">
-                  <div className="font-tech text-lg font-black text-white">{s.val}</div>
-                  <div className="font-tech text-[8px] uppercase tracking-widest text-slate-500">{s.lbl}</div>
+                <div key={i} className="text-center group/stat">
+                  <div className="font-tech text-xl font-black text-white group-hover/stat:text-primary transition-colors">{s.val}</div>
+                  <div className="font-tech text-[8px] uppercase tracking-[0.3em] text-slate-500 font-bold">{s.lbl}</div>
                 </div>
               ))}
             </div>
-          </motion.div>
+            
+            <Sparkles className="absolute bottom-6 right-6 text-primary/10 group-hover:text-primary/30 transition-colors animate-spin-slow" size={60} />
+          </GlassContainer>
         </div>
       </div>
 

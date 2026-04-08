@@ -13,6 +13,7 @@ import TestimonialsSection from '@/features/inventory/ui/storefront/Testimonials
 import FAQSection from '@/shared/ui/components/FAQSection';
 import SocialFooter from '@/features/inventory/ui/storefront/SocialFooter';
 import { AuthoritySection } from '@/features/marketing';
+import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
 
 // Extracted UI Components
 import { StorefrontToolbar } from '@/features/inventory';
@@ -122,17 +123,23 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
           onSellCar={() => actions.openAppraisal('hero')}
         />
 
-        {/* Main Content Container */}
-        <main className="relative z-20 mx-auto -mt-14 max-w-[1600px] space-y-14 px-5 pb-28 lg:px-12 lg:pb-10">
-          <section aria-label="Autoridad y Respaldo">
+        {/* Main Content Container (Nivel 18: Adaptive Flow) */}
+        <main className="relative z-20 mx-auto -mt-20 max-w-[1600px] space-y-20 px-6 pb-28 lg:px-12 lg:pb-16">
+          <section aria-label="Autoridad y Respaldo" className="reveal-up">
             <AuthoritySection />
           </section>
 
-          <StorefrontMarketPulse
-            avgPrice={state.marketPulse.avgPrice}
-            premiumUnits={state.marketPulse.premiumUnits}
-            compactUnits={state.marketPulse.compactUnits}
-          />
+          <GlassContainer 
+            intensity="medium"
+            opacity={0.03}
+            className="p-8 lg:p-12 reveal-up"
+          >
+            <StorefrontMarketPulse
+              avgPrice={state.marketPulse.avgPrice}
+              premiumUnits={state.marketPulse.premiumUnits}
+              compactUnits={state.marketPulse.compactUnits}
+            />
+          </GlassContainer>
 
           {/* Search, Filters, Grid */}
           <section id="inventory-grid" aria-labelledby="inventory-heading" className="scroll-mt-32">
@@ -169,9 +176,11 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
 
           <section
             aria-label="Nuestra Confianza"
-            className="reveal-up rounded-[34px] border border-cyan-200/20 bg-[linear-gradient(150deg,rgba(11,26,39,0.9),rgba(7,15,24,0.85))] p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.9)] md:p-8"
+            className="reveal-up"
           >
-            <TrustBar />
+            <GlassContainer intensity="high" opacity={0.05} className="p-10 lg:p-16">
+              <TrustBar />
+            </GlassContainer>
           </section>
         </main>
 

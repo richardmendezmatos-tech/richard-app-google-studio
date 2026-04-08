@@ -2,7 +2,15 @@ import { db } from '@/shared/api/firebase/client';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface SentinelMetric {
-  type: 'trade_in_calculation' | 'sale_attempt' | 'inventory_in_take' | 'ai_persuasion_generated' | 'conversion_friction' | 'neuro_persuasion_attempt';
+  type: 
+    | 'trade_in_calculation' 
+    | 'sale_attempt' 
+    | 'inventory_in_take' 
+    | 'ai_persuasion_generated' 
+    | 'conversion_friction' 
+    | 'neuro_persuasion_attempt'
+    | 'performance_vitals'
+    | 'vision_intake_attempt';
   data: any;
   operationalScore: number;
   frictionPoint?: string;
@@ -44,6 +52,18 @@ export class RaSentinelService {
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
         url: typeof window !== 'undefined' ? window.location.href : 'unknown'
       }
+    });
+  }
+
+  /**
+   * Registra métricas de rendimiento (Nivel 15/16).
+   */
+  async reportPerformance(metric: string, value: number, score: number): Promise<void> {
+    await this.reportActivity({
+      type: 'performance_vitals',
+      data: { [metric.toLowerCase()]: value },
+      operationalScore: score,
+      metadata: { metric, unit: metric === 'CLS' ? 'score' : 'ms' }
     });
   }
 

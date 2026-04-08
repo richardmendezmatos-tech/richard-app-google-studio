@@ -82,36 +82,42 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <nav
-      className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-cyan-300/15 bg-[linear-gradient(180deg,rgba(8,20,33,0.95),rgba(7,17,27,0.95))] text-white shadow-2xl backdrop-blur-2xl transition-all duration-300 lg:static lg:h-screen pointer-events-auto ${
-        isCollapsed ? 'lg:w-[80px]' : 'lg:w-72'
+      className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/10 bg-gradient-to-b from-[#081421]/95 to-[#07111b]/98 text-white shadow-2xl backdrop-blur-3xl transition-all duration-500 lg:static lg:h-screen pointer-events-auto ${
+        isCollapsed ? 'lg:w-[88px]' : 'lg:w-[300px]'
       } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
     >
       <div
-        className={`relative border-b border-white/5 px-6 py-8 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}
+        className={`relative border-b border-white/5 px-7 py-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}
       >
         <button className="group text-left overflow-hidden" onClick={() => navigate('/')}>
           {!isCollapsed ? (
-            <>
-              <p className="font-cinematic text-5xl leading-[0.82] text-cyan-300 transition-colors group-hover:text-cyan-200">
+            <div className="relative">
+              <p className="font-cinematic text-5xl leading-[0.82] text-white transition-all group-hover:text-primary group-hover:drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]">
                 RICHARD
               </p>
-              <p className="font-cinematic text-3xl tracking-[0.18em] text-slate-200">AUTOMOTIVE</p>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">
-                Command Center
-              </p>
-            </>
+              <p className="font-cinematic text-3xl tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors uppercase">AUTOMOTIVE</p>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="h-1 w-1 rounded-full bg-primary animate-pulse" />
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                  COMMAND CENTER
+                </p>
+              </div>
+            </div>
           ) : (
-            <p className="font-cinematic text-4xl text-cyan-300">R</p>
+            <div className="relative group/logo">
+              <p className="font-cinematic text-5xl text-primary drop-shadow-[0_0_10px_rgba(0,229,255,0.3)] group-hover/logo:scale-110 transition-transform">R</p>
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary animate-ping" />
+            </div>
           )}
         </button>
 
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className={`absolute -right-3 top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-cyan-300/20 bg-slate-900 text-cyan-300 transition-transform duration-300 hover:scale-110 active:scale-95 ${isCollapsed ? 'rotate-180' : ''}`}
+            className={`absolute -right-3.5 top-12 hidden lg:flex h-7 w-7 items-center justify-center rounded-xl border border-white/20 bg-[#0a1929] text-primary shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all hover:scale-110 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(0,229,255,0.2)] active:scale-95 ${isCollapsed ? 'rotate-180' : ''}`}
             title={isCollapsed ? 'Expandir' : 'Colapsar'}
           >
-            <Cpu size={12} className="animate-pulse" />
+            <Cpu size={14} className="animate-pulse" />
           </button>
         )}
       </div>

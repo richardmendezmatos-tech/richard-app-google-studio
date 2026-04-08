@@ -1,5 +1,6 @@
 import { analyzeImageWithPrompt } from '@/shared/api/ai';
 import { Car } from '@/shared/types/types';
+import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 export const inventoryIngestionService = {
   /**
@@ -12,17 +13,16 @@ export const inventoryIngestionService = {
         
         Tu tarea es extraer datos precisos para una ficha de inventario premium.
         
+        NIVEL 16 - NEURO-PERSUASION:
+        Identifica el perfil cognitivo dominante sugerido por el vehículo:
+        - ANALYTICAL: Si es un auto económico, híbrido, con alta depreciación o enfoque técnico (Toyota Prius, Honda Civic).
+        - IMPULSIVE: Si es un auto de lujo, deportivo, o de alto estatus (BMW, Porsche, Corvette).
+        - CONSERVATIVE: Si es un auto familiar, SUV sólido, con enfoque en seguridad (Subaru, Volvo, Sienna).
+
         Si es un WINDOW STICKER (Monroney), extrae:
         - VIN exacto.
         - Año, Marca, Modelo, Trim (ej: SE, XLE, Limited).
-        - Motor (ej: 2.5L 4-Cyl) y Tracción (AWD, FWD, 4x2).
-        - Color exterior e interior.
-        - Equipamiento clave (ej: Sunroof, Apple CarPlay, Blind Spot Monitor).
-        
-        Si es una FOTO DEL AUTO:
-        - Estima Marca/Modelo/Año por el diseño.
-        - Color visible.
-        - Estilo (SUV, Sedan, etc).
+        ...
         
         RETORNA SOLO JSON (sin markdown) con este esquema:
         {
@@ -34,15 +34,24 @@ export const inventoryIngestionService = {
             "price": number,
             "color": "string",
             "mileage": number,
-            "type": "SUV" | "Sedan" | "Pickup" | "Luxury" | "Deportivo" | "Compacto",
-            "fuelType": "Gasolina" | "Híbrido" | "Eléctrico" | "Diesel",
-            "keyFeatures": ["máximo 5 specs"],
-            "description": "Pitch corto comercial (max 150 caracteres)"
+            "type": "string",
+            "fuelType": "string",
+            "keyFeatures": ["string"],
+            "description": "string",
+            "suggestedCognitiveProfile": "analytical" | "impulsive" | "conservative"
         }
         `;
 
     try {
       const data = (await analyzeImageWithPrompt(imageSource, prompt)) as any;
+
+      // Report activity to Sentinel
+      await raSentinel.reportActivity({
+        type: 'vision_intake_attempt',
+        data: { vin: data.vin, make: data.make, model: data.model },
+        operationalScore: data.vin ? 100 : 40,
+        metadata: { profile: data.suggestedCognitiveProfile }
+      });
 
       // Sanitización de tipos y alineación con la interfaz Car
       const sanitized: Partial<Car> = {
@@ -60,6 +69,7 @@ export const inventoryIngestionService = {
       return sanitized;
     } catch (error) {
       console.error('Inventory Ingestion Error:', error);
+      raSentinel.reportFriction('vision_ingestion', 'AI Analysis Failed', { error: String(error) });
       throw new Error('Análisis de Visión fallido. Por favor carga una imagen más clara.', {
         cause: error,
       });

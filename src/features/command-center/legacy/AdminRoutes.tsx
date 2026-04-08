@@ -11,7 +11,7 @@ import CommandCenterLayout, { CommandCenterContextType } from './CommandCenterLa
 
 // Lazy imports for admin tabs
 const SentinelInventoryTab = React.lazy(() => import('./SentinelInventoryTab'));
-const IntakeView = React.lazy(() => import('./IntakeView'));
+const VisionIntake = React.lazy(() => import('../vision/VisionIntake').then(m => ({ default: m.VisionIntake })));
 const SentinelAnalyticsTab = React.lazy(() =>
   import('./SentinelAnalyticsTab').then((m) => ({ default: m.SentinelAnalyticsTab })),
 );
@@ -164,7 +164,11 @@ export const AdminRoutes = (props: any) => {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="inventory" element={<InventoryWrapper />} />
-        <Route path="intake" element={<IntakeView />} />
+        <Route path="intake" element={
+          <Suspense fallback={<div className="p-8 text-slate-500 font-black animate-pulse uppercase tracking-widest">Iniciando Sentinel Vision...</div>}>
+            <VisionIntake />
+          </Suspense>
+        } />
         <Route path="analytics" element={<AnalyticsWrapper />} />
         <Route path="analytics/:leadId" element={<LeadAnalyticsPage />} />
         <Route path="billing" element={<B2BBillingDashboard />} />

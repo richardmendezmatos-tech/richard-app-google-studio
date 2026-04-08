@@ -13,18 +13,17 @@ export const observerPerformance = () => {
     const entries = entryList.getEntries();
     const lastEntry = entries[entries.length - 1];
     
-    raSentinel.reportActivity({
-      type: 'ai_persuasion_generated', // Reutilizamos reporte de actividad con metadata de performance
-      data: { lcp: lastEntry.startTime },
-      operationalScore: lastEntry.startTime < 1200 ? 100 : 70,
-      metadata: { metric: 'LCP', unit: 'ms' }
-    });
+    // Nivel 16: Calibración de score por impacto en persuasión
+    const lcp = lastEntry.startTime;
+    const score = lcp < 1200 ? 100 : lcp < 2500 ? 85 : 50;
+
+    raSentinel.reportPerformance('LCP', lcp, score);
 
     auditRepository.log({
-      type: lastEntry.startTime < 2500 ? 'info' : 'warning',
-      message: `RUM LCP Detectado: ${Math.round(lastEntry.startTime)}ms`,
+      type: lcp < 2500 ? 'info' : 'warning',
+      message: `RUM LCP Detectado: ${Math.round(lcp)}ms`,
       source: 'Sentinel-Vitals',
-      metadata: { lcp: lastEntry.startTime }
+      metadata: { lcp }
     });
   });
 
@@ -35,12 +34,9 @@ export const observerPerformance = () => {
     const entries = entryList.getEntries();
     entries.forEach((entry) => {
       const fid = entry.duration;
-      raSentinel.reportActivity({
-        type: 'ai_persuasion_generated',
-        data: { fid },
-        operationalScore: fid < 100 ? 100 : 50,
-        metadata: { metric: 'FID', unit: 'ms' }
-      });
+      const score = fid < 100 ? 100 : 60;
+
+      raSentinel.reportPerformance('FID', fid, score);
 
       auditRepository.log({
         type: fid < 100 ? 'info' : 'warning',
@@ -62,12 +58,8 @@ export const observerPerformance = () => {
       }
     }
     
-    raSentinel.reportActivity({
-      type: 'ai_persuasion_generated',
-      data: { cls: clsValue },
-      operationalScore: clsValue < 0.1 ? 100 : 40,
-      metadata: { metric: 'CLS' }
-    });
+    const score = clsValue < 0.1 ? 100 : 40;
+    raSentinel.reportPerformance('CLS', clsValue, score);
 
     if (clsValue > 0) {
       auditRepository.log({
