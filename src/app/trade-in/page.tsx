@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import TradeInView from '@/pages/leads/ui/TradeInView';
+import TradeInView from '@/views/leads/ui/TradeInView';
 
 /**
  * Next.js App Router entry point for /trade-in

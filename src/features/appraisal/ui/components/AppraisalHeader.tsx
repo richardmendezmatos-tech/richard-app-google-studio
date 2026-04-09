@@ -20,9 +20,9 @@ export const AppraisalHeader: React.FC<AppraisalHeaderProps> = ({ step }) => {
         </div>
       </div>
       
-      {step < 4 && (
+      {step < 5 && (
         <div className="flex gap-2">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3, 4].map(i => (
             <div 
               key={i} 
               className={`h-1.5 w-8 rounded-full transition-all duration-500 ${

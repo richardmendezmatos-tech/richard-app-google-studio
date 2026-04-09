@@ -11,17 +11,25 @@ export const vehicleSchema = z.object({
   vin: z.string().length(17, 'VIN debe tener 17 caracteres').optional().or(z.literal('')),
 });
 
+export const contactSchema = z.object({
+  name: z.string().min(2, 'Nombre requerido'),
+  phone: z.string().min(10, 'Teléfono válido requerido (min 10 dígitos)').regex(/^[0-9\-+()\s]+$/, 'Teléfono inválido'),
+});
+
 export type VehicleData = z.infer<typeof vehicleSchema>;
+export type ContactData = z.infer<typeof contactSchema>;
 
 interface AppraisalState {
   step: number;
   formData: VehicleData;
+  contactData: ContactData;
   isOffline: boolean;
-  errors: Partial<Record<keyof VehicleData, string>>;
+  errors: Partial<Record<keyof VehicleData | keyof ContactData, string>>;
   
   // Actions
   setStep: (step: number) => void;
   updateFormData: (data: Partial<VehicleData>) => void;
+  updateContactData: (data: Partial<ContactData>) => void;
   setOffline: (status: boolean) => void;
   reset: () => void;
   validateStep: (step: number) => boolean;
@@ -36,34 +44,48 @@ const initialFormData: VehicleData = {
   vin: ''
 };
 
+const initialContactData: ContactData = {
+  name: '',
+  phone: ''
+};
+
 export const useAppraisalStore = create<AppraisalState>()(
   persist(
     (set) => ({
       step: 1,
       formData: initialFormData,
+      contactData: initialContactData,
       isOffline: typeof navigator !== 'undefined' ? !navigator.onLine : false,
       errors: {},
 
       setStep: (step) => set({ step }),
       updateFormData: (data) => set((state) => ({ 
         formData: { ...state.formData, ...data },
-        // Clear error when field changes
         errors: Object.keys(data).reduce((acc, key) => {
           const { [key as keyof VehicleData]: _, ...rest } = acc;
           return rest;
-        }, state.errors)
+        }, state.errors as any)
+      })),
+      updateContactData: (data) => set((state) => ({ 
+        contactData: { ...state.contactData, ...data },
+        errors: Object.keys(data).reduce((acc, key) => {
+          const { [key as keyof ContactData]: _, ...rest } = acc;
+          return rest;
+        }, state.errors as any)
       })),
       setOffline: (isOffline) => set({ isOffline }),
-      reset: () => set({ step: 1, formData: initialFormData, errors: {} }),
+      reset: () => set({ step: 1, formData: initialFormData, contactData: initialContactData, errors: {} }),
       validateStep: (step) => {
         const state = (useAppraisalStore.getState() as any);
-        const data = state.formData;
+        const { formData, contactData } = state;
         
         try {
           if (step === 1) {
-            vehicleSchema.pick({ year: true, make: true, model: true }).parse(data);
+            vehicleSchema.pick({ year: true, make: true, model: true }).parse(formData);
           } else if (step === 2) {
-            vehicleSchema.pick({ mileage: true, condition: true }).parse(data);
+            vehicleSchema.pick({ mileage: true, condition: true }).parse(formData);
+          } else if (step === 4) {
+             contactSchema.parse(contactData);
           }
           set({ errors: {} });
           return true;
@@ -81,7 +103,7 @@ export const useAppraisalStore = create<AppraisalState>()(
     }),
     {
       name: 'ra-appraisal-storage', // unique name
-      storage: createJSONStorage(() => localStorage), // can switch to IndexedDB if needed
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

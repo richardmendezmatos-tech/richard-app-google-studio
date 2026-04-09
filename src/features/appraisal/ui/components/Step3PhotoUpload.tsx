@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Zap } from 'lucide-react';
+import { Camera, ChevronRight, Zap } from 'lucide-react';
 
 interface Step3PhotoUploadProps {
-  onSimulate: () => void;
-  loading: boolean;
+  onNext: () => void;
+  onPrev: () => void;
 }
 
-export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onSimulate, loading }) => {
+export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onNext, onPrev }) => {
+  const [analyzing, setAnalyzing] = useState(false);
+
+  const handleAnalyze = () => {
+    setAnalyzing(true);
+    // Fake progress loading for "analysis"
+    setTimeout(() => {
+      setAnalyzing(false);
+      onNext();
+    }, 1500);
+  };
+
   return (
     <motion.div 
       key="step3"
@@ -24,25 +35,34 @@ export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onSimulate, 
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Sube fotos de tu auto</h3>
             <p className="text-[10px] text-slate-500 mt-2 uppercase tracking-widest max-w-[200px] mx-auto">
-              Frontal, Laterales y Tacómetro (Recomendado para Richard Certified)
+              Frontal, Laterales y Tacómetro (Opcional - Recomendado)
             </p>
           </div>
         </div>
       </div>
 
-      <button 
-        onClick={onSimulate}
-        disabled={loading}
-        className="w-full py-6 bg-gradient-to-r from-primary to-cyan-400 text-white rounded-2xl font-black uppercase tracking-[0.3em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_-10px_rgba(var(--primary-rgb),0.4)] disabled:opacity-50"
-      >
-        {loading ? (
-          <span className="flex items-center justify-center gap-3">
-             <Zap size={18} className="animate-spin text-white" /> Analizando con Richard Intelligence...
-          </span>
-        ) : (
-          "Obtener Oferta Digital"
-        )}
-      </button>
+      <div className="flex gap-4">
+        <button 
+          onClick={onPrev}
+          disabled={analyzing}
+          className="flex-[0.3] py-5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all"
+        >
+          Atrás
+        </button>
+        <button 
+          onClick={handleAnalyze}
+          disabled={analyzing}
+          className="flex-1 py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+        >
+          {analyzing ? (
+            <span className="flex items-center justify-center gap-3">
+               <Zap size={18} className="animate-pulse text-primary" /> Analizando Carrocería...
+            </span>
+          ) : (
+            <>Analizar Unidad <ChevronRight size={18} /></>
+          )}
+        </button>
+      </div>
     </motion.div>
   );
 };

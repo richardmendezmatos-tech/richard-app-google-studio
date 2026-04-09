@@ -1,29 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSaveAppraisal } from '@/entities/appraisal';
 import { Appraisal } from '@/shared/types/types';
+import { WifiOff } from 'lucide-react';
+import { leadService } from '@/entities/lead/api/leadService';
 
 // Sub-components
 import { AppraisalHeader } from './components/AppraisalHeader';
 import { Step1VehicleInfo } from './components/Step1VehicleInfo';
 import { Step2ConditionMileage } from './components/Step2ConditionMileage';
 import { Step3PhotoUpload } from './components/Step3PhotoUpload';
-import { Step4Success } from './components/Step4Success';
+import { Step4Contact } from './components/Step4Contact';
+import { Step4Success as Step5Success } from './components/Step4Success';
 import { AppraisalFooter } from './components/AppraisalFooter';
 
-import { VehicleData, useAppraisalStore } from '../model/appraisalStore';
-import { useEffect } from 'react';
-import { WifiOff } from 'lucide-react';
-import { leadService } from '@/entities/lead/api/leadService';
+import { useAppraisalStore } from '../model/appraisalStore';
 
 export const TradeInWizard: React.FC = () => {
   const { 
     step, 
     formData, 
+    contactData,
     isOffline, 
     errors,
     setStep, 
     updateFormData, 
+    updateContactData,
     setOffline, 
     reset,
     validateStep
@@ -48,13 +50,11 @@ export const TradeInWizard: React.FC = () => {
 
   const nextStep = () => {
     if (validateStep(step)) {
-      setStep(Math.min(step + 1, 3));
+      setStep(Math.min(step + 1, 4));
       
-      // Sentinel Lead Interceptor: Save partial progress on Step 1 complete
+      // Sentinel Lead Interceptor (Passive Capture)
       if (step === 1 && formData.make && formData.model) {
         console.log('RA Sentinel: Intercepting partial lead...', formData);
-        
-        // Richard Intelligence: Create a passive lead for follow-up
         leadService.saveLead({
           firstName: 'Sentinel',
           lastName: 'Interceptor',
@@ -69,12 +69,15 @@ export const TradeInWizard: React.FC = () => {
   };
 
   const prevStep = () => setStep(Math.max(step - 1, 1));
+  
   const resetWizard = () => {
     setResult(null);
     reset();
   };
 
   const handleSimulateAppraisal = () => {
+    if (!validateStep(4)) return;
+
     setLoading(true);
     // Simulación de "Calculando con Richard Intelligence"
     setTimeout(() => {
@@ -84,7 +87,18 @@ export const TradeInWizard: React.FC = () => {
       
       setResult(calculatedValue);
       setLoading(false);
-      setStep(4);
+      setStep(5);
+
+      // Guardar Lead Real con Contacto
+      leadService.saveLead({
+        firstName: contactData.name.split(' ')[0],
+        lastName: contactData.name.split(' ').slice(1).join(' ') || '',
+        email: '',
+        phone: contactData.phone,
+        notes: `RA-Elite Lead Final: ${formData.year} ${formData.make} ${formData.model}. Valor IA: $${calculatedValue}`,
+        status: 'new',
+        source: 'ra-elite-wizard'
+      });
 
       // Persistir Asset en Richard Digital / RA Cloud
       const newAppraisal: Appraisal = {
@@ -121,7 +135,7 @@ export const TradeInWizard: React.FC = () => {
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-12 -mt-32" />
       
-      <AppraisalHeader step={step} />
+      <AppraisalHeader step={step > 4 ? 4 : step} />
 
       {isOffline && (
         <motion.div 
@@ -158,13 +172,24 @@ export const TradeInWizard: React.FC = () => {
 
         {step === 3 && (
           <Step3PhotoUpload 
-            onSimulate={handleSimulateAppraisal}
-            loading={loading}
+            onNext={nextStep}
+            onPrev={prevStep}
           />
         )}
 
         {step === 4 && (
-          <Step4Success 
+          <Step4Contact 
+            contactData={contactData}
+            setContactData={updateContactData}
+            errors={errors}
+            onSimulate={handleSimulateAppraisal}
+            loading={loading}
+            onPrev={prevStep}
+          />
+        )}
+
+        {step === 5 && (
+          <Step5Success 
             result={result}
             onReset={resetWizard}
           />

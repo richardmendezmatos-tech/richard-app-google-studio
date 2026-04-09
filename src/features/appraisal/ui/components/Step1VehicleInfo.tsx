@@ -11,6 +11,12 @@ interface Step1VehicleInfoProps {
   labelClasses: string;
 }
 
+const COMMON_MAKES = [
+  "Toyota", "Honda", "Kia", "Hyundai", "Ford", "Nissan", 
+  "Jeep", "Mitsubishi", "Chevrolet", "Lexus", "BMW", 
+  "Mercedes-Benz", "Porsche", "Audi", "Acura"
+];
+
 export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({ 
   formData, 
   setFormData, 
@@ -38,13 +44,27 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
           />
         </div>
         <div>
-          <label className={labelClasses}>Marca / Modelo</label>
+          <label className={labelClasses}>Marca</label>
+          <select 
+            className={inputClasses}
+            value={formData.make}
+            onChange={(e) => setFormData({ make: e.target.value })}
+          >
+            <option value="" disabled>Selecciona la Marca</option>
+            {COMMON_MAKES.map(make => (
+              <option key={make} value={make}>{make}</option>
+            ))}
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className={labelClasses}>Modelo (Ej: Tacoma TRD Sport)</label>
           <input 
             type="text" 
-            placeholder="Ej: Porsche 911" 
+            placeholder="Tacoma TRD Sport" 
             className={inputClasses}
             value={formData.model}
-            onChange={(e) => setFormData({ model: e.target.value, make: e.target.value.split(' ')[0] })}
+            onChange={(e) => setFormData({ model: e.target.value })}
           />
         </div>
         <div className="md:col-span-2">
