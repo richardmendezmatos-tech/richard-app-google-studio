@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { Car } from '@/entities/inventory';
-import { calculateNeuralMatch, analyzeCarImage } from '@/shared/api/ai/geminiService';
+import { analyzeCarImage } from '@/shared/api/ai/geminiService';
+import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 
 import {
@@ -174,13 +175,32 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
       try {
         analytics.trackNeuralMatch(finalProfile);
-        const [data] = await Promise.all([
-          calculateNeuralMatch(finalProfile, inventory),
+
+        const embeddingRes = await fetch('/api/embeddings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: finalProfile }),
+        });
+
+        if (!embeddingRes.ok) {
+           throw new Error('AI Engine Offline');
+        }
+
+        const { embedding } = await embeddingRes.json();
+
+        const [supabaseMatches] = await Promise.all([
+          searchSemanticInventory(embedding, 0.4, 3),
           new Promise((resolve) => setTimeout(resolve, 3500)), // Artificial delay for effect
         ]);
 
-        setResults(data.matches);
-        setUserPersona(data.persona);
+        const matchesMapped = supabaseMatches.map((m: any) => ({
+           carId: m.car_id,
+           score: Math.round(m.similarity * 100),
+           reason: "Concordancia semántica detectada por AI Neural Engine."
+        }));
+
+        setResults(matchesMapped);
+        setUserPersona(activeTags.length > 0 ? activeTags.join(', ') : 'Comprador Standard');
       } catch (error) {
         console.error('Scan failed', error);
         setResults([]);
