@@ -39,8 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Configuration Check for SEO Health
-  const hasConfig = process.env.INTERNAL_API_URL && 
-                   process.env.INTERNAL_API_KEY && 
+  const hasConfig = process.env.INTERNAL_API_KEY && 
                    process.env.INTERNAL_API_KEY !== 'PLACEHOLDER_CHANGE_ME';
 
   if (!hasConfig) {
