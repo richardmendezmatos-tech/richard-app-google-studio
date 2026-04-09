@@ -6,13 +6,15 @@ import { SocialProofWidget } from '@/widgets/brand-ui/layout/conversion/SocialPr
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
-// Import Modular Components
+import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
-import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
-import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
-import FAQSection from '@/shared/ui/components/FAQSection';
-import SocialFooter from '@/features/inventory/ui/storefront/SocialFooter';
-import { AuthoritySection } from '@/features/marketing';
+
+const TrustBar = dynamic(() => import('@/features/inventory/ui/storefront/TrustBar'), { ssr: false });
+const TestimonialsSection = dynamic(() => import('@/features/inventory/ui/storefront/TestimonialsSection'), { ssr: false });
+const FAQSection = dynamic(() => import('@/shared/ui/components/FAQSection'), { ssr: false });
+const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), { ssr: false });
+const AuthoritySection = dynamic(() => import('@/features/marketing').then(mod => ({ default: mod.AuthoritySection })), { ssr: false });
+
 import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
 
 // Extracted UI Components

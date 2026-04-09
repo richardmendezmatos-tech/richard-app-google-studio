@@ -10,7 +10,6 @@ import { initGA } from '@/shared/api/metrics/analytics';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 
-import { HelmetProvider } from 'react-helmet-async';
 import { RehydrationService } from '@/shared/lib/resilience/RehydrationService';
 import { DI } from '@/app/di/registry';
 
@@ -32,18 +31,16 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   }, []);
 
   return (
-    <HelmetProvider>
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <NotificationProvider>
-            <TelemetryProvider>
-              <I18nextProvider i18n={i18n}>
-                {children}
-              </I18nextProvider>
-            </TelemetryProvider>
-          </NotificationProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </HelmetProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <NotificationProvider>
+          <TelemetryProvider>
+            <I18nextProvider i18n={i18n}>
+              {children}
+            </I18nextProvider>
+          </TelemetryProvider>
+        </NotificationProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };

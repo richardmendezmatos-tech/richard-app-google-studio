@@ -56,8 +56,9 @@ export default function RootLayout({
       lang="es" 
       className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable} ${sora.variable} ${manrope.variable} ${cormorant.variable} antialiased`}
     >
-      {/* Metadata is handled by Next.js Metadata API */}
-      <head />
+      <head>
+        <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
+      </head>
       <body className="bg-slate-950 text-white min-h-screen">
         <PerformanceInitializer />
         <Script

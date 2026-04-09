@@ -12,17 +12,17 @@
     {
       "id": "env-config",
       "description": "Setup .env.local with INTERNAL_API_KEY",
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "sitemap-validation",
       "description": "Verify sitemap.ts generation logic",
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "lighthouse-audit",
       "description": "Lighthouse Performance Audit for Storefront",
-      "status": "pending"
+      "status": "completed"
     }
   ],
   "context": {

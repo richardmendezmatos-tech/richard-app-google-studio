@@ -26,7 +26,18 @@ export const leadService = {
 
   async saveLead(data: any) {
     try {
-      return await DI.getLeadRepository().saveLead(data);
+      const savedLead = await DI.getLeadRepository().saveLead(data);
+      
+      // Async trigger for AI Agent Follow-up (Jules WhatsApp Webhook)
+      if (data.phone) {
+        fetch('/api/webhooks/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, id: savedLead?.id || 'synthetic_id' })
+        }).catch(err => console.error('Failed to trigger Jules webhook:', err));
+      }
+
+      return savedLead;
     } catch (error) {
       console.error('[leadService.saveLead] Error:', error);
       throw error;
