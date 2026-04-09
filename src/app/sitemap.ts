@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
+import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 
 const SITE_URL = 'https://richard-automotive.com';
 export const revalidate = 86400; // Revalidate sitemap every 24 hours
@@ -92,10 +93,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('🚨 Sitemap: Inventory fetch failed:', error);
   }
 
+  // Blog: Index + individual articles
+  const blogRoutes: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    ...SEED_ARTICLES.filter((a) => a.slug).map((article) => ({
+      url: `${SITE_URL}/blog/${article.slug}`,
+      lastModified: new Date(article.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ];
+
   return [
     ...staticRoutes,
     ...cityRoutes,
     ...categoryRoutes,
+    ...blogRoutes,
     ...inventoryRoutes,
   ];
 }
