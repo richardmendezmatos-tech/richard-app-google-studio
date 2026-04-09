@@ -14,8 +14,8 @@
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --ring-focus: #00e5ff;
-  --font-editorial: 'Cormorant Garamond', serif;
-  --font-tech: 'Sora', sans-serif;
+  --font-editorial: var(--font-editorial), serif;
+  --font-tech: var(--font-tech), sans-serif;
 
   /* Premium Aesthetics Tokens (Nivel 13) */
   --cyber-cyan: 184 100% 50%;
@@ -56,7 +56,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   background:
@@ -70,7 +70,7 @@ body {
 
 /* Base Styles */
 .font-cinematic {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-cinematic), sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 900;

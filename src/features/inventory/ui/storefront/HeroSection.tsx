@@ -92,6 +92,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           loop
           muted
           playsInline
+          poster="/hero.avif"
           className="h-full w-full object-cover opacity-30 scale-105"
         >
           <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />

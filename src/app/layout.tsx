@@ -6,8 +6,16 @@ import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
 import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 import Script from 'next/script';
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
+
+// Essential Project Fonts
+import { Bebas_Neue, Sora, Manrope, Cormorant_Garamond } from 'next/font/google';
+
+const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-cinematic', display: 'swap' });
+const sora = Sora({ subsets: ['latin'], variable: '--font-tech', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
+const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-editorial', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Master Control Center',
@@ -44,7 +52,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="es" className={`${inter.className} ${outfit.variable}`}>
+    <html 
+      lang="es" 
+      className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable} ${sora.variable} ${manrope.variable} ${cormorant.variable} antialiased`}
+    >
       {/* Metadata is handled by Next.js Metadata API */}
       <head />
       <body className="bg-slate-950 text-white min-h-screen">
