@@ -106,13 +106,25 @@ export class DataConnectLeadRepository implements LeadRepository {
 
   private mapSqlToDomain(sqlLead: any): Lead {
     let behavioralFingerprint;
-    try { behavioralFingerprint = sqlLead.behavioralData ? JSON.parse(sqlLead.behavioralData) : undefined; } catch (e) {}
+    try { 
+      behavioralFingerprint = sqlLead.behavioralData ? JSON.parse(sqlLead.behavioralData) : undefined; 
+    } catch (e) {
+      console.debug('Failed to parse behavioralData', e);
+    }
 
     let aiAnalysis;
-    try { aiAnalysis = sqlLead.aiAnalysis ? JSON.parse(sqlLead.aiAnalysis) : undefined; } catch (e) {}
+    try { 
+      aiAnalysis = sqlLead.aiAnalysis ? JSON.parse(sqlLead.aiAnalysis) : undefined; 
+    } catch (e) {
+      console.debug('Failed to parse aiAnalysis', e);
+    }
 
     let marketingData;
-    try { marketingData = sqlLead.marketingData ? JSON.parse(sqlLead.marketingData) : undefined; } catch (e) {}
+    try { 
+      marketingData = sqlLead.marketingData ? JSON.parse(sqlLead.marketingData) : undefined; 
+    } catch (e) {
+      console.debug('Failed to parse marketingData', e);
+    }
 
     return {
       id: sqlLead.id,

@@ -10,8 +10,8 @@ import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
 
-const DealBuilder = React.lazy(() =>
-  import('@/features/inventory').then((m) => ({ default: m.DealBuilder })),
+const ApprovalSimulatorWidget = React.lazy(() =>
+  import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => ({ default: m.ApprovalSimulatorWidget })),
 );
 const Viewer360 = React.lazy(() =>
   import('@/features/inventory').then((m) => ({ default: m.Viewer360 })),
@@ -371,7 +371,12 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
           <div id="deal-builder-section" className="scroll-mt-32">
             <React.Suspense fallback={<div className="w-full h-[600px] animate-pulse bg-white/5 rounded-[40px] border border-white/10" />}>
               <GlassContainer intensity="medium" opacity={0.02} className="p-1">
-                <DealBuilder vehicleId={car.id} vehiclePrice={car.price} vehicleName={car.name} vehicleImage={car.img} />
+                <ApprovalSimulatorWidget 
+                  vehicleId={car.id} 
+                  basePrice={car.price} 
+                  vehicleName={car.name} 
+                  dealerId={currentDealer?.id || 'richard-automotive'} 
+                />
               </GlassContainer>
             </React.Suspense>
           </div>

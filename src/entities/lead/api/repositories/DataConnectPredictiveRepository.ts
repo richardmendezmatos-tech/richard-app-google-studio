@@ -38,7 +38,9 @@ export class DataConnectPredictiveRepository implements PredictiveRepository {
       let currentAiData: any = {};
       try {
         currentAiData = lead.aiAnalysis ? JSON.parse(lead.aiAnalysis) : {};
-      } catch (e) {}
+      } catch (e) {
+        console.debug('Failed to parse existing aiAnalysis', e);
+      }
 
       currentAiData.score = insight.score;
       currentAiData.confidence = insight.confidence;
@@ -70,7 +72,11 @@ export class DataConnectPredictiveRepository implements PredictiveRepository {
 
       return resp.data.leads.map(lead => {
          let aiAnalysis;
-         try { aiAnalysis = lead.aiAnalysis ? JSON.parse(lead.aiAnalysis) : undefined; } catch (e) {}
+         try { 
+            aiAnalysis = lead.aiAnalysis ? JSON.parse(lead.aiAnalysis) : undefined; 
+         } catch (e) {
+            console.debug('Failed to parse aiAnalysis from remote DB', e);
+         }
          
          return {
            id: lead.id,
