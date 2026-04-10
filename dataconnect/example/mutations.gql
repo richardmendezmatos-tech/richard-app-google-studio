@@ -11,7 +11,12 @@ mutation CreateCar(
   $type: String!
   $category: String!
   $condition: String!
-) @auth(level: USER, insecureReason: "Staff can create new cars.") {
+  $img: String
+  $dealerId: String
+  $featured: Boolean
+  $views: Int
+  $leadsCount: Int
+) @auth(level: PUBLIC, insecureReason: "Automated server-side ingestion.") {
   car_insert(
     data: {
       year: $year
@@ -23,6 +28,11 @@ mutation CreateCar(
       type: $type
       category: $category
       condition: $condition
+      img: $img
+      dealerId: $dealerId
+      featured: $featured
+      views: $views
+      leadsCount: $leadsCount
     }
   )
 }
@@ -34,6 +44,13 @@ mutation CreateLead(
   $phone: String!
   $email: String!
   $vehicleOfInterest: String
+  $vehicleId: UUID
+  $type: String
+  $behavioralData: String
+  $aiAnalysis: String
+  $marketingData: String
+  $closureProbability: Float
+  $totalVisits: Int
 ) @auth(level: PUBLIC, insecureReason: "Anyone can register as a lead.") {
   lead_insert(
     data: {
@@ -42,6 +59,13 @@ mutation CreateLead(
       phone: $phone
       email: $email
       vehicleOfInterest: $vehicleOfInterest
+      vehicleId: $vehicleId
+      type: $type
+      behavioralData: $behavioralData
+      aiAnalysis: $aiAnalysis
+      marketingData: $marketingData
+      closureProbability: $closureProbability
+      totalVisits: $totalVisits
     }
   )
 }
@@ -50,4 +74,23 @@ mutation CreateLead(
 mutation UpdateLeadStatus($id: UUID!, $status: String!)
 @auth(level: USER, insecureReason: "Staff can update lead status.") {
   lead_update(id: $id, data: { status: $status })
+}
+
+# AI Engine: Update predictive insights and behavior
+mutation UpdateLeadIntelligence(
+  $id: UUID!
+  $aiAnalysis: String
+  $closureProbability: Float
+  $behavioralData: String
+  $marketingData: String
+) @auth(level: USER, insecureReason: "Server-side and staff updates only.") {
+  lead_update(
+    id: $id,
+    data: {
+      aiAnalysis: $aiAnalysis
+      closureProbability: $closureProbability
+      behavioralData: $behavioralData
+      marketingData: $marketingData
+    }
+  )
 }

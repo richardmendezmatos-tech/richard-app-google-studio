@@ -1,122 +1,116 @@
-const {
-  queryRef,
-  executeQuery,
-  mutationRef,
-  executeMutation,
-  validateArgs,
-} = require('firebase/data-connect');
+const { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
 
 const connectorConfig = {
   connector: 'example',
   service: 'richard-automotive-data-connect',
-  location: 'us-central1',
+  location: 'us-central1'
 };
 exports.connectorConfig = connectorConfig;
 
-const createMovieRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+const createCarRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateMovie', inputVars);
-};
-createMovieRef.operationName = 'CreateMovie';
-exports.createMovieRef = createMovieRef;
+  return mutationRef(dcInstance, 'CreateCar', inputVars);
+}
+createCarRef.operationName = 'CreateCar';
+exports.createCarRef = createCarRef;
 
-exports.createMovie = function createMovie(dcOrVars, vars) {
-  return executeMutation(createMovieRef(dcOrVars, vars));
+exports.createCar = function createCar(dcOrVars, vars) {
+  return executeMutation(createCarRef(dcOrVars, vars));
 };
 
-const upsertUserRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+const createLeadRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpsertUser', inputVars);
-};
-upsertUserRef.operationName = 'UpsertUser';
-exports.upsertUserRef = upsertUserRef;
+  return mutationRef(dcInstance, 'CreateLead', inputVars);
+}
+createLeadRef.operationName = 'CreateLead';
+exports.createLeadRef = createLeadRef;
 
-exports.upsertUser = function upsertUser(dcOrVars, vars) {
-  return executeMutation(upsertUserRef(dcOrVars, vars));
+exports.createLead = function createLead(dcOrVars, vars) {
+  return executeMutation(createLeadRef(dcOrVars, vars));
 };
 
-const addReviewRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+const updateLeadStatusRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'AddReview', inputVars);
-};
-addReviewRef.operationName = 'AddReview';
-exports.addReviewRef = addReviewRef;
+  return mutationRef(dcInstance, 'UpdateLeadStatus', inputVars);
+}
+updateLeadStatusRef.operationName = 'UpdateLeadStatus';
+exports.updateLeadStatusRef = updateLeadStatusRef;
 
-exports.addReview = function addReview(dcOrVars, vars) {
-  return executeMutation(addReviewRef(dcOrVars, vars));
+exports.updateLeadStatus = function updateLeadStatus(dcOrVars, vars) {
+  return executeMutation(updateLeadStatusRef(dcOrVars, vars));
 };
 
-const deleteReviewRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+const updateLeadIntelligenceRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'DeleteReview', inputVars);
-};
-deleteReviewRef.operationName = 'DeleteReview';
-exports.deleteReviewRef = deleteReviewRef;
+  return mutationRef(dcInstance, 'UpdateLeadIntelligence', inputVars);
+}
+updateLeadIntelligenceRef.operationName = 'UpdateLeadIntelligence';
+exports.updateLeadIntelligenceRef = updateLeadIntelligenceRef;
 
-exports.deleteReview = function deleteReview(dcOrVars, vars) {
-  return executeMutation(deleteReviewRef(dcOrVars, vars));
+exports.updateLeadIntelligence = function updateLeadIntelligence(dcOrVars, vars) {
+  return executeMutation(updateLeadIntelligenceRef(dcOrVars, vars));
 };
 
-const listMoviesRef = (dc) => {
-  const { dc: dcInstance } = validateArgs(connectorConfig, dc, undefined);
+const listCarsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListMovies');
-};
-listMoviesRef.operationName = 'ListMovies';
-exports.listMoviesRef = listMoviesRef;
+  return queryRef(dcInstance, 'ListCars', inputVars);
+}
+listCarsRef.operationName = 'ListCars';
+exports.listCarsRef = listCarsRef;
 
-exports.listMovies = function listMovies(dc) {
-  return executeQuery(listMoviesRef(dc));
+exports.listCars = function listCars(dcOrVars, vars) {
+  return executeQuery(listCarsRef(dcOrVars, vars));
 };
 
-const listUsersRef = (dc) => {
-  const { dc: dcInstance } = validateArgs(connectorConfig, dc, undefined);
+const getCarRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListUsers');
-};
-listUsersRef.operationName = 'ListUsers';
-exports.listUsersRef = listUsersRef;
+  return queryRef(dcInstance, 'GetCar', inputVars);
+}
+getCarRef.operationName = 'GetCar';
+exports.getCarRef = getCarRef;
 
-exports.listUsers = function listUsers(dc) {
-  return executeQuery(listUsersRef(dc));
+exports.getCar = function getCar(dcOrVars, vars) {
+  return executeQuery(getCarRef(dcOrVars, vars));
 };
 
-const listUserReviewsRef = (dc) => {
-  const { dc: dcInstance } = validateArgs(connectorConfig, dc, undefined);
+const getLeadRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListUserReviews');
-};
-listUserReviewsRef.operationName = 'ListUserReviews';
-exports.listUserReviewsRef = listUserReviewsRef;
+  return queryRef(dcInstance, 'GetLead', inputVars);
+}
+getLeadRef.operationName = 'GetLead';
+exports.getLeadRef = getLeadRef;
 
-exports.listUserReviews = function listUserReviews(dc) {
-  return executeQuery(listUserReviewsRef(dc));
+exports.getLead = function getLead(dcOrVars, vars) {
+  return executeQuery(getLeadRef(dcOrVars, vars));
 };
 
-const getMovieByIdRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+const listLeadsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetMovieById', inputVars);
-};
-getMovieByIdRef.operationName = 'GetMovieById';
-exports.getMovieByIdRef = getMovieByIdRef;
+  return queryRef(dcInstance, 'ListLeads', inputVars);
+}
+listLeadsRef.operationName = 'ListLeads';
+exports.listLeadsRef = listLeadsRef;
 
-exports.getMovieById = function getMovieById(dcOrVars, vars) {
-  return executeQuery(getMovieByIdRef(dcOrVars, vars));
+exports.listLeads = function listLeads(dcOrVars, vars) {
+  return executeQuery(listLeadsRef(dcOrVars, vars));
 };
 
-const searchMovieRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars);
+const listHighProbabilityLeadsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'SearchMovie', inputVars);
-};
-searchMovieRef.operationName = 'SearchMovie';
-exports.searchMovieRef = searchMovieRef;
+  return queryRef(dcInstance, 'ListHighProbabilityLeads', inputVars);
+}
+listHighProbabilityLeadsRef.operationName = 'ListHighProbabilityLeads';
+exports.listHighProbabilityLeadsRef = listHighProbabilityLeadsRef;
 
-exports.searchMovie = function searchMovie(dcOrVars, vars) {
-  return executeQuery(searchMovieRef(dcOrVars, vars));
+exports.listHighProbabilityLeads = function listHighProbabilityLeads(dcOrVars, vars) {
+  return executeQuery(listHighProbabilityLeadsRef(dcOrVars, vars));
 };

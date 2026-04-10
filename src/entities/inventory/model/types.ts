@@ -43,7 +43,7 @@ export interface Car {
   
   // Analytics
   views?: number;
-  leads_count?: number;
+  leadsCount?: number;
   dealerId?: string;
   
   // SEO

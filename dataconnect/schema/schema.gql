@@ -19,9 +19,15 @@ type Car @table {
   type: String!
   category: String!
   condition: String!
+  img: String
+  images: [String]
   features: [String]
   description: String
   status: String @default(value: "available")
+  views: Int @default(value: 0)
+  leadsCount: Int @default(value: 0)
+  dealerId: String @default(value: "richard-automotive")
+  featured: Boolean @default(value: false)
   updatedAt: Date! @default(expr: "request.time")
   daysInInventory: Int @default(value: 0)
 }
@@ -48,6 +54,13 @@ type Lead @table {
   documentsSent: Boolean @default(value: false)
   dealClosed: Boolean @default(value: false)
   appointmentCompleted: Boolean @default(value: false)
+  type: String # whatsapp, form, trade-in, etc.
+  behavioralData: String
+  aiAnalysis: String
+  marketingData: String
+  closureProbability: Float @default(value: 0)
+  totalVisits: Int @default(value: 1)
   timestamp: Date! @default(expr: "request.time")
   vehicleOfInterest: String
+  dealerId: String @default(value: "richard-automotive")
 }

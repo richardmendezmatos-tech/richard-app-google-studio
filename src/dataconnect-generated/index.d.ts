@@ -1,11 +1,4 @@
-import {
-  ConnectorConfig,
-  DataConnect,
-  QueryRef,
-  QueryPromise,
-  MutationRef,
-  MutationPromise,
-} from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -14,129 +7,200 @@ export type UUIDString = string;
 export type Int64String = string;
 export type DateString = string;
 
-export interface AddReviewData {
-  review_upsert: Review_Key;
+
+
+
+export interface Car_Key {
+  id: UUIDString;
+  __typename?: 'Car_Key';
 }
 
-export interface AddReviewVariables {
-  movieId: UUIDString;
-  rating: number;
-  reviewText: string;
+export interface CreateCarData {
+  car_insert: Car_Key;
 }
 
-export interface CreateMovieData {
-  movie_insert: Movie_Key;
+export interface CreateCarVariables {
+  year: number;
+  make: string;
+  model: string;
+  name: string;
+  price: number;
+  mileage: number;
+  type: string;
+  category: string;
+  condition: string;
+  img?: string | null;
+  dealerId?: string | null;
+  featured?: boolean | null;
+  views?: number | null;
+  leadsCount?: number | null;
 }
 
-export interface CreateMovieVariables {
-  title: string;
-  genre: string;
-  imageUrl: string;
+export interface CreateLeadData {
+  lead_insert: Lead_Key;
 }
 
-export interface DeleteReviewData {
-  review_delete?: Review_Key | null;
+export interface CreateLeadVariables {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  vehicleOfInterest?: string | null;
+  vehicleId?: UUIDString | null;
+  type?: string | null;
+  behavioralData?: string | null;
+  aiAnalysis?: string | null;
+  marketingData?: string | null;
+  closureProbability?: number | null;
+  totalVisits?: number | null;
 }
 
-export interface DeleteReviewVariables {
-  movieId: UUIDString;
-}
-
-export interface GetMovieByIdData {
-  movie?: {
+export interface GetCarData {
+  car?: {
     id: UUIDString;
-    title: string;
-    imageUrl: string;
-    genre?: string | null;
-    metadata?: {
-      rating?: number | null;
-      releaseYear?: number | null;
-      description?: string | null;
-    };
-    reviews: {
-      reviewText?: string | null;
-      reviewDate: DateString;
-      rating?: number | null;
-      user: {
-        id: string;
-        username: string;
-      } & User_Key;
-    }[];
-  } & Movie_Key;
+    make: string;
+    model: string;
+    year: number;
+    price: number;
+    mileage: number;
+    img?: string | null;
+    images?: string[] | null;
+    type: string;
+    condition: string;
+    description?: string | null;
+    features?: string[] | null;
+    status?: string | null;
+    views?: number | null;
+    leadsCount?: number | null;
+    dealerId?: string | null;
+    updatedAt: DateString;
+  } & Car_Key;
 }
 
-export interface GetMovieByIdVariables {
+export interface GetCarVariables {
   id: UUIDString;
 }
 
-export interface ListMoviesData {
-  movies: ({
+export interface GetLeadData {
+  lead?: {
     id: UUIDString;
-    title: string;
-    imageUrl: string;
-    genre?: string | null;
-  } & Movie_Key)[];
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    status?: string | null;
+    category?: string | null;
+    type?: string | null;
+    behavioralData?: string | null;
+    aiAnalysis?: string | null;
+    marketingData?: string | null;
+    closureProbability?: number | null;
+    totalVisits?: number | null;
+    timestamp: DateString;
+    vehicleOfInterest?: string | null;
+    vehicleId?: UUIDString | null;
+    hasPronto?: boolean | null;
+    chatInteractions?: number | null;
+    responded?: boolean | null;
+    documentsSent?: boolean | null;
+    dealClosed?: boolean | null;
+    appointmentCompleted?: boolean | null;
+  } & Lead_Key;
 }
 
-export interface ListUserReviewsData {
-  user?: {
-    id: string;
-    username: string;
-    reviews: {
-      rating?: number | null;
-      reviewDate: DateString;
-      reviewText?: string | null;
-      movie: {
-        id: UUIDString;
-        title: string;
-      } & Movie_Key;
-    }[];
-  } & User_Key;
-}
-
-export interface ListUsersData {
-  users: ({
-    id: string;
-    username: string;
-  } & User_Key)[];
-}
-
-export interface MovieMetadata_Key {
+export interface GetLeadVariables {
   id: UUIDString;
-  __typename?: 'MovieMetadata_Key';
 }
 
-export interface Movie_Key {
+export interface Lead_Key {
   id: UUIDString;
-  __typename?: 'Movie_Key';
+  __typename?: 'Lead_Key';
 }
 
-export interface Review_Key {
-  userId: string;
-  movieId: UUIDString;
-  __typename?: 'Review_Key';
-}
-
-export interface SearchMovieData {
-  movies: ({
+export interface ListCarsData {
+  cars: ({
     id: UUIDString;
-    title: string;
-    genre?: string | null;
-    imageUrl: string;
-  } & Movie_Key)[];
+    make: string;
+    model: string;
+    year: number;
+    price: number;
+    img?: string | null;
+    type: string;
+    status?: string | null;
+    category: string;
+    featured?: boolean | null;
+    views?: number | null;
+    leadsCount?: number | null;
+  } & Car_Key)[];
 }
 
-export interface SearchMovieVariables {
-  titleInput?: string | null;
-  genre?: string | null;
+export interface ListCarsVariables {
+  limit?: number | null;
+  offset?: number | null;
+  dealerId?: string | null;
 }
 
-export interface UpsertUserData {
-  user_upsert: User_Key;
+export interface ListHighProbabilityLeadsData {
+  leads: ({
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    vehicleOfInterest?: string | null;
+    aiAnalysis?: string | null;
+    closureProbability?: number | null;
+    timestamp: DateString;
+  } & Lead_Key)[];
 }
 
-export interface UpsertUserVariables {
-  username: string;
+export interface ListHighProbabilityLeadsVariables {
+  dealerId?: string | null;
+  threshold?: number | null;
+  limit?: number | null;
+}
+
+export interface ListLeadsData {
+  leads: ({
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    status?: string | null;
+    category?: string | null;
+    type?: string | null;
+    closureProbability?: number | null;
+    timestamp: DateString;
+    vehicleOfInterest?: string | null;
+  } & Lead_Key)[];
+}
+
+export interface ListLeadsVariables {
+  dealerId?: string | null;
+  limit?: number | null;
+  offset?: number | null;
+}
+
+export interface UpdateLeadIntelligenceData {
+  lead_update?: Lead_Key | null;
+}
+
+export interface UpdateLeadIntelligenceVariables {
+  id: UUIDString;
+  aiAnalysis?: string | null;
+  closureProbability?: number | null;
+  behavioralData?: string | null;
+  marketingData?: string | null;
+}
+
+export interface UpdateLeadStatusData {
+  lead_update?: Lead_Key | null;
+}
+
+export interface UpdateLeadStatusVariables {
+  id: UUIDString;
+  status: string;
 }
 
 export interface User_Key {
@@ -144,143 +208,111 @@ export interface User_Key {
   __typename?: 'User_Key';
 }
 
-interface CreateMovieRef {
+interface CreateCarRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateMovieVariables): MutationRef<CreateMovieData, CreateMovieVariables>;
+  (vars: CreateCarVariables): MutationRef<CreateCarData, CreateCarVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateMovieVariables): MutationRef<CreateMovieData, CreateMovieVariables>;
+  (dc: DataConnect, vars: CreateCarVariables): MutationRef<CreateCarData, CreateCarVariables>;
   operationName: string;
 }
-export const createMovieRef: CreateMovieRef;
+export const createCarRef: CreateCarRef;
 
-export function createMovie(
-  vars: CreateMovieVariables,
-): MutationPromise<CreateMovieData, CreateMovieVariables>;
-export function createMovie(
-  dc: DataConnect,
-  vars: CreateMovieVariables,
-): MutationPromise<CreateMovieData, CreateMovieVariables>;
+export function createCar(vars: CreateCarVariables): MutationPromise<CreateCarData, CreateCarVariables>;
+export function createCar(dc: DataConnect, vars: CreateCarVariables): MutationPromise<CreateCarData, CreateCarVariables>;
 
-interface UpsertUserRef {
+interface CreateLeadRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (vars: CreateLeadVariables): MutationRef<CreateLeadData, CreateLeadVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
+  (dc: DataConnect, vars: CreateLeadVariables): MutationRef<CreateLeadData, CreateLeadVariables>;
   operationName: string;
 }
-export const upsertUserRef: UpsertUserRef;
+export const createLeadRef: CreateLeadRef;
 
-export function upsertUser(
-  vars: UpsertUserVariables,
-): MutationPromise<UpsertUserData, UpsertUserVariables>;
-export function upsertUser(
-  dc: DataConnect,
-  vars: UpsertUserVariables,
-): MutationPromise<UpsertUserData, UpsertUserVariables>;
+export function createLead(vars: CreateLeadVariables): MutationPromise<CreateLeadData, CreateLeadVariables>;
+export function createLead(dc: DataConnect, vars: CreateLeadVariables): MutationPromise<CreateLeadData, CreateLeadVariables>;
 
-interface AddReviewRef {
+interface UpdateLeadStatusRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: AddReviewVariables): MutationRef<AddReviewData, AddReviewVariables>;
+  (vars: UpdateLeadStatusVariables): MutationRef<UpdateLeadStatusData, UpdateLeadStatusVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: AddReviewVariables): MutationRef<AddReviewData, AddReviewVariables>;
+  (dc: DataConnect, vars: UpdateLeadStatusVariables): MutationRef<UpdateLeadStatusData, UpdateLeadStatusVariables>;
   operationName: string;
 }
-export const addReviewRef: AddReviewRef;
+export const updateLeadStatusRef: UpdateLeadStatusRef;
 
-export function addReview(
-  vars: AddReviewVariables,
-): MutationPromise<AddReviewData, AddReviewVariables>;
-export function addReview(
-  dc: DataConnect,
-  vars: AddReviewVariables,
-): MutationPromise<AddReviewData, AddReviewVariables>;
+export function updateLeadStatus(vars: UpdateLeadStatusVariables): MutationPromise<UpdateLeadStatusData, UpdateLeadStatusVariables>;
+export function updateLeadStatus(dc: DataConnect, vars: UpdateLeadStatusVariables): MutationPromise<UpdateLeadStatusData, UpdateLeadStatusVariables>;
 
-interface DeleteReviewRef {
+interface UpdateLeadIntelligenceRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: DeleteReviewVariables): MutationRef<DeleteReviewData, DeleteReviewVariables>;
+  (vars: UpdateLeadIntelligenceVariables): MutationRef<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (
-    dc: DataConnect,
-    vars: DeleteReviewVariables,
-  ): MutationRef<DeleteReviewData, DeleteReviewVariables>;
+  (dc: DataConnect, vars: UpdateLeadIntelligenceVariables): MutationRef<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
   operationName: string;
 }
-export const deleteReviewRef: DeleteReviewRef;
+export const updateLeadIntelligenceRef: UpdateLeadIntelligenceRef;
 
-export function deleteReview(
-  vars: DeleteReviewVariables,
-): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
-export function deleteReview(
-  dc: DataConnect,
-  vars: DeleteReviewVariables,
-): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
+export function updateLeadIntelligence(vars: UpdateLeadIntelligenceVariables): MutationPromise<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
+export function updateLeadIntelligence(dc: DataConnect, vars: UpdateLeadIntelligenceVariables): MutationPromise<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
 
-interface ListMoviesRef {
+interface ListCarsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListMoviesData, undefined>;
+  (vars?: ListCarsVariables): QueryRef<ListCarsData, ListCarsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListMoviesData, undefined>;
+  (dc: DataConnect, vars?: ListCarsVariables): QueryRef<ListCarsData, ListCarsVariables>;
   operationName: string;
 }
-export const listMoviesRef: ListMoviesRef;
+export const listCarsRef: ListCarsRef;
 
-export function listMovies(): QueryPromise<ListMoviesData, undefined>;
-export function listMovies(dc: DataConnect): QueryPromise<ListMoviesData, undefined>;
+export function listCars(vars?: ListCarsVariables): QueryPromise<ListCarsData, ListCarsVariables>;
+export function listCars(dc: DataConnect, vars?: ListCarsVariables): QueryPromise<ListCarsData, ListCarsVariables>;
 
-interface ListUsersRef {
+interface GetCarRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListUsersData, undefined>;
+  (vars: GetCarVariables): QueryRef<GetCarData, GetCarVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListUsersData, undefined>;
+  (dc: DataConnect, vars: GetCarVariables): QueryRef<GetCarData, GetCarVariables>;
   operationName: string;
 }
-export const listUsersRef: ListUsersRef;
+export const getCarRef: GetCarRef;
 
-export function listUsers(): QueryPromise<ListUsersData, undefined>;
-export function listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
+export function getCar(vars: GetCarVariables): QueryPromise<GetCarData, GetCarVariables>;
+export function getCar(dc: DataConnect, vars: GetCarVariables): QueryPromise<GetCarData, GetCarVariables>;
 
-interface ListUserReviewsRef {
+interface GetLeadRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListUserReviewsData, undefined>;
+  (vars: GetLeadVariables): QueryRef<GetLeadData, GetLeadVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListUserReviewsData, undefined>;
+  (dc: DataConnect, vars: GetLeadVariables): QueryRef<GetLeadData, GetLeadVariables>;
   operationName: string;
 }
-export const listUserReviewsRef: ListUserReviewsRef;
+export const getLeadRef: GetLeadRef;
 
-export function listUserReviews(): QueryPromise<ListUserReviewsData, undefined>;
-export function listUserReviews(dc: DataConnect): QueryPromise<ListUserReviewsData, undefined>;
+export function getLead(vars: GetLeadVariables): QueryPromise<GetLeadData, GetLeadVariables>;
+export function getLead(dc: DataConnect, vars: GetLeadVariables): QueryPromise<GetLeadData, GetLeadVariables>;
 
-interface GetMovieByIdRef {
+interface ListLeadsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: GetMovieByIdVariables): QueryRef<GetMovieByIdData, GetMovieByIdVariables>;
+  (vars?: ListLeadsVariables): QueryRef<ListLeadsData, ListLeadsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: GetMovieByIdVariables): QueryRef<GetMovieByIdData, GetMovieByIdVariables>;
+  (dc: DataConnect, vars?: ListLeadsVariables): QueryRef<ListLeadsData, ListLeadsVariables>;
   operationName: string;
 }
-export const getMovieByIdRef: GetMovieByIdRef;
+export const listLeadsRef: ListLeadsRef;
 
-export function getMovieById(
-  vars: GetMovieByIdVariables,
-): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
-export function getMovieById(
-  dc: DataConnect,
-  vars: GetMovieByIdVariables,
-): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
+export function listLeads(vars?: ListLeadsVariables): QueryPromise<ListLeadsData, ListLeadsVariables>;
+export function listLeads(dc: DataConnect, vars?: ListLeadsVariables): QueryPromise<ListLeadsData, ListLeadsVariables>;
 
-interface SearchMovieRef {
+interface ListHighProbabilityLeadsRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars?: SearchMovieVariables): QueryRef<SearchMovieData, SearchMovieVariables>;
+  (vars?: ListHighProbabilityLeadsVariables): QueryRef<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars?: SearchMovieVariables): QueryRef<SearchMovieData, SearchMovieVariables>;
+  (dc: DataConnect, vars?: ListHighProbabilityLeadsVariables): QueryRef<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;
   operationName: string;
 }
-export const searchMovieRef: SearchMovieRef;
+export const listHighProbabilityLeadsRef: ListHighProbabilityLeadsRef;
 
-export function searchMovie(
-  vars?: SearchMovieVariables,
-): QueryPromise<SearchMovieData, SearchMovieVariables>;
-export function searchMovie(
-  dc: DataConnect,
-  vars?: SearchMovieVariables,
-): QueryPromise<SearchMovieData, SearchMovieVariables>;
+export function listHighProbabilityLeads(vars?: ListHighProbabilityLeadsVariables): QueryPromise<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;
+export function listHighProbabilityLeads(dc: DataConnect, vars?: ListHighProbabilityLeadsVariables): QueryPromise<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;
+

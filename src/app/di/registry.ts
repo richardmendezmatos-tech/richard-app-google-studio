@@ -5,9 +5,7 @@ import { Lead } from '@/entities/lead';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getStorageService } from '@/shared/api/firebase/optionalServices';
 import { FirestoreHoustonRepository } from '@/entities/houston/api/FirestoreHoustonRepository';
-import { FirestorePredictiveRepository } from '@/entities/lead/api/FirestorePredictiveRepository';
-import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
-import { FirestoreApplicationRepository } from '@/entities/lead/api/FirestoreApplicationRepository';
+import { DataConnectLeadRepository } from '@/entities/lead/api/repositories/DataConnectLeadRepository';
 import { FirestoreSubscriberRepository, FirestoreSurveyRepository } from '@/entities/lead/api/FirestoreCaptureRepositories';
 
 /**
@@ -24,14 +22,14 @@ export const DI = {
   },
   
   getLeadsUseCase: () => {
-    const repository = new FirestoreLeadRepository();
+    const repository = new DataConnectLeadRepository();
     return {
       execute: (dealerId: string, limitCount: number = 100) => repository.getLeads(dealerId, limitCount)
     };
   },
   
   getLeadRepository: () => {
-    return new FirestoreLeadRepository();
+    return new DataConnectLeadRepository();
   },
 
   getStorageRepository: () => {
@@ -46,7 +44,21 @@ export const DI = {
   },
 
   getApplicationRepository: () => {
-    return new FirestoreApplicationRepository();
+    // Adapter to use LeadRepository for credit applications now
+    const sqlRepo = new DataConnectLeadRepository();
+    return {
+      submitApplication: async (data: any, dealerId: string) => {
+         return await sqlRepo.saveLead({
+            ...data,
+            dealerId,
+            type: 'credit_application',
+            status: 'new'
+         });
+      },
+      getApplicationById: async (id: string) => {
+         return await sqlRepo.getLeadById(id, 'richard-automotive') as any;
+      }
+    };
   },
 
   getSubscriberRepository: () => {
@@ -89,16 +101,18 @@ export const DI = {
   },
 
   getIdentifyOutreachOpportunitiesUseCase: () => {
-    const repository = new FirestorePredictiveRepository();
     return {
       execute: async (threshold: number) => {
+        // Dynamic import to prevent dependency cycles
+        const { DataConnectPredictiveRepository } = await import('@/entities/lead/api/repositories/DataConnectPredictiveRepository');
+        const repository = new DataConnectPredictiveRepository();
         const leads = await repository.getHighProbabilityLeads(threshold);
-        return leads.map(l => ({
+        return leads.map((l: any) => ({
           leadId: l.id!,
-          reason: `Interés detectado en ${l.vehicleOfInterest || 'Inventario'}. Score: ${l.aiScore || 0}`,
-          suggestedAction: 'Enviar Oferta Personalizada',
-          potentialRoi: (l.aiScore || 0) / 20,
-          opportunityScale: l.aiScore || 0,
+          reason: `Interés detectado en ${l.vehicleOfInterest || 'Inventario'}. Score (Closure): ${l.closureProbability || 0}`,
+          suggestedAction: 'Enviar Oferta Personalizada F&I',
+          potentialRoi: (l.closureProbability || 0) / 20,
+          opportunityScale: l.closureProbability || 0,
           expiresAt: Date.now() + 86400000,
           actionType: 'whatsapp' as const
         }));

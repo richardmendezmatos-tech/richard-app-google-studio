@@ -3,108 +3,70 @@ const { validateAdminArgs } = require('firebase-admin/data-connect');
 const connectorConfig = {
   connector: 'example',
   serviceId: 'richard-automotive-data-connect',
-  location: 'us-central1',
+  location: 'us-central1'
 };
 exports.connectorConfig = connectorConfig;
 
-function createMovie(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+function createCar(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('CreateMovie', inputVars, inputOpts);
+  return dcInstance.executeMutation('CreateCar', inputVars, inputOpts);
 }
-exports.createMovie = createMovie;
+exports.createCar = createCar;
 
-function upsertUser(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+function createLead(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('UpsertUser', inputVars, inputOpts);
+  return dcInstance.executeMutation('CreateLead', inputVars, inputOpts);
 }
-exports.upsertUser = upsertUser;
+exports.createLead = createLead;
 
-function addReview(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+function updateLeadStatus(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('AddReview', inputVars, inputOpts);
+  return dcInstance.executeMutation('UpdateLeadStatus', inputVars, inputOpts);
 }
-exports.addReview = addReview;
+exports.updateLeadStatus = updateLeadStatus;
 
-function deleteReview(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+function updateLeadIntelligence(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('DeleteReview', inputVars, inputOpts);
+  return dcInstance.executeMutation('UpdateLeadIntelligence', inputVars, inputOpts);
 }
-exports.deleteReview = deleteReview;
+exports.updateLeadIntelligence = updateLeadIntelligence;
 
-function listMovies(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateAdminArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-    undefined,
-  );
+function listCars(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListMovies', undefined, inputOpts);
+  return dcInstance.executeQuery('ListCars', inputVars, inputOpts);
 }
-exports.listMovies = listMovies;
+exports.listCars = listCars;
 
-function listUsers(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateAdminArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-    undefined,
-  );
+function getCar(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListUsers', undefined, inputOpts);
+  return dcInstance.executeQuery('GetCar', inputVars, inputOpts);
 }
-exports.listUsers = listUsers;
+exports.getCar = getCar;
 
-function listUserReviews(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateAdminArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-    undefined,
-  );
+function getLead(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListUserReviews', undefined, inputOpts);
+  return dcInstance.executeQuery('GetLead', inputVars, inputOpts);
 }
-exports.listUserReviews = listUserReviews;
+exports.getLead = getLead;
 
-function getMovieById(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+function listLeads(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('GetMovieById', inputVars, inputOpts);
+  return dcInstance.executeQuery('ListLeads', inputVars, inputOpts);
 }
-exports.getMovieById = getMovieById;
+exports.listLeads = listLeads;
 
-function searchMovie(dcOrVarsOrOptions, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
+function listHighProbabilityLeads(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('SearchMovie', inputVars, inputOpts);
+  return dcInstance.executeQuery('ListHighProbabilityLeads', inputVars, inputOpts);
 }
-exports.searchMovie = searchMovie;
+exports.listHighProbabilityLeads = listHighProbabilityLeads;
+

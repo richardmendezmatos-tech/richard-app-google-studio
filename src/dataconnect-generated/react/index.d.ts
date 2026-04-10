@@ -1,102 +1,33 @@
-import {
-  CreateMovieData,
-  CreateMovieVariables,
-  UpsertUserData,
-  UpsertUserVariables,
-  AddReviewData,
-  AddReviewVariables,
-  DeleteReviewData,
-  DeleteReviewVariables,
-  ListMoviesData,
-  ListUsersData,
-  ListUserReviewsData,
-  GetMovieByIdData,
-  GetMovieByIdVariables,
-  SearchMovieData,
-  SearchMovieVariables,
-} from '../';
-import {
-  UseDataConnectQueryResult,
-  useDataConnectQueryOptions,
-  UseDataConnectMutationResult,
-  useDataConnectMutationOptions,
-} from '@tanstack-query-firebase/react/data-connect';
-import { UseQueryResult, UseMutationResult } from '@tanstack/react-query';
+import { CreateCarData, CreateCarVariables, CreateLeadData, CreateLeadVariables, UpdateLeadStatusData, UpdateLeadStatusVariables, UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables, ListCarsData, ListCarsVariables, GetCarData, GetCarVariables, GetLeadData, GetLeadVariables, ListLeadsData, ListLeadsVariables, ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables } from '../';
+import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
+import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
 import { FirebaseError } from 'firebase/app';
 
-export function useCreateMovie(
-  options?: useDataConnectMutationOptions<CreateMovieData, FirebaseError, CreateMovieVariables>,
-): UseDataConnectMutationResult<CreateMovieData, CreateMovieVariables>;
-export function useCreateMovie(
-  dc: DataConnect,
-  options?: useDataConnectMutationOptions<CreateMovieData, FirebaseError, CreateMovieVariables>,
-): UseDataConnectMutationResult<CreateMovieData, CreateMovieVariables>;
 
-export function useUpsertUser(
-  options?: useDataConnectMutationOptions<UpsertUserData, FirebaseError, UpsertUserVariables>,
-): UseDataConnectMutationResult<UpsertUserData, UpsertUserVariables>;
-export function useUpsertUser(
-  dc: DataConnect,
-  options?: useDataConnectMutationOptions<UpsertUserData, FirebaseError, UpsertUserVariables>,
-): UseDataConnectMutationResult<UpsertUserData, UpsertUserVariables>;
+export function useCreateCar(options?: useDataConnectMutationOptions<CreateCarData, FirebaseError, CreateCarVariables>): UseDataConnectMutationResult<CreateCarData, CreateCarVariables>;
+export function useCreateCar(dc: DataConnect, options?: useDataConnectMutationOptions<CreateCarData, FirebaseError, CreateCarVariables>): UseDataConnectMutationResult<CreateCarData, CreateCarVariables>;
 
-export function useAddReview(
-  options?: useDataConnectMutationOptions<AddReviewData, FirebaseError, AddReviewVariables>,
-): UseDataConnectMutationResult<AddReviewData, AddReviewVariables>;
-export function useAddReview(
-  dc: DataConnect,
-  options?: useDataConnectMutationOptions<AddReviewData, FirebaseError, AddReviewVariables>,
-): UseDataConnectMutationResult<AddReviewData, AddReviewVariables>;
+export function useCreateLead(options?: useDataConnectMutationOptions<CreateLeadData, FirebaseError, CreateLeadVariables>): UseDataConnectMutationResult<CreateLeadData, CreateLeadVariables>;
+export function useCreateLead(dc: DataConnect, options?: useDataConnectMutationOptions<CreateLeadData, FirebaseError, CreateLeadVariables>): UseDataConnectMutationResult<CreateLeadData, CreateLeadVariables>;
 
-export function useDeleteReview(
-  options?: useDataConnectMutationOptions<DeleteReviewData, FirebaseError, DeleteReviewVariables>,
-): UseDataConnectMutationResult<DeleteReviewData, DeleteReviewVariables>;
-export function useDeleteReview(
-  dc: DataConnect,
-  options?: useDataConnectMutationOptions<DeleteReviewData, FirebaseError, DeleteReviewVariables>,
-): UseDataConnectMutationResult<DeleteReviewData, DeleteReviewVariables>;
+export function useUpdateLeadStatus(options?: useDataConnectMutationOptions<UpdateLeadStatusData, FirebaseError, UpdateLeadStatusVariables>): UseDataConnectMutationResult<UpdateLeadStatusData, UpdateLeadStatusVariables>;
+export function useUpdateLeadStatus(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateLeadStatusData, FirebaseError, UpdateLeadStatusVariables>): UseDataConnectMutationResult<UpdateLeadStatusData, UpdateLeadStatusVariables>;
 
-export function useListMovies(
-  options?: useDataConnectQueryOptions<ListMoviesData>,
-): UseDataConnectQueryResult<ListMoviesData, undefined>;
-export function useListMovies(
-  dc: DataConnect,
-  options?: useDataConnectQueryOptions<ListMoviesData>,
-): UseDataConnectQueryResult<ListMoviesData, undefined>;
+export function useUpdateLeadIntelligence(options?: useDataConnectMutationOptions<UpdateLeadIntelligenceData, FirebaseError, UpdateLeadIntelligenceVariables>): UseDataConnectMutationResult<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
+export function useUpdateLeadIntelligence(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateLeadIntelligenceData, FirebaseError, UpdateLeadIntelligenceVariables>): UseDataConnectMutationResult<UpdateLeadIntelligenceData, UpdateLeadIntelligenceVariables>;
 
-export function useListUsers(
-  options?: useDataConnectQueryOptions<ListUsersData>,
-): UseDataConnectQueryResult<ListUsersData, undefined>;
-export function useListUsers(
-  dc: DataConnect,
-  options?: useDataConnectQueryOptions<ListUsersData>,
-): UseDataConnectQueryResult<ListUsersData, undefined>;
+export function useListCars(vars?: ListCarsVariables, options?: useDataConnectQueryOptions<ListCarsData>): UseDataConnectQueryResult<ListCarsData, ListCarsVariables>;
+export function useListCars(dc: DataConnect, vars?: ListCarsVariables, options?: useDataConnectQueryOptions<ListCarsData>): UseDataConnectQueryResult<ListCarsData, ListCarsVariables>;
 
-export function useListUserReviews(
-  options?: useDataConnectQueryOptions<ListUserReviewsData>,
-): UseDataConnectQueryResult<ListUserReviewsData, undefined>;
-export function useListUserReviews(
-  dc: DataConnect,
-  options?: useDataConnectQueryOptions<ListUserReviewsData>,
-): UseDataConnectQueryResult<ListUserReviewsData, undefined>;
+export function useGetCar(vars: GetCarVariables, options?: useDataConnectQueryOptions<GetCarData>): UseDataConnectQueryResult<GetCarData, GetCarVariables>;
+export function useGetCar(dc: DataConnect, vars: GetCarVariables, options?: useDataConnectQueryOptions<GetCarData>): UseDataConnectQueryResult<GetCarData, GetCarVariables>;
 
-export function useGetMovieById(
-  vars: GetMovieByIdVariables,
-  options?: useDataConnectQueryOptions<GetMovieByIdData>,
-): UseDataConnectQueryResult<GetMovieByIdData, GetMovieByIdVariables>;
-export function useGetMovieById(
-  dc: DataConnect,
-  vars: GetMovieByIdVariables,
-  options?: useDataConnectQueryOptions<GetMovieByIdData>,
-): UseDataConnectQueryResult<GetMovieByIdData, GetMovieByIdVariables>;
+export function useGetLead(vars: GetLeadVariables, options?: useDataConnectQueryOptions<GetLeadData>): UseDataConnectQueryResult<GetLeadData, GetLeadVariables>;
+export function useGetLead(dc: DataConnect, vars: GetLeadVariables, options?: useDataConnectQueryOptions<GetLeadData>): UseDataConnectQueryResult<GetLeadData, GetLeadVariables>;
 
-export function useSearchMovie(
-  vars?: SearchMovieVariables,
-  options?: useDataConnectQueryOptions<SearchMovieData>,
-): UseDataConnectQueryResult<SearchMovieData, SearchMovieVariables>;
-export function useSearchMovie(
-  dc: DataConnect,
-  vars?: SearchMovieVariables,
-  options?: useDataConnectQueryOptions<SearchMovieData>,
-): UseDataConnectQueryResult<SearchMovieData, SearchMovieVariables>;
+export function useListLeads(vars?: ListLeadsVariables, options?: useDataConnectQueryOptions<ListLeadsData>): UseDataConnectQueryResult<ListLeadsData, ListLeadsVariables>;
+export function useListLeads(dc: DataConnect, vars?: ListLeadsVariables, options?: useDataConnectQueryOptions<ListLeadsData>): UseDataConnectQueryResult<ListLeadsData, ListLeadsVariables>;
+
+export function useListHighProbabilityLeads(vars?: ListHighProbabilityLeadsVariables, options?: useDataConnectQueryOptions<ListHighProbabilityLeadsData>): UseDataConnectQueryResult<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;
+export function useListHighProbabilityLeads(dc: DataConnect, vars?: ListHighProbabilityLeadsVariables, options?: useDataConnectQueryOptions<ListHighProbabilityLeadsData>): UseDataConnectQueryResult<ListHighProbabilityLeadsData, ListHighProbabilityLeadsVariables>;

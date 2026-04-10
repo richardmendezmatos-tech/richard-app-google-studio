@@ -1,20 +1,25 @@
 # Richard Automotive Car Queries
 
-# Public access to inventory
-query ListCars @auth(level: PUBLIC, insecureReason: "Anyone can list cars in inventory.") {
-  cars {
+# Public access to inventory with pagination
+query ListCars($limit: Int, $offset: Int, $dealerId: String) @auth(level: PUBLIC) {
+  cars(limit: $limit, offset: $offset, where: { dealerId: { eq: $dealerId } }, orderBy: [{ updatedAt: DESC }]) {
     id
     make
     model
     year
     price
+    img
+    type
     status
     category
+    featured
+    views
+    leadsCount
   }
 }
 
 # Public access to individual car details
-query GetCar($id: UUID!) @auth(level: PUBLIC, insecureReason: "Anyone can view car details.") {
+query GetCar($id: UUID!) @auth(level: PUBLIC) {
   car(id: $id) {
     id
     make
@@ -22,10 +27,17 @@ query GetCar($id: UUID!) @auth(level: PUBLIC, insecureReason: "Anyone can view c
     year
     price
     mileage
+    img
+    images
+    type
     condition
     description
     features
     status
+    views
+    leadsCount
+    dealerId
+    updatedAt
   }
 }
 
@@ -39,6 +51,64 @@ query GetLead($id: UUID!) @auth(level: USER, insecureReason: "Staff can view any
     email
     status
     category
+    type
+    behavioralData
+    aiAnalysis
+    marketingData
+    closureProbability
+    totalVisits
+    timestamp
+    vehicleOfInterest
+    vehicleId
+    hasPronto
+    chatInteractions
+    responded
+    documentsSent
+    dealClosed
+    appointmentCompleted
+  }
+}
+
+# List leads for dashboard
+query ListLeads($dealerId: String, $limit: Int, $offset: Int) @auth(level: USER) {
+  leads(
+    where: { dealerId: { eq: $dealerId } }
+    limit: $limit
+    offset: $offset
+    orderBy: [{ timestamp: DESC }]
+  ) {
+    id
+    firstName
+    lastName
+    phone
+    email
+    status
+    category
+    type
+    closureProbability
+    timestamp
+    vehicleOfInterest
+  }
+}
+
+# ORCHESTRATION: Get High Probability Leads for AI Outreach
+query ListHighProbabilityLeads($dealerId: String, $threshold: Float, $limit: Int) @auth(level: USER) {
+  leads(
+    where: { 
+      dealerId: { eq: $dealerId },
+      closureProbability: { ge: $threshold }
+    }
+    limit: $limit
+    orderBy: [{ closureProbability: DESC }, { timestamp: DESC }]
+  ) {
+    id
+    firstName
+    lastName
+    phone
+    email
+    vehicleOfInterest
+    aiAnalysis
+    closureProbability
     timestamp
   }
 }

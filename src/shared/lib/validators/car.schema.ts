@@ -25,7 +25,7 @@ export const carSchema = z.object({
   description: z.string().optional(),
   features: z.array(z.string()).optional(),
   views: z.number().min(0).optional(),
-  leads_count: z.number().min(0).optional(),
+  leadsCount: z.number().min(0).optional(),
   dealerId: z.string().optional(),
   seoFaqs: z
     .array(

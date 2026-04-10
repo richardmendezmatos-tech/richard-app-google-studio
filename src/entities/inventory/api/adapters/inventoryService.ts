@@ -1,31 +1,17 @@
 import {
-  collection,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-  serverTimestamp,
-  increment,
-  QueryDocumentSnapshot,
-  setDoc,
-  writeBatch,
-} from 'firebase/firestore';
-import { dbLite as db } from '@/shared/api/firebase/client';
+  listCars,
+  getCar,
+  createCar,
+  CreateCarVariables,
+  ListCarsVariables,
+} from '@dataconnect/generated';
 import { getStorageService, getAnalyticsService } from '@/shared/api/firebase/optionalServices';
 import { Car } from '../../model/types';
 import { carSchema } from '@/shared/lib/validators/car.schema';
-const CARS_COLLECTION = 'cars';
 
 export interface PaginatedResult {
   cars: Car[];
-  lastDoc: QueryDocumentSnapshot | null;
+  nextOffset: number | null;
   hasMore: boolean;
 }
 
@@ -33,68 +19,53 @@ export interface PaginatedResult {
 
 export const getPaginatedCars = async (
   pageSize: number = 9,
-  lastVisible: QueryDocumentSnapshot | null = null,
+  offset: number = 0,
   filterType: string = 'all',
   sortOrder: 'asc' | 'desc' | null = null,
 ): Promise<PaginatedResult> => {
-  const constraints: any[] = [];
-  const carsCollectionRef = collection(db, CARS_COLLECTION);
-
-  // 5. Multi-tenancy (Moved up to be an equality filter)
   let dealerId = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null;
   if (!dealerId || dealerId === 'undefined' || dealerId === 'null') {
     dealerId = 'richard-automotive';
   }
-  constraints.push(where('dealerId', '==', dealerId));
-
-  // 1. Filter
-  if (filterType && filterType !== 'all') {
-    constraints.push(where('type', '==', filterType));
-  }
-
-  // 2. Sort
-  if (sortOrder) {
-    constraints.push(orderBy('price', sortOrder));
-  } else {
-    constraints.push(orderBy('createdAt', 'desc'));
-  }
-
-  // 3. Cursor
-  if (lastVisible) {
-    constraints.push(startAfter(lastVisible));
-  }
-
-  // 4. Limit
-  constraints.push(limit(pageSize));
-
-  const q = query(carsCollectionRef, ...constraints);
 
   try {
-    const snapshot = await getDocs(q);
-    const cars = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Car[];
-    const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
+    const vars: ListCarsVariables = {
+      limit: pageSize,
+      offset,
+      dealerId,
+    };
+    
+    const response = await listCars(vars);
+    const cars = response.data.cars.map((c) => ({
+      ...c,
+      name: `${c.make} ${c.model} ${c.year}`,
+      status: (c.status as 'available' | 'reserved' | 'sold') || 'available',
+    })) as unknown as Car[];
 
     return {
       cars,
-      lastDoc,
-      hasMore: snapshot.docs.length === pageSize,
+      nextOffset: response.data.cars.length === pageSize ? offset + pageSize : null,
+      hasMore: response.data.cars.length === pageSize,
     };
   } catch (e: any) {
-    console.error('Pagination Error:', e);
+    console.error('[DataConnect] Pagination Error:', e);
     throw e;
   }
 };
 
 export const getCarById = async (id: string): Promise<Car | null> => {
   try {
-    const docRef = doc(db, CARS_COLLECTION, id);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as Car;
-    }
-    return null;
+    const response = await getCar({ id });
+    if (!response.data.car) return null;
+    
+    const c = response.data.car;
+    return {
+      ...c,
+      name: `${c.make} ${c.model} ${c.year}`,
+      status: (c.status as 'available' | 'reserved' | 'sold') || 'available',
+    } as unknown as Car;
   } catch (error) {
-    console.error('Error fetching car:', error);
+    console.error('[DataConnect] Error fetching car:', error);
     return null;
   }
 };
@@ -108,16 +79,26 @@ export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
     ...carData,
     dealerId: currentDealerId,
     views: 0,
-    leads_count: 0,
+    leadsCount: 0,
   });
 
-  const docRef = await addDoc(collection(db, CARS_COLLECTION), {
+  const response = await createCar({
     ...validatedData,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    year: validatedData.year || new Date().getFullYear(),
+    make: validatedData.make || 'Universal',
+    model: validatedData.model || 'Generic',
+    name: validatedData.name,
+    price: validatedData.price,
+    mileage: validatedData.mileage || 0,
+    type: validatedData.type,
+    category: 'standard', // Default for now
+    condition: 'used', // Default for now
+    img: validatedData.img,
+    dealerId: currentDealerId,
+    featured: validatedData.featured || false,
   });
 
-  return docRef.id;
+  return response.data.car_insert.id;
 };
 
 export const updateVehicle = async (id: string, updates: Partial<Car>) => {

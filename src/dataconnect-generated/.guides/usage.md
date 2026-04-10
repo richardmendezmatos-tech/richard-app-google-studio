@@ -4,43 +4,35 @@ Always prioritize using a supported framework over using the generated SDK
 directly. Supported frameworks simplify the developer experience and help ensure
 best practices are followed.
 
-### React
 
+
+
+### React
 For each operation, there is a wrapper hook that can be used to call the operation.
 
 Here are all of the hooks that get generated:
-
 ```ts
-import {
-  useCreateMovie,
-  useUpsertUser,
-  useAddReview,
-  useDeleteReview,
-  useListMovies,
-  useListUsers,
-  useListUserReviews,
-  useGetMovieById,
-  useSearchMovie,
-} from '@dataconnect/generated/react';
+import { useCreateCar, useCreateLead, useUpdateLeadStatus, useUpdateLeadIntelligence, useListCars, useGetCar, useGetLead, useListLeads, useListHighProbabilityLeads } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
-const { data, isPending, isSuccess, isError, error } = useCreateMovie(createMovieVars);
+const { data, isPending, isSuccess, isError, error } = useCreateCar(createCarVars);
 
-const { data, isPending, isSuccess, isError, error } = useUpsertUser(upsertUserVars);
+const { data, isPending, isSuccess, isError, error } = useCreateLead(createLeadVars);
 
-const { data, isPending, isSuccess, isError, error } = useAddReview(addReviewVars);
+const { data, isPending, isSuccess, isError, error } = useUpdateLeadStatus(updateLeadStatusVars);
 
-const { data, isPending, isSuccess, isError, error } = useDeleteReview(deleteReviewVars);
+const { data, isPending, isSuccess, isError, error } = useUpdateLeadIntelligence(updateLeadIntelligenceVars);
 
-const { data, isPending, isSuccess, isError, error } = useListMovies();
+const { data, isPending, isSuccess, isError, error } = useListCars(listCarsVars);
 
-const { data, isPending, isSuccess, isError, error } = useListUsers();
+const { data, isPending, isSuccess, isError, error } = useGetCar(getCarVars);
 
-const { data, isPending, isSuccess, isError, error } = useListUserReviews();
+const { data, isPending, isSuccess, isError, error } = useGetLead(getLeadVars);
 
-const { data, isPending, isSuccess, isError, error } = useGetMovieById(getMovieByIdVars);
+const { data, isPending, isSuccess, isError, error } = useListLeads(listLeadsVars);
 
-const { data, isPending, isSuccess, isError, error } = useSearchMovie(searchMovieVars);
+const { data, isPending, isSuccess, isError, error } = useListHighProbabilityLeads(listHighProbabilityLeadsVars);
+
 ```
 
 Here's an example from a different generated SDK:
@@ -70,49 +62,43 @@ function App() {
 }
 ```
 
-## Advanced Usage
 
+
+## Advanced Usage
 If a user is not using a supported framework, they can use the generated SDK directly.
 
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import {
-  createMovie,
-  upsertUser,
-  addReview,
-  deleteReview,
-  listMovies,
-  listUsers,
-  listUserReviews,
-  getMovieById,
-  searchMovie,
-} from '@dataconnect/generated';
+import { createCar, createLead, updateLeadStatus, updateLeadIntelligence, listCars, getCar, getLead, listLeads, listHighProbabilityLeads } from '@dataconnect/generated';
 
-// Operation CreateMovie:  For variables, look at type CreateMovieVars in ../index.d.ts
-const { data } = await CreateMovie(dataConnect, createMovieVars);
 
-// Operation UpsertUser:  For variables, look at type UpsertUserVars in ../index.d.ts
-const { data } = await UpsertUser(dataConnect, upsertUserVars);
+// Operation CreateCar:  For variables, look at type CreateCarVars in ../index.d.ts
+const { data } = await CreateCar(dataConnect, createCarVars);
 
-// Operation AddReview:  For variables, look at type AddReviewVars in ../index.d.ts
-const { data } = await AddReview(dataConnect, addReviewVars);
+// Operation CreateLead:  For variables, look at type CreateLeadVars in ../index.d.ts
+const { data } = await CreateLead(dataConnect, createLeadVars);
 
-// Operation DeleteReview:  For variables, look at type DeleteReviewVars in ../index.d.ts
-const { data } = await DeleteReview(dataConnect, deleteReviewVars);
+// Operation UpdateLeadStatus:  For variables, look at type UpdateLeadStatusVars in ../index.d.ts
+const { data } = await UpdateLeadStatus(dataConnect, updateLeadStatusVars);
 
-// Operation ListMovies:
-const { data } = await ListMovies(dataConnect);
+// Operation UpdateLeadIntelligence:  For variables, look at type UpdateLeadIntelligenceVars in ../index.d.ts
+const { data } = await UpdateLeadIntelligence(dataConnect, updateLeadIntelligenceVars);
 
-// Operation ListUsers:
-const { data } = await ListUsers(dataConnect);
+// Operation ListCars:  For variables, look at type ListCarsVars in ../index.d.ts
+const { data } = await ListCars(dataConnect, listCarsVars);
 
-// Operation ListUserReviews:
-const { data } = await ListUserReviews(dataConnect);
+// Operation GetCar:  For variables, look at type GetCarVars in ../index.d.ts
+const { data } = await GetCar(dataConnect, getCarVars);
 
-// Operation GetMovieById:  For variables, look at type GetMovieByIdVars in ../index.d.ts
-const { data } = await GetMovieById(dataConnect, getMovieByIdVars);
+// Operation GetLead:  For variables, look at type GetLeadVars in ../index.d.ts
+const { data } = await GetLead(dataConnect, getLeadVars);
 
-// Operation SearchMovie:  For variables, look at type SearchMovieVars in ../index.d.ts
-const { data } = await SearchMovie(dataConnect, searchMovieVars);
+// Operation ListLeads:  For variables, look at type ListLeadsVars in ../index.d.ts
+const { data } = await ListLeads(dataConnect, listLeadsVars);
+
+// Operation ListHighProbabilityLeads:  For variables, look at type ListHighProbabilityLeadsVars in ../index.d.ts
+const { data } = await ListHighProbabilityLeads(dataConnect, listHighProbabilityLeadsVars);
+
+
 ```

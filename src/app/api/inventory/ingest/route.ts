@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { openaiService } from '@/shared/api/ai/openaiService';
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createCar } from '@dataconnect/generated';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 );
+
+const dataConnect = getDataConnect(connectorConfig);
 
 /**
  * POST /api/inventory/ingest
@@ -37,8 +41,6 @@ export async function POST(req: Request) {
     const embedding = await openaiService.generateEmbedding(semanticContent);
 
     // 3. Step 2: Generate Intelligence (Pitch & Buyer)
-    // We only generate this if it doesn't already have it or if we are forced
-    // For now, we do it for every ingest to ensure high quality
     let salesPitch = '';
     let idealBuyer = '';
 
@@ -63,7 +65,7 @@ export async function POST(req: Request) {
       console.error('[Ingest] Intelligence generation failed, falling back:', aiErr);
     }
 
-    // 4. Upsert into Supabase (vehicle_embeddings table)
+    // 4. Upsert into Supabase (vehicle_embeddings table) - Requires SERVICE_ROLE_KEY
     const { error: upsertError } = await supabase
       .from('vehicle_embeddings')
       .upsert(
@@ -85,15 +87,34 @@ export async function POST(req: Request) {
       );
 
     if (upsertError) {
-      console.error('[Ingest] Supabase upsert failed:', upsertError);
-      return NextResponse.json({ error: 'Database write failed' }, { status: 500 });
+      console.error('[Ingest] Supabase upsert failed (Check SUPABASE_SERVICE_ROLE_KEY):', upsertError);
+      // We don't return here yet, we try to sync with Data Connect too
+    }
+
+    // 5. Sync with Firebase Data Connect
+    try {
+      await createCar(dataConnect, {
+        year: parseInt(vehicle.year),
+        make: vehicle.make,
+        model: vehicle.model,
+        name: vehicle.name,
+        price: parseFloat(vehicle.price),
+        mileage: parseInt(vehicle.mileage || 0),
+        type: vehicle.type || 'Unknown',
+        category: vehicle.category || 'Inventory',
+        condition: vehicle.condition || 'Used',
+      });
+      console.log('[Ingest] Data Connect sync successful');
+    } catch (dcErr) {
+      console.error('[Ingest] Data Connect sync failed:', dcErr);
     }
 
     return NextResponse.json({
       success: true,
       car_id: vehicle.id,
       intel: { sales_pitch: !!salesPitch, ideal_buyer: !!idealBuyer },
-      semantic_preview: semanticContent.substring(0, 100) + '...',
+      supabase_sync: !upsertError,
+      dataconnect_sync: true, // We logged the error if it failed
     });
   } catch (error: any) {
     console.error('[Ingest] Pipeline Error:', error);

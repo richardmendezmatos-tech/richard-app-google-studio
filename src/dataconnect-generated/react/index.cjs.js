@@ -1,100 +1,66 @@
-const {
-  createMovieRef,
-  upsertUserRef,
-  addReviewRef,
-  deleteReviewRef,
-  listMoviesRef,
-  listUsersRef,
-  listUserReviewsRef,
-  getMovieByIdRef,
-  searchMovieRef,
-  connectorConfig,
-} = require('../index.cjs.js');
+const { createCarRef, createLeadRef, updateLeadStatusRef, updateLeadIntelligenceRef, listCarsRef, getCarRef, getLeadRef, listLeadsRef, listHighProbabilityLeadsRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
-const {
-  useDataConnectQuery,
-  useDataConnectMutation,
-  validateReactArgs,
-} = require('@tanstack-query-firebase/react/data-connect');
+const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
-exports.useCreateMovie = function useCreateMovie(dcOrOptions, options) {
+exports.useCreateCar = function useCreateCar(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
-    return createMovieRef(dcInstance, vars);
+    return createCarRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useUpsertUser = function useUpsertUser(dcOrOptions, options) {
+exports.useCreateLead = function useCreateLead(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
-    return upsertUserRef(dcInstance, vars);
+    return createLeadRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useAddReview = function useAddReview(dcOrOptions, options) {
+exports.useUpdateLeadStatus = function useUpdateLeadStatus(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
-    return addReviewRef(dcInstance, vars);
+    return updateLeadStatusRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useDeleteReview = function useDeleteReview(dcOrOptions, options) {
+exports.useUpdateLeadIntelligence = function useUpdateLeadIntelligence(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
-    return deleteReviewRef(dcInstance, vars);
+    return updateLeadIntelligenceRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useListMovies = function useListMovies(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateReactArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-  );
-  const ref = listMoviesRef(dcInstance);
-  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
 
-exports.useListUsers = function useListUsers(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateReactArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-  );
-  const ref = listUsersRef(dcInstance);
+exports.useListCars = function useListCars(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  const ref = listCarsRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useListUserReviews = function useListUserReviews(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateReactArgs(
-    connectorConfig,
-    dcOrOptions,
-    options,
-  );
-  const ref = listUserReviewsRef(dcInstance);
+exports.useGetCar = function useGetCar(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = getCarRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useGetMovieById = function useGetMovieById(dcOrVars, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
-  const ref = getMovieByIdRef(dcInstance, inputVars);
+exports.useGetLead = function useGetLead(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = getLeadRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
 
-exports.useSearchMovie = function useSearchMovie(dcOrVars, varsOrOptions, options) {
-  const {
-    dc: dcInstance,
-    vars: inputVars,
-    options: inputOpts,
-  } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
-  const ref = searchMovieRef(dcInstance, inputVars);
+exports.useListLeads = function useListLeads(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  const ref = listLeadsRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-};
+}
+
+exports.useListHighProbabilityLeads = function useListHighProbabilityLeads(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  const ref = listHighProbabilityLeadsRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
