@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Car } from '@/shared/types/types';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Car } from '@/entities/inventory';
 import {
   X,
   ChevronRight,
@@ -18,6 +18,10 @@ import {
   Activity,
   Zap,
   Cpu,
+  Info,
+  Eye,
+  Phone,
+  CheckCircle2,
 } from 'lucide-react';
 import { motion, AnimatePresence, animate } from 'framer-motion';
 import { generateCarPitch } from '@/shared/api/ai';
@@ -32,6 +36,8 @@ interface Props {
   onClose: () => void;
 }
 
+type TabType = 'overview' | 'financials' | 'specs' | 'contact';
+
 const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -42,27 +48,26 @@ const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
       onUpdate: (latest) => setDisplayValue(Math.round(latest)),
     });
     return () => controls.stop();
-  }, [value, displayValue]);
+  }, [value]);
 
   return <span className="tabular-nums">{displayValue.toLocaleString()}</span>;
 };
 
 const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [downPayment, setDownPayment] = useState<number | ''>(0);
   const [tradeIn, setTradeIn] = useState<number | ''>(0);
   const [term, setTerm] = useState<number>(84);
   const [creditRate, setCreditRate] = useState<number>(0.059);
-
-  const [activeTab, setActiveTab] = useState<'calculator' | 'insight'>('calculator');
+  
   const [aiPitch, setAiPitch] = useState<string>('');
   const [loadingPitch, setLoadingPitch] = useState(false);
-  const [errors, setErrors] = useState<{ downPayment?: string }>({});
+  const [showHeavyContent, setShowHeavyContent] = useState(false);
+  
   const analytics = useInventoryAnalytics();
 
-  const [showHeavyContent, setShowHeavyContent] = useState(false);
-
   // Monthly payment derived state
-  const calculatedPayment = React.useMemo(() => {
+  const calculatedPayment = useMemo(() => {
     const dpVal = downPayment === '' ? 0 : downPayment;
     const tiVal = tradeIn === '' ? 0 : tradeIn;
     const principal = Math.max(0, car.price - dpVal - tiVal);
@@ -77,340 +82,445 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     return Math.round(principal * (numerator / denominator));
   }, [downPayment, tradeIn, term, creditRate, car.price]);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const timer = setTimeout(() => setShowHeavyContent(true), 300);
-    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        clearTimeout(timer);
-    }
+      document.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
   }, [onClose]);
 
-  const handleTabChange = (tab: 'calculator' | 'insight') => {
-    setActiveTab(tab);
-    if (tab === 'insight' && !aiPitch && !loadingPitch) {
+  useEffect(() => {
+    if (activeTab === 'overview' && !aiPitch && !loadingPitch) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoadingPitch(true);
       generateCarPitch(car)
         .then((text) => setAiPitch(text))
-        .catch(() => setAiPitch('No pudimos conectar con Richard IA en este momento.'))
+        .catch(() => setAiPitch('No pudimos conectar con Richard IA.'))
         .finally(() => setLoadingPitch(false));
     }
-  };
+  }, [activeTab, aiPitch, car, loadingPitch]);
 
-  const validate = (): boolean => {
-    const newErrors: { downPayment?: string } = {};
-    let isValid = true;
-    if (downPayment === '') {
-      newErrors.downPayment = 'Este campo es obligatorio.';
-      isValid = false;
-    } else if (downPayment < 0) {
-      newErrors.downPayment = 'El valor no puede ser negativo.';
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleRequestApproval = () => {
-    if (!validate()) {
-      const form = document.getElementById('calculator-form');
-      form?.classList.add('animate-shake');
-      setTimeout(() => form?.classList.remove('animate-shake'), 500);
-      return;
-    }
+  const handleAction = () => {
     const dpVal = downPayment === '' ? 0 : downPayment;
     const tiVal = tradeIn === '' ? 0 : tradeIn;
     analytics.trackCarConfigure(car.id);
     window.open(
-      `https://wa.me/17873682880?text=Hola, vi el análisis de IA del ${car.name}. Me interesa con un pago estimado de $${calculatedPayment}/mes (Pronto: $${dpVal}, TradeIn: $${tiVal}, Término: ${term} meses).`,
-      '_blank',
+      `https://wa.me/17873682880?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
+      '_blank'
     );
   };
 
   const handleShare = async () => {
     const shareData = {
-      title: `Mira este ${car.name}`,
-      text: `¡Encontré este ${car.name} en Richard Automotive! Precio: $${car.price.toLocaleString()}`,
+      title: car.name,
+      text: `¡Mira este ${car.name} en Richard Automotive!`,
       url: window.location.href,
     };
     if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error) {
-        console.debug('Share cancelled or failed', error);
-      }
+      try { await navigator.share(shareData); } catch (e) { console.debug('Native share failed', e); }
     } else {
       window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text)}`, '_blank');
     }
   };
+
+  const tabs: { id: TabType; icon: React.ReactNode; label: string }[] = [
+    { id: 'overview', icon: <Eye size={18} />, label: 'Explorador' },
+    { id: 'financials', icon: <Calculator size={18} />, label: 'Finanzas' },
+    { id: 'specs', icon: <Info size={18} />, label: 'Ficha' },
+    { id: 'contact', icon: <Phone size={18} />, label: 'Acción' },
+  ];
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-3xl"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-2xl p-0 md:p-6"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.98, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 1.02, y: -10 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300, delay: 0.1 }}
-        onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl h-[92vh] rounded-[48px] md:rounded-[64px] shadow-[0_32px_120px_rgba(0,0,0,0.8)] p-4 md:p-6 relative flex flex-col lg:flex-row gap-6 overflow-hidden border border-white/10"
+        exit={{ opacity: 0, scale: 1.05, y: -20 }}
+        transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-black/40 w-full max-w-6xl h-full md:h-[92vh] md:rounded-[64px] shadow-[0_40px_150px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col relative border border-white/10"
       >
-        {/* Holographic Mesh Layer */}
-        <div className="absolute inset-0 pointer-events-none opacity-30 select-none">
-          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-cyan-500/20 blur-[120px] rounded-full" />
-          <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full" />
-          <div className="mesh-bg-elite absolute inset-0 opacity-10" />
-        </div>
+        {/* Glow Effects */}
+        <div className="absolute top-0 -left-20 w-80 h-80 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 -right-20 w-80 h-80 bg-cyan-500/20 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-30 flex gap-4">
-          <button onClick={handleShare} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-cyan-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Compartir este vehículo" aria-label="Compartir este vehículo">
-            <Share2 size={18} />
-          </button>
-          <button onClick={onClose} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-xl hover:scale-110 active:scale-95" title="Cerrar detalles" aria-label="Cerrar detalles">
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="w-full lg:w-3/5 flex flex-col gap-4 h-[40%] lg:h-full relative z-10">
-          <div className="flex-1 bg-slate-200/20 dark:bg-white/5 rounded-[35px] lg:rounded-[45px] flex items-center justify-center relative overflow-hidden group border border-white/10 shadow-2xl backdrop-blur-md">
-            {showHeavyContent ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full relative">
-                  {/* Digital HUD Overlay on image */}
-                  <div className="absolute top-8 left-8 p-4 border-l-2 border-cyan-500 opacity-40">
-                    <p className="font-tech text-[8px] font-black uppercase tracking-[0.4em] text-cyan-400">Tactical 3D Scan</p>
-                    <p className="text-[10px] font-bold text-white mt-1">Resolution: 8K High Definition</p>
-                  </div>
-                  
-                  <Viewer360
-                      images={(car.images && car.images.length > 0 ? car.images : [car.img]).filter((img): img is string => !!img)}
-                      alt={car.name}
-                      badge={car.badge}
-                      carPrice={car.price}
-                      carType={car.type}
-                      onFullscreen={() => {}}
-                  />
-              </motion.div>
-            ) : (
-              <div className="flex flex-col items-center gap-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-cyan-500/20" />
-                    <Loader2 className="animate-spin text-cyan-400 relative z-10" size={40} />
-                  </div>
-                  <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400/80 animate-pulse">Initializing Virtual Garage...</span>
-              </div>
-            )}
+        {/* Top Header Navigation */}
+        <div className="flex items-center justify-between p-6 lg:px-12 lg:py-8 relative z-20">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+              <p className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/80">Mission Critical Unit {car.id.slice(0,6).toUpperCase()}</p>
+            </div>
+            <h2 className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">{car.name}</h2>
           </div>
           
-          {/* Stats Bar */}
-          <GlassContainer intensity="low" className="hidden lg:flex justify-between items-center py-5 px-10 rounded-[32px] border border-white/10 shadow-2xl">
-            <div className="flex items-center gap-8">
-              <div className="relative">
-                <div className="absolute inset-0 blur-xl bg-cyan-500/20 rounded-full" />
-                <ProgressRing label="HP" value={car.price > 60000 ? 450 : car.price > 35000 ? 280 : 180} max={600} size={56} strokeWidth={5} color="#00e5ff" />
-              </div>
-              <div className="h-8 w-[1px] bg-white/10" />
-              <div className="space-y-1">
-                <p className="font-tech text-[9px] font-black uppercase tracking-[0.3em] text-cyan-500">Transmission</p>
-                <p className="text-xs font-black text-white uppercase italic tracking-tighter">8-Speed Direct Shift</p>
-              </div>
-            </div>
-            <div className="flex flex-col text-right">
-              <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Sentinel Unit</span>
-              <span className="text-xs font-black text-white uppercase tracking-tighter italic flex items-center gap-2 justify-end">
-                Verified & Mission Ready <ShieldCheck size={14} className="text-cyan-500" />
-              </span>
-            </div>
-          </GlassContainer>
+          <div className="flex items-center gap-3">
+            <button onClick={handleShare} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110 active:scale-90">
+              <Share2 size={20} />
+            </button>
+            <button onClick={onClose} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-rose-500 transition-all hover:scale-110 active:scale-90">
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
-        <div className="w-full lg:w-[38%] flex flex-col h-full overflow-hidden p-2 relative z-10">
-          {/* Header Area */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_8px_#00e5ff]" />
-                <span className="font-tech text-[10px] font-black text-cyan-500 uppercase tracking-[0.4em]">
-                {car.type} Priority Node
+        {/* Sentinel Tab Bar */}
+        <div className="px-6 lg:px-12 mb-4 relative z-20">
+          <div className="flex gap-2 bg-white/5 p-1.5 rounded-[24px] border border-white/5 backdrop-blur-md">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 py-4 px-4 rounded-[18px] flex flex-col md:flex-row items-center justify-center gap-2 transition-all relative overflow-hidden group ${activeTab === tab.id ? 'bg-gradient-to-br from-primary to-cyan-600 shadow-[0_10px_30px_rgba(0,180,216,0.3)]' : 'hover:bg-white/5'}`}
+              >
+                <div className={`${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                  {tab.icon}
+                </div>
+                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                  {tab.label}
                 </span>
-              </div>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                UNIT-{car.id.slice(0, 8)}
-              </span>
-            </div>
-            <h2 className="text-3xl lg:text-5xl font-black text-white tracking-tighter leading-none italic uppercase">
-              {car.name}
-            </h2>
+                {activeTab === tab.id && (
+                  <motion.div layoutId="tab-glow" className="absolute inset-0 bg-white/20 animate-pulse" />
+                )}
+              </button>
+            ))}
           </div>
+        </div>
 
-          <GlassContainer intensity="high" className="p-6 lg:p-8 rounded-[40px] shadow-2xl mb-6 relative border-t-2 border-cyan-500/30">
-            <div className="flex items-center justify-between gap-4 mb-6">
-              <div className="space-y-1">
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
-                  <Calculator size={12} className="text-cyan-500" /> Strategic Payment
-                </div>
-                <div className="text-5xl lg:text-6xl font-black text-white tracking-tighter tabular-nums italic">
-                  $<AnimatedNumber value={calculatedPayment} />
-                  <span className="text-lg text-slate-500 ml-1">/mo</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-2xl mb-6 border border-white/5">
-                {(['calculator', 'insight'] as const).map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => handleTabChange(tab)}
-                        className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${activeTab === tab ? 'bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(0,229,255,0.3)]' : 'text-slate-500 hover:text-slate-300'}`}
-                    >
-                        {tab === 'insight' ? <Cpu size={14} /> : <Zap size={14} />}
-                        {tab === 'calculator' ? 'Config' : 'IA Intel'}
-                    </button>
-                ))}
-            </div>
-
-            <AnimatePresence mode="wait">
-              {activeTab === 'calculator' ? (
-                <motion.div 
-                  key="calc"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  <div className="space-y-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-all group">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-1.5 group-hover:text-cyan-400">
-                      <Banknote size={12} /> Down Payment
-                    </label>
-                    <div className="relative">
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-black">$</span>
-                        <input
-                            type="number" value={downPayment}
-                            onChange={(e) => setDownPayment(e.target.value === '' ? '' : Number(e.target.value))}
-                            className="w-full bg-transparent text-white font-black outline-none text-lg pl-3"
-                            placeholder="0"
-                        />
-                    </div>
-                  </div>
-                  <div className="space-y-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-cyan-500/30 transition-all group">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-1.5 group-hover:text-cyan-400">
-                      <CreditCard size={12} /> Trade-In
-                    </label>
-                    <div className="relative">
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-black">$</span>
-                        <input
-                            type="number" value={tradeIn}
-                            onChange={(e) => setTradeIn(e.target.value === '' ? '' : Number(e.target.value))}
-                            className="w-full bg-transparent text-white font-black outline-none text-lg pl-3"
-                            placeholder="0"
-                        />
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-1.5 mb-2">
-                      <Calendar size={12} /> Duration
-                    </label>
-                    <select
-                      value={term}
-                      onChange={(e) => setTerm(Number(e.target.value))}
-                      aria-label="Seleccionar término de financiamiento en meses"
-                      title="Seleccionar término de financiamiento"
-                      className="w-full bg-transparent text-white font-black outline-none text-sm appearance-none cursor-pointer"
-                    >
-                      {[48, 60, 72, 84].map(t => (
-                        <option key={t} value={t} className="bg-slate-900">{t} Months</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-1.5 mb-2">
-                      <ShieldCheck size={12} /> Tier
-                    </label>
-                    <div className="flex gap-1">
-                      {[0.029, 0.059, 0.099, 0.129].map((rate) => (
-                        <button
-                          key={rate}
-                          onClick={() => setCreditRate(rate)}
-                          className={`flex-1 py-1 rounded-lg text-[9px] font-black uppercase transition-all ${creditRate === rate ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-slate-800/40 text-slate-600 border border-transparent'}`}
-                        >
-                          {rate === 0.029 ? 'A+' : rate === 0.059 ? 'A' : rate === 0.099 ? 'B' : 'C'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="insight"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.02 }}
-                  className="max-h-[220px] overflow-y-auto custom-scrollbar bg-black/40 p-6 rounded-3xl border border-white/5"
-                >
-                  {loadingPitch ? (
-                    <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                      <div className="relative h-12 w-12">
-                        <Loader2 className="animate-spin text-cyan-500 absolute inset-0" size={48} />
-                        <Sparkles className="text-white absolute inset-0 m-auto animate-pulse" size={20} />
-                      </div>
-                      <span className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/60">Decoding AI Strategy...</span>
-                    </div>
-                  ) : (
-                    <div className="text-[12px] leading-relaxed text-slate-300 font-medium">
-                      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aiPitch.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-black">$1</strong>').replace(/\n/g, '<br/>')) }} />
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </GlassContainer>
-
-          <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
-            <button
-              onClick={handleRequestApproval}
-              className="group relative w-full py-6 bg-gradient-to-r from-primary to-cyan-600 text-white rounded-[32px] font-black text-base uppercase tracking-[0.3em] flex items-center justify-center gap-3 overflow-hidden shadow-[0_20px_50px_rgba(34,211,238,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all hover:shadow-[0_0_40px_rgba(0,229,255,0.4)]"
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-hidden relative z-10 px-6 lg:px-12 pb-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, x: 20, scale: 0.99 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -20, scale: 1.01 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="h-full"
             >
-                {/* Nivel 13 Adaptive CTA Pulse */}
-                <div className="absolute inset-0 bg-cyan-400/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
-                <Zap size={20} className="fill-white group-hover:animate-bounce relative z-10" /> 
-                <span className="relative z-10">Authorize Mission</span>
-            </button>
-            <div className="flex items-center justify-center gap-6 opacity-40">
-                <div className="flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-cyan-500" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-300 italic">Sentinel Verified</span>
+              {activeTab === 'overview' && (
+                <div className="flex flex-col lg:flex-row gap-6 h-full">
+                  {/* Digital Garage Area */}
+                  <div className="w-full lg:w-2/3 bg-white/5 rounded-[40px] border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner group">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 pointer-events-none" />
+                    {showHeavyContent ? (
+                      <div className="w-full h-full relative">
+                         {/* HUD HUD Digital HUD */}
+                        <div className="absolute top-8 left-8 p-4 border-l-2 border-cyan-500 opacity-60 z-20 pointer-events-none">
+                          <p className="font-tech text-[8px] font-black uppercase tracking-[0.4em] text-cyan-400">Tactical Scan ACTIVE</p>
+                          <div className="flex gap-2 mt-2">
+                             {[1,2,3,4].map(i => <div key={i} className="w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-pulse" style={{ animationDelay: `${i*0.2}s` }} />)}
+                          </div>
+                        </div>
+
+                        <div className="absolute bottom-8 right-8 text-right opacity-60 z-20 pointer-events-none">
+                           <p className="font-tech text-3xl font-black text-white italic tracking-tighter">CERTIFIED</p>
+                           <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Sentinel Elite Unit</p>
+                        </div>
+                        
+                        <Viewer360
+                          images={(car.images || [car.img || car.image]).filter((img): img is string => !!img)}
+                          alt={car.name}
+                          badge={car.badge}
+                          carPrice={car.price}
+                          carType={car.type}
+                          onFullscreen={() => {}}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-4">
+                        <Loader2 size={40} className="animate-spin text-cyan-500" />
+                        <span className="font-tech text-[10px] uppercase tracking-[0.5em] text-cyan-500 animate-pulse">Syncing Garage...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quick Specs / Insight Area */}
+                  <div className="w-full lg:w-1/3 flex flex-col gap-4">
+                    <GlassContainer intensity="high" className="p-8 rounded-[40px] flex-1 border-t-2 border-cyan-500/30 overflow-hidden flex flex-col shadow-2xl">
+                      <div className="flex items-center gap-2 mb-6">
+                        <Cpu size={20} className="text-cyan-400" />
+                        <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">IA Richard Report</span>
+                      </div>
+                      
+                      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                        {loadingPitch ? (
+                          <div className="h-full flex flex-col items-center justify-center gap-4 opacity-50">
+                            <Loader2 className="animate-spin text-cyan-500" size={32} />
+                            <p className="text-[10px] uppercase tracking-widest text-center">Parsing Vector Data...</p>
+                          </div>
+                        ) : (
+                          <div className="text-[13px] leading-relaxed text-slate-300 font-medium">
+                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aiPitch.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-black">$1</strong>').replace(/\n/g, '<br/>')) }} />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Sub-stats indicators */}
+                      <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/5">
+                        <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                           <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Condition</p>
+                           <p className="text-xs font-black text-white italic">Elite Certified</p>
+                        </div>
+                        <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                           <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fuel Economy</p>
+                           <p className="text-xs font-black text-white italic">Optimal</p>
+                        </div>
+                      </div>
+                    </GlassContainer>
+                  </div>
                 </div>
-                <div className="h-1 w-1 rounded-full bg-slate-600" />
-                <div className="flex items-center gap-2">
-                    <Activity size={14} className="text-cyan-500" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-300 italic">Tactical Approval</span>
+              )}
+
+              {activeTab === 'financials' && (
+                <div className="h-full flex flex-col lg:flex-row gap-6">
+                  <div className="w-full lg:w-2/3 bg-slate-900/60 rounded-[40px] border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
+                    <div className="flex items-center gap-2 mb-8">
+                       <Calculator size={24} className="text-cyan-400" />
+                       <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Simulador de Aprobación</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
+                           <Banknote size={14} className="text-cyan-400" /> Pago Inicial (Pronto)
+                        </label>
+                        <div className="bg-white/5 p-6 rounded-[28px] border border-white/10 group focus-within:border-cyan-500 transition-all flex items-center">
+                           <span className="text-3xl font-black text-slate-500 group-focus-within:text-cyan-400 mr-2">$</span>
+                           <input 
+                             type="number" 
+                             value={downPayment} 
+                             onChange={(e) => setDownPayment(e.target.value === '' ? '' : Number(e.target.value))}
+                             className="bg-transparent text-4xl font-black text-white outline-none w-full tabular-nums"
+                             placeholder="0"
+                           />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
+                           <Zap size={14} className="text-cyan-400" /> Trade-In Estimado
+                        </label>
+                        <div className="bg-white/5 p-6 rounded-[28px] border border-white/10 group focus-within:border-cyan-500 transition-all flex items-center">
+                           <span className="text-3xl font-black text-slate-500 group-focus-within:text-cyan-400 mr-2">$</span>
+                           <input 
+                             type="number" 
+                             value={tradeIn} 
+                             onChange={(e) => setTradeIn(e.target.value === '' ? '' : Number(e.target.value))}
+                             className="bg-transparent text-4xl font-black text-white outline-none w-full tabular-nums"
+                             placeholder="0"
+                           />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
+                           <Calendar size={14} className="text-cyan-400" /> Término del Financiamiento
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {[48, 60, 72, 84].map((t) => (
+                            <button
+                              key={t}
+                              onClick={() => setTerm(t)}
+                              className={`py-4 rounded-2xl text-sm font-black transition-all ${term === t ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
+                            >
+                              {t}m
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
+                           <ShieldCheck size={14} className="text-cyan-400" /> Perfil de Crédito (Tier)
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {[0.029, 0.059, 0.099, 0.129].map((rate) => (
+                            <button
+                              key={rate}
+                              onClick={() => setCreditRate(rate)}
+                              className={`py-4 rounded-2xl text-xs font-black transition-all ${creditRate === rate ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
+                            >
+                              {rate === 0.029 ? 'EXC' : rate === 0.059 ? 'BUENO' : rate === 0.099 ? 'REG' : 'POB'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full lg:w-1/3 flex flex-col gap-6">
+                    <GlassContainer intensity="high" className="p-10 rounded-[48px] border-t-2 border-primary flex-1 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden">
+                       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] mb-4">Pago Mensual Estimado</p>
+                       <div className="text-7xl lg:text-8xl font-black text-white italic tracking-tighter mb-2">
+                          $<AnimatedNumber value={calculatedPayment} />
+                       </div>
+                       <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">+ Tax & Licensing</p>
+                       
+                       <div className="mt-12 w-full space-y-3">
+                          <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                             <span>Precio Unidad</span>
+                             <span className="text-white">${car.price.toLocaleString()}</span>
+                          </div>
+                          <div className="h-[1px] w-full bg-white/5" />
+                          <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                             <span>APR Estimado</span>
+                             <span className="text-cyan-400">{(creditRate * 100).toFixed(1)}%</span>
+                          </div>
+                       </div>
+                    </GlassContainer>
+                  </div>
                 </div>
-            </div>
-          </div>
+              )}
+
+              {activeTab === 'specs' && (
+                <div className="h-full bg-white/5 rounded-[40px] border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                      <div className="space-y-8">
+                         <div className="flex items-center gap-3">
+                            <Zap size={20} className="text-cyan-400" />
+                            <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">Matriz de Energía</h4>
+                         </div>
+                         <div className="space-y-6">
+                            {[
+                              { label: 'Caballos de Fuerza (HP)', value: car.hp || 'N/A' },
+                              { label: 'Transmisión', value: car.transmission || 'Automática Selective' },
+                              { label: 'Tracción', value: 'Delantera AWD System' },
+                              { label: 'Motor', value: car.engine || 'Turbocard Intercooled' }
+                            ].map(spec => (
+                               <div key={spec.label} className="group">
+                                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 group-hover:text-cyan-400 transition-colors">{spec.label}</p>
+                                  <p className="text-sm font-black text-white italic">{spec.value}</p>
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+
+                      <div className="space-y-8">
+                         <div className="flex items-center gap-3">
+                            <ShieldCheck size={20} className="text-cyan-400" />
+                            <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">Sentinel Security</h4>
+                         </div>
+                         <div className="grid grid-cols-1 gap-4">
+                            {['Frenado Autónomo', 'Sensores Blind-Spot', 'Cámara 360 Scan', 'Alerta de Tráfico Cruzado'].map(f => (
+                               <div key={f} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
+                                  <CheckCircle2 size={16} className="text-cyan-400" />
+                                  <span className="text-xs font-black text-slate-300 uppercase italic">{f}</span>
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+
+                      <div className="space-y-8">
+                         <div className="flex items-center gap-3">
+                            <Activity size={20} className="text-cyan-400" />
+                            <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">Estado de Unidad</h4>
+                         </div>
+                         <GlassContainer intensity="low" className="p-6 rounded-3xl border border-white/10">
+                            <div className="flex items-center gap-4 mb-4">
+                               <ProgressRing value={100} max={100} size={50} label="CERT" strokeWidth={4} color="#00e5ff" />
+                               <div>
+                                  <p className="text-xs font-black text-white italic uppercase">Nivel 13 Aprobado</p>
+                                  <p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase italic">Inspección Rigurosa 2026</p>
+                               </div>
+                            </div>
+                            <div className="p-4 bg-cyan-400/10 rounded-2xl border border-cyan-400/20">
+                               <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-[0.2em] leading-relaxed">Esta unidad ha sido sometida a un escaneo digital completo y validada por Sentinel Engine.</p>
+                            </div>
+                         </GlassContainer>
+                      </div>
+                   </div>
+                </div>
+              )}
+
+              {activeTab === 'contact' && (
+                 <div className="h-full flex items-center justify-center p-4">
+                    <div className="w-full max-w-2xl bg-white/5 rounded-[64px] border border-white/10 p-12 text-center shadow-2xl relative overflow-hidden group">
+                       <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                       <div className="relative z-10 flex flex-col items-center">
+                          <div className="w-24 h-24 bg-gradient-to-br from-primary to-cyan-400 rounded-full flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(0,180,216,0.5)]">
+                             <MessageCircle size={48} className="text-white" />
+                          </div>
+                          <h3 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4">¿Listo para la Misión?</h3>
+                          <p className="text-lg text-slate-400 font-medium mb-12 max-w-md">Conversa directamente con Richard IA o un estratega certificado para coordinar tu prueba de vuelo.</p>
+                          
+                          <div className="w-full flex flex-col md:flex-row gap-4">
+                             <button
+                               onClick={handleAction}
+                               className="flex-1 py-8 bg-white text-slate-950 rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-cyan-400 transition-all hover:scale-[1.05] shadow-xl"
+                             >
+                                <MessageCircle size={24} /> WhatsApp
+                             </button>
+                             <button
+                               className="flex-1 py-8 bg-primary text-white rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-primary/80 transition-all hover:scale-[1.05] shadow-xl shadow-primary/20"
+                             >
+                                <Phone size={24} /> Llamar
+                             </button>
+                          </div>
+                          
+                          <div className="mt-12 flex items-center gap-4 opacity-40">
+                             <div className="flex items-center gap-2">
+                                <ShieldCheck size={16} className="text-cyan-400" />
+                                <span className="text-[10px] font-black uppercase tracking-widest italic text-white">Transacción Segura</span>
+                             </div>
+                             <div className="h-1 w-1 rounded-full bg-slate-500" />
+                             <div className="flex items-center gap-2">
+                                <Zap size={16} className="text-cyan-400" />
+                                <span className="text-[10px] font-black uppercase tracking-widest italic text-white">Respuesta Inmediata</span>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Global Floating Actions (Pinned Footer) */}
+        <div className="p-6 lg:px-12 lg:py-8 border-t border-white/5 bg-black/40 backdrop-blur-3xl flex flex-col md:flex-row items-center justify-between gap-6 relative z-30">
+           <div className="flex items-end gap-6">
+              <div className="space-y-1">
+                 <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Precio de Venta</p>
+                 <p className="text-2xl lg:text-3xl font-black text-white italic tracking-tighter tabular-nums">${car.price.toLocaleString()}</p>
+              </div>
+              <div className="h-8 w-[1px] bg-white/10 hidden md:block" />
+              <div className="space-y-1">
+                 <p className="text-[8px] font-black text-cyan-500 uppercase tracking-[0.4em]">Financiamiento desde</p>
+                 <p className="text-4xl lg:text-5xl font-black text-cyan-400 italic tracking-tighter tabular-nums leading-none">
+                    $<AnimatedNumber value={calculatedPayment} />
+                    <span className="text-lg ml-1">/mes</span>
+                 </p>
+              </div>
+           </div>
+           
+           <button 
+             onClick={handleAction}
+             className="w-full md:w-auto px-16 py-6 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-[32px] font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
+           >
+              <Zap size={20} className="fill-white group-hover:animate-bounce" /> Autorizar Misión
+           </button>
         </div>
       </motion.div>
 
       <style jsx>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.2); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.4); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.3); }
+        .font-tech { font-family: 'Inter', system-ui, sans-serif; }
       `}</style>
     </motion.div>
   );
