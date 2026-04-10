@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
 import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
 import { notFound } from 'next/navigation';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 // ── Tactical City Data for PR Market Domination ──
 const CITIES: Record<string, {
@@ -159,9 +160,9 @@ function CityJsonLd({ city }: { city: typeof CITIES[string] }) {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
     name: `Richard Automotive — ${city.name}`,
-    description: `Dealer de autos usados certificados en ${city.name}, Puerto Rico. ${city.meta}.`,
+    description: `Dealer de autos usados certificados en ${city.name}, Puerto Rico. ${city.meta}. Con el respaldo de Central Ford.`,
     url: `https://richard-automotive.com/autos-usados/${city.slug}`,
-    telephone: '+1-787-000-0000',
+    telephone: BUSINESS_CONTACT.phone,
     address: {
       '@type': 'PostalAddress',
       addressLocality: city.name,
@@ -171,14 +172,14 @@ function CityJsonLd({ city }: { city: typeof CITIES[string] }) {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 18.2208,
-      longitude: -66.5901,
+      latitude: BUSINESS_CONTACT.geo.latitude,
+      longitude: BUSINESS_CONTACT.geo.longitude,
     },
     areaServed: {
       '@type': 'City',
       name: city.name,
     },
-    priceRange: '$$',
+    priceRange: '$$$',
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
