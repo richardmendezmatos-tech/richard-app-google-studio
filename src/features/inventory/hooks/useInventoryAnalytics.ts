@@ -38,6 +38,10 @@ export const useInventoryAnalytics = () => {
     ga.trackEvent('AI_Agent', action, details ? JSON.stringify(details) : undefined);
   }, []);
 
+  const trackTabChange = useCallback((carId: string, tabName: string) => {
+    ga.trackEvent('Engagement', 'tab_switch', `${carId}_to_${tabName}`);
+  }, []);
+
   return {
     trackCarView,
     trackCarViewIncremental,
@@ -47,5 +51,6 @@ export const useInventoryAnalytics = () => {
     trackVisualSearch,
     trackCompare,
     trackInteraction,
+    trackTabChange,
   };
 };

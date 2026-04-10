@@ -95,6 +95,10 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
   }, [onClose]);
 
   useEffect(() => {
+    analytics.trackTabChange(car.id, activeTab);
+  }, [activeTab, car.id, analytics]);
+
+  useEffect(() => {
     if (activeTab === 'overview' && !aiPitch && !loadingPitch) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoadingPitch(true);
@@ -261,9 +265,26 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       
                       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                         {loadingPitch ? (
-                          <div className="h-full flex flex-col items-center justify-center gap-4 opacity-50">
-                            <Loader2 className="animate-spin text-cyan-500" size={32} />
-                            <p className="text-[10px] uppercase tracking-widest text-center">Parsing Vector Data...</p>
+                          <div className="h-full flex flex-col items-center justify-center gap-6 overflow-hidden">
+                            <div className="relative w-full h-32 overflow-hidden bg-slate-900/50 rounded-2xl flex items-center justify-center">
+                              {/* Neural Scan Animation */}
+                              <motion.div 
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent"
+                                animate={{ x: ['-100%', '100%'] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                              />
+                              <div className="flex gap-2">
+                                {[0, 1, 2].map((i) => (
+                                  <motion.div 
+                                    key={i}
+                                    className="w-2 h-8 bg-cyan-500/30 rounded-full"
+                                    animate={{ height: [32, 48, 32] }}
+                                    transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-400 font-black animate-pulse">Running Neural Analysis...</p>
                           </div>
                         ) : (
                           <div className="text-[14px] leading-relaxed text-slate-300 font-medium space-y-4">
@@ -384,7 +405,15 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                              <span>APR Estimado</span>
                              <span className="text-cyan-400">{(creditRate * 100).toFixed(1)}%</span>
                           </div>
-                       </div>
+                        </div>
+
+                        {/* Financial Audit Note */}
+                        <div className="mt-8 p-4 rounded-3xl bg-amber-500/5 border border-amber-500/10 flex gap-3">
+                           <AlertCircle size={14} className="text-amber-500 shrink-0 mt-0.5" />
+                           <p className="text-[10px] text-slate-400 leading-tight">
+                              <strong>Socio Financiero PR:</strong> Pago estimado basado en crédito de excelencia. Sujeto a aprobación por Banco Popular, FirstBank u Oriental. No incluye seguros ni arbitrios.
+                           </p>
+                        </div>
                     </GlassContainer>
                   </div>
                 </div>
@@ -482,7 +511,27 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                              </div>
                              <div className="h-1 w-1 rounded-full bg-slate-500" />
                              <div className="flex items-center gap-2">
-                                <Zap size={16} className="text-cyan-400" />
+                                <ProgressRing 
+                                  value={car.year > 2024 ? 98 : 95} 
+                                  size={45}
+                                  strokeWidth={3}
+                                  label="HP Efficiency" 
+                                  color={car.make === 'Porsche' || car.price > 80000 ? '#f59e0b' : '#10b981'} 
+                                />
+                                <ProgressRing 
+                                  value={100} 
+                                  size={45}
+                                  strokeWidth={3}
+                                  label="Security" 
+                                  color="#06b6d4" 
+                                />
+                                <ProgressRing 
+                                  value={95} 
+                                  size={45}
+                                  strokeWidth={3}
+                                  label="Neural Log" 
+                                  color="#8b5cf6" 
+                                />
                                 <span className="text-[10px] font-black uppercase tracking-widest italic text-white">Respuesta Inmediata</span>
                              </div>
                           </div>
