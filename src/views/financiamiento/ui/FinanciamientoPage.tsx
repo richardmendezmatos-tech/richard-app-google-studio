@@ -12,6 +12,7 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { CreditCalculator } from '@/features/loans/ui/CreditCalculator';
+import { ApprovalSimulatorWidget } from '@/features/loans/ui/ApprovalSimulatorWidget';
 
 const WHATSAPP_LINK =
   'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20financiamiento';
@@ -148,6 +149,26 @@ const FinanciamientoPage: React.FC = () => {
 
         {/* Dynamic Calculator Section */}
         <CreditCalculator />
+
+        {/* F&I Approval Simulator — FlexDrive™ */}
+        <section className="py-20 px-6" id="simulador">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-5">
+              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
+              <span className="text-xs font-black text-indigo-400 uppercase tracking-widest">
+                Simulador FlexDrive™ — F&I Premium
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">
+              Calcula tu Pago <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Mensual Ahora</span>
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              Sin impacto a tu crédito. Sin presión. Selecciona tu perfil crediticio, ajusta el pronto y 
+              descubre exactamente cuánto pagas al mes — en segundos.
+            </p>
+          </div>
+          <ApprovalSimulatorWidget dealerId="richard-automotive" />
+        </section>
 
         {/* Benefits */}
         <section className="py-16 px-6 bg-slate-900/30">
