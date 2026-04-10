@@ -15,14 +15,31 @@ import {
   Activity,
   Search,
   Users,
+  ChevronRight,
+  Flame,
+  Target,
 } from 'lucide-react';
+
+interface HotLead {
+  id: string;
+  name: string;
+  phone: string;
+  interest?: string;
+  score: number;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  factors: string[];
+}
 
 interface TelemetryData {
   timestamp: string;
-  leads: { last_24h: number; last_7d: number; last_30d: number };
+  summary: {
+    leads_last_24h: number;
+    avg_score: number;
+    inventory_coverage: number;
+  };
+  hotLeads: HotLead[];
   neuralSearch: { recent_gaps: any[]; gap_count: number };
   whatsapp: { sent: number; scheduled: number; failed: number };
-  inventory: { vehicles_with_embeddings: number };
 }
 
 const CARD_CLASSES =
@@ -60,11 +77,11 @@ export default function CommandCenterPage() {
       });
       if (res.ok) {
         const result = await res.json();
-        alert(`✅ Sync completo: ${result.processed} vehículos procesados, ${result.failed} fallos.`);
+        alert(`✅ Sync completo: ${result.processed} unidades procesadas inteligentes.`);
         fetchTelemetry();
       }
     } catch (err) {
-      alert('❌ Error durante la sincronización.');
+      alert('❌ Error durante la sincronización inteligente.');
     } finally {
       setSyncing(false);
     }
@@ -72,12 +89,12 @@ export default function CommandCenterPage() {
 
   useEffect(() => {
     fetchTelemetry();
-    const interval = setInterval(fetchTelemetry, 60000); // Auto-refresh cada 60s
+    const interval = setInterval(fetchTelemetry, 60000);
     return () => clearInterval(interval);
   }, [fetchTelemetry]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-cyan-500/30">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -90,8 +107,8 @@ export default function CommandCenterPage() {
               <h1 className="text-lg font-black uppercase tracking-[0.25em]" style={{ fontFamily: 'var(--font-cinematic)' }}>
                 Command <span className="text-cyan-400">Center</span>
               </h1>
-              <p className="text-[10px] text-slate-500 tracking-widest uppercase">
-                Nivel 18 • Protocolo Sentinel Activo
+              <p className="text-[10px] text-slate-500 tracking-widest uppercase font-bold">
+                Nivel 19 • Inteligencia Neural Activa
               </p>
             </div>
           </div>
@@ -100,18 +117,18 @@ export default function CommandCenterPage() {
             <button
               onClick={fetchTelemetry}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl border border-white/5 text-xs text-slate-300 hover:text-white hover:border-cyan-500/30 transition-all"
+              className="px-4 py-2 bg-slate-800/50 rounded-xl border border-white/5 text-xs text-slate-300 hover:text-white transition-all flex items-center gap-2"
             >
               <RefreshCcw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              Update
             </button>
             <button
               onClick={triggerBulkSync}
               disabled={syncing}
-              className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all"
+              className="px-4 py-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center gap-2"
             >
               <Database className={`w-3.5 h-3.5 ${syncing ? 'animate-pulse' : ''}`} />
-              {syncing ? 'Syncing...' : 'Sync Inventario'}
+              {syncing ? 'Intelligent Sync...' : 'Sync IA Ingest'}
             </button>
           </div>
         </div>
@@ -123,112 +140,135 @@ export default function CommandCenterPage() {
           <KPICard
             icon={<Users className="w-5 h-5" />}
             label="Leads (24h)"
-            value={data?.leads.last_24h ?? '—'}
+            value={data?.summary.leads_last_24h ?? '—'}
             accent="cyan"
           />
           <KPICard
-            icon={<TrendingUp className="w-5 h-5" />}
-            label="Leads (7 días)"
-            value={data?.leads.last_7d ?? '—'}
+            icon={<Target className="w-5 h-5" />}
+            label="Avg. Lead Score"
+            value={`${data?.summary.avg_score ?? '—'}%`}
             accent="emerald"
           />
           <KPICard
             icon={<Brain className="w-5 h-5" />}
-            label="Vehículos con AI"
-            value={data?.inventory.vehicles_with_embeddings ?? '—'}
+            label="Neural Coverage"
+            value={data?.summary.inventory_coverage ?? '—'}
             accent="violet"
           />
           <KPICard
             icon={<MessageSquare className="w-5 h-5" />}
-            label="WhatsApp Enviados"
-            value={data?.whatsapp.sent ?? '—'}
+            label="WhatsApp Health"
+            value={`${data ? Math.round((data.whatsapp.sent / Math.max(data.whatsapp.sent + data.whatsapp.failed, 1)) * 100) : '—'}%`}
             accent="green"
           />
         </div>
 
-        {/* Main Grid */}
+        {/* Intelligence Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* WhatsApp Pipeline Status */}
-          <motion.div className={CARD_CLASSES} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-green-500/10">
-                <MessageSquare className="w-5 h-5 text-green-400" />
+          {/* Hot Leads Monitor */}
+          <motion.div 
+            className={`${CARD_CLASSES} lg:col-span-2`} 
+            initial={{ opacity: 0, x: -20 }} 
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-orange-500/10">
+                  <Flame className="w-5 h-5 text-orange-400" />
+                </div>
+                <div>
+                  <h2 className="font-bold text-sm tracking-wide">Hot Leads Monitor</h2>
+                  <p className="text-[10px] text-slate-500">Prospectos con alta probabilidad de cierre</p>
+                </div>
               </div>
-              <h2 className="font-bold text-sm tracking-wide">WhatsApp Pipeline</h2>
             </div>
-            <div className="space-y-4">
-              <StatusRow icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />} label="Enviados" value={data?.whatsapp.sent ?? 0} />
-              <StatusRow icon={<Activity className="w-4 h-4 text-amber-400" />} label="En Cola" value={data?.whatsapp.scheduled ?? 0} />
-              <StatusRow icon={<AlertTriangle className="w-4 h-4 text-red-400" />} label="Fallidos" value={data?.whatsapp.failed ?? 0} />
-            </div>
-            <div className="mt-6 pt-4 border-t border-white/5">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Delivery Rate</p>
-              <div className="mt-2 h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000"
-                  style={{
-                    width: data
-                      ? `${Math.round(((data.whatsapp.sent) / Math.max(data.whatsapp.sent + data.whatsapp.failed, 1)) * 100)}%`
-                      : '0%',
-                  }}
-                />
-              </div>
+
+            <div className="space-y-3">
+              {data?.hotLeads.length ? (
+                data.hotLeads.map((lead) => (
+                  <div key={lead.id} className="group p-4 bg-slate-800/30 rounded-2xl border border-white/[0.04] hover:border-cyan-500/30 transition-all flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
+                        lead.score > 85 ? 'bg-orange-500/20 text-orange-400' : 'bg-cyan-500/20 text-cyan-400'
+                      }`}>
+                        {lead.score}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-sm">{lead.name}</h3>
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1.5 uppercase tracking-wider">
+                          <Target className="w-3 h-3" /> {lead.interest || 'Interés General'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-6">
+                      <div className="hidden md:block text-right">
+                        <p className={`text-[10px] font-bold uppercase tracking-widest ${
+                          lead.priority === 'urgent' ? 'text-red-400' : 'text-cyan-400'
+                        }`}>
+                          Prioridad {lead.priority}
+                        </p>
+                        <p className="text-[9px] text-slate-600 truncate max-w-[150px]">
+                          {lead.factors[0]}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-cyan-400 transition" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-12 text-center text-slate-600">
+                  <Users className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                  <p className="text-xs">Esperando leads de alta intención...</p>
+                </div>
+              )}
             </div>
           </motion.div>
 
-          {/* Neural Search Intelligence */}
-          <motion.div
-            className={`${CARD_CLASSES} lg:col-span-2`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-violet-500/10">
-                <Search className="w-5 h-5 text-violet-400" />
+          {/* WhatsApp & Search Health */}
+          <div className="space-y-6">
+            <motion.div className={CARD_CLASSES} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 rounded-xl bg-green-500/10">
+                  <MessageSquare className="w-5 h-5 text-green-400" />
+                </div>
+                <h2 className="font-bold text-sm">Nurturing Status</h2>
               </div>
-              <div>
-                <h2 className="font-bold text-sm tracking-wide">Neural Search Gaps</h2>
-                <p className="text-[10px] text-slate-500">Búsquedas sin resultados — oportunidades de inventario</p>
+              <div className="space-y-4">
+                <StatusRow icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />} label="Completados" value={data?.whatsapp.sent ?? 0} />
+                <StatusRow icon={<Activity className="w-4 h-4 text-amber-400" />} label="En Secuencia" value={data?.whatsapp.scheduled ?? 0} />
+                <StatusRow icon={<AlertTriangle className="w-4 h-4 text-red-400" />} label="Fallidos" value={data?.whatsapp.failed ?? 0} />
               </div>
-            </div>
+            </motion.div>
 
-            {data?.neuralSearch.recent_gaps.length ? (
-              <div className="space-y-2 max-h-[280px] overflow-y-auto pr-2 scrollbar-thin">
-                {data.neuralSearch.recent_gaps.map((gap: any, i: number) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl border border-white/[0.03]"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span className="text-sm text-slate-300 truncate max-w-[320px]">
-                        &ldquo;{gap.query}&rdquo;
-                      </span>
-                    </div>
-                    {gap.detected_intent && (
-                      <span className="text-[10px] px-2 py-0.5 bg-violet-500/10 text-violet-400 rounded-full border border-violet-500/20 shrink-0">
-                        {gap.detected_intent}
-                      </span>
-                    )}
+            <motion.div className={CARD_CLASSES} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-xl bg-violet-500/10">
+                  <Search className="w-5 h-5 text-violet-400" />
+                </div>
+                <h2 className="font-bold text-sm">Gaps Detectados</h2>
+              </div>
+              <div className="space-y-2">
+                {data?.neuralSearch.recent_gaps.slice(0, 3).map((gap: any, i: number) => (
+                  <div key={i} className="p-2 bg-slate-800/50 rounded-lg text-[10px] text-slate-400 border border-white/[0.02]">
+                    &ldquo;{gap.query}&rdquo;
                   </div>
                 ))}
+                {(!data?.neuralSearch.recent_gaps.length) && (
+                  <p className="text-center py-4 text-[10px] text-slate-700">Inventario al 100%</p>
+                )}
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-40 text-slate-600">
-                <Shield className="w-8 h-8 mb-2" />
-                <p className="text-xs">Sin gaps detectados — cobertura perfecta</p>
-              </div>
-            )}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
 
-        {/* Footer */}
-        {lastRefresh && (
-          <p className="text-center text-[10px] text-slate-600 tracking-widest uppercase">
-            Última actualización: {lastRefresh.toLocaleTimeString('es-PR')}
+        {/* Bottom Banner */}
+        <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl flex items-center justify-center gap-3">
+          <Shield className="w-4 h-4 text-cyan-400" />
+          <p className="text-[10px] text-cyan-300 uppercase tracking-[0.2em] font-bold">
+            Protección de Datos Activa • Richard Automotive Command v2.4
           </p>
-        )}
+        </div>
       </main>
     </div>
   );
@@ -236,24 +276,13 @@ export default function CommandCenterPage() {
 
 // ─── Subcomponents ──────────────────────────────────────────────────
 
-function KPICard({
-  icon,
-  label,
-  value,
-  accent,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number | string;
-  accent: string;
-}) {
+function KPICard({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: number | string; accent: string }) {
   const colorMap: Record<string, string> = {
     cyan: 'from-cyan-500/10 border-cyan-500/10 text-cyan-400',
     emerald: 'from-emerald-500/10 border-emerald-500/10 text-emerald-400',
     violet: 'from-violet-500/10 border-violet-500/10 text-violet-400',
     green: 'from-green-500/10 border-green-500/10 text-green-400',
   };
-
   const colors = colorMap[accent] || colorMap.cyan;
 
   return (
@@ -261,13 +290,10 @@ function KPICard({
       className={`relative bg-gradient-to-br ${colors.split(' ')[0]} to-slate-900/60 backdrop-blur-xl border ${colors.split(' ')[1]} rounded-2xl p-5 overflow-hidden`}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
     >
       <div className={`mb-3 ${colors.split(' ')[2]}`}>{icon}</div>
       <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">{label}</p>
-      <p className="text-3xl font-black tabular-nums" style={{ fontFamily: 'var(--font-cinematic)' }}>
-        {value}
-      </p>
+      <p className="text-3xl font-black tabular-nums" style={{ fontFamily: 'var(--font-cinematic)' }}>{value}</p>
     </motion.div>
   );
 }
@@ -277,7 +303,7 @@ function StatusRow({ icon, label, value }: { icon: React.ReactNode; label: strin
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2.5">
         {icon}
-        <span className="text-sm text-slate-400">{label}</span>
+        <span className="text-xs text-slate-400">{label}</span>
       </div>
       <span className="text-sm font-bold tabular-nums">{value}</span>
     </div>

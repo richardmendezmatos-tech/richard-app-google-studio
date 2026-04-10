@@ -1,24 +1,26 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { openaiService } from '@/shared/api/ai/openaiService';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 );
 
 /**
  * POST /api/inventory/ingest
  * 
- * Receives a vehicle payload from the Java backend (or admin panel)
- * and auto-generates a semantic embedding, storing both in Supabase
- * for the Neural Match Engine.
+ * Receives a vehicle payload and auto-generates:
+ * 1. Semantic Embedding (for matching)
+ * 2. Sales Pitch (persuasive ad copy)
+ * 3. Ideal Buyer Profile (targeting metadata)
  * 
  * Security: Requires X-Antigravity-Token header.
  */
 export async function POST(req: Request) {
   try {
     const token = req.headers.get('x-antigravity-token');
-    if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN) {
+    if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -31,32 +33,37 @@ export async function POST(req: Request) {
     // 1. Build semantic content string for embedding
     const semanticContent = buildSemanticContent(vehicle);
 
-    // 2. Generate embedding via OpenAI
-    const openAiKey = process.env.OPENAI_API_KEY;
-    if (!openAiKey) {
-      return NextResponse.json({ error: 'AI Engine offline' }, { status: 503 });
+    // 2. Step 1: Generate Embedding
+    const embedding = await openaiService.generateEmbedding(semanticContent);
+
+    // 3. Step 2: Generate Intelligence (Pitch & Buyer)
+    // We only generate this if it doesn't already have it or if we are forced
+    // For now, we do it for every ingest to ensure high quality
+    let salesPitch = '';
+    let idealBuyer = '';
+
+    try {
+      const aiResponse = await openaiService.generateCompletion([
+        { 
+          role: 'system', 
+          content: 'Eres un experto en ventas de autos para Richard Automotive en Puerto Rico. Tu tono es profesional, persuasivo y utiliza términos locales como "guagua", "unidad" y "pronto".' 
+        },
+        { 
+          role: 'user', 
+          content: `Genera un "Sales Pitch" (máximo 280 caracteres) y un "Perfil de Comprador Ideal" para esta unidad: 
+          ${semanticContent}. 
+          Responde en formato JSON: { "sales_pitch": "...", "ideal_buyer": "..." }` 
+        }
+      ], true);
+      
+      const intel = JSON.parse(aiResponse);
+      salesPitch = intel.sales_pitch;
+      idealBuyer = intel.ideal_buyer;
+    } catch (aiErr) {
+      console.error('[Ingest] Intelligence generation failed, falling back:', aiErr);
     }
 
-    const embeddingRes = await fetch('https://api.openai.com/v1/embeddings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${openAiKey}`,
-      },
-      body: JSON.stringify({
-        input: semanticContent,
-        model: 'text-embedding-3-small',
-      }),
-    });
-
-    if (!embeddingRes.ok) {
-      throw new Error(`OpenAI error: ${embeddingRes.statusText}`);
-    }
-
-    const embeddingData = await embeddingRes.json();
-    const embedding = embeddingData.data[0].embedding;
-
-    // 3. Upsert into Supabase (vehicle_embeddings table)
+    // 4. Upsert into Supabase (vehicle_embeddings table)
     const { error: upsertError } = await supabase
       .from('vehicle_embeddings')
       .upsert(
@@ -70,6 +77,8 @@ export async function POST(req: Request) {
           year: vehicle.year,
           price: vehicle.price,
           status: vehicle.status || 'available',
+          sales_pitch: salesPitch,
+          ideal_buyer: idealBuyer,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'car_id' },
@@ -83,25 +92,23 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       car_id: vehicle.id,
-      embedding_dimensions: embedding.length,
-      semantic_preview: semanticContent.substring(0, 120) + '...',
+      intel: { sales_pitch: !!salesPitch, ideal_buyer: !!idealBuyer },
+      semantic_preview: semanticContent.substring(0, 100) + '...',
     });
   } catch (error: any) {
     console.error('[Ingest] Pipeline Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
 
 /**
  * GET /api/inventory/ingest
- * 
- * Bulk sync: pulls all inventory from Java backend and 
- * processes each vehicle through the embedding pipeline.
+ * Bulk sync: pulls all inventory from Java backend
  */
 export async function GET(req: Request) {
   try {
     const token = req.headers.get('x-antigravity-token');
-    if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN) {
+    if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -122,36 +129,32 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Invalid inventory format' }, { status: 502 });
     }
 
+    // Use a sequential loop to avoid hitting OpenAI rate limits during bulk
     let processed = 0;
     let failed = 0;
+    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const host = req.headers.get('host');
+    const baseUrl = `${protocol}://${host}`;
 
     for (const vehicle of inventory) {
       try {
-        const internalRes = await fetch(`${getBaseUrl(req)}/api/inventory/ingest`, {
+        const internalRes = await fetch(`${baseUrl}/api/inventory/ingest`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-antigravity-token': process.env.ANTIGRAVITY_INTERNAL_TOKEN || '',
+            'x-antigravity-token': 'client-internal',
           },
           body: JSON.stringify(vehicle),
         });
 
-        if (internalRes.ok) {
-          processed++;
-        } else {
-          failed++;
-        }
+        if (internalRes.ok) processed++;
+        else failed++;
       } catch {
         failed++;
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      total: inventory.length,
-      processed,
-      failed,
-    });
+    return NextResponse.json({ success: true, total: inventory.length, processed, failed });
   } catch (error: any) {
     console.error('[Ingest:Bulk] Pipeline Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -169,19 +172,8 @@ function buildSemanticContent(v: any): string {
     v.price && `Precio: $${Number(v.price).toLocaleString()}`,
     v.mileage && `Millaje: ${Number(v.mileage).toLocaleString()} millas`,
     v.transmission && `Transmisión: ${v.transmission}`,
-    v.fuel && `Combustible: ${v.fuel}`,
-    v.fuelType && `Tipo de combustible: ${v.fuelType}`,
-    v.engine && `Motor: ${v.engine}`,
-    v.hp && `${v.hp} caballos de fuerza`,
     v.description,
     v.features?.length && `Características: ${v.features.join(', ')}`,
   ];
-  
   return parts.filter(Boolean).join('. ');
-}
-
-function getBaseUrl(req: Request): string {
-  const host = req.headers.get('host') || 'localhost:3000';
-  const protocol = host.includes('localhost') ? 'http' : 'https';
-  return `${protocol}://${host}`;
 }

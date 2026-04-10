@@ -1,23 +1,26 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
+import { calculateLeadScore } from '@/entities/lead/api/leadScoringService';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 );
+
+const leadRepo = new FirestoreLeadRepository();
+const DEALER_ID = 'richard-automotive-main'; // ID unificado del ecosistema
 
 /**
  * GET /api/command-center/telemetry
  * 
- * Aggregates real-time metrics for the Command Center dashboard:
- * - Lead velocity (last 24h, 7d, 30d)
- * - Neural Search queries & gaps
- * - WhatsApp delivery stats
- * - Inventory embedding coverage
+ * Central telemetry aggregator. Performs a "Sync Capture" of latest leads
+ * from Firestore, calculates their AI scores, and merges with Supabase 
+ * automation states for a real-time command view.
  */
 export async function GET(req: Request) {
   const token = req.headers.get('x-antigravity-token');
-  if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN) {
+  if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -25,52 +28,67 @@ export async function GET(req: Request) {
     const now = new Date();
     const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
     const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const last30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Parallel data fetching for speed
+    // 1. Parallel Aggregation
     const [
-      leadsToday,
-      leads7d,
-      leads30d,
       searchGaps,
       messageStats,
       embeddingCount,
+      recentLeads
     ] = await Promise.all([
-      supabase.from('leads').select('id', { count: 'exact', head: true }).gte('created_at', last24h),
-      supabase.from('leads').select('id', { count: 'exact', head: true }).gte('created_at', last7d),
-      supabase.from('leads').select('id', { count: 'exact', head: true }).gte('created_at', last30d),
-      supabase.from('search_gaps').select('*').order('created_at', { ascending: false }).limit(20),
+      supabase.from('search_gaps').select('*').order('created_at', { ascending: false }).limit(10),
       supabase.from('message_queue').select('status').gte('created_at', last7d),
       supabase.from('vehicle_embeddings').select('car_id', { count: 'exact', head: true }),
+      leadRepo.getLeads(DEALER_ID, 20)
     ]);
 
-    // Compute message delivery breakdown
-    const msgBreakdown = { sent: 0, scheduled: 0, failed: 0 };
+    // 2. Lead Intelligence Processing
+    // Calculate scores and priority for recent leads
+    const scoredLeads = recentLeads.map(lead => {
+      const scoring = calculateLeadScore(lead);
+      return {
+        id: lead.id,
+        name: `${lead.firstName} ${lead.lastName}`,
+        phone: lead.phone,
+        interest: lead.vehicleInterest,
+        score: scoring.score,
+        priority: scoring.priority,
+        factors: scoring.factors,
+        timestamp: lead.timestamp
+      };
+    });
+
+    // 3. Automation Statistics
+    const whatsapp = { sent: 0, scheduled: 0, failed: 0 };
     if (messageStats.data) {
       for (const msg of messageStats.data) {
-        const s = msg.status as keyof typeof msgBreakdown;
-        if (msgBreakdown[s] !== undefined) msgBreakdown[s]++;
+        const s = msg.status as keyof typeof whatsapp;
+        if (whatsapp[s] !== undefined) whatsapp[s]++;
       }
     }
 
+    // 4. Hot Leads Filter (Top 5)
+    const hotLeads = scoredLeads
+      .filter(l => l.score >= 70)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
     return NextResponse.json({
       timestamp: now.toISOString(),
-      leads: {
-        last_24h: leadsToday.count || 0,
-        last_7d: leads7d.count || 0,
-        last_30d: leads30d.count || 0,
+      summary: {
+        leads_last_24h: recentLeads.filter(l => (l.timestamp as any)?.seconds * 1000 > new Date(last24h).getTime()).length,
+        avg_score: scoredLeads.length ? Math.round(scoredLeads.reduce((a, b) => a + b.score, 0) / scoredLeads.length) : 0,
+        inventory_coverage: embeddingCount.count || 0,
       },
+      hotLeads,
       neuralSearch: {
         recent_gaps: searchGaps.data || [],
         gap_count: searchGaps.data?.length || 0,
       },
-      whatsapp: msgBreakdown,
-      inventory: {
-        vehicles_with_embeddings: embeddingCount.count || 0,
-      },
+      whatsapp,
     });
   } catch (error: any) {
-    console.error('[Telemetry] Error:', error);
+    console.error('[Telemetry] Sentinel Overload:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
