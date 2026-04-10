@@ -1,15 +1,11 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { openaiService } from '@/shared/api/ai/openaiService';
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig, createCar } from '@dataconnect/generated';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-);
 
-const dataConnect = getDataConnect(connectorConfig);
 
 /**
  * POST /api/inventory/ingest
@@ -22,6 +18,11 @@ const dataConnect = getDataConnect(connectorConfig);
  * Security: Requires X-Antigravity-Token header.
  */
 export async function POST(req: Request) {
+  const dataConnect = getDataConnect(connectorConfig);
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  );
   try {
     const token = req.headers.get('x-antigravity-token');
     if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
@@ -127,6 +128,11 @@ export async function POST(req: Request) {
  * Bulk sync: pulls all inventory from Java backend
  */
 export async function GET(req: Request) {
+  const dataConnect = getDataConnect(connectorConfig);
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  );
   try {
     const token = req.headers.get('x-antigravity-token');
     if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {

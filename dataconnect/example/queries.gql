@@ -66,6 +66,7 @@ query GetLead($id: UUID!) @auth(level: USER, insecureReason: "Staff can view any
     documentsSent
     dealClosed
     appointmentCompleted
+    dealerId
   }
 }
 
@@ -88,6 +89,7 @@ query ListLeads($dealerId: String, $limit: Int, $offset: Int) @auth(level: USER)
     closureProbability
     timestamp
     vehicleOfInterest
+    dealerId
   }
 }
 

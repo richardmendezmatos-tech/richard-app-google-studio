@@ -59,16 +59,16 @@ export const generateCarMarketingContent = async (
   locale: 'es' | 'en' = 'es',
 ): Promise<MarketingContent> => {
   const psychology = determineSalesAngle(car);
-  const dealerInfo = BUSINESS_CONTACT.dealer;
+  const dealerInfo = BUSINESS_CONTACT;
 
   const prompt = `
         ACTÚA COMO UN CONTENT STRATEGIST SENIOR EXPERTO EN EL MERCADO AUTOMOTRIZ DE PUERTO RICO.
-        Tu misión es generar contenido que detenga el scroll y genere leads inmediatos para Richard Automotive en ${dealerInfo.location.city}.
+        Tu misión es generar contenido que detenga el scroll y genere leads inmediatos para Richard Automotive en ${dealerInfo.address.city}.
 
         PERFIL DEL NEGOCIO:
         - Dealer: ${dealerInfo.name} (Central Ford)
-        - Ubicación: ${dealerInfo.location.address}, Vega Alta, PR.
-        - Teléfono de cierre: ${BUSINESS_CONTACT.primaryPhone}
+        - Ubicación: ${dealerInfo.address.street}, ${dealerInfo.address.city}, ${dealerInfo.address.state}.
+        - Teléfono de cierre: ${BUSINESS_CONTACT.phone}
         - Personalidad: Richard es Finance Manager Experto. Si el cliente tiene crédito afectado o busca el mejor negocio, Richard lo resuelve.
 
         DATOS DE LA UNIDAD:
@@ -100,7 +100,7 @@ export const generateCarMarketingContent = async (
         3. TIKTOK SCRIPT (Viral Hook):
            - [0-2s] Gancho: "¿Buscabas esta nena? Mira lo que acaba de llegar a Central Ford."
            - [2-8s] Detalles rápidos: "Aros, interiores, tecnología... está nueva."
-           - [8-12s] Cierre: "Richard te la monta. Llama al ${BUSINESS_CONTACT.primaryPhone}."
+           - [8-12s] Cierre: "Richard te la monta. Llama al ${BUSINESS_CONTACT.phone}."
 
         4. WHATSAPP (Direct Sales Message):
            - Formato optimizado para reenviar a leads.
@@ -168,9 +168,9 @@ export const generateCarMarketingContent = async (
     console.error('Marketing Gen Error:', error);
     return {
       instagram: `¡${car.name} impecable en Central Ford! 🚗💨 Richard te ayuda con el financiamiento.`,
-      facebook: `¿Buscabas una ${car.name}? Acaba de llegar a Vega Alta. ¡Richard resuelve! Llama al ${BUSINESS_CONTACT.primaryPhone}.`,
+      facebook: `¿Buscabas una ${car.name}? Acaba de llegar a Vega Alta. ¡Richard resuelve! Llama al ${BUSINESS_CONTACT.phone}.`,
       tiktokScript: '¡Mira esta nave en Central Ford! Sal hoy guiando con Richard.',
-      whatsapp: `*${car.name}* - Disponible en Central Ford.\n\nRichard te espera para cuadrar el mejor negocio. 📞 ${BUSINESS_CONTACT.primaryPhone}`,
+      whatsapp: `*${car.name}* - Disponible en Central Ford.\n\nRichard te espera para cuadrar el mejor negocio. 📞 ${BUSINESS_CONTACT.phone}`,
     };
   }
 };

@@ -1,12 +1,10 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
 import { calculateLeadScore } from '@/entities/lead/api/leadScoringService';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-);
+
 
 const leadRepo = new FirestoreLeadRepository();
 const DEALER_ID = 'richard-automotive-main'; // ID unificado del ecosistema
@@ -19,6 +17,10 @@ const DEALER_ID = 'richard-automotive-main'; // ID unificado del ecosistema
  * automation states for a real-time command view.
  */
 export async function GET(req: Request) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  );
   const token = req.headers.get('x-antigravity-token');
   if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

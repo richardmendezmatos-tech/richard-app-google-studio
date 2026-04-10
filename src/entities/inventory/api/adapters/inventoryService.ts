@@ -101,61 +101,36 @@ export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
   return response.data.car_insert.id;
 };
 
-export const updateVehicle = async (id: string, updates: Partial<Car>) => {
+export const updateVehicle = async (id: string, updates: Partial<Car>): Promise<void> => {
+  // TODO (SQL-Migration): Replace with DataConnect updateCar mutation when available.
+  // Firestore writes for inventory are disabled post-migration.
   const validatedUpdates = carSchema.partial().parse(updates);
-
-  const docRef = doc(db, CARS_COLLECTION, id);
-  await updateDoc(docRef, {
-    ...validatedUpdates,
-    updatedAt: serverTimestamp(),
-  });
+  console.warn('[inventoryService] updateVehicle: SQL mutation not yet mapped. id:', id, 'updates:', validatedUpdates);
 };
 
-export const deleteVehicle = async (id: string) => {
-  await deleteDoc(doc(db, CARS_COLLECTION, id));
+export const deleteVehicle = async (id: string): Promise<void> => {
+  // TODO (SQL-Migration): Replace with DataConnect deleteCar mutation when available.
+  console.warn('[inventoryService] deleteVehicle: SQL mutation not yet mapped. id:', id);
 };
 
-export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]) => {
-  const currentDealerId = (typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-  const batch = writeBatch(db);
-
-  inventory.forEach((car) => {
-    // Create an idempotent ID: brand-model-year slug
-    const idSlug = `${car.name}-${car.year}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-
-    const carRef = doc(db, CARS_COLLECTION, idSlug);
-    batch.set(
-      carRef,
-      {
-        ...car,
-        dealerId: currentDealerId,
-        updatedAt: serverTimestamp(),
-        // Only set createdAt if it doesn't exist (handled by set with merge if needed,
-        // but for initial seeding we want to ensure we don't duplicate)
-        createdAt: serverTimestamp(),
-      },
-      { merge: true },
-    );
-  });
-
-  await batch.commit();
+export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]): Promise<void> => {
+  // TODO (SQL-Migration): Implement bulk insert via DataConnect createCar mutation.
+  // This function is a no-op until the bulk SQL migration script is executed.
+  console.warn('[inventoryService] uploadInitialInventory: Bulk SQL insert not yet implemented. Items:', inventory.length);
 };
 
 // --- Metrics & Analytics ---
 
-export const incrementCarView = async (carId: string) => {
-  const carRef = doc(db, CARS_COLLECTION, carId);
-  await setDoc(carRef, { views: increment(1) }, { merge: true });
-
-  const analytics = await getAnalyticsService();
-  if (typeof window !== 'undefined' && analytics) {
-    const { logEvent } = await import('firebase/analytics');
-    logEvent(analytics, 'view_item', {
-      items: [{ item_id: carId }],
-    });
+export const incrementCarView = async (carId: string): Promise<void> => {
+  // Analytics only — no Firestore write needed post-migration.
+  try {
+    const analytics = await getAnalyticsService();
+    if (typeof window !== 'undefined' && analytics) {
+      const { logEvent } = await import('firebase/analytics');
+      logEvent(analytics, 'view_item', { items: [{ item_id: carId }] });
+    }
+  } catch (e) {
+    console.debug('[inventoryService] incrementCarView analytics skipped', e);
   }
 };
 

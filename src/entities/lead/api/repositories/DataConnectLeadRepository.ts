@@ -82,7 +82,7 @@ export class DataConnectLeadRepository implements LeadRepository {
        
        let count = 0;
        for (const lead of leads) {
-          const pastTime = lead.timestamp?.toMillis ? lead.timestamp.toMillis() : lead.timestamp?.getTime?.() || 0;
+          const pastTime = lead.timestamp?.toMillis ? lead.timestamp.toMillis() : (lead.timestamp?.seconds ? lead.timestamp.seconds * 1000 : 0);
           if (now - pastTime <= msInHours) {
             count++;
           }

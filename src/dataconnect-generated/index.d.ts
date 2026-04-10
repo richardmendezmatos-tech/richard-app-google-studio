@@ -105,6 +105,7 @@ export interface GetLeadData {
     documentsSent?: boolean | null;
     dealClosed?: boolean | null;
     appointmentCompleted?: boolean | null;
+    dealerId?: string | null;
   } & Lead_Key;
 }
 
@@ -173,6 +174,7 @@ export interface ListLeadsData {
     closureProbability?: number | null;
     timestamp: DateString;
     vehicleOfInterest?: string | null;
+    dealerId?: string | null;
   } & Lead_Key)[];
 }
 
