@@ -73,3 +73,38 @@ export const captureHotLead = async (leadData: {
     console.error('[Supabase] Exception in captureHotLead:', err);
   }
 };
+
+/**
+ * createPurchaseOrderDraft
+ * Registra una orden de compra sugerida por la IA de Houston basándose en Search Gaps.
+ */
+export const createPurchaseOrderDraft = async (orderData: {
+  query: string;
+  recommendation: string;
+  roi: number;
+  priority: string;
+  reason: string;
+}) => {
+  try {
+    const { error } = await supabase.from('purchase_orders').insert({
+      query: orderData.query,
+      recommendation: orderData.recommendation,
+      estimated_roi: orderData.roi,
+      priority: orderData.priority,
+      reason: orderData.reason,
+      status: 'draft',
+      created_at: new Date().toISOString()
+    });
+
+    if (error) {
+       console.error('[Supabase] Error creating PO draft:', error);
+       return { success: false, error };
+    }
+
+    console.log('[Supabase] PO Draft created successfully.');
+    return { success: true };
+  } catch (err) {
+    console.error('[Supabase] Exception in createPurchaseOrderDraft:', err);
+    return { success: false, error: err };
+  }
+};

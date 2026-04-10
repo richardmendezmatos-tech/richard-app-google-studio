@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Search, AlertTriangle, TrendingUp, ShoppingBag, CheckCircle, BarChart3, Info } from 'lucide-react';
 import { analyzeGap, SourcingOpportunity } from '../../api/sourcingIntelligence';
+import { createPurchaseOrderDraft } from '@/shared/api/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SearchGap {
@@ -18,16 +19,32 @@ interface Props {
 export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
   const [activeOpportunity, setActiveOpportunity] = useState<string | null>(null);
   const [draftedOrders, setDraftedOrders] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
 
   if (!gaps.length) return null;
 
   const opportunities = gaps.map(g => analyzeGap(g.query, g.count));
 
-  const handleDraftOrder = (query: string) => {
-    // Simulando persistencia de intención de compra
-    setDraftedOrders(prev => [...prev, query]);
-    // TODO: Connect with Supabase 'purchase_orders' draft table in future phase
-    console.log(`[NeuralIntelligence] Draft Order created for: ${query}`);
+  const handleDraftOrder = async (opportunity: SourcingOpportunity) => {
+    setIsSubmitting(opportunity.query);
+    try {
+      const result = await createPurchaseOrderDraft({
+        query: opportunity.query,
+        recommendation: opportunity.recommendation,
+        roi: opportunity.roi,
+        priority: opportunity.priority,
+        reason: opportunity.reason
+      });
+
+      if (result.success) {
+        setDraftedOrders(prev => [...prev, opportunity.query]);
+        console.log(`[NeuralIntelligence] Functional PO Draft created for: ${opportunity.query}`);
+      }
+    } catch (error) {
+      console.error('[NeuralIntelligence] Failed to create PO draft:', error);
+    } finally {
+      setIsSubmitting(null);
+    }
   };
 
   return (
@@ -124,19 +141,26 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (!isDrafted) handleDraftOrder(opp.query);
+                          if (!isDrafted && isSubmitting !== opp.query) handleDraftOrder(opp);
                         }}
-                        disabled={isDrafted}
+                        disabled={isDrafted || isSubmitting === opp.query}
                         className={`w-full py-2.5 rounded-xl font-black text-[9px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${
                           isDrafted 
                             ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                            : 'bg-violet-500 hover:bg-violet-400 text-white shadow-lg shadow-violet-500/20'
+                            : isSubmitting === opp.query
+                              ? 'bg-violet-500/40 text-white animate-pulse cursor-wait'
+                              : 'bg-violet-500 hover:bg-violet-400 text-white shadow-lg shadow-violet-500/20'
                         }`}
                       >
                         {isDrafted ? (
                           <>
                             <CheckCircle size={14} />
                             Orden en Draft
+                          </>
+                        ) : isSubmitting === opp.query ? (
+                          <>
+                            <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            Procesando Intel...
                           </>
                         ) : (
                           <>
