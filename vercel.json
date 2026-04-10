@@ -52,7 +52,7 @@
   "crons": [
     {
       "path": "/api/cron/messages",
-      "schedule": "0 */4 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
