@@ -50,7 +50,7 @@ export async function GET(req: Request) {
         id: lead.id,
         name: `${lead.firstName} ${lead.lastName}`,
         phone: lead.phone,
-        interest: lead.vehicleInterest,
+        interest: lead.vehicleOfInterest,
         score: scoring.score,
         priority: scoring.priority,
         factors: scoring.factors,
