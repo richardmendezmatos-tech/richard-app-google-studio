@@ -96,11 +96,11 @@ export const HoustonDashboard: React.FC = () => {
       {/* Main Grid: Dual Pulse Interface */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
         
-        {/* COL LEFT: Mission Pulse (Business Intelligence) */}
+        {/* COL LEFT: Strategic Intelligence (N15) */}
         <div className="lg:col-span-4 flex flex-col gap-6">
-          <div className="flex items-center gap-2 mb-2">
-             <TrendingUp size={16} className="text-primary" />
-             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Mission Pulse (N15)</span>
+          <div className="flex items-center gap-2 mb-2 border-l-2 border-primary pl-3">
+             <Brain size={16} className="text-primary" />
+             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Strategic Intelligence</span>
           </div>
           
           <LeadIntelligenceWidget leads={businessData?.hotLeads} />
