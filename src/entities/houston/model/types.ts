@@ -34,6 +34,35 @@ export interface HoustonTelemetry {
     fid: HoustonMetric;
     cls: HoustonMetric;
   };
+
+  // Nivel 15 Strategic Business Intelligence
+  businessMetrics?: {
+    hotLeads: Array<{
+      id: string;
+      name: string;
+      score: number;
+      priority: string;
+      interest: string;
+      factors: string[];
+      timestamp: any;
+    }>;
+    searchGaps: Array<{
+      query: string;
+      count: number;
+      last_searched: string;
+    }>;
+    whatsappStats: {
+      sent: number;
+      scheduled: number;
+      failed: number;
+    };
+    summary: {
+      leads_last_24h: number;
+      avg_score: number;
+      inventory_coverage: number;
+    };
+  };
+
   recentEvents: Array<{
     id: string;
     timestamp: number;

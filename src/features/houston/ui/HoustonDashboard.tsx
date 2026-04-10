@@ -20,11 +20,16 @@ import {
 import styles from './HoustonDashboard.module.css';
 import { HoustonTerminalLog } from './components/HoustonTerminalLog';
 import { BusinessHealthWidget } from './components/BusinessHealthWidget';
+import { LeadIntelligenceWidget } from './components/LeadIntelligenceWidget';
+import { NeuralSearchTicker } from './components/NeuralSearchTicker';
+import { WhatsAppOperationsHUD } from './components/WhatsAppOperationsHUD';
 import { DI } from '@/app/di/registry';
 import { HoustonTelemetry } from '@/entities/houston/model/types';
+import { useBusinessTelemetry } from '@/entities/houston/api/useBusinessTelemetry';
 
 export const HoustonDashboard: React.FC = () => {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
+  const { businessData, loading: bizLoading } = useBusinessTelemetry();
   
   // Real-time Telemetry Subscription (Nivel 13)
   useEffect(() => {
@@ -88,29 +93,64 @@ export const HoustonDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Grid: Telemetry + Terminal */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-        {/* Terminal Section */}
-        <div className="lg:col-span-8">
-          <HoustonTerminalLog events={telemetry.recentEvents} />
+      {/* Main Grid: Dual Pulse Interface */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+        
+        {/* COL LEFT: Mission Pulse (Business Intelligence) */}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className="flex items-center gap-2 mb-2">
+             <TrendingUp size={16} className="text-primary" />
+             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Mission Pulse (N15)</span>
+          </div>
+          
+          <LeadIntelligenceWidget leads={businessData?.hotLeads} />
+          <NeuralSearchTicker gaps={businessData?.searchGaps} />
+          
+          <div className="grid grid-cols-2 gap-4">
+             <div className="glass-premium p-4 border border-white/5">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Leads 24h</p>
+                <p className="text-2xl font-black text-white">{businessData?.summary.leads_last_24h || 0}</p>
+             </div>
+             <div className="glass-premium p-4 border border-white/5">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Avg Score</p>
+                <p className="text-2xl font-black text-primary">{businessData?.summary.avg_score || 0}%</p>
+             </div>
+          </div>
         </div>
 
-        {/* Telemetry Section */}
-        <div className="lg:col-span-4 grid grid-cols-1 gap-4">
+        {/* COL CENTER: Neural Operations (Technical) */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+           <div className="flex items-center gap-2 mb-2">
+              <Layers size={16} className="text-cyan-400" />
+              <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Neural Operations</span>
+           </div>
+           
+           <HoustonTerminalLog events={telemetry.recentEvents} />
+           <WhatsAppOperationsHUD stats={businessData?.whatsappStats} />
+           
+           <BusinessHealthWidget />
+        </div>
+
+        {/* COL RIGHT: System Telemetry (Sentinel) */}
+        <div className="lg:col-span-3 flex flex-col gap-4">
+          <div className="flex items-center gap-2 mb-2">
+             <Activity size={16} className="text-indigo-400" />
+             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">System Telemetry</span>
+          </div>
+
           {/* Structural Health */}
-          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-primary/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-primary/10 rounded-xl">
-                <ShieldCheck className="text-primary" size={18} />
+          <div className="glass-premium p-4 border border-white/5 flex flex-col gap-3 group hover:border-primary/20 transition-all">
+            <div className="flex items-center justify-between">
+              <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                Integrity
               </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  ESTADO ESTRUCTURAL
-                </div>
-                <div className="text-xl font-black text-white">{telemetry.metrics.structuralHealth.value} Integrity</div>
-              </div>
+              <ShieldCheck className="text-primary" size={14} />
             </div>
-            <div className="w-16 h-1.5 bg-slate-900 rounded-full overflow-hidden">
+            <div className="flex items-baseline gap-2">
+               <div className="text-2xl font-black text-white">{telemetry.metrics.structuralHealth.value}</div>
+               <div className="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Global</div>
+            </div>
+            <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden">
               <div 
                 ref={healthRef}
                 className="h-full bg-primary transition-all duration-1000 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" 
@@ -118,183 +158,58 @@ export const HoustonDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Database Latency (N13) */}
-          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-cyan-500/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-cyan-500/10 rounded-xl">
-                <Zap className="text-cyan-400" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  LATENCIA DB (REAL-TIME)
-                </div>
-                <div className="text-xl font-black text-white">{telemetry.metrics.dbLatency.value}{telemetry.metrics.dbLatency.unit}</div>
-              </div>
-            </div>
-            <div className="flex gap-0.5 items-end h-6">
-              {[1, 2, 3, 4, 5, 6, 7].map((i) => {
-                const latencyValue = typeof telemetry.metrics.dbLatency.value === 'number' ? telemetry.metrics.dbLatency.value : 10;
-                const active = i <= (latencyValue < 50 ? 5 : 2);
-                return (
-                  <div
-                    key={i}
-                    className={`w-1 rounded-full transition-all duration-500 ${active ? 'bg-cyan-500' : 'bg-slate-800'}`}
-                    style={{ height: `${20 + (i * 10)}%` }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Circuit Breakers (N13) */}
-          <div className="glass-premium p-4 border border-white/5 flex items-center justify-between group hover:border-amber-500/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-amber-500/10 rounded-xl">
-                <CircleDot className="text-amber-400" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  CIRCUIT BREAKERS
-                </div>
-                <div className="text-xl font-black text-white">
-                  {telemetry.metrics.activeBreakers.value} <span className="text-[10px] text-slate-500">ACTIVE</span>
-                </div>
-              </div>
-            </div>
-            <div className={`w-2 h-2 rounded-full ${telemetry.metrics.activeBreakers.value === 0 ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
-          </div>
-
-          {/* AI Inference Latency (N14) */}
-          <div className="glass-premium p-4 border border-indigo-500/10 flex items-center justify-between group hover:border-indigo-500/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-indigo-500/10 rounded-xl">
-                <Brain className="text-indigo-400" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  IA INFERENCE (N14)
-                </div>
-                <div className="text-xl font-black text-white">
-                  {telemetry.metrics.inferenceLatency.value} <span className="text-[10px] text-slate-500">{telemetry.metrics.inferenceLatency.unit}</span>
-                </div>
-              </div>
-            </div>
-            <Activity className="text-indigo-500/40 animate-pulse" size={16} />
-          </div>
-
-          {/* Lead Velocity (N14) */}
-          <div className="glass-premium p-4 border border-blue-500/10 flex items-center justify-between group hover:border-blue-500/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-blue-500/10 rounded-xl">
-                <TrendingUp className="text-blue-400" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  LEAD VELOCITY (REAL)
-                </div>
-                <div className="text-xl font-black text-white">
-                  {telemetry.metrics.leadVelocity.value} <span className="text-[10px] text-slate-500">{telemetry.metrics.leadVelocity.unit}</span>
-                </div>
-              </div>
-            </div>
-            <div className={`w-2 h-2 rounded-full ${telemetry.metrics.leadVelocity.status === 'healthy' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
-          </div>
-
-          {/* RUM Sentinel (Nivel 15 Core Web Vitals) */}
+          {/* Performance Overlay (RUM) */}
           <div className="glass-premium p-6 border border-cyan-500/10 group hover:border-cyan-500/20 transition-all">
-            <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-              <Zap size={14} className="animate-pulse" /> RUM SENTINEL • PERFORMANCE
+            <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] mb-6 flex items-center justify-between">
+              <span>Performance</span>
+              <Wifi size={14} className="animate-pulse" />
             </div>
-            <div className="space-y-4">
-              {/* LCP Overlay */}
+            <div className="space-y-6">
               <div>
-                <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5">
-                  <span>LCP (Carga)</span>
+                <div className="flex justify-between text-[8px] font-black text-slate-500 uppercase tracking-widest mb-2">
+                  <span>LCP</span>
                   <span className={telemetry.metrics.lcp.status === 'healthy' ? 'text-emerald-400' : 'text-amber-400'}>
-                    {telemetry.metrics.lcp.value}{telemetry.metrics.lcp.unit}
+                    {telemetry.metrics.lcp.value}{telemetry.metrics.lcp.unit || 'ms'}
                   </span>
                 </div>
-                <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
+                <div className="h-0.5 bg-slate-900 rounded-full overflow-hidden">
                   <div 
                     className={`h-full transition-all duration-1000 ${telemetry.metrics.lcp.status === 'healthy' ? 'bg-emerald-500' : 'bg-amber-500'}`}
-                    style={{ width: `${Math.min(100, (2500 / (telemetry.metrics.lcp.value as number)) * 100)}%` }}
+                    style={{ width: `${Math.min(100, (2500 / (Number(telemetry.metrics.lcp.value) || 2500)) * 100)}%` }}
                   />
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                {/* FID */}
-                <div className="p-2.5 bg-slate-950/50 rounded-xl border border-white/5">
-                  <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">FID</div>
-                  <div className={`text-sm font-black ${telemetry.metrics.fid.status === 'healthy' ? 'text-white' : 'text-amber-400'}`}>
-                    {telemetry.metrics.fid.value}ms
-                  </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-slate-950/50 rounded-2xl border border-white/5 text-center">
+                  <div className="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">FID</div>
+                  <div className="text-lg font-black text-white">{telemetry.metrics.fid.value}ms</div>
                 </div>
-                {/* CLS */}
-                <div className="p-2.5 bg-slate-950/50 rounded-xl border border-white/5">
-                  <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">CLS</div>
-                  <div className={`text-sm font-black ${telemetry.metrics.cls.status === 'healthy' ? 'text-white' : 'text-amber-400'}`}>
-                    {telemetry.metrics.cls.value}
-                  </div>
+                <div className="p-3 bg-slate-950/50 rounded-2xl border border-white/5 text-center">
+                  <div className="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">CLS</div>
+                  <div className="text-lg font-black text-white">{telemetry.metrics.cls.value}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Closure Probability (N14) */}
-          <div className="glass-premium p-4 border border-purple-500/10 flex items-center justify-between group hover:border-purple-500/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-purple-500/10 rounded-xl">
-                <Target className="text-purple-400" size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
-                  CLOSURE PROBABILITY
-                </div>
-                <div className="text-xl font-black text-white">
-                  {telemetry.metrics.closureProbability.value}{telemetry.metrics.closureProbability.unit}
-                </div>
-              </div>
+          {/* AI Latency */}
+          <div className="glass-premium p-4 border border-indigo-500/10 flex items-center justify-between group hover:border-indigo-500/20 transition-all">
+            <div>
+               <div className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">IA INFERENCE</div>
+               <div className="text-xl font-black text-white">{telemetry.metrics.inferenceLatency.value}{telemetry.metrics.inferenceLatency.unit}</div>
             </div>
-            <Activity className="text-purple-500/40 animate-pulse" size={16} />
+            <Brain className="text-indigo-400/40" size={20} />
           </div>
 
-          <BusinessHealthWidget />
-
-          {/* Repository Integrity Grid (N14) */}
-          <div className="glass-premium p-6 border border-white/5 group hover:border-emerald-500/20 transition-all">
-            <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-              <Layers size={14} /> REPOSITORY INTEGRITY GRID
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: 'Inventory', value: 99.8, color: 'text-cyan-400' },
-                { label: 'Leads', value: 98.5, color: 'text-emerald-400' },
-                { label: 'Finance', value: 100, color: 'text-purple-400' }
-              ].map((repo) => (
-                <div key={repo.label} className="flex flex-col items-center">
-                  <div className="relative w-12 h-12 flex items-center justify-center mb-2">
-                    <svg className="w-full h-full -rotate-90">
-                      <circle
-                        cx="24" cy="24" r="20"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        fill="transparent"
-                        className="text-slate-800"
-                      />
-                      <circle
-                        cx="24" cy="24" r="20"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        fill="transparent"
-                        strokeDasharray={126}
-                        strokeDashoffset={126 - (126 * repo.value) / 100}
-                        className={repo.color}
-                      />
-                    </svg>
-                    <span className="absolute text-[9px] font-bold text-white">{Math.floor(repo.value)}%</span>
-                  </div>
-                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{repo.label}</span>
+          {/* Repository Integrity (Compact) */}
+          <div className="glass-premium p-4 border border-white/5">
+            <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-3">Integrity Grid</div>
+            <div className="flex justify-between">
+              {['Inv', 'Lead', 'Fin'].map((label) => (
+                <div key={label} className="w-10 h-10 rounded-full border-2 border-slate-900 flex items-center justify-center relative">
+                   <div className="absolute inset-0 rounded-full border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '3s' }} />
+                   <span className="text-[8px] font-black text-white">{label}</span>
                 </div>
               ))}
             </div>
