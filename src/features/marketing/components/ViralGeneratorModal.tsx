@@ -21,15 +21,26 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    // Simulación de llamada al VideoGeneratorService (Functions)
-    setTimeout(() => {
+    try {
+      const { generateCarMarketingContent } = await import('@/features/leads/model/marketingService');
+      const content = await generateCarMarketingContent(car);
+      
+      // Parsear el script de TikTok para extraer Hook y CTA si es posible, o usar el bloque completo
+      setScript({
+        hook: `¡🚨 LANZAMIENTO EXCLUSIVO PR! 🚨`,
+        body: content.tiktokScript.split('\n').filter(l => !l.includes('[')).join('\n'),
+        cta: `📲 Richard te la monta. Llama ahora.`,
+      });
+    } catch (error) {
+      console.error('Error in Viral Generation:', error);
       setScript({
         hook: `¡🚨 EXCLUSIVO PUERTO RICO! 🚨`,
-        body: `Mira este espectacular ${car.name}. Un sueño hecho realidad con solo ${car.badge || 'pocas'} millas. Elegancia, poder y el mejor trato de Richard Automotive.`,
-        cta: `¡Escríbeme al DM ahora! 📲 Aprobación instantánea disponible.`,
+        body: `Mira este espectacular ${car.name}. Elegancia, poder y el mejor trato de Richard Automotive en Central Ford.`,
+        cta: `¡Escríbeme ahora! 📲 Aprobación disponible.`,
       });
+    } finally {
       setIsGenerating(false);
-    }, 2500);
+    }
   };
 
   if (!isOpen) return null;

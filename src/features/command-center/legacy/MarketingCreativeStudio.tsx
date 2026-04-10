@@ -273,6 +273,42 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                         </div>
                       </div>
 
+                      {/* WhatsApp Marketing */}
+                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-emerald-500/20 transition-all duration-300">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg">
+                              <MessageCircle size={20} className="text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-black text-white uppercase tracking-widest">
+                                WhatsApp Blast
+                              </h4>
+                              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
+                                Direct Closing / Personal
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => copyToClipboard(content.whatsapp, 'wa')}
+                            className="p-4 bg-white/5 hover:bg-emerald-500/20 rounded-2xl text-slate-400 hover:text-emerald-500 transition-all"
+                            title="Copiar contenido de WhatsApp"
+                            aria-label="Copiar contenido de WhatsApp"
+                          >
+                            {copiedField === 'wa' ? (
+                              <Check size={20} className="text-emerald-500" />
+                            ) : (
+                              <Copy size={20} />
+                            )}
+                          </button>
+                        </div>
+                        <div className="p-6 bg-emerald-500/[0.03] rounded-3xl border border-emerald-500/10 border-dashed">
+                          <p className="text-md text-slate-300 whitespace-pre-wrap leading-relaxed font-mono text-sm">
+                            {content.whatsapp}
+                          </p>
+                        </div>
+                      </div>
+
                       {/* TikTok / Reels Script */}
                       <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
                         <div className="flex items-center justify-between">

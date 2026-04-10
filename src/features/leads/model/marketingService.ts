@@ -1,10 +1,12 @@
 import { Car } from '@/shared/types/types';
 import { blobToBase64 } from '@/shared/api/media/imageOptimizationService';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 export interface MarketingContent {
   instagram: string;
   facebook: string;
   tiktokScript: string;
+  whatsapp: string; // Nuevo canal de cierre directo
   posterPrompt?: string;
 }
 
@@ -20,7 +22,7 @@ const determineSalesAngle = (car: Car): string => {
     name.includes('bmw') ||
     name.includes('audi')
   ) {
-    return 'LUJO Y ESTATUS: Enfócate en la exclusividad, el éxito, la admiración que genera y el placer de conducción superior. Usa un tono sofisticado y seguro.';
+    return 'LUJO Y ESTATUS: Enfócate en la exclusividad, el éxito en PR, y la presencia que impone en el expreso. Usa un tono sofisticado de "High-End Dealer".';
   }
   if (
     type.includes('suv') ||
@@ -28,26 +30,28 @@ const determineSalesAngle = (car: Car): string => {
     name.includes('sienna') ||
     name.includes('odyssey')
   ) {
-    return 'FAMILIA Y SEGURIDAD: Enfócate en la protección de los hijos, la comodidad en viajes largos, el espacio para todo y la paz mental. Usa un tono cálido y protector.';
+    return 'FAMILIA Y SEGURIDAD: Enfócate en el chinchorreo familiar, la comodidad para los nenes y la seguridad en las carreteras de la isla. Tono protector y confiable.';
   }
   if (
-    price < 15000 ||
+    price < 18000 ||
     name.includes('spark') ||
     name.includes('mirage') ||
-    name.includes('march')
+    name.includes('march') ||
+    name.includes('accent')
   ) {
-    return "INTELIGENCIA FINANCIERA: Enfócate en el ahorro de combustible, bajo costo de mantenimiento, oportunidad única y 'ser listo con el dinero'. Usa un tono empático y entusiasta.";
+    return "MOVILIDAD INTELIGENTE: Enfócate en el ahorro de gasolina, financiamiento con $0 pronto (si aplica) y ser la solución perfecta para el 'daily' en PR. Tono entusiasta y accesible.";
   }
   if (
     type.includes('pickup') ||
     name.includes('hilux') ||
     name.includes('tacoma') ||
-    name.includes('ranger')
+    name.includes('ranger') ||
+    name.includes('f-150')
   ) {
-    return 'TRABAJO Y PODER: Enfócate en la capacidad de carga, durabilidad, respeto en el camino y ser una herramienta para hacer dinero. Usa un tono robusto y directo.';
+    return 'TRABAJO Y FUERZA: Enfócate en que es una máquina de guerra para el trabajo o para la finca. Resalta la durabilidad en el clima de PR. Tono robusto y de "negocio".';
   }
   // Default
-  return 'OPORTUNIDAD Y ESTILO: Enfócate en renovarse, mejorar el estilo de vida y aprovechar una gran oferta antes de que se vaya.';
+  return 'OPORTUNIDAD ÚNICA: Enfócate en que esta unidad no dura 24 horas en el lote de Central Ford. Crea urgencia real.';
 };
 
 export const generateCarMarketingContent = async (
@@ -55,69 +59,71 @@ export const generateCarMarketingContent = async (
   locale: 'es' | 'en' = 'es',
 ): Promise<MarketingContent> => {
   const psychology = determineSalesAngle(car);
+  const dealerInfo = BUSINESS_CONTACT.dealer;
 
   const prompt = `
-        ACTÚA COMO UN COPYWRITER EXPERTO DE CLASE MUNDIAL (Nivel Ogilvy/Gary Halbert).
-        Tu objetivo es vender este auto usando psicología de ventas avanzada.
-        
-        CONTEXTO DEL PRODUCTO:
+        ACTÚA COMO UN CONTENT STRATEGIST SENIOR EXPERTO EN EL MERCADO AUTOMOTRIZ DE PUERTO RICO.
+        Tu misión es generar contenido que detenga el scroll y genere leads inmediatos para Richard Automotive en ${dealerInfo.location.city}.
+
+        PERFIL DEL NEGOCIO:
+        - Dealer: ${dealerInfo.name} (Central Ford)
+        - Ubicación: ${dealerInfo.location.address}, Vega Alta, PR.
+        - Teléfono de cierre: ${BUSINESS_CONTACT.primaryPhone}
+        - Personalidad: Richard es Finance Manager Experto. Si el cliente tiene crédito afectado o busca el mejor negocio, Richard lo resuelve.
+
+        DATOS DE LA UNIDAD:
         - Vehículo: ${car.name}
-        - Precio: $${car.price}
-        - Tipo: ${car.type}
-        - Badge: ${car.badge || 'N/A'}
+        - Precio: $${Number(car.price).toLocaleString()}
+        - Categoría: ${car.type}
+        - Estado: Certified Pre-Owned / Impecable
         
-        ÁNGULO PSICOLÓGICO OBLIGATORIO:
+        ÁNGULO PSICOLÓGICO PARA PR:
         "${psychology}"
         
-        INSTRUCCIONES VISUALES (Si se incluye imagen):
-        Analiza visualmente la foto. Menciona detalles que veas (estado de los rines, color especial, diseño de rines, estado impecable, extras como spoilers o barras de techo) para que el copy se sienta real y no genérico.
+        INSTRUCCIONES DE TONO (PUERTO RICO):
+        - Usa jerga local sutil pero efectiva: "Esa guagua", "Llegó el pronto", "Pa' monta'o", "El negocio de tu vida".
+        - Enfatiza la transparencia y la rapidez: "Sal hoy mismo guiando".
         
-        Genera 3 piezas de contenido distintas en ${locale === 'es' ? 'Español Latino Neutro' : 'Inglés Nativo'}:
+        GENERA 4 PIEZAS DE CONTENIDO (JSON):
 
-        1. FACEBOOK (Estructura PAS: Problema - Agitación - Solución):
-           - Inicia con una pregunta o afirmación que toque una fibra emocional relacionada al ángulo psicológico.
-           - Desarrolla una mini-historia sobre cómo este auto mejora la vida del dueño.
-           - Elimina objeciones (ej. financiamiento fácil).
-           - Cierra con un llamado a la acción suave pero claro.
+        1. FACEBOOK (Estructura de Retención):
+           - Un hook fuerte que mencione a Vega Alta o el beneficio principal.
+           - Bullet points con 3 specs clave.
+           - Menciona que Richard te ayuda con el financiamiento.
+           - CTA: "Dale click al link de WhatsApp en los comentarios".
 
-        2. INSTAGRAM (Estilo "Lifestyle" & Aspirational):
-           - Texto corto, punchy y visual.
-           - Vende la "sensación" de tenerlo.
-           - Usa emojis estratégicamente (no satures).
-           - Hashtags: Mezcla 3 de alto volumen y 3 de nicho específico.
+        2. INSTAGRAM (Aspirational / Reel Cover Style):
+           - Copy corto y visual.
+           - Usa palabras como "Impecable", "Clean Carfax", "Showroom Ready".
+           - Hashtags: #PuertoRicoCars #VegaAlta #CentralFord #RichardAutomotive #AutosUsadosPR.
 
-        3. TIKTOK SCRIPT (Estructura Viral):
-           - [0-3s] EL GANCHO: Algo visualmente impactante o una frase controversial/curiosa sobre el auto.
-           - [3-10s] EL VALOR: 3 cortes rápidos mostrando lo mejor del auto (interior, rines, tecnología).
-           - [10-15s] EL CIERRE: "Si quieres manejarlo, comenta 'YO' ahora mismo".
-        
-        4. POSTER PROMPT (Instrucciones para Generador de Imágenes AI):
-           - Describe una escena cinematográfica de alta gama donde el auto luzca espectacular.
-           - Especifica iluminación (ej. 'golden hour', 'cyberpunk neon', 'studio lighting').
-           - Incluye instrucciones para que el auto se vea reluciente y deseable.
-           - NO incluyas texto en la imagen, solo la descripción visual.
-           - Estilo: Fotografía publicitaria profesional de automotriz.
-        
-        FORMATO DE SALIDA (JSON PURO):
+        3. TIKTOK SCRIPT (Viral Hook):
+           - [0-2s] Gancho: "¿Buscabas esta nena? Mira lo que acaba de llegar a Central Ford."
+           - [2-8s] Detalles rápidos: "Aros, interiores, tecnología... está nueva."
+           - [8-12s] Cierre: "Richard te la monta. Llama al ${BUSINESS_CONTACT.primaryPhone}."
+
+        4. WHATSAPP (Direct Sales Message):
+           - Formato optimizado para reenviar a leads.
+           - Usa negritas y bullet points.
+           - Incluye "Richard te espera en Central Ford para la prueba de manejo".
+
+        FORMATO DE SALIDA (JSON ÚNICAMENTE):
         {
-            "instagram": "texto...",
-            "facebook": "texto...",
-            "tiktokScript": "texto...",
-            "posterPrompt": "descripción visual para IA..."
+            "instagram": "...",
+            "facebook": "...",
+            "tiktokScript": "...",
+            "whatsapp": "...",
+            "posterPrompt": "..."
         }
     `;
 
-  // VISION UPGRADE: Prepare multimodal contents
   let contents: any[] = [prompt];
 
   if (car.img) {
     try {
-      // Fetch the image and convert to base64 for Gemini
       const imgResponse = await fetch(car.img);
       const blob = await imgResponse.blob();
       const base64Data = await blobToBase64(blob);
-
-      // Remove data:image/jpeg;base64, prefix
       const base64Content = base64Data.split(',')[1];
 
       contents = [
@@ -134,9 +140,8 @@ export const generateCarMarketingContent = async (
           ],
         },
       ];
-      console.log('Marketing Vision: Imagen enviada exitosamente para análisis.');
     } catch (imgError) {
-      console.error('Error preparing marketing vision data:', imgError);
+      console.error('Marketing Vision Error:', imgError);
     }
   }
 
@@ -151,7 +156,6 @@ export const generateCarMarketingContent = async (
       config: { responseMimeType: 'application/json' },
     });
 
-    // Robust cleaning of the response if needed
     let cleanText = response.data;
     if (cleanText.includes('```json')) {
       cleanText = cleanText.split('```json')[1].split('```')[0].trim();
@@ -163,9 +167,10 @@ export const generateCarMarketingContent = async (
   } catch (error) {
     console.error('Marketing Gen Error:', error);
     return {
-      instagram: `¡${car.name} disponible! 🚗💨 Contáctanos hoy.`,
-      facebook: `Oportunidad increíble: ${car.name} por solo $${car.price}. ¡Escríbenos!`,
-      tiktokScript: '¡Mira esta nave! Disponible en Richard Automotive.',
+      instagram: `¡${car.name} impecable en Central Ford! 🚗💨 Richard te ayuda con el financiamiento.`,
+      facebook: `¿Buscabas una ${car.name}? Acaba de llegar a Vega Alta. ¡Richard resuelve! Llama al ${BUSINESS_CONTACT.primaryPhone}.`,
+      tiktokScript: '¡Mira esta nave en Central Ford! Sal hoy guiando con Richard.',
+      whatsapp: `*${car.name}* - Disponible en Central Ford.\n\nRichard te espera para cuadrar el mejor negocio. 📞 ${BUSINESS_CONTACT.primaryPhone}`,
     };
   }
 };

@@ -167,6 +167,33 @@ export const calculateLoan = (structure: FinancingStructure): PaymentResult => {
   };
 };
 
+/**
+ * Calcula el pago mensual simplificado (sin IVU/Fees) para Richard Automotive.
+ * Ideal para el "Approval Simulator" de Fase 2.
+ */
+export const calculateSimplePayment = (
+  price: number,
+  downPayment: number,
+  term: number,
+  tier: CreditTier,
+): number => {
+  const principal = Math.max(0, price - downPayment);
+  if (principal === 0) return 0;
+
+  const rates: Record<CreditTier, number> = {
+    excellent: 5.95,
+    good: 8.95,
+    fair: 12.95,
+    poor: 18.95,
+  };
+
+  const monthlyRate = rates[tier] / 100 / 12;
+  const x = Math.pow(1 + monthlyRate, term);
+  const monthlyPayment = (principal * x * monthlyRate) / (x - 1);
+
+  return Math.round(monthlyPayment);
+};
+
 export const getCreditTierLabel = (tier: CreditTier): string => {
   switch (tier) {
     case 'excellent':
