@@ -249,9 +249,14 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                   {/* Quick Specs / Insight Area */}
                   <div className="w-full lg:w-1/3 flex flex-col gap-4">
                     <GlassContainer intensity="high" className="p-8 rounded-[40px] flex-1 border-t-2 border-cyan-500/30 overflow-hidden flex flex-col shadow-2xl">
-                      <div className="flex items-center gap-2 mb-6">
-                        <Cpu size={20} className="text-cyan-400" />
-                        <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">IA Richard Report</span>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                           <Cpu size={20} className="text-cyan-400" />
+                           <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">IA Richard Report</span>
+                        </div>
+                        <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/20 rounded-full">
+                           <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">PRO VERSION</span>
+                        </div>
                       </div>
                       
                       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
@@ -261,7 +266,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                             <p className="text-[10px] uppercase tracking-widest text-center">Parsing Vector Data...</p>
                           </div>
                         ) : (
-                          <div className="text-[13px] leading-relaxed text-slate-300 font-medium">
+                          <div className="text-[14px] leading-relaxed text-slate-300 font-medium space-y-4">
                             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aiPitch.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-black">$1</strong>').replace(/\n/g, '<br/>')) }} />
                           </div>
                         )}

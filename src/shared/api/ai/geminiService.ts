@@ -3,6 +3,7 @@ import { Blob as GeminiBlob } from '@google/genai';
 import { Car, BlogPost } from '@/shared/types/types';
 import { z } from 'zod';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
+import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
 import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 // Helper: Call Vercel Serverless Function (Hides API Key)
@@ -376,6 +377,11 @@ export const getAIResponse = async (
         - Prioriza bancos locales: Banco Popular de PR y FirstBank PR. Son los socios principales para cierres rápidos.
         - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter(e => e.tier === 1).map(e => `${e.name} (${e.baseRate}% APR)`).join(', ')}.
         - Las cooperativas son la última opción y solo se mencionan si el cliente las solicita específicamente.
+        
+        INTELIGENCIA DE MERCADO LOCAL (PR):
+        - Contexto regional: ${MARKET_INTELLIGENCE_PR.regionalInsights.metro}
+        - Marcas dominantes: ${MARKET_INTELLIGENCE_PR.powerBrands.map(b => b.name).join(', ')}
+        - Tono Richard: Usa terminología local (guagua, pronto, marbete) de forma profesional y estratégica.
       `;
 
   const sanitizedPrompt = interceptPrompt(userPrompt);
@@ -552,14 +558,45 @@ export const analyzeCarImage = async (base64Image: string): Promise<Record<strin
 };
 
 export const generateCarPitch = async (car: Car): Promise<string> => {
-  const prompt = `Sell this car: ${car.name}. Return JSON: { pitch: "HTML paragraph" }`;
+  const marketContext = JSON.stringify(MARKET_INTELLIGENCE_PR);
+  const prompt = `
+    Eres Richard IA Pro, el estratega de ventas número 1 de Richard Automotive.
+    Tu misión es realizar un "Mission Analysis" de la unidad: ${car.name}.
+    
+    UNIDAD DATA:
+    - Marca: ${car.make}
+    - Modelo: ${car.model}
+    - Año: ${car.year}
+    - Precio: $${car.price.toLocaleString()}
+    - Características: ${car.features?.join(', ') || 'Standard Sentinel Package'}
+
+    CONTEXTO DE MERCADO PR:
+    ${marketContext}
+
+    REGLAS DE SALIDA:
+    1. Debes generar un reporte altamente persuasivo y técnico en HTML.
+    2. Divide el reporte en 3 secciones claras:
+       - **ANÁLISIS DE UNIDAD**: Por qué este auto destaca técnicamente.
+       - **PERSPECTIVA DE MERCADO (PR)**: Cómo se compara en Puerto Rico (valor de reventa, popularidad, costo de marbete/gasolina).
+       - **VERDICTO RICHARD**: Un cierre contundente estilo "Cierra el trato ahora".
+    3. Usa "Boricuismos Profesionales": Pronto, Unidad, Marbete, Guagua (si aplica).
+    4. Usa negritas (<strong class="text-cyan-400">) para resaltar puntos clave.
+    
+    Genera el reporte en formato JSON: { "pitch": "HTML_STRING" }
+  `;
+
   try {
     const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
       responseMimeType: 'application/json',
     });
     return JSON.parse(text).pitch;
-  } catch {
-    return `¡Este ${car.name} es increíble!`;
+  } catch (error) {
+    console.error('Richard IA Pro Error:', error);
+    return `
+      <p><strong>REPORTE SENTINEL:</strong> Este ${car.name} es una unidad excepcional en el mercado local. 
+      Con un precio competitivo de $${car.price.toLocaleString()}, ofrece un balance ideal entre performance y valor de reventa en la isla. 
+      Contáctame para validar tu oferta financiera hoy.</p>
+    `;
   }
 };
 

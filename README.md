@@ -24,12 +24,15 @@ La versión **3.5** consolida la arquitectura de **Siguiente Generación**, tran
 
 ### 🧠 Capacidades de Vanguardia
 
+- **Sentinel UI (V4.0):** Rediseño radical del ecosistema de interacción con el cliente.
+    - **Tabbed Vehicle Experience:** Modal de detalle de unidades optimizado con sistema de pestañas (Explorador, Finanzas, Ficha, Acción) para eliminar el scroll vertical.
+    - **HUD Digital:** Superposición de telemetría y escaneos tácticos en tiempo real sobre el inventario.
+    - **Aero-Glassmorphism:** Estética premium de alto impacto visual con efectos de desenfuerzo profundo.
 - **Houston Dashboard:** Monitor de salud del negocio en tiempo real.
     - **Pipeline de Leads:** Visualización del flujo de ventas impulsado por SQL.
     - **Telemetría Neural:** Rastreo de la intención de compra del usuario mediante eventos dinámicos.
-    - **AI Marketing Engine:** Generación automática de copys para Instagram/Facebook/TikTok basados en psicología de ventas.
 - **Approval Simulator:** Widget de alta conversión que permite al cliente pre-cualificarse financieramente antes de llegar al dealer.
-- **Business Health Widget:** Métricas en vivo (Lead Velocity, AI Score, Conversion Rate) directamente desde Data Connect.
+- **Supabase SSR:** Integración de infraestructura de autenticación y persistencia de sesiones protegida por middleware.
 
 ## 🏗️ Arquitectura del Proyecto (FSD Strict)
 
