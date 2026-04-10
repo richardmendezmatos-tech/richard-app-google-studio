@@ -5,6 +5,7 @@ import { Car } from '@/shared/types/types';
 import { SocialProofWidget } from '@/widgets/brand-ui/layout/conversion/SocialProofWidget';
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
@@ -53,31 +54,39 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             '@graph': [
               {
                 '@type': 'AutoDealer',
-                name: 'Richard Automotive',
+                name: BUSINESS_CONTACT.name,
                 image: SITE_CONFIG.seo.ogImage,
                 '@id': `${SITE_CONFIG.url}/#dealer`,
                 url: SITE_CONFIG.url,
-                telephone: '+1-787-368-2880',
+                telephone: BUSINESS_CONTACT.phone,
                 address: {
                   '@type': 'PostalAddress',
-                  streetAddress: 'Bayamón',
-                  addressLocality: 'Bayamón',
+                  streetAddress: BUSINESS_CONTACT.address.street,
+                  addressLocality: BUSINESS_CONTACT.address.city,
                   addressRegion: 'PR',
-                  postalCode: '00961',
+                  postalCode: BUSINESS_CONTACT.address.zip,
                   addressCountry: 'US',
                 },
                 geo: {
                   '@type': 'GeoCoordinates',
-                  latitude: 18.399,
-                  longitude: -66.1573,
+                  latitude: BUSINESS_CONTACT.geo.latitude,
+                  longitude: BUSINESS_CONTACT.geo.longitude,
                 },
-                openingHoursSpecification: {
-                  '@type': 'OpeningHoursSpecification',
-                  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                  opens: '09:00',
-                  closes: '18:00',
-                },
-                priceRange: '$$',
+                openingHoursSpecification: [
+                  {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                    opens: '09:00',
+                    closes: '18:00',
+                  },
+                  {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: 'Saturday',
+                    opens: '09:00',
+                    closes: '17:00',
+                  },
+                ],
+                priceRange: '$$$',
                 aggregateRating: {
                   '@type': 'AggregateRating',
                   ratingValue: '5.0',

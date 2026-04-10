@@ -3,34 +3,68 @@
 import React, { useState, useEffect } from 'react';
 import { Users, TrendingUp, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
-const ACTIVITY_MESSAGES = [
-  { icon: Users, text: 'Juan de Santo Domingo guardó un Toyota Corolla', time: '2 min' },
-  { icon: TrendingUp, text: '3 personas están viendo este vehículo', time: 'ahora' },
-  { icon: Users, text: 'María de Santiago comparó este auto', time: '5 min' },
-  { icon: TrendingUp, text: 'Carlos de San Pedro contactó por WhatsApp', time: '8 min' },
-  { icon: Users, text: 'Ana de La Vega guardó en su garaje', time: '12 min' },
-  { icon: TrendingUp, text: '5 personas vieron este auto hoy', time: '1 hora' },
+const BASE_MESSAGES = [
+  { icon: Users, text: 'guardó un [MODELO]', time: '2 min' },
+  { icon: TrendingUp, text: '[N] personas están viendo esta unidad', time: 'ahora' },
+  { icon: Users, text: 'comparó dos unidades de lujo', time: '5 min' },
+  { icon: TrendingUp, text: 'envió una consulta por WhatsApp', time: '8 min' },
+  { icon: Users, text: 'añadió a favoritos en su garaje', time: '12 min' },
 ];
 
+const CITIES = ['Vega Alta', 'Bayamón', 'San Juan', 'Guaynabo', 'Carolina', 'Levittown'];
+const MODELS = ['Toyota Tacoma', 'Ford F-150', 'BMW X5', 'Mercedes-Benz GLE', 'Hyundai Tucson'];
+
 export const SocialProofWidget: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const pathname = usePathname();
+  const [currentMessage, setCurrentMessage] = useState({ icon: Activity, text: '', time: '' });
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const generateMessage = () => {
+      const isVegaAlta = pathname.includes('vega-alta');
+      const city = isVegaAlta && Math.random() > 0.3 ? 'Vega Alta' : CITIES[Math.floor(Math.random() * CITIES.length)];
+      
+      const base = BASE_MESSAGES[Math.floor(Math.random() * BASE_MESSAGES.length)];
+      const model = MODELS[Math.floor(Math.random() * MODELS.length)];
+      const n = Math.floor(Math.random() * 5) + 2;
+
+      const text = base.text
+        .replace('[MODELO]', model)
+        .replace('[N]', n.toString());
+
+      const names = ['Juan', 'María', 'Carlos', 'Ana', 'Ricardo', 'Sofía', 'Pedro', 'Elena'];
+      const name = names[Math.floor(Math.random() * names.length)];
+      
+      return {
+        icon: base.icon,
+        text: `${name} de ${city} ${text}`,
+        time: base.time
+      };
+    };
+
+    // Initial delay
+    const timer = setTimeout(() => {
+      setCurrentMessage(generateMessage());
+      setIsVisible(true);
+    }, 5000);
+
     const interval = setInterval(() => {
       setIsVisible(false);
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % ACTIVITY_MESSAGES.length);
+        setCurrentMessage(generateMessage());
         setIsVisible(true);
-      }, 500);
-    }, 12000); // 12s per message for better readability
+      }, 1000);
+    }, 15000);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [pathname]);
 
-  const currentActivity = ACTIVITY_MESSAGES[currentIndex];
-  const Icon = currentActivity.icon;
+  const Icon = currentMessage.icon || Activity;
 
   return (
     <AnimatePresence mode="wait">
@@ -42,7 +76,7 @@ export const SocialProofWidget: React.FC = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="ra-social-proof fixed right-6 top-24 z-40 hidden sm:block w-fit max-w-[340px]"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-black/40 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-black/60 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             <div className="flex items-start gap-3">
               <div className="relative">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-900 to-black border border-cyan-500/30">
@@ -63,10 +97,10 @@ export const SocialProofWidget: React.FC = () => {
                     </span>
                 </div>
                 <p className="text-[0.85rem] font-medium leading-tight text-white/90">
-                  {currentActivity.text}
+                  {currentMessage.text}
                 </p>
                 <p className="mt-1.5 font-tech text-[10px] text-white/40 uppercase tracking-widest">
-                  Hace {currentActivity.time}
+                  Hace {currentMessage.time}
                 </p>
               </div>
 
