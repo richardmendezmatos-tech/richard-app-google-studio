@@ -10,6 +10,8 @@ interface DealBuilderProps {
   vehiclePrice: number;
   vehicleName: string;
   vehicleImage?: string;
+  hideAction?: boolean;
+  onPaymentChange?: (payment: number) => void;
 }
 
 const DealBuilder: React.FC<DealBuilderProps> = ({
@@ -17,6 +19,8 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
   vehiclePrice,
   vehicleName,
   vehicleImage,
+  hideAction,
+  onPaymentChange,
 }) => {
   const navigate = useNavigate();
   // State
@@ -28,6 +32,11 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
   const payment = React.useMemo(() => {
     return calculateSimplePayment(vehiclePrice, downPayment, term, creditTier);
   }, [vehiclePrice, downPayment, term, creditTier]);
+
+  React.useEffect(() => {
+    if (onPaymentChange) onPaymentChange(payment);
+  }, [payment, onPaymentChange]);
+
 
   const purchasePowerScore = Math.min(
     100,
@@ -46,19 +55,27 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
   const power = getPowerLabel(purchasePowerScore);
 
-  const handlePreQualify = () => {
-    navigate('/qualify', {
-      state: {
-        vehicle: { id: vehicleId, name: vehicleName, price: vehiclePrice, image: vehicleImage },
-        quote: {
-          monthlyPayment: payment,
-          downPayment: downPayment,
-          term: term,
-          creditTier: creditTier,
-          apr: creditTier === 'excellent' ? 5.95 : creditTier === 'good' ? 8.95 : 12.95
-        },
-      },
+  const handlePreQualify = async () => {
+    // Zero-Friction WhatsApp Flow + Supabase Telemetry (Sentinel N15 Option B)
+    const apr = creditTier === 'excellent' ? 5.95 : creditTier === 'good' ? 8.95 : creditTier === 'fair' ? 12.95 : 18.95;
+    
+    // 1. Silent Lead Capture in Supabase
+    import('@/shared/api/supabase/supabaseClient').then(({ captureHotLead }) => {
+      captureHotLead({
+        vehicleId,
+        vehicleName,
+        vehiclePrice,
+        monthlyPayment: payment,
+        downPayment,
+        term,
+        creditTier,
+        source: 'DealBuilder_Simulador',
+      });
     });
+
+    // 2. Direct to WhatsApp with context
+    const text = `Hola Richard, acabo de cotizar el ${vehicleName} por $${vehiclePrice.toLocaleString()}.\n\nMi escenario ideal:\n- Pago mensual deseado: $${payment}\n- Pronto: $${downPayment}\n- Plazo: ${term} meses\n- Perfil de crédito: ${creditTier.toUpperCase()} (Tasa est. ${apr}%)\n\nMe gustaría comenzar el proceso.`;
+    window.open(`https://wa.me/17873682880?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
@@ -213,13 +230,15 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={handlePreQualify}
-          className="w-full bg-primary hover:bg-cyan-400 text-slate-950 font-black uppercase tracking-[0.3em] text-xs py-6 rounded-[24px] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-[0.98] group/btn"
-        >
-          <CheckCircle size={20} className="group-hover/btn:rotate-12 transition-transform" />
-          Pre-Cualificar Ahora
-        </button>
+        {!hideAction && (
+          <button
+            onClick={handlePreQualify}
+            className="w-full bg-primary hover:bg-cyan-400 text-slate-950 font-black uppercase tracking-[0.3em] text-xs py-6 rounded-[24px] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-[0.98] group/btn"
+          >
+            <CheckCircle size={20} className="group-hover/btn:rotate-12 transition-transform" />
+            Pre-Cualificar por WhatsApp
+          </button>
+        )}
       </div>
     </div>
   );

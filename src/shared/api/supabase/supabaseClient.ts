@@ -38,3 +38,38 @@ export const logSearchGap = async (query: string, intent?: string) => {
   });
   if (error) console.error('Error logging search gap:', error);
 };
+
+export const captureHotLead = async (leadData: {
+  vehicleId: string;
+  vehicleName: string;
+  vehiclePrice: number;
+  monthlyPayment?: number;
+  downPayment?: number;
+  tradeIn?: number;
+  term?: number;
+  creditTier?: string;
+  source: string;
+}) => {
+  try {
+    const { error } = await supabase.from('hot_leads').insert({
+      vehicle_id: leadData.vehicleId,
+      vehicle_name: leadData.vehicleName,
+      vehicle_price: leadData.vehiclePrice,
+      monthly_payment: leadData.monthlyPayment,
+      down_payment: leadData.downPayment,
+      trade_in: leadData.tradeIn,
+      term: leadData.term,
+      credit_tier: leadData.creditTier,
+      source: leadData.source,
+      timestamp: new Date().toISOString()
+    });
+    
+    if (error) {
+      console.error('[Supabase] Error capturing hot lead:', error);
+    } else {
+      console.log('[Supabase] Hot lead captured successfully.');
+    }
+  } catch (err) {
+    console.error('[Supabase] Exception in captureHotLead:', err);
+  }
+};

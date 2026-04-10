@@ -30,6 +30,7 @@ import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import DOMPurify from 'dompurify';
+import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
 
 interface Props {
   car: Car;
@@ -112,11 +113,36 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
   const handleAction = () => {
     const dpVal = downPayment === '' ? 0 : downPayment;
     const tiVal = tradeIn === '' ? 0 : tradeIn;
+    
+    // 1. Silent Lead Capture in Supabase (Sentinel N15 standard)
+    captureHotLead({
+      vehicleId: car.id,
+      vehicleName: car.name,
+      vehiclePrice: car.price,
+      monthlyPayment: calculatedPayment,
+      downPayment: dpVal,
+      tradeIn: tiVal,
+      term,
+      creditTier: creditRate === 0.029 ? 'Excellent' : creditRate === 0.059 ? 'Good' : creditRate === 0.099 ? 'Fair' : 'Poor',
+      source: `CarDetailModal_${activeTab}`,
+    });
+
     analytics.trackCarConfigure(car.id);
     window.open(
       `https://wa.me/17873682880?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
       '_blank'
     );
+  };
+
+  const handleCall = () => {
+    // 1. Silent Lead Capture
+    captureHotLead({
+      vehicleId: car.id,
+      vehicleName: car.name,
+      vehiclePrice: car.price,
+      source: `CarDetailModal_Call`,
+    });
+    window.location.href = 'tel:7873682880';
   };
 
   const handleShare = async () => {
@@ -498,6 +524,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                                 <MessageCircle size={24} /> WhatsApp
                              </button>
                              <button
+                               onClick={handleCall}
                                className="flex-1 py-8 bg-primary text-white rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-primary/80 transition-all hover:scale-[1.05] shadow-xl shadow-primary/20"
                              >
                                 <Phone size={24} /> Llamar
