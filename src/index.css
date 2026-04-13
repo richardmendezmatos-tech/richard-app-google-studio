@@ -32,13 +32,16 @@
   --mesh-3: #ff0070;
   --mesh-4: #00ffaa;
 
-  /* Glass V2 Tokens */
-  --glass-bg: rgba(8, 18, 30, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  /* Glass Nivel 22 Evolution */
+  --liquid-bg: rgba(4, 12, 22, 0.4);
+  --liquid-border: rgba(255, 255, 255, 0.05);
+  --liquid-blur: 50px;
+  --liquid-cyan: hsla(184, 100%, 50%, 0.15);
+  
   --glass-reflection: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 50%,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 40%,
     rgba(255, 255, 255, 0.05) 100%
   );
 
@@ -47,6 +50,17 @@
   --holographic-glow: 0 0 30px var(--holographic-cyan);
   --living-bg-speed: 20s;
   --texture-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.glass-liquid {
+  background: var(--liquid-bg);
+  backdrop-filter: blur(var(--liquid-blur)) saturate(180%);
+  border: 1px solid var(--liquid-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glow-active-cyan {
+  filter: drop-shadow(0 0 10px hsla(var(--cyber-cyan), 0.6));
 }
 
 html {

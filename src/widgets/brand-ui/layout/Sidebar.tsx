@@ -82,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <nav
-      className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/10 bg-gradient-to-b from-[#081421]/95 to-[#07111b]/98 text-white shadow-2xl backdrop-blur-3xl transition-all duration-500 lg:static lg:h-screen pointer-events-auto ${
+      className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/5 text-white shadow-2xl transition-all duration-700 ease-in-out lg:static lg:h-screen pointer-events-auto glass-liquid ${
         isCollapsed ? 'lg:w-[88px]' : 'lg:w-[300px]'
       } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
     >
@@ -489,12 +489,12 @@ const NavButton: React.FC<NavButtonProps> = ({
   isCollapsed = false,
   hasMounted = false,
 }) => {
-  const base = `group relative flex w-full items-center transition-all duration-200 ${isCollapsed ? 'justify-center px-0 py-3 rounded-xl' : 'gap-3 rounded-2xl px-4 py-3 text-left'}`;
+  const base = `group relative flex w-full items-center transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] ${isCollapsed ? 'justify-center px-0 py-3.5 rounded-2xl' : 'gap-3 rounded-2xl px-4 py-3.5 text-left'}`;
   const stateClass = active
-    ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-[0_12px_25px_-14px_rgba(0,174,217,0.7)]'
+    ? 'bg-white/10 text-white shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10'
     : isAction
-      ? 'border border-cyan-300/25 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/20'
-      : 'text-slate-300 hover:bg-white/8 hover:text-white';
+      ? 'border border-cyan-400/20 bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20'
+      : 'text-slate-400 hover:bg-white/5 hover:text-white';
 
   return (
     <button
@@ -504,13 +504,14 @@ const NavButton: React.FC<NavButtonProps> = ({
       aria-current={active ? 'page' : undefined}
       title={isCollapsed ? label : undefined}
     >
-      <span className="relative z-10 shrink-0">{icon}</span>
+      <span className={`relative z-10 shrink-0 transition-transform duration-500 ${active ? 'scale-110 glow-active-cyan' : 'group-hover:scale-110'}`}>{icon}</span>
       {!isCollapsed && hasMounted && (
-        <span className="relative z-10 text-sm font-bold tracking-wide truncate">{label}</span>
+        <span className={`relative z-10 text-xs font-bold tracking-widest uppercase truncate transition-all duration-500 ${active ? 'text-white translate-x-1' : 'text-slate-400 group-hover:text-white'}`}>{label}</span>
       )}
       {active && (
-        <span
-          className={`${isCollapsed ? 'absolute left-0 w-1 h-6 bg-white rounded-r-full' : 'absolute right-2 h-2 w-2 rounded-full bg-white/90'}`}
+        <motion.span
+          layoutId="sidebar-active-pill"
+          className={`${isCollapsed ? 'absolute left-0 w-1 h-8 bg-cyan-400 rounded-r-full shadow-[0_0_15px_rgba(34,211,238,0.8)]' : 'absolute left-0 h-6 w-1 rounded-r-full bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)]'}`}
         />
       )}
     </button>

@@ -122,34 +122,34 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-transparent overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Premium Glass Mobile Header (Nivel 18 Refinement) */}
-      <header className="z-50 flex items-center justify-between p-5 text-white lg:hidden glass-premium m-4 border-white/20 shadow-[0_0_40px_rgba(0,229,255,0.15)]">
+      {/* Premium Glass Mobile Header (Nivel 22 Edge-to-Edge) */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 text-white lg:hidden glass-liquid border-b border-white/5 shadow-2xl">
         <span className="font-cinematic text-3xl tracking-[0.2em] text-white text-glow">
-          RICHARD<span className="text-primary italic">AUTO</span>
+          RICHARD<span className="text-cyan-400 italic">AUTO</span>
         </span>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           title="Abrir menú"
           aria-label="Abrir menú"
-          className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-primary/20 hover:border-primary/40 active:scale-95"
+          className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
         >
-          <Menu className="text-primary" />
+          <Menu className="text-cyan-400" />
         </button>
       </header>
 
-      {/* Nivel 18: Living Background Parallax Layer */}
+      {/* Nivel 22: Living Background Parallax Layer */}
       <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
         <div 
-          className="absolute inset-[-10%] opacity-40 blur-[120px] transition-transform duration-1000 ease-out animate-spin-slow"
+          className="absolute inset-[-20%] opacity-40 blur-[140px] transition-transform duration-1000 ease-out animate-spin-slow"
           style={{
             background: `
-              radial-gradient(circle at 20% 30%, hsla(var(--cyber-cyan), 0.15), transparent 40%),
-              radial-gradient(circle at 80% 70%, hsla(var(--plasma-purple), 0.15), transparent 40%),
-              radial-gradient(circle at 50% 50%, hsla(var(--sentinel-amber), 0.05), transparent 60%)
+              radial-gradient(circle at 20% 30%, hsla(var(--cyber-cyan), 0.2), transparent 45%),
+              radial-gradient(circle at 80% 70%, hsla(var(--plasma-purple), 0.2), transparent 45%),
+              radial-gradient(circle at 50% 50%, hsla(var(--sentinel-amber), 0.08), transparent 65%)
             `
           }}
         />
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'var(--texture-grain)' }} />
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay scale-125" style={{ backgroundImage: 'var(--texture-grain)' }} />
       </div>
 
       {/* Main Sidebar Component */}
