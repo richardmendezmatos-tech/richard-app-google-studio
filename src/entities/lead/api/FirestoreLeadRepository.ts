@@ -12,7 +12,7 @@ import {
   Timestamp,
   getCountFromServer,
 } from 'firebase/firestore';
-import { db } from '@/shared/api/firebase/client';
+import { getDb } from '@/shared/api/firebase';
 import { LeadRepository } from '@/entities/lead';
 import { Lead } from '@/entities/lead';
 import { LeadMapper } from '@/entities/lead/lib/mappers/LeadMapper';
@@ -20,7 +20,7 @@ import { leadSchema } from '@/entities/lead/lib/schemas/leadSchema';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
 import { CircuitBreaker } from '@/shared/lib/resilience/CircuitBreaker';
 import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
-import { auditRepository } from '@/shared/api/houston/AuditRepository';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 const dbBreaker = new CircuitBreaker({
   failureThreshold: 5,
@@ -32,6 +32,7 @@ export class FirestoreLeadRepository implements LeadRepository {
 
   async getLeads(dealerId: string, limitCount: number): Promise<Lead[]> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const q = query(
         collection(db, this.collectionName),
         where('dealerId', '==', dealerId),
@@ -44,6 +45,7 @@ export class FirestoreLeadRepository implements LeadRepository {
 
   async getLeadById(id: string, dealerId: string): Promise<Lead | null> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const docRef = doc(db, this.collectionName, id);
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) return null;
@@ -61,18 +63,19 @@ export class FirestoreLeadRepository implements LeadRepository {
         const data = LeadMapper.toPersistence(lead);
         const safeData = leadSchema.parse(data); // Security Validation
 
+        const db = await getDb();
         const docRef = await addDoc(collection(db, this.collectionName), {
           ...safeData,
           timestamp: serverTimestamp(),
         });
 
         // Nivel 14 Traceability
-        auditRepository.log({
+        getAuditRepository().then(repo => repo.log({
           type: 'conversion',
           message: `Nuevo Lead capturado: ${lead.firstName} ${lead.lastName}`,
           source: 'FirestoreLeadRepository',
           metadata: { leadId: docRef.id, dealerId: lead.dealerId }
-        });
+        }));
 
         // Fire-and-forget CRM / Messaging synchronization
         import('@/features/sales-automation/model/sales-orchestrator.service')
@@ -91,12 +94,12 @@ export class FirestoreLeadRepository implements LeadRepository {
       console.error('[Sentinel:Resilience] Firestore save failed. Triggering Emergency Save.', error);
       
       // Nivel 14 Critical Alert
-      auditRepository.log({
+      getAuditRepository().then(repo => repo.log({
         type: 'critical',
         message: 'Fallo crítico en guardado de Lead. Activando Emergency Save.',
         source: 'FirestoreLeadRepository',
         metadata: { error: error.message }
-      });
+      }));
 
       // Transform partial lead to a dummy lead if necessary for the sensor
       const emergencyLead = { ...lead, id: `pending_${Date.now()}` } as Lead;
@@ -109,6 +112,7 @@ export class FirestoreLeadRepository implements LeadRepository {
 
   async updateLead(id: string, data: Partial<Lead>): Promise<void> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const docRef = doc(db, this.collectionName, id);
       const safeData = leadSchema.parse(data);
       await updateDoc(docRef, safeData);
@@ -117,6 +121,7 @@ export class FirestoreLeadRepository implements LeadRepository {
 
   async getLeadVelocity(dealerId: string, hours: number): Promise<number> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const startTime = new Date(Date.now() - hours * 60 * 60 * 1000);
       const q = query(
         collection(db, this.collectionName),
@@ -132,6 +137,7 @@ export class FirestoreLeadRepository implements LeadRepository {
 
   async getAverageAIScore(dealerId: string): Promise<number> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const q = query(
         collection(db, this.collectionName),
         where('dealerId', '==', dealerId),

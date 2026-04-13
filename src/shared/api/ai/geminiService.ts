@@ -4,7 +4,7 @@ import { Car, BlogPost } from '@/shared/types/types';
 import { z } from 'zod';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
 import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
-import { auditRepository } from '@/shared/api/houston/AuditRepository';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 // Helper: Call Vercel Serverless Function (Hides API Key)
 // Helper: Direct Client-Side Call (Restored and Hardened)
@@ -288,23 +288,23 @@ const callGeminiProxy = async (
     const duration = Date.now() - startTime;
     
     // Nivel 14 AI Traceability
-    auditRepository.log({
+    getAuditRepository().then(repo => repo.log({
       type: 'info',
       message: `IA Inferencia completada (${modelName})`,
       source: 'GeminiService',
       metadata: { latency: duration, model: modelName }
-    });
+    }));
 
     return response.text();
   } catch (error: any) {
     console.error('AI Proxy Error:', error);
     
-    auditRepository.log({
+    getAuditRepository().then(repo => repo.log({
       type: 'error',
       message: `Fallo en IA Inferencia: ${error.message}`,
       source: 'GeminiService',
       metadata: { model: modelName }
-    });
+    }));
     
     throw error;
   }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HoustonTelemetry } from '@/entities/houston/model/types';
-import { auditRepository } from '@/shared/api/houston/AuditRepository';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 /**
  * Advanced Telemetry Hook for Houston Command Center.
@@ -51,7 +51,7 @@ export function useTelemetry(connectionState: string): HoustonTelemetry {
         const cls = Math.random() * 0.05;
 
         // Fetch real logs (Nivel 14)
-        auditRepository.getRecentLogs(10).then(logs => {
+        getAuditRepository().then(repo => repo.getRecentLogs(10)).then(logs => {
           setTelemetry(prev => ({
             ...prev,
             lastUpdate: Date.now(),

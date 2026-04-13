@@ -1,5 +1,5 @@
 import { raSentinel } from './raSentinelService';
-import { auditRepository } from '@/shared/api/houston/AuditRepository';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 /**
  * PerformanceObserver: El ojo clínico del Nivel 15.
@@ -18,13 +18,13 @@ export const observerPerformance = () => {
     const score = lcp < 1200 ? 100 : lcp < 2500 ? 85 : 50;
 
     raSentinel.reportPerformance('LCP', lcp, score);
-
-    auditRepository.log({
+    
+    getAuditRepository().then(repo => repo.log({
       type: lcp < 2500 ? 'info' : 'warning',
       message: `RUM LCP Detectado: ${Math.round(lcp)}ms`,
       source: 'Sentinel-Vitals',
       metadata: { lcp }
-    });
+    }));
   });
 
   lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -38,12 +38,16 @@ export const observerPerformance = () => {
 
       raSentinel.reportPerformance('FID', fid, score);
 
-      auditRepository.log({
-        type: fid < 100 ? 'info' : 'warning',
-        message: `RUM FID Detectado: ${Math.round(fid)}ms`,
-        source: 'Sentinel-Vitals',
-        metadata: { fid }
-      });
+      getAuditRepository().then(repo => repo.log({
+        type: 'info',
+        message: `Performance Trace: ${entry.name}`,
+        source: 'PerformanceObserver',
+        metadata: {
+          duration: entry.duration,
+          startTime: entry.startTime,
+          entryType: entry.entryType
+        }
+      }));
     });
   });
 
@@ -62,12 +66,12 @@ export const observerPerformance = () => {
     raSentinel.reportPerformance('CLS', clsValue, score);
 
     if (clsValue > 0) {
-      auditRepository.log({
+      getAuditRepository().then(repo => repo.log({
         type: clsValue < 0.1 ? 'info' : 'warning',
         message: `RUM CLS Detectado: ${clsValue.toFixed(4)}`,
         source: 'Sentinel-Vitals',
         metadata: { cls: clsValue }
-      });
+      }));
     }
   });
 

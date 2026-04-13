@@ -5,18 +5,9 @@ import {
   orderBy, 
   limit, 
   getDocs,
-  Timestamp 
+  Timestamp,
+  Firestore
 } from 'firebase/firestore';
-
-const getDb = async () => {
-  if (typeof window === 'undefined') {
-    const { db } = await import('@/shared/api/firebase/server');
-    return db;
-  } else {
-    const { db } = await import('@/shared/api/firebase/client');
-    return db;
-  }
-};
 
 export interface AuditEvent {
   id?: string;
@@ -27,13 +18,14 @@ export interface AuditEvent {
   metadata?: Record<string, any>;
 }
 
-export class AuditRepository {
-  private collectionName = 'houston_audit_logs';
+export class AuditRepositoryBase {
+  protected collectionName = 'houston_audit_logs';
+
+  constructor(protected db: Firestore) {}
 
   async log(event: Omit<AuditEvent, 'timestamp'>): Promise<void> {
     try {
-      const dbInstance = await getDb();
-      await addDoc(collection(dbInstance, this.collectionName), {
+      await addDoc(collection(this.db, this.collectionName), {
         ...event,
         timestamp: Timestamp.now(),
       });
@@ -43,9 +35,8 @@ export class AuditRepository {
   }
 
   async getRecentLogs(max: number = 20): Promise<AuditEvent[]> {
-    const dbInstance = await getDb();
     const q = query(
-      collection(dbInstance, this.collectionName),
+      collection(this.db, this.collectionName),
       orderBy('timestamp', 'desc'),
       limit(max)
     );

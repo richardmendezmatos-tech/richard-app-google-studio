@@ -1,13 +1,7 @@
+const { initializeAdmin, admin } = require('./lib/firebase-admin-init.cjs');
 
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
-
-// Initialize Firebase Admin
-if (admin.apps.length === 0) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
-}
+// Initialize Firebase Admin safely
+initializeAdmin();
 
 const db = admin.firestore();
 const email = 'richardmendezmatos@gmail.com';

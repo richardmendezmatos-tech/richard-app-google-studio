@@ -5,7 +5,7 @@ import {
   setDoc,
   serverTimestamp,
 } from 'firebase/firestore';
-import { db } from '@/shared/api/firebase/client';
+import { getDb } from '@/shared/api/firebase';
 import { HoustonRepository } from './HoustonRepository';
 import { HoustonTelemetry } from '../model/types';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
@@ -16,6 +16,7 @@ export class FirestoreHoustonRepository implements HoustonRepository {
 
   async getTelemetry(): Promise<HoustonTelemetry> {
     return withSecureErrorHandling(async () => {
+      const db = await getDb();
       const docRef = doc(db, this.collectionName, this.docId);
       const docSnap = await getDoc(docRef);
 
@@ -28,6 +29,7 @@ export class FirestoreHoustonRepository implements HoustonRepository {
   }
 
   async pushTelemetry(telemetry: Partial<HoustonTelemetry>): Promise<void> {
+    const db = await getDb();
     const docRef = doc(db, this.collectionName, this.docId);
     await setDoc(docRef, {
       ...telemetry,
@@ -36,13 +38,20 @@ export class FirestoreHoustonRepository implements HoustonRepository {
   }
 
   subscribeToTelemetry(callback: (telemetry: HoustonTelemetry) => void): () => void {
-    const docRef = doc(db, this.collectionName, this.docId);
+    let unsubscribe: (() => void) | undefined;
     
-    return onSnapshot(docRef, (snapshot) => {
-      if (snapshot.exists()) {
-        callback(this.mapToTelemetry(snapshot.data()));
-      }
+    getDb().then(db => {
+      const docRef = doc(db, this.collectionName, this.docId);
+      unsubscribe = onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+          callback(this.mapToTelemetry(snapshot.data()));
+        }
+      });
     });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }
 
   private mapToTelemetry(data: any): HoustonTelemetry {

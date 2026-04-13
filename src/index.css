@@ -1,7 +1,97 @@
-@import './shared/styles/ra-tokens.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00aed9;
+  --color-brand-cyan: #00e5ff;
+  --color-brand-cyan-strong: #00b8cc;
+  
+  /* Richard Automotive Branding (Sentinel N23) */
+  --color-ra-primary: #00f2ff;
+  --color-ra-secondary: #0d2232;
+  --color-ra-accent: #ffd700;
+  --color-ra-bg-dark: #050b10;
+  
+  --font-ra-main: "Inter", sans-serif;
+  --font-ra-tech: "Roboto Mono", monospace;
+  --font-editorial: "Cormorant Garamond", serif;
+  --font-tech: "Sora", sans-serif;
+
+  --animate-scan: scan 3s linear infinite;
+  --animate-bounce-slow: bounce-slow 4s ease-in-out infinite;
+  --animate-gradient-x: gradientX 8s ease infinite;
+  --animate-spin-slow: spinSlow 32s linear infinite;
+  --animate-neural-pulse: neural-pulse 15s ease-in-out infinite alternate;
+  
+  /* Shared Tokens */
+  --ra-glass-border: rgba(255, 255, 255, 0.1);
+  --ra-motion-duration: 0.5s;
+  --ra-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --ra-glow-cyan: 0 0 20px rgba(0, 242, 255, 0.2);
+
+  @keyframes scan {
+    0% { top: 0%; opacity: 0; }
+    50% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes gradientX {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes neural-pulse {
+    0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+    50% { transform: scale(1.1) translate(2%, 2%); opacity: 0.8; }
+    100% { transform: scale(1) translate(-2%, -2%); opacity: 0.5; }
+  }
+}
+/* Essential Utilities (Sentinel N23) */
+.glass-premium {
+  background: rgba(13, 34, 50, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ra-glass-border);
+  box-shadow: var(--ra-shadow-premium);
+  transition: all var(--ra-motion-duration) var(--ra-motion-ease);
+}
+
+.ra-input-base {
+  width: 100%;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ra-input-base:focus {
+  border-color: var(--color-ra-primary);
+  box-shadow: var(--ra-glow-cyan);
+  outline: none;
+}
+
+.ra-label-base {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+  margin-left: 0.25rem;
+}
 
 :root {
   --brand-cyan: #00e5ff;
@@ -810,7 +900,7 @@ body {
 .scan-line {
   @apply absolute left-0 right-0 h-0.5 bg-cyan-500 z-10;
   box-shadow:
-    0 0 15px theme('colors.cyan.500'),
+    0 0 15px var(--color-cyan-500),
     0 0 5px #fff;
   animation: var(--animate-scan);
 }

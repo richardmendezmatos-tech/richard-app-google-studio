@@ -1,3 +1,5 @@
+"use client";
+
 import { useChat } from 'ai/react';
 import type { Message as AIMessage } from 'ai/react';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect } from 'react';
-import { useCopilotAgent, type Message } from '@/features/ai-hub';
+import { useCopilotAgent, type Message } from '@/features/ai-hub/hooks';
 import { Bot, User, Send, ShieldCheck } from 'lucide-react';
 import ProgressiveForm from '@/widgets/brand-ui/chat/ProgressiveForm';
 import { customerMemoryService } from '@/features/leads';

@@ -11,6 +11,9 @@ coverage
 dist
 build
 out
+# Firebase Service Accounts
+serviceAccountKey.json
+functions/serviceAccountKey.json
 .next
 .vercel
 

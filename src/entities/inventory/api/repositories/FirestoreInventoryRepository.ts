@@ -1,5 +1,5 @@
 import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db } from '@/shared/api/firebase/client';
+import { getDb } from '@/shared/api/firebase';
 import { InventoryRepository } from '@/entities/inventory';
 import { Car } from '@/entities/inventory';
 
@@ -7,6 +7,7 @@ export class FirestoreInventoryRepository implements InventoryRepository {
   private collectionName = 'cars';
 
   async getInventory(dealerId: string, limitCount: number = 100): Promise<Car[]> {
+    const db = await getDb();
     const q = query(
       collection(db, this.collectionName),
       where('dealerId', '==', dealerId),
@@ -23,6 +24,7 @@ export class FirestoreInventoryRepository implements InventoryRepository {
   }
 
   async getCarById(id: string): Promise<Car | null> {
+    const db = await getDb();
     const docRef = doc(db, this.collectionName, id);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return null;
@@ -30,6 +32,7 @@ export class FirestoreInventoryRepository implements InventoryRepository {
   }
 
   async getInventoryTurnover(dealerId: string): Promise<number> {
+    const db = await getDb();
     const q = query(
       collection(db, this.collectionName),
       where('dealerId', '==', dealerId)

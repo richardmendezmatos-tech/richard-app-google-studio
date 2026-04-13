@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
 import ThemeToggle from './ThemeToggle';

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { connectToVoiceSession } from '@/shared/api/ai';

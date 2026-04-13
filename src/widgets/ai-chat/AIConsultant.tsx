@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { Car } from '@/shared/types/types';
-import { useCopilotAgent } from '@/features/ai-hub';
+import { useCopilotAgent } from '@/features/ai-hub/hooks';
 import { Send, User, Bot, Sparkles, Loader2 } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
 

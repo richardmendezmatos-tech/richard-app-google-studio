@@ -77,11 +77,7 @@ export default function RootLayout({
           />
         )}
         <AppProviders>
-          <Suspense fallback={<div className="min-h-screen bg-slate-950 animate-pulse" />}>
-            <CinemaLayout inventory={[]}>
-              {children}
-            </CinemaLayout>
-          </Suspense>
+          {children}
         </AppProviders>
       </body>
     </html>

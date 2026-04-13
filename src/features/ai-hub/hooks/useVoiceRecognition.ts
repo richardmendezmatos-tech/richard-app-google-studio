@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
