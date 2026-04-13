@@ -48,9 +48,9 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
   };
 
   return (
-    <div className="glass-premium p-6 border border-white/5 group hover:border-violet-500/20 transition-all overflow-hidden relative">
+    <div className="glass-premium p-6 border border-white/5 group hover:border-violet-500/20 transition-all overflow-hidden relative hud-brackets">
       {/* Background Pulse for Intelligence */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/5 blur-[50px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/5 blur-[50px] rounded-full pointer-events-none group-hover:bg-violet-600/10 transition-colors" />
 
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
@@ -79,11 +79,14 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
             <motion.div 
               key={i} 
               layout
-              className={`p-4 rounded-2xl border transition-all cursor-pointer group/card ${
-                isActive ? 'bg-violet-950/20 border-violet-500/40 shadow-xl' : 'bg-slate-900/40 border-white/5 hover:border-white/10'
-              }`}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer group/card relative overflow-hidden ${
+                isActive 
+                  ? 'bg-violet-950/20 border-violet-500/40 shadow-xl' 
+                  : 'bg-slate-900/40 border-white/5 hover:border-white/10'
+              } ${opp.priority === 'CRITICAL' ? 'priority-pulse-critical' : ''}`}
               onClick={() => setActiveOpportunity(isActive ? null : opp.query)}
             >
+              {isActive && <div className="light-leak -top-10 -left-10 animate-pulse" />}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`p-1.5 rounded-lg ${

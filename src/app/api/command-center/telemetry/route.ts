@@ -36,12 +36,14 @@ export async function GET(req: Request) {
       searchGaps,
       messageStats,
       embeddingCount,
-      recentLeads
+      recentLeads,
+      purchaseOrders
     ] = await Promise.all([
       supabase.from('search_gaps').select('*').order('created_at', { ascending: false }).limit(10),
       supabase.from('message_queue').select('status').gte('created_at', last7d),
       supabase.from('vehicle_embeddings').select('car_id', { count: 'exact', head: true }),
-      leadRepo.getLeads(DEALER_ID, 20)
+      leadRepo.getLeads(DEALER_ID, 20),
+      supabase.from('purchase_orders').select('*').in('status', ['draft', 'confirmed']).order('created_at', { ascending: false }).limit(10)
     ]);
 
     // 2. Lead Intelligence Processing
@@ -88,6 +90,7 @@ export async function GET(req: Request) {
         gap_count: searchGaps.data?.length || 0,
       },
       whatsapp,
+      purchaseOrders: purchaseOrders.data || [],
     });
   } catch (error: any) {
     console.error('[Telemetry] Sentinel Overload:', error);

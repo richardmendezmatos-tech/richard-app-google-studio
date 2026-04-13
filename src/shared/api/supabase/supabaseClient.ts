@@ -108,3 +108,47 @@ export const createPurchaseOrderDraft = async (orderData: {
     return { success: false, error: err };
   }
 };
+
+/**
+ * getPurchaseOrders
+ * Recupera el log de abasto filtrado por estatus activo (draft o confirmed).
+ */
+export const getPurchaseOrders = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[Supabase] Error fetching POs:', error);
+      return [];
+    }
+    return data;
+  } catch (err) {
+    console.error('[Supabase] Exception in getPurchaseOrders:', err);
+    return [];
+  }
+};
+
+/**
+ * updatePurchaseOrderStatus
+ * Actualiza el estatus de una orden (confirmar o archivar).
+ */
+export const updatePurchaseOrderStatus = async (id: string, status: 'confirmed' | 'archived') => {
+  try {
+    const { error } = await supabase
+      .from('purchase_orders')
+      .update({ status })
+      .eq('id', id);
+
+    if (error) {
+      console.error('[Supabase] Error updating PO status:', error);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('[Supabase] Exception in updatePurchaseOrderStatus:', err);
+    return { success: false, error: err };
+  }
+};

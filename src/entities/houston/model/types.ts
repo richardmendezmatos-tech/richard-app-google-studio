@@ -6,6 +6,19 @@ export interface HoustonMetric {
   trend?: 'up' | 'down' | 'stable';
 }
 
+export interface PurchaseOrder {
+  id: string;
+  query: string;
+  recommendation: string;
+  estimated_roi: number;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  reason: string;
+  status: 'draft' | 'confirmed' | 'archived';
+  unit_type?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface HoustonTelemetry {
   systemHealth: 'online' | 'degraded' | 'offline';
   businessHealthScore: number;
@@ -61,6 +74,7 @@ export interface HoustonTelemetry {
       avg_score: number;
       inventory_coverage: number;
     };
+    purchaseOrders: PurchaseOrder[];
   };
 
   recentEvents: Array<{

@@ -19,6 +19,9 @@ import {
   Flame,
   Target,
 } from 'lucide-react';
+import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearchTicker';
+import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
+import { PurchaseOrder } from '@/entities/houston/model/types';
 
 interface HotLead {
   id: string;
@@ -40,6 +43,7 @@ interface TelemetryData {
   hotLeads: HotLead[];
   neuralSearch: { recent_gaps: any[]; gap_count: number };
   whatsapp: { sent: number; scheduled: number; failed: number };
+  purchaseOrders: PurchaseOrder[];
 }
 
 const CARD_CLASSES =
@@ -94,7 +98,9 @@ export default function CommandCenterPage() {
   }, [fetchTelemetry]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-cyan-500/30 overflow-hidden relative">
+      {/* Cinematic Scanline */}
+      <div className="scanline-overlay" />
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -142,24 +148,28 @@ export default function CommandCenterPage() {
             label="Leads (24h)"
             value={data?.summary.leads_last_24h ?? '—'}
             accent="cyan"
+            className="hud-brackets"
           />
           <KPICard
             icon={<Target className="w-5 h-5" />}
             label="Avg. Lead Score"
             value={`${data?.summary.avg_score ?? '—'}%`}
             accent="emerald"
+            className="hud-brackets"
           />
           <KPICard
             icon={<Brain className="w-5 h-5" />}
             label="Neural Coverage"
             value={data?.summary.inventory_coverage ?? '—'}
             accent="violet"
+            className="hud-brackets"
           />
           <KPICard
             icon={<MessageSquare className="w-5 h-5" />}
             label="WhatsApp Health"
             value={`${data ? Math.round((data.whatsapp.sent / Math.max(data.whatsapp.sent + data.whatsapp.failed, 1)) * 100) : '—'}%`}
             accent="green"
+            className="hud-brackets"
           />
         </div>
 
@@ -167,7 +177,7 @@ export default function CommandCenterPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Hot Leads Monitor */}
           <motion.div 
-            className={`${CARD_CLASSES} lg:col-span-2`} 
+            className={`${CARD_CLASSES} lg:col-span-2 hud-brackets`} 
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }}
           >
@@ -186,7 +196,9 @@ export default function CommandCenterPage() {
             <div className="space-y-3">
               {data?.hotLeads.length ? (
                 data.hotLeads.map((lead) => (
-                  <div key={lead.id} className="group p-4 bg-slate-800/30 rounded-2xl border border-white/[0.04] hover:border-cyan-500/30 transition-all flex items-center justify-between">
+                  <div key={lead.id} className={`group p-4 bg-slate-800/30 rounded-2xl border border-white/[0.04] hover:border-cyan-500/30 transition-all flex items-center justify-between ${
+                    lead.priority === 'urgent' ? 'priority-pulse-urgent border-rose-500/20' : ''
+                  }`}>
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
                         lead.score > 85 ? 'bg-orange-500/20 text-orange-400' : 'bg-cyan-500/20 text-cyan-400'
@@ -241,23 +253,12 @@ export default function CommandCenterPage() {
               </div>
             </motion.div>
 
-            <motion.div className={CARD_CLASSES} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-xl bg-violet-500/10">
-                  <Search className="w-5 h-5 text-violet-400" />
-                </div>
-                <h2 className="font-bold text-sm">Gaps Detectados</h2>
-              </div>
-              <div className="space-y-2">
-                {data?.neuralSearch.recent_gaps.slice(0, 3).map((gap: any, i: number) => (
-                  <div key={i} className="p-2 bg-slate-800/50 rounded-lg text-[10px] text-slate-400 border border-white/[0.02]">
-                    &ldquo;{gap.query}&rdquo;
-                  </div>
-                ))}
-                {(!data?.neuralSearch.recent_gaps.length) && (
-                  <p className="text-center py-4 text-[10px] text-slate-700">Inventario al 100%</p>
-                )}
-              </div>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <NeuralSearchTicker gaps={data?.neuralSearch.recent_gaps} />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <SourcingLogWidget orders={data?.purchaseOrders || []} onUpdate={fetchTelemetry} />
             </motion.div>
           </div>
         </div>
@@ -276,7 +277,7 @@ export default function CommandCenterPage() {
 
 // ─── Subcomponents ──────────────────────────────────────────────────
 
-function KPICard({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: number | string; accent: string }) {
+function KPICard({ icon, label, value, accent, className = '' }: { icon: React.ReactNode; label: string; value: number | string; accent: string; className?: string }) {
   const colorMap: Record<string, string> = {
     cyan: 'from-cyan-500/10 border-cyan-500/10 text-cyan-400',
     emerald: 'from-emerald-500/10 border-emerald-500/10 text-emerald-400',
@@ -287,7 +288,7 @@ function KPICard({ icon, label, value, accent }: { icon: React.ReactNode; label:
 
   return (
     <motion.div
-      className={`relative bg-gradient-to-br ${colors.split(' ')[0]} to-slate-900/60 backdrop-blur-xl border ${colors.split(' ')[1]} rounded-2xl p-5 overflow-hidden`}
+      className={`relative bg-gradient-to-br ${colors.split(' ')[0]} to-slate-900/60 backdrop-blur-xl border ${colors.split(' ')[1]} rounded-2xl p-5 overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
     >
