@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  cacheComponents: true,
   images: {
     formats: ['image/avif', 'image/webp'],
-    // Next.js Image Optimization
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -12,7 +14,12 @@ const nextConfig = {
       { protocol: 'https', hostname: 'randomuser.me' },
     ],
   },
-  cacheComponents: false,
+  transpilePackages: [
+    'lucide-react',
+    'motion',
+    'framer-motion',
+    'canvas-confetti'
+  ],
   experimental: {
     optimizePackageImports: [
       'lucide-react',
@@ -22,13 +29,13 @@ const nextConfig = {
       '@tanstack/react-query',
       'date-fns',
       'recharts',
+      '@headlessui/react',
     ],
   },
-  // outputFileTracingRoot removed for CI/CD compatibility
   
-  // Turbopack configuration for Next.js 16+
   turbopack: {
     resolveAlias: {
+      '@': './src',
       '@/shared': './src/shared',
       '@/entities': './src/entities',
       '@/features': './src/features',
@@ -41,6 +48,7 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
+      '@': './src',
       '@/shared': './src/shared',
       '@/entities': './src/entities',
       '@/features': './src/features',

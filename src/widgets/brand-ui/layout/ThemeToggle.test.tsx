@@ -1,4 +1,5 @@
-import { cleanup, render, screen, fireEvent } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/dom';
 import { afterEach, describe, it, expect } from 'vitest';
 import ThemeToggle from './ThemeToggle';
 import { ThemeProvider } from '@/shared/ui/providers/ThemeProvider';

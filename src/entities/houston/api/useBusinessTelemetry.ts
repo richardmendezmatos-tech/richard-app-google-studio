@@ -30,7 +30,8 @@ export const useBusinessTelemetry = () => {
         hotLeads: data.hotLeads,
         searchGaps: data.neuralSearch.recent_gaps,
         whatsappStats: data.whatsapp,
-        summary: data.summary
+        summary: data.summary,
+        purchaseOrders: data.purchaseOrders || []
       });
       setError(null);
     } catch (err: any) {

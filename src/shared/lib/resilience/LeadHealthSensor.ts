@@ -1,4 +1,4 @@
-import { Lead, PredictiveInsight } from '@/entities/lead';
+import { Lead, PredictiveInsight } from '../../types/lead';
 
 export interface HealthStatus {
   isHealthy: boolean;

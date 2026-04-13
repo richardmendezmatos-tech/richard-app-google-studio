@@ -19,7 +19,7 @@ import { LeadMapper } from '@/entities/lead/lib/mappers/LeadMapper';
 import { leadSchema } from '@/entities/lead/lib/schemas/leadSchema';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
 import { CircuitBreaker } from '@/shared/lib/resilience/CircuitBreaker';
-import { LeadHealthSensor } from '@/features/leads/model/health/LeadHealthSensor';
+import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
 import { auditRepository } from '@/shared/api/houston/AuditRepository';
 
 const dbBreaker = new CircuitBreaker({

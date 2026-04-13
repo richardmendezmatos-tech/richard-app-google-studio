@@ -7,7 +7,7 @@ import {
   validateImageFile,
   generateBlurPlaceholder,
 } from '@/shared/api/media/imageOptimizationService';
-import ImageOptimizerWorker from '@/shared/lib/workers/imageOptimizer.worker?worker';
+// Web Worker is initialized dynamically in useEffect to comply with Next.js standards
 
 interface WorkerResponse {
   id: string;
@@ -60,7 +60,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    workerRef.current = new ImageOptimizerWorker();
+    workerRef.current = new Worker(
+      new URL('../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url)
+    );
     return () => {
       workerRef.current?.terminate();
     };

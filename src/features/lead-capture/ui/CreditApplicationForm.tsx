@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/shared/api/firebase/client';
-import { LeadHealthSensor } from '../../leads/model/health/LeadHealthSensor';
+import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
 import { PersuasionWrapper } from '@/shared/ui/containers/PersuasionWrapper';
 import { useCustomerMemory } from '@/shared/lib/persuasion/customerMemory';
 
