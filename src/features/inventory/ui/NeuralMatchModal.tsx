@@ -3,6 +3,10 @@ import { Car } from '@/entities/inventory';
 import { analyzeCarImage } from '@/shared/api/ai/geminiService';
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
+import { AuditRepository } from '@/shared/api/houston/AuditRepository';
+
+const auditRepo = new AuditRepository();
+
 
 import {
   X,
@@ -175,6 +179,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
       try {
         analytics.trackNeuralMatch(finalProfile);
+        auditRepo.log({
+          type: 'info',
+          message: `Neural Match Scan Initiated`,
+          source: 'NeuralMatchModal',
+          metadata: { profile_length: finalProfile.length, tags: activeTags }
+        });
 
         const embeddingRes = await fetch('/api/embeddings', {
           method: 'POST',
@@ -275,10 +285,10 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
   }, [results]);
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-[#0d2232]/95 backdrop-blur-xl animate-in fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in">
       <div
         ref={containerRef}
-        className="w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh]"
+        className="glass-premium w-full max-w-4xl shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh] rounded-[40px]"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
@@ -299,7 +309,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
             </div>
             <div>
               <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-                Neural Match <span className="text-primary">v4.0</span>
+                Neural Match <span className="text-ra-primary">v23.0</span>
               </h2>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                 Identidad Digital & Compatibilidad
@@ -329,8 +339,8 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                             flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide border transition-all duration-200
                                             ${
                                               activeTags.includes(tag.id)
-                                                ? 'bg-primary text-white border-primary shadow-lg shadow-cyan-500/30'
-                                                : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white'
+                                                ? 'bg-ra-primary text-slate-950 border-ra-primary shadow-lg shadow-ra-primary/30'
+                                                : 'bg-white/5 text-slate-400 border-white/10 hover:border-ra-primary/50 hover:text-white'
                                             }
                                         `}
                     >
@@ -349,8 +359,8 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     <textarea
                       value={profile}
                       onChange={(e) => setProfile(e.target.value)}
-                      placeholder="Escribe o usa el micrófono: 'Busco algo seguro para mi familia, que tenga espacio para las bicicletas y que no gaste mucha gasolina...'"
-                      className="w-full bg-slate-800/80 border-2 border-slate-700 rounded-3xl p-6 text-white placeholder:text-slate-600 focus:border-primary focus:bg-slate-800 outline-none text-lg leading-relaxed resize-none min-h-[200px] transition-all shadow-inner relative z-10"
+                      placeholder="Escribe o usa el micrófono: 'Busco algo seguro para mi familia, que tenga espacio para las bicicletas...'"
+                      className="ra-input-base w-full min-h-[200px] p-6 text-lg leading-relaxed resize-none transition-all placeholder:text-slate-600"
                     />
                     <div className="absolute top-4 right-4 z-20">
                       <button
@@ -360,7 +370,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                                                 ${
                                                   isListening
                                                     ? 'bg-red-500 text-white animate-pulse shadow-red-500/40'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-primary hover:text-white'
+                                                    : 'bg-slate-800 text-slate-300 hover:bg-ra-primary hover:text-slate-950'
                                                 }
                                             `}
                         title="Dictado por Voz"
@@ -419,15 +429,15 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                 <div className="w-full mt-4 flex justify-center relative z-20 group pb-8">
                   <div
-                    className={`absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
+                    className={`absolute -inset-1 bg-gradient-to-r from-ra-primary to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
                   ></div>
                   <button
                     onClick={() => handleScan()}
                     disabled={isAnalyzing || !profile.trim()}
-                    className="w-full md:w-auto px-12 py-5 bg-primary hover:bg-cyan-500 text-white rounded-[30px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:scale-100"
+                    className="w-full md:w-auto px-12 py-5 bg-ra-primary hover:bg-ra-primary-light text-slate-950 rounded-[30px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-ra-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:scale-100"
                     title="Iniciar Escaneo Neural"
                   >
-                    <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors shadow-inner">
+                    <div className="p-2 bg-slate-950/20 rounded-full group-hover:bg-slate-950/30 transition-colors shadow-inner">
                       <ScanLine size={32} strokeWidth={3} className="drop-shadow-sm" />
                     </div>
                     <span className="drop-shadow-md">Iniciar Escaneo</span>
@@ -476,7 +486,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                       <User size={24} className="text-white" />
                     </div>
                     <div>
-                      <div className="text-[10px] text-cyan-300 font-bold uppercase tracking-widest">
+                      <div className="text-[10px] text-ra-primary font-bold uppercase tracking-widest">
                         Identidad Detectada
                       </div>
                       <div className="text-2xl font-black text-white uppercase tracking-tight">

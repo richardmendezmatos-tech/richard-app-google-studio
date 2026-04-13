@@ -31,6 +31,10 @@ import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import DOMPurify from 'dompurify';
 import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
+import { AuditRepository } from '@/shared/api/houston/AuditRepository';
+
+const auditRepo = new AuditRepository();
+
 
 interface Props {
   car: Car;
@@ -97,7 +101,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
   useEffect(() => {
     analytics.trackTabChange(car.id, activeTab);
-  }, [activeTab, car.id, analytics]);
+    auditRepo.log({
+      type: 'info',
+      message: `User viewed ${activeTab} tab for ${car.name}`,
+      source: 'CarDetailModal',
+      metadata: { vehicleId: car.id, tab: activeTab }
+    });
+  }, [activeTab, car.id, car.name, analytics]);
 
   useEffect(() => {
     if (activeTab === 'overview' && !aiPitch && !loadingPitch) {
@@ -128,6 +138,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     });
 
     analytics.trackCarConfigure(car.id);
+    auditRepo.log({
+      type: 'conversion',
+      message: `WhatsApp Conversion attempt for ${car.name}`,
+      source: 'CarDetailModal',
+      metadata: { vehicleId: car.id, payment: calculatedPayment }
+    });
+
     window.open(
       `https://wa.me/17873682880?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
       '_blank'
@@ -142,6 +159,14 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       vehiclePrice: car.price,
       source: `CarDetailModal_Call`,
     });
+
+    auditRepo.log({
+      type: 'conversion',
+      message: `Call Conversion attempt for ${car.name}`,
+      source: 'CarDetailModal',
+      metadata: { vehicleId: car.id }
+    });
+
     window.location.href = 'tel:7873682880';
   };
 
@@ -170,7 +195,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-2xl p-0 md:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-xl p-0 md:p-6"
       onClick={onClose}
     >
       <motion.div
@@ -179,7 +204,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         exit={{ opacity: 0, scale: 1.05, y: -20 }}
         transition={{ type: 'spring', damping: 30, stiffness: 400 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-black/40 w-full max-w-6xl h-full md:h-[92vh] md:rounded-[64px] shadow-[0_40px_150px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col relative border border-white/10"
+        className="glass-premium w-full max-w-6xl h-full md:h-[92vh] md:rounded-[64px] shadow-2xl overflow-hidden flex flex-col relative"
       >
         {/* Glow Effects */}
         <div className="absolute top-0 -left-20 w-80 h-80 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
@@ -345,47 +370,47 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
-                           <Banknote size={14} className="text-cyan-400" /> Pago Inicial (Pronto)
+                        <label className="ra-label-base flex items-center gap-2">
+                           <Banknote size={14} className="text-ra-primary" /> Pago Inicial (Pronto)
                         </label>
-                        <div className="bg-white/5 p-6 rounded-[28px] border border-white/10 group focus-within:border-cyan-500 transition-all flex items-center">
-                           <span className="text-3xl font-black text-slate-500 group-focus-within:text-cyan-400 mr-2">$</span>
+                        <div className="relative group">
+                           <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-slate-500 group-focus-within:text-ra-primary transition-colors">$</span>
                            <input 
                              type="number" 
                              value={downPayment} 
                              onChange={(e) => setDownPayment(e.target.value === '' ? '' : Number(e.target.value))}
-                             className="bg-transparent text-4xl font-black text-white outline-none w-full tabular-nums"
+                             className="ra-input-base pl-14 text-4xl font-black tabular-nums"
                              placeholder="0"
                            />
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
-                           <Zap size={14} className="text-cyan-400" /> Trade-In Estimado
+                        <label className="ra-label-base flex items-center gap-2">
+                           <Zap size={14} className="text-ra-primary" /> Trade-In Estimado
                         </label>
-                        <div className="bg-white/5 p-6 rounded-[28px] border border-white/10 group focus-within:border-cyan-500 transition-all flex items-center">
-                           <span className="text-3xl font-black text-slate-500 group-focus-within:text-cyan-400 mr-2">$</span>
+                        <div className="relative group">
+                           <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-slate-500 group-focus-within:text-ra-primary transition-colors">$</span>
                            <input 
                              type="number" 
                              value={tradeIn} 
                              onChange={(e) => setTradeIn(e.target.value === '' ? '' : Number(e.target.value))}
-                             className="bg-transparent text-4xl font-black text-white outline-none w-full tabular-nums"
+                             className="ra-input-base pl-14 text-4xl font-black tabular-nums"
                              placeholder="0"
                            />
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
-                           <Calendar size={14} className="text-cyan-400" /> Término del Financiamiento
+                        <label className="ra-label-base flex items-center gap-2">
+                           <Calendar size={14} className="text-ra-primary" /> Término (Meses)
                         </label>
                         <div className="grid grid-cols-4 gap-2">
                           {[48, 60, 72, 84].map((t) => (
                             <button
                               key={t}
                               onClick={() => setTerm(t)}
-                              className={`py-4 rounded-2xl text-sm font-black transition-all ${term === t ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
+                              className={`py-4 rounded-2xl text-sm font-black transition-all ${term === t ? 'bg-ra-primary text-slate-950 shadow-lg shadow-ra-primary/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
                             >
                               {t}m
                             </button>
@@ -394,15 +419,15 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-2">
-                           <ShieldCheck size={14} className="text-cyan-400" /> Perfil de Crédito (Tier)
+                        <label className="ra-label-base flex items-center gap-2">
+                           <ShieldCheck size={14} className="text-ra-primary" /> Perfil de Crédito
                         </label>
                         <div className="grid grid-cols-4 gap-2">
                           {[0.029, 0.059, 0.099, 0.129].map((rate) => (
                             <button
                               key={rate}
                               onClick={() => setCreditRate(rate)}
-                              className={`py-4 rounded-2xl text-xs font-black transition-all ${creditRate === rate ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
+                              className={`py-4 rounded-2xl text-xs font-black transition-all ${creditRate === rate ? 'bg-ra-primary text-slate-950 shadow-lg shadow-ra-primary/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}
                             >
                               {rate === 0.029 ? 'EXC' : rate === 0.059 ? 'BUENO' : rate === 0.099 ? 'REG' : 'POB'}
                             </button>
