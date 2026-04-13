@@ -23,21 +23,29 @@ import { BusinessHealthWidget } from './components/BusinessHealthWidget';
 import { LeadIntelligenceWidget } from './components/LeadIntelligenceWidget';
 import { NeuralSearchTicker } from './components/NeuralSearchTicker';
 import { WhatsAppOperationsHUD } from './components/WhatsAppOperationsHUD';
+import { SourcingLogWidget } from './components/SourcingLogWidget';
 import { DI } from '@/app/di/registry';
 import { HoustonTelemetry } from '@/entities/houston/model/types';
 import { useBusinessTelemetry } from '@/entities/houston/api/useBusinessTelemetry';
 
 export const HoustonDashboard: React.FC = () => {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
-  const { businessData, loading: bizLoading } = useBusinessTelemetry();
+  const { businessData, loading: bizLoading, refresh: refreshBiz } = useBusinessTelemetry();
   
   // Real-time Telemetry Subscription (Nivel 13)
   useEffect(() => {
     const unsub = DI.getHoustonTelemetryUseCase().subscribe((data: HoustonTelemetry) => {
       setTelemetry(data);
     });
-    return () => unsub();
-  }, []);
+
+    const handleRefresh = () => refreshBiz();
+    window.addEventListener('ra_telemetry_refresh', handleRefresh);
+
+    return () => {
+      unsub();
+      window.removeEventListener('ra_telemetry_refresh', handleRefresh);
+    };
+  }, [refreshBiz]);
 
   const healthRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +134,10 @@ export const HoustonDashboard: React.FC = () => {
            </div>
            
            <HoustonTerminalLog events={telemetry.recentEvents} />
+           <SourcingLogWidget 
+             orders={businessData?.purchaseOrders || []} 
+             onUpdate={refreshBiz} 
+           />
            <WhatsAppOperationsHUD stats={businessData?.whatsappStats} />
            
            <BusinessHealthWidget />

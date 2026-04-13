@@ -28,16 +28,29 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
   const handleDraftOrder = async (opportunity: SourcingOpportunity) => {
     setIsSubmitting(opportunity.query);
     try {
+      // 1. Neural Analysis via AI Brain
+      const analysisRes = await fetch('/api/command-center/sourcing/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: opportunity.query, count: opportunity.count })
+      });
+
+      if (!analysisRes.ok) throw new Error('AI Intelligence Sync Failed');
+      const aiIntel = await analysisRes.json();
+
+      // 2. Persist in RA Cloud (Supabase)
       const result = await createPurchaseOrderDraft({
         query: opportunity.query,
-        recommendation: opportunity.recommendation,
-        roi: opportunity.roi,
-        priority: opportunity.priority,
-        reason: opportunity.reason
+        recommendation: aiIntel.recommendation || opportunity.recommendation,
+        roi: aiIntel.roi || opportunity.roi,
+        priority: aiIntel.priority?.toLowerCase() || opportunity.priority.toLowerCase(),
+        reason: aiIntel.reason || opportunity.reason
       });
 
       if (result.success) {
         setDraftedOrders(prev => [...prev, opportunity.query]);
+        // Trigger global telemetry refresh if available via event (optional, but handled by parent in this architecture)
+        window.dispatchEvent(new CustomEvent('ra_telemetry_refresh'));
         console.log(`[NeuralIntelligence] Functional PO Draft created for: ${opportunity.query}`);
       }
     } catch (error) {
