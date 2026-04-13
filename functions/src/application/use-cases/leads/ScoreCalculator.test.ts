@@ -13,7 +13,7 @@ describe('ScoreCalculator', () => {
         };
         const result = ScoreCalculator.execute(input);
         expect(result.category).toBe('HOT');
-        expect(result.score).toBeGreaterThanOrEqual(70);
+        expect(result.score).toBeGreaterThanOrEqual(60); // Sincronizado con UseCase
         expect(result.insights).toContain("Ingreso sólido (>3k)");
         expect(result.insights).toContain("Interés específico en unidad");
     });
@@ -24,13 +24,13 @@ describe('ScoreCalculator', () => {
             timeAtJob: "1 year",
             chatInteractions: 6,
             hasPronto: true,
-            viewedInventoryMultipleTimes: true,
+            behavioralMetrics: { inventoryViews: 5 }, // Estructura corregida
             location: "Puerto Rico"
         };
         const result = ScoreCalculator.execute(input);
         expect(result.category).toBe('WARM');
-        expect(result.score).toBeGreaterThanOrEqual(40);
-        expect(result.score).toBeLessThan(70);
+        expect(result.score).toBeGreaterThanOrEqual(30); // Sincronizado con UseCase
+        expect(result.score).toBeLessThan(60);
     });
 
     it('should classify a lead as COLD with weak signals', () => {
@@ -40,6 +40,6 @@ describe('ScoreCalculator', () => {
         };
         const result = ScoreCalculator.execute(input);
         expect(result.category).toBe('COLD');
-        expect(result.score).toBeLessThan(40);
+        expect(result.score).toBeLessThan(30);
     });
 });

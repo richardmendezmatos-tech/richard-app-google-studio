@@ -13,7 +13,7 @@
     "bun:dev": "bun --bun next dev",
     "bun:build": "bun --bun next build",
     "deploy:vercel": "dotenvx run -- npx vercel --prod",
-    "test": "dotenvx run -- vitest run",
+    "test": "dotenvx run -- vitest run --exclude \".agents/**\"",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test e2e/boot-smoke.spec.ts --project=chromium",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 500",

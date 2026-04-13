@@ -14,7 +14,8 @@ describe('ProcessWhatsAppMessage', () => {
             save: vi.fn()
         };
         mockLeadRepo = {
-            getById: vi.fn()
+            getById: vi.fn(),
+            updateLead: vi.fn().mockResolvedValue(undefined)
         };
         mockAI = {
             orchestrate: vi.fn(() => Promise.resolve({ response: 'Test AI Response', metadata: {} }))

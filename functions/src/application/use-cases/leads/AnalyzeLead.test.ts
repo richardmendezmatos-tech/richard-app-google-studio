@@ -28,12 +28,16 @@ describe('AnalyzeLead Use Case', () => {
         vi.mocked(mockInventoryRepo.getById).mockResolvedValue(mockCar as Car);
 
         const input: Partial<Lead> = {
+            firstName: 'Richard',
+            lastName: 'Mendez',
+            phone: '7870000000',
+            email: 'richard@example.com',
             vehicleId: 'car-123',
             monthlyIncome: "5000",
             chatInteractions: 10,
             hasPronto: true,
             timeAtJob: '2+ years',
-            aiAnalysis: { requestedConsultation: true } as any
+            aiAnalysis: { score: 75, insights: [], requestedConsultation: true } as any
         };
 
         const result = await useCase.execute(input);
@@ -50,6 +54,10 @@ describe('AnalyzeLead Use Case', () => {
         vi.mocked(mockInventoryRepo.getById).mockResolvedValue(null);
 
         const input = {
+            firstName: 'Cold',
+            lastName: 'Lead',
+            phone: '7871112222',
+            email: 'cold@example.com',
             vehicleId: 'missing-car',
             monthlyIncome: "1000"
         };

@@ -3,6 +3,17 @@ import { OperationalSentinel } from '../application/use-cases';
 import { saveCheckpoint } from './persistenceService';
 import fs from 'node:fs';
 
+vi.mock('./firebaseAdmin', () => ({
+    db: {
+        collection: vi.fn(() => ({
+            doc: vi.fn(() => ({
+                set: vi.fn().mockResolvedValue(undefined)
+            }))
+        })),
+        settings: vi.fn()
+    }
+}));
+
 let lastWrittenData = '';
 vi.mock('node:fs', () => ({
     default: {
