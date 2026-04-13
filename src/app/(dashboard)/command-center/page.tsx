@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearchTicker';
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
+import TelemetryFeedWidget from '@/features/dashboard/ui/TelemetryFeedWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 
 interface HotLead {
@@ -259,6 +260,10 @@ export default function CommandCenterPage() {
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <SourcingLogWidget orders={data?.purchaseOrders || []} onUpdate={fetchTelemetry} />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <TelemetryFeedWidget />
             </motion.div>
           </div>
         </div>
