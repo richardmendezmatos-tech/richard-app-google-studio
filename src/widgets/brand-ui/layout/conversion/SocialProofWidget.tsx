@@ -14,7 +14,7 @@ const BASE_MESSAGES = [
 ];
 
 const CITIES = ['Vega Alta', 'Bayamón', 'San Juan', 'Guaynabo', 'Carolina', 'Levittown'];
-const MODELS = ['Toyota Tacoma', 'Ford F-150', 'BMW X5', 'Mercedes-Benz GLE', 'Hyundai Tucson'];
+const MODELS = ['Ford F-150 Raptor R', 'Ford Mustang GT California Special', 'Ford Ranger STX Canopy', 'Ford Explorer Active', 'Ford Bronco 4-Door Base'];
 
 export const SocialProofWidget: React.FC = () => {
   const pathname = usePathname();

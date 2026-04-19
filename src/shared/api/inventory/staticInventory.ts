@@ -49,5 +49,41 @@ export const STATIC_INVENTORY_FALLBACK = [
     features: ['Electric Performance', 'Bang & Olufsen'],
     dealer: 'Richard Automotive HQ',
     status: 'AVAILABLE (SENTINEL RESERVED)'
+  },
+  {
+    id: 'fallback-ford-1',
+    make: 'Ford',
+    model: 'Mustang GT California Special',
+    year: 2026,
+    price: 76995,
+    img: '/inventory/ford/mustang-gt-cs.png',
+    images: ['/inventory/ford/mustang-gt-cs.png'],
+    features: ['CS Pkg', 'Active Exhaust', 'Brembo'],
+    dealer: 'Central Ford Vega Alta',
+    status: 'AVAILABLE (SENTINEL RESERVED)'
+  },
+  {
+    id: 'fallback-ford-2',
+    make: 'Ford',
+    model: 'F-150 Raptor R',
+    year: 2026,
+    price: 159995,
+    img: '/inventory/ford/f150-raptor-r.png',
+    images: ['/inventory/ford/f150-raptor-r.png'],
+    features: ['800hp V8', '37 Pkg', 'Carbonized Gray'],
+    dealer: 'Central Ford Vega Alta',
+    status: 'AVAILABLE (SENTINEL RESERVED)'
+  },
+  {
+    id: 'fallback-ford-3',
+    make: 'Ford',
+    model: 'Ranger STX Canopy',
+    year: 2025,
+    price: 49995,
+    img: '/inventory/ford/ranger-stx-canopy.png',
+    images: ['/inventory/ford/ranger-stx-canopy.png'],
+    features: ['Canopy/Bed Shell', 'STX Appearance', '4x4'],
+    dealer: 'Central Ford Vega Alta',
+    status: 'AVAILABLE (SENTINEL RESERVED)'
   }
 ];
