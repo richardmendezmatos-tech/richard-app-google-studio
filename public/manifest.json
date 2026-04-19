@@ -7,6 +7,16 @@
   "background_color": "#020617",
   "theme_color": "#020617",
   "orientation": "portrait",
+  "categories": ["business", "finance", "productivity"],
+  "screenshots": [
+    {
+      "src": "/houston_terminal.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Houston Command Center Terminal"
+    }
+  ],
   "icons": [
     {
       "src": "/app-icon.png",

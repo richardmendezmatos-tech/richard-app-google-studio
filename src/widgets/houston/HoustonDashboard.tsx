@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './HoustonDashboard.module.css';
 import {
@@ -23,6 +23,9 @@ import {
   Sparkles,
   TrendingUp,
   Download,
+  Share2,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
@@ -88,12 +91,42 @@ const TABS: { id: DashboardTab; label: string; icon: React.ReactNode; accentColo
   },
 ];
 
+const useNetworkStatus = () => {
+  return useSyncExternalStore(
+    (callback) => {
+      window.addEventListener('online', callback);
+      window.addEventListener('offline', callback);
+      return () => {
+        window.removeEventListener('online', callback);
+        window.removeEventListener('offline', callback);
+      };
+    },
+    () => navigator.onLine,
+    () => true
+  );
+};
+
 // ─── Tab: Financial Pipeline ──────────────────────────────────────────────────
 const PipelineTab: React.FC<{
   opportunities: OutreachOpportunity[];
   telemetry: HoustonTelemetry;
-}> = ({ opportunities, telemetry }) => (
-  <motion.div
+}> = ({ opportunities, telemetry }) => {
+  const handleShare = async (opp: OutreachOpportunity) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Oportunidad: ${opp.suggestedAction}`,
+          text: `Richard Automotive - Lead: ${opp.reason}. ROI Potencial: ${opp.potentialRoi}x`,
+          url: window.location.href,
+        });
+      } catch (e) {
+        console.error('Share failed:', e);
+      }
+    }
+  };
+
+  return (
+    <motion.div
     key="pipeline"
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
@@ -190,40 +223,44 @@ const PipelineTab: React.FC<{
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.1 + idx * 0.08 }}
-                className="p-4 border border-white/5 rounded-2xl bg-white/2 group relative hover:bg-white/5 transition-all overflow-hidden"
+                className="p-5 border border-white/5 rounded-2xl bg-white/2 group relative hover:bg-white/5 transition-all overflow-hidden active:bg-white/10"
               >
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-30 group-hover:opacity-100 group-hover:w-1.5 transition-all shadow-[0_0_12px_#10b981]" />
-                <p className="text-[11px] text-slate-400 font-bold leading-relaxed mb-3 group-hover:text-white transition-colors">
+                <p className="text-[12px] md:text-[11px] text-slate-400 font-bold leading-relaxed mb-4 group-hover:text-white transition-colors">
                   <span className="text-emerald-500 mr-2 text-sm">🎯</span>
                   {opp.reason}
                 </p>
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-4 py-1.5 rounded-xl border border-emerald-500/20">
                     {opp.suggestedAction}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">
-                      {opp.potentialRoi}x ROI
-                    </span>
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleShare(opp); }}
+                      className="p-3 bg-white/5 border border-white/10 text-slate-400 rounded-xl hover:bg-white/10 hover:text-white transition-all active:scale-95"
+                      title="Compartir"
+                    >
+                      <Share2 size={14} />
+                    </button>
                     <a
                       href={waLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#25D366]/20 hover:border-[#25D366]/50 transition-all active:scale-95"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#25D366]/20 hover:border-[#25D366]/50 transition-all active:scale-95"
                       title="Enviar WhatsApp"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488z"/>
                       </svg>
                       WhatsApp
                     </a>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleJulesClosing(); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600/20 border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-violet-600/30 hover:border-violet-500/50 transition-all active:scale-95 group/jules"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-violet-600/20 border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-violet-600/30 hover:border-violet-500/50 transition-all active:scale-95 group/jules"
                       title="Dejar que Jules cierre el negocio"
                     >
-                      <Sparkles size={12} className="group-hover/jules:animate-pulse" />
+                      <Sparkles size={14} className="group-hover/jules:animate-pulse" />
                       Jules Close
                     </button>
                   </div>
@@ -242,7 +279,8 @@ const PipelineTab: React.FC<{
       </div>
     </div>
   </motion.div>
-);
+  );
+};
 
 // ─── Tab: IT Telemetry ────────────────────────────────────────────────────────
 const TelemetryTab: React.FC<{ telemetry: HoustonTelemetry }> = ({ telemetry }) => {
@@ -511,6 +549,7 @@ const HoustonDashboard: React.FC = () => {
   const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
   const [activeTab, setActiveTab] = useState<DashboardTab>('PIPELINE');
   const { isInstallable, installPWA } = usePWAInstall();
+  const isOnline = useNetworkStatus();
   const { businessData, refresh: refreshBusiness } = useBusinessTelemetry();
   const { containerRef } = useMouseGlow();
 
@@ -534,7 +573,7 @@ const HoustonDashboard: React.FC = () => {
     );
 
   return (
-    <div ref={containerRef as any} className="min-h-screen bg-[#02060a] text-slate-300 font-mono p-4 md:p-8 relative overflow-hidden mesh-bg select-none">
+    <div ref={containerRef as any} className="min-h-screen bg-[#02060a] text-slate-300 font-mono p-4 md:p-8 pb-24 md:pb-8 relative overflow-hidden mesh-bg select-none">
       {/* Ambient Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/5 blur-[160px] rounded-full animate-pulse" />
@@ -556,8 +595,17 @@ const HoustonDashboard: React.FC = () => {
               <div className={`w-2 h-2 rounded-full ${telemetry.systemHealth === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-red-500'}`} />
               {telemetry.systemHealth.toUpperCase()}
             </span>
-            <span className="border-l border-white/10 pl-6">Up: <span className="text-slate-300">99.99%</span></span>
-            <span className="border-l border-white/10 pl-6">HQ_SAN_JUAN</span>
+            <span className="border-l border-white/10 pl-6 flex items-center gap-2">
+              {isOnline ? (
+                <Wifi size={12} className="text-emerald-500" />
+              ) : (
+                <WifiOff size={12} className="text-red-500 animate-bounce" />
+              )}
+              <span className={isOnline ? 'text-slate-300' : 'text-red-500'}>
+                {isOnline ? 'ENLACE_ACTIVO' : 'ENLACE_CAIDO'}
+              </span>
+            </span>
+            <span className="border-l border-white/10 pl-6 hidden sm:inline">HQ_SAN_JUAN</span>
           </div>
         </div>
         {/* Autonomy Score Badge */}
@@ -597,7 +645,7 @@ const HoustonDashboard: React.FC = () => {
       </motion.header>
 
       {/* Tab Navigation */}
-      <div className="relative z-10 mb-8">
+      <div className="relative z-10 mb-8 hidden md:block">
         <div className="flex gap-2 p-1 bg-white/[0.03] border border-white/5 rounded-2xl w-fit">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -690,6 +738,29 @@ const HoustonDashboard: React.FC = () => {
           {activeTab === 'TELEMETRY' && <TelemetryTab key="telemetry" telemetry={telemetry} />}
           {activeTab === 'LOGS' && <LogsTab key="logs" telemetry={telemetry} />}
         </AnimatePresence>
+      </div>
+
+      {/* Mobile Bottom Nav */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] md:hidden bg-[#02060a]/95 backdrop-blur-xl border-t border-white/5 p-2 pb-8">
+        <div className="flex justify-around items-center">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-col items-center gap-1 p-2 transition-all ${
+                  isActive ? 'text-cyan-400' : 'text-slate-500'
+                }`}
+              >
+                <div className={`p-2 rounded-xl transition-all ${isActive ? 'bg-cyan-500/20' : ''}`}>
+                  {tab.icon}
+                </div>
+                <span className="text-[8px] font-black uppercase tracking-widest">{tab.label.split(' ')[0]}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

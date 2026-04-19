@@ -22,11 +22,20 @@ export const metadata: Metadata = {
   description: 'Inventario de vehículos premium y tasaciones digitales. Gestión por Richard Oneal Méndez Matos.',
   manifest: '/manifest.json',
   themeColor: '#020617',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'RichardAuto',
+    startupImage: [
+      {
+        url: '/app-icon.png',
+        media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
+      },
+    ],
+  },
+  icons: {
+    apple: '/app-icon.png',
   },
   formatDetection: {
     telephone: false,
