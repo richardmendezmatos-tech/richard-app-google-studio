@@ -1,4 +1,4 @@
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { STATIC_INVENTORY_FALLBACK } from '@/shared/api/inventory/staticInventory';
 
 export const inventoryService = {

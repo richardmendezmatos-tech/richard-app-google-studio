@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 import {
   appraisalVisionService,
   AppraisalResult,

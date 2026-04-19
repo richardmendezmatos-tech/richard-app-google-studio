@@ -24,7 +24,7 @@ import { LeadIntelligenceWidget } from './components/LeadIntelligenceWidget';
 import { NeuralSearchTicker } from './components/NeuralSearchTicker';
 import { WhatsAppOperationsHUD } from './components/WhatsAppOperationsHUD';
 import { SourcingLogWidget } from './components/SourcingLogWidget';
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston/model/types';
 import { useBusinessTelemetry } from '@/entities/houston/api/useBusinessTelemetry';
 

@@ -11,7 +11,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 
 import { RehydrationService } from '@/shared/lib/resilience/RehydrationService';
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 
 interface AppProvidersProps {
   children: React.ReactNode;

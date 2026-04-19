@@ -32,7 +32,7 @@ vi.mock('@/features/omnichannel/api/antigravityOmnichannelService', () => ({
 }));
 
 import { automationService } from './automationService';
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 
 const NOW = Date.UTC(2026, 1, 11, 15, 0, 0);
 

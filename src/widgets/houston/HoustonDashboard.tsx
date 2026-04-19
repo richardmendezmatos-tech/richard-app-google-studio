@@ -20,7 +20,7 @@ import {
   LineChart,
   MessageSquare,
 } from 'lucide-react';
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
 import { OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';

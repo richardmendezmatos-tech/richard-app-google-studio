@@ -44,7 +44,7 @@ type SubscriberRecord = Subscriber;
 
 // --- Application Logic ---
 
-import { DI } from '@/app/di/registry';
+import { DI } from '@/app/(dashboard)/di/registry';
 
 // --- Application Logic (Delegated to Repositories via DI) ---
 
