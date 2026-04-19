@@ -47,7 +47,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'npm run dev -- --port 5180',
+        command: 'bun run dev -- --port 5180',
         url: 'http://127.0.0.1:5180',
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
