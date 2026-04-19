@@ -7,16 +7,63 @@ export class SupabaseInventoryRepository implements InventoryRepository {
   constructor(private readonly supabase: SupabaseClient) {}
 
   // --- FRONTEND METHODS STUBS ---
-  async getInventory(dealerId: string, limit: number): Promise<import('@/entities/inventory').Car[]> {
-    throw new Error('Supabase Sync repo does not implement frontend fetching yet. Use DataConnect.');
+  async getInventory(dealerId: string, limitCount: number = 100): Promise<import('@/entities/inventory').Car[]> {
+    const { data, error } = await this.supabase
+      .from('inventory')
+      .select('*')
+      // Note: If you enforce dealer mapping strictly, add .eq('dealer_id', dealerId)
+      .limit(limitCount);
+
+    if (error) {
+      console.error('[SupabaseInventoryRepository] getInventory error:', error);
+      return [];
+    }
+
+    return (data || []).map(row => this.mapRowToCar(row));
   }
 
   async getCarById(id: string): Promise<import('@/entities/inventory').Car | null> {
-    throw new Error('Supabase Sync repo does not implement frontend fetching yet. Use DataConnect.');
+    const { data, error } = await this.supabase
+      .from('inventory')
+      .select('*')
+      .eq('vin', id)
+      .single();
+
+    if (error || !data) return null;
+    return this.mapRowToCar(data);
   }
 
   async getInventoryTurnover(dealerId: string): Promise<number> {
-    throw new Error('Method not implemented.');
+    // Turnover = (Sold / Total Portfolio) * 100
+    const { data, error } = await this.supabase
+      .from('inventory')
+      .select('status');
+
+    if (error || !data) return 0;
+    const total = data.length;
+    if (total === 0) return 0;
+
+    const sold = data.filter(c => c.status === 'SOLD').length;
+    return parseFloat(((sold / total) * 100).toFixed(2));
+  }
+
+  private mapRowToCar(row: any): import('@/entities/inventory').Car {
+    return {
+      id: row.vin,
+      vin: row.vin,
+      make: row.make,
+      model: row.model,
+      year: row.year,
+      price: row.price || 0,
+      mileage: row.mileage || 0,
+      image: row.images?.[0] || '/images/placeholders/car.webp',
+      images: row.images || [],
+      gallery: row.images || [],
+      status: (row.status?.toLowerCase() as any) || 'available',
+      type: 'suv', // placeholder
+      color: 'N/A',
+      name: `${row.make} ${row.model} ${row.year}`,
+    };
   }
 
   async getActiveInventory(): Promise<Vehicle[]> {

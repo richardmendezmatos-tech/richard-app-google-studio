@@ -21,7 +21,11 @@ export class HoustonCollectorService {
   async collectAndPush(dealerId: string): Promise<void> {
     try {
       const leadRepo = DI.getLeadRepository();
-      const inventoryRepo = new (await import('@/entities/inventory/api/repositories/FirestoreInventoryRepository')).FirestoreInventoryRepository();
+      const { createClient } = await import('@supabase/supabase-js');
+      const { SupabaseInventoryRepository } = await import('@/entities/inventory/api/SupabaseInventoryRepository');
+      const inventoryRepo = new SupabaseInventoryRepository(
+         createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
+      );
       const houstonRepo = new (await import('@/entities/houston/api/FirestoreHoustonRepository')).FirestoreHoustonRepository();
       const { NeuroScoringService } = await import('../lib/NeuroScoringService');
 

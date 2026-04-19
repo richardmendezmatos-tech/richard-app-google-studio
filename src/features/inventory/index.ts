@@ -8,7 +8,7 @@ export * from './hooks/useInventoryAnalytics';
 export * from './hooks/useSavedCars';
 export * from './hooks/useStorefrontState';
 export * from './hooks/useVisualSearch';
-export * from './infra/FirestoreInventoryRepository';
+// End of exports
 export * from './services/inventoryIngestionService';
 export * from './ui/CarDetailModal';
 export * from './ui/ComparisonModal';

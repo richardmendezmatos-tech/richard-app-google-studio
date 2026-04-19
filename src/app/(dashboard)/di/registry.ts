@@ -1,5 +1,6 @@
 // Repository Registry for Dependency Injection
-import { FirestoreInventoryRepository } from '@/entities/inventory/api/repositories/FirestoreInventoryRepository';
+import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseInventoryRepository';
+import { createClient } from '@supabase/supabase-js';
 import { FirestoreUserRepository } from '@/entities/user/api/repositories/FirestoreUserRepository';
 import { Lead } from '@/entities/lead';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -15,7 +16,10 @@ import { FirestoreSubscriberRepository, FirestoreSurveyRepository } from '@/enti
  */
 export const DI = {
   getInventoryUseCase: () => {
-    const repository = new FirestoreInventoryRepository();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+    const repository = new SupabaseInventoryRepository(supabaseClient);
     return {
       execute: (dealerId: string) => repository.getInventory(dealerId)
     };
