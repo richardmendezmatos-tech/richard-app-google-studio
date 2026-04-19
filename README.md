@@ -6,33 +6,37 @@
 
 **Transformando la experiencia de financiamiento de autos en Puerto Rico a través de la Autonomía Sentinel y el Houston Command Center.**
 
-Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**, Gerente de Financiamiento en **Central Ford, Vega Alta**. Utilice este centro de mando para monitorear leads, telemetría de usuarios y automatizar el marketing para unidades de **Ford, Hyundai y Trucks Freightliner**.
+Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**, Gerente de Financiamiento en **Central Ford, Vega Alta**. Utilice este centro de mando para monitorear leads, telemetría de usuarios y automatizar el abasto de inventario para unidades de **Ford, Hyundai y Trucks Freightliner**.
 
 ---
 
-## 🚀 Sentinel 3.5: Houston Command Center (Fase de Producción)
+## 🚀 Sentinel 4.5: Houston Command Center (Neural Edition)
 
-La versión **3.5** consolida la arquitectura de **Siguiente Generación**, transformando el portal en una plataforma de alto rendimiento para cierres de ventas.
+La versión **4.5** consolida la arquitectura de **Siguiente Generación**, eliminando deuda técnica y centralizando la inteligencia en un ecosistema unificado.
+
+### ⚡️ Sentinel Performance Engine (Powered by Bun)
+Para maximizar la eficiencia ($E_w$) y reducir la fricción en el desarrollo y despliegue, el proyecto utiliza **Bun** como runtime principal:
+- **Builds Instantáneos**: Reducción drástica en tiempos de compilación.
+- **Gestión de Paquetes**: Instalación de dependencias 20x más rápida que npm.
+- **Script Execution**: Ejecución de telemetría y scripts de optimización con latencia mínima.
 
 ### 🛠️ Tecnologías Core (Stack Actualizado)
 
-- **Framework:** **Next.js 15 (App Router)** - SSR/ISR para máximo performance y SEO.
-- **Base de Datos Principal:** **Firebase Data Connect (PostgreSQL)** para gestión de Leads e Inventario con esquemas estrictos.
-- **Inteligencia Vectorial:** **Supabase + pgvector** para "Neural Matching" (búsqueda semántica de unidades).
-- **Motor IA:** Google Gemini API 1.5 (Pro/Flash) para generación de contenido y scoring de leads.
-- **Infraestructura:** Desplegado en **Vercel** con sincronización automática de GitHub.
+- **Framework:** **Next.js (App Router)** - SSR/ISR para máximo performance y SEO.
+- **Base de Datos Unificada:** **Supabase (PostgreSQL)** como única fuente de verdad para Inventario, Sourcing y Telemetría.
+- **Inteligencia Vectorial:** **pgvector** para "Neural Matching" (búsqueda semántica de unidades).
+- **Motor IA:** Google Gemini API 1.5 (Pro/Flash) para generación de Purchase Orders y scoring de leads.
+- **Infraestructura:** Desplegado en **Vercel** con CI/CD optimizado vía Bun.
 
 ### 🧠 Capacidades de Vanguardia
 
-- **Sentinel UI (V4.0):** Rediseño radical del ecosistema de interacción con el cliente.
-    - **Tabbed Vehicle Experience:** Modal de detalle de unidades optimizado con sistema de pestañas (Explorador, Finanzas, Ficha, Acción) para eliminar el scroll vertical.
-    - **HUD Digital:** Superposición de telemetría y escaneos tácticos en tiempo real sobre el inventario.
-    - **Aero-Glassmorphism:** Estética premium de alto impacto visual con efectos de desenfuerzo profundo.
-- **Houston Dashboard:** Monitor de salud del negocio en tiempo real.
+- **Neural Sourcing Intelligence (Nivel 19):** Transformación de "Search Gaps" en Órdenes de Compra (POs) sugeridas. Richard puede confirmar o archivar oportunidades de ROI directamente desde Houston.
+- **Houston Dashboard (V5.0):** Monitor de salud del negocio en tiempo real.
+    - **Sourcing Tab:** Gestión proactiva de inventario estratégico.
     - **Pipeline de Leads:** Visualización del flujo de ventas impulsado por SQL.
     - **Telemetría Neural:** Rastreo de la intención de compra del usuario mediante eventos dinámicos.
-- **Approval Simulator:** Widget de alta conversión que permite al cliente pre-cualificarse financieramente antes de llegar al dealer.
-- **Supabase SSR:** Integración de infraestructura de autenticación y persistencia de sesiones protegida por middleware.
+- **Approval Simulator (Fase 2):** Widget de alta conversión que permite al cliente pre-cualificarse financieramente con perfiles de crédito dinámicos.
+- **Asset Optimization:** Pipeline de procesamiento de imágenes con `sharp` para entregas en AVIF de próxima generación.
 
 ## 🏗️ Arquitectura del Proyecto (FSD Strict)
 
@@ -40,16 +44,16 @@ El proyecto sigue la metodología **Feature-Sliced Design (FSD)** para garantiza
 
 - `src/app`: Rutas de Next.js, layouts globales y providers.
 - `src/widgets`: Componentes complejos de negocio (ej. `HoustonDashboard`, `ApprovalSimulator`).
-- `src/features`: Lógica de comportamiento (ej. `leads`, `inventory-matching`).
-- `src/entities`: Modelos de negocio y repositorios (ej. `LeadRepository` con adaptador SQL).
-- `src/shared`: Componentes UI atómicos, hooks y configuración de clientes (Firebase, Supabase).
+- `src/features`: Lógica de comportamiento (ej. `houston`, `automation`, `inventory`).
+- `src/entities`: Modelos de negocio y repositorios (ej. `InventoryRepository` unificado en Supabase).
+- `src/shared`: Componentes UI atómicos, hooks y configuración de clientes (Supabase Core).
 
 ## 🚀 Despliegue en Producción
 
 El Command Center está operando en vivo en la infraestructura de Richard Automotive:
 
-- **Producción:** [www.richard-automotive.com](https://www.richard-automotive.com)
-- **Houston Access:** Requiere token de acceso interno para visualización de telemetría y datos de leads.
+- **Portal Público:** [www.richard-automotive.com](https://www.richard-automotive.com)
+- **Houston Access:** Terminal de inteligencia restringida para Richard y el equipo Sentinel.
 
 ---
 
