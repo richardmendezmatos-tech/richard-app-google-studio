@@ -44,4 +44,21 @@ export class DataConnectInventoryRepository implements InventoryRepository {
     // For now returning a placeholder as it's a derived metric
     return 15.5; 
   }
+
+  // --- SYNC ENGINE STUBS ---
+  async getActiveInventory(): Promise<import('../../model/sync/Vehicle').Vehicle[]> {
+    throw new Error('Method not implemented for DataConnect adapter.');
+  }
+
+  async insertBatch(vehicles: import('../../model/sync/Vehicle').Vehicle[]): Promise<void> {
+    throw new Error('Method not implemented for DataConnect adapter.');
+  }
+
+  async updateBatch(vehicles: import('../../model/sync/Vehicle').Vehicle[]): Promise<void> {
+    throw new Error('Method not implemented for DataConnect adapter.');
+  }
+
+  async markAsSoldBatch(vins: string[]): Promise<void> {
+    throw new Error('Method not implemented for DataConnect adapter.');
+  }
 }

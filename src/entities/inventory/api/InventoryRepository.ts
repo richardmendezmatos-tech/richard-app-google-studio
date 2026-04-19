@@ -1,7 +1,14 @@
-// src/features/inventory-sync/domain/repositories/InventoryRepository.ts
+// src/entities/inventory/api/InventoryRepository.ts
 import { Vehicle } from '../model/sync/Vehicle';
+import { Car } from '../model/types';
 
 export interface InventoryRepository {
+  // --- FRONTEND METHODS ---
+  getInventory(dealerId: string, limit: number): Promise<Car[]>;
+  getCarById(id: string): Promise<Car | null>;
+  getInventoryTurnover(dealerId: string): Promise<number>;
+
+  // --- SYNC ENGINE METHODS ---
   /** 
    * Extrae la foto actual (snapshot) base de datos de todas las 
    * unidades que se suponen activas disponibles en el dealer.

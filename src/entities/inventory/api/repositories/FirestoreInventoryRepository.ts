@@ -47,4 +47,21 @@ export class FirestoreInventoryRepository implements InventoryRepository {
     // Turnover formula: (Sold / Total) * 100 as percentage of current portfolio efficiency
     return parseFloat(((sold / total) * 100).toFixed(2));
   }
+
+  // --- SYNC ENGINE STUBS ---
+  async getActiveInventory(): Promise<import('../../model/sync/Vehicle').Vehicle[]> {
+    throw new Error('Method not implemented for Firestore adapter.');
+  }
+
+  async insertBatch(vehicles: import('../../model/sync/Vehicle').Vehicle[]): Promise<void> {
+    throw new Error('Method not implemented for Firestore adapter.');
+  }
+
+  async updateBatch(vehicles: import('../../model/sync/Vehicle').Vehicle[]): Promise<void> {
+    throw new Error('Method not implemented for Firestore adapter.');
+  }
+
+  async markAsSoldBatch(vins: string[]): Promise<void> {
+    throw new Error('Method not implemented for Firestore adapter.');
+  }
 }

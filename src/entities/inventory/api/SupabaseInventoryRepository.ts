@@ -6,6 +6,19 @@ import { Vehicle } from '../model/sync/Vehicle';
 export class SupabaseInventoryRepository implements InventoryRepository {
   constructor(private readonly supabase: SupabaseClient) {}
 
+  // --- FRONTEND METHODS STUBS ---
+  async getInventory(dealerId: string, limit: number): Promise<import('@/entities/inventory').Car[]> {
+    throw new Error('Supabase Sync repo does not implement frontend fetching yet. Use DataConnect.');
+  }
+
+  async getCarById(id: string): Promise<import('@/entities/inventory').Car | null> {
+    throw new Error('Supabase Sync repo does not implement frontend fetching yet. Use DataConnect.');
+  }
+
+  async getInventoryTurnover(dealerId: string): Promise<number> {
+    throw new Error('Method not implemented.');
+  }
+
   async getActiveInventory(): Promise<Vehicle[]> {
     const { data, error } = await this.supabase
       .from('inventory')
