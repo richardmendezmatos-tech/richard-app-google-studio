@@ -19,12 +19,15 @@ import {
   Gauge,
   LineChart,
   MessageSquare,
+  PackageSearch,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
 import { OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BusinessHealthWidget } from './ui/BusinessHealthWidget';
+import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
+import { useBusinessTelemetry } from '@/entities/houston/api/useBusinessTelemetry';
 
 // ─── Isolated Jitter Label ───────────────────────────────────────────────────
 const JitterLabel: React.FC<{ metricKey: string }> = ({ metricKey }) => {
@@ -53,7 +56,7 @@ const JitterLabel: React.FC<{ metricKey: string }> = ({ metricKey }) => {
 };
 
 // ─── Tab Definitions ──────────────────────────────────────────────────────────
-type DashboardTab = 'PIPELINE' | 'TELEMETRY' | 'LOGS';
+type DashboardTab = 'PIPELINE' | 'SOURCING' | 'TELEMETRY' | 'LOGS';
 
 const TABS: { id: DashboardTab; label: string; icon: React.ReactNode; accentColor: string }[] = [
   {
@@ -67,6 +70,12 @@ const TABS: { id: DashboardTab; label: string; icon: React.ReactNode; accentColo
     label: 'IT Telemetry',
     icon: <Gauge size={14} />,
     accentColor: 'cyan',
+  },
+  {
+    id: 'SOURCING',
+    label: 'Sourcing Intelligence',
+    icon: <PackageSearch size={14} />,
+    accentColor: 'purple',
   },
   {
     id: 'LOGS',
@@ -438,6 +447,7 @@ const HoustonDashboard: React.FC = () => {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
   const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
   const [activeTab, setActiveTab] = useState<DashboardTab>('PIPELINE');
+  const { businessData, refresh: refreshBusiness } = useBusinessTelemetry();
   const { containerRef } = useMouseGlow();
 
   const getHoustonTelemetry = useMemo(() => DI.getHoustonTelemetryUseCase(), []);
@@ -509,6 +519,7 @@ const HoustonDashboard: React.FC = () => {
             const accentMap: Record<string, string> = {
               emerald: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]',
               cyan: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300 shadow-[0_0_20px_rgba(0,229,255,0.15)]',
+              purple: 'bg-purple-500/20 border-purple-500/40 text-purple-300 shadow-[0_0_20px_rgba(168,85,247,0.15)]',
               amber: 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]',
             };
             return (
@@ -533,6 +544,20 @@ const HoustonDashboard: React.FC = () => {
       <div className="relative z-10">
         <AnimatePresence mode="wait">
           {activeTab === 'PIPELINE' && <PipelineTab key="pipeline" opportunities={opportunities} telemetry={telemetry} />}
+          {activeTab === 'SOURCING' && (
+             <motion.div
+               key="sourcing"
+               initial={{ opacity: 0, y: 16 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -16 }}
+               className="grid grid-cols-1 gap-6"
+             >
+               <SourcingLogWidget 
+                 orders={businessData?.purchaseOrders || []} 
+                 onUpdate={refreshBusiness}
+               />
+             </motion.div>
+          )}
           {activeTab === 'TELEMETRY' && <TelemetryTab key="telemetry" telemetry={telemetry} />}
           {activeTab === 'LOGS' && <LogsTab key="logs" telemetry={telemetry} />}
         </AnimatePresence>

@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore';
 import { getDb } from '@/shared/api/firebase';
 import { HoustonRepository } from './HoustonRepository';
-import { HoustonTelemetry } from '../model/types';
+import { HoustonTelemetry, PurchaseOrder } from '../model/types';
 import { withSecureErrorHandling } from '@/shared/lib/errors/AppError';
 
 export class FirestoreHoustonRepository implements HoustonRepository {
@@ -52,6 +52,15 @@ export class FirestoreHoustonRepository implements HoustonRepository {
     return () => {
       if (unsubscribe) unsubscribe();
     };
+  }
+
+  async getPurchaseOrders(): Promise<PurchaseOrder[]> {
+    console.warn('FirestoreHoustonRepository: getPurchaseOrders not implemented (use Supabase)');
+    return [];
+  }
+
+  async updatePurchaseOrderStatus(id: string, status: 'confirmed' | 'archived'): Promise<void> {
+    console.warn('FirestoreHoustonRepository: updatePurchaseOrderStatus not implemented (use Supabase)');
   }
 
   private mapToTelemetry(data: any): HoustonTelemetry {

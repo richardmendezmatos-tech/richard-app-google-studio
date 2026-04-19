@@ -6,6 +6,7 @@ import { Lead } from '@/entities/lead';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getStorageService } from '@/shared/api/firebase/optionalServices';
 import { FirestoreHoustonRepository } from '@/entities/houston/api/FirestoreHoustonRepository';
+import { SupabaseHoustonRepository } from '@/entities/houston/api/SupabaseHoustonRepository';
 import { DataConnectLeadRepository } from '@/entities/lead/api/repositories/DataConnectLeadRepository';
 import { FirestoreSubscriberRepository, FirestoreSurveyRepository } from '@/entities/lead/api/FirestoreCaptureRepositories';
 
@@ -121,6 +122,14 @@ export const DI = {
           actionType: 'whatsapp' as const
         }));
       }
+    };
+  },
+
+  getPurchaseOrdersUseCase: () => {
+    const repository = new SupabaseHoustonRepository();
+    return {
+      execute: () => repository.getPurchaseOrders(),
+      updateStatus: (id: string, status: 'confirmed' | 'archived') => repository.updatePurchaseOrderStatus(id, status)
     };
   }
 };
