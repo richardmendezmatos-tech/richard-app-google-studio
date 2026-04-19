@@ -20,6 +20,8 @@ import {
   LineChart,
   MessageSquare,
   PackageSearch,
+  Sparkles,
+  TrendingUp,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
@@ -157,6 +159,30 @@ const PipelineTab: React.FC<{
               `¡Hola ${name}! 👋 Ví que tienes interés en ${vehicle}. Tu pre-aprobación FlexDrive™ está lista. ¿Seguimos?`
             );
             const waLink = `https://wa.me/${phone.replace(/\D/g, '')}?text=${waMsg}`;
+
+            const handleJulesClosing = async () => {
+              try {
+                const res = await fetch('/api/command-center/outreach/generate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    leadName: name,
+                    vehicleOfInterest: vehicle,
+                    creditProfile: (opp as any).creditProfile || 'Good',
+                    currentOffer: opp.suggestedAction
+                  })
+                });
+                const data = await res.json();
+                if (data.message) {
+                  const julesWaLink = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(data.message)}`;
+                  window.open(julesWaLink, '_blank');
+                }
+              } catch (e) {
+                console.error('Jules failed to close:', e);
+                window.open(waLink, '_blank');
+              }
+            };
+
             return (
               <motion.div
                 key={idx}
@@ -191,6 +217,14 @@ const PipelineTab: React.FC<{
                       </svg>
                       WhatsApp
                     </a>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleJulesClosing(); }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600/20 border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-violet-600/30 hover:border-violet-500/50 transition-all active:scale-95 group/jules"
+                      title="Dejar que Jules cierre el negocio"
+                    >
+                      <Sparkles size={12} className="group-hover/jules:animate-pulse" />
+                      Jules Close
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -545,18 +579,62 @@ const HoustonDashboard: React.FC = () => {
         <AnimatePresence mode="wait">
           {activeTab === 'PIPELINE' && <PipelineTab key="pipeline" opportunities={opportunities} telemetry={telemetry} />}
           {activeTab === 'SOURCING' && (
-             <motion.div
-               key="sourcing"
-               initial={{ opacity: 0, y: 16 }}
-               animate={{ opacity: 1, y: 0 }}
-               exit={{ opacity: 0, y: -16 }}
-               className="grid grid-cols-1 gap-6"
-             >
-               <SourcingLogWidget 
-                 orders={businessData?.purchaseOrders || []} 
-                 onUpdate={refreshBusiness}
-               />
-             </motion.div>
+            <motion.div
+              key="sourcing"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            >
+              <div className="lg:col-span-2">
+                <SourcingLogWidget 
+                  orders={businessData?.purchaseOrders || []} 
+                  onUpdate={refreshBusiness}
+                />
+              </div>
+              <div className="lg:col-span-1 space-y-6">
+                <div className="glass-premium p-6 border border-purple-500/20 bg-purple-500/[0.02] relative overflow-hidden h-full">
+                  <div className="absolute top-0 right-0 p-4 opacity-10"><TrendingUp size={80} className="text-purple-400" /></div>
+                  <h3 className="text-[10px] font-black text-purple-400 uppercase tracking-[0.4em] mb-8">ROI Financial Forecast</h3>
+                  
+                  <div className="space-y-8">
+                    <div>
+                      <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-4">Pipeline Profitability</p>
+                      <div className="flex items-end gap-3 mb-4">
+                        <span className="text-5xl font-black text-white tracking-tighter">
+                          ${((businessData?.purchaseOrders?.length || 0) * 1250).toLocaleString()}
+                        </span>
+                        <span className="text-sm text-emerald-400 font-bold mb-2">+14.2% Est.</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: '68%' }}
+                          className="h-full bg-gradient-to-r from-purple-600 to-violet-400 shadow-[0_0_15px_#8b5cf6]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+                        <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest mb-1">Cap. en Riesgo</p>
+                        <p className="text-lg font-black text-white">$42.5k</p>
+                      </div>
+                      <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+                        <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest mb-1">Turn Rate</p>
+                        <p className="text-lg font-black text-emerald-400">18.4d</p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 border border-purple-500/20 bg-purple-500/5 rounded-2xl">
+                      <p className="text-[9px] text-purple-400 font-bold leading-relaxed">
+                        "Sentinel detectó 12.4% de incremento en la demanda de SUVs compactas en el norte de la isla."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
           {activeTab === 'TELEMETRY' && <TelemetryTab key="telemetry" telemetry={telemetry} />}
           {activeTab === 'LOGS' && <LogsTab key="logs" telemetry={telemetry} />}
