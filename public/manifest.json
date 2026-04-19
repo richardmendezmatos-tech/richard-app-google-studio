@@ -1,0 +1,35 @@
+{
+  "name": "Richard Automotive Command Center",
+  "short_name": "RichardAuto",
+  "description": "Richard Automotive Command Center - Sentinel 4.5 Performance Engine",
+  "start_url": "/houston",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Houston Terminal",
+      "url": "/houston",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Inventory Sourcing",
+      "url": "/houston?tab=SOURCING",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    }
+  ]
+}

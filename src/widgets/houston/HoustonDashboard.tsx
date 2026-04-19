@@ -22,6 +22,7 @@ import {
   PackageSearch,
   Sparkles,
   TrendingUp,
+  Download,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
@@ -476,11 +477,40 @@ const LogsTab: React.FC<{ telemetry: HoustonTelemetry }> = ({ telemetry }) => {
   );
 };
 
+// ─── PWA Install Prompt Hook ──────────────────────────────────────────────────
+const usePWAInstall = () => {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const installPWA = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+    }
+  };
+
+  return { isInstallable, installPWA };
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 const HoustonDashboard: React.FC = () => {
   const [telemetry, setTelemetry] = useState<HoustonTelemetry | null>(null);
   const [opportunities, setOpportunities] = useState<OutreachOpportunity[]>([]);
   const [activeTab, setActiveTab] = useState<DashboardTab>('PIPELINE');
+  const { isInstallable, installPWA } = usePWAInstall();
   const { businessData, refresh: refreshBusiness } = useBusinessTelemetry();
   const { containerRef } = useMouseGlow();
 
@@ -543,6 +573,27 @@ const HoustonDashboard: React.FC = () => {
             <Activity className="text-cyan-500 animate-pulse" size={28} />
           </div>
         </div>
+        {/* PWA Install Action */}
+        {isInstallable && (
+          <motion.button
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={installPWA}
+            className="glass-premium px-6 py-5 flex items-center gap-4 border border-cyan-500/20 hover:bg-cyan-500/10 transition-all cursor-pointer shadow-xl group/install ml-auto md:ml-0"
+          >
+            <div className="text-right">
+              <p className="text-[10px] text-cyan-500/70 uppercase font-black tracking-[0.3em] mb-1">Mobile Access</p>
+              <p className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
+                INSTALL APP
+              </p>
+            </div>
+            <div className="p-2 bg-cyan-500/20 rounded-xl group-hover:animate-bounce">
+              <Download className="text-cyan-400" size={20} />
+            </div>
+          </motion.button>
+        )}
       </motion.header>
 
       {/* Tab Navigation */}

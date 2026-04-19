@@ -20,6 +20,17 @@ const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'
 export const metadata: Metadata = {
   title: 'Richard Automotive | Master Control Center',
   description: 'Inventario de vehículos premium y tasaciones digitales. Gestión por Richard Oneal Méndez Matos.',
+  manifest: '/manifest.json',
+  themeColor: '#020617',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'RichardAuto',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: 'Richard Automotive',
     description: 'Expertos en automovilismo y tecnología.',
