@@ -26,9 +26,17 @@ export async function GET(request: Request) {
   try {
     // 2. Inicializar Cliente Supabase (Setup estricto @supabase/ssr)
     const cookieStore = await cookies();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+       console.error('[CRON Sync] Missing Supabase credentials');
+       return NextResponse.json({ error: 'Missing Supabase credentials' }, { status: 500 });
+    }
+
     const supabaseClient = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!, // Usamos Service Role bypass RLS para el Worker
+      supabaseUrl,
+      supabaseKey,
       {
         cookies: {
           getAll() {
