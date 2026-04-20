@@ -56,7 +56,7 @@ export const NeuroTrajectoryDriver: React.FC = () => {
     
     // Sincronización proactiva con el store
     setScore(insight.score);
-    setFactors(insight.factors);
+    setFactors(insight.signals);
 
     // Lógica de "High Intent" (Criterio de Nivel 13+)
     if (insight.score >= 60) {
