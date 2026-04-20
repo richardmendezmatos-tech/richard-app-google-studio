@@ -7,7 +7,7 @@ Este documento define la **secuencia de ensamblaje** para garantizar que cada ac
 Antes de iniciar la línea de ensamblaje, asegúrese de que el entorno esté afinado:
 
 - **Raíz del Circuito**: Ejecutar comandos siempre desde `/Users/richardmendez/richard-automotive-_-command-center`.
-- **Octanaje de Dependencias**: `bun install` (recomendado) o `npm install`.
+- **Octanaje de Dependencias**: `npm install` (recomendado) o `bun install`.
 - **Inyección de Entorno**: Configuración activa vía `dotenvx` o archivos `.env` locales.
 
 ## 🚜 Línea de Ensamblaje de Precisión (Standard Pipeline)
