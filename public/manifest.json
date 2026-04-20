@@ -2,7 +2,7 @@
   "name": "Richard Automotive Command Center",
   "short_name": "RichardAuto",
   "description": "Richard Automotive Command Center - Sentinel 4.5 Performance Engine",
-  "start_url": "/houston",
+  "start_url": "/command-center",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",

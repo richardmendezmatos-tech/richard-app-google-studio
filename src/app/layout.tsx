@@ -21,8 +21,6 @@ export const metadata: Metadata = {
   title: 'Richard Automotive | Master Control Center',
   description: 'Inventario de vehículos premium y tasaciones digitales. Gestión por Richard Oneal Méndez Matos.',
   manifest: '/manifest.json',
-  themeColor: '#020617',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -45,6 +43,15 @@ export const metadata: Metadata = {
     description: 'Expertos en automovilismo y tecnología.',
     images: ['https://richard-automotive.com/og-image.jpg'],
   },
+};
+
+export const viewport = {
+  themeColor: '#020617',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScaleable: false,
+  viewportFit: 'cover',
 };
 
 import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceInitializer';

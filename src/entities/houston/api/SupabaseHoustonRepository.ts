@@ -19,6 +19,10 @@ export class SupabaseHoustonRepository implements HoustonRepository {
   }
 
   async getPurchaseOrders(): Promise<PurchaseOrder[]> {
+    if (!supabase) {
+      console.warn('[SupabaseHoustonRepository] Supabase client not initialized. Returning empty PO list.');
+      return [];
+    }
     const { data, error } = await supabase
       .from('purchase_orders')
       .select('*')
@@ -33,6 +37,10 @@ export class SupabaseHoustonRepository implements HoustonRepository {
   }
 
   async updatePurchaseOrderStatus(id: string, status: 'confirmed' | 'archived'): Promise<void> {
+    if (!supabase) {
+      console.error('[SupabaseHoustonRepository] Cannot update PO: Supabase client not initialized.');
+      return;
+    }
     const { error } = await supabase
       .from('purchase_orders')
       .update({ status })
