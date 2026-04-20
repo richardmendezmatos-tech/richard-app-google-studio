@@ -3,10 +3,10 @@ import type { NextRequest } from 'next/server';
 import { updateSession } from '@/shared/api/supabase/middleware';
 
 /**
- * Richard Automotive Global Middleware (Sentinel N23)
+ * Richard Automotive Global Proxy (Sentinel N23)
  * Handles Supabase sessions, protections, and security headers.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. Ejecutar actualización de sesión de Supabase (Middleware-based session refresh)
   const supabaseResponse = await updateSession(request);
   

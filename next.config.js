@@ -42,7 +42,7 @@ const nextConfig = {
   },
   
   turbopack: {
-    root: '.',
+    root: process.cwd(),
     resolveAlias: {
       '@': './src',
       '@/shared': './src/shared',
