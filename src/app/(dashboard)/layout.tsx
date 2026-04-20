@@ -2,6 +2,8 @@ import React from 'react';
 import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 import { Suspense } from 'react';
 
+export const experimental_ppr = true;
+
 /**
  * Dashboard Layout (Sentinel N23)
  * The full "Command Center" experience.

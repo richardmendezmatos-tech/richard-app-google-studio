@@ -22,7 +22,7 @@ import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import DOMPurify from 'dompurify';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
-import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
+import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {

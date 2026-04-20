@@ -13,7 +13,7 @@ import {
   Cpu,
   Sparkles
 } from 'lucide-react';
-import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
+import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
 import { Car } from '@/shared/types/types';
 

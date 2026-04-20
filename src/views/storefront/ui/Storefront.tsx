@@ -16,7 +16,7 @@ const FAQSection = dynamic(() => import('@/shared/ui/components/FAQSection'), { 
 const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), { ssr: false });
 const AuthoritySection = dynamic(() => import('@/features/marketing').then(mod => ({ default: mod.AuthoritySection })), { ssr: false });
 
-import { GlassContainer } from '@/shared/ui/containers/GlassContainer';
+import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 
 // Extracted UI Components
 import { StorefrontToolbar } from '@/features/inventory';

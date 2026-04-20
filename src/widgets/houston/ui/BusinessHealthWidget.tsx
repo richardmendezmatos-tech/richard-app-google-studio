@@ -6,6 +6,8 @@ import { TrendingUp, Target, ArrowUpRight, Zap } from 'lucide-react';
 import { leadService } from '@/entities/lead';
 import { useDealer } from '@/entities/dealer';
 
+import { GlassContainer } from '@/shared/ui/common/GlassContainer';
+
 interface HealthMetrics {
   leadVelocity: number;       // leads per hour (from SQL)
   avgAiScore: number;         // 0-100 from closureProbability avg
@@ -94,10 +96,9 @@ export const BusinessHealthWidget: React.FC = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="glass-premium p-8 border border-white/5 relative overflow-hidden group"
+    <GlassContainer
+      intensity="medium"
+      className="p-8 border border-white/5 relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-30 transition-opacity">
         <Target size={80} className="text-cyan-500" />
@@ -165,6 +166,6 @@ export const BusinessHealthWidget: React.FC = () => {
           Deep Analysis →
         </button>
       </div>
-    </motion.div>
+    </GlassContainer>
   );
 };

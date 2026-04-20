@@ -87,6 +87,8 @@ function HomeJsonLd() {
   );
 }
 
+export const experimental_ppr = true;
+
 /**
  * Next.js App Router Home Page
  * Optimized for Local SEO and Strategic Conversion.

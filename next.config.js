@@ -29,6 +29,7 @@ const nextConfig = {
     'canvas-confetti'
   ],
   experimental: {
+    ppr: 'incremental',
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',
