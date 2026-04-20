@@ -1,5 +1,4 @@
 import React from 'react';
-import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
 import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 import { Suspense } from 'react';
 
@@ -14,12 +13,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AppProviders>
-      <Suspense fallback={<div className="min-h-screen bg-slate-950 animate-pulse" />}>
-        <CinemaLayout inventory={[]}>
-          {children}
-        </CinemaLayout>
-      </Suspense>
-    </AppProviders>
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 animate-pulse" />}>
+      <CinemaLayout inventory={[]}>
+        {children}
+      </CinemaLayout>
+    </Suspense>
   );
 }
