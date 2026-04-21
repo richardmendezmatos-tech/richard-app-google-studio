@@ -97,6 +97,17 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
               {car.badge}
             </span>
           )}
+          {car.condition === 'new' && (
+            <span className="font-tech flex items-center gap-1.5 rounded-full border border-cyan-400/50 bg-gradient-to-r from-cyan-500/80 to-blue-600/80 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.25em] text-white shadow-[0_0_20px_rgba(34,211,238,0.5)] backdrop-blur-xl animate-in zoom-in-95 duration-500">
+              <Sparkles size={12} className="animate-pulse" />
+              NUEVO
+            </span>
+          )}
+          {car.condition === 'used' && (
+            <span className="font-tech flex items-center gap-1.5 rounded-full border border-white/20 bg-slate-800/80 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-300 backdrop-blur-md">
+              USADO
+            </span>
+          )}
           <span className="font-tech flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/60 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-slate-200 shadow-sm backdrop-blur-md">
             <ShieldCheck size={12} className="text-primary" /> Richard Certified
           </span>

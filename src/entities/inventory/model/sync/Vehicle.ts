@@ -13,6 +13,7 @@ export interface VehicleProps {
   mileage: number;
   images: string[];
   status: SyncStatus;
+  condition: 'NEW' | 'USED';
   lastScrapedAt: Date;
 }
 

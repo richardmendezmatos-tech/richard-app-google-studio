@@ -1,20 +1,20 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { MapPin, Phone, Clock, ShieldCheck } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Richard Automotive | Dealer de Autos Usados en Vega Alta y Bayamón',
-  description: 'Compra autos, guaguas y pickups de lujo en Central Ford, Vega Alta. Financiamiento expreso desde 4.9% APR. El inventario más exclusivo de Puerto Rico.',
-  keywords: ['autos usados puerto rico', 'dealer vega alta', 'central ford vega alta', 'richard automotive', 'guaguas usadas', 'pickups puerto rico'],
+  title: 'Richard Automotive | Dealer de Autos Nuevos y Usados en Vega Alta',
+  description: 'Tu concesionario de confianza para autos nuevos y usados de lujo en Central Ford, Vega Alta. Financiamiento expreso y el inventario más exclusivo de Puerto Rico.',
+  keywords: ['autos nuevos puerto rico', 'autos usados puerto rico', 'dealer vega alta', 'central ford vega alta', 'richard automotive', 'guaguas nuevas', 'pickups nuevas'],
   alternates: {
     canonical: 'https://richard-automotive.com/',
   },
   openGraph: {
-    title: 'Richard Automotive | Dealer de Autos Usados Certificados',
-    description: 'Ubicados en Central Ford, Vega Alta. Los mejores precios y financiamiento en PR.',
+    title: 'Richard Automotive | Dealer de Autos Nuevos y Usados Certificados',
+    description: 'Ubicados en Central Ford, Vega Alta. Concesionario oficial de autos nuevos y selección premium de usados.',
     url: 'https://richard-automotive.com/',
     siteName: 'Richard Automotive',
     images: [
@@ -96,7 +96,8 @@ export default async function HomePage() {
   let inventory: any[] = [];
   
   try {
-    inventory = await fetchInventoryFromJava(12);
+    const result = await getPaginatedCars(12);
+    inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for SSR:', error);
   }
@@ -118,10 +119,10 @@ export default async function HomePage() {
               <div className="space-y-4">
                 <span className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">Visítanos Hoy</span>
                 <h2 className="text-4xl font-black text-white leading-tight">
-                  Tu Destino de Confianza en <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Vega Alta</span>
+                  Tu Concesionario de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Autos Nuevos</span> en Vega Alta
                 </h2>
                 <p className="text-slate-400 text-lg leading-relaxed">
-                  Estamos ubicados estratégicamente en las facilidades de **Central Ford**. Ven y experimenta el inventario de autos usados más exclusivo de Puerto Rico con atención personalizada.
+                  Ubicados estratégicamente en las facilidades de **Central Ford**. Somos especialistas en autos nuevos con una selección exclusiva de usados certificados. Ven y experimenta el mejor servicio de Puerto Rico con atención personalizada.
                 </p>
               </div>
 

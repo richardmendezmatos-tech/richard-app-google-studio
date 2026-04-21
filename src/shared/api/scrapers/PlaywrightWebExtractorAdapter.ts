@@ -1,21 +1,33 @@
-// src/features/inventory-sync/infrastructure/scrapers/PlaywrightWebExtractorAdapter.ts
 import { WebExtractorPort, ExtractorConfig } from './WebExtractorPort';
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
-import { chromium, Browser, Page } from '@playwright/test'; // O puppeteer
+import { chromium, Page } from 'playwright-core'; 
+import sparticuzChromium from '@sparticuz/chromium';
 
 export class PlaywrightWebExtractorAdapter implements WebExtractorPort {
   async extractFullInventory(config: ExtractorConfig): Promise<Vehicle[]> {
-    let browser: Browser | null = null;
+    let browser: any = null;
     
     try {
-      browser = await chromium.launch({
-        headless: true,
-        args: config.useStealthMode ? [
-          '--disable-blink-features=AutomationControlled',
-          '--no-sandbox',
-          '--disable-setuid-sandbox'
-        ] : []
-      });
+      const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+
+      if (isProd) {
+        // Configuración para Vercel Serverless
+        browser = await chromium.launch({
+          args: sparticuzChromium.args,
+          executablePath: await sparticuzChromium.executablePath(),
+          headless: true,
+        });
+      } else {
+        // Configuración para Desarrollo Local
+        browser = await chromium.launch({
+          headless: true,
+          args: config.useStealthMode ? [
+            '--disable-blink-features=AutomationControlled',
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+          ] : []
+        });
+      }
 
       const context = await browser.newContext({
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -28,8 +40,9 @@ export class PlaywrightWebExtractorAdapter implements WebExtractorPort {
       const page = await context.newPage();
 
       // Estrategia: Intercepción de XHR es más limpia y menos frágil que el DOM.
-      const inventoryData = await this.interceptXhrOrFallbackToDom(page, config.baseUrl);
-      
+      // Detectar condición desde el URL (Basado en la arquitectura de Central Ford)
+      const condition = config.baseUrl.includes('nuevos') ? 'NEW' : 'USED';
+
       // Mapeo (Parsing sucio a Entidad Pura)
       return inventoryData.map(data => 
         Vehicle.create(data.vin, {
@@ -40,6 +53,7 @@ export class PlaywrightWebExtractorAdapter implements WebExtractorPort {
           mileage: data.mileage || 0,
           images: data.images || [],
           status: 'AVAILABLE',
+          condition: condition,
           lastScrapedAt: new Date()
         })
       );

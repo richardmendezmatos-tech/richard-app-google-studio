@@ -1,13 +1,5 @@
-import {
-  listCars,
-  getCar,
-  createCar,
-  CreateCarVariables,
-  ListCarsVariables,
-} from '@dataconnect/generated';
-import { getStorageService, getAnalyticsService } from '@/shared/api/firebase/optionalServices';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { Car } from '../../model/types';
-import { carSchema } from '@/shared/lib/validators/car.schema';
 
 export interface PaginatedResult {
   cars: Car[];
@@ -23,49 +15,88 @@ export const getPaginatedCars = async (
   filterType: string = 'all',
   sortOrder: 'asc' | 'desc' | null = null,
 ): Promise<PaginatedResult> => {
-  let dealerId = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null;
-  if (!dealerId || dealerId === 'undefined' || dealerId === 'null') {
-    dealerId = 'richard-automotive';
-  }
-
   try {
-    const vars: ListCarsVariables = {
-      limit: pageSize,
-      offset,
-      dealerId,
-    };
-    
-    const response = await listCars(vars);
-    const cars = response.data.cars.map((c) => ({
-      ...c,
-      name: `${c.make} ${c.model} ${c.year}`,
-      status: (c.status as 'available' | 'reserved' | 'sold') || 'available',
+    let query = supabase
+      .from('inventory')
+      .select('*')
+      .range(offset, offset + pageSize - 1);
+
+    // Apply Filter
+    if (filterType !== 'all') {
+      if (filterType === 'ford' || filterType === 'hyundai') {
+         query = query.ilike('make', filterType);
+      } else {
+         // Placeholder for more complex filters (e.g. type)
+      }
+    }
+
+    // Apply Sort
+    if (sortOrder) {
+      query = query.order('price', { ascending: sortOrder === 'asc' });
+    } else {
+      query = query.order('last_scraped_at', { ascending: false });
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    const cars = (data || []).map((row) => ({
+      id: row.vin,
+      vin: row.vin,
+      make: row.make,
+      model: row.model,
+      year: row.year,
+      price: row.price || 0,
+      mileage: row.mileage || 0,
+      img: row.images?.[0] || '/images/placeholders/car.webp',
+      images: row.images || [],
+      gallery: row.images || [],
+      status: (row.status?.toLowerCase() as any) || 'available',
+      type: 'suv', // placeholder or logic needed
+      color: 'N/A',
+      name: `${row.make} ${row.model} ${row.year}`,
     })) as unknown as Car[];
 
     return {
       cars,
-      nextOffset: response.data.cars.length === pageSize ? offset + pageSize : null,
-      hasMore: response.data.cars.length === pageSize,
+      nextOffset: (data?.length || 0) === pageSize ? offset + pageSize : null,
+      hasMore: (data?.length || 0) === pageSize,
     };
   } catch (e: any) {
-    console.error('[DataConnect] Pagination Error:', e);
+    console.error('[Supabase] Pagination Error:', e);
     throw e;
   }
 };
 
 export const getCarById = async (id: string): Promise<Car | null> => {
   try {
-    const response = await getCar({ id });
-    if (!response.data.car) return null;
+    const { data, error } = await supabase
+      .from('inventory')
+      .select('*')
+      .eq('vin', id)
+      .single();
+
+    if (error || !data) return null;
     
-    const c = response.data.car;
     return {
-      ...c,
-      name: `${c.make} ${c.model} ${c.year}`,
-      status: (c.status as 'available' | 'reserved' | 'sold') || 'available',
+      id: data.vin,
+      vin: data.vin,
+      make: data.make,
+      model: data.model,
+      year: data.year,
+      price: data.price || 0,
+      mileage: data.mileage || 0,
+      img: data.images?.[0] || '/images/placeholders/car.webp',
+      images: data.images || [],
+      gallery: data.images || [],
+      status: (data.status?.toLowerCase() as any) || 'available',
+      type: 'suv',
+      color: 'N/A',
+      name: `${data.make} ${data.model} ${data.year}`,
     } as unknown as Car;
   } catch (error) {
-    console.error('[DataConnect] Error fetching car:', error);
+    console.error('[Supabase] Error fetching car:', error);
     return null;
   }
 };

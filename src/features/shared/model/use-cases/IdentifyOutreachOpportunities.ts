@@ -63,15 +63,30 @@ export class IdentifyOutreachOpportunities {
 
     const defaultRules: OutreachRuleSet = {
       isStalled: (lead) => lead.status !== 'sold' && lead.status !== 'lost',
-      determineAction: (lead) =>
-        (lead.predictiveScore || 0) > 90 ? 'Cierre Estratégico (Sentinel High)' : 'Cierre Suave (Nurturing)',
+      determineAction: (lead) => {
+        const score = lead.predictiveScore || 0;
+        const hasFinancialIntent = (lead as any).metadata?.financialsViewed;
+        
+        if (score > 92 && hasFinancialIntent) return 'Sentinel Elite Closing (Immediate)';
+        if (score > 85) return 'Strategic Priority Follow-up';
+        return 'Standard Nurturing Loop';
+      },
       generateMessage: (lead) => {
         const vehicle = lead.vehicleOfInterest || 'el vehículo de tus sueños';
-        return (lead.predictiveScore || 0) > 90
-          ? `Hola ${lead.firstName}, soy Jules de Richard Automotive. 💎 He reservado prioridad para ti en el ${vehicle}. ¿Te gustaría coordinar una prueba VIP hoy?`
-          : `Hola ${lead.firstName}, sigo atento a tu interés en el ${vehicle}. Richard acaba de autorizar una atención especial para esta unidad. ¿Hablamos?`;
+        const score = lead.predictiveScore || 0;
+        const firstName = lead.firstName || 'amigo';
+        
+        if (score > 92) {
+          return `Hola ${firstName}, soy Jules. 💎 He detectado que el ${vehicle} está en su fase crítica de rotación. Richard me ha autorizado una ventana de cierre preferencial para ti. ¿Te llamo ahora?`;
+        }
+        
+        return `Hola ${firstName}, el ${vehicle} sigue disponible con beneficios Sentinel. Richard acaba de optimizar las cuotas para esta unidad. ¿Te gustaría ver el nuevo desglose?`;
       },
-      estimateRoi: (lead) => (lead.predictiveScore || 0) * 12.5, // Ajustado a valor premium
+      estimateRoi: (lead) => {
+        const baseRoi = (lead.predictiveScore || 0) * 15;
+        const behavioralMultiplier = (lead as any).metadata?.highIntent ? 1.4 : 1.0;
+        return baseRoi * behavioralMultiplier;
+      },
     };
 
     const pipeline = this.createPipeline(defaultRules);

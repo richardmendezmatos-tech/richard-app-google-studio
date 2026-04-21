@@ -31,6 +31,7 @@ export interface Car {
   gallery?: string[];
   images?: string[]; // Multiple source support
   status: 'available' | 'reserved' | 'sold';
+  condition?: 'new' | 'used';
   inventoryId?: string;
   createdAt?: any;
   

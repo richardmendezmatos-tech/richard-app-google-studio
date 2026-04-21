@@ -45,8 +45,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
     <>
       <div className="h-full w-full bg-transparent">
         <SEO
-          title={customTitle || "Autos, Guaguas y Pickups de Lujo en Puerto Rico | Richard Automotive"}
-          description={customDescription || "Compra autos, guaguas y pickups de lujo en Bayamón, Puerto Rico. El inventario más exclusivo: SUVs, Sedanes y Trucks con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."}
+          title={customTitle || "Autos Nuevos y Usados de Lujo en Puerto Rico | Richard Automotive"}
+          description={customDescription || "Tu concesionario oficial de autos nuevos en Bayamón y Vega Alta, Puerto Rico. El inventario más exclusivo de SUVs, Sedanes y Pickups con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."}
           url="/"
           type="website"
           schema={{
@@ -96,8 +96,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
               {
                 '@type': 'ItemList',
                 '@id': `${SITE_CONFIG.url}/#inventory`,
-                name: 'Inventario de Lujo Richard Automotive',
-                description: 'Selección exclusiva de vehículos certificados con garantía de 24h.',
+                name: 'Inventario de Autos Nuevos y Usados Richard Automotive',
+                description: 'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
                 numberOfItems: inventory.length,
                 itemListElement: inventory.slice(0, 10).map((car, index) => ({
                   '@type': 'ListItem',
@@ -106,7 +106,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                     '@type': 'Product',
                     name: car.name,
                     image: car.img,
-                    description: `${car.type} de lujo certificado por Richard Automotive.`,
+                    description: `${car.type} nuevo o certificado por Richard Automotive.`,
                     brand: { '@type': 'Brand', name: car.name.split(' ')[0] },
                     offers: {
                       '@type': 'Offer',

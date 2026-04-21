@@ -16,10 +16,10 @@ interface HeroSectionProps {
 const HEADLINES = [
   {
     eyebrow: 'PROTOCOL: DOMINANCE',
-    line1: 'EL AUTO DE',
-    line2: 'TUS SUEÑOS',
+    line1: 'AUTOS NUEVOS',
+    line2: 'Y USADOS',
     accent: 'READY TO LAUNCH',
-    sub: 'Garantizamos la estructura de financiamiento más agresiva de Puerto Rico. Unidades exclusivas, aprobaciones blindadas.',
+    sub: 'Concesionario oficial de autos nuevos en Vega Alta. Garantizamos la estructura de financiamiento más agresiva de Puerto Rico. Unidades exclusivas, aprobaciones blindadas.',
   },
   {
     eyebrow: 'PROTOCOL: APPROVAL',

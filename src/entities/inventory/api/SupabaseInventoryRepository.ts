@@ -60,6 +60,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       images: row.images || [],
       gallery: row.images || [],
       status: (row.status?.toLowerCase() as any) || 'available',
+      condition: (row.condition?.toLowerCase() as any) || 'used',
       type: 'suv', // placeholder
       color: 'N/A',
       name: `${row.make} ${row.model} ${row.year}`,
@@ -84,6 +85,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
         mileage: row.mileage,
         images: row.images || [],
         status: row.status,
+        condition: row.condition || 'USED',
         lastScrapedAt: new Date(row.last_scraped_at)
       })
     );
@@ -101,6 +103,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       mileage: v.props.mileage,
       images: v.props.images,
       status: v.status,
+      condition: v.props.condition,
       last_scraped_at: new Date().toISOString()
     }));
 

@@ -22,6 +22,7 @@ import {
   Eye,
   Phone,
   CheckCircle2,
+  Rotate3D,
 } from 'lucide-react';
 import { motion, AnimatePresence, animate } from 'framer-motion';
 import { generateCarPitch } from '@/shared/api/ai';
@@ -32,6 +33,7 @@ import Viewer360 from '@/features/inventory/ui/common/Viewer360';
 import DOMPurify from 'dompurify';
 import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';
+import { ARViewOverlay } from '@/features/inventory/ui/ARViewOverlay';
 
 const auditRepo = new AuditRepository();
 
@@ -68,6 +70,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
   const [aiPitch, setAiPitch] = useState<string>('');
   const [loadingPitch, setLoadingPitch] = useState(false);
   const [showHeavyContent, setShowHeavyContent] = useState(false);
+  const [showAR, setShowAR] = useState(false);
   
   const analytics = useInventoryAnalytics();
 
@@ -204,7 +207,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         exit={{ opacity: 0, scale: 1.05, y: -20 }}
         transition={{ type: 'spring', damping: 30, stiffness: 400 }}
         onClick={(e) => e.stopPropagation()}
-        className="glass-premium w-full max-w-6xl h-full md:h-[92vh] md:rounded-[64px] shadow-2xl overflow-hidden flex flex-col relative"
+        className="glass-premium w-full max-w-6xl h-full md:h-[92vh] md:rounded-[64px] shadow-2xl overflow-hidden flex flex-col relative z-100"
       >
         {/* Glow Effects */}
         <div className="absolute top-0 -left-20 w-80 h-80 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
@@ -220,11 +223,19 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             <h2 className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">{car.name}</h2>
           </div>
           
-          <div className="flex items-center gap-3">
-            <button onClick={handleShare} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110 active:scale-90">
+           <div className="flex items-center gap-3">
+            <button 
+              onClick={handleShare} 
+              aria-label="Compartir vehículo"
+              className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110 active:scale-90"
+            >
               <Share2 size={20} />
             </button>
-            <button onClick={onClose} className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-rose-500 transition-all hover:scale-110 active:scale-90">
+            <button 
+              onClick={onClose} 
+              aria-label="Cerrar modal"
+              className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-rose-500 transition-all hover:scale-110 active:scale-90"
+            >
               <X size={20} />
             </button>
           </div>
@@ -237,7 +248,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 py-4 px-4 rounded-[18px] flex flex-col md:flex-row items-center justify-center gap-2 transition-all relative overflow-hidden group ${activeTab === tab.id ? 'bg-gradient-to-br from-primary to-cyan-600 shadow-[0_10px_30px_rgba(0,180,216,0.3)]' : 'hover:bg-white/5'}`}
+                className={`flex-1 py-4 px-4 rounded-[18px] flex flex-col md:flex-row items-center justify-center gap-2 transition-all relative overflow-hidden group ${activeTab === tab.id ? 'bg-linear-to-br from-primary to-cyan-600 shadow-[0_10px_30px_rgba(0,180,216,0.3)]' : 'hover:bg-white/5'}`}
               >
                 <div className={`${activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`}>
                   {tab.icon}
@@ -268,7 +279,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                 <div className="flex flex-col lg:flex-row gap-6 h-full">
                   {/* Digital Garage Area */}
                   <div className="w-full lg:w-2/3 bg-white/5 rounded-[40px] border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner group">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40 pointer-events-none" />
                     {showHeavyContent ? (
                       <div className="w-full h-full relative">
                          {/* HUD HUD Digital HUD */}
@@ -282,6 +293,17 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                         <div className="absolute bottom-8 right-8 text-right opacity-60 z-20 pointer-events-none">
                            <p className="font-tech text-3xl font-black text-white italic tracking-tighter">CERTIFIED</p>
                            <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Sentinel Elite Unit</p>
+                        </div>
+
+                        {/* Phase 5: AR-Vision Trigger */}
+                        <div className="absolute top-8 right-8 z-30">
+                           <button
+                             onClick={() => setShowAR(true)}
+                             className="flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-cyan-500 backdrop-blur-xl border border-white/10 rounded-2xl text-white font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-105 shadow-2xl group/ar"
+                           >
+                              <Rotate3D size={16} className="text-cyan-400 group-hover/ar:text-slate-950 transition-colors" />
+                              Activate AR-Vision
+                           </button>
                         </div>
                         
                         <Viewer360
@@ -320,7 +342,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                             <div className="relative w-full h-32 overflow-hidden bg-slate-900/50 rounded-2xl flex items-center justify-center">
                               {/* Neural Scan Animation */}
                               <motion.div 
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent"
+                                className="absolute inset-0 bg-linear-to-r from-transparent via-cyan-500/20 to-transparent"
                                 animate={{ x: ['-100%', '100%'] }}
                                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                               />
@@ -439,7 +461,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
                   <div className="w-full lg:w-1/3 flex flex-col gap-6">
                     <GlassContainer intensity="high" className="p-10 rounded-[48px] border-t-2 border-primary flex-1 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden">
-                       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                       <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-transparent via-primary to-transparent" />
                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] mb-4">Pago Mensual Estimado</p>
                        <div className="text-7xl lg:text-8xl font-black text-white italic tracking-tighter mb-2">
                           $<AnimatedNumber value={calculatedPayment} />
@@ -451,7 +473,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                              <span>Precio Unidad</span>
                              <span className="text-white">${car.price.toLocaleString()}</span>
                           </div>
-                          <div className="h-[1px] w-full bg-white/5" />
+                          <div className="h-px w-full bg-white/5" />
                           <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
                              <span>APR Estimado</span>
                              <span className="text-cyan-400">{(creditRate * 100).toFixed(1)}%</span>
@@ -535,13 +557,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                     <div className="w-full max-w-2xl bg-white/5 rounded-[64px] border border-white/10 p-12 text-center shadow-2xl relative overflow-hidden group">
                        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                        <div className="relative z-10 flex flex-col items-center">
-                          <div className="w-24 h-24 bg-gradient-to-br from-primary to-cyan-400 rounded-full flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(0,180,216,0.5)]">
+                          <div className="w-24 h-24 bg-linear-to-br from-primary to-cyan-400 rounded-full flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(0,180,216,0.5)]">
                              <MessageCircle size={48} className="text-white" />
                           </div>
                           <h3 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4">¿Listo para la Misión?</h3>
                           <p className="text-lg text-slate-400 font-medium mb-12 max-w-md">Conversa directamente con Richard IA o un estratega certificado para coordinar tu prueba de vuelo.</p>
                           
-                          <div className="w-full flex flex-col md:flex-row gap-4">
+                           <div className="w-full flex flex-col md:flex-row gap-4">
                              <button
                                onClick={handleAction}
                                className="flex-1 py-8 bg-white text-slate-950 rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-cyan-400 transition-all hover:scale-[1.05] shadow-xl"
@@ -602,7 +624,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                  <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Precio de Venta</p>
                  <p className="text-2xl lg:text-3xl font-black text-white italic tracking-tighter tabular-nums">${car.price.toLocaleString()}</p>
               </div>
-              <div className="h-8 w-[1px] bg-white/10 hidden md:block" />
+              <div className="w-px h-8 bg-white/10 hidden md:block" />
               <div className="space-y-1">
                  <p className="text-[8px] font-black text-cyan-500 uppercase tracking-[0.4em]">Financiamiento desde</p>
                  <p className="text-4xl lg:text-5xl font-black text-cyan-400 italic tracking-tighter tabular-nums leading-none">
@@ -614,11 +636,27 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
            
            <button 
              onClick={handleAction}
-             className="w-full md:w-auto px-16 py-6 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-[32px] font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
+             className="w-full md:w-auto px-16 py-6 bg-linear-to-r from-primary to-cyan-500 text-white rounded-[32px] font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
            >
               <Zap size={20} className="fill-white group-hover:animate-bounce" /> Autorizar Misión
            </button>
         </div>
+
+        {/* Phase 5: AR-Vision Overlay */}
+        <AnimatePresence>
+           {showAR && (
+              <ARViewOverlay 
+                image={car.img || car.image || (car.images?.[0] ?? '')}
+                vehicleName={car.name}
+                specs={{
+                  hp: car.hp || 180,
+                  torque: 210,
+                  safety: 96
+                }}
+                onClose={() => setShowAR(false)}
+              />
+           )}
+        </AnimatePresence>
       </motion.div>
 
       <style jsx>{`

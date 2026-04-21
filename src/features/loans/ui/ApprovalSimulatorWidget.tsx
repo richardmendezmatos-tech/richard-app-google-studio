@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calculator, ChevronRight, CheckCircle, CreditCard, 
   ShieldCheck, Zap, ArrowRightLeft, TrendingUp,
-  Building2, Landmark, Wallet, Sparkles, CreditCard as CardIcon
+  Building2, Landmark, Wallet, Sparkles, CreditCard as CardIcon,
+  Loader2
 } from 'lucide-react';
 import { leadService } from '@/entities/lead';
 

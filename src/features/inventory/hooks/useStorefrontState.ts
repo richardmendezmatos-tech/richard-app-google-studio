@@ -26,17 +26,6 @@ export function useStorefrontState(
   const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Car[]>([]);
   
-  // Sentinel N24: Search Gap Intelligence
-  // Captura automáticamente búsquedas que no arrojan resultados para el análisis de Houston.
-  useEffect(() => {
-    if (isSearching && displayCars.length === 0 && searchTerm.length > 3) {
-      const timer = setTimeout(async () => {
-        await logSearchGap(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
-        console.log(`[Sentinel] Search Gap logged: ${searchTerm}`);
-      }, 5000); // Debounce extendido para precisión
-      return () => clearTimeout(timer);
-    }
-  }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -150,6 +139,18 @@ export function useStorefrontState(
   }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory, preferredCategory]);
 
   const displayCars = isSearching || preferredCategory ? filteredAndSorted : serverCars;
+
+  // Sentinel N24: Search Gap Intelligence
+  // Captura automáticamente búsquedas que no arrojan resultados para el análisis de Houston.
+  useEffect(() => {
+    if (isSearching && displayCars.length === 0 && searchTerm.length > 3) {
+      const timer = setTimeout(async () => {
+        await logSearchGap(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
+        console.log(`[Sentinel] Search Gap logged: ${searchTerm}`);
+      }, 5000); // Debounce extendido para precisión
+      return () => clearTimeout(timer);
+    }
+  }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const marketPulse = useMemo(() => {
     const source = displayCars.length > 0 ? displayCars : inventory;
