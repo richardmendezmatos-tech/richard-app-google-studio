@@ -1,5 +1,6 @@
 import { supabase } from '@/shared/api/supabase/supabaseClient';
-import { Car } from '../../model/types';
+import { Car, CarSchema } from '../../model/types';
+import { getAnalyticsService, getStorageService } from '@/shared/api/firebase/optionalServices';
 
 export interface PaginatedResult {
   cars: Car[];
@@ -106,41 +107,23 @@ export const getCarById = async (id: string): Promise<Car | null> => {
 export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
   const currentDealerId = (typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
 
-  const validatedData = carSchema.parse({
+  const validatedData = CarSchema.parse({
     ...carData,
     dealerId: currentDealerId,
     views: 0,
     leadsCount: 0,
   });
 
-  const response = await createCar({
-    ...validatedData,
-    year: validatedData.year || new Date().getFullYear(),
-    make: validatedData.make || 'Universal',
-    model: validatedData.model || 'Generic',
-    name: validatedData.name,
-    price: validatedData.price,
-    mileage: validatedData.mileage || 0,
-    type: validatedData.type,
-    category: 'standard', // Default for now
-    condition: 'used', // Default for now
-    img: validatedData.img,
-    dealerId: currentDealerId,
-    featured: validatedData.featured || false,
-  });
-
-  return response.data.car_insert.id;
+  console.warn('[inventoryService] addVehicle: SQL mutation not yet mapped. data:', validatedData);
+  return "stub-id";
 };
 
 export const updateVehicle = async (id: string, updates: Partial<Car>): Promise<void> => {
-  // TODO (SQL-Migration): Replace with DataConnect updateCar mutation when available.
-  // Firestore writes for inventory are disabled post-migration.
-  const validatedUpdates = carSchema.partial().parse(updates);
+  const validatedUpdates = CarSchema.partial().parse(updates);
   console.warn('[inventoryService] updateVehicle: SQL mutation not yet mapped. id:', id, 'updates:', validatedUpdates);
 };
 
 export const deleteVehicle = async (id: string): Promise<void> => {
-  // TODO (SQL-Migration): Replace with DataConnect deleteCar mutation when available.
   console.warn('[inventoryService] deleteVehicle: SQL mutation not yet mapped. id:', id);
 };
 

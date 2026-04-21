@@ -18,8 +18,8 @@ export const BUSINESS_CONTACT = {
     full: 'Carr. #2 KM 28.5, Bo. Espinosa, Vega Alta, PR 00692',
   },
   geo: {
-    latitude: 18.4069,
-    longitude: -66.3353,
+    latitude: 18.4135024,
+    longitude: -66.3097368,
   },
   hours: {
     weekdays: '9:00 AM - 6:00 PM',
