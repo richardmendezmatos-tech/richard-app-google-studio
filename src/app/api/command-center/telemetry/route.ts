@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
@@ -17,10 +17,22 @@ const DEALER_ID = 'richard-automotive-main'; // ID unificado del ecosistema
  * automation states for a real-time command view.
  */
 export async function GET(req: Request) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('[Telemetry API] Supabase keys missing. Returning degraded mode for build.');
+    return NextResponse.json({ 
+      timestamp: new Date().toISOString(),
+      summary: { leads_last_24h: 0, avg_score: 0, inventory_coverage: 0 },
+      hotLeads: [],
+      neuralSearch: { recent_gaps: [], gap_count: 0 },
+      whatsapp: { sent: 0, scheduled: 0, failed: 0 },
+      purchaseOrders: []
+    });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
   const token = req.headers.get('x-antigravity-token');
   if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

@@ -8,7 +8,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 // Evita que Next.js convierta esta ruta en estática
-export const dynamic = 'force-dynamic';
+
 // Vercel Serverless Functions para Playwright necesitan más memoria/tiempo (si el plan lo permite)
 export const maxDuration = 300; // 5 minutos máximo
 

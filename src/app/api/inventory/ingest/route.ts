@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { openaiService } from '@/shared/api/ai/openaiService';
@@ -19,10 +19,15 @@ import { connectorConfig, createCar } from '@dataconnect/generated';
  */
 export async function POST(req: Request) {
   const dataConnect = getDataConnect(connectorConfig);
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('[Ingest API] Supabase keys missing. Aborting.');
+    return NextResponse.json({ error: 'Supabase configuration missing' }, { status: 503 });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
   try {
     const token = req.headers.get('x-antigravity-token');
     if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
@@ -129,10 +134,15 @@ export async function POST(req: Request) {
  */
 export async function GET(req: Request) {
   const dataConnect = getDataConnect(connectorConfig);
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('[Ingest API:Bulk] Supabase keys missing. Aborting.');
+    return NextResponse.json({ error: 'Supabase configuration missing' }, { status: 503 });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
   try {
     const token = req.headers.get('x-antigravity-token');
     if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {

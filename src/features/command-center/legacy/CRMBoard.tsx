@@ -173,7 +173,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
 const CRMBoard: React.FC = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
   const [leads, setLeads] = React.useState<Lead[]>(() => {
-    if (localStorage.getItem('e2e_bypass') === 'true') {
+    if (typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') === 'true') {
       return [
         {
           id: 'e2e-mock-lead',
@@ -254,7 +254,7 @@ const CRMBoard: React.FC = () => {
     const unsubscribe = subscribeToLeads((newLeads) => {
       if (newLeads.length > 0) {
         setLeads(newLeads);
-      } else if (localStorage.getItem('e2e_bypass') !== 'true') {
+      } else if (typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') !== 'true') {
         setLeads([]);
       }
       setLoading(false);
@@ -585,7 +585,7 @@ const CRMBoard: React.FC = () => {
         </div>
       </div>
 
-      {createPortal(
+      {typeof window !== 'undefined' && document.body && createPortal(
         <DragOverlay adjustScale={false}>
           {activeId ? (
             <div className="rotate-2 scale-105 transition-transform">

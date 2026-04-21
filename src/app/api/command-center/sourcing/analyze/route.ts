@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
-export const dynamic = 'force-dynamic';
+
 
 /**
  * POST /api/command-center/sourcing/analyze

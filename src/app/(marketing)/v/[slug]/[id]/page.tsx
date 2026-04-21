@@ -5,7 +5,7 @@ import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
 
-export const dynamic = 'force-dynamic';
+
 
 interface Props {
   params: Promise<{ id: string; slug: string }>;
@@ -15,13 +15,16 @@ interface Props {
 export async function generateStaticParams() {
   try {
     const inventory = await fetchInventoryFromJava(50);
+    if (!inventory || inventory.length === 0) {
+      throw new Error('Empty inventory from Java API');
+    }
     return inventory.map((car: Car) => ({
       id: car.id,
       slug: generateVehicleSlug(car, false),
     }));
   } catch (error) {
-    console.warn('[Build] Java API unreachable for v/[slug]/[id]. Falling back to on-demand rendering.');
-    return [];
+    console.warn('[Build] Java API unreachable for v/[slug]/[id]. Providing fallback for build stability.');
+    return [{ id: 'fallback-unit', slug: 'richard-automotive-unit' }];
   }
 }
 

@@ -87,7 +87,6 @@ function HomeJsonLd() {
   );
 }
 
-export const experimental_ppr = true;
 
 /**
  * Next.js App Router Home Page
