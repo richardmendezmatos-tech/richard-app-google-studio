@@ -64,12 +64,14 @@ export class IdentifyOutreachOpportunities {
     const defaultRules: OutreachRuleSet = {
       isStalled: (lead) => lead.status !== 'sold' && lead.status !== 'lost',
       determineAction: (lead) =>
-        (lead.predictiveScore || 0) > 90 ? 'Cierre Agresivo' : 'Re-engager Suave',
-      generateMessage: (lead) =>
-        (lead.predictiveScore || 0) > 90
-          ? `¡Hola ${lead.firstName}! 🚀 Oferta exclusiva hoy.`
-          : `Hola ${lead.firstName}, ¿cómo vas con tu búsqueda?`,
-      estimateRoi: (lead) => (lead.predictiveScore || 0) * 10,
+        (lead.predictiveScore || 0) > 90 ? 'Cierre Estratégico (Sentinel High)' : 'Cierre Suave (Nurturing)',
+      generateMessage: (lead) => {
+        const vehicle = lead.vehicleOfInterest || 'el vehículo de tus sueños';
+        return (lead.predictiveScore || 0) > 90
+          ? `Hola ${lead.firstName}, soy Jules de Richard Automotive. 💎 He reservado prioridad para ti en el ${vehicle}. ¿Te gustaría coordinar una prueba VIP hoy?`
+          : `Hola ${lead.firstName}, sigo atento a tu interés en el ${vehicle}. Richard acaba de autorizar una atención especial para esta unidad. ¿Hablamos?`;
+      },
+      estimateRoi: (lead) => (lead.predictiveScore || 0) * 12.5, // Ajustado a valor premium
     };
 
     const pipeline = this.createPipeline(defaultRules);

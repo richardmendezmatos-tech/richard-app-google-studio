@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearchTicker';
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
+import { HoloDashboard } from '@/features/houston/ui/components/HoloDashboard';
 import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 
@@ -173,6 +174,19 @@ export default function CommandCenterPage() {
             className="hud-brackets"
           />
         </div>
+
+        {/* Phase 3: Holo-Dashboard Intelligence */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <HoloDashboard 
+            leadsCount={data?.summary.leads_last_24h}
+            inventoryHealth={data?.summary.inventory_coverage}
+            aiConfidence={98}
+          />
+        </motion.div>
 
         {/* Intelligence Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,4 +1,4 @@
-import { useState, useContext, useMemo } from 'react';
+import { useState, useContext, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car, CarType } from '@/shared/types/types';
 import { useVisualSearch } from './useVisualSearch';
@@ -8,6 +8,7 @@ import { useInventoryAnalytics } from './useInventoryAnalytics';
 import { useAuthStore } from '@/entities/session';
 import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore';
 import { TrajectoryAnalyzer } from '@/features/predictive/model/TrajectoryAnalyzer';
+import { logSearchGap } from '@/shared/api/supabase/supabaseClient';
 
 export function useStorefrontState(
   inventory: Car[],
@@ -24,6 +25,18 @@ export function useStorefrontState(
   const [visualContext, setVisualContext] = useState<string | null>(null);
   const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Car[]>([]);
+  
+  // Sentinel N24: Search Gap Intelligence
+  // Captura automáticamente búsquedas que no arrojan resultados para el análisis de Houston.
+  useEffect(() => {
+    if (isSearching && displayCars.length === 0 && searchTerm.length > 3) {
+      const timer = setTimeout(async () => {
+        await logSearchGap(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
+        console.log(`[Sentinel] Search Gap logged: ${searchTerm}`);
+      }, 5000); // Debounce extendido para precisión
+      return () => clearTimeout(timer);
+    }
+  }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();

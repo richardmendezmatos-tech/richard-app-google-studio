@@ -1,10 +1,12 @@
 import React from 'react';
 import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
+import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 
 /**
  * Marketing Layout (Sentinel N23)
  * Optimized for SEO and ultra-fast initial paint.
- * No heavy dashboard widgets here.
+ * Now includes the CinemaLayout to maintain the "Command Center" aesthetic
+ * and provide global navigation (Sidebar, AI Chat).
  */
 export default function MarketingLayout({
   children,
@@ -13,10 +15,11 @@ export default function MarketingLayout({
 }) {
   return (
     <AppProviders>
-      <div className="min-h-screen bg-slate-950 text-white selection:bg-cyan-500/30">
-        {/* Simple navigation can be added here if needed, or kept inside pages */}
-        {children}
-      </div>
+      <CinemaLayout inventory={[]}>
+        <div className="min-h-screen bg-transparent text-white selection:bg-cyan-500/30">
+          {children}
+        </div>
+      </CinemaLayout>
     </AppProviders>
   );
 }
