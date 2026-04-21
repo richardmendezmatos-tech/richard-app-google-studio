@@ -124,7 +124,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
 
         {/* Visually hidden H1 for search engine crawlers — matches SEO keyword strategy */}
         <h1 className="sr-only">
-          Autos Nuevos y Usados de Lujo en Puerto Rico — Richard Automotive Bayamón
+          Dealer de Autos Nuevos Ford y Usados Certificados en Puerto Rico — Richard Automotive Bayamón
         </h1>
 
         {/* Hero Section */}

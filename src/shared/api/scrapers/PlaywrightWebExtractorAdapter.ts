@@ -38,28 +38,36 @@ export class PlaywrightWebExtractorAdapter implements WebExtractorPort {
       });
 
       const page = await context.newPage();
+      const allVehicles: Vehicle[] = [];
 
-      // Estrategia: Intercepción de XHR es más limpia y menos frágil que el DOM.
-      // Detectar condición desde el URL (Basado en la arquitectura de Central Ford)
-      const condition = config.baseUrl.includes('nuevos') ? 'NEW' : 'USED';
+      for (const url of config.targetUrls) {
+        const condition = url.includes('nuevos') ? 'NEW' : 'USED';
 
-      // Mapeo (Parsing sucio a Entidad Pura)
-      return inventoryData.map(data => 
-        Vehicle.create(data.vin, {
-          make: data.make || 'Ford',
-          model: data.model,
-          year: parseInt(data.year),
-          price: this.parseCleanPrice(data.price),
-          mileage: data.mileage || 0,
-          images: data.images || [],
-          status: 'AVAILABLE',
-          condition: condition,
-          lastScrapedAt: new Date()
-        })
-      );
+        // Disparar extracción para esta URL
+        const inventoryData = await this.interceptXhrOrFallbackToDom(page, url);
+
+        if (inventoryData && inventoryData.length > 0) {
+          const vehicles = inventoryData.map(data => 
+            Vehicle.create(data.vin, {
+              make: data.make || 'Ford',
+              model: data.model,
+              year: parseInt(data.year),
+              price: this.parseCleanPrice(data.price),
+              mileage: data.mileage || 0,
+              images: data.images || [],
+              status: 'AVAILABLE',
+              condition: condition,
+              lastScrapedAt: new Date()
+            })
+          );
+          allVehicles.push(...vehicles);
+        }
+      }
+
+      return allVehicles;
 
     } catch (error: any) {
-      throw new Error(`Scraper Error [${config.baseUrl}]: ${error.message}`, { cause: error });
+      throw new Error(`Scraper Error [${config.targetUrls.join(', ')}]: ${error.message}`, { cause: error });
     } finally {
       if (browser) await browser.close();
     }
@@ -76,32 +84,21 @@ export class PlaywrightWebExtractorAdapter implements WebExtractorPort {
         console.warn('Inventario360 Cards no encontradas en 15s. Posible bloqueo o página vacía.');
     });
 
-    // Extraer datos del DOM
+    // Extraer datos del DOM usando los Data Attributes de Inventario360 (Más robusto)
     const rawVehicles = await page.$$eval('.inv360VehicleCard', cards => {
       return cards.map(card => {
+        const vin = (card as HTMLElement).dataset.vin || 'UNKNOWN';
         const titleEl = card.querySelector('.inv360VehicleCard__title');
         const priceEl = card.querySelector('.inv360VehicleCard__price');
-        const mileageEl = card.querySelector('.inv360VehicleCard__mileage');
-        const imgEl = card.querySelector('.inv360VehicleCard__image img') as HTMLImageElement;
-        const linkEl = card.querySelector('a.inv360VehicleCard__goDetail') as HTMLAnchorElement;
+        const mileageEl = card.querySelector('.inv360VehicleCard__info span:last-child'); // Basado en "Nuevo - 0 millas"
+        const imgEl = card.querySelector('.inv360VehicleCard__img') as HTMLImageElement;
 
-        // Parseo de Título (Ej. "Ford Bronco Sport Big Bend 2025")
+        // Parseo de Título (Ej. "Ford Ranger STX Canopy 2025")
         const fullTitle = titleEl?.textContent?.trim() || '';
         const yearMatch = fullTitle.match(/\b(202[4-6])\b/);
-        const year = yearMatch ? yearMatch[1] : '2026';
-        const make = 'Ford'; // Sabemos el origen
-        // Remover el año y la marca para dejar solo el modelo
+        const year = yearMatch ? yearMatch[1] : '2025';
+        const make = 'Ford';
         const model = fullTitle.replace(make, '').replace(year, '').trim();
-
-        // Extracción y sanitización de VIN del URL
-        // Ej: .../nuevo-2025-ford-bronco-sport-3fmcr9bn5srf45559-573762/
-        let vin = 'UNKNOWN';
-        if (linkEl && linkEl.href) {
-            const parts = linkEl.href.split('-');
-            if (parts.length > 2) {
-                vin = parts[parts.length - 2].toUpperCase(); 
-            }
-        }
 
         return {
           vin,

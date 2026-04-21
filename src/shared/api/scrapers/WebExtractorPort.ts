@@ -2,7 +2,7 @@
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 
 export interface ExtractorConfig {
-  baseUrl: string;
+  targetUrls: string[];
   maxConcurrency?: number;
   useStealthMode?: boolean;
 }

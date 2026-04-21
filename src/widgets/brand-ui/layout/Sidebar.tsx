@@ -503,6 +503,7 @@ const NavButton: React.FC<NavButtonProps> = ({
       onMouseEnter={onMouseEnter}
       className={`${base} ${stateClass}`}
       aria-current={active ? 'page' : undefined}
+      aria-label={label}
       title={isCollapsed ? label : undefined}
     >
       <span className={`relative z-10 shrink-0 transition-transform duration-500 ${active ? 'scale-110 glow-active-cyan' : 'group-hover:scale-110'}`}>{icon}</span>

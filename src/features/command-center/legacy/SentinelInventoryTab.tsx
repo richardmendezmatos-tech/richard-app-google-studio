@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Flame,
+  RefreshCcw,
 } from 'lucide-react';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
 import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
@@ -65,6 +66,25 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   );
   const [searchTerm, setSearchTerm] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
+  const [isSyncing, setIsSyncing] = React.useState(false);
+
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch('/api/cron/sync-inventory?manual=true');
+      const data = await response.json();
+      if (response.ok) {
+        alert(`Sincronización exitosa: ${data.telemetry.inserted} nuevos, ${data.telemetry.updated} actualizados.`);
+        window.location.reload(); // Recargar para ver cambios
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      alert('Error de conexión al sincronizar.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   React.useEffect(() => {
     searchInputRef.current?.focus();
@@ -203,6 +223,15 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
               className="px-8 h-[48px] bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
             >
               <Plus size={18} strokeWidth={3} /> Nueva Unidad
+            </button>
+
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className={`px-6 h-[48px] bg-slate-900 hover:bg-slate-800 text-cyan-400 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl border border-cyan-500/30 active:scale-95 transition-all flex items-center justify-center gap-3 ${isSyncing ? 'animate-pulse opacity-70' : ''}`}
+            >
+              <RefreshCcw size={18} className={isSyncing ? 'animate-spin' : ''} />
+              {isSyncing ? 'Sincronizando...' : 'Sincronizar Central Ford'}
             </button>
 
             {onInitializeDb && (

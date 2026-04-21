@@ -2,5 +2,11 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /command-center/
+Disallow: /ai-lab/
+Disallow: /consultant/
+Disallow: /profile/
+Disallow: /login/
+Disallow: /admin-login/
 
-Sitemap: https://www.richard-automotive.com/sitemap.xml
+Sitemap: https://richard-automotive.com/sitemap.xml

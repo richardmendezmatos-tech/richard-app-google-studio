@@ -13,11 +13,14 @@ import { cookies } from 'next/headers';
 export const maxDuration = 300; // 5 minutos máximo
 
 export async function GET(request: Request) {
-  // 1. Seguridad: Verificar el "Bearer Token" secreto de Vercel Cron
-  // En desarrollo local nos podemos saltar esto o usar un token propio
+  // 1. Seguridad: Verificar el "Bearer Token" secreto de Vercel Cron o si es un trigger manual del Admin
+  const { searchParams } = new URL(request.url);
+  const isManual = searchParams.get('manual') === 'true';
   const authHeader = request.headers.get('authorization');
+  
   if (
     process.env.NODE_ENV === 'production' &&
+    !isManual &&
     authHeader !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -62,21 +65,32 @@ export async function GET(request: Request) {
     
     const useCase = new RunInventorySyncUseCase(repository, extractor, engine);
 
-    // 4. Disparo
+    // 4. Disparo (Doble pasada: Nuevos y Usados para un Mirroring Completo)
     const result = await useCase.execute({
-      baseUrl: 'https://centralfordpr.com/inventario-nuevos/',
+      targetUrls: [
+        'https://centralfordpr.com/inventario-nuevos/',
+        'https://centralfordpr.com/inventario-usados/'
+      ],
       useStealthMode: process.env.NODE_ENV === 'production',
     });
 
     // 5. Respuesta
     if (result.status === 'FAILED') {
-      return NextResponse.json({ error: result.error }, { status: 500 });
+      return NextResponse.json({ 
+        error: result.error,
+        status: 'partial_failure'
+      }, { status: 500 });
     }
 
     return NextResponse.json({
-      message: 'Sincronización Completada',
-      telemetry: result
-    }, { status: 200 });
+      status: 'success',
+      telemetry: {
+        inserted: result.inserted,
+        updated: result.updated,
+        sold: result.sold,
+        timestamp: new Date().toISOString()
+      }
+    });
 
   } catch (error: any) {
     console.error('[CRON Sync] Error fatal:', error);

@@ -136,13 +136,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col gap-0"
               >
-                <h1 className="flex flex-col">
+                <h2 className="flex flex-col">
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter">{h.line1}</span>
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter">{h.line2}</span>
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none">
                     {h.accent}
                   </span>
-                </h1>
+                </h2>
               </motion.div>
             </AnimatePresence>
           </div>
