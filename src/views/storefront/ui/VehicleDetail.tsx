@@ -27,9 +27,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   inventory: Car[];
+  car?: Car;
 }
 
-const VehicleDetail: React.FC<Props> = ({ inventory }) => {
+const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const { id, slug } = useParams<{ id: string; slug?: string }>();
   const navigate = useNavigate();
   const { currentDealer } = useDealer();
@@ -37,7 +38,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory }) => {
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
 
-  const car = inventory.find((c) => c.id === id);
+  const car = propCar || inventory.find((c) => c.id === id);
 
   useEffect(() => {
     if (car) {
