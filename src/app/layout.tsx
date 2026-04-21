@@ -18,8 +18,8 @@ const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', displa
 const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-editorial', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Richard Automotive | Master Control Center',
-  description: 'Inventario de vehículos premium y tasaciones digitales. Gestión por Richard Oneal Méndez Matos.',
+  title: 'Richard Automotive | Dealer de Autos Nuevos Ford en Puerto Rico',
+  description: 'Tu destino premium para autos nuevos Ford y usados certificados en Bayamón, Puerto Rico. Richard Automotive ofrece financiamiento digital y tasaciones inteligentes.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -39,9 +39,11 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'Richard Automotive',
-    description: 'Expertos en automovilismo y tecnología.',
+    title: 'Richard Automotive | Dealer de Autos Nuevos en Puerto Rico',
+    description: 'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Bayamón.',
     images: ['https://richard-automotive.com/og-image.jpg'],
+    locale: 'es_PR',
+    type: 'website',
   },
 };
 
@@ -64,18 +66,35 @@ export default function RootLayout({
 }) {
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: 'Richard Oneal Méndez Matos',
+    '@type': 'LocalBusiness',
+    name: 'Richard Automotive',
+    image: 'https://richard-automotive.com/logo.png',
+    '@id': 'https://richard-automotive.com',
     url: 'https://richard-automotive.com',
-    sameAs: [
-      'https://linkedin.com/in/richardmendez',
-      'https://instagram.com/richardautomotive',
-    ],
-    jobTitle: 'Especialista en Sistemas Automotrices',
-    worksFor: {
-      '@type': 'Organization',
-      name: 'Richard Automotive',
+    telephone: '+17873682880',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Bayamón',
+      addressLocality: 'Bayamón',
+      addressRegion: 'PR',
+      postalCode: '00956',
+      addressCountry: 'US',
     },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 18.3973,
+      longitude: -66.1558,
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+    sameAs: [
+      'https://www.facebook.com/richardautomotive1',
+      'https://www.instagram.com/richardoneal_/',
+    ],
   };
 
   return (

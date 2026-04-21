@@ -1,11 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
 import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getCarById, getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
-
-
 
 interface Props {
   params: Promise<{ id: string; slug: string }>;
@@ -14,31 +12,29 @@ interface Props {
 // SSG: Generate the top vehicle pages at build time
 export async function generateStaticParams() {
   try {
-    const inventory = await fetchInventoryFromJava(50);
-    if (!inventory || inventory.length === 0) {
-      throw new Error('Empty inventory from Java API');
+    // Fetch first 100 cars for static generation
+    const { cars } = await getPaginatedCars(100, 0);
+    
+    if (!cars || cars.length === 0) {
+      console.warn('[Build] Empty inventory from Supabase for static params.');
+      return [];
     }
-    return inventory.map((car: Car) => ({
+
+    return cars.map((car: Car) => ({
       id: car.id,
       slug: generateVehicleSlug(car, false),
     }));
   } catch (error) {
-    console.warn('[Build] Java API unreachable for v/[slug]/[id]. Providing fallback for build stability.');
-    return [{ id: 'fallback-unit', slug: 'richard-automotive-unit' }];
+    console.error('[Build] Supabase unreachable for static params:', error);
+    return [];
   }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, slug } = await params;
 
-  // Attempt to fetch the specific car for rich metadata
-  let car: Car | undefined;
-  try {
-    const inventory = await fetchInventoryFromJava(100);
-    car = inventory.find((c: Car) => c.id === id);
-  } catch {
-    // Fallback to slug-derived metadata
-  }
+  // Fetch specific car for rich metadata
+  const car = await getCarById(id);
 
   const title = car
     ? `${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''} | Richard Automotive`
@@ -46,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description = car
     ? `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Bayamón.`
-    : `Encuentra los mejores vehículos usados en Richard Automotive, Puerto Rico. Financiamiento disponible.`;
+    : `Encuentra los mejores vehículos nuevos y usados en Richard Automotive, Puerto Rico. Financiamiento disponible.`;
 
   return {
     title,
@@ -55,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: 'website',
-      images: car?.image ? [{ url: car.image, width: 1200, height: 630, alt: title }] : [],
+      images: car?.img ? [{ url: car.img, width: 1200, height: 630, alt: title }] : [],
       siteName: 'Richard Automotive',
       locale: 'es_PR',
     },
@@ -63,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: car?.image ? [car.image] : [],
+      images: car?.img ? [car.img] : [],
     },
     alternates: {
       canonical: `https://richard-automotive.com/v/${slug}/${id}`,
@@ -72,6 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'product:price:amount': car?.price?.toString() || '',
       'product:price:currency': 'USD',
       'product:availability': car?.status === 'available' ? 'in stock' : 'out of stock',
+      'product:condition': car?.condition || 'new',
     },
   };
 }
@@ -96,7 +93,8 @@ function VehicleJsonLd({ car }: { car?: Car }) {
     vehicleEngine: car.engine
       ? { '@type': 'EngineSpecification', name: car.engine }
       : undefined,
-    image: car.image,
+    image: car.img || car.image,
+    itemCondition: car.condition === 'new' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
     offers: {
       '@type': 'Offer',
       price: car.price,
@@ -153,15 +151,12 @@ function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
 
 export default async function VehicleDetailPage({ params }: Props) {
   const { id } = await params;
-  let inventory: Car[] = [];
-  let currentCar: Car | undefined;
-
-  try {
-    inventory = await fetchInventoryFromJava(50);
-    currentCar = inventory.find((c) => c.id === id);
-  } catch (err) {
-    console.error(err);
-  }
+  
+  // Parallel fetch for current car and initial inventory (for related/sidebar)
+  const [currentCar, { cars: inventory }] = await Promise.all([
+    getCarById(id),
+    getPaginatedCars(12, 0)
+  ]);
 
   // Generate default FAQs if not provided by the entity
   const defaultFaqs = currentCar
@@ -187,7 +182,10 @@ export default async function VehicleDetailPage({ params }: Props) {
     <>
       <VehicleJsonLd car={currentCar} />
       <FAQJsonLd faqs={faqs} />
-      <VehicleDetail inventory={inventory} />
+      <VehicleDetail 
+        car={currentCar} 
+        inventory={inventory} 
+      />
     </>
   );
 }

@@ -1,12 +1,18 @@
 import fs from 'fs';
 import path from 'path';
-import admin from 'firebase-admin';
+import { createClient } from '@supabase/supabase-js';
 import { SITE_CONFIG } from '../src/shared/config/siteConfig.ts';
+import { slugify, generateVehicleSlug } from '../src/shared/lib/utils/seo.ts';
 
 const ROOT = process.cwd();
 const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');
 const baseUrl = (process.env.SITE_URL || SITE_CONFIG.url).replace(/\/$/, '');
 const today = new Date().toISOString().slice(0, 10);
+
+// Initialize Supabase (Using env vars or placeholders for script)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 type SitemapEntry = {
   loc: string;
@@ -40,25 +46,6 @@ const escapeXml = (value: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 
-const resolveServiceAccountPath = () => {
-  const candidates = [
-    path.join(ROOT, 'functions', 'serviceAccountKey.json'),
-    path.join(ROOT, 'serviceAccountKey.json')
-  ];
-  return candidates.find((candidate) => fs.existsSync(candidate));
-};
-
-const toIsoDate = (value: unknown) => {
-  if (!value || typeof value !== 'object') return today;
-
-  const maybeDate = value as { toDate?: () => Date };
-  if (typeof maybeDate.toDate === 'function') {
-    return maybeDate.toDate().toISOString().slice(0, 10);
-  }
-
-  return today;
-};
-
 const normalizeImageUrl = (value: unknown) => {
   if (typeof value !== 'string' || !value.trim()) return null;
   if (value.startsWith('http://') || value.startsWith('https://')) return value;
@@ -67,46 +54,33 @@ const normalizeImageUrl = (value: unknown) => {
 };
 
 const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
-  const serviceAccountPath = resolveServiceAccountPath();
-  if (!serviceAccountPath) {
-    console.warn('[sitemap] Service account not found. Skipping vehicle URLs.');
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('[sitemap] Supabase credentials missing. Skipping vehicle URLs.');
     return [];
   }
 
-  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+  const { data: cars, error } = await supabase
+    .from('inventory')
+    .select('*')
+    .eq('status', 'available');
 
-  if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
+  if (error || !cars) {
+    console.error('[sitemap] Error fetching from Supabase:', error);
+    return [];
   }
 
-  const snapshot = await admin.firestore().collection('cars').get();
-  return snapshot.docs.map((doc) => {
-    const data = doc.data() as {
-      name?: string;
-      make?: string;
-      model?: string;
-      year?: number;
-      img?: string;
-      images?: string[];
-      updatedAt?: any;
-      createdAt?: any;
-      price?: number;
-    };
-
-    // Use name if make/model are missing
-    const vehicleName = data.name || `${data.year || ''} ${data.make || ''} ${data.model || ''}`.trim() || 'Vehículo';
-
-    // Dynamic Priority: Newer inventory gets higher visibility
-    const createdDate = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
-    const daysOld = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-    const priority = daysOld < 7 ? 0.9 : daysOld < 30 ? 0.8 : 0.7;
+  return cars.map((car) => {
+    const vehicleName = `${car.year} ${car.make} ${car.model}`.trim();
+    const slug = generateVehicleSlug({ name: vehicleName });
+    
+    // Priority: New inventory and priority conditions get higher visibility
+    const isNew = car.condition?.toUpperCase() === 'NEW';
+    const priority = isNew ? 0.9 : 0.8;
 
     const images = [...new Set(
-      [data.img, ...(data.images || [])]
-        .map((image) => normalizeImageUrl(image))
-        .filter((image): image is string => Boolean(image))
+      (car.images || [])
+        .map((image: string) => normalizeImageUrl(image))
+        .filter((image: string): image is string => Boolean(image))
     )].map(url => ({
       url,
       title: `${vehicleName} - Richard Automotive`,
@@ -114,10 +88,10 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
     }));
 
     return {
-      loc: `${baseUrl}/vehicle/${doc.id}`,
+      loc: `${baseUrl}/v/${slug}/${car.vin}`,
       changefreq: 'daily',
       priority,
-      lastmod: toIsoDate(data.updatedAt || data.createdAt),
+      lastmod: car.last_scraped_at ? car.last_scraped_at.slice(0, 10) : today,
       images
     };
   });

@@ -27,7 +27,7 @@ export const SITE_CONFIG: SiteConfig = {
   domain: 'richard-automotive.com',
   url: 'https://www.richard-automotive.com',
   description:
-    'Tu destino de autos nuevos y usados de lujo en Puerto Rico. Richard Automotive en Bayamón ofrece financiamiento inteligente, trade-in y selección curada con IA.',
+    'Tu dealer líder de autos nuevos Ford y usados certificados en Puerto Rico. Richard Automotive en Bayamón ofrece financiamiento inteligente, trade-in y selección curada con IA.',
   social: {
     facebook: 'https://www.facebook.com/richardautomotive1',
     instagram: 'https://www.instagram.com/richardoneal_/',
@@ -40,8 +40,10 @@ export const SITE_CONFIG: SiteConfig = {
   },
   seo: {
     keywords: [
-      'autos usados puerto rico',
+      'autos nuevos ford puerto rico',
       'autos nuevos bayamon puerto rico',
+      'ford puerto rico nuevos',
+      'autos usados puerto rico',
       'carros usados san juan pr',
       'dealer de autos puerto rico',
       'financiamiento de autos pr',
