@@ -180,10 +180,10 @@ export default async function VehicleDetailPage({ params }: Props) {
 
   return (
     <>
-      <VehicleJsonLd car={currentCar} />
+      <VehicleJsonLd car={currentCar || undefined} />
       <FAQJsonLd faqs={faqs} />
       <VehicleDetail 
-        car={currentCar} 
+        car={currentCar || undefined} 
         inventory={inventory} 
       />
     </>
