@@ -90,8 +90,13 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
         status: 'AVAILABLE',
         condition: condition as any,
         lastScrapedAt: new Date(),
-        exteriorColor: item.attributes?.color,
-        trim: item.attributes?.trim
+        exteriorColor: item.attributes?.exterior_color || item.attributes?.color,
+        interiorColor: item.attributes?.interior_color,
+        trim: item.attributes?.trim,
+        engine: item.attributes?.engine,
+        transmission: item.attributes?.transmission,
+        driveTrain: item.attributes?.drive_train || item.attributes?.drivetrain,
+        bodyStyle: item.attributes?.body_style || item.attributes?.body
       });
     });
 

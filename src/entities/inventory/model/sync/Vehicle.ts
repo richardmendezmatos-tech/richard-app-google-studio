@@ -10,6 +10,11 @@ export interface VehicleProps {
   price: number;
   trim?: string;
   exteriorColor?: string;
+  interiorColor?: string;
+  engine?: string;
+  transmission?: string;
+  driveTrain?: string;
+  bodyStyle?: string;
   mileage: number;
   images: string[];
   status: SyncStatus;

@@ -104,6 +104,13 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       images: v.props.images,
       status: v.status,
       condition: v.props.condition,
+      trim: v.props.trim,
+      body_style: v.props.bodyStyle,
+      transmission: v.props.transmission,
+      engine: v.props.engine,
+      drive_train: v.props.driveTrain,
+      exterior_color: v.props.exteriorColor,
+      interior_color: v.props.interiorColor,
       last_scraped_at: new Date().toISOString()
     }));
 
@@ -120,6 +127,15 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       vin: v.vin,
       price: v.price,
       status: v.status,
+      mileage: v.props.mileage,
+      images: v.props.images,
+      trim: v.props.trim,
+      body_style: v.props.bodyStyle,
+      transmission: v.props.transmission,
+      engine: v.props.engine,
+      drive_train: v.props.driveTrain,
+      exterior_color: v.props.exteriorColor,
+      interior_color: v.props.interiorColor,
       last_scraped_at: new Date().toISOString()
     }));
 
