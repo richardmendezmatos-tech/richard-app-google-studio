@@ -1,45 +1,48 @@
 import { WebExtractorPort, ExtractorConfig } from './WebExtractorPort';
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 
-interface Inv360Response {
-  message: string;
-  status: number;
-  data: any[];
-  pagination: {
-    total_results: number;
-    total_pages: number;
-    current_page: number;
-    per_page: number;
+interface AjaxInventoryResponse {
+  success: boolean;
+  data: {
+    vehicles: string; // HTML content
+    total: number;
+    pagination: string; // HTML pagination
   };
 }
 
 export class RestApiExtractorAdapter implements WebExtractorPort {
-  private readonly API_BASE_URL = 'https://centralfordpr.com/wp-json/inv360/v1/vehicles';
+  private readonly AJAX_URL = 'https://centralfordpr.com/wp-admin/admin-ajax.php';
 
   async extractFullInventory(config: ExtractorConfig): Promise<Vehicle[]> {
-    console.log('[RestApiExtractor] Iniciando extracción masiva vía API...');
-    
-    // El endpoint de Inv360 devuelve tanto nuevos como usados si no se filtra,
-    // pero para seguridad seguiremos el patrón de URLs si se proveen filtros,
-    // o simplemente traeremos todo el universo disponible.
+    console.log('[RestApiExtractor] Iniciando extracción masiva vía AJAX (Legacy)...');
     
     const allVehicles: Vehicle[] = [];
+    const perPage = 100;
     
     try {
-      // 1. Obtener primera página para conocer el total_pages
-      const firstPage = await this.fetchPage(1);
-      if (!firstPage) return [];
+      // 1. Obtener primera página para conocer el total
+      const firstPage = await this.fetchPage(1, perPage);
+      if (!firstPage || !firstPage.success) {
+        console.error('[RestApiExtractor] No se pudo obtener la respuesta del servidor.');
+        return [];
+      }
 
-      console.log(`[RestApiExtractor] Detectadas ${firstPage.pagination.total_pages} páginas (${firstPage.pagination.total_results} unidades).`);
+      const totalItems = firstPage.data.total;
+      const totalPages = Math.ceil(totalItems / perPage);
+      
+      console.log(`[RestApiExtractor] Detectadas ${totalPages} páginas (${totalItems} unidades).`);
       
       // 2. Procesar primera página
-      this.processResponse(firstPage, allVehicles);
+      this.processHtml(firstPage.data.vehicles, allVehicles);
 
       // 3. Iterar por las páginas restantes
-      for (let p = 2; p <= firstPage.pagination.total_pages; p++) {
-        const pageData = await this.fetchPage(p);
-        if (pageData) {
-          this.processResponse(pageData, allVehicles);
+      for (let p = 2; p <= totalPages; p++) {
+        console.log(`[RestApiExtractor] Esperando 1s antes de procesar página ${p}...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const pageData = await this.fetchPage(p, perPage);
+        if (pageData && pageData.success) {
+          this.processHtml(pageData.data.vehicles, allVehicles);
         }
       }
 
@@ -47,59 +50,110 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
       return allVehicles;
 
     } catch (error: any) {
-      console.error('[RestApiExtractor] Error fatal en la API:', error.message);
+      console.error('[RestApiExtractor] Error fatal en la extracción:', error.message);
       throw error;
     }
   }
 
-  private async fetchPage(page: number): Promise<Inv360Response | null> {
-    const url = `${this.API_BASE_URL}?current_page=${page}&per_page=20`;
-    
+  private async fetchPage(page: number, perPage: number): Promise<AjaxInventoryResponse | null> {
+    const formData = new URLSearchParams();
+    formData.append('action', 'get_inventory_results_v2');
+    formData.append('allFilters[current_page]', page.toString());
+    formData.append('allFilters[per_page]', perPage.toString());
+    formData.append('allFilters[make]', '19'); // Ford
+    formData.append('allFilters[condition]', 'New');
+
     try {
-      const response = await fetch(url, {
+      const response = await fetch(this.AJAX_URL, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'application/json'
-        }
+          'Referer': 'https://centralfordpr.com/inventario-nuevos/',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData.toString()
       });
 
       if (!response.ok) {
         throw new Error(`HTTP Error: ${response.status}`);
       }
 
-      return await response.json();
+      return await response.json() as AjaxInventoryResponse;
     } catch (error: any) {
-      console.error(`[RestApiExtractor] Error en página ${page}:`, error.message);
+      console.error(`[RestApiExtractor] Error fetching page ${page}:`, error.message);
       return null;
     }
   }
 
-  private processResponse(response: Inv360Response, target: Vehicle[]): void {
-    const vehicles = response.data.map(item => {
-      // Mapeo defensivo de campos
-      const vin = item.vin || item.id?.toString() || 'UNKNOWN';
-      const condition = (item.condition?.toLowerCase() === 'nuevo' || item.condition?.toLowerCase() === 'new') ? 'NEW' : 'USED';
-      
-      return Vehicle.create(vin, {
-        make: item.attributes?.make || 'Ford',
-        model: item.attributes?.model || item.title || 'Unknown',
-        year: parseInt(item.attributes?.year || item.title?.match(/\d{4}/)?.[0] || '2025'),
-        price: parseFloat(item.price || '0'),
-        mileage: parseInt(item.mileage || '0'),
-        images: Array.isArray(item.images) ? item.images : (item.image ? [item.image] : []),
-        status: 'AVAILABLE',
-        condition: condition as any,
-        lastScrapedAt: new Date(),
-        exteriorColor: item.attributes?.exterior_color || item.attributes?.color,
-        interiorColor: item.attributes?.interior_color,
-        trim: item.attributes?.trim,
-        engine: item.attributes?.engine,
-        transmission: item.attributes?.transmission,
-        driveTrain: item.attributes?.drive_train || item.attributes?.drivetrain,
-        bodyStyle: item.attributes?.body_style || item.attributes?.body
-      });
-    });
+  private processHtml(html: string, target: Vehicle[]): void {
+    if (!html) return;
 
-    target.push(...vehicles.filter(v => v.vin !== 'UNKNOWN'));
+    // Regex para encontrar cada bloque <article> de vehículo
+    const articleRegex = /<article[^>]*class="[^"]*inv360VehicleCard[^"]*"[^>]*>([\s\S]*?)<\/article>/g;
+    let match;
+
+    while ((match = articleRegex.exec(html)) !== null) {
+      const articleHtml = match[0];
+      const content = match[1];
+
+      try {
+        // Extraer atributos data-*
+        const vehicleId = this.extractAttr(articleHtml, 'data-vehicle-id');
+        const vin = this.extractAttr(articleHtml, 'data-vin');
+        const engine = this.extractAttr(articleHtml, 'data-engine');
+        const transmission = this.extractAttr(articleHtml, 'data-transmission');
+        const exteriorColor = this.extractAttr(articleHtml, 'data-color');
+        const mpgCity = this.extractAttr(articleHtml, 'data-mpg-city');
+        const mpgHighway = this.extractAttr(articleHtml, 'data-mpg-highway');
+
+        // Extraer Título
+        const titleMatch = content.match(/<h5[^>]*class="[^"]*inv360VehicleCard__title[^"]*"[^>]*>\s*([\s\S]*?)\s*<\/h5>/);
+        const title = titleMatch ? titleMatch[1].trim() : 'Unknown';
+
+        // Extraer Precio
+        const priceMatch = content.match(/<span[^>]*class="[^"]*inv360VehicleCard__price[^"]*"[^>]*>\$([\d,]+)<\/span>/);
+        const price = priceMatch ? parseFloat(priceMatch[1].replace(/,/g, '')) : 0;
+
+        // Extraer Kilometraje (Millas)
+        const mileageMatch = content.match(/<span>\s*([\d,]+)\s*millas\s*<\/span>/);
+        const mileage = mileageMatch ? parseInt(mileageMatch[1].replace(/,/g, '')) : 0;
+
+        // Extraer Imagen Principal
+        const imgMatch = content.match(/src="([^"]+apicdn\.inventario360\.com\/img\?src=([^&]+)[^"]*)"/);
+        const imageUrl = imgMatch ? decodeURIComponent(imgMatch[2]) : '';
+
+        // Solo procesar si tenemos un VIN válido
+        if (!vin || vin === 'UNKNOWN') continue;
+
+        const vehicle = Vehicle.create(vin, {
+          make: 'Ford',
+          model: title,
+          year: parseInt(title.match(/\d{4}/)?.[0] || '2025'),
+          price: price,
+          mileage: mileage,
+          images: imageUrl ? [imageUrl] : [],
+          status: 'AVAILABLE',
+          condition: 'NEW',
+          lastScrapedAt: new Date(),
+          exteriorColor: exteriorColor !== '-' ? exteriorColor : undefined,
+          engine: engine !== '-' ? engine : undefined,
+          transmission: transmission !== '-' ? transmission : undefined,
+          driveTrain: undefined, // No disponible en el resumen de la tarjeta
+          bodyStyle: undefined
+        });
+
+        target.push(vehicle);
+      } catch (e: any) {
+        // Skip invalid vehicles (e.g. invalid VIN format)
+        console.warn(`[RestApiExtractor] Saltando vehículo inválido: ${e.message}`);
+      }
+    }
+  }
+
+  private extractAttr(html: string, attr: string): string {
+    const regex = new RegExp(`${attr}="([^"]*)"`);
+    const match = html.match(regex);
+    return match ? match[1] : '';
   }
 }
