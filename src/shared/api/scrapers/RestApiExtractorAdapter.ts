@@ -18,31 +18,37 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     
     const allVehicles: Vehicle[] = [];
     const perPage = 24;
+    const conditions = ['New', 'Used'];
     
     try {
-      // 1. Obtener primera página para conocer el total
-      const firstPage = await this.fetchPage(1, perPage);
-      if (!firstPage || !firstPage.success) {
-        console.error('[RestApiExtractor] No se pudo obtener la respuesta del servidor.');
-        return [];
-      }
-
-      const totalItems = firstPage.data.total;
-      const totalPages = Math.ceil(totalItems / perPage);
-      
-      console.log(`[RestApiExtractor] Detectadas ${totalPages} páginas (${totalItems} unidades).`);
-      
-      // 2. Procesar primera página
-      this.processHtml(firstPage.data.vehicles, allVehicles);
-
-      // 3. Iterar por las páginas restantes
-      for (let p = 2; p <= totalPages; p++) {
-        console.log(`[RestApiExtractor] Esperando 1s antes de procesar página ${p}...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      for (const condition of conditions) {
+        console.log(`[RestApiExtractor] Procesando condición: ${condition}...`);
         
-        const pageData = await this.fetchPage(p, perPage);
-        if (pageData && pageData.success) {
-          this.processHtml(pageData.data.vehicles, allVehicles);
+        // 1. Obtener primera página para conocer el total de esta condición
+        const firstPage = await this.fetchPage(1, perPage, condition);
+        if (!firstPage || !firstPage.success) {
+          console.warn(`[RestApiExtractor] No se pudo obtener la respuesta para ${condition}. Saltando...`);
+          continue;
+        }
+
+        const totalItems = firstPage.data.total;
+        if (totalItems === 0) continue;
+
+        const totalPages = Math.ceil(totalItems / perPage);
+        console.log(`[RestApiExtractor] Detectadas ${totalPages} páginas para ${condition} (${totalItems} unidades).`);
+        
+        // 2. Procesar primera página
+        this.processHtml(firstPage.data.vehicles, allVehicles, condition.toUpperCase() as 'NEW' | 'USED');
+
+        // 3. Iterar por las páginas restantes
+        for (let p = 2; p <= totalPages; p++) {
+          console.log(`[RestApiExtractor] Esperando 1s antes de procesar página ${p} de ${condition}...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const pageData = await this.fetchPage(p, perPage, condition);
+          if (pageData && pageData.success) {
+            this.processHtml(pageData.data.vehicles, allVehicles, condition.toUpperCase() as 'NEW' | 'USED');
+          }
         }
       }
 
@@ -55,7 +61,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     }
   }
 
-  private async fetchPage(page: number, perPage: number): Promise<AjaxInventoryResponse | null> {
+  private async fetchPage(page: number, perPage: number, condition: string): Promise<AjaxInventoryResponse | null> {
     const formData = new URLSearchParams();
     formData.append('action', 'get_inventory_results_v2');
     formData.append('allFilters[current_page]', page.toString());
@@ -63,7 +69,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     formData.append('allFilters[sort]', 'updated_at');
     formData.append('allFilters[sort_direction]', 'desc');
     formData.append('allFilters[make]', '19'); // Ford
-    formData.append('allFilters[condition]', 'New');
+    formData.append('allFilters[condition]', condition);
 
     try {
       const response = await fetch(this.AJAX_URL, {
@@ -92,7 +98,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     }
   }
 
-  private processHtml(html: string, target: Vehicle[]): void {
+  private processHtml(html: string, target: Vehicle[], defaultCondition: 'NEW' | 'USED' = 'USED'): void {
     if (!html) return;
 
     // Regex para encontrar cada bloque <article> de vehículo
@@ -140,7 +146,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
           mileage: mileage,
           images: imageUrl ? [imageUrl] : [],
           status: 'AVAILABLE',
-          condition: 'NEW',
+          condition: defaultCondition,
           lastScrapedAt: new Date(),
           exteriorColor: exteriorColor !== '-' ? exteriorColor : undefined,
           engine: engine !== '-' ? engine : undefined,
