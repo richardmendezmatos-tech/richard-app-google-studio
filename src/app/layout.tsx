@@ -19,7 +19,7 @@ const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos Ford en Puerto Rico',
-  description: 'Tu destino premium para autos nuevos Ford y usados certificados en Bayamón, Puerto Rico. Richard Automotive ofrece financiamiento digital y tasaciones inteligentes.',
+  description: 'Tu destino premium para autos nuevos Ford y usados certificados en Vega Alta, Puerto Rico. Richard Automotive ofrece financiamiento digital y tasaciones inteligentes.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Richard Automotive | Dealer de Autos Nuevos en Puerto Rico',
-    description: 'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Bayamón.',
+    description: 'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Vega Alta.',
     images: ['https://richard-automotive.com/og-image.jpg'],
     locale: 'es_PR',
     type: 'website',
@@ -74,16 +74,16 @@ export default function RootLayout({
     telephone: '+17873682880',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Bayamón',
-      addressLocality: 'Bayamón',
+      streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
+      addressLocality: 'Vega Alta',
       addressRegion: 'PR',
-      postalCode: '00956',
+      postalCode: '00692',
       addressCountry: 'US',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 18.3973,
-      longitude: -66.1558,
+      latitude: 18.4069,
+      longitude: -66.3533,
     },
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',

@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import { RunInventorySyncUseCase } from '@/features/inventory-sync/model/RunInventorySyncUseCase';
 import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseInventoryRepository';
-import { PlaywrightWebExtractorAdapter } from '@/shared/api/scrapers/PlaywrightWebExtractorAdapter';
 import { ReconciliationEngine } from '@/features/inventory-sync/model/ReconciliationEngine';
+import { RestApiExtractorAdapter } from '@/shared/api/scrapers/RestApiExtractorAdapter';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
 
     // 3. Orquestación Inyección de Dependencias
     const repository = new SupabaseInventoryRepository(supabaseClient);
-    const extractor = new PlaywrightWebExtractorAdapter();
+    const extractor = new RestApiExtractorAdapter();
     const engine = new ReconciliationEngine();
     
     const useCase = new RunInventorySyncUseCase(repository, extractor, engine);

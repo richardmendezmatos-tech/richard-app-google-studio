@@ -27,7 +27,7 @@ export const SITE_CONFIG: SiteConfig = {
   domain: 'richard-automotive.com',
   url: 'https://www.richard-automotive.com',
   description:
-    'Tu dealer líder de autos nuevos Ford y usados certificados en Puerto Rico. Richard Automotive en Bayamón ofrece financiamiento inteligente, trade-in y selección curada con IA.',
+    'Tu dealer líder de autos nuevos Ford y usados certificados en Puerto Rico. Richard Automotive en Vega Alta ofrece financiamiento inteligente, trade-in y selección curada con IA.',
   social: {
     facebook: 'https://www.facebook.com/richardautomotive1',
     instagram: 'https://www.instagram.com/richardoneal_/',
@@ -36,7 +36,7 @@ export const SITE_CONFIG: SiteConfig = {
     phone: '+1 (787) 368-2880',
     whatsapp: '17873682880',
     email: 'richard@richard-automotive.com',
-    address: 'Bayamón, Puerto Rico',
+    address: 'Vega Alta, Puerto Rico',
   },
   seo: {
     keywords: [

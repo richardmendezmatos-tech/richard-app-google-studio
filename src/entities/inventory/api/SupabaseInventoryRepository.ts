@@ -90,10 +90,10 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       })
     );
   }
-
   async insertBatch(vehicles: Vehicle[]): Promise<void> {
     if (!vehicles.length) return;
 
+    console.log(`[SupabaseInventoryRepository] Insertando ${vehicles.length} unidades nuevas...`);
     const payload = vehicles.map(v => ({
       vin: v.vin,
       make: v.props.make,
@@ -109,14 +109,13 @@ export class SupabaseInventoryRepository implements InventoryRepository {
 
     const { error } = await this.supabase.from('inventory').insert(payload);
     if (error) throw new Error(`Insert Falló: ${error.message}`);
+    console.log('[SupabaseInventoryRepository] Inserción completada con éxito.');
   }
 
   async updateBatch(vehicles: Vehicle[]): Promise<void> {
     if (!vehicles.length) return;
     
-    // Supabase JS no tiene un mass-update dinámico por defecto.
-    // En PostgreSQL real (y vía Supabase RPC) se usaría un upsert rápido.
-    // Usaremos upsert explícito asumiendo que el VIN es primary/unique key.
+    console.log(`[SupabaseInventoryRepository] Actualizando ${vehicles.length} unidades existentes...`);
     const payload = vehicles.map(v => ({
       vin: v.vin,
       price: v.price,
@@ -129,6 +128,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       .upsert(payload, { onConflict: 'vin', ignoreDuplicates: false });
       
     if (error) throw new Error(`Update Falló: ${error.message}`);
+    console.log('[SupabaseInventoryRepository] Actualización completada con éxito.');
   }
 
   async markAsSoldBatch(vins: string[]): Promise<void> {

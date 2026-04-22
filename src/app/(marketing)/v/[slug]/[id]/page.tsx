@@ -9,15 +9,21 @@ interface Props {
   params: Promise<{ id: string; slug: string }>;
 }
 
-// SSG: Generate the top vehicle pages at build time
+// Sentinel N23.4: Hardened Dynamic Routing
+
 export async function generateStaticParams() {
   try {
-    // Fetch first 100 cars for static generation
-    const { cars } = await getPaginatedCars(100, 0);
+    // Fetch first 50 cars for build-time static generation
+    const { cars } = await getPaginatedCars(50, 0);
     
     if (!cars || cars.length === 0) {
-      console.warn('[Build] Empty inventory from Supabase for static params.');
-      return [];
+      console.warn('[Build] Empty inventory from Supabase. Using fallback to satisfy Next.js 16/17 build rules.');
+      return [
+        {
+          id: 'placeholder',
+          slug: 'vehiculo-en-proceso',
+        },
+      ];
     }
 
     return cars.map((car: Car) => ({
@@ -25,8 +31,14 @@ export async function generateStaticParams() {
       slug: generateVehicleSlug(car, false),
     }));
   } catch (error) {
-    console.error('[Build] Supabase unreachable for static params:', error);
-    return [];
+    console.error('[Build] Critical error in generateStaticParams:', error);
+    // Absolute fallback to prevent deployment failure
+    return [
+      {
+        id: 'fallback-error',
+        slug: 'error-de-datos',
+      },
+    ];
   }
 }
 
@@ -41,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `Vehículo ${slug.replace(/-/g, ' ')} | Richard Automotive`;
 
   const description = car
-    ? `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Bayamón.`
+    ? `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Vega Alta.`
     : `Encuentra los mejores vehículos nuevos y usados en Richard Automotive, Puerto Rico. Financiamiento disponible.`;
 
   return {

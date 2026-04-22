@@ -3,10 +3,10 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Capacitor } from '@capacitor/core';
 
 // 📍 COORDINATES: UPDATE THESE WITH YOUR REAL DEALER LOCATION
-// 📍 COORDINATES: 9RC9+WF Bayamón (Richard Automotive)
+// 📍 COORDINATES: 9RC9+WF Vega Alta (Richard Automotive @ Central Ford)
 const DEALER_COORDS = {
-  latitude: 18.3986,
-  longitude: -66.1557,
+  latitude: 18.4069,
+  longitude: -66.3533,
 };
 
 const GEOFENCE_RADIUS_METERS = 500; // Trigger when within 500m

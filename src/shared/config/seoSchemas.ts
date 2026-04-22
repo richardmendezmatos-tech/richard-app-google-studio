@@ -1,7 +1,7 @@
 import { SITE_CONFIG } from './siteConfig';
 
 export const getAutoDealerSchema = (city?: string) => {
-  const cityName = city || 'Bayamón';
+  const cityName = city || 'Vega Alta';
   return {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
@@ -19,18 +19,18 @@ export const getAutoDealerSchema = (city?: string) => {
       addressRegion: 'PR',
       addressCountry: 'US',
       streetAddress:
-        cityName === 'Bayamón'
-          ? 'Villa Contessa'
-          : cityName === 'Vega Alta'
-            ? 'Carr. #2'
+        cityName === 'Vega Alta'
+          ? 'Carr. #2 KM 28.5, Bo. Espinosa'
+          : cityName === 'Bayamón'
+            ? 'Bayamón'
             : 'Puerto Rico',
     },
     geo:
-      cityName === 'Bayamón' || cityName === 'Vega Alta'
+      cityName === 'Vega Alta' || cityName === 'Bayamón'
         ? {
             '@type': 'GeoCoordinates',
-            latitude: cityName === 'Bayamón' ? 18.397 : 18.4124,
-            longitude: cityName === 'Bayamón' ? -66.1558 : -66.3313,
+            latitude: cityName === 'Vega Alta' ? 18.4069 : 18.397,
+            longitude: cityName === 'Vega Alta' ? -66.3533 : -66.1558,
           }
         : undefined,
     openingHoursSpecification: [
