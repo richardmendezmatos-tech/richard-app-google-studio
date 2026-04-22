@@ -70,8 +70,10 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36',
           'Referer': 'https://centralfordpr.com/inventario-nuevos/',
+          'Accept': '*/*',
+          'Accept-Language': 'es-419,es;q=0.9',
           'Origin': 'https://centralfordpr.com',
           'X-Requested-With': 'XMLHttpRequest',
           'Cookie': 'cookieadmin_consent={"accept":"true"}'
