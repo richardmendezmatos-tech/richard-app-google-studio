@@ -17,7 +17,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     console.log('[RestApiExtractor] Iniciando extracción masiva vía AJAX (Legacy)...');
     
     const allVehicles: Vehicle[] = [];
-    const perPage = 100;
+    const perPage = 24;
     
     try {
       // 1. Obtener primera página para conocer el total
