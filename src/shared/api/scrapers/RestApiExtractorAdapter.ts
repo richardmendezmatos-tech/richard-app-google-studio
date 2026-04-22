@@ -60,6 +60,8 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     formData.append('action', 'get_inventory_results_v2');
     formData.append('allFilters[current_page]', page.toString());
     formData.append('allFilters[per_page]', perPage.toString());
+    formData.append('allFilters[sort]', 'updated_at');
+    formData.append('allFilters[sort_direction]', 'desc');
     formData.append('allFilters[make]', '19'); // Ford
     formData.append('allFilters[condition]', 'New');
 
@@ -70,7 +72,9 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Referer': 'https://centralfordpr.com/inventario-nuevos/',
-          'X-Requested-With': 'XMLHttpRequest'
+          'Origin': 'https://centralfordpr.com',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Cookie': 'cookieadmin_consent={"accept":"true"}'
         },
         body: formData.toString()
       });
