@@ -5,8 +5,12 @@ interface AjaxInventoryResponse {
   success: boolean;
   data: {
     vehicles: string; // HTML content
-    total: number;
-    pagination: string; // HTML pagination
+    pagination: {
+      total: number;
+      total_pages: number;
+      current_page: number;
+      per_page: number;
+    };
   };
 }
 
@@ -17,7 +21,7 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
     console.log('[RestApiExtractor] Iniciando extracción masiva vía AJAX (Legacy)...');
     
     const allVehicles: Vehicle[] = [];
-    const perPage = 24;
+    const perPage = 100;
     const conditions = ['New', 'Used'];
     
     try {
@@ -31,8 +35,11 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
           continue;
         }
 
-        const totalItems = firstPage.data.total;
-        if (totalItems === 0) continue;
+        const totalItems = firstPage.data.pagination?.total || 0;
+        if (totalItems === 0) {
+          console.log(`[RestApiExtractor] No se encontraron unidades para ${condition}.`);
+          continue;
+        }
 
         const totalPages = Math.ceil(totalItems / perPage);
         console.log(`[RestApiExtractor] Detectadas ${totalPages} páginas para ${condition} (${totalItems} unidades).`);
