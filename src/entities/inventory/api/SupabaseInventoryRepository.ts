@@ -90,6 +90,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       })
     );
   }
+
   async insertBatch(vehicles: Vehicle[]): Promise<void> {
     if (!vehicles.length) return;
 
@@ -115,46 +116,58 @@ export class SupabaseInventoryRepository implements InventoryRepository {
     }));
 
     const { error } = await this.supabase.from('inventory').insert(payload);
-    if (error) throw new Error(`Insert Falló: ${error.message}`);
+    if (error) {
+      console.error(`[SupabaseInventoryRepository] Error en insertBatch: ${error.message}`);
+      throw new Error(`Insert Falló: ${error.message}`);
+    }
     console.log('[SupabaseInventoryRepository] Inserción completada con éxito.');
   }
 
   async updateBatch(vehicles: Vehicle[]): Promise<void> {
     if (!vehicles.length) return;
-    
-    console.log(`[SupabaseInventoryRepository] Actualizando ${vehicles.length} unidades existentes...`);
-    const payload = vehicles.map(v => ({
-      vin: v.vin,
-      price: v.price,
-      status: v.status,
-      mileage: v.props.mileage,
-      images: v.props.images,
-      trim: v.props.trim,
-      body_style: v.props.bodyStyle,
-      transmission: v.props.transmission,
-      engine: v.props.engine,
-      drive_train: v.props.driveTrain,
-      exterior_color: v.props.exteriorColor,
-      interior_color: v.props.interiorColor,
-      last_scraped_at: new Date().toISOString()
-    }));
 
-    const { error } = await this.supabase
-      .from('inventory')
-      .upsert(payload, { onConflict: 'vin', ignoreDuplicates: false });
-      
-    if (error) throw new Error(`Update Falló: ${error.message}`);
-    console.log('[SupabaseInventoryRepository] Actualización completada con éxito.');
+    console.log(`[SupabaseInventoryRepository] Actualizando ${vehicles.length} unidades existentes...`);
+    const promises = vehicles.map(v => 
+      this.supabase.from('inventory').update({
+        vin: v.vin,
+        price: v.price,
+        status: v.status,
+        mileage: v.props.mileage,
+        images: v.props.images,
+        trim: v.props.trim,
+        body_style: v.props.bodyStyle,
+        transmission: v.props.transmission,
+        engine: v.props.engine,
+        drive_train: v.props.driveTrain,
+        exterior_color: v.props.exteriorColor,
+        interior_color: v.props.interiorColor,
+        last_scraped_at: new Date().toISOString()
+      }).eq('vin', v.vin)
+    );
+
+    const results = await Promise.all(promises);
+    const errors = results.filter(r => r.error).map(r => r.error?.message);
+    if (errors.length) {
+      console.error(`[SupabaseInventoryRepository] Errores en updateBatch:`, errors);
+      throw new Error(`Update Falló: ${errors[0]}`);
+    }
   }
 
   async markAsSoldBatch(vins: string[]): Promise<void> {
     if (!vins.length) return;
 
+    console.log(`[SupabaseInventoryRepository] Marcando ${vins.length} unidades como SOLD...`);
     const { error } = await this.supabase
       .from('inventory')
-      .update({ status: 'SOLD', sold_at: new Date().toISOString() })
+      .update({ 
+        status: 'SOLD'
+        // sold_at: new Date().toISOString() // Columna faltante en esquema actual, deshabilitado por seguridad
+      })
       .in('vin', vins);
 
-    if (error) throw new Error(`MarkAsSold Falló: ${error.message}`);
+    if (error) {
+      console.error(`[SupabaseInventoryRepository] Error en markAsSoldBatch: ${error.message}`);
+      throw new Error(`MarkAsSold Falló: ${error.message}`);
+    }
   }
 }

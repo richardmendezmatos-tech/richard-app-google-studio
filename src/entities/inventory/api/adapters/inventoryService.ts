@@ -18,7 +18,7 @@ export const getPaginatedCars = async (
 ): Promise<PaginatedResult> => {
   try {
     let query = supabase
-      .from('inventory_vectors')
+      .from('inventory')
       .select('*')
       .range(offset, offset + pageSize - 1);
 
@@ -73,7 +73,7 @@ export const getPaginatedCars = async (
 export const getCarById = async (id: string): Promise<Car | null> => {
   try {
     const { data, error } = await supabase
-      .from('inventory_vectors')
+      .from('inventory')
       .select('*')
       .eq('vin', id)
       .single();
