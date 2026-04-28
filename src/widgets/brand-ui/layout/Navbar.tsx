@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
 
           <div className="hidden items-center space-x-8 md:flex">
             <Link
-              to="/"
+              to="/inventario"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
               Inventario
@@ -106,7 +106,7 @@ const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="space-y-4 border-t border-cyan-300/15 bg-[#07111b] p-4 md:hidden">
           <Link
-            to="/"
+            to="/inventario"
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             Inventario

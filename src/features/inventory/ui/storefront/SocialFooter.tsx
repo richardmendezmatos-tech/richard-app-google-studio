@@ -43,7 +43,7 @@ const SocialFooter: React.FC = () => {
         <div className="space-y-6">
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">OPERATIONS</h3>
           <ul className="space-y-3 font-tech text-sm">
-            <li><FooterLink label="Inventario Elite" /></li>
+            <li><FooterLink label="Inventario Elite" href="/inventario" /></li>
             <li><FooterLink label="Neural Appraisal" /></li>
             <li><FooterLink label="Mission: Financials" /></li>
             <li><FooterLink label="Richard AI Portal" /></li>
@@ -105,8 +105,8 @@ const SocialFooter: React.FC = () => {
   );
 };
 
-const FooterLink = ({ label }: { label: string }) => (
-  <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-all group">
+const FooterLink = ({ label, href = "#" }: { label: string, href?: string }) => (
+  <a href={href} className="flex items-center gap-2 text-slate-400 hover:text-white transition-all group">
     <div className="h-1 w-0 bg-cyan-400 group-hover:w-3 transition-all duration-300" />
     {label}
   </a>

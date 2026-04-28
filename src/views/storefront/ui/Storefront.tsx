@@ -28,6 +28,8 @@ import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
 // Custom Hook
 import { useStorefrontState } from '@/features/inventory';
 
+import { useRouter } from 'next/navigation';
+
 interface Props {
   inventory: Car[];
   initialVisualSearch?: string | null;
@@ -40,6 +42,7 @@ interface Props {
 
 const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, customTitle, customDescription }) => {
   const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix);
+  const router = useRouter();
 
   return (
     <>
@@ -130,7 +133,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
         {/* Hero Section */}
         <HeroSection
           onNeuralMatch={() => actions.openNeuralMatch('hero')}
-          onBrowseInventory={() => actions.jumpToInventory('hero')}
+          onBrowseInventory={() => router.push('/inventario')}
           onSellCar={() => actions.openAppraisal('hero')}
         />
 
@@ -152,27 +155,33 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             />
           </GlassContainer>
 
-          {/* Search, Filters, Grid */}
-          <section id="inventory-grid" aria-labelledby="inventory-heading" className="scroll-mt-32">
-            <StorefrontToolbar state={state} actions={actions} />
+          {/* Autos Destacados */}
+          <section id="featured-inventory" className="scroll-mt-32">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-white">Unidades Destacadas</h2>
+                <p className="text-slate-400 mt-2">Nuestra selección premium de vehículos recién llegados.</p>
+              </div>
+              <a href="/inventario" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500 text-black font-bold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all whitespace-nowrap group">
+                Ver Inventario Completo
+                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
 
             <StorefrontResultsGrid
-              displayCars={state.displayCars as Car[]}
+              displayCars={inventory.slice(0, 8)}
               isLoadingInitial={state.isLoadingInitial}
-              isSearching={state.isSearching}
-              searchTerm={state.searchTerm}
-              visualContext={state.visualContext}
+              isSearching={false}
+              searchTerm=""
+              visualContext={null}
               savedIdsCount={state.savedCars.savedIds.length}
               status={state.status as 'pending' | 'success' | 'error'}
               error={state.error}
-              hasNextPage={state.hasNextPage}
-              isFetchingNextPage={state.isFetchingNextPage}
-              onClearFilters={() => {
-                state.setVisualContext(null);
-                state.setSearchTerm('');
-                state.setFilter('all');
-                state.setSemanticResultIds([]);
-              }}
+              hasNextPage={false}
+              isFetchingNextPage={false}
+              onClearFilters={() => {}}
               onMagicFix={onMagicFix}
               isFixing={state.isFixing}
               onOpenGarage={onOpenGarage}
@@ -181,7 +190,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
               isComparing={(id) => state.compareList.some((c: Car) => c.id === id)}
               isSaved={(id) => state.savedCars.isSaved(id)}
               onToggleSave={actions.handleToggleSave}
-              onFetchNextPage={actions.fetchNextPage}
+              onFetchNextPage={() => {}}
             />
           </section>
 
