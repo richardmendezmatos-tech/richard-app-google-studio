@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 
@@ -79,7 +79,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let inventoryRoutes: MetadataRoute.Sitemap = [];
 
   try {
-    const inventory = await fetchInventoryFromJava(100);
+    const result = await getPaginatedCars(100);
+    const inventory = result.cars;
 
     if (Array.isArray(inventory) && inventory.length > 0) {
       inventoryRoutes = inventory.map((car) => ({

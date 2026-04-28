@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
@@ -253,7 +253,8 @@ export default async function CityPage({ params }: Props) {
   let inventory: any[] = [];
 
   try {
-    inventory = await fetchInventoryFromJava(12);
+    const result = await getPaginatedCars(12);
+    inventory = result.cars;
   } catch (error) {
     console.error(`[SEO Page: ${city.name}] Error fetching inventory:`, error);
   }

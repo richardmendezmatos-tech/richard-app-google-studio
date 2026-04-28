@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { notFound } from 'next/navigation';
 
 const CATEGORIES: Record<string, {
@@ -176,7 +176,8 @@ export default async function CategoryPage({ params }: Props) {
   let inventory: any[] = [];
 
   try {
-    const allInventory = await fetchInventoryFromJava(50);
+    const result = await getPaginatedCars(50);
+    const allInventory = result.cars;
     // Filter by type if possible, otherwise show all
     inventory = allInventory.filter(
       (car: any) => car.type?.toLowerCase() === cat.slug || !car.type
