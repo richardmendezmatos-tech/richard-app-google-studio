@@ -127,20 +127,21 @@ export class RestApiExtractorAdapter implements WebExtractorPort {
         const mpgHighway = this.extractAttr(articleHtml, 'data-mpg-highway');
 
         // Extraer Título
-        const titleMatch = content.match(/<h5[^>]*class="[^"]*inv360VehicleCard__title[^"]*"[^>]*>\s*([\s\S]*?)\s*<\/h5>/);
+        const titleMatch = content.match(/<h5[^>]*class=['"][^'"]*inv360VehicleCard__title[^'"]*['"][^>]*>\s*([\s\S]*?)\s*<\/h5>/);
         const title = titleMatch ? titleMatch[1].trim() : 'Unknown';
 
         // Extraer Precio
-        const priceMatch = content.match(/<span[^>]*class="[^"]*inv360VehicleCard__price[^"]*"[^>]*>\$([\d,]+)<\/span>/);
+        const priceMatch = content.match(/<span[^>]*class=['"][^'"]*inv360VehicleCard__price[^'"]*['"][^>]*>\$([\d,]+)<\/span>/);
         const price = priceMatch ? parseFloat(priceMatch[1].replace(/,/g, '')) : 0;
 
         // Extraer Kilometraje (Millas)
-        const mileageMatch = content.match(/<span>\s*([\d,]+)\s*millas\s*<\/span>/);
+        const mileageMatch = content.match(/<span>\s*([\d,]+)\s*millas\s*<\/span>/i);
         const mileage = mileageMatch ? parseInt(mileageMatch[1].replace(/,/g, '')) : 0;
 
         // Extraer Imagen Principal
-        const imgMatch = content.match(/src="([^"]+apicdn\.inventario360\.com\/img\?src=([^&]+)[^"]*)"/);
+        const imgMatch = content.match(/src=['"]([^'"]+apicdn\.inventario360\.com\/img\?src=([^&'"]+)[^'"]*)['"]/);
         const imageUrl = imgMatch ? decodeURIComponent(imgMatch[2]) : '';
+
 
         // Solo procesar si tenemos un VIN válido
         if (!vin || vin === 'UNKNOWN') continue;

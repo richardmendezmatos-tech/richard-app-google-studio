@@ -13,8 +13,12 @@ export const metadata: Metadata = {
   },
 };
 
+import { unstable_noStore as noStore } from 'next/cache';
+
 export default async function InventoryRoute() {
+  noStore();
   let inventory: any[] = [];
+
   
   try {
     const result = await getPaginatedCars(12);
