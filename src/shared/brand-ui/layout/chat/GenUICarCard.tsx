@@ -18,7 +18,7 @@ const GenUICarCard: React.FC<Props> = ({ cars }) => {
           <div
             key={car.id}
             className="shrink-0 w-48 bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group"
-            onClick={() => window.open(`/v/${generateVehicleSlug(car)}/${car.id}`, '_blank')}
+            onClick={() => window.open(`/inventario/${generateVehicleSlug(car)}/${car.id}`, '_blank')}
           >
             {/* Image Section */}
             <div className="relative h-28 overflow-hidden">

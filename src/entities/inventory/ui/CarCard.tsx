@@ -36,10 +36,10 @@ const CarCard: React.FC<CarCardProps> = React.memo(
 
     return (
       <div
-        onClick={() => navigate(`/v/${generateVehicleSlug(car)}/${car.id}`)}
+        onClick={() => navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
-            navigate(`/v/${generateVehicleSlug(car)}/${car.id}`);
+            navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`);
           }
         }}
         role="button"

@@ -256,7 +256,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             }
           />
           <Route
-            path="/v/:slug/:id"
+            path="/inventario/:slug/:id"
             element={
               <PageWrapper>
                 <VehicleDetail inventory={inventory} />

@@ -83,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (Array.isArray(inventory) && inventory.length > 0) {
       inventoryRoutes = inventory.map((car) => ({
-        url: `${SITE_URL}/v/${generateVehicleSlug(car)}/${car.id}`,
+        url: `${SITE_URL}/inventario/${generateVehicleSlug(car)}/${car.id}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.7,

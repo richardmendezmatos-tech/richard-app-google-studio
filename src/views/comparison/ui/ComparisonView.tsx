@@ -238,7 +238,7 @@ const ComparisonView: React.FC = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/v/${generateVehicleSlug(car)}/${car.id}`)}
+                  onClick={() => navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)}
                   className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-colors"
                 >
                   Ver Auto

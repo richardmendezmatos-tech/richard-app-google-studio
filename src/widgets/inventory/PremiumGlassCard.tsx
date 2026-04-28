@@ -66,11 +66,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      onClick={() => (onSelect ? onSelect() : navigate(`/v/${generateVehicleSlug(car)}/${car.id}`))}
+      onClick={() => (onSelect ? onSelect() : navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`))}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           if (onSelect) onSelect();
-          else navigate(`/v/${generateVehicleSlug(car)}/${car.id}`);
+          else navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`);
         }
       }}
       className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300"

@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: car?.img ? [car.img] : [],
     },
     alternates: {
-      canonical: `https://richard-automotive.com/v/${slug}/${id}`,
+      canonical: `https://richard-automotive.com/inventario/${slug}/${id}`,
     },
     other: {
       'product:price:amount': car?.price?.toString() || '',

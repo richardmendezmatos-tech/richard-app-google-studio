@@ -9,6 +9,7 @@ import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 const TrustBar = dynamic(() => import('@/features/inventory/ui/storefront/TrustBar'), { ssr: false });
 const TestimonialsSection = dynamic(() => import('@/features/inventory/ui/storefront/TestimonialsSection'), { ssr: false });
@@ -116,7 +117,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                       price: car.price,
                       priceCurrency: 'USD',
                       availability: 'https://schema.org/InStock',
-                      url: `${SITE_CONFIG.url}/v/${car.id}`,
+                      url: `${SITE_CONFIG.url}/inventario/${generateVehicleSlug(car)}/${car.id}`,
                     },
                   },
                 })),

@@ -45,7 +45,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
       // SEO Automatic Redirection (Canonical URL Enforcement)
       const correctSlug = generateVehicleSlug(car);
       if (!slug || slug !== correctSlug) {
-        navigate(`/v/${correctSlug}/${car.id}`, { replace: true });
+        navigate(`/inventario/${correctSlug}/${car.id}`, { replace: true });
         return;
       }
 
@@ -141,7 +141,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
         title={`${car.name} | Richard Automotive`}
         description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
         image={car.img}
-        url={`/v/${slug || generateVehicleSlug(car)}/${car.id}`}
+        url={`/inventario/${slug || generateVehicleSlug(car)}/${car.id}`}
         type="product"
         schema={[
           ...(car.seoFaqs && car.seoFaqs.length > 0
@@ -187,9 +187,9 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 }
               : {}),
             offers: {
-              '@id': `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}#offer`,
+              '@id': `${siteUrl}/inventario/${slug || generateVehicleSlug(car)}/${car.id}#offer`,
               '@type': 'Offer',
-              url: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
+              url: `${siteUrl}/inventario/${slug || generateVehicleSlug(car)}/${car.id}`,
               priceCurrency: 'USD',
               price: car.price,
               itemCondition: 'https://schema.org/UsedCondition',
@@ -220,7 +220,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 '@type': 'ListItem',
                 position: 3,
                 name: car.name,
-                item: `${siteUrl}/v/${slug || generateVehicleSlug(car)}/${car.id}`,
+                item: `${siteUrl}/inventario/${slug || generateVehicleSlug(car)}/${car.id}`,
               },
             ],
           },
