@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import InventoryPage from '@/views/inventory/ui/InventoryPage';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 export default async function InventoryRoute() {
   noStore();
-  let inventory: any[] = [];
+  let inventory: Car[] = [];
 
   
   try {

@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
@@ -250,7 +251,7 @@ export default async function CityPage({ params }: Props) {
     notFound();
   }
 
-  let inventory: any[] = [];
+  let inventory: Car[] = [];
 
   try {
     const result = await getPaginatedCars(12);

@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/pages/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 
 const CATEGORIES: Record<string, {
@@ -173,14 +174,14 @@ export default async function CategoryPage({ params }: Props) {
     notFound();
   }
 
-  let inventory: any[] = [];
+  let inventory: Car[] = [];
 
   try {
     const result = await getPaginatedCars(50);
     const allInventory = result.cars;
     // Filter by type if possible, otherwise show all
     inventory = allInventory.filter(
-      (car: any) => car.type?.toLowerCase() === cat.slug || !car.type
+      (car: Car) => car.type?.toLowerCase() === cat.slug || !car.type
     );
     // If filter yields too few results, show all
     if (inventory.length < 3) {
