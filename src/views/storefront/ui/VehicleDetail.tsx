@@ -16,6 +16,9 @@ const ApprovalSimulatorWidget = React.lazy(() =>
 const Viewer360 = React.lazy(() =>
   import('@/features/inventory').then((m) => ({ default: m.Viewer360 })),
 );
+const PreQualifyView = React.lazy(() =>
+  import('@/views/leads/ui/PreQualifyView').then((m) => ({ default: m.default }))
+);
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
@@ -35,6 +38,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const navigate = useNavigate();
   const { currentDealer } = useDealer();
   const [engagedTime, setEngagedTime] = useState(0);
+  const [isPreQualifyOpen, setIsPreQualifyOpen] = useState(false);
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
 
@@ -329,16 +333,26 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             <h1 className="font-cinematic text-5xl lg:text-8xl text-white tracking-tighter leading-none text-glow uppercase">
               {car.name}
             </h1>
-            <div className="flex items-baseline gap-6 mt-4">
-              <span className="font-tech text-5xl font-black text-white decoration-primary/30 underline-offset-8">
-                ${car.price.toLocaleString()}
-              </span>
-              <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400">
-                  MARKET-VALIDATED
+            <div className="flex flex-col gap-4">
+              <div className="flex items-baseline gap-6 mt-4">
+                <span className="font-tech text-5xl font-black text-white decoration-primary/30 underline-offset-8">
+                  ${car.price.toLocaleString()}
                 </span>
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400">
+                    MARKET-VALIDATED
+                  </span>
+                </div>
               </div>
+              
+              <button
+                onClick={() => setIsPreQualifyOpen(true)}
+                className="w-full lg:w-auto mt-4 px-8 py-4 bg-primary hover:bg-cyan-500 text-slate-900 font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 animate-btn-glow"
+              >
+                <Zap size={18} className="animate-pulse" />
+                Pre-cualifícate Express
+              </button>
             </div>
           </div>
 
@@ -403,6 +417,46 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           ME INTERESA
         </button>
       </div>
+      {/* Pre-Qualification Modal */}
+      <AnimatePresence>
+        {isPreQualifyOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-slate-900 rounded-[40px] border border-white/10 p-1 w-full max-w-4xl relative shadow-2xl mt-20 lg:mt-0"
+            >
+              <button
+                onClick={() => setIsPreQualifyOpen(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-white z-50 p-2 bg-slate-800/50 rounded-full backdrop-blur-md border border-white/5"
+              >
+                ✕
+              </button>
+              <div className="max-h-[85vh] overflow-y-auto p-6">
+                <React.Suspense fallback={<div className="h-[600px] flex items-center justify-center text-primary animate-pulse font-tech text-xs tracking-widest">CARGANDO MÓDULO DE CRÉDITO...</div>}>
+                  <PreQualifyView 
+                    dealContext={{
+                      vehicle: car,
+                      quote: {
+                        monthlyPayment: Math.round((car.price - 2000) * (1.08 / 60)),
+                        downPayment: 2000,
+                        term: 60,
+                        apr: 8
+                      }
+                    }} 
+                  />
+                </React.Suspense>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

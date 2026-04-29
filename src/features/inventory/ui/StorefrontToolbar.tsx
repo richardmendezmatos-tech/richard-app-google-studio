@@ -111,6 +111,36 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                 <ArrowUpDown size={14} /> <span className="hidden sm:inline">$$$-$</span>
               </button>
             </div>
+
+            {/* Year Filter */}
+            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1.5 backdrop-blur-xl">
+              <select
+                value={state.yearFilter}
+                onChange={(e) => state.setYearFilter(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+              >
+                <option value="all" className="bg-slate-900 text-slate-300">Año: Todos</option>
+                <option value="2026" className="bg-slate-900 text-slate-300">2026</option>
+                <option value="2025" className="bg-slate-900 text-slate-300">2025</option>
+                <option value="2024" className="bg-slate-900 text-slate-300">2024</option>
+                <option value="2023" className="bg-slate-900 text-slate-300">2023</option>
+                <option value="2022" className="bg-slate-900 text-slate-300">2022 o anterior</option>
+              </select>
+            </div>
+
+            {/* Mileage Filter */}
+            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1.5 backdrop-blur-xl">
+              <select
+                value={state.mileageFilter}
+                onChange={(e) => state.setMileageFilter(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+              >
+                <option value="all" className="bg-slate-900 text-slate-300">Millaje: Todos</option>
+                <option value="10000" className="bg-slate-900 text-slate-300">&lt; 10k Millas</option>
+                <option value="50000" className="bg-slate-900 text-slate-300">&lt; 50k Millas</option>
+                <option value="100000" className="bg-slate-900 text-slate-300">&lt; 100k Millas</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>

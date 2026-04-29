@@ -1,0 +1,15 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "FI_MODAL",
+  "title": "Implementación de Modal de Precalificación en Ficha de Unidad",
+  "description": "Se integró el flujo de precalificación como un Modal accesible directamente desde el detalle del vehículo, mejorando la conversión in-situ.",
+  "achievements": [
+    "Creación del estado y trigger modal en VehicleDetail.tsx.",
+    "Adaptación de PreQualifyView para aceptar contexto por props."
+  ],
+  "impact": {
+    "business_value": "Captura de leads calificados sin fricción de salida.",
+    "roi": "Mayor tasa de conversión de visitantes a solicitantes de crédito."
+  }
+}

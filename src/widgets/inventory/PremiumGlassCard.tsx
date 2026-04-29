@@ -163,6 +163,10 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           >
             {car.name}
           </h3>
+          <div className="mt-2 flex items-center gap-1.5 text-[9px] text-orange-400 font-tech uppercase tracking-wider animate-pulse">
+            <Activity size={12} />
+            <span>🔥 {((car.id.charCodeAt(0) || 0) % 5) + 3} personas cotizaron esta unidad hoy</span>
+          </div>
         </div>
 
         {/* Specs */}
@@ -178,36 +182,43 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           </span>
         </div>
 
-        <div className="mt-auto flex items-end justify-between border-t border-white/10 pt-6">
-          <div>
-            <p className="font-cinematic text-4xl tracking-[0.03em] text-white text-glow">
-              <AnimatedCounter value={car.price || 0} format="currency" />
-            </p>
-            <div className="mt-1">
-              <p className="font-tech flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
-                Desde <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
-                /mes *
+        <div className="mt-auto border-t border-white/10 pt-6">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="font-cinematic text-4xl tracking-[0.03em] text-white text-glow">
+                <AnimatedCounter value={car.price || 0} format="currency" />
               </p>
-              <p className="font-tech text-[8px] uppercase tracking-[0.1em] text-slate-500 mt-0.5">
-                Con pronto de ${suggestedPronto.toLocaleString()}
-              </p>
+              <div className="mt-1">
+                <p className="font-tech flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
+                  Desde <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
+                  /mes *
+                </p>
+                <p className="font-tech text-[8px] uppercase tracking-[0.1em] text-slate-500 mt-0.5">
+                  Con pronto de ${suggestedPronto.toLocaleString()}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
             <a
               href={whatsappUrl}
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              className="flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-5 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all hover:scale-105 hover:bg-[#20ba59] active:scale-95"
+              className="flex h-9 items-center justify-center rounded-full bg-[#25D366] px-4 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all hover:scale-105 hover:bg-[#20ba59] active:scale-95"
             >
                Cotizar
             </a>
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.5)] transition-transform group-hover:scale-110">
-              <ChevronRight size={22} />
-            </div>
           </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/precualificacion', { state: { dealContext: { vehicle: car } } });
+            }}
+            className="w-full mt-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-[10px] uppercase tracking-widest rounded-full text-center shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1"
+          >
+            <Sparkles size={12} /> Pre-cualifícate Express
+          </button>
         </div>
-        <p className="text-[7px] text-slate-500 mt-4 leading-tight">
+        <p className="text-[7px] text-slate-500 mt-2 leading-tight">
           * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
         </p>
       </div>

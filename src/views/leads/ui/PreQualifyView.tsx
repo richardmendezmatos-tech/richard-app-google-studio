@@ -27,22 +27,26 @@ import { useSaveApplication } from '@/features/garage/hooks/useApplications';
 import { FinancialApplication } from '@/shared/types/types';
 
 interface Props {
-  onExit: () => void;
+  onExit?: () => void;
+  dealContext?: {
+    vehicle: { id: string; name: string; price: number; image?: string; img?: string };
+    quote?: { monthlyPayment: number; downPayment: number; term: number; apr?: number };
+  };
 }
 
-const PreQualifyView: React.FC<Props> = ({ onExit }) => {
+const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext }) => {
   const { addNotification } = useNotification();
   const location = useLocation();
   const { trackEvent } = useMetaPixel();
   const saveApplication = useSaveApplication();
 
   // Retrieve vehicle context if available
-  const dealContext = location.state as
+  const dealContext = propDealContext || (location.state as
     | {
-        vehicle: { id: string; name: string; price: number; image: string };
+        vehicle: { id: string; name: string; price: number; image?: string; img?: string };
         quote: { monthlyPayment: number; downPayment: number; term: number };
       }
-    | undefined;
+    | undefined);
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +70,8 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
     monthlyIncome: '',
     timeAtJob: '',
     creditAuth: false,
+    downPayment: '2000',
+    term: '60',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -142,7 +148,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
         name: `${formData.firstName} ${formData.lastName}`,
         phone: formData.phone,
         email: formData.email,
-        notes: `Finance Application #${refId} - Total Completion (SSN Protected)`,
+        notes: `Finance Application #${refId} - Pronto: $${formData.downPayment} - Término: ${formData.term}m - Total Completion (SSN Protected)`,
       });
 
       setReferenceId(refId);
@@ -231,8 +237,10 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
   // SOFIA AI AGENT HELP TEXTS (REALISTIC)
   const sofiaTips = [
     'Hola, soy Sofia 👩‍💼. Recopilaré tu información de forma segura para crear tu expediente.',
+    'Excelente. Ahora un poco más sobre tus datos de contacto.',
+    'Ajusta tu pronto y el término para ver un estimado mensual de tu pago.',
     'Estos datos ayudarán a nuestros analistas humanos a encontrar el mejor banco para ti 🏦.',
-    'Tu seguridad es legalmente sagrada 🔒. Esta conexión está encriptada y tus datos solo los verá un oficial autorizado.',
+    'Tu seguridad es legalmente sagrada 🔒. Esta conexión está encriptada.',
   ];
 
   return (
@@ -377,26 +385,92 @@ const PreQualifyView: React.FC<Props> = ({ onExit }) => {
               )}
 
               {step === 3 && (
-                <div className="space-y-6 animate-in slide-in-from-right duration-500 py-4 text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
-                    <ShieldCheck className="text-primary" size={32} />
-                  </div>
-                  <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-                    ¡Excelente, {formData.firstName}!
+                <div className="space-y-6 animate-in slide-in-from-right duration-500 py-4">
+                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter text-center">
+                    Simula tu Pago
                   </h2>
-                  <p className="text-slate-300 leading-relaxed font-light">
-                    Ya tenemos lo básico. Ahora, para darte una cifra real de financiamiento,
-                    necesitamos tu perfil financiero.
-                    <br />
-                    <span className="text-primary font-bold">
-                      Tus datos están protegidos por encriptación bancaria 256-bit.
-                    </span>
+                  <p className="text-slate-400 text-sm mb-6 text-center">
+                    Ajusta tu pronto y el término para ver un estimado mensual.
                   </p>
+                  
+                  {/* CRO: Social Proof / Urgency */}
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-center gap-2 mb-4">
+                    <span className="text-sm">🔥</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 animate-pulse">
+                      Alta Demanda: 4 personas han cotizado este término hoy
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-6 bg-slate-900/40 p-6 rounded-2xl border border-white/5">
+                    {/* Down Payment Slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                          Pronto (Down Payment)
+                        </label>
+                        <span className="text-xl font-bold text-primary">
+                          ${parseInt(formData.downPayment).toLocaleString()}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        name="downPayment"
+                        min="0"
+                        max="20000"
+                        step="500"
+                        value={formData.downPayment}
+                        onChange={handleInputChange}
+                        className="w-full accent-primary bg-slate-800 h-2 rounded-lg appearance-none cursor-pointer"
+                      />
+                      {parseInt(formData.downPayment) >= 3000 && (
+                        <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
+                          ✓ ¡Excelente pronto! Esto mejora tu probabilidad de aprobación.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Term Selector */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                        Término (Meses)
+                      </label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {['36', '48', '60', '72'].map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, term: t }))}
+                            className={`py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+                              formData.term === t
+                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                            }`}
+                          >
+                            {t} m
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Estimated Payment (Quick Math) */}
+                    <div className="pt-4 border-t border-white/5 text-center">
+                      <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">
+                        Pago Mensual Estimado
+                      </p>
+                      <p className="text-5xl font-black text-white tracking-tight animate-pulse">
+                        ${Math.round(((dealContext?.vehicle.price || 35000) - parseInt(formData.downPayment)) * (1.08 / parseInt(formData.term))).toLocaleString()}<span className="text-sm text-slate-500">/m*</span>
+                      </p>
+                      <p className="text-[9px] text-slate-600 mt-2 italic">
+                        *Estimado basado en un precio de unidad de ${(dealContext?.vehicle.price || 35000).toLocaleString()} e interés del 8%.
+                      </p>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => setStep(4)}
-                    className="mt-6 w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all border border-white/10"
+                    className="mt-6 w-full py-4 bg-primary hover:bg-cyan-500 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 animate-btn-glow"
                   >
-                    Continuar a Perfil Financiero
+                    Validar Mi Pago de ${Math.round(((dealContext?.vehicle.price || 35000) - parseInt(formData.downPayment)) * (1.08 / parseInt(formData.term))).toLocaleString()}/m <ChevronRight size={16} />
                   </button>
                 </div>
               )}

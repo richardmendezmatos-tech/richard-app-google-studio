@@ -1,0 +1,15 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "FI_WA_RETARGETING",
+  "title": "Integración de WhatsApp Retargeting en el Funnel",
+  "description": "Se creó el servicio de WhatsApp y se integró en la creación de leads para automatizar el seguimiento.",
+  "achievements": [
+    "Creación de whatsappService.ts con soporte para Cloud API y modo simulación.",
+    "Hook en crmService.ts para disparar el mensaje en leads express."
+  ],
+  "impact": {
+    "business_value": "Recuperación activa de carritos abandonados (leads que no terminan el proceso).",
+    "roi": "Incremento estimado del 15% en leads calificados."
+  }
+}

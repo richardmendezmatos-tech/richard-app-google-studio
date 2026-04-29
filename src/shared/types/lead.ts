@@ -24,6 +24,7 @@ export interface Lead {
   notes?: string;
   hasCreditApplication?: boolean;
   hasPronto?: boolean;
+  creditTier?: 'excellent' | 'good' | 'fair' | 'poor';
   dealerId?: string;
   category?: string;
   monthlyIncome?: number;

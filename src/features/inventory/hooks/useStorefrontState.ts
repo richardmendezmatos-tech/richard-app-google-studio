@@ -19,6 +19,8 @@ export function useStorefrontState(
   const [filter, setFilter] = useState<CarType | 'all'>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
+  const [mileageFilter, setMileageFilter] = useState<number | 'all'>('all');
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const [isNeuralMatchOpen, setIsNeuralMatchOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
@@ -121,7 +123,15 @@ export function useStorefrontState(
           matchesType = type === 'truck' || make === 'freightliner';
         }
 
-        return matchesSearch && matchesType;
+        const yearValue = c.year || (c.name ? parseInt(c.name.split(' ')[0]) : 0);
+        const matchesYear = yearFilter === 'all' || yearValue === yearFilter;
+
+        const matchesMileage = mileageFilter === 'all' || 
+          (mileageFilter === 10000 && (c.mileage || 0) <= 10000) ||
+          (mileageFilter === 50000 && (c.mileage || 0) <= 50000) ||
+          (mileageFilter === 100000 && (c.mileage || 0) <= 100000);
+
+        return matchesSearch && matchesType && matchesYear && matchesMileage;
       })
       .sort((a, b) => {
         // Nivel 13 Adaptive Boost
@@ -136,7 +146,7 @@ export function useStorefrontState(
         if (sortOrder === 'desc') return b.price - a.price;
         return 0;
       });
-  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory, preferredCategory]);
+  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory, preferredCategory, yearFilter, mileageFilter]);
 
   const displayCars = isSearching || preferredCategory ? filteredAndSorted : serverCars;
 
@@ -255,6 +265,10 @@ export function useStorefrontState(
       error,
       hasNextPage,
       isFetchingNextPage,
+      yearFilter,
+      setYearFilter,
+      mileageFilter,
+      setMileageFilter,
     },
     actions: {
       handleToggleSave,

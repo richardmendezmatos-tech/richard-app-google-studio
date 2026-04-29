@@ -15,6 +15,8 @@ import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
 import { extractMarketingData } from './marketingCaptureService';
 import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookService';
 
+import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
+
 export type { Lead };
 
 const LEADS_COLLECTION = 'applications';
@@ -34,15 +36,18 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
     });
     console.log('Lead added successfully');
 
-    // HubSpot Sync
     const newLead = { ...lead, marketingData, id: docRef.id, status: 'new' } as Lead;
 
+    // HubSpot Sync
     hubspotService
       .syncLeadToHubSpot(newLead)
       .catch((e) => console.error('HubSpot async sync failed', e));
 
     // Automation / Meta CAPI Webhook Sync
     dispatchLeadToWebhook(newLead).catch((e) => console.error('Webhook async sync failed', e));
+
+    // WhatsApp Retargeting (Sentinel Funnel Optimization)
+    sendWhatsAppRetargeting(newLead).catch((e) => console.error('WhatsApp dispatch failed', e));
 
     return docRef.id;
   } catch (error) {

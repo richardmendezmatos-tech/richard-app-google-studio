@@ -1,0 +1,13 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "WA_RETARGETING",
+  "title": "Optimización de Copy para WhatsApp Retargeting",
+  "description": "Se refinó el mensaje de seguimiento automático para Leads Express.",
+  "achievements": [
+    "Inclusión de terminología local (trade-in, pronto, unidad).",
+    "Estructura basada en urgencia y propuesta de valor (tasación rápida)."
+  ],
+  "copy_version": "1.1",
+  "message_draft": "¡Hola [Nombre]! 🚗 Vimos tu interés en la *[Unidad]*. 🔥 Tenemos buenas noticias: esta unidad califica para aprobación rápida esta semana. ¿Te gustaría saber en cuánto tasaríamos tu *trade-in* para bajar aún más el *pronto*? Responde 'SÍ' y te paso los números ahora mismo."
+}

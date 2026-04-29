@@ -43,6 +43,7 @@ class HubSpotService {
         ai_intent_score: lead.aiScore?.toString() || '0',
         lifecycle_stage: lead.customerMemory?.l3_evolutivo?.lifecycleStage || 'discovery',
         lead_source: lead.source || 'direct',
+        credit_tier: lead.creditTier || 'good',
       };
 
       // Search for existing contact first

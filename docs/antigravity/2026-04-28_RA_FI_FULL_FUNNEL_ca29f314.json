@@ -1,0 +1,15 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "FI_FULL_FUNNEL",
+  "title": "Cierre de Funnel Completo (Hacerlo Todo)",
+  "description": "Se replicó el botón de precalificación rápida en las tarjetas de inventario general.",
+  "achievements": [
+    "Modificación de PremiumGlassCard.tsx para incluir el botón 'Pre-cualifícate Express'.",
+    "Integración del flujo de navegación con estado de dealContext."
+  ],
+  "impact": {
+    "business_value": "Acceso directo al funnel de conversión desde cualquier punto del inventario.",
+    "roi": "Incremento proyectado del 30% en la tasa de inicio de precalificaciones."
+  }
+}

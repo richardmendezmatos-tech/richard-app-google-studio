@@ -1,0 +1,15 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "FI_QUALIFY",
+  "title": "Optimización del Flujo de Precalificación (F&I)",
+  "description": "Se integró un simulador de pronto y término interactivo en el flujo de precalificación para mejorar la conversión de leads.",
+  "achievements": [
+    "Transformación del Paso 3 en Simulación Financiera.",
+    "Persistencia de datos de pronto y término en el CRM."
+  ],
+  "impact": {
+    "business_value": "Mayor engagement del cliente al visualizar su pago mensual estimado.",
+    "roi": "Incremento en la tasa de finalización de solicitudes de crédito."
+  }
+}

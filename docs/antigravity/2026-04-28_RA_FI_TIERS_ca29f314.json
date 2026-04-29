@@ -1,0 +1,17 @@
+{
+  "id": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "date": "2026-04-28",
+  "category": "FI_TIERS",
+  "title": "Implementación de Matriz de Crédito por Tiers",
+  "description": "Se agregaron los CREDIT_TIERS en financing.ts para permitir cálculos dinámicos basados en la empírica del cliente.",
+  "achievements": [
+    "Creación del objeto CREDIT_TIERS con APRs y prontos base.",
+    "Actualización de calculateMonthlyPayment y calculateSuggestedPronto para soportar tierId."
+  ],
+  "tiers": {
+    "EXCELLENT": "5.99% APR, 5% Pronto",
+    "GOOD": "8.50% APR, 10% Pronto",
+    "FAIR": "11.99% APR, 15% Pronto",
+    "POOR": "15.99% APR, 20% Pronto"
+  }
+}
