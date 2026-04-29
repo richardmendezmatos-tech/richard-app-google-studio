@@ -10,6 +10,7 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Forzar reinicio del servidor para aplicar cambios en componentes
   cacheComponents: true,
   images: {
     formats: ['image/avif', 'image/webp'],

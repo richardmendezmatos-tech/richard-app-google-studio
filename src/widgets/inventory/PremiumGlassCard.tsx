@@ -28,16 +28,19 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   onSelect,
   isSaved,
   onToggleSave,
+  onCompare,
+  isComparing,
   isRecommended,
-  priority = false,
+  priority,
   isHighInterest,
 }) => {
+  console.log('PremiumGlassCard render for car:', car.id, 'img:', car.img);
   const navigate = useNavigate();
   const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Check if this specific car is in comparison
-  const isComparing = isInComparison(car.id);
+  // Check if this specific car is in comparison (removed to fix compilation error)
+
 
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -76,12 +79,15 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
       className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300"
     >
       {/* Image Section */}
-      <div className="relative aspect-[4/3] overflow-hidden p-8 flex items-center justify-center rounded-t-[24px]">
+      <div 
+        className="relative w-full overflow-hidden flex items-center justify-center rounded-t-[24px] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5"
+        style={{ height: '220px' }}
+      >
         {/* Dynamic Shine Overlay */}
         <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
         {/* Badges */}
-        <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 items-start">
+        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 items-start scale-90 origin-top-left">
           {isRecommended && (
             <span className="font-tech animate-pulse rounded-full border border-white/20 bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-slate-900 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
               Recomendado para ti
@@ -124,7 +130,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
         </div>
 
         {/* Actions */}
-        <div className="absolute top-6 right-6 z-20 flex flex-col gap-3">
+        <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 scale-90 origin-top-right">
           <div
             onClick={onToggleSave}
             className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isSaved ? 'border-rose-500 bg-rose-500 text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-rose-400'}`}
@@ -144,12 +150,12 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           src={car.img || '/placeholder-car.webp'}
           alt={car.name}
           priority={priority}
-          className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-1"
+          className="w-full h-full object-cover transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.25)]"
         />
       </div>
 
       {/* Content Section */}
-      <div className="p-8 flex-1 flex flex-col relative z-20">
+      <div className="p-6 flex-1 flex flex-col relative z-20">
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="font-tech text-[10px] uppercase tracking-[0.2em] text-primary">

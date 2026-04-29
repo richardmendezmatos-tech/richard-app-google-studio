@@ -37,21 +37,13 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const displaySrc = optimizeWithAntigravity(src || '', width);
 
   return (
-    <div className={`relative h-full w-full overflow-hidden ${className}`}>
-      <Image
-        src={displaySrc}
-        alt={alt}
-        width={!fill ? width : undefined}
-        height={!fill ? height : undefined}
-        fill={fill}
-        priority={priority}
-        loading={loading}
-        onLoad={onLoad}
-        placeholder={placeholder}
-        className={`object-cover transition-all duration-700 ${fill ? 'absolute inset-0' : ''}`}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
-    </div>
+    <img
+      src={displaySrc}
+      alt={alt}
+      className={className}
+      loading={loading || (priority ? 'eager' : 'lazy')}
+      onLoad={onLoad}
+    />
   );
 };
 

@@ -66,7 +66,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   const preferences = useMemo(() => TrajectoryAnalyzer.analyze(trajectory), [trajectory]);
 
   // Grid configuration
-  const itemHeight = 480; 
+  const itemHeight = 540; 
   const [columns, setColumns] = useState(1);
 
   useLayoutEffect(() => {
@@ -159,7 +159,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
                 key={car.id}
                 variants={itemVariants}
                 layout
-                className="h-[480px] w-full"
+                className="h-[540px] w-full"
                 aria-labelledby={`car-title-${car.id}`}
               >
                 <PremiumGlassCard
