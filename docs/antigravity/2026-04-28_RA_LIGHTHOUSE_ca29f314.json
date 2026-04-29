@@ -1,0 +1,15 @@
+{
+  "sessionId": "ca29f314-4615-4ba2-b747-313d6c6c8299",
+  "timestamp": "2026-04-28T22:58:30-04:00",
+  "url": "http://localhost:3000/inventario",
+  "device": "mobile",
+  "scores": {
+    "accessibility": 80,
+    "bestPractices": 73,
+    "seo": 100
+  },
+  "timing": {
+    "total": 8171.92
+  },
+  "status": "success"
+}
