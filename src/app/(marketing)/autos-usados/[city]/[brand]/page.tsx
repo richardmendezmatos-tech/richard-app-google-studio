@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/views/storefront/ui/Storefront';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
@@ -61,10 +62,16 @@ export default async function CityBrandPage({ params }: Props) {
     notFound();
   }
 
-  const inventory = await fetchInventoryFromJava(50);
+  let inventory: Car[] = [];
+  try {
+    const result = await getPaginatedCars(50);
+    inventory = result.cars;
+  } catch (error) {
+    console.error('Error fetching inventory for city+brand page:', error);
+  }
   
   // High-performance filter
-  const filteredInventory = inventory.filter(car => 
+  const filteredInventory = inventory.filter((car: Car) => 
     car.name.toLowerCase().includes(brand.slug.toLowerCase())
   );
 

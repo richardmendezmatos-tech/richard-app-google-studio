@@ -1,17 +1,18 @@
 import React from 'react';
 import AIConsultant from '@/widgets/ai-chat/AIConsultant';
-import { fetchInventoryFromJava } from '@/shared/api/backend/javaClient';
+import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { Car } from '@/entities/inventory';
 
 /**
  * Next.js App Router entry point for /consultant
  * Bridges to the AI Chat widget.
  */
 export default async function ConsultantRoute() {
-  let inventory: any[] = [];
+  let inventory: Car[] = [];
   
   try {
-    // SSR: Fetching data from GCP Java Backend
-    inventory = await fetchInventoryFromJava(20);
+    const result = await getPaginatedCars(20);
+    inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for Consultant:', error);
   }
