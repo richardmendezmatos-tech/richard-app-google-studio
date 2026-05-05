@@ -30,7 +30,9 @@ const Viewer360: React.FC<Props> = ({
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [activeMode] = useState<'360' | 'cinematic'>(images.length > 1 ? '360' : 'cinematic');
+  const [activeMode] = useState<'360' | 'cinematic'>(
+    (images || []).length > 1 ? '360' : 'cinematic',
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const [hintVisible, setHintVisible] = useState(true);
 

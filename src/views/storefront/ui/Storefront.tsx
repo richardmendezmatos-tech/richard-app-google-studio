@@ -108,13 +108,13 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                   position: index + 1,
                   item: {
                     '@type': 'Product',
-                    name: car.name,
-                    image: car.img,
-                    description: `${car.type} nuevo o certificado por Richard Automotive.`,
-                    brand: { '@type': 'Brand', name: car.name.split(' ')[0] },
+                    name: car.name || 'Vehículo Richard Automotive',
+                    image: car.img || car.image,
+                    description: `${car.type || 'Auto'} nuevo o certificado por Richard Automotive.`,
+                    brand: { '@type': 'Brand', name: (car.name || 'Auto').split(' ')[0] },
                     offers: {
                       '@type': 'Offer',
-                      price: car.price,
+                      price: car.price || 0,
                       priceCurrency: 'USD',
                       availability: 'https://schema.org/InStock',
                       url: `${SITE_CONFIG.url}/inventario/${generateVehicleSlug(car)}/${car.id}`,
@@ -172,7 +172,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             </div>
 
             <StorefrontResultsGrid
-              displayCars={inventory.slice(0, 8)}
+              displayCars={(inventory || []).slice(0, 8)}
               isLoadingInitial={state.isLoadingInitial}
               isSearching={false}
               searchTerm=""
