@@ -51,7 +51,7 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
               {car.name}
             </span>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-              {car.id.slice(0, 8)}
+              {(car.id || '').slice(0, 8)}
             </span>
           </div>
         </div>

@@ -102,7 +102,7 @@ const MarketingWrapper = () => {
           generar contenido viral.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {ctx.inventory.slice(0, 4).map((car) => (
+          {(ctx.inventory || []).slice(0, 4).map((car) => (
             <button
               key={car.id}
               onClick={() => ctx.setMarketingCar(car)}

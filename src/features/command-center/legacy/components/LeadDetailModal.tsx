@@ -141,7 +141,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                     ? new Date(lead.createdAt.seconds * 1000).toLocaleDateString()
                     : 'Fecha Desconocida'}
                   <span className="opacity-20">|</span>
-                  ID: <span className="font-mono">{lead.id.slice(0, 8)}</span>
+                  ID: <span className="font-mono">{(lead.id || '').slice(0, 8)}</span>
                 </p>
               </div>
             </div>

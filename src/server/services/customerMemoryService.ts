@@ -57,7 +57,7 @@ export class CustomerMemoryService {
       .eq('lead_id', leadId)
       .single();
 
-    let currentMemory: any = existing 
+    const currentMemory: any = existing 
       ? existing.memory_data 
       : this.getDefaultMemory(leadId);
 

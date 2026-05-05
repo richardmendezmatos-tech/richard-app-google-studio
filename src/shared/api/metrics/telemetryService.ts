@@ -35,31 +35,43 @@ export const useVehicleTelemetry = (vehicleId: string) => {
   useEffect(() => {
     if (!vehicleId) return;
 
-    const supabase = createClient();
-    if (!supabase) {
-      setError('Supabase client not initialized');
-      setLoading(false);
-      return;
-    }
-
-    const channel = supabase.channel(TELEMETRY_CHANNEL);
-
-    channel
-      .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
-        setTelemetry(payload.payload as VehicleTelemetry);
+    const setupTelemetry = async () => {
+      const supabase = createClient();
+      if (!supabase) {
+        setError('Supabase client not initialized');
         setLoading(false);
-      })
-      .subscribe((status, err) => {
-        if (status === 'SUBSCRIBED') {
+        return;
+      }
+
+      const channel = supabase.channel(TELEMETRY_CHANNEL);
+
+      channel
+        .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
+          setTelemetry(payload.payload as VehicleTelemetry);
           setLoading(false);
-        }
-        if (status === 'CHANNEL_ERROR') {
-          setError(err?.message || 'Error subscribing to telemetry');
-        }
-      });
+        })
+        .subscribe((status, err) => {
+          if (status === 'SUBSCRIBED') {
+            setLoading(false);
+          }
+          if (status === 'CHANNEL_ERROR') {
+            setError(err?.message || 'Error subscribing to telemetry');
+          }
+        });
+
+      return channel;
+    };
+
+    let activeChannel: any;
+    setupTelemetry().then(channel => {
+      activeChannel = channel;
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      if (activeChannel) {
+        const supabase = createClient();
+        supabase?.removeChannel(activeChannel);
+      }
     };
   }, [vehicleId]);
 

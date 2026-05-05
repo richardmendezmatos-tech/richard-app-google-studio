@@ -558,7 +558,9 @@ const HoustonDashboard: React.FC = () => {
   const [killSwitch, setKillSwitch] = useState(false);
 
   useEffect(() => {
-    setKillSwitch(window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true');
+    // Defer execution to avoid synchronous setState in effect body
+    const savedState = window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true';
+    Promise.resolve().then(() => setKillSwitch(savedState));
   }, []);
 
   const toggleKillSwitch = () => {

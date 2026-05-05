@@ -80,7 +80,7 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
   }, [leads]);
 
   const visibleItems = useMemo(() => {
-    return inventory.slice(startIndex, endIndex).map((car, index) => ({
+    return (inventory || []).slice(startIndex, endIndex).map((car, index) => ({
       car,
       index: startIndex + index,
       leadCount: leadCounts.get(car.id) || 0,

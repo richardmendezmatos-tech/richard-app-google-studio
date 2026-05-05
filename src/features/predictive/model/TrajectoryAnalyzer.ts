@@ -101,18 +101,18 @@ export class TrajectoryAnalyzer {
     }
 
     // Match por nombre / marca mencionado en la trayectoria
-    const carName = car.name.toLowerCase();
-    const uniquePaths = new Set<string>((preferences.events || []).map((e: any) => e.path.toLowerCase()));
+    const carName = (car.name || '').toLowerCase();
+    const uniquePaths = new Set<string>((preferences.events || []).map((e: any) => (e.path || '').toLowerCase()));
     
     uniquePaths.forEach((path) => {
-      if (path.includes(carName.split(' ')[0])) { // Match simple por marca
+      if (carName && path.includes(carName.split(' ')[0])) { // Match simple por marca
         score += 0.2;
       }
     });
 
     // Bonus por "Alta Demanda" simulado (Social Proof Predictivo)
     // En producción esto vendría de un backend, aquí lo simulamos con el ID para consistencia
-    if (parseInt(car.id.slice(-1), 16) % 3 === 0) {
+    if (car.id && parseInt(car.id.slice(-1), 16) % 3 === 0) {
       score += 0.15;
     }
 

@@ -24,7 +24,8 @@ export const AuditLogViewer: React.FC = () => {
   };
 
   useEffect(() => {
-    loadLogs();
+    // Defer execution to avoid synchronous setState in effect body
+    Promise.resolve().then(() => loadLogs());
     const intervalId = setInterval(loadLogs, 15000);
 
     return () => {

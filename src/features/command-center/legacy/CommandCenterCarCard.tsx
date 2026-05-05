@@ -22,8 +22,8 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
 }) => {
   const prediction = calculatePredictiveDTS(car, leadCount);
   const isEco =
-    car.name.toLowerCase().includes('electric') ||
-    car.name.toLowerCase().includes('tesla') ||
+    (car.name || '').toLowerCase().includes('electric') ||
+    (car.name || '').toLowerCase().includes('tesla') ||
     car.type === 'luxury';
 
   return (
@@ -32,7 +32,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       <div className="relative h-72 overflow-hidden">
         <img
           src={optimizeImage(car.img || '', 800)}
-          alt={car.name}
+          alt={car.name || 'Vehicle'}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050c14] via-transparent to-slate-950/40" />
@@ -70,7 +70,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       <div className="p-8 space-y-6 flex-1 flex flex-col">
         <div>
           <h3 className="text-lg font-black text-white uppercase tracking-tight truncate mb-1 group-hover/card:text-primary transition-colors">
-            {car.name}
+            {car.name || 'Sin Nombre'}
           </h3>
           <div className="flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">
             <Gauge size={10} /> {car.type === 'luxury' ? 'Premium' : 'Standard'} •{' '}
@@ -106,9 +106,9 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
         </div>
 
         {/* Features Tags */}
-        {car.features && car.features.length > 0 && (
+        {(car.features || []).length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {car.features.slice(0, 2).map((f, i) => (
+            {(car.features || []).slice(0, 2).map((f, i) => (
               <span
                 key={i}
                 className="px-3 py-1.5 bg-white/5 rounded-xl text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"

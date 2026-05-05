@@ -314,7 +314,9 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
   let ip = 'unknown';
   try {
     ip = await getClientIP();
-  } catch {}
+  } catch {
+    // Ignore IP fetch failure
+  }
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
