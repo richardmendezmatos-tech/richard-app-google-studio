@@ -27,7 +27,7 @@ export function generateVehicleSlug(
   car: Pick<Car, 'name'>,
   includeModifiers: boolean = true,
 ): string {
-  const baseSlug = slugify(car.name);
+  const baseSlug = slugify(car?.name || 'vehiculo-desconocido');
 
   if (includeModifiers) {
     // Ejemplo de long-tail para SEO Transaccional local
