@@ -112,7 +112,7 @@ export class TrajectoryAnalyzer {
 
     // Bonus por "Alta Demanda" simulado (Social Proof Predictivo)
     // En producción esto vendría de un backend, aquí lo simulamos con el ID para consistencia
-    if (car.id && parseInt(car.id.slice(-1), 16) % 3 === 0) {
+    if (car.id && typeof car.id === 'string' && parseInt(car.id.slice(-1), 16) % 3 === 0) {
       score += 0.15;
     }
 

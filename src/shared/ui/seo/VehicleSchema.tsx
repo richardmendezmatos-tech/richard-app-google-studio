@@ -36,7 +36,7 @@ export const VehicleSchema: React.FC<VehicleSchemaProps> = ({ car }) => {
     image: car.img,
     description:
       car.description ||
-      `${car.name} disponible en Richard Automotive. ${car.features?.slice(0, 3).join(', ') || 'Excelente condición'}.`,
+      `${car.name} disponible en Richard Automotive. ${(car.features || []).slice(0, 3).join(', ') || 'Excelente condición'}.`,
   };
 
   return (

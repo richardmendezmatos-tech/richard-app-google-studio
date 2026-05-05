@@ -100,7 +100,7 @@ const detectAction = (
 
 const formatCars = (cars: any[]): string => {
   if (cars.length === 0) return 'No encontre unidades con ese criterio.';
-  return cars
+  return (cars || [])
     .slice(0, 5)
     .map(
       (car, idx) =>
@@ -345,12 +345,12 @@ const DigitalTwinDashboard: React.FC = () => {
           const queryText = action.payload.query.toLowerCase().trim();
           const { cars } = await getPaginatedCars(40, null, 'all', null);
           const filtered = queryText
-            ? cars.filter((car) =>
+            ? (cars || []).filter((car) =>
                 `${car.name || ''} ${car.type || ''} ${car.badge || ''}`
                   .toLowerCase()
                   .includes(queryText),
               )
-            : cars;
+            : (cars || []);
 
           setMessages((prev) => [
             ...prev,
