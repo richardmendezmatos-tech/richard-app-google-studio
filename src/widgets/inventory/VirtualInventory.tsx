@@ -81,7 +81,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const rowCount = Math.ceil(cars.length / columns);
+  const rowCount = Math.ceil((cars || []).length / columns);
   const totalHeight = rowCount * itemHeight;
 
   useLayoutEffect(() => {
@@ -106,7 +106,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
 
       setVisibleRange({
         start: Math.max(0, startRow * columns),
-        end: Math.min(cars.length, endRow * columns),
+        end: Math.min((cars || []).length, endRow * columns),
       });
     };
 
@@ -114,7 +114,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     updateVisibleRange(); 
 
     return () => window.removeEventListener('scroll', updateVisibleRange);
-  }, [cars.length, columns, rowCount]);
+  }, [(cars || []).length, columns, rowCount]);
 
   const visibleCars = useMemo(() => {
     return (cars || []).slice(visibleRange.start, visibleRange.end);

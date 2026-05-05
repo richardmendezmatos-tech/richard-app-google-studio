@@ -63,7 +63,7 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
               />
             ))}
           </div>
-        ) : displayCars.length === 0 ? (
+        ) : (displayCars || []).length === 0 ? (
           <div className="col-span-full flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-primary/20 bg-slate-900/60 backdrop-blur-xl py-20 text-center animate-in fade-in">
             {isSearching ? (
               <>
@@ -120,7 +120,7 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
                   </div>
                 )}
                 {/* Debugging / Error Message */}
-                {(status === 'error' || displayCars.length === 0) && (
+                {(status === 'error' || (displayCars || []).length === 0) && (
                   <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-mono text-left max-w-lg overflow-auto">
                     {status === 'error' && (
                       <div className="text-red-500 mb-2">
