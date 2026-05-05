@@ -127,24 +127,27 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
           >
             <Sparkles
               size={14}
+              aria-hidden="true"
               className="group-hover/btn:rotate-12 transition-transform duration-500"
             />
             Strategy Lab
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="group" aria-label="Acciones de gestión">
             <button
               onClick={() => onEdit(car)}
               className="w-10 h-10 bg-white/5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all border border-white/10 group/edit"
               title="Editar descripción de unidad"
+              aria-label={`Editar ${car.name || 'unidad'}`}
             >
-              <Edit3 size={16} />
+              <Edit3 size={16} aria-hidden="true" />
             </button>
             <button
               onClick={() => onDelete(car.id)}
               className="w-10 h-10 bg-rose-500/5 text-rose-500/50 hover:text-white hover:bg-rose-600 rounded-xl flex items-center justify-center transition-all border border-rose-500/10 group/del"
               title="Eliminar unidad del inventario"
+              aria-label={`Eliminar ${car.name || 'unidad'}`}
             >
-              <Trash2 size={16} />
+              <Trash2 size={16} aria-hidden="true" />
             </button>
           </div>
         </div>

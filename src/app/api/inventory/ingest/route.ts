@@ -103,7 +103,6 @@ export async function POST(req: Request) {
       car_id: vehicle.id,
       intel: { sales_pitch: !!salesPitch, ideal_buyer: !!idealBuyer },
       supabase_sync: !upsertError,
-      dataconnect_sync: true, // We logged the error if it failed
     });
   } catch (error: any) {
     console.error('[Ingest] Pipeline Error:', error);
