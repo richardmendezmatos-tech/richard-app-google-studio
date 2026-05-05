@@ -117,7 +117,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   }, [cars.length, columns, rowCount]);
 
   const visibleCars = useMemo(() => {
-    return cars.slice(visibleRange.start, visibleRange.end);
+    return (cars || []).slice(visibleRange.start, visibleRange.end);
   }, [cars, visibleRange]);
 
   const checkRecommendation = (car: Car): boolean => {
@@ -128,9 +128,9 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     // Priority 2: Traditional memory
     if (!customerMemory?.preferences) return false;
     const { models, colors, features } = customerMemory.preferences;
-    if (models?.some((m: string) => car.name.toLowerCase().includes(m.toLowerCase()))) return true;
-    if (colors?.some((c: string) => car.name.toLowerCase().includes(c.toLowerCase()))) return true;
-    if (features?.some((f: string) => car.name.toLowerCase().includes(f.toLowerCase()))) return true;
+    if (models?.some((m: string) => (car.name || '').toLowerCase().includes(m.toLowerCase()))) return true;
+    if (colors?.some((c: string) => (car.name || '').toLowerCase().includes(c.toLowerCase()))) return true;
+    if (features?.some((f: string) => (car.name || '').toLowerCase().includes(f.toLowerCase()))) return true;
     return false;
   };
 
