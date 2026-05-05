@@ -185,7 +185,7 @@ export default async function CategoryPage({ params }: Props) {
     );
     // If filter yields too few results, show all
     if (inventory.length < 3) {
-      inventory = allInventory.slice(0, 12);
+      inventory = (allInventory || []).slice(0, 12);
     }
   } catch (error) {
     console.error(`[SEO Category: ${cat.name}] Error fetching inventory:`, error);

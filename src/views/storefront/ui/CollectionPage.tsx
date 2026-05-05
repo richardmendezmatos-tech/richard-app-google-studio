@@ -44,7 +44,7 @@ const CollectionPage: React.FC<Props> = ({ inventory }) => {
       list = list.filter((car) => {
         const _make = car.make
           ? car.make.toLowerCase()
-          : (car.name.split(' ')[0] || '').toLowerCase();
+          : (car.name || '').split(' ')[0].toLowerCase();
         return _make === brand.toLowerCase();
       });
     }
