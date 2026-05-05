@@ -34,6 +34,7 @@ export const uploadInitialInventory = async (data: any[]) => {
       make: car.make,
       model: car.model,
       year: car.year,
+      name: car.name || `${car.year} ${car.make} ${car.model}`,
       price: car.price,
       mileage: car.mileage || 0,
       images: car.image ? [car.image] : (car.images || []),

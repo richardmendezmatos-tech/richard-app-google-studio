@@ -9,14 +9,23 @@ export class SupabaseInventoryRepository implements InventoryRepository {
         const supabase = createServerSupabaseClient();
         const { data, error } = await supabase.from(this.tableName).select('*');
         if (error) throw error;
-        return data as Car[];
+        
+        // Safeguard: Ensure name exists for all cars to prevent .split() crashes
+        return (data || []).map(car => ({
+            ...car,
+            name: car.name || `${car.year} ${car.make} ${car.model}`
+        })) as Car[];
     }
 
     async getById(id: string): Promise<Car | null> {
         const supabase = createServerSupabaseClient();
         const { data, error } = await supabase.from(this.tableName).select('*').eq('id', id).single();
-        if (error) return null;
-        return data as Car;
+        if (error || !data) return null;
+        
+        return {
+            ...data,
+            name: data.name || `${data.year} ${data.make} ${data.model}`
+        } as Car;
     }
 
     async update(id: string, data: Partial<Car>): Promise<void> {
