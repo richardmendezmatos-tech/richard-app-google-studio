@@ -102,8 +102,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                 '@id': `${SITE_CONFIG.url}/#inventory`,
                 name: 'Inventario de Autos Nuevos y Usados Richard Automotive',
                 description: 'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
-                numberOfItems: inventory.length,
-                itemListElement: inventory.slice(0, 10).map((car, index) => ({
+                numberOfItems: (inventory || []).length,
+                itemListElement: (inventory || []).slice(0, 10).map((car, index) => ({
                   '@type': 'ListItem',
                   position: index + 1,
                   item: {

@@ -5,7 +5,10 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env
 
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : null as any; // Cast as any to avoid breaking types, but handled in usage
+  : {
+      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }), order: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }), order: () => ({ limit: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }) }), insert: () => Promise.resolve({ error: new Error('Supabase not configured') }), update: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }), delete: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }) }),
+      rpc: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }),
+    } as any;
 
 export interface SemanticMatch {
   car_id: string;
