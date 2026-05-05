@@ -23,7 +23,7 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
 
   return (data || []).map(item => ({
     id: item.id,
-    name: item.name,
+    name: item.name || `${item.year} ${item.make} ${item.model}`,
     price: item.price,
     image: item.image_url,
     category: item.category,
@@ -62,7 +62,7 @@ export const getCarById = async (id: string): Promise<Vehicle | null> => {
 
   return {
     id: data.id,
-    name: data.name,
+    name: data.name || `${data.year} ${data.make} ${data.model}`,
     price: data.price,
     image: data.image_url,
     category: data.category,
@@ -70,7 +70,7 @@ export const getCarById = async (id: string): Promise<Vehicle | null> => {
     dealerId: data.dealer_id,
     ...data
   } as Vehicle;
-};
+}
 
 export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
   try {
@@ -112,7 +112,7 @@ export const getPaginatedCars = async (
 
   const cars = (data || []).map(item => ({
     id: item.id,
-    name: item.name,
+    name: item.name || `${item.year} ${item.make} ${item.model}`,
     price: item.price,
     image: item.image_url,
     category: item.category,
