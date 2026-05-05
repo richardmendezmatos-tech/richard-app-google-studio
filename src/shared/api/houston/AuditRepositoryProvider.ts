@@ -1,5 +1,4 @@
-import { AuditRepositoryBase } from './AuditRepositoryBase';
-import { getDb } from '@/shared/api/firebase';
+import { AuditRepository } from './AuditRepository';
 
 /**
  * AuditRepositoryProvider (Nivel 22)
@@ -7,6 +6,5 @@ import { getDb } from '@/shared/api/firebase';
  * de forma asíncrona, evitando fugas de dependencias de cliente.
  */
 export const getAuditRepository = async () => {
-    const db = await getDb();
-    return new AuditRepositoryBase(db);
+    return new AuditRepository();
 };

@@ -1,42 +1,37 @@
-import { db } from '@/shared/api/firebase/firebaseService';
-import {
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  updateDoc,
-  doc,
-  getDoc,
-  getDocs,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { Lead } from '@/shared/types/types';
 import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
 import { extractMarketingData } from './marketingCaptureService';
 import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookService';
-
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
 
 export type { Lead };
 
-const LEADS_COLLECTION = 'applications';
+const LEADS_TABLE = 'leads';
 
 /**
- * Adds a new lead to Firestore
+ * Adds a new lead to Supabase
  */
 export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): Promise<string> => {
   try {
+    if (!supabase) throw new Error('Supabase client not initialized');
     const marketingData = extractMarketingData();
 
-    const docRef = await addDoc(collection(db, LEADS_COLLECTION), {
-      ...lead,
-      marketingData,
+    const { data, error } = await supabase.from(LEADS_TABLE).insert({
+      first_name: lead.firstName || '',
+      last_name: lead.lastName || '',
+      phone: lead.phone || '',
+      email: lead.email || '',
+      vehicle_id: lead.vehicleId,
+      marketing_data: marketingData,
       status: 'new',
-      createdAt: serverTimestamp(),
-    });
-    console.log('Lead added successfully');
+      created_at: new Date().toISOString(),
+    }).select('id').single();
 
-    const newLead = { ...lead, marketingData, id: docRef.id, status: 'new' } as Lead;
+    if (error) throw error;
+    console.log('Lead added successfully to Supabase');
+
+    const newLead = { ...lead, marketingData, id: data.id, status: 'new' } as Lead;
 
     // HubSpot Sync
     hubspotService
@@ -49,7 +44,7 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
     // WhatsApp Retargeting (Sentinel Funnel Optimization)
     sendWhatsAppRetargeting(newLead).catch((e) => console.error('WhatsApp dispatch failed', e));
 
-    return docRef.id;
+    return data.id;
   } catch (error) {
     console.error('Error adding lead:', error);
     throw error;
@@ -61,34 +56,20 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
  */
 export const updateLead = async (leadId: string, updates: Partial<Lead>) => {
   try {
-    const leadRef = doc(db, LEADS_COLLECTION, leadId);
-    await updateDoc(leadRef, updates as { [x: string]: unknown });
+    if (!supabase) return;
+    
+    // Map CamelCase to SnakeCase for DB
+    const dbUpdates: any = {};
+    if (updates.status) dbUpdates.status = updates.status;
+    if (updates.aiScore) dbUpdates.ai_analysis = { score: updates.aiScore };
+    if (updates.customerMemory) dbUpdates.customer_memory = updates.customerMemory;
 
-    // HubSpot Sync - Fetch full lead only if critical fields are missing
+    const { error } = await supabase.from(LEADS_TABLE).update(dbUpdates).eq('id', leadId);
+    if (error) throw error;
+
+    // HubSpot Sync
     if (updates.email || updates.aiScore || updates.customerMemory || updates.status) {
-      if (updates.email && (updates.name || updates.firstName)) {
-        // We have enough local data to sync directly without fetching
-        hubspotService
-          .syncLeadToHubSpot({
-            id: leadId,
-            ...updates,
-          } as Lead)
-          .catch(console.error);
-      } else {
-        // Fallback to fetch the complete lead from DB
-        getDoc(leadRef)
-          .then((snap) => {
-            if (snap.exists()) {
-              hubspotService
-                .syncLeadToHubSpot({
-                  id: leadId,
-                  ...snap.data(),
-                } as Lead)
-                .catch(console.error);
-            }
-          })
-          .catch(console.error);
-      }
+      hubspotService.syncLeadToHubSpot({ id: leadId, ...updates } as Lead).catch(console.error);
     }
   } catch (error) {
     console.error('Error updating lead:', error);
@@ -104,141 +85,68 @@ export const updateLeadStatus = async (leadId: string, newStatus: Lead['status']
 };
 
 /**
- * CONTINUUM MEMORY SYSTEM (CMS) - Nested Frequency Updates
+ * CMS - Continuum Memory System refactored for Supabase
  */
+export const updateLeadL1Memory = async (leadId: string, l1Data: any) => {
+  if (!supabase) return;
+  const { data: lead } = await supabase.from(LEADS_TABLE).select('customer_memory').eq('id', leadId).single();
+  const currentMemory = lead?.customer_memory || {};
 
-/**
- * L1: Reactive Memory Update (High Frequency)
- * Triggered by real-time interactions
- */
-export const updateLeadL1Memory = async (
-  leadId: string,
-  l1Data: Partial<NonNullable<Lead['customerMemory']>['l1_reactive']>,
-) => {
-  const leadRef = doc(db, LEADS_COLLECTION, leadId);
-  const snapshot = await getDoc(leadRef);
-  if (!snapshot.exists()) return;
-
-  const lead = snapshot.data() as Lead;
-  const currentMemory = lead.customerMemory || {};
-
-  await updateDoc(leadRef, {
-    'customerMemory.l1_reactive': {
-      ...(currentMemory.l1_reactive || {}),
-      ...l1Data,
-      activeContext: true,
-    },
-  });
+  await supabase.from(LEADS_TABLE).update({
+    customer_memory: {
+      ...currentMemory,
+      l1_reactive: { ...(currentMemory.l1_reactive || {}), ...l1Data, activeContext: true }
+    }
+  }).eq('id', leadId);
 };
-
-/**
- * L2: Contextual Memory Update (Medium Frequency)
- * Triggered by daily analysis or significant behavior shifts
- */
-export const updateLeadL2Memory = async (
-  leadId: string,
-  l2Data: Partial<NonNullable<Lead['customerMemory']>['l2_contextual']>,
-) => {
-  const leadRef = doc(db, LEADS_COLLECTION, leadId);
-  const snapshot = await getDoc(leadRef);
-  if (!snapshot.exists()) return;
-
-  const lead = snapshot.data() as Lead;
-  const currentMemory = lead.customerMemory || {};
-
-  await updateDoc(leadRef, {
-    'customerMemory.l2_contextual': {
-      ...(currentMemory.l2_contextual || {}),
-      ...l2Data,
-    },
-  });
-};
-
-/**
- * L3: Evolutivo Memory Update (Low Frequency)
- * Triggered by milestone events or monthly reviews
- */
-export const updateLeadL3Memory = async (
-  leadId: string,
-  l3Data: Partial<NonNullable<Lead['customerMemory']>['l3_evolutivo']>,
-) => {
-  const leadRef = doc(db, LEADS_COLLECTION, leadId);
-  const snapshot = await getDoc(leadRef);
-  if (!snapshot.exists()) return;
-
-  const lead = snapshot.data() as Lead;
-  const currentMemory = lead.customerMemory || {};
-
-  await updateDoc(leadRef, {
-    'customerMemory.l3_evolutivo': {
-      ...(currentMemory.l3_evolutivo || {}),
-      ...l3Data,
-    },
-  });
-};
-
-/**
- * Near-real-time poller for leads - Aggregates from standard and secure collections
- */
-import { limit } from 'firebase/firestore';
 
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
-  let cancelled = false;
+  if (!supabase) return () => {};
 
-  const fetchAll = async () => {
-    try {
-      const qApps = query(collection(db, 'applications'), orderBy('createdAt', 'desc'), limit(50));
-      const qSols = query(
-        collection(db, 'solicitudes_credito'),
-        orderBy('createdAt', 'desc'),
-        limit(50),
-      );
+  const channel = supabase
+    .channel('leads-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: LEADS_TABLE }, async () => {
+      const { data } = await supabase.from(LEADS_TABLE).select('*').order('created_at', { ascending: false }).limit(50);
+      if (data) {
+        callback(data.map(d => ({
+          id: d.id,
+          firstName: d.first_name,
+          lastName: d.last_name,
+          email: d.email,
+          phone: d.phone,
+          status: d.status,
+          createdAt: d.created_at,
+          customerMemory: d.customer_memory
+        } as any)));
+      }
+    })
+    .subscribe();
 
-      const [snapApps, snapSols] = await Promise.all([getDocs(qApps), getDocs(qSols)]);
-
-      if (cancelled) return;
-
-      const apps = snapApps.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Lead);
-      const sols = snapSols.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Lead);
-
-      const combined = [...apps, ...sols].sort((a, b) => {
-        const dateA = a.createdAt?.seconds || 0;
-        const dateB = b.createdAt?.seconds || 0;
-        return dateB - dateA;
-      });
-
-      callback(combined);
-    } catch (error) {
-      console.error('Error fetching combined leads:', error);
+  // Initial fetch
+  supabase.from(LEADS_TABLE).select('*').order('created_at', { ascending: false }).limit(50).then(({ data }) => {
+    if (data) {
+      callback(data.map(d => ({
+        id: d.id,
+        firstName: d.first_name,
+        lastName: d.last_name,
+        email: d.email,
+        phone: d.phone,
+        status: d.status,
+        createdAt: d.created_at,
+        customerMemory: d.customer_memory
+      } as any)));
     }
-  };
-
-  fetchAll();
-  // Adaptive/lazy interval setting: 30 seconds backpressure to prevent DB abuse instead of 10s
-  const intervalId = setInterval(fetchAll, 30000);
+  });
 
   return () => {
-    cancelled = true;
-    clearInterval(intervalId);
+    supabase.removeChannel(channel);
   };
 };
 
-/**
- * Fetches sensitive data from the Secure Vault
- * Note: This will fail if the user is not an authorized Admin (Richard/SuperAdmin)
- */
 export const getSecureLeadData = async (leadId: string) => {
-  try {
-    const secureRef = doc(db, 'applications_secure', leadId);
-    const snapshot = await getDoc(secureRef);
-    if (snapshot.exists()) {
-      return snapshot.data() as { ssn: string };
-    }
-    return null;
-  } catch (error) {
-    console.error('Vault Access Denied or Error:', error);
-    throw new Error('No tienes permisos suficientes para acceder a la Bóveda Segura.', {
-      cause: error,
-    });
-  }
+  if (!supabase) return null;
+  const { data, error } = await supabase.from(LEADS_TABLE).select('ssn').eq('id', leadId).single();
+  if (error) throw error;
+  return data;
 };
+

@@ -44,8 +44,17 @@ export const useBusinessTelemetry = () => {
 
   useEffect(() => {
     fetchTelemetry();
-    // Re-validación cada 45 segundos para mantener el pulso del negocio
-    const interval = setInterval(fetchTelemetry, 45000);
+    // Re-validación cada 3 minutos para mantener el pulso del negocio sin sobrecargar Firebase
+    const interval = setInterval(() => {
+      // Evitar fetch si el tab del navegador está en segundo plano o el Kill Switch está activo (ahorro de costos)
+      if (typeof document !== 'undefined' && document.hidden) {
+        return;
+      }
+      if (typeof window !== 'undefined' && window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true') {
+        return;
+      }
+      fetchTelemetry();
+    }, 180000);
     return () => clearInterval(interval);
   }, []);
 

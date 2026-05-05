@@ -1,34 +1,51 @@
-# Guía de Despliegue Sentinel N23 (Vercel)
+# Guía de Despliegue Sentinel N24 (Hardened Supabase)
 
-Para que el Command Center funcione con todas sus capacidades de **Firebase Admin** y **Houston Intelligence**, debes configurar los siguientes secretos en el dashboard de Vercel.
+El Richard Automotive Command Center ha sido migrado a una arquitectura unificada de **Supabase (PostgreSQL)**, eliminando la dependencia de Firebase/GCP para la gestión de inventario y telemetría.
 
-## 1. Firebase Service Account (CRÍTICO)
+## 1. Variables de Entorno (Vercel)
 
-El sistema utiliza un puente seguro que no expone archivos JSON en el cliente. Para ello, debes copiar el contenido completo de tu archivo de credenciales de Firebase en una variable de entorno.
+Asegúrate de configurar los siguientes secretos en el dashboard de Vercel para que el build y el runtime funcionen correctamente.
 
-- **Variable**: `FIREBASE_SERVICE_ACCOUNT_JSON`
-- **Valor**: (Pega aquí el contenido completo del archivo `.json` que descargaste de Firebase Console)
-
-> [!CAUTION]
-> No elimines las comillas ni los saltos de línea del JSON. Pégalo tal cual.
-
-## 2. Variables de Entorno Adicionales
-
-Asegúrate de tener configuradas las siguientes variables para Supabase y Gemini:
-
+### Core Infrastructure (Supabase)
 | Variable | Propósito |
 | :--- | :--- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Endpoint de tu base de datos Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Key pública de Supabase |
-| `GEMINI_API_KEY` | Key para el motor Neural Match y Visión |
-| `NEXT_PUBLIC_WHATSAPP_PHONE` | Tu número de WhatsApp de negocios |
+| `NEXT_PUBLIC_SUPABASE_URL` | Endpoint de tu instancia de Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Key pública para el cliente del navegador |
+| `SUPABASE_SERVICE_ROLE_KEY` | **(CRÍTICO)** Requerido para operaciones de servidor y crons que saltan RLS |
+
+### AI & Intelligence (Vercel AI SDK)
+| Variable | Propósito |
+| :--- | :--- |
+| `GEMINI_API_KEY` | Motor Neural Match, Visión de Unidades y Chat Copilot (Vercel AI SDK) |
+| `NEXT_PUBLIC_AI_ENDPOINT` | Opcional. Por defecto utiliza `/api/ai/chat` |
+
+### Integrations
+| Variable | Propósito |
+| :--- | :--- |
+| `NEXT_PUBLIC_WHATSAPP_PHONE` | Número de WhatsApp Business para leads |
+
+## 2. Gestión de Base de Datos (Supabase CLI)
+
+El proyecto ahora utiliza el **Supabase CLI** para gestionar el esquema y los tipos de TypeScript.
+
+### Sincronización de Tipos
+Para regenerar los tipos de la base de datos localmente:
+```bash
+npx supabase gen types typescript --project-id <tu-id-de-proyecto> > src/shared/api/supabase/types.ts
+```
+
+### Migraciones
+El esquema de la base de datos se gestiona en el directorio `supabase/migrations`. Para aplicar cambios o jalar el esquema actual:
+```bash
+npx supabase db pull
+```
 
 ## 3. Verificación de Despliegue
 
 Una vez configuradas las variables:
-1. Realiza un `git push` a la rama `main`.
-2. Vercel detectará el cambio y ejecutará el build.
-3. Verifica en los logs de Vercel que no aparezca el error `❌ [Firebase Admin] Initialization failed`.
+1. Realiza un `git commit` y `git push` a la rama `main`.
+2. Vercel ejecutará el build utilizando **npm** (estándar de estabilidad).
+3. Verifica en el dashboard de Houston (`/admin`) que la telemetría esté reportando **ONLINE** y el **Enlace DB** esté activo.
 
 ---
-*Richard Automotive - Sentinel N23 Security Protocol*
+*Richard Automotive - Sentinel N24 Security Protocol*

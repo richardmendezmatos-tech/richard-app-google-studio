@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
+
 import { BlogPost } from '@/shared/types/types';
 import { useBlogPosts } from '@/features/blog/hooks/useBlog';
 import {
@@ -50,10 +51,16 @@ const BlogPage: React.FC = () => {
     }
     setIsSubscribing(true);
     try {
-      await subscribeToNewsletter(subscriberEmail);
+      const repo = DI.getSubscriberRepository();
+      await repo.subscribe({ 
+        email: subscriberEmail,
+        source: 'blog_page',
+        created_at: new Date().toISOString()
+      } as any);
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {
+
       console.error(error);
       addNotification('error', 'Error al suscribirse. Intenta de nuevo.');
     } finally {

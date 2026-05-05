@@ -26,6 +26,8 @@ import {
   Share2,
   Wifi,
   WifiOff,
+  Power,
+  PowerOff,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
@@ -238,9 +240,9 @@ const PipelineTab: React.FC<{
                     <button
                       onClick={(e) => { e.stopPropagation(); handleShare(opp); }}
                       className="p-3 bg-white/5 border border-white/10 text-slate-400 rounded-xl hover:bg-white/10 hover:text-white transition-all active:scale-95"
-                      title="Compartir"
+                      aria-label={`Compartir oportunidad para ${name}`}
                     >
-                      <Share2 size={14} />
+                      <Share2 size={14} aria-hidden="true" />
                     </button>
                     <a
                       href={waLink}
@@ -248,9 +250,9 @@ const PipelineTab: React.FC<{
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#25D366]/20 hover:border-[#25D366]/50 transition-all active:scale-95"
-                      title="Enviar WhatsApp"
+                      aria-label={`Enviar WhatsApp a ${name}`}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488z"/>
                       </svg>
                       WhatsApp
@@ -258,9 +260,9 @@ const PipelineTab: React.FC<{
                     <button
                       onClick={(e) => { e.stopPropagation(); handleJulesClosing(); }}
                       className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-violet-600/20 border border-violet-500/30 text-violet-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-violet-600/30 hover:border-violet-500/50 transition-all active:scale-95 group/jules"
-                      title="Dejar que Jules cierre el negocio"
+                      aria-label="Dejar que Jules cierre el negocio"
                     >
-                      <Sparkles size={14} className="group-hover/jules:animate-pulse" />
+                      <Sparkles size={14} aria-hidden="true" className="group-hover/jules:animate-pulse" />
                       Jules Close
                     </button>
                   </div>
@@ -553,6 +555,24 @@ const HoustonDashboard: React.FC = () => {
   const { businessData, refresh: refreshBusiness } = useBusinessTelemetry();
   const { containerRef } = useMouseGlow();
 
+  const [killSwitch, setKillSwitch] = useState(false);
+
+  useEffect(() => {
+    // Defer execution to avoid synchronous setState in effect body
+    const savedState = window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true';
+    Promise.resolve().then(() => setKillSwitch(savedState));
+  }, []);
+
+  const toggleKillSwitch = () => {
+    const newState = !killSwitch;
+    setKillSwitch(newState);
+    if (newState) {
+      window.sessionStorage.setItem('RA_KILL_SWITCH', 'true');
+    } else {
+      window.sessionStorage.removeItem('RA_KILL_SWITCH');
+    }
+  };
+
   const getHoustonTelemetry = useMemo(() => DI.getHoustonTelemetryUseCase(), []);
   const identifyOutreachOpportunities = useMemo(() => DI.getIdentifyOutreachOpportunitiesUseCase(), []);
 
@@ -586,20 +606,20 @@ const HoustonDashboard: React.FC = () => {
       <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-10">
         <div>
           <h1 className="text-5xl font-black text-white tracking-tighter mb-2 flex items-center gap-4 group">
-            <TerminalIcon className="text-cyan-500 group-hover:rotate-12 transition-transform" size={36} />
+            <TerminalIcon className="text-cyan-500 group-hover:rotate-12 transition-transform" size={36} aria-hidden="true" />
             Houston
             <span className="text-cyan-500 text-lg font-mono tracking-[0.5em] ml-4 opacity-70">RA SENTINEL</span>
           </h1>
           <div className="flex items-center gap-6 text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">
             <span className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${telemetry.systemHealth === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-red-500'}`} />
+              <div className={`w-2 h-2 rounded-full ${telemetry.systemHealth === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-red-500'}`} aria-hidden="true" />
               {telemetry.systemHealth.toUpperCase()}
             </span>
             <span className="border-l border-white/10 pl-6 flex items-center gap-2">
               {isOnline ? (
-                <Wifi size={12} className="text-emerald-500" />
+                <Wifi size={12} className="text-emerald-500" aria-hidden="true" />
               ) : (
-                <WifiOff size={12} className="text-red-500 animate-bounce" />
+                <WifiOff size={12} className="text-red-500 animate-bounce" aria-hidden="true" />
               )}
               <span className={isOnline ? 'text-slate-300' : 'text-red-500'}>
                 {isOnline ? 'ENLACE_ACTIVO' : 'ENLACE_CAIDO'}
@@ -608,40 +628,64 @@ const HoustonDashboard: React.FC = () => {
             <span className="border-l border-white/10 pl-6 hidden sm:inline">HQ_SAN_JUAN</span>
           </div>
         </div>
-        {/* Autonomy Score Badge */}
-        <div className="glass-premium px-8 py-5 flex items-center gap-8 border border-white/5 hover:scale-[1.02] transition-all cursor-pointer shadow-xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="text-right">
-            <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">Autonomy Score</p>
-            <p className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
-              {telemetry.metrics.autonomyRate.value}<span className="text-lg text-cyan-500/50">%</span>
-            </p>
-          </div>
-          <div className="p-3 bg-cyan-500/10 rounded-2xl group-hover:bg-cyan-500/20 transition-colors">
-            <Activity className="text-cyan-500 animate-pulse" size={28} />
-          </div>
-        </div>
-        {/* PWA Install Action */}
-        {isInstallable && (
-          <motion.button
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={installPWA}
-            className="glass-premium px-6 py-5 flex items-center gap-4 border border-cyan-500/20 hover:bg-cyan-500/10 transition-all cursor-pointer shadow-xl group/install ml-auto md:ml-0"
-          >
+        <div className="flex flex-wrap items-center gap-4 ml-auto md:ml-0 w-full md:w-auto justify-end">
+          {/* Autonomy Score Badge */}
+          <div className="glass-premium px-6 md:px-8 py-5 flex items-center gap-4 md:gap-8 border border-white/5 hover:scale-[1.02] transition-all cursor-pointer shadow-xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="text-right">
-              <p className="text-[10px] text-cyan-500/70 uppercase font-black tracking-[0.3em] mb-1">Mobile Access</p>
-              <p className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
-                INSTALL APP
+              <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">Autonomy Score</p>
+              <p className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
+                {telemetry.metrics.autonomyRate.value}<span className="text-lg text-cyan-500/50">%</span>
               </p>
             </div>
-            <div className="p-2 bg-cyan-500/20 rounded-xl group-hover:animate-bounce">
-              <Download className="text-cyan-400" size={20} />
+            <div className="p-3 bg-cyan-500/10 rounded-2xl group-hover:bg-cyan-500/20 transition-colors">
+              <Activity className="text-cyan-500 animate-pulse" size={28} />
             </div>
-          </motion.button>
-        )}
+          </div>
+          
+          {/* Kill Switch */}
+          <button
+            onClick={toggleKillSwitch}
+            title="Activar o desactivar escucha de base de datos"
+            className={`glass-premium px-6 py-5 flex items-center gap-4 border transition-all cursor-pointer shadow-xl group/kill ${
+              killSwitch ? 'border-red-500/40 bg-red-500/10' : 'border-emerald-500/20 hover:bg-emerald-500/10'
+            }`}
+          >
+            <div className="text-right hidden sm:block">
+              <p className={`text-[10px] uppercase font-black tracking-[0.3em] mb-1 ${killSwitch ? 'text-red-500/70' : 'text-emerald-500/70'}`}>
+                {killSwitch ? 'Reposo' : 'Conexión DB'}
+              </p>
+              <p className={`text-xl font-black tracking-tighter ${killSwitch ? 'text-red-400' : 'text-emerald-400'}`}>
+                {killSwitch ? 'APAGADA' : 'ACTIVA'}
+              </p>
+            </div>
+            <div className={`p-3 rounded-2xl transition-all ${killSwitch ? 'bg-red-500/20 animate-pulse' : 'bg-emerald-500/20'}`}>
+              {killSwitch ? <PowerOff className="text-red-400" size={28} /> : <Power className="text-emerald-400" size={28} />}
+            </div>
+          </button>
+
+          {/* PWA Install Action */}
+          {isInstallable && (
+            <motion.button
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={installPWA}
+              className="glass-premium px-6 py-5 flex items-center gap-4 border border-cyan-500/20 hover:bg-cyan-500/10 transition-all cursor-pointer shadow-xl group/install"
+            >
+              <div className="text-right hidden sm:block">
+                <p className="text-[10px] text-cyan-500/70 uppercase font-black tracking-[0.3em] mb-1">Mobile Access</p>
+                <p className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
+                  INSTALL APP
+                </p>
+              </div>
+              <div className="p-3 bg-cyan-500/20 rounded-2xl group-hover:animate-bounce">
+                <Download className="text-cyan-400" size={28} />
+              </div>
+            </motion.button>
+          )}
+        </div>
       </motion.header>
 
       {/* Tab Navigation */}

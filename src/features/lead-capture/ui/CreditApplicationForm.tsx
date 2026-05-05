@@ -9,8 +9,8 @@ import {
   ChevronRight,
   ChevronLeft,
 } from 'lucide-react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/shared/api/firebase/client';
+import { DI } from '@/app/(dashboard)/di/registry';
+
 import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
 import { PersuasionWrapper } from '@/shared/ui/containers/PersuasionWrapper';
 import { useCustomerMemory } from '@/shared/lib/persuasion/customerMemory';
@@ -107,14 +107,8 @@ export const CreditApplicationForm: React.FC = () => {
     };
 
     try {
-      if (!db) throw new Error('Firebase DB not initialized');
-
-      await addDoc(collection(db, 'credit_applications'), {
-        ...formData,
-        status: 'pending',
-        source: 'web_form',
-        createdAt: serverTimestamp(),
-      });
+      const repository = DI.getApplicationRepository();
+      await repository.submitApplication(formData, 'richard-automotive');
 
       setIsSuccess(true);
     } catch (error) {

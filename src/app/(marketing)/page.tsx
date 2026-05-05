@@ -96,7 +96,7 @@ export default async function HomePage() {
   let inventory: any[] = [];
   
   try {
-    const result = await getPaginatedCars(12);
+    const result = await getPaginatedCars(12, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for SSR:', error);

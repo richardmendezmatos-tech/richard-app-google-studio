@@ -29,7 +29,7 @@ const FrameworkDashboard: React.FC = () => {
       // Add to logs with timestamp
       const time = new Date().toLocaleTimeString();
       setLogs((prev) =>
-        [`[${time}] ${newState.source.toUpperCase()}: ${newState.lastAction}`, ...prev].slice(
+        [`[${time}] ${(newState.source || 'SYS').toUpperCase()}: ${newState.lastAction || 'Processing'}`, ...prev].slice(
           0,
           50,
         ),

@@ -30,7 +30,9 @@ const Viewer360: React.FC<Props> = ({
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [activeMode] = useState<'360' | 'cinematic'>(images.length > 1 ? '360' : 'cinematic');
+  const [activeMode] = useState<'360' | 'cinematic'>(
+    (images || []).length > 1 ? '360' : 'cinematic',
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const [hintVisible, setHintVisible] = useState(true);
 
@@ -276,7 +278,7 @@ const Viewer360: React.FC<Props> = ({
         </AnimatePresence>
         
         <img
-          src={images[currentFrame]}
+          src={(images || [])[currentFrame] || ''}
           alt={alt}
           className={`max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           draggable={false}

@@ -1,5 +1,4 @@
-import { auth, db } from '@/shared/api/firebase/firebaseService';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { PrivacySettings } from '@/shared/types/types';
 
 const PRIVACY_STORAGE_KEY = 'ra_privacy_settings';
@@ -17,16 +16,23 @@ const DEFAULT_SETTINGS: PrivacySettings = {
 };
 
 export const getPrivacySettings = async (): Promise<PrivacySettings> => {
-  // 1. Try Firestore if user is logged in
-  if (auth.currentUser) {
+  // 1. Try Supabase if user is logged in
+  if (supabase) {
     try {
-      const userDoc = doc(db, 'users', auth.currentUser.uid);
-      const snapshot = await getDoc(userDoc);
-      if (snapshot.exists() && snapshot.data()?.privacySettings) {
-        return snapshot.data().privacySettings as PrivacySettings;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('metadata')
+          .eq('id', user.id)
+          .single();
+          
+        if (!error && data?.metadata?.privacySettings) {
+          return data.metadata.privacySettings as PrivacySettings;
+        }
       }
     } catch (error) {
-      console.error('Error fetching privacy settings from Firestore:', error);
+      console.error('Error fetching privacy settings from Supabase:', error);
     }
   }
 
@@ -49,15 +55,21 @@ export const savePrivacySettings = async (settings: PrivacySettings): Promise<vo
   // 1. Save to Local Storage
   localStorage.setItem(PRIVACY_STORAGE_KEY, JSON.stringify(updatedSettings));
 
-  // 2. Save to Firestore if user is logged in
-  if (auth.currentUser) {
+  // 2. Save to Supabase if user is logged in
+  if (supabase) {
     try {
-      const userDoc = doc(db, 'users', auth.currentUser.uid);
-      await setDoc(userDoc, { privacySettings: updatedSettings }, { merge: true });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ metadata: { privacySettings: updatedSettings } })
+          .eq('id', user.id);
+      }
     } catch (error) {
-      console.error('Error saving privacy settings to Firestore:', error);
+      console.error('Error saving privacy settings to Supabase:', error);
     }
   }
+
 
   // 3. Dispatch event for other services to react
   window.dispatchEvent(new CustomEvent('privacySettingsChanged', { detail: updatedSettings }));

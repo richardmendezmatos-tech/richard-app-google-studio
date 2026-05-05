@@ -22,7 +22,7 @@ export default async function InventoryRoute() {
 
   
   try {
-    const result = await getPaginatedCars(12);
+    const result = await getPaginatedCars(12, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for SSR:', error);

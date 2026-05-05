@@ -37,7 +37,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
       setError(null);
       try {
         // Obtenemos un bloque del inventario real para contexto
-        const response = await getPaginatedCars(15, null);
+        const response = await getPaginatedCars(15, null, 'all');
         const allCars = response.cars;
         const data = await generateSmartDealSheet(lead, allCars); // Pasamos una muestra por tokens
         setDealData(data);

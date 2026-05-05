@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
-import { getStorageService } from '@/shared/api/firebase/firebaseService';
 import {
   validateImageFile,
   generateBlurPlaceholder,
@@ -196,57 +195,46 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
-          const storage = await getStorageService();
-          const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+          
+          const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+          const bucket = 'inventory';
 
-          // Parallel Upload of ALL versions
-          const uploadTasks: {
-            type: string;
-            ref: import('firebase/storage').StorageReference;
-            task: Promise<string>;
-          }[] = [];
+          // Parallel Upload of ALL versions to Supabase
+          const uploadTasks = [
+            {
+              type: 'jpeg',
+              path: `${storagePath}/${baseFileName}.jpg`,
+              file: optimized.jpeg,
+              contentType: 'image/jpeg'
+            },
+            {
+              type: 'thumb',
+              path: `${storagePath}/${baseFileName}_thumb.jpg`,
+              file: optimized.thumbnail,
+              contentType: 'image/jpeg'
+            }
+          ];
 
-          // 1. JPEG Task
-          const jpegRef = ref(storage, `${storagePath}/${baseFileName}.jpg`);
-          uploadTasks.push({
-            type: 'jpeg',
-            ref: jpegRef,
-            task: uploadBytes(jpegRef, optimized.jpeg, { contentType: 'image/jpeg' }).then(() =>
-              getDownloadURL(jpegRef),
-            ),
-          });
+          const results = await Promise.all(uploadTasks.map(async (task) => {
+            const { data, error } = await supabase.storage
+              .from(bucket)
+              .upload(task.path, task.file, {
+                contentType: task.contentType,
+                upsert: true
+              });
+            
+            if (error) throw error;
+            
+            const { data: { publicUrl } } = supabase.storage
+              .from(bucket)
+              .getPublicUrl(task.path);
+            
+            return { type: task.type, url: publicUrl };
+          }));
 
-          // 2. WebP Task
-          if (optimized.webp) {
-            const webpRef = ref(storage, `${storagePath}/${baseFileName}.webp`);
-            uploadTasks.push({
-              type: 'webp',
-              ref: webpRef,
-              task: uploadBytes(webpRef, optimized.webp, { contentType: 'image/webp' }).then(() =>
-                getDownloadURL(webpRef),
-              ),
-            });
-          }
-
-          // 3. Thumbnail Task
-          const thumbRef = ref(storage, `${storagePath}/${baseFileName}_thumb.jpg`);
-          uploadTasks.push({
-            type: 'thumb',
-            ref: thumbRef,
-            task: uploadBytes(thumbRef, optimized.thumbnail, { contentType: 'image/jpeg' }).then(
-              () => getDownloadURL(thumbRef),
-            ),
-          });
-
-          // Wait for all uploads of THIS image
-          const uploadResults = await Promise.all(uploadTasks.map((t) => t.task));
-
-          // Map results back to specific fields
-          const jpegUrl = uploadResults[uploadTasks.findIndex((t) => t.type === 'jpeg')];
-          const webpUrl = optimized.webp
-            ? uploadResults[uploadTasks.findIndex((t) => t.type === 'webp')]
-            : '';
-          const thumbUrl = uploadResults[uploadTasks.findIndex((t) => t.type === 'thumb')];
+          const jpegUrl = results.find(r => r.type === 'jpeg')?.url || '';
+          const thumbUrl = results.find(r => r.type === 'thumb')?.url || '';
+          const webpUrl = ''; // WebP generation skipped for now as per legacy worker logic
 
           const result: UploadResult = {
             url: jpegUrl,

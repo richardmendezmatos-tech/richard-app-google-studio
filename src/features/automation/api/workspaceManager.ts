@@ -1,5 +1,4 @@
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { dbLite as db } from '@/shared/api/firebase/client';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -9,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
  * llamadas prolongadas a Gemini (AI).
  */
 export class WorkspaceManager {
-  private readonly collectionName = 'workspaces';
+  private readonly tableName = 'checkpoints';
 
   /**
    * Inicializa o recupera un ID de sesión de Workspace.
@@ -19,38 +18,34 @@ export class WorkspaceManager {
   }
 
   /**
-   * Ejecuta un Checkpoint (Draft/Borrador) en Firestore.
+   * Ejecuta un Checkpoint (Draft/Borrador) en Supabase.
    * "Dato que no está en el Workspace, es dato que no existe."
    *
    * @param sessionId UUID de la tarea actual
    * @param category Categoría de la tarea (ej. 'VALUACION', 'COPYWRITING', 'AI_AUDIT')
-   * @param data Los datos en formato JSON o estructura plana para evitar stringify
+   * @param data Los datos en formato JSON o estructura plana
    */
   async checkpointOperation(sessionId: string, category: string, data: Record<string, any>) {
     try {
+      if (!supabase) return null;
+
       const today = new Date().toISOString().split('T')[0];
       const documentId = `${today}_${category.toUpperCase()}_${sessionId}`;
 
-      const docRef = doc(db, this.collectionName, documentId);
+      const { error } = await supabase.from(this.tableName).upsert({
+        id: documentId,
+        fecha: today,
+        categoria: category,
+        datos: data,
+        timestamp: new Date().toISOString(),
+      });
 
-      // Upsert the workspace checkpoint
-      await setDoc(
-        docRef,
-        {
-          sessionId,
-          category,
-          data,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true },
-      );
+      if (error) throw error;
 
       console.log(`[WorkspaceManager] Checkpoint Guardado: ${documentId}`);
       return documentId;
     } catch (error) {
       console.error('[WorkspaceManager] Fallo Crítico en Checkpointing:', error);
-      // No lanzamos excepcion para no bloquear el flujo principal
-      // Pero idealmente debería reintentarse si P_error se penaliza.
       return null;
     }
   }
@@ -60,12 +55,16 @@ export class WorkspaceManager {
    */
   async retrieveCheckpoint(documentId: string) {
     try {
-      const docRef = doc(db, this.collectionName, documentId);
-      const snapshot = await getDoc(docRef);
-      if (snapshot.exists()) {
-        return snapshot.data();
-      }
-      return null;
+      if (!supabase) return null;
+
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('id', documentId)
+        .single();
+
+      if (error || !data) return null;
+      return data;
     } catch (error) {
       console.error('[WorkspaceManager] Error al recuperar Checkpoint:', error);
       return null;
@@ -74,3 +73,4 @@ export class WorkspaceManager {
 }
 
 export const workspaceManager = new WorkspaceManager();
+

@@ -2,11 +2,10 @@
 
 import React, { useState, useRef } from 'react';
 import { useAuthStore } from '@/entities/session';
-import { updateUserProfile, updateUserPassword } from '@/features/auth';
+import { updateUserProfile, updateUserPassword, User as AppAuthUser } from '@/features/auth';
 import { usePrivacyStore } from '@/features/privacy';
-import { User as FirebaseUser } from 'firebase/auth';
 
-import { uploadImage } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2 } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import SEO from '@/shared/ui/seo/SEO';
@@ -25,16 +24,16 @@ const ProfilePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) return null;
-  const firebaseUser = user as unknown as FirebaseUser;
+  const authUser = user as unknown as AppAuthUser;
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setIsLoading(true);
       try {
         const file = e.target.files[0];
-        const url = await uploadImage(file);
+        const url = await DI.getStorageRepository().uploadImage(file);
         setPhotoURL(url); // Optimistic update
-        await updateUserProfile(firebaseUser, { photoURL: url });
+        await updateUserProfile(authUser, { photoURL: url });
         addNotification('success', 'Foto de perfil actualizada');
       } catch {
         addNotification('error', 'Error subiendo imagen');
@@ -49,7 +48,7 @@ const ProfilePage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await updateUserProfile(firebaseUser, { displayName });
+      await updateUserProfile(authUser, { displayName });
       addNotification('success', 'Perfil actualizado correctamente');
     } catch {
       addNotification('error', 'Error actualizando perfil');
@@ -71,7 +70,7 @@ const ProfilePage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await updateUserPassword(firebaseUser, passwords.new);
+      await updateUserPassword(authUser, passwords.new);
       addNotification('success', 'Contraseña actualizada. Mantén tu cuenta segura.');
       setPasswords({ new: '', confirm: '' });
     } catch {

@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, FC } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '@/shared/api/firebase/firebaseService';
+import { signInWithGoogleCredential } from '@/features/auth';
 
 interface GoogleOneTapProps {
   clientId?: string;
@@ -64,10 +63,9 @@ const GoogleOneTap: FC<GoogleOneTapProps> = ({
     async (response: GoogleCredentialResponse) => {
       try {
         console.log('Google Security Token Recibido:', response.credential);
-        const credential = GoogleAuthProvider.credential(response.credential);
-        const result = await signInWithCredential(auth, credential);
+        const user = await signInWithGoogleCredential(response.credential);
 
-        console.log('Usuario autenticado vía One Tap:', result.user.email);
+        console.log('Usuario autenticado vía One Tap:', user.email);
 
         if (onSuccess) onSuccess();
         else {

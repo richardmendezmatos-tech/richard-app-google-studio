@@ -4,10 +4,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
-import { FirestoreTimestamp } from '@/shared/types/types';
-import { getAuditLogs, AuditLog } from '@/shared/api/repositories/FirestoreAuditRepository';
+import { getAuditLogs, AuditLog } from '@/shared/api/repositories/SupabaseAuditRepository';
 
-type TimestampLike = FirestoreTimestamp | { toDate: () => Date };
+type TimestampLike = { seconds: number; nanoseconds: number } | { toDate: () => Date } | string | Date;
 
 const hasToDate = (value: TimestampLike): value is { toDate: () => Date } =>
   typeof (value as { toDate?: unknown }).toDate === 'function';
@@ -41,7 +40,16 @@ export const AuditLogViewer: React.FC = () => {
 
   const formatDate = (timestamp: TimestampLike) => {
     if (!timestamp) return 'N/A';
-    const date = hasToDate(timestamp) ? timestamp.toDate() : new Date(timestamp.seconds * 1000);
+    let date: Date;
+    if (hasToDate(timestamp as any)) {
+      date = (timestamp as { toDate: () => Date }).toDate();
+    } else if (timestamp instanceof Date) {
+      date = timestamp;
+    } else if (typeof timestamp === 'string') {
+      date = new Date(timestamp);
+    } else {
+      date = new Date((timestamp as { seconds: number }).seconds * 1000);
+    }
     return new Intl.DateTimeFormat('es-ES', {
       day: '2-digit',
       month: 'short',

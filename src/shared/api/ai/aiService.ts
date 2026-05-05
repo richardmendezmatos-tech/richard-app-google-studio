@@ -40,6 +40,25 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 /**
+ * Helper to call our internal Gemini API
+ */
+const callAiApi = async (contents: any[], model: string = 'gemini-1.5-flash'): Promise<string> => {
+  const response = await fetch('/api/ai/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents, model }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'AI API request failed');
+  }
+
+  const { data } = await response.json();
+  return data;
+};
+
+/**
  * Analyzes a car image to extract metadata for search
  */
 export const analyzeCarVisuals = async (file: File): Promise<VisualSearchResult> => {
@@ -57,17 +76,7 @@ export const analyzeCarVisuals = async (file: File): Promise<VisualSearchResult>
 
   try {
     const imagePart = await fileToGenerativePart(file);
-
-    const { functions } = await import('@/shared/api/firebase/client');
-    const { httpsCallable } = await import('firebase/functions');
-    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
-
-    const response = await askGemini({
-      contents: [prompt, imagePart],
-      model: 'gemini-1.5-flash',
-    });
-
-    const text = response.data;
+    const text = await callAiApi([prompt, imagePart], 'gemini-1.5-flash');
 
     // Extract JSON from potential markdown code blocks
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -153,16 +162,7 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
   `;
 
   try {
-    const { functions } = await import('@/shared/api/firebase/client');
-    const { httpsCallable } = await import('firebase/functions');
-    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
-
-    const response = await askGemini({
-      contents: [prompt],
-      model: 'gemini-1.5-flash',
-    });
-
-    const responseText = response.data;
+    const responseText = await callAiApi([prompt], 'gemini-1.5-flash');
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return null;

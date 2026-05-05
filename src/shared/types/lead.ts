@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { FirestoreTimestamp } from './firestore';
 
 export interface BehavioralFingerprint {
   scrollVelocity: number;
@@ -28,8 +27,8 @@ export interface Lead {
   dealerId?: string;
   category?: string;
   monthlyIncome?: number;
-  createdAt?: FirestoreTimestamp;
-  timestamp?: FirestoreTimestamp;
+  createdAt?: Date | any;
+  timestamp?: Date | any;
 
   // Context
   vehicleOfInterest?: string;
@@ -54,7 +53,7 @@ export interface Lead {
   // Automation Status
   emailSent?: boolean;
   nudgeSent?: boolean;
-  lastContacted?: FirestoreTimestamp;
+  lastContacted?: Date | any;
   chatInteractions?: number;
   responded?: boolean;
   documentsSent?: boolean;

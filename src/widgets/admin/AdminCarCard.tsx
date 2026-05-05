@@ -1,7 +1,7 @@
 import React from 'react';
 import { Car as CarType } from '@/shared/types/types';
 import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 
@@ -22,8 +22,8 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
 }) => {
   const prediction = calculatePredictiveDTS(car, leadCount);
   const isEco =
-    car.name.toLowerCase().includes('electric') ||
-    car.name.toLowerCase().includes('tesla') ||
+    (car?.name || '').toLowerCase().includes('electric') ||
+    (car?.name || '').toLowerCase().includes('tesla') ||
     car.type === 'luxury';
 
   return (
@@ -108,7 +108,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
         {/* Features Tags */}
         {car.features && car.features.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-auto pt-2">
-            {car.features.slice(0, 2).map((f, i) => (
+            {(car.features || []).slice(0, 2).map((f, i) => (
               <span
                 key={i}
                 className="px-3 py-1.5 bg-white/5 rounded-lg text-[9px] font-bold text-slate-300 uppercase tracking-widest border border-white/10 flex items-center gap-1.5"

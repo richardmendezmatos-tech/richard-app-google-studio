@@ -26,14 +26,14 @@ export const InventoryProfitabilityWidget: React.FC<Props> = ({ inventory }) => 
     const units = inventory.map((car) => ({
       id: car.id,
       vin: car.id, // Usamos ID como fallback de VIN para el análisis visual
-      marca: car.name.split(' ')[1] || 'Unknown',
-      modelo: car.name.split(' ').slice(2).join(' ') || 'Unknown',
+      marca: (car.name || '').split(' ')[1] || 'Unknown',
+      modelo: (car.name || '').split(' ').slice(2).join(' ') || 'Unknown',
       anio: car.year || 2024,
       color: 'N/A',
       millaje: 0,
-      costoAdquisicion: car.price * 0.8, // Estimación de costo para el widget (backend data real idealmente)
+      costoAdquisicion: (car.price || 0) * 0.8, // Estimación de costo para el widget (backend data real idealmente)
       costoRecondicionamiento: 500,
-      precioVenta: car.price,
+      precioVenta: car.price || 0,
       estado: EstadoUnidad.DISPONIBLE,
       fechaIngreso: new Date(),
     }));
@@ -45,7 +45,7 @@ export const InventoryProfitabilityWidget: React.FC<Props> = ({ inventory }) => 
     const healthyCount = reports.filter((r) => r.esOperacionSaludable).length;
 
     return {
-      reports: reports.slice(0, 5), // Top 5 para el widget
+      reports: (reports || []).slice(0, 5), // Top 5 para el widget
       averageRoi,
       totalProfit,
       healthyCount,
@@ -115,7 +115,7 @@ export const InventoryProfitabilityWidget: React.FC<Props> = ({ inventory }) => 
               </div>
               <div className="overflow-hidden">
                 <p className="text-[10px] font-black text-white truncate w-24">
-                  ID: {report.id.split('-')[0]}
+                  ID: {(report.id || '').split('-')[0]}
                 </p>
                 <p className="text-[9px] text-slate-400 font-bold uppercase">
                   ROI: {report.roi.toFixed(1)}%

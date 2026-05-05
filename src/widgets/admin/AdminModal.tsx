@@ -73,53 +73,30 @@ export const AdminModal: React.FC<AdminModalProps> = ({
             
             ADICIONAL: Si se incluye una imagen, analiza visualmente el vehículo y menciona detalles específicos que veas (color, rines, estado de la pintura, extras visibles) para hacer la descripción más auténtica.`;
 
-      // VISION UPGRADE: Prepare multimodal contents
-      let contents: unknown[] = [prompt];
-
+      // vision upgrade: use shared gemini service directly
+      const { generateVisionDescription } = await import('@/shared/api/ai/geminiService');
+      
+      let base64Image: string | undefined;
       if (uploadResults.length > 0) {
         try {
           const firstImageUrl = uploadResults[0].url;
-          // Fetch the image and convert to base64 for Gemini
           const imgResponse = await fetch(firstImageUrl);
           const blob = await imgResponse.blob();
-          const base64Data = await blobToBase64(blob);
-
-          // Remove data:image/jpeg;base64, prefix
-          const base64Content = base64Data.split(',')[1];
-
-          contents = [
-            {
-              role: 'user',
-              parts: [
-                { text: prompt },
-                {
-                  inlineData: {
-                    mimeType: blob.type,
-                    data: base64Content,
-                  },
-                },
-              ],
-            },
-          ];
-          logDebug('AI Vision: Imagen enviada exitosamente para análisis.');
+          base64Image = await blobToBase64(blob);
+          logDebug('AI Vision: Imagen cargada para análisis directo.');
         } catch (imgError) {
           console.error('Error preparing vision data:', imgError);
           logDebug('AI Vision: Fallo al cargar imagen, procediendo solo con texto.');
         }
       }
 
-      const { functions } = await import('@/shared/api/firebase/client');
-      const { httpsCallable } = await import('firebase/functions');
-      const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+      const response = await generateVisionDescription(
+        prompt,
+        base64Image,
+        'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.'
+      );
 
-      const response = await askGemini({
-        contents,
-        model: 'gemini-1.5-flash',
-        systemInstruction:
-          'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
-      });
-
-      setDescription(response.data);
+      setDescription(response);
     } catch (error) {
       console.error('AI Generation Error:', error);
       alert('Error generando descripción. Intenta nuevamente.');

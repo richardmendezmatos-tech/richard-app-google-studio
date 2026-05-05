@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { db } from '@/shared/api/firebase/firebaseService';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore/lite';
+import { getUsageLogs, UsageLog } from '@/entities/sales/api/billingService';
 import {
   CreditCard,
   TrendingUp,
@@ -14,13 +13,6 @@ import {
   Clock,
 } from 'lucide-react';
 
-interface UsageLog {
-  dealerId?: string;
-  eventType?: string;
-  count?: number;
-  costEstimate?: number;
-}
-
 const B2BBillingDashboard = () => {
   const [usageLogs, setUsageLogs] = useState<UsageLog[]>([]);
   const [stats, setStats] = useState({
@@ -30,13 +22,10 @@ const B2BBillingDashboard = () => {
   });
 
   useEffect(() => {
-    let cancelled = false;
-    const loadUsageLogs = async () => {
+    const loadLogs = async () => {
       try {
-        const q = query(collection(db, 'usage_logs'), orderBy('timestamp', 'desc'));
-        const snapshot = await getDocs(q);
-        if (cancelled) return;
-        const logs = snapshot.docs.map((doc) => doc.data() as UsageLog);
+        const dealerId = 'richard-automotive'; // Hardcoded for now or fetch from context
+        const logs = await getUsageLogs(dealerId, 50);
         setUsageLogs(logs);
 
         const cost = logs.reduce((sum, log) => sum + (log.costEstimate || 0), 0);
@@ -50,14 +39,14 @@ const B2BBillingDashboard = () => {
       }
     };
 
-    loadUsageLogs();
-    const intervalId = setInterval(loadUsageLogs, 15000);
+    loadLogs();
+    const intervalId = setInterval(loadLogs, 15000);
 
     return () => {
-      cancelled = true;
       if (intervalId) clearInterval(intervalId);
     };
   }, []);
+
 
   return (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">

@@ -1,10 +1,9 @@
 import { Lead } from '@/entities/lead';
 import { Car, CarType } from '@/entities/inventory';
 import { Appraisal } from '@/entities/appraisal';
-import { FirestoreTimestamp } from './firestore';
 import { UserRole, AppUser } from '@/entities/user';
 
-export type { Lead, Car, CarType, Appraisal, FirestoreTimestamp, UserRole, AppUser };
+export type { Lead, Car, CarType, Appraisal, UserRole, AppUser };
 
 export interface PrivacySettings {
   language: 'es' | 'en';
@@ -76,7 +75,7 @@ export interface BlogPost {
 export interface Subscriber {
   id?: string;
   email: string;
-  timestamp?: FirestoreTimestamp | { seconds: number };
+  timestamp?: Date | any;
 }
 
 export interface FinancialApplication {

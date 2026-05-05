@@ -1,7 +1,7 @@
 import React from 'react';
 import { Car as CarType } from '@/entities/inventory';
 import { Edit3, Trash2, Sparkles, Leaf, TrendingUp, Clock, Tag, Gauge } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 
@@ -22,8 +22,8 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
 }) => {
   const prediction = calculatePredictiveDTS(car, leadCount);
   const isEco =
-    car.name.toLowerCase().includes('electric') ||
-    car.name.toLowerCase().includes('tesla') ||
+    (car.name || '').toLowerCase().includes('electric') ||
+    (car.name || '').toLowerCase().includes('tesla') ||
     car.type === 'luxury';
 
   return (
@@ -32,7 +32,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       <div className="relative h-72 overflow-hidden">
         <img
           src={optimizeImage(car.img || '', 800)}
-          alt={car.name}
+          alt={car.name || 'Vehicle'}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050c14] via-transparent to-slate-950/40" />
@@ -70,7 +70,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
       <div className="p-8 space-y-6 flex-1 flex flex-col">
         <div>
           <h3 className="text-lg font-black text-white uppercase tracking-tight truncate mb-1 group-hover/card:text-primary transition-colors">
-            {car.name}
+            {car.name || 'Sin Nombre'}
           </h3>
           <div className="flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">
             <Gauge size={10} /> {car.type === 'luxury' ? 'Premium' : 'Standard'} •{' '}
@@ -106,9 +106,9 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
         </div>
 
         {/* Features Tags */}
-        {car.features && car.features.length > 0 && (
+        {(car.features || []).length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {car.features.slice(0, 2).map((f, i) => (
+            {(car.features || []).slice(0, 2).map((f, i) => (
               <span
                 key={i}
                 className="px-3 py-1.5 bg-white/5 rounded-xl text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"
@@ -127,24 +127,27 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
           >
             <Sparkles
               size={14}
+              aria-hidden="true"
               className="group-hover/btn:rotate-12 transition-transform duration-500"
             />
             Strategy Lab
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="group" aria-label="Acciones de gestión">
             <button
               onClick={() => onEdit(car)}
               className="w-10 h-10 bg-white/5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl flex items-center justify-center transition-all border border-white/10 group/edit"
               title="Editar descripción de unidad"
+              aria-label={`Editar ${car.name || 'unidad'}`}
             >
-              <Edit3 size={16} />
+              <Edit3 size={16} aria-hidden="true" />
             </button>
             <button
               onClick={() => onDelete(car.id)}
               className="w-10 h-10 bg-rose-500/5 text-rose-500/50 hover:text-white hover:bg-rose-600 rounded-xl flex items-center justify-center transition-all border border-rose-500/10 group/del"
               title="Eliminar unidad del inventario"
+              aria-label={`Eliminar ${car.name || 'unidad'}`}
             >
-              <Trash2 size={16} />
+              <Trash2 size={16} aria-hidden="true" />
             </button>
           </div>
         </div>

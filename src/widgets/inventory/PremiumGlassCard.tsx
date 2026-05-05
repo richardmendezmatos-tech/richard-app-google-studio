@@ -61,9 +61,9 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   };
 
   // F&I Logic (Expert Decision: real amortization > simple division)
-  const suggestedPronto = calculateSuggestedPronto(car.price);
-  const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
-  const whatsappUrl = generateWhatsAppQuoteUrl(car.name, car.price, estimatedMonthly, suggestedPronto);
+  const suggestedPronto = calculateSuggestedPronto(car.price || 0);
+  const estimatedMonthly = calculateMonthlyPayment(car.price || 0, suggestedPronto);
+  const whatsappUrl = generateWhatsAppQuoteUrl(car.name || 'Vehículo', car.price || 0, estimatedMonthly, suggestedPronto);
 
   return (
     <div
@@ -171,7 +171,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           </h3>
           <div className="mt-2 flex items-center gap-1.5 text-[9px] text-orange-400 font-tech uppercase tracking-wider animate-pulse">
             <Activity size={12} />
-            <span>🔥 {((car.id.charCodeAt(0) || 0) % 5) + 3} personas cotizaron esta unidad hoy</span>
+            <span>🔥 {((car.id?.charCodeAt(0) || 0) % 5) + 3} personas cotizaron esta unidad hoy</span>
           </div>
         </div>
 

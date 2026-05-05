@@ -177,15 +177,15 @@ export default async function CategoryPage({ params }: Props) {
   let inventory: Car[] = [];
 
   try {
-    const result = await getPaginatedCars(50);
+    const result = await getPaginatedCars(50, null, 'all');
     const allInventory = result.cars;
     // Filter by type if possible, otherwise show all
-    inventory = allInventory.filter(
+    inventory = (allInventory || []).filter(
       (car: Car) => car.type?.toLowerCase() === cat.slug || !car.type
     );
     // If filter yields too few results, show all
     if (inventory.length < 3) {
-      inventory = allInventory.slice(0, 12);
+      inventory = (allInventory || []).slice(0, 12);
     }
   } catch (error) {
     console.error(`[SEO Category: ${cat.name}] Error fetching inventory:`, error);

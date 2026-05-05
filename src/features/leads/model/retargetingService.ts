@@ -1,5 +1,4 @@
-import { dbLite } from '@/shared/api/firebase/firebaseService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 
 export interface InteractionEvent {
   userId?: string;
@@ -10,14 +9,17 @@ export interface InteractionEvent {
 
 export const logBehavioralEvent = async (event: InteractionEvent) => {
   try {
-    const eventsRef = collection(dbLite, 'behavioral_events');
-    await addDoc(eventsRef, {
-      ...event,
-      timestamp: serverTimestamp(),
-      sessionId: sessionStorage.getItem('richard_session_id') || 'anonymous',
+    if (!supabase) return;
+
+    await supabase.from('behavioral_events').insert({
+      user_id: event.userId || null,
+      car_id: event.carId,
+      action: event.action,
+      metadata: event.metadata || {},
+      session_id: typeof window !== 'undefined' ? sessionStorage.getItem('richard_session_id') || 'anonymous' : 'server',
+      timestamp: new Date().toISOString(),
     });
 
-    // Simple local-threshold check for immediate nudge
     checkImmediateNudge(event);
   } catch (err) {
     console.error('Retargeting Log Error:', err);
@@ -25,14 +27,14 @@ export const logBehavioralEvent = async (event: InteractionEvent) => {
 };
 
 const checkImmediateNudge = (event: InteractionEvent) => {
+  if (typeof window === 'undefined') return;
+
   const views = parseInt(localStorage.getItem(`views_${event.carId}`) || '0') + 1;
   localStorage.setItem(`views_${event.carId}`, views.toString());
 
-  // COO TUNE: Reduced threshold to 2 for aggressive 90-day cash flow boost
   if (views >= 2 && event.action === 'view') {
     const dealerName = localStorage.getItem('current_dealer_name') || 'Richard Automotive';
 
-    // Trigger "Smart Nudge"
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(`¡Interés Detectado en ${dealerName}!`, {
         body: 'Has visto este auto varias veces. ¿Quieres una oferta exclusiva por WhatsApp?',
@@ -41,3 +43,4 @@ const checkImmediateNudge = (event: InteractionEvent) => {
     }
   }
 };
+

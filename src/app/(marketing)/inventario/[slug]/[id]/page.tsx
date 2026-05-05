@@ -14,7 +14,7 @@ interface Props {
 export async function generateStaticParams() {
   try {
     // Fetch first 50 cars for build-time static generation
-    const { cars } = await getPaginatedCars(50, 0);
+    const { cars } = await getPaginatedCars(50, 0, 'all');
     
     if (!cars || cars.length === 0) {
       console.warn('[Build] Empty inventory from Supabase. Using fallback to satisfy Next.js 16/17 build rules.');
@@ -167,7 +167,7 @@ export default async function VehicleDetailPage({ params }: Props) {
   // Parallel fetch for current car and initial inventory (for related/sidebar)
   const [currentCar, { cars: inventory }] = await Promise.all([
     getCarById(id),
-    getPaginatedCars(12, 0)
+    getPaginatedCars(12, 0, 'all')
   ]);
 
   // Generate default FAQs if not provided by the entity

@@ -1,49 +1,32 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@/entities/session';
+import { subscribeToAuthChanges, getUserRole, normalizeUser } from '@/features/auth/services/authService';
 
 export const useAuthListener = () => {
   const { setUser, setRole, setLoading, logout } = useAuthStore();
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-    let mounted = true;
-
-    (async () => {
-      const [{ auth }, { getUserRole }] = await Promise.all([
-        import('@/shared/api/firebase/firebaseService'),
-        import('@/features/auth/services/authService'),
-      ]);
-
-      if (!mounted) return;
-
-      unsubscribe = auth.onAuthStateChanged(async (user) => {
-        if (!mounted) return;
-
-        if (user) {
+    setLoading(true);
+    
+    const unsubscribe = subscribeToAuthChanges(async (user) => {
+      if (user) {
+        try {
           const role = await getUserRole(user.uid);
-          if (!mounted) return;
-
           setRole(role);
-          setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            role: role,
-          });
-        } else {
+          setUser(normalizeUser(user, role));
+        } catch (error) {
+          console.error('Error fetching user role:', error);
           logout();
         }
-        setLoading(false);
-      });
-    })().catch((error) => {
-      console.error('Auth listener bootstrap failed:', error);
-      if (mounted) setLoading(false);
+      } else {
+        logout();
+      }
+      setLoading(false);
     });
 
     return () => {
-      mounted = false;
-      unsubscribe?.();
+      unsubscribe();
     };
   }, [setUser, setRole, setLoading, logout]);
 };
+

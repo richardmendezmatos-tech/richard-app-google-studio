@@ -1,5 +1,4 @@
-import { db } from '@/shared/api/firebase/firebaseService';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { generateEmbedding } from '@/shared/api/ai';
 import { vectorStoreService } from '@/features/ai-hub';
 import { intentAnalysisService, IntentMatrix } from './scoring/IntentAnalysisService';
@@ -28,15 +27,13 @@ export interface CustomerMemory {
  * Mobile/Web Frontend Service to manage long-term customer memory.
  */
 export class CustomerMemoryService {
-  private collection = 'customer_memory';
+  private tableName = 'customer_memory';
 
   /**
    * Analiza el perfil cognitivo basado en interacciones.
    * Nivel 16: Hyper-Personalization.
    */
-  async analyzeCognitiveProfile(leadId: string, interaction: string): Promise<PersuasionProfile> {
-    // Aquí se llamaría a un modelo de IA (Vertex/Gemini) para clasificar el texto.
-    // Lógica determinista simulada por ahora:
+  async analyzeCognitiveProfile(interaction: string): Promise<PersuasionProfile> {
     const text = interaction.toLowerCase();
     if (text.includes('precio') || text.includes('ahorro') || text.includes('comparar')) return 'Analytical';
     if (text.includes('entrega') || text.includes('estatus') || text.includes('ya')) return 'Impulsive';
@@ -51,52 +48,63 @@ export class CustomerMemoryService {
     leadId: string,
     data: { vehicleId?: string; interactionSnippet?: string },
   ): Promise<void> {
-    const memoryRef = doc(db, this.collection, leadId);
-    const docSnap = await getDoc(memoryRef);
+    if (!supabase) return;
 
-    if (!docSnap.exists()) {
-      await setDoc(memoryRef, this.getDefaultMemory(leadId));
-    }
+    const { data: existingMemory, error: fetchError } = await supabase
+      .from(this.tableName)
+      .select('*')
+      .eq('lead_id', leadId)
+      .single();
 
-    const currentMemory = docSnap.exists() ? docSnap.data() as CustomerMemory : this.getDefaultMemory(leadId);
+    const currentMemory: CustomerMemory = existingMemory 
+      ? {
+          leadId: existingMemory.lead_id,
+          preferences: {
+            ...existingMemory.preferences,
+            lastSeen: new Date(existingMemory.preferences.lastSeen)
+          },
+          history: existingMemory.history || [],
+          notes: existingMemory.notes || []
+        }
+      : this.getDefaultMemory(leadId);
 
-    const updates: Record<string, unknown> = {
-      'preferences.lastSeen': Timestamp.now(),
+    const updates: any = {
+      lead_id: leadId,
+      preferences: {
+        ...currentMemory.preferences,
+        lastSeen: new Date().toISOString(),
+      },
     };
 
     if (data.vehicleId) {
-      updates.history = arrayUnion(data.vehicleId);
+      updates.history = [...new Set([...currentMemory.history, data.vehicleId])];
     }
 
     if (data.interactionSnippet) {
       const timestamp = new Date().toLocaleDateString();
       const noteEntry = `[${timestamp}] ${data.interactionSnippet}`;
-      updates.notes = arrayUnion(noteEntry);
+      updates.notes = [...currentMemory.notes, noteEntry];
 
-      // Nivel 16: Perfilado Dinámico
-      const newProfile = await this.analyzeCognitiveProfile(leadId, data.interactionSnippet);
+      const newProfile = await this.analyzeCognitiveProfile(data.interactionSnippet);
       if (newProfile !== 'Unknown') {
-        updates['preferences.persuasionProfile'] = newProfile;
+        updates.preferences.persuasionProfile = newProfile;
       }
 
-      // Nivel 17: Matriz de Intención Semántica (Gemini 1.5 Flash)
       try {
         const newMatrix = await intentAnalysisService.extractIntent(data.interactionSnippet);
-        updates['preferences.intentMatrix'] = newMatrix;
+        updates.preferences.intentMatrix = newMatrix;
 
-        // Sentiment Velocity
         if (currentMemory.preferences.intentMatrix) {
           const velocity = intentAnalysisService.calculateVelocity(
             currentMemory.preferences.intentMatrix,
             newMatrix
           );
-          updates['preferences.sentimentVelocity'] = velocity;
+          updates.preferences.sentimentVelocity = velocity;
         }
       } catch (err) {
         console.error('Failed to extract intent matrix:', err);
       }
 
-      // AI Vector Integration: Generate embedding and store in Supabase
       try {
         const embedding = await generateEmbedding(data.interactionSnippet);
         await vectorStoreService.upsertInteraction({
@@ -110,12 +118,15 @@ export class CustomerMemoryService {
       }
     }
 
-    await updateDoc(memoryRef, updates);
+    const { error: upsertError } = await supabase
+      .from(this.tableName)
+      .upsert(updates);
+
+    if (upsertError) {
+      console.error('[CustomerMemoryService] Error upserting memory:', upsertError);
+    }
   }
 
-  /**
-   * Searches for relevant past context across all interactions of a lead.
-   */
   async getRelevantContext(leadId: string, query: string): Promise<string[]> {
     try {
       const queryEmbedding = await generateEmbedding(query);
@@ -127,24 +138,26 @@ export class CustomerMemoryService {
     }
   }
 
-  /**
-   * Retrieves the stored memory for a lead.
-   */
   async getMemory(leadId: string): Promise<CustomerMemory | null> {
-    const docRef = doc(db, this.collection, leadId);
-    const docSnap = await getDoc(docRef);
+    if (!supabase) return null;
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        ...data,
-        preferences: {
-          ...data.preferences,
-          lastSeen: data.preferences.lastSeen.toDate(),
-        },
-      } as CustomerMemory;
-    }
-    return null;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select('*')
+      .eq('lead_id', leadId)
+      .single();
+
+    if (error || !data) return null;
+
+    return {
+      leadId: data.lead_id,
+      preferences: {
+        ...data.preferences,
+        lastSeen: new Date(data.preferences.lastSeen),
+      },
+      history: data.history || [],
+      notes: data.notes || [],
+    } as CustomerMemory;
   }
 
   private getDefaultMemory(leadId: string): CustomerMemory {
@@ -165,3 +178,4 @@ export class CustomerMemoryService {
 }
 
 export const customerMemoryService = new CustomerMemoryService();
+

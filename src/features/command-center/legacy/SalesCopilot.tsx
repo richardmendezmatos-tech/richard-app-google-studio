@@ -4,14 +4,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Target, MessageSquare, Save, Zap, Bot, User, Loader2 } from 'lucide-react';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from '@/shared/api/firebase/client';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateText } from '@/shared/api/ai/geminiService';
 
 import ProgressiveForm from '@/widgets/brand-ui/chat/ProgressiveForm';
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.VITE_GEMINI_API_KEY || '');
 
 interface ChatMessage {
   id: string;
@@ -51,29 +46,15 @@ const SalesCopilot: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Ref para mantener la historia en el loop de Gemini
-  const chatHistoryRef = useRef<any>(null);
+  // Mantener el historial para las llamadas sucesivas al aiService
+  const chatHistory = useRef<{ role: string; content: string }[]>([]);
 
   useEffect(() => {
-    // Initialize Gemini Chat Session on mount
-    const initChat = async () => {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: 'gemini-1.5-flash',
-          systemInstruction: fiSystemPrompt,
-        });
-        chatHistoryRef.current = model.startChat({
-          history: [
-            { role: 'user', parts: [{ text: 'Inicia la conversación.' }] },
-            { role: 'model', parts: [{ text: messages[0].content }] },
-          ],
-        });
-      } catch (error) {
-        console.error('Gemini init error:', error);
-      }
-    };
-    initChat();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Inicializar historial con el mensaje de bienvenida y el prompt del sistema
+    chatHistory.current = [
+      { role: 'user', content: 'Inicia la conversación.' },
+      { role: 'agent', content: messages[0].content }
+    ];
   }, []);
 
   useEffect(() => {
@@ -96,40 +77,43 @@ const SalesCopilot: React.FC = () => {
     setIsTyping(true);
 
     try {
-      if (chatHistoryRef.current) {
-        const result = await chatHistoryRef.current.sendMessage(newUserMsg);
-        const responseText = result.response.text();
+      // Usar el aiService que llama a nuestra API interna (segura)
+      const responseText = await generateText(
+        `History:\n${chatHistory.current.map(h => `${h.role}: ${h.content}`).join('\n')}\nUser: ${newUserMsg}`,
+        fiSystemPrompt
+      );
 
-        let finalContent = responseText;
-        let detectedWidget: 'income' | 'trade-in' | 'credit' | undefined = undefined;
+      let finalContent = responseText;
+      let detectedWidget: 'income' | 'trade-in' | 'credit' | undefined = undefined;
 
-        // Extract Widget Commands like [WIDGET:income]
-        const widgetMatch = responseText.match(/\[WIDGET:(income|trade-in|credit)\]/i);
-        if (widgetMatch && widgetMatch[1]) {
-          detectedWidget = widgetMatch[1].toLowerCase() as any;
-          finalContent = responseText.replace(/\[WIDGET:(income|trade-in|credit)\]/gi, '').trim();
-        }
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: 'agent',
-            content: finalContent,
-            widget: detectedWidget,
-          },
-        ]);
-      } else {
-        throw new Error('Chat no inicializado');
+      // Extract Widget Commands like [WIDGET:income]
+      const widgetMatch = responseText.match(/\[WIDGET:(income|trade-in|credit)\]/i);
+      if (widgetMatch && widgetMatch[1]) {
+        detectedWidget = widgetMatch[1].toLowerCase() as any;
+        finalContent = responseText.replace(/\[WIDGET:(income|trade-in|credit)\]/gi, '').trim();
       }
-    } catch (error) {
+
+      // Actualizar historial local
+      chatHistory.current.push({ role: 'user', content: newUserMsg });
+      chatHistory.current.push({ role: 'agent', content: finalContent });
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
           role: 'agent',
-          content:
-            'Disculpa, tuve un problema procesando eso. (Asegúrate de tener la API Key configurada).',
+          content: finalContent,
+          widget: detectedWidget,
+        },
+      ]);
+    } catch (error) {
+      console.error('Copilot Error:', error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: 'agent',
+          content: 'Disculpa, tuve un problema procesando eso. Por favor intenta de nuevo.',
         },
       ]);
     } finally {
@@ -140,46 +124,33 @@ const SalesCopilot: React.FC = () => {
   const syncToNotion = async () => {
     setIsSaving(true);
     try {
-      const saveFiProgress = httpsCallable(functions, 'saveFiProgress');
-
       // Construir resumen simplificado basado en el chat actual
       const chatContext = messages
         .map((m) => `${m.role === 'agent' ? 'Asesor' : 'Cliente'}: ${m.content}`)
-        .join('\\n');
+        .join('\n');
 
-      // Placeholder values for the new fields, as they are not defined in the current component scope.
-      // In a real application, these would be extracted from the chat messages or other state.
-      const placeholderFormData = {
-        nombreSolicitante: 'Lead Interactivo F&I',
-        telefono: 'N/A',
-        seguroSocial: 'N/A',
-        puntuacionCredito: 'N/A',
-        ingresosMensuales: 0,
+      const payload = {
+        clientName: 'Lead Interactivo F&I',
+        phone: 'N/A',
+        ssn: 'N/A',
+        score: 'N/A',
+        income: 0,
+        unitPrice: 0,
+        tradeIn: 0,
+        netToFinance: 0,
+        status: 'Pre-Cualificación AI',
+        summary: chatContext.substring(0, 1800),
       };
-      const placeholderMonto = 0; // Unit price
-      const placeholderAppraisalResult = { suggestedAppraisal: 0 }; // Trade-in value
-      const placeholderAnalysisResult = {
-        perfil: 'Pre-Cualificación AI',
-        mensajeVenta: chatContext.substring(0, 1800),
-      }; // Status and summary
 
-      const response = await saveFiProgress({
-        clientName: placeholderFormData.nombreSolicitante,
-        phone: placeholderFormData.telefono,
-        ssn: placeholderFormData.seguroSocial,
-        score: placeholderFormData.puntuacionCredito,
-        income: placeholderFormData.ingresosMensuales,
-        unitPrice: placeholderMonto,
-        tradeIn: placeholderAppraisalResult?.suggestedAppraisal || 0,
-        netToFinance: Math.max(
-          0,
-          placeholderMonto - (placeholderAppraisalResult?.suggestedAppraisal || 0),
-        ),
-        status: placeholderAnalysisResult.perfil,
-        summary: placeholderAnalysisResult.mensajeVenta,
+      const response = await fetch('/api/webhooks/notion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      if ((response.data as any)?.success) {
+      const result = await response.json();
+
+      if (result.success) {
         setMessages((prev) => [
           ...prev,
           {
@@ -189,6 +160,8 @@ const SalesCopilot: React.FC = () => {
               '✅ ¡Excelente! He guardado este expediente de forma segura en nuestro CRM Central (Notion). El equipo de gerencia ya tiene acceso al caso.',
           },
         ]);
+      } else {
+        throw new Error(result.error || 'Error desconocido');
       }
     } catch (error: any) {
       alert('Hubo un error guardando el caso: ' + error.message);

@@ -5,7 +5,6 @@ import { Car } from '@/shared/types/types';
 /**
  * Buscador "Ghost Failover"
  * Prioriza búsqueda semántica (IA) en Supabase.
- * Si Supabase está pausado o falla, activa búsqueda básica en Firestore.
  */
 export const smartVehicleSearch = async (
   queryText: string,
@@ -17,21 +16,16 @@ export const smartVehicleSearch = async (
       const semanticMatches = await searchSemanticInventory(queryEmbedding);
 
       if (semanticMatches && semanticMatches.length > 0) {
-        // Mapear IDs si es necesario o retornar resultados
-        // (Para simplificar, asumimos que devuelve objetos Car o IDs válidos)
         return semanticMatches as any;
       }
     }
   } catch (error) {
-    console.warn('Supabase no disponible, activando failover a Firestore:', error);
+    console.warn('Supabase no disponible, activando búsqueda local:', error);
   }
 
-  // Fallback: Búsqueda básica en Firestore
-  // Implementamos un filtro simple por texto en el inventario paginado
-  console.log('Ejecutando fallback en Firestore...');
+  // Fallback: Búsqueda básica local (Basado en inventario cargado)
   const { cars } = await getPaginatedCars(10, null, 'all');
 
-  // Filtro simple de cliente para el fallback (Simulando búsqueda de texto)
   return cars.filter(
     (car) =>
       car.name?.toLowerCase().includes(queryText.toLowerCase()) ||

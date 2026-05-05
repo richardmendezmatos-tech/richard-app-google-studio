@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { getRealtimeDbService } from '@/shared/api/firebase/firebaseService';
 import { VehicleHealthStatus } from '@/shared/types/types';
-import type { DataSnapshot } from 'firebase/database';
-import telemetry from '@/shared/api/metrics/analytics';
+import { createClient } from '@/shared/api/supabase/client';
+import { analyzeVehicleHealth } from '@/shared/api/metrics/telemetryService';
+import telemetryAnalytics from '@/shared/api/metrics/analytics';
 
 interface TelemetryContextType {
   telemetryMap: Record<string, VehicleHealthStatus>;
@@ -13,15 +13,18 @@ interface TelemetryContextType {
 
 const TelemetryContext = createContext<TelemetryContextType | undefined>(undefined);
 
+const TELEMETRY_CHANNEL = 'global-telemetry';
+
 export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [telemetryMap, setTelemetryMap] = useState<Record<string, VehicleHealthStatus>>({});
-  const [loading, setLoading] = useState(true);
-  const activeSubscriptions = useRef<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const activeSubscriptions = useRef<Record<string, any>>({});
+  const supabase = useRef(createClient());
 
   // Page View Tracking
   useEffect(() => {
-    if (typeof window !== 'undefined' && telemetry) {
-      telemetry.add({
+    if (typeof window !== 'undefined' && telemetryAnalytics) {
+      telemetryAnalytics.add({
         event: 'page_view',
         url: window.location.href,
         title: document.title
@@ -29,51 +32,44 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, []);
 
-  const subscribeToVehicle = useCallback(async (vehicleId: string) => {
-    if (activeSubscriptions.current.has(vehicleId)) return;
-    activeSubscriptions.current.add(vehicleId);
+  const subscribeToVehicle = useCallback((vehicleId: string) => {
+    if (activeSubscriptions.current[vehicleId] || !supabase.current) return;
 
-    try {
-      const rtdb = await getRealtimeDbService();
-      if (!rtdb) return;
+    const channel = supabase.current.channel(`${TELEMETRY_CHANNEL}-${vehicleId}`);
+    
+    channel
+      .on('broadcast', { event: `update-${vehicleId}` }, ({ payload }) => {
+        const health = analyzeVehicleHealth(payload);
+        setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
+      })
+      .subscribe();
 
-      const { ref, onValue } = await import('firebase/database');
-      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
-
-      onValue(vehicleRef, (snapshot: DataSnapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          // Import analyzeVehicleHealth dynamically to avoid circular dependencies
-          import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
-            const health = analyzeVehicleHealth(data);
-            setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
-          });
-        }
-      });
-    } catch (error) {
-      console.warn('[TelemetryProvider] Sync error:', error);
-    } finally {
-      setLoading(false);
-    }
+    activeSubscriptions.current[vehicleId] = channel;
   }, []);
 
-  const unsubscribeFromVehicle = useCallback(async (vehicleId: string) => {
-    activeSubscriptions.current.delete(vehicleId);
-    try {
-      const rtdb = await getRealtimeDbService();
-      if (!rtdb) return;
-      const { ref, off } = await import('firebase/database');
-      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
-      off(vehicleRef);
+  const unsubscribeFromVehicle = useCallback((vehicleId: string) => {
+    const channel = activeSubscriptions.current[vehicleId];
+    if (channel && supabase.current) {
+      supabase.current.removeChannel(channel);
+      delete activeSubscriptions.current[vehicleId];
       
       setTelemetryMap((prev) => {
         const next = { ...prev };
         delete next[vehicleId];
         return next;
       });
-    } catch (error) {
-      console.warn('[TelemetryProvider] Unsubscribe error:', error);
     }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (supabase.current) {
+        Object.values(activeSubscriptions.current).forEach(channel => {
+          supabase.current?.removeChannel(channel);
+        });
+      }
+    };
   }, []);
 
   return (

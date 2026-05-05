@@ -1,8 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
 
-vi.mock('@/shared/api/firebase/client', () => ({
-  db: {},
-  auth: {},
+vi.mock('@/shared/api/supabase/supabaseClient', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      insert: vi.fn().mockResolvedValue({ error: null }),
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+          })),
+        })),
+      })),
+    })),
+  },
 }));
 
 import { logUsageEvent, getUsageLogs, MonetizableEvent } from './billingService';

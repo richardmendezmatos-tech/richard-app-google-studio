@@ -1,174 +1,161 @@
+import { uploadVehicleImages as uploadToSupabase } from '@/shared/api/storage/storageService';
 import { supabase } from '@/shared/api/supabase/supabaseClient';
-import { Car, CarSchema } from '../../model/types';
-import { getAnalyticsService, getStorageService } from '@/shared/api/firebase/optionalServices';
+import { Car } from '@/entities/inventory/model/types';
 
-export interface PaginatedResult {
-  cars: Car[];
-  nextOffset: number | null;
-  hasMore: boolean;
-}
+// Legacy alias for backwards compatibility
+export type Vehicle = Car;
 
-// --- Data Fetching ---
+export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
+  if (!supabase) {
+    console.error('[InventoryService] Supabase client not available');
+    return [];
+  }
 
-export const getPaginatedCars = async (
-  pageSize: number = 9,
-  offset: number = 0,
-  filterType: string = 'all',
-  sortOrder: 'asc' | 'desc' | null = null,
-): Promise<PaginatedResult> => {
+  const { data, error } = await supabase
+    .from('inventory')
+    .select('*')
+    .eq('dealer_id', dealerId);
+
+  if (error) {
+    console.error('[InventoryService] Error fetching inventory:', error);
+    return [];
+  }
+
+  return (data || []).map(item => ({
+    id: item.id,
+    name: item.name || `${item.year} ${item.make} ${item.model}`,
+    price: item.price,
+    image: item.image_url,
+    category: item.category,
+    vin: item.vin,
+    dealerId: item.dealer_id
+  }));
+};
+
+export const incrementCarView = async (carId: string) => {
+  // Migration Note: Firebase Analytics replaced by native event logging or simple DB increment
+  if (!supabase) return;
+  
   try {
-    let query = supabase
-      .from('inventory')
-      .select('*')
-      .range(offset, offset + pageSize - 1);
-
-    // Apply Filter
-    if (filterType !== 'all') {
-      if (filterType === 'ford' || filterType === 'hyundai') {
-         query = query.ilike('make', filterType);
-      } else {
-         // Placeholder for more complex filters (e.g. type)
-      }
+    const { error } = await supabase.rpc('increment_vehicle_view', { vehicle_id: carId });
+    if (error) {
+      console.warn('[InventoryService] Could not increment car view in DB:', error);
     }
-
-    // Apply Sort
-    if (sortOrder) {
-      query = query.order('price', { ascending: sortOrder === 'asc' });
-    } else {
-      query = query.order('last_scraped_at', { ascending: false });
-    }
-
-    const { data, error } = await query;
-
-    if (error) throw error;
-
-    const cars = (data || []).map((row) => ({
-      id: row.vin,
-      vin: row.vin,
-      make: row.make,
-      model: row.model,
-      year: row.year,
-      price: row.price || 0,
-      mileage: row.mileage || 0,
-      img: row.images?.[0] || '/images/placeholders/car.webp',
-      images: row.images || [],
-      gallery: row.images || [],
-      status: (row.status?.toLowerCase() as any) || 'available',
-      type: 'suv', // placeholder or logic needed
-      color: 'N/A',
-      name: `${row.make} ${row.model} ${row.year}`,
-    })) as unknown as Car[];
-
-    return {
-      cars,
-      nextOffset: (data?.length || 0) === pageSize ? offset + pageSize : null,
-      hasMore: (data?.length || 0) === pageSize,
-    };
-  } catch (e: any) {
-    console.error('[Supabase] Pagination Error:', e);
-    throw e;
+  } catch (err) {
+    console.warn('[InventoryService] Exception incrementing car view:', err);
   }
 };
 
-export const getCarById = async (id: string): Promise<Car | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('inventory')
-      .select('*')
-      .eq('vin', id)
-      .single();
+export const getCarById = async (id: string): Promise<Vehicle | null> => {
+  if (!supabase) return null;
 
-    if (error || !data) return null;
-    
-    return {
-      id: data.vin,
-      vin: data.vin,
-      make: data.make,
-      model: data.model,
-      year: data.year,
-      price: data.price || 0,
-      mileage: data.mileage || 0,
-      img: data.images?.[0] || '/images/placeholders/car.webp',
-      images: data.images || [],
-      gallery: data.images || [],
-      status: (data.status?.toLowerCase() as any) || 'available',
-      type: 'suv',
-      color: 'N/A',
-      name: `${data.make} ${data.model} ${data.year}`,
-    } as unknown as Car;
-  } catch (error) {
-    console.error('[Supabase] Error fetching car:', error);
+  const { data, error } = await supabase
+    .from('inventory')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('[InventoryService] Error fetching car by id:', error);
     return null;
   }
-};
 
-// --- CRUD Operations (Admin) ---
+  return {
+    id: data.id,
+    name: data.name || `${data.year} ${data.make} ${data.model}`,
+    price: data.price,
+    image: data.image_url,
+    category: data.category,
+    vin: data.vin,
+    dealerId: data.dealer_id,
+    ...data
+  } as Vehicle;
+}
 
-export const addVehicle = async (carData: Omit<Car, 'id'>): Promise<string> => {
-  const currentDealerId = (typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') : null) || 'richard-automotive';
-
-  const validatedData = CarSchema.parse({
-    ...carData,
-    dealerId: currentDealerId,
-    views: 0,
-    leadsCount: 0,
-  });
-
-  console.warn('[inventoryService] addVehicle: SQL mutation not yet mapped. data:', validatedData);
-  return "stub-id";
-};
-
-export const updateVehicle = async (id: string, updates: Partial<Car>): Promise<void> => {
-  const validatedUpdates = CarSchema.partial().parse(updates);
-  console.warn('[inventoryService] updateVehicle: SQL mutation not yet mapped. id:', id, 'updates:', validatedUpdates);
-};
-
-export const deleteVehicle = async (id: string): Promise<void> => {
-  console.warn('[inventoryService] deleteVehicle: SQL mutation not yet mapped. id:', id);
-};
-
-export const uploadInitialInventory = async (inventory: Omit<Car, 'id'>[]): Promise<void> => {
-  // TODO (SQL-Migration): Implement bulk insert via DataConnect createCar mutation.
-  // This function is a no-op until the bulk SQL migration script is executed.
-  console.warn('[inventoryService] uploadInitialInventory: Bulk SQL insert not yet implemented. Items:', inventory.length);
-};
-
-// --- Metrics & Analytics ---
-
-export const incrementCarView = async (carId: string): Promise<void> => {
-  // Analytics only — no Firestore write needed post-migration.
+export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
   try {
-    const analytics = await getAnalyticsService();
-    if (typeof window !== 'undefined' && analytics) {
-      const { logEvent } = await import('firebase/analytics');
-      logEvent(analytics, 'view_item', { items: [{ item_id: carId }] });
-    }
-  } catch (e) {
-    console.debug('[inventoryService] incrementCarView analytics skipped', e);
+    return await uploadToSupabase(files, vin);
+  } catch (error) {
+    console.error('[InventoryService] Failed to upload vehicle images:', error);
+    throw error;
   }
 };
 
-// --- Image Management ---
+export const getPaginatedCars = async (
+  pageSize: number,
+  offset: number | null,
+  filterType: string,
+  sortOrder: 'asc' | 'desc' | null = null
+) => {
+  if (!supabase) return { cars: [], nextOffset: null };
 
-export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
-  const storage = await getStorageService();
-  const { ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage');
-  const uploadPromises = files.map((file) => {
-    const path = `vehicles/${vin}/${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, path);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  let query = supabase
+    .from('inventory')
+    .select('*', { count: 'exact' });
 
-    return new Promise<string>((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        null,
-        (error) => reject(error),
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(resolve);
-        },
-      );
-    });
-  });
+  if (filterType !== 'all') {
+    query = query.eq('category', filterType);
+  }
 
-  return Promise.all(uploadPromises);
+  if (sortOrder) {
+    query = query.order('price', { ascending: sortOrder === 'asc' });
+  }
+
+  const start = offset || 0;
+  const { data, error, count } = await query
+    .range(start, start + pageSize - 1);
+
+  if (error) {
+    console.error('[InventoryService] Error fetching paginated cars:', error);
+    return { cars: [], nextOffset: null };
+  }
+
+  const cars = (data || []).map(item => ({
+    id: item.id,
+    name: item.name || `${item.year} ${item.make} ${item.model}`,
+    price: item.price,
+    image: item.image_url,
+    category: item.category,
+    vin: item.vin,
+    dealerId: item.dealer_id
+  }));
+
+  const nextOffset = (count && start + pageSize < count) ? start + pageSize : null;
+  return { cars, nextOffset };
+};
+
+export const addVehicle = async (car: Record<string, any>) => {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('inventory')
+    .insert([car])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateVehicle = async (id: string, updates: Record<string, any>) => {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('inventory')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteVehicle = async (id: string) => {
+  if (!supabase) return null;
+  const { error } = await supabase
+    .from('inventory')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return true;
 };

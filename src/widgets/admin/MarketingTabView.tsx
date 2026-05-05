@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Sparkles, User as UserIcon } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { Car } from '@/shared/types/types';
 
 // Lazy load
@@ -37,7 +37,7 @@ export const MarketingTabView: React.FC<MarketingTabViewProps> = ({
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-          {inventory.slice(0, 4).map((car) => (
+          {(inventory || []).slice(0, 4).map((car) => (
             <button
               key={car.id}
               onClick={() => setMarketingCar(car)}

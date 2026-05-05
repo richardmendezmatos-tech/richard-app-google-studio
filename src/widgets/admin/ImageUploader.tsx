@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
-import { getStorageService } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
 import {
   validateImageFile,
   generateBlurPlaceholder,
@@ -197,46 +197,33 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
-          const storage = await getStorageService();
-          const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+          
+          const storageRepo = DI.getStorageRepository();
 
-          // Parallel Upload of ALL versions
+          // Parallel Upload of ALL versions using Supabase via DI
           const uploadTasks: {
             type: string;
-            ref: import('firebase/storage').StorageReference;
             task: Promise<string>;
           }[] = [];
 
           // 1. JPEG Task
-          const jpegRef = ref(storage, `${storagePath}/${baseFileName}.jpg`);
           uploadTasks.push({
             type: 'jpeg',
-            ref: jpegRef,
-            task: uploadBytes(jpegRef, optimized.jpeg, { contentType: 'image/jpeg' }).then(() =>
-              getDownloadURL(jpegRef),
-            ),
+            task: storageRepo.uploadImage(optimized.jpeg, `${storagePath}/${baseFileName}.jpg`, 'image/jpeg'),
           });
 
-          // 2. WebP Task
+          // 2. WebP Task (if available)
           if (optimized.webp) {
-            const webpRef = ref(storage, `${storagePath}/${baseFileName}.webp`);
             uploadTasks.push({
               type: 'webp',
-              ref: webpRef,
-              task: uploadBytes(webpRef, optimized.webp, { contentType: 'image/webp' }).then(() =>
-                getDownloadURL(webpRef),
-              ),
+              task: storageRepo.uploadImage(optimized.webp, `${storagePath}/${baseFileName}.webp`, 'image/webp'),
             });
           }
 
           // 3. Thumbnail Task
-          const thumbRef = ref(storage, `${storagePath}/${baseFileName}_thumb.jpg`);
           uploadTasks.push({
             type: 'thumb',
-            ref: thumbRef,
-            task: uploadBytes(thumbRef, optimized.thumbnail, { contentType: 'image/jpeg' }).then(
-              () => getDownloadURL(thumbRef),
-            ),
+            task: storageRepo.uploadImage(optimized.thumbnail, `${storagePath}/${baseFileName}_thumb.jpg`, 'image/jpeg'),
           });
 
           // Wait for all uploads of THIS image

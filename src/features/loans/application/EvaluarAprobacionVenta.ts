@@ -1,15 +1,11 @@
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
 import { REGLAS_FINANCIAMIENTO } from '../domain/rules';
-import { FirestoreLoanRepository } from '../infra/FirestoreLoanRepository';
-import { getFunctionsService } from '@/shared/api/firebase/firebaseService';
-import { httpsCallable } from 'firebase/functions';
-
 /**
  * Caso de Uso: Evaluar Aprobacion de Venta
  * Enfocado en generar 'Power' y cierre para Richard Automotive.
  */
 export class EvaluarAprobacionVenta {
-  constructor(private readonly loanRepository?: FirestoreLoanRepository) {}
+  constructor(private readonly loanRepository?: any) {}
 
   async execute(solicitud: SolicitudPrestamo): Promise<ResultadoAprobacion> {
     // 1. Validar Puntuación de Crédito
@@ -82,19 +78,19 @@ export class EvaluarAprobacionVenta {
           },
         })
         .then(async () => {
-          // Enviar Notificación SMS a través de Firebase Functions de forma Asíncrona
+          // Enviar Notificación SMS a través de la API Route de Vercel de forma Asíncrona
           try {
-            const functionsService = await getFunctionsService();
-            if (functionsService) {
-              const sendSmsLead = httpsCallable(functionsService, 'sendSmsLead');
-              sendSmsLead({
+            fetch('/api/webhooks/twilio', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
                 toParams: {
                   phone: solicitud.telefono,
                   clientName: solicitud.nombreSolicitante,
                   vehicleDesc: `vehículo (${solicitud.precioUnidad})`,
                 },
-              }).catch((e) => console.error('Error enviando SMS de Lead [Twilio]:', e));
-            }
+              })
+            }).catch((e) => console.error('Error enviando SMS de Lead [Twilio API]:', e));
           } catch (error) {
             console.error('Error invocando Twilio:', error);
           }

@@ -8,10 +8,10 @@ interface VehicleSchemaProps {
 
 export const VehicleSchema: React.FC<VehicleSchemaProps> = ({ car }) => {
   // Extract make and model from car.name (e.g., "2024 Toyota Camry")
-  const nameParts = car.name.split(' ');
-  const year = car.year || parseInt(nameParts[0]) || 2025;
+  const nameParts = (car?.name || '').split(' ');
+  const year = car?.year || parseInt(nameParts[0]) || 2025;
   const make = nameParts[1] || 'Auto';
-  const model = nameParts.slice(2).join(' ') || car.name;
+  const model = nameParts.slice(2).join(' ') || car?.name || 'Unknown Model';
 
   const schema = {
     '@context': 'https://schema.org',
@@ -36,7 +36,7 @@ export const VehicleSchema: React.FC<VehicleSchemaProps> = ({ car }) => {
     image: car.img,
     description:
       car.description ||
-      `${car.name} disponible en Richard Automotive. ${car.features?.slice(0, 3).join(', ') || 'Excelente condición'}.`,
+      `${car.name} disponible en Richard Automotive. ${(car.features || []).slice(0, 3).join(', ') || 'Excelente condición'}.`,
   };
 
   return (

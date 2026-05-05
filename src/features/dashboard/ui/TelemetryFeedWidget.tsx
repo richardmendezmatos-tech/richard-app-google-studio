@@ -90,7 +90,7 @@ const TelemetryFeedWidget: React.FC = () => {
                       {log.source || 'SYS'}
                     </span>
                     <span className="text-[9px] font-medium text-slate-600">
-                      {log.timestamp?.toDate ? formatDistanceToNow(log.timestamp.toDate(), { addSuffix: true, locale: es }) : 'ahora mismo'}
+                      {log.timestamp ? formatDistanceToNow(new Date(log.timestamp), { addSuffix: true, locale: es }) : 'ahora mismo'}
                     </span>
                   </div>
                 </div>

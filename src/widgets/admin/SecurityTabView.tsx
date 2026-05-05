@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Smartphone, Shield, Key } from 'lucide-react';
-import { auth } from '@/shared/api/firebase/firebaseService';
+import { useAuthStore } from '@/entities/session';
+import { registerPasskey } from '@/features/auth';
 
 // Lazy load
 const AuditLogViewer = React.lazy(() =>
@@ -8,16 +9,23 @@ const AuditLogViewer = React.lazy(() =>
 );
 
 export const SecurityTabView: React.FC = () => {
+  const { user } = useAuthStore();
+
   const handleRegisterPasskey = async () => {
-    if (!auth.currentUser) return alert('Debes estar logueado.');
+    if (!user) return alert('Debes estar logueado.');
     try {
-      const { registerPasskey } = await import('@/features/auth');
-      await registerPasskey(auth.currentUser);
+      await registerPasskey({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL
+      });
       alert('✅ Dispositivo vinculado exitosamente.');
     } catch (err: any) {
       alert('Error: ' + err.message);
     }
   };
+
 
   return (
     <div className="space-y-6">

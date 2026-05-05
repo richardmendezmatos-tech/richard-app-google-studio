@@ -10,50 +10,46 @@ Este proyecto es el motor de inteligencia artificial para la marca personal de *
 
 ---
 
-## 🚀 Sentinel 4.5: Houston Command Center (Neural Edition)
+## 🚀 Sentinel N24: Hardened Infrastructure
 
-La versión **4.5** consolida la arquitectura de **Siguiente Generación**, eliminando deuda técnica y centralizando la inteligencia en un ecosistema unificado.
+La versión **N24** representa la madurez técnica absoluta del ecosistema, eliminando dependencias fragmentadas (Firebase/GCP) y consolidando todo en un núcleo resiliente basado en **npm** y **Supabase**.
 
-### ⚡️ Sentinel Performance Engine (Powered by Bun)
-Para maximizar la eficiencia ($E_w$) y reducir la fricción en el desarrollo y despliegue, el proyecto utiliza **Bun** como runtime principal:
-- **Builds Instantáneos**: Reducción drástica en tiempos de compilación.
-- **Gestión de Paquetes**: Instalación de dependencias 20x más rápida que npm.
-- **Script Execution**: Ejecución de telemetría y scripts de optimización con latencia mínima.
+### ⚡️ Estabilidad Industrial (Powered by npm)
+Para asegurar despliegues predecibles y una gestión de dependencias robusta en entornos de alta producción (Vercel), el proyecto utiliza **npm** como gestor principal:
+- **Lockfile Determinístico**: Eliminación de inconsistencias entre entornos de desarrollo y producción.
+- **Producción Vercel-Ready**: Optimización del pipeline de build para despliegues rápidos y seguros.
 
-### 🛠️ Tecnologías Core (Stack Actualizado)
+### 🛠️ Tecnologías Core (Unified Stack)
 
-- **Framework:** **Next.js (App Router)** - SSR/ISR para máximo performance y SEO.
-- **Base de Datos Unificada:** **Supabase (PostgreSQL)** como única fuente de verdad para Inventario, Sourcing y Telemetría.
-- **Inteligencia Vectorial:** **pgvector** para "Neural Matching" (búsqueda semántica de unidades).
-- **Motor IA:** Google Gemini API 1.5 (Pro/Flash) para generación de Purchase Orders y scoring de leads.
-- **Infraestructura:** Desplegado en **Vercel** con CI/CD optimizado vía Bun.
+- **Framework:** **Next.js (App Router)** - Arquitectura de componentes de servidor para máximo SEO y velocidad.
+- **Base de Datos Unificada:** **Supabase (PostgreSQL)** - Única fuente de verdad. Manejo de inventario, leads y telemetría bajo un mismo esquema SQL.
+- **Inteligencia Vectorial:** **pgvector** en Supabase para "Neural Matching" (búsqueda semántica avanzada).
+- **Motor IA:** **Google Gemini API 1.5** - Visión de inventario y análisis predictivo de sourcing.
+- **Infraestructura:** Desplegado en **Vercel** con integración profunda de Supabase CLI.
 
 ### 🧠 Capacidades de Vanguardia
 
-- **Neural Sourcing Intelligence (Nivel 19):** Transformación de "Search Gaps" en Órdenes de Compra (POs) sugeridas. Richard puede confirmar o archivar oportunidades de ROI directamente desde Houston.
-- **Houston Dashboard (V5.0):** Monitor de salud del negocio en tiempo real.
-    - **Sourcing Tab:** Gestión proactiva de inventario estratégico.
-    - **Pipeline de Leads:** Visualización del flujo de ventas impulsado por SQL.
-    - **Telemetría Neural:** Rastreo de la intención de compra del usuario mediante eventos dinámicos.
-- **Approval Simulator (Fase 2):** Widget de alta conversión que permite al cliente pre-cualificarse financieramente con perfiles de crédito dinámicos.
-- **Asset Optimization:** Pipeline de procesamiento de imágenes con `sharp` para entregas en AVIF de próxima generación.
+- **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs) con ROI estimado.
+- **Houston Command Center:** Panel de control táctico con telemetría en tiempo real:
+    - **Sourcing Management:** Aprobación inmediata de inventario estratégico detectado por la IA.
+    - **Pipeline de Prospección:** Seguimiento de leads con integración directa a WhatsApp.
+    - **Telemetría Sentinel:** Monitor de salud del sistema, latencia de IA y estabilidad de API.
+- **Approval Simulator:** Widget premium para la pre-cualificación financiera de clientes con perfiles de crédito dinámicos.
 
 ## 🏗️ Arquitectura del Proyecto (FSD Strict)
 
-El proyecto sigue la metodología **Feature-Sliced Design (FSD)** para garantizar escalabilidad:
+El proyecto sigue rigurosamente la metodología **Feature-Sliced Design (FSD)**:
 
-- `src/app`: Rutas de Next.js, layouts globales y providers.
-- `src/widgets`: Componentes complejos de negocio (ej. `HoustonDashboard`, `ApprovalSimulator`).
-- `src/features`: Lógica de comportamiento (ej. `houston`, `automation`, `inventory`).
-- `src/entities`: Modelos de negocio y repositorios (ej. `InventoryRepository` unificado en Supabase).
-- `src/shared`: Componentes UI atómicos, hooks y configuración de clientes (Supabase Core).
+- `src/app`: Rutas de Next.js, configuraciones de API y layouts.
+- `src/widgets`: Bloques funcionales complejos (ej. `HoustonDashboard`, `CommandCenter`).
+- `src/features`: Capacidades de negocio (ej. `houston`, `inventory`, `predictive`).
+- `src/entities`: Modelos de datos y estados de negocio.
+- `src/shared`: Utilidades, diseño atómico y clientes de API (Supabase Singleton).
 
-## 🚀 Despliegue en Producción
-
-El Command Center está operando en vivo en la infraestructura de Richard Automotive:
+## 🚀 Despliegue y Acceso
 
 - **Portal Público:** [www.richard-automotive.com](https://www.richard-automotive.com)
-- **Houston Access:** Terminal de inteligencia restringida para Richard y el equipo Sentinel.
+- **Houston Access:** Terminal de inteligencia restringida para gestión táctica.
 
 ---
 

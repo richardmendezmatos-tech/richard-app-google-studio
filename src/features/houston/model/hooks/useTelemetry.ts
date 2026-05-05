@@ -59,7 +59,7 @@ export function useTelemetry(connectionState: string): HoustonTelemetry {
             quality: Math.round(structuralHealth),
             recentEvents: logs.map(l => ({
               id: l.id || Math.random().toString(),
-              timestamp: l.timestamp?.toMillis() || Date.now(),
+              timestamp: l.timestamp ? new Date(l.timestamp).getTime() : Date.now(),
               type: l.type as any,
               message: l.message,
               source: l.source

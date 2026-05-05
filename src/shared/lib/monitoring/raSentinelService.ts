@@ -1,5 +1,4 @@
-import { db } from '@/shared/api/firebase/client';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 
 export interface SentinelMetric {
   type: 
@@ -23,14 +22,22 @@ export interface SentinelMetric {
  * Optimización de Cierre: Monitoreo en tiempo real de la viabilidad del negocio y maximización del ROI.
  */
 export class RaSentinelService {
-  private readonly metricsCollection = 'raSentinel_metrics';
+  private readonly tableName = 'sentinel_metrics';
 
   async reportActivity(metric: SentinelMetric): Promise<void> {
     try {
-      await addDoc(collection(db, this.metricsCollection), {
-        ...metric,
-        timestamp: serverTimestamp(),
-      });
+      if (!supabase) return;
+
+      await supabase.from(this.tableName).insert([{
+        type: metric.type,
+        data: metric.data,
+        operational_score: metric.operationalScore,
+        friction_point: metric.frictionPoint,
+        persuasion_profile: metric.persuasionProfile,
+        metadata: metric.metadata,
+        timestamp: new Date().toISOString(),
+      }]);
+
       console.log(
         `[Sentinel] Actividad registrada: ${metric.type} | Score: ${metric.operationalScore}`,
       );
@@ -38,6 +45,7 @@ export class RaSentinelService {
       console.error('[Sentinel] Error al persistir reporte:', error);
     }
   }
+
 
   /**
    * Registra puntos de fricción para el auto-evolución (Nivel 14).

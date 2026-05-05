@@ -92,7 +92,7 @@ export function useStorefrontState(
     const isGuagua = normalizedSearch === 'guagua';
     const isPickup = normalizedSearch === 'pickup' || normalizedSearch === 'pick-up';
 
-    return [...inventory] // Copy to avoid mutation
+    return [...(inventory || [])] // Copy to avoid mutation
       .filter((c) => {
         if (semanticResultIds.length > 0) {
           if (semanticResultIds.includes('NO_MATCHES')) return false;
@@ -163,7 +163,7 @@ export function useStorefrontState(
   }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const marketPulse = useMemo(() => {
-    const source = displayCars.length > 0 ? displayCars : inventory;
+    const source = (displayCars || []).length > 0 ? displayCars : (inventory || []);
     if (!source.length) {
       return { avgPrice: 0, premiumUnits: 0, compactUnits: 0 };
     }

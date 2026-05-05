@@ -1,22 +1,11 @@
-import { db } from '@/shared/api/firebase/firebaseService';
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  getDocs,
-  serverTimestamp,
-  Timestamp,
-} from 'firebase/firestore';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 
 export interface ConversationMessage {
   id?: string;
   leadId: string;
   role: 'user' | 'assistant';
   content: string;
-  timestamp: Timestamp;
+  timestamp: Date;
   source: 'whatsapp' | 'web' | 'sms';
   metadata?: {
     mediaUrl?: string;
@@ -26,11 +15,11 @@ export interface ConversationMessage {
 }
 
 /**
- * Service for managing conversation history in Firebase.
+ * Service for managing conversation history in Supabase.
  * Enables contextual RAG by storing and retrieving message history.
  */
 export class ConversationService {
-  private collection = 'conversations';
+  private tableName = 'conversations';
 
   /**
    * Adds a new message to the conversation history.
@@ -43,14 +32,18 @@ export class ConversationService {
     metadata?: ConversationMessage['metadata'],
   ): Promise<void> {
     try {
-      await addDoc(collection(db, this.collection), {
-        leadId,
+      if (!supabase) return;
+
+      const { error } = await supabase.from(this.tableName).insert({
+        lead_id: leadId,
         role,
         content,
         source,
         metadata: metadata || {},
-        timestamp: serverTimestamp(),
+        timestamp: new Date().toISOString(),
       });
+
+      if (error) throw error;
     } catch (error) {
       console.error('Error adding message to conversation:', error);
       throw error;
@@ -66,21 +59,26 @@ export class ConversationService {
     messageLimit: number = 10,
   ): Promise<ConversationMessage[]> {
     try {
-      const q = query(
-        collection(db, this.collection),
-        where('leadId', '==', leadId),
-        orderBy('timestamp', 'desc'),
-        limit(messageLimit),
-      );
+      if (!supabase) return [];
 
-      const snapshot = await getDocs(q);
-      const messages = snapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          }) as ConversationMessage,
-      );
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('lead_id', leadId)
+        .order('timestamp', { ascending: false })
+        .limit(messageLimit);
+
+      if (error) throw error;
+
+      const messages = (data || []).map((msg: any) => ({
+        id: msg.id,
+        leadId: msg.lead_id,
+        role: msg.role,
+        content: msg.content,
+        source: msg.source,
+        metadata: msg.metadata,
+        timestamp: new Date(msg.timestamp),
+      }));
 
       // Reverse to get chronological order (oldest first)
       return messages.reverse();
@@ -124,9 +122,14 @@ export class ConversationService {
    */
   async getMessageCount(leadId: string): Promise<number> {
     try {
-      const q = query(collection(db, this.collection), where('leadId', '==', leadId));
-      const snapshot = await getDocs(q);
-      return snapshot.size;
+      if (!supabase) return 0;
+      const { count, error } = await supabase
+        .from(this.tableName)
+        .select('*', { count: 'exact', head: true })
+        .eq('lead_id', leadId);
+
+      if (error) throw error;
+      return count || 0;
     } catch (error) {
       console.error('Error counting messages:', error);
       return 0;
@@ -135,3 +138,4 @@ export class ConversationService {
 }
 
 export const conversationService = new ConversationService();
+

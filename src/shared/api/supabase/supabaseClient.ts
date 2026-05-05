@@ -5,7 +5,10 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env
 
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : null as any; // Cast as any to avoid breaking types, but handled in usage
+  : {
+      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }), order: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }), order: () => ({ limit: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }) }), insert: () => Promise.resolve({ error: new Error('Supabase not configured') }), update: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }), delete: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }) }),
+      rpc: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }),
+    } as any;
 
 export interface SemanticMatch {
   car_id: string;
@@ -152,5 +155,19 @@ export const updatePurchaseOrderStatus = async (id: string, status: 'confirmed' 
   } catch (err) {
     console.error('[Supabase] Exception in updatePurchaseOrderStatus:', err);
     return { success: false, error: err };
+  }
+};
+
+export const recordPredictionOutcome = async (outcome: any) => {
+  try {
+    const { error } = await supabase.from('prediction_outcomes').insert({
+      ...outcome,
+      model_version: 'dts-v3-heuristic-advanced',
+      target: 'richard-automotive-command-center',
+      timestamp: new Date().toISOString()
+    });
+    if (error) console.error('[Supabase] Error recording prediction outcome:', error);
+  } catch (err) {
+    console.error('[Supabase] Exception in recordPredictionOutcome:', err);
   }
 };

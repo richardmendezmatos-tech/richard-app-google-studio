@@ -4,7 +4,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { DI } from '@/app/(dashboard)/di/registry';
-import { getSubscribers } from '@/shared/api/firebase/firebaseService';
+
 import { Lead } from '@/entities/lead/model/types';
 import { Subscriber } from '@/shared/types/types';
 
@@ -22,10 +22,17 @@ export const useCommandCenterData = (dealerId: string) => {
   const subscribersQuery = useQuery<Subscriber[]>({
     queryKey: ['subscribers', dealerId],
     queryFn: async () => {
-      return getSubscribers();
+      const repo = DI.getSubscriberRepository();
+      const data = await repo.getSubscribers();
+      return data.map((s: any) => ({
+        id: s.id || '',
+        email: s.email,
+        timestamp: s.created_at ? { seconds: Math.floor(new Date(s.created_at).getTime() / 1000), nanoseconds: 0 } : undefined
+      })) as Subscriber[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour cache
   });
+
 
   return {
     leads: leadsQuery.data || [],

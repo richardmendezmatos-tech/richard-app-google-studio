@@ -107,10 +107,10 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   // Helper to parse vehicle details if structured data is missing
   const { year, make, model } = React.useMemo(() => {
     if (!car) return { year: 2026, make: 'Auto', model: 'Auto' };
-    const parts = car.name.split(' ');
-    const parsedYear = car.year || parseInt(parts[0]) || 2026;
-    const parsedMake = parts[1] || 'Auto';
-    const parsedModel = parts.slice(2).join(' ') || car.name;
+    const parts = (car?.name || '').split(' ');
+    const parsedYear = car?.year || parseInt(parts[0]) || 2026;
+    const parsedMake = car?.make || parts[1] || 'Auto';
+    const parsedModel = car?.model || parts.slice(2).join(' ') || 'Auto';
     return { year: parsedYear, make: parsedMake, model: parsedModel };
   }, [car]);
   const siteUrl = SITE_CONFIG.url;

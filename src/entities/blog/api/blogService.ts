@@ -1,54 +1,28 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  deleteDoc,
-  query,
-  orderBy,
-  limit,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { db } from '@/shared/api/firebase/client';
 import { BlogPost } from '@/shared/types/types';
-
-const COLLECTION_NAME = 'blog_posts';
+import { SupabaseBlogRepository } from './repositories/SupabaseBlogRepository';
 
 export const blogService = {
   /**
-   * Obtiene los posts del blog ordenados por fecha de creación descendente.
+   * Obtiene los posts del blog - Migrado a Supabase
    */
   async getBlogPosts(maxResults = 50): Promise<BlogPost[]> {
-    const q = query(collection(db, COLLECTION_NAME), orderBy('date', 'desc'), limit(maxResults));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(
-      (docSnap) =>
-        ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }) as BlogPost,
-    );
+    const repository = new SupabaseBlogRepository();
+    return await repository.getBlogPosts(maxResults);
   },
 
   /**
-   * Guarda un nuevo artículo generado en Firestore.
+   * Guarda un nuevo artículo - Migrado a Supabase
    */
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<BlogPost> {
-    const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-      ...post,
-      createdAt: serverTimestamp(),
-    });
-    return {
-      id: docRef.id,
-      ...post,
-    };
+    const repository = new SupabaseBlogRepository();
+    return await repository.createBlogPost(post);
   },
 
   /**
-   * Elimina un artículo del inventario de noticias.
+   * Elimina un artículo - Migrado a Supabase
    */
   async deleteBlogPost(id: string): Promise<void> {
-    const docRef = doc(db, COLLECTION_NAME, id);
-    await deleteDoc(docRef);
+    const repository = new SupabaseBlogRepository();
+    await repository.deleteBlogPost(id);
   },
 };

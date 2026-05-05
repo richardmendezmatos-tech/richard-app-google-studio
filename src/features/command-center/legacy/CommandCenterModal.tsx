@@ -110,18 +110,34 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
         }
       }
 
-      const { functions } = await import('@/shared/api/firebase/client');
-      const { httpsCallable } = await import('firebase/functions');
-      const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+      const { generateText } = await import('@/shared/api/ai/geminiService');
+      
+      let multimodalData: any = null;
+      if (uploadResults.length > 0) {
+        try {
+          const firstImageUrl = uploadResults[0].url;
+          const imgResponse = await fetch(firstImageUrl);
+          const blob = await imgResponse.blob();
+          const base64Data = await blobToBase64(blob);
+          const base64Content = base64Data.split(',')[1];
+          
+          multimodalData = {
+            mimeType: blob.type,
+            data: base64Content
+          };
+          logDebug('AI Vision: Imagen preparada para análisis multimodal.');
+        } catch (imgError) {
+          console.error('Error preparing vision data:', imgError);
+          logDebug('AI Vision: Fallo al cargar imagen, procediendo solo con texto.');
+        }
+      }
 
-      const response = await askGemini({
-        contents,
-        model: 'gemini-1.5-flash',
-        systemInstruction:
-          'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
-      });
+      const response = await generateText(
+        prompt,
+        'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
+      );
 
-      setDescription(response.data);
+      setDescription(response);
     } catch (error) {
       console.error('AI Generation Error:', error);
       alert('Error generando descripción. Intenta nuevamente.');

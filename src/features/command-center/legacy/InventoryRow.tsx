@@ -5,7 +5,7 @@
 import React from 'react';
 import { Car } from '@/entities/inventory';
 import { Sparkles, Edit3, Trash2, Clock } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 
 interface InventoryRowProps {
@@ -51,7 +51,7 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
               {car.name}
             </span>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-              {car.id.slice(0, 8)}
+              {(car.id || '').slice(0, 8)}
             </span>
           </div>
         </div>
