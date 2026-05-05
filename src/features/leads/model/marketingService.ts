@@ -145,6 +145,7 @@ export const generateCarMarketingContent = async (
     }
   }
 
+  try {
     const { generateStructuredJSON } = await import('@/shared/api/ai/geminiService');
 
     const response = await generateStructuredJSON(

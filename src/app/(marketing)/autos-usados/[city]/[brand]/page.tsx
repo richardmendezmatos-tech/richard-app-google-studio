@@ -64,7 +64,7 @@ export default async function CityBrandPage({ params }: Props) {
 
   let inventory: Car[] = [];
   try {
-    const result = await getPaginatedCars(50);
+    const result = await getPaginatedCars(50, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for city+brand page:', error);

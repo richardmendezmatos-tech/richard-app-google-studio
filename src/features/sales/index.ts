@@ -5,5 +5,4 @@ export * from './application/VenderUnidad';
 export * from './domain/TradeIn';
 export * from './domain/Venta';
 export * from './domain/repositories/SaleRepository';
-export * from './infra/FirestoreSaleRepository';
 export * from './ui/TradeInCalculator';

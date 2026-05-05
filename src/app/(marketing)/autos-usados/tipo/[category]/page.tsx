@@ -177,7 +177,7 @@ export default async function CategoryPage({ params }: Props) {
   let inventory: Car[] = [];
 
   try {
-    const result = await getPaginatedCars(50);
+    const result = await getPaginatedCars(50, null, 'all');
     const allInventory = result.cars;
     // Filter by type if possible, otherwise show all
     inventory = allInventory.filter(

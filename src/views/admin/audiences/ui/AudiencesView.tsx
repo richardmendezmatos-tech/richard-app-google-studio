@@ -123,14 +123,14 @@ const AudiencesView: React.FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    key={sub.id}
+                    key={sub.email || i}
                     className="border-b border-white/5 hover:bg-white/5 transition-all"
                   >
                     <td className="p-6 font-bold text-white">{sub.email}</td>
                     <td className="p-6 text-slate-400">Website Form</td>
                     <td className="p-6 text-slate-400">
-                      {sub.created_at
-                        ? new Date(sub.created_at).toLocaleDateString()
+                      {(sub as any).created_at
+                        ? new Date((sub as any).created_at).toLocaleDateString()
                         : 'Reciente'}
                     </td>
 

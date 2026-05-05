@@ -254,7 +254,7 @@ export default async function CityPage({ params }: Props) {
   let inventory: Car[] = [];
 
   try {
-    const result = await getPaginatedCars(12);
+    const result = await getPaginatedCars(12, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error(`[SEO Page: ${city.name}] Error fetching inventory:`, error);

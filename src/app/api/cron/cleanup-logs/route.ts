@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { CleanAuditLogs } from '@/server/application/use-cases';
-import { FirestoreLogRepository } from '@/server/infrastructure/persistence/firestore/FirestoreLogRepository';
+import { SupabaseLogRepository } from '@/server/infrastructure/repositories/SupabaseLogRepository';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   console.info("Running Log Cleanup...");
   try {
-    const logRepository = new FirestoreLogRepository();
+    const logRepository = new SupabaseLogRepository();
     const useCase = new CleanAuditLogs(logRepository);
     const deletedCount = await useCase.execute(30);
     console.info(`Log Cleanup complete. Deleted ${deletedCount} logs.`);

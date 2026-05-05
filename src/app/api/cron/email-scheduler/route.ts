@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AutomateEmailSequences } from '@/server/application/use-cases';
-import { FirestoreLeadRepository } from '@/server/infrastructure/persistence/firestore/FirestoreLeadRepository';
-import { SendGridEmailRepository } from '@/server/infrastructure/messaging/SendGridEmailRepository';
+import { SupabaseLeadRepository } from '@/server/infrastructure/repositories/SupabaseLeadRepository';
+import { SendGridEmailRepository } from '@/server/infrastructure/repositories/SendGridEmailRepository';
 
 export async function GET(request: Request) {
   // Authorization header verification can be added here
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   console.info('Starting Agnostic Email Automation Queue');
 
   try {
-    const leadRepository = new FirestoreLeadRepository();
+    const leadRepository = new SupabaseLeadRepository();
     const emailRepository = new SendGridEmailRepository();
     const useCase = new AutomateEmailSequences(leadRepository, emailRepository);
     

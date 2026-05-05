@@ -24,8 +24,8 @@ export const useCommandCenterData = (dealerId: string) => {
     queryFn: async () => {
       const repo = DI.getSubscriberRepository();
       const data = await repo.getSubscribers();
-      return data.map(s => ({
-        id: s.id || '',
+      return data.map((s: any) => ({
+        id: s.id || s.email || '',
         email: s.email,
         timestamp: s.created_at ? { seconds: Math.floor(new Date(s.created_at).getTime() / 1000), nanoseconds: 0 } : undefined
       })) as Subscriber[];

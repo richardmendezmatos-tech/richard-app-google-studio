@@ -119,7 +119,7 @@ const NewsroomPage: React.FC = () => {
         email: subscriberEmail,
         source: 'newsroom_admin',
         created_at: new Date().toISOString()
-      });
+      } as any);
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {

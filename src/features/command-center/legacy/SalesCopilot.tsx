@@ -4,7 +4,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Target, MessageSquare, Save, Zap, Bot, User, Loader2 } from 'lucide-react';
-import { aiService } from '@/shared/api/ai/aiService';
+import { generateText } from '@/shared/api/ai/geminiService';
 
 import ProgressiveForm from '@/widgets/brand-ui/chat/ProgressiveForm';
 
@@ -78,9 +78,9 @@ const SalesCopilot: React.FC = () => {
 
     try {
       // Usar el aiService que llama a nuestra API interna (segura)
-      const responseText = await aiService.generateText(
+      const responseText = await generateText(
         `History:\n${chatHistory.current.map(h => `${h.role}: ${h.content}`).join('\n')}\nUser: ${newUserMsg}`,
-        { systemPrompt: fiSystemPrompt }
+        fiSystemPrompt
       );
 
       let finalContent = responseText;

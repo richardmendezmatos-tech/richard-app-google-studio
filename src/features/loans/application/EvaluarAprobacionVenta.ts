@@ -1,13 +1,11 @@
 import { SolicitudPrestamo, ResultadoAprobacion } from '../domain/Loan';
 import { REGLAS_FINANCIAMIENTO } from '../domain/rules';
-import { FirestoreLoanRepository } from '../infra/FirestoreLoanRepository';
-
 /**
  * Caso de Uso: Evaluar Aprobacion de Venta
  * Enfocado en generar 'Power' y cierre para Richard Automotive.
  */
 export class EvaluarAprobacionVenta {
-  constructor(private readonly loanRepository?: FirestoreLoanRepository) {}
+  constructor(private readonly loanRepository?: any) {}
 
   async execute(solicitud: SolicitudPrestamo): Promise<ResultadoAprobacion> {
     // 1. Validar Puntuación de Crédito

@@ -110,7 +110,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
         }
       }
 
-      const { aiService } = await import('@/shared/api/ai/aiService');
+      const { generateText } = await import('@/shared/api/ai/geminiService');
       
       let multimodalData: any = null;
       if (uploadResults.length > 0) {
@@ -132,10 +132,10 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
         }
       }
 
-      const response = await aiService.generateText(prompt, {
-        systemPrompt: 'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
-        multimodalData
-      });
+      const response = await generateText(
+        prompt,
+        'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
+      );
 
       setDescription(response);
     } catch (error) {

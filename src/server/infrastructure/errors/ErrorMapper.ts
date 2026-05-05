@@ -1,26 +1,37 @@
 import { AppError } from '../../domain/types';
-import { HttpsError } from 'firebase-functions/v2/https';
 
 /**
- * Utility to map domain AppErrors to Firebase HttpsErrors.
+ * Utility to map domain AppErrors to standard errors.
  * Ensures consistent error reporting to the frontend.
  */
 export function mapToHttpsError(error: any): never {
     if (error instanceof AppError) {
+        const message = error.message;
+        const details = error.details;
+        
+        // Simular el comportamiento de HttpsError pero sin la dependencia de firebase
+        const err = new Error(message) as any;
+        err.details = details;
+        
         switch (error.code) {
             case 'VALIDATION_ERROR':
-                throw new HttpsError('invalid-argument', error.message, error.details);
+                err.code = 'invalid-argument';
+                break;
             case 'NOT_FOUND':
-                throw new HttpsError('not-found', error.message);
+                err.code = 'not-found';
+                break;
             case 'UNAUTHORIZED':
-                throw new HttpsError('unauthenticated', error.message);
+                err.code = 'unauthenticated';
+                break;
             case 'EXTERNAL_SERVICE_ERROR':
-                throw new HttpsError('unavailable', error.message);
+                err.code = 'unavailable';
+                break;
             default:
-                throw new HttpsError('internal', error.message);
+                err.code = 'internal';
         }
+        throw err;
     }
 
     // Default fallback
-    throw new HttpsError('internal', error instanceof Error ? error.message : 'Unknown internal error');
+    throw error instanceof Error ? error : new Error('Unknown internal error');
 }

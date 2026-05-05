@@ -19,7 +19,7 @@ export class InventoryMatchingService {
         try {
             // 1. Initialize Clean Architecture Components
             const leadRepository = new SupabaseLeadRepository();
-            const matcher = new InventoryMatcher(leadRepository);
+            const matcher = new InventoryMatcher(leadRepository as any);
 
             // 2. Execute Use Case (Handles Result Pattern)
             const result = await matcher.execute(carId, carData as Car);

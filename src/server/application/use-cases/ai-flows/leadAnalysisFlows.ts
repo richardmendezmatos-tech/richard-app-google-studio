@@ -1,13 +1,12 @@
 import { z } from 'zod';
-import { ai } from '../../../services/aiManager';
 import { AnalyzeLead, AnalyzeLeadOutputSchema } from '../../use-cases';
-import { FirestoreLeadRepository } from '../../../infrastructure/persistence/firestore/FirestoreLeadRepository';
-import { FirestoreInventoryRepository } from '../../../infrastructure/persistence/firestore/FirestoreInventoryRepository';
+import { SupabaseLeadRepository } from '../../../infrastructure/repositories/SupabaseLeadRepository';
+import { SupabaseInventoryRepository } from '../../../infrastructure/repositories/SupabaseInventoryRepository';
 import { GenkitAgentOrchestrator } from '../../../infrastructure/ai/GenkitAgentOrchestrator';
 import { logFlowExecution } from '../../../services/persistenceService';
 
-const leadRepository = new FirestoreLeadRepository();
-const inventoryRepository = new FirestoreInventoryRepository();
+const leadRepository = new SupabaseLeadRepository();
+const inventoryRepository = new SupabaseInventoryRepository();
 const aiOrchestrator = new GenkitAgentOrchestrator();
 
 export const analyzeLeadFlow = async (input: {

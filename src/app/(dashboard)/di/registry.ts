@@ -110,8 +110,14 @@ export const DI = {
 
   getEvaluarAprobacionVentaUseCase: () => {
     return {
-      execute: (solicitud: any) => import('@/features/loans/application/EvaluarAprobacionVenta')
-        .then(m => new m.EvaluarAprobacionVenta().execute(solicitud))
+      execute: async (solicitud: any) => {
+        const [{ EvaluarAprobacionVenta }, { SupabaseLoanRepository }] = await Promise.all([
+          import('@/features/loans/application/EvaluarAprobacionVenta'),
+          import('@/features/loans/infra/SupabaseLoanRepository')
+        ]);
+        const repository = new SupabaseLoanRepository();
+        return new EvaluarAprobacionVenta(repository).execute(solicitud);
+      }
     };
   },
 

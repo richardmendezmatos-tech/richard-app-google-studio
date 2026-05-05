@@ -11,7 +11,7 @@ export default async function ConsultantRoute() {
   let inventory: Car[] = [];
   
   try {
-    const result = await getPaginatedCars(20);
+    const result = await getPaginatedCars(20, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for Consultant:', error);

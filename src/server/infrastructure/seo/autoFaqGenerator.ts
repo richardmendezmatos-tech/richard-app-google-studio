@@ -24,7 +24,7 @@ export async function generateAutoFaqsForVehicle(carName: string, brand: string,
 
     const faqs = result.object;
     if (faqs && Array.isArray(faqs)) {
-      return faqs;
+      return faqs as FAQItem[];
     }
     
     return [];

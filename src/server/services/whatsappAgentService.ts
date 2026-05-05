@@ -2,7 +2,7 @@ import { customerMemoryService } from './customerMemoryService';
 import { appointmentService } from './appointmentService';
 import { WhatsAppAgent } from '../application/use-cases';
 
-import { FirestoreWhatsAppRepository } from '../infrastructure/whatsapp/FirestoreWhatsAppRepository';
+import { TwilioWhatsAppRepository } from '../infrastructure/messaging/TwilioWhatsAppRepository';
 
 /**
  * Advanced WhatsApp Agent Service for Richard Automotive.
@@ -10,10 +10,10 @@ import { FirestoreWhatsAppRepository } from '../infrastructure/whatsapp/Firestor
  */
 export class WhatsAppAgentService {
   private agent: WhatsAppAgent;
-  private repo: FirestoreWhatsAppRepository;
+  private repo: TwilioWhatsAppRepository;
 
   constructor() {
-    this.repo = new FirestoreWhatsAppRepository();
+    this.repo = new TwilioWhatsAppRepository();
     this.agent = new WhatsAppAgent(this.repo);
   }
 

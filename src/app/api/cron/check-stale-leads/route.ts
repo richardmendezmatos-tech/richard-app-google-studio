@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { NudgeStaleLeads } from '@/server/application/use-cases';
-import { FirestoreLeadRepository } from '@/server/infrastructure/persistence/firestore/FirestoreLeadRepository';
-import { SendGridEmailRepository } from '@/server/infrastructure/messaging/SendGridEmailRepository';
+import { SupabaseLeadRepository } from '@/server/infrastructure/repositories/SupabaseLeadRepository';
+import { SendGridEmailRepository } from '@/server/infrastructure/repositories/SendGridEmailRepository';
 
 export async function GET(request: Request) {
   // Authorization header verification can be added here
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   console.info('Checking for stale leads (Agnostic Flow)...');
 
   try {
-    const leadRepository = new FirestoreLeadRepository();
+    const leadRepository = new SupabaseLeadRepository();
     const emailRepository = new SendGridEmailRepository();
     const useCase = new NudgeStaleLeads(leadRepository, emailRepository);
     

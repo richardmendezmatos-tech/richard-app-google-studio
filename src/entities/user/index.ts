@@ -1,2 +1,2 @@
 export * from './model/types';
-export * from './api/FirestoreUserRepository';
+export * from './api/repositories/SupabaseUserRepository';

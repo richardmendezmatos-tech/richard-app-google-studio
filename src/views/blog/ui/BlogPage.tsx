@@ -56,7 +56,7 @@ const BlogPage: React.FC = () => {
         email: subscriberEmail,
         source: 'blog_page',
         created_at: new Date().toISOString()
-      });
+      } as any);
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {

@@ -43,7 +43,7 @@ export const cache = {
                     return JSON.parse(value.toString()) as T;
                 }
             } catch (err) {
-                logger.warn(`Memcached GET error for key ${key}:`, err);
+                console.warn(`Memcached GET error for key ${key}:`, err);
             }
         }
 
@@ -71,7 +71,7 @@ export const cache = {
             try {
                 await client.set(key, stringValue, { expires: ttl });
             } catch (err) {
-                logger.warn(`Memcached SET error for key ${key}:`, err);
+                console.warn(`Memcached SET error for key ${key}:`, err);
             }
         }
 
@@ -90,7 +90,7 @@ export const cache = {
             try {
                 await client.delete(key);
             } catch (err) {
-                logger.warn(`Memcached DELETE error for key ${key}:`, err);
+                console.warn(`Memcached DELETE error for key ${key}:`, err);
             }
         }
         localCache.delete(key);

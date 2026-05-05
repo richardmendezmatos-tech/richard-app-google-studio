@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { ai } from '../../../services/aiManager';
 import { ReindexInventory } from '../../use-cases';
-import { FirestoreInventoryRepository } from '../../../infrastructure/persistence/firestore/FirestoreInventoryRepository';
+import { SupabaseInventoryRepository } from '../../../infrastructure/repositories/SupabaseInventoryRepository';
 
-const inventoryRepository = new FirestoreInventoryRepository();
+const inventoryRepository = new SupabaseInventoryRepository();
 
 export const semanticCarSearchFlow = async (input: { query: string }) => {
   const { semanticSearch } = await import('../../../infrastructure/ai/VectorAdapter');

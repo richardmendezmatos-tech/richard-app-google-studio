@@ -1,4 +1,4 @@
-import { GenkitVectorRepository } from '../infrastructure/vector/GenkitVectorRepository';
+import { GenkitVectorRepository } from '../infrastructure/ai/GenkitVectorRepository';
 import { InventorySearcher } from '../application/use-cases';
 import { Car } from '../domain/entities';
 

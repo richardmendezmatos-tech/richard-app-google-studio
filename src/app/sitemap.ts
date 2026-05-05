@@ -79,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let inventoryRoutes: MetadataRoute.Sitemap = [];
 
   try {
-    const result = await getPaginatedCars(100);
+    const result = await getPaginatedCars(100, null, 'all');
     const inventory = result.cars;
 
     if (Array.isArray(inventory) && inventory.length > 0) {

@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 
 let sendGridInitialized = false;
 let smtpTransport: nodemailer.Transporter | null = null;
+const apiKey = process.env.SENDGRID_API_KEY;
 
 const ensureSendGridConfigured = (): boolean => {
     if (sendGridInitialized) return true;
