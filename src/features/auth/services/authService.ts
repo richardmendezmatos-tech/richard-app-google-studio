@@ -1,33 +1,26 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-  signInWithCredential,
-  sendSignInLinkToEmail,
-  updateProfile,
-  updatePassword,
-  User,
-} from 'firebase/auth';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { UserRole, AppUser } from '@/entities/user';
-import { auth, getAnalyticsService } from '@/shared/api/firebase/firebaseService';
+import { createClient } from '@/shared/api/supabase/client';
+
 
 // --- Types & Constants ---
 const AUDIT_LOGS_COLLECTION = 'audit_logs';
 const RATE_LIMITS_COLLECTION = 'login_attempts';
 
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  phoneNumber?: string | null;
+}
+
 // --- Helper Functions ---
 
 const getClientIP = async (): Promise<string> => {
   try {
-    // Add timeout to prevent hanging
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2s max
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
     const res = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
     clearTimeout(timeoutId);
     const data = await res.json();
@@ -36,8 +29,6 @@ const getClientIP = async (): Promise<string> => {
     return '127_0_0_1';
   }
 };
-
-// --- Helper Functions ---
 
 export const isAdminEmail = (email: string | null): boolean => {
   if (!email) return false;
@@ -61,11 +52,21 @@ export const normalizeUser = (user: User, roleOverride?: UserRole) => {
   } as AppUser;
 };
 
+const mapSupabaseUser = (sbUser: any): User => {
+  return {
+    uid: sbUser.id,
+    email: sbUser.email || null,
+    displayName: sbUser.user_metadata?.full_name || sbUser.user_metadata?.displayName || null,
+    photoURL: sbUser.user_metadata?.avatar_url || sbUser.user_metadata?.photoURL || null,
+    phoneNumber: sbUser.phone || null,
+  };
+};
+
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
   const userRepo = DI.getUserRepository();
   const existing = await userRepo.getUserProfile(user.uid);
-  const currentDealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
-  const currentDealerName = localStorage.getItem('current_dealer_name') || 'Richard Automotive';
+  const currentDealerId = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') || 'richard-automotive' : 'richard-automotive';
+  const currentDealerName = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_name') || 'Richard Automotive' : 'Richard Automotive';
 
   if (!existing) {
     await userRepo.saveUserProfile(user.uid, {
@@ -99,7 +100,7 @@ export const logAuthActivity = async (
     /* ignore */
   }
 
-  const device = navigator.userAgent;
+  const device = typeof navigator !== 'undefined' ? navigator.userAgent : 'server';
 
   try {
     await DI.getUserRepository().logActivity({
@@ -109,131 +110,118 @@ export const logAuthActivity = async (
       method,
       success,
       details: details || '',
-      location: window.location.pathname,
+      location: typeof window !== 'undefined' ? window.location.pathname : '/',
     });
   } catch (e) {
     console.warn('Audit logging failed (non-critical):', e);
   }
 
-  const analytics = success && typeof window !== 'undefined' ? await getAnalyticsService() : null;
-  if (success && analytics) {
-    try {
-      const { logEvent } = await import('firebase/analytics');
-      const eventName = method.includes('login')
-        ? 'login'
-        : method.includes('signup')
-          ? 'sign_up'
-          : method;
-      logEvent(analytics, eventName, { method });
-    } catch {
-      /* ignore analytics errors */
-    }
+  // Firebase Analytics removed for $0 cost migration
+  if (success) {
+      console.log(`[Auth] Activity logged: ${method} for ${email}`);
   }
 };
+
 
 // --- User Management Functions ---
 
 export async function signUpWithEmail(email: string, password: string) {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
-    await createUserProfile(userCredential.user, role);
-    await logAuthActivity(email, true, 'signup_email');
-    return normalizeUser(userCredential.user, role);
-  } catch (error: unknown) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    const errorCode = (error as { code?: string }).code;
-    if (errorCode !== 'auth/cancelled-popup-request') {
-      await logAuthActivity(email, false, 'signup_email', errorMsg);
-    }
-    throw error;
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  
+  if (error || !data.user) {
+    const errorMsg = error ? error.message : 'Unknown error';
+    await logAuthActivity(email, false, 'signup_email', errorMsg);
+    throw error || new Error('Signup failed');
   }
+
+  const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
+  const user = mapSupabaseUser(data.user);
+  await createUserProfile(user, role);
+  await logAuthActivity(email, true, 'signup_email');
+  return normalizeUser(user, role);
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    await logAuthActivity(email, true, 'login_email');
-    return normalizeUser(userCredential.user);
-  } catch (error: unknown) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+  if (error || !data.user) {
+    const errorMsg = error ? error.message : 'Unknown error';
     await logAuthActivity(email, false, 'login_email', errorMsg);
-    throw error;
+    throw error || new Error('Login failed');
   }
+
+  const user = mapSupabaseUser(data.user);
+  await logAuthActivity(email, true, 'login_email');
+  return normalizeUser(user);
 }
 
 export async function signInWithGoogle(useRedirect: boolean = false) {
-  const provider = new GoogleAuthProvider();
-  try {
-    if (useRedirect || /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      return await signInWithRedirect(auth, provider);
+  const supabase = createClient();
+  
+  // Supabase handles the OAuth flow via redirects mostly
+  // It provides signInWithOAuth
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
     }
-    const result = await signInWithPopup(auth, provider);
-    Promise.all([createUserProfile(result.user, 'user')]).catch((err) =>
-      console.error('Background Auth Ops Failed:', err),
-    );
-    return result.user;
-  } catch (error: unknown) {
-    const errorCode = (error as { code?: string }).code;
-    const errorMessage = (error as { message?: string }).message;
-    if (errorCode === 'auth/popup-closed-by-user' || errorCode === 'auth/cancelled-popup-request') {
-      console.warn('Popup blocked/closed, falling back to redirect...');
-      return await signInWithRedirect(auth, provider);
-    }
+  });
 
-    if (errorMessage?.includes('requests-from-referer') || errorMessage?.includes('blocked')) {
-      console.error(
-        'CRITICAL: Firebase API Key restricted. Add http://localhost:3000 to Authorized Domains in Google Cloud Console.',
-      );
-      console.info('Troubleshoot at: https://console.cloud.google.com/apis/credentials');
-    }
-
-    console.error('Error signing in with Google:', errorMessage);
+  if (error) {
+    console.error('Error signing in with Google:', error.message);
     throw error;
   }
+  
+  // Note: OAuth redirects immediately, so the code below won't execute if successful
+  // We'll have to handle profile creation in a callback route or via a trigger
+  return data;
 }
 
 export async function signInWithGoogleCredential(credentialString: string) {
-  const credential = GoogleAuthProvider.credential(credentialString);
-  try {
-    const result = await signInWithCredential(auth, credential);
-    await createUserProfile(result.user, 'user');
-    await logAuthActivity(result.user.email || 'unknown', true, 'login_google_onetap');
-    return normalizeUser(result.user);
-  } catch (error: unknown) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    await logAuthActivity('unknown', false, 'login_google_onetap', errorMsg);
-    throw error;
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithIdToken({
+    provider: 'google',
+    token: credentialString,
+  });
+
+  if (error || !data.user) {
+    await logAuthActivity('unknown', false, 'login_google_onetap', error?.message);
+    throw error || new Error('Login failed');
   }
+
+  const user = mapSupabaseUser(data.user);
+  await createUserProfile(user, 'user');
+  await logAuthActivity(user.email || 'unknown', true, 'login_google_onetap');
+  return normalizeUser(user);
 }
 
 export async function signInWithFacebook(useRedirect: boolean = false) {
-  const provider = new FacebookAuthProvider();
-  try {
-    if (useRedirect || /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      return await signInWithRedirect(auth, provider);
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+    options: {
+      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
     }
-    const result = await signInWithPopup(auth, provider);
-    Promise.all([createUserProfile(result.user, 'user')]).catch((err) =>
-      console.error('Background Auth Ops Failed:', err),
-    );
-    return result.user;
-  } catch (error: unknown) {
-    const errorCode = (error as { code?: string }).code;
-    const errorMessage = (error as { message?: string }).message;
-    if (errorCode === 'auth/popup-closed-by-user') {
-      return await signInWithRedirect(auth, provider);
-    }
-    console.error('Error signing in with Facebook:', errorMessage);
+  });
+
+  if (error) {
+    console.error('Error signing in with Facebook:', error.message);
     throw error;
   }
+  
+  return data;
 }
 
 export async function signOutUser() {
-  const user = auth.currentUser;
+  const supabase = createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  const email = session?.user?.email;
+  
   try {
-    await signOut(auth);
-    if (user?.email) await logAuthActivity(user.email, true, 'signout');
+    await supabase.auth.signOut();
+    if (email) await logAuthActivity(email, true, 'signout');
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.error('Error signing out:', errorMsg);
@@ -242,13 +230,18 @@ export async function signOutUser() {
 }
 
 export async function sendMagicLink(email: string) {
+  const supabase = createClient();
   try {
-    const actionCodeSettings = {
-      url: `${window.location.origin}/admin-login-callback`,
-      handleCodeInApp: true,
-    };
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    window.localStorage.setItem('emailForSignIn', email);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/admin-login-callback` : undefined,
+      }
+    });
+    
+    if (error) throw error;
+    
+    if (typeof window !== 'undefined') window.localStorage.setItem('emailForSignIn', email);
     await logAuthActivity(email, true, 'magic_link_sent');
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);
@@ -277,8 +270,17 @@ export const updateUserProfile = async (
   user: User,
   data: { displayName?: string; photoURL?: string },
 ) => {
+  const supabase = createClient();
   try {
-    await updateProfile(user, data);
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        full_name: data.displayName,
+        avatar_url: data.photoURL
+      }
+    });
+    
+    if (error) throw error;
+    
     await DI.getUserRepository().saveUserProfile(user.uid, data);
     await logAuthActivity(user.email || 'unknown', true, 'profile_update');
   } catch (error: unknown) {
@@ -290,8 +292,14 @@ export const updateUserProfile = async (
 };
 
 export const updateUserPassword = async (user: User, newPassword: string) => {
+  const supabase = createClient();
   try {
-    await updatePassword(user, newPassword);
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+    
+    if (error) throw error;
+    
     await logAuthActivity(user.email || 'unknown', true, 'password_change');
   } catch (error: unknown) {
     const errorMessage = (error as { message?: string }).message;
@@ -301,86 +309,71 @@ export const updateUserPassword = async (user: User, newPassword: string) => {
   }
 };
 
-/**
- * Advanced Admin Login with Rate Limiting, Role Check, and 2FA Simulation
- * RESILIENCE UPDATE: "Fail-Open" for aux services (Logging/RateLimits)
- */
 export const loginAdmin = async (email: string, password: string, twoFactorCode?: string) => {
   console.log('2FA Challenge (Simulation):', twoFactorCode);
-  // 1. Parallel IO with Fail-Safe IP
   let ip = 'unknown';
   try {
     ip = await getClientIP();
-  } catch {
-    /* Ignore IP failures */
+  } catch {}
+
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+  if (error || !data.user) {
+    logAuthActivity(email, false, 'admin_login_failed', error ? error.message : 'Unknown').catch(() => {});
+    throw error || new Error('Login failed');
   }
 
-  // 2. Perform Auth FIRST (Critical Path)
-  let authResult;
-  try {
-    authResult = await signInWithEmailAndPassword(auth, email, password);
-  } catch (err: unknown) {
-    const errorCode = (err as { code?: string }).code;
-    // Log failure but ensure we throw the auth error
-    logAuthActivity(email, false, 'admin_login_failed', errorCode).catch(() => {});
-    throw err;
-  }
-
-  // 3. Post-Auth Checks (Rate Limits & Role) - FAIL OPEN
-  // We only block if we are SURE there is a risk. Database errors shouldn't lock out admins.
   try {
     const sanitizedEmail = (email || 'anon').replace(/[@.]/g, '_');
     const sanitizedIP = (ip || '0_0_0_0').replace(/[.:]/g, '_');
     const attemptId = `${sanitizedEmail}_${sanitizedIP}`;
 
     const userRepo = DI.getUserRepository();
-    const profile = await userRepo.getUserProfile(authResult.user.uid);
+    const profile = await userRepo.getUserProfile(data.user.id);
 
     if (profile?.isBlocked) {
       throw new Error('Su cuenta ha sido bloqueada temporalmente por seguridad.');
     }
 
-    // Limpiar intentos previos si existen
     await userRepo.deleteRateLimit(attemptId);
   } catch (e) {
     if (e instanceof Error && e.message.includes('bloqueada')) throw e;
     console.warn('Non-Critical Auth Logic skipped due to DB error:', e);
   }
 
-  // 4. Return Normalized User
-  const user = normalizeUser(authResult.user);
+  const mappedUser = mapSupabaseUser(data.user);
+  const user = normalizeUser(mappedUser);
 
-  // 5. Async Logging (Fire & Forget)
   logAuthActivity(email, true, 'admin_login_success').catch(() => {});
 
   return user;
 };
 
-// --- Authentication State Observer ---
-
 export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, (user) => {
-    callback(user);
+  const supabase = createClient();
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    callback(session?.user ? mapSupabaseUser(session.user) : null);
   });
+  
+  return () => {
+    subscription.unsubscribe();
+  };
 };
 
 // --- Passkey / Biometric Authentication ---
 
 export const registerPasskey = async (user: User) => {
-  // 1. Check browser support
-  if (!window.PublicKeyCredential) {
+  if (typeof window === 'undefined' || !window.PublicKeyCredential) {
     throw new Error('Passkeys not supported in this browser.');
   }
 
   try {
-    // 2. Create Challenge
     const challenge = new Uint8Array(32);
     window.crypto.getRandomValues(challenge);
 
-    // 3. User Info
     const userId = new TextEncoder().encode(user.uid);
 
-    // 4. Request Credential Creation
     const credential = (await navigator.credentials.create({
       publicKey: {
         challenge,
@@ -403,7 +396,6 @@ export const registerPasskey = async (user: User) => {
       },
     })) as PublicKeyCredential;
 
-    // 5. Save Credential ID
     if (credential) {
       await DI.getUserRepository().saveUserProfile(user.uid, {
         passkeyEnabled: true,
@@ -420,7 +412,7 @@ export const registerPasskey = async (user: User) => {
 };
 
 export const loginWithPasskey = async () => {
-  if (!window.PublicKeyCredential) {
+  if (typeof window === 'undefined' || !window.PublicKeyCredential) {
     throw new Error('Passkeys not supported in this browser.');
   }
 
@@ -428,7 +420,6 @@ export const loginWithPasskey = async () => {
     const challenge = new Uint8Array(32);
     window.crypto.getRandomValues(challenge);
 
-    // 1. Request Assertion from Authenticator
     const credential = (await navigator.credentials.get({
       publicKey: {
         challenge,
@@ -438,7 +429,6 @@ export const loginWithPasskey = async () => {
     })) as PublicKeyCredential;
 
     if (credential) {
-      // 2. Correlation: Find associated user by passkeyId
       const userRepo = DI.getUserRepository();
       const userData = await userRepo.getUserByPasskeyId(credential.id);
 
@@ -446,7 +436,6 @@ export const loginWithPasskey = async () => {
         throw new Error('Dispositivo no reconocido. Por favor, vincula tu dispositivo primero.');
       }
 
-      // 3. Log Intent
       await logAuthActivity(
         userData.email,
         true,

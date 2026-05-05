@@ -4,8 +4,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route, Navigate, useOutletContext } from '@/shared/lib/next-route-adapter';
 import { motion } from 'framer-motion';
 import { Smartphone, Sparkles } from 'lucide-react';
-import { auth } from '@/shared/api/firebase/firebaseService';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { useAuthStore } from '@/entities/session';
 
 import CommandCenterLayout, { CommandCenterContextType } from './CommandCenterLayout';
 
@@ -80,6 +79,8 @@ const CRMBoardWrapper = () => {
 
 const MarketingWrapper = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
+  const { user } = useAuthStore();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -108,7 +109,7 @@ const MarketingWrapper = () => {
               className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-primary hover:bg-slate-800 transition-all text-left group"
             >
               <img
-                src={optimizeImage(car.img || '', 100)}
+                src={car.img || ''}
                 alt={car.name}
                 className="w-12 h-12 rounded-lg object-cover"
                 loading="lazy"
@@ -132,10 +133,10 @@ const MarketingWrapper = () => {
         </div>
         <button
           onClick={async () => {
-            if (!auth.currentUser) return alert('Debes estar logueado.');
+            if (!user) return alert('Debes estar logueado.');
             try {
               const { registerPasskey } = await import('@/features/auth');
-              await registerPasskey(auth.currentUser);
+              await registerPasskey(user as any);
               alert('✅ Dispositivo vinculado exitosamente.');
             } catch (err: unknown) {
               alert('Error: ' + (err as Error).message);

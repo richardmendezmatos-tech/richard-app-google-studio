@@ -102,13 +102,8 @@ export interface PredictionOutcome {
 export const recordPredictionOutcomes = async (outcome: PredictionOutcome) => {
   console.log('[Antigravity DTS] Logging prediction outcome', outcome);
   try {
-    const { db } = await import('@/shared/api/firebase/firebaseService');
-    const { addDoc, collection } = await import('firebase/firestore/lite');
-    await addDoc(collection(db, 'prediction_outcomes'), {
-      ...outcome,
-      modelVersion: 'dts-v3-heuristic-advanced',
-      target: 'richard-automotive-command-center',
-    });
+    const { recordPredictionOutcome } = await import('@/shared/api/supabase/supabaseClient');
+    await recordPredictionOutcome(outcome);
   } catch (err) {
     console.error('Failed to log tactical prediction data:', err);
   }

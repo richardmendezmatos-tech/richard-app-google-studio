@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Sparkles, User as UserIcon } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { Car } from '@/shared/types/types';
 
 // Lazy load

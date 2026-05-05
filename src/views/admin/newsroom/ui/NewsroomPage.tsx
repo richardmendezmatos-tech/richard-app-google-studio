@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { generateBlogPost, generateCoverImage } from '@/shared/api/ai';
-import { subscribeToNewsletter } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
+
 import { BlogPost } from '@/shared/types/types';
 import { useBlogPosts, useCreateBlogPost } from '@/features/blog/hooks/useBlog';
 import {
@@ -113,10 +114,16 @@ const NewsroomPage: React.FC = () => {
     }
     setIsSubscribing(true);
     try {
-      await subscribeToNewsletter(subscriberEmail);
+      const repo = DI.getSubscriberRepository();
+      await repo.subscribe({ 
+        email: subscriberEmail,
+        source: 'newsroom_admin',
+        created_at: new Date().toISOString()
+      });
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {
+
       console.error(error);
       addNotification('error', 'Error al suscribirse. Intenta de nuevo.');
     } finally {

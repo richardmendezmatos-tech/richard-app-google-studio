@@ -1,6 +1,6 @@
 import React from 'react';
 import { Car } from '@/shared/types/types';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { ExternalLink, Tag } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 

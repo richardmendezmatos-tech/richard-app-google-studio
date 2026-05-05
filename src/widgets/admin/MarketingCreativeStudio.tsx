@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from '@/shared/types/types';
 import { generateCarMarketingContent, MarketingContent } from '@/features/leads';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import {
   X,
   Instagram,

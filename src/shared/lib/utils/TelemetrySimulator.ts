@@ -24,7 +24,17 @@ export class TelemetrySimulator {
   start() {
     if (this.intervalId) return;
 
+    const startTime = Date.now();
+    const MAX_DURATION_MS = 5 * 60 * 1000; // 5 minutos de simulación máxima
+
     this.intervalId = setInterval(() => {
+      // Auto-shutdown para evitar costos en la nube
+      if (Date.now() - startTime > MAX_DURATION_MS) {
+        console.warn('Telemetry Simulator auto-shutdown reached to prevent cloud cost leaks.');
+        this.stop();
+        return;
+      }
+
       // Logic for realistic variation
       const acceleration = Math.random() * 4 - 2; // -2 to +2
       this.currentData.speed = Math.max(0, Math.min(120, this.currentData.speed + acceleration));
@@ -47,7 +57,7 @@ export class TelemetrySimulator {
       updateVehicleTelemetry(this.currentData).catch((err) => {
         console.warn('Simulator push failed:', err);
       });
-    }, 1000);
+    }, 5000); // Incrementado de 1000ms a 5000ms para reducir escrituras en Firebase
   }
 
   stop() {

@@ -10,7 +10,6 @@ import {
   signInWithGoogleCredential,
   normalizeUser,
 } from '@/features/auth';
-import { auth, getRedirectResult } from '@/shared/api/firebase/firebaseService';
 import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
@@ -131,22 +130,6 @@ const UserLogin: React.FC = () => {
     const timer = setTimeout(initializeOneTap, 1500);
     return () => clearTimeout(timer);
   }, [from, isRegistering, loading, navigate, setStoreLoading, setUser, setError]);
-
-  // Handle successful redirect return
-  React.useEffect(() => {
-    const checkRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          setUser(normalizeUser(result.user) as any);
-          navigate(from, { replace: true });
-        }
-      } catch (err: unknown) {
-        setLocalError(getErrorMsg(err)); // Changed setError to setLocalError
-      }
-    };
-    checkRedirect();
-  }, [from, navigate, setUser]);
 
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setLoading(true);
@@ -386,7 +369,6 @@ const UserLogin: React.FC = () => {
           </Link>
         </div>
       </motion.div>
-      <div id="recaptcha-container" className="hidden"></div>
     </div>
   );
 };

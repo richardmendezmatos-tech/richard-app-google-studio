@@ -1,41 +1,33 @@
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  orderBy, 
-  limit, 
-  getDocs,
-  Timestamp 
-} from 'firebase/firestore';
-
-const getDb = async () => {
-  if (typeof window === 'undefined') {
-    const { db } = await import('@/shared/api/firebase/server');
-    return db;
-  } else {
-    const { db } = await import('@/shared/api/firebase/client');
-    return db;
-  }
-};
+import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
+import { supabase } from '@/shared/api/supabase/supabaseClient';
 
 export interface AuditEvent {
   id?: string;
   type: 'info' | 'warning' | 'error' | 'critical' | 'conversion';
   message: string;
   source: string;
-  timestamp: any;
+  timestamp: string;
   metadata?: Record<string, any>;
 }
 
 export class AuditRepository {
-  private collectionName = 'houston_audit_logs';
+  private tableName = 'logs';
+
+  private getClient() {
+    return typeof window === 'undefined' ? createServerSupabaseClient() : supabase;
+  }
 
   async log(event: Omit<AuditEvent, 'timestamp'>): Promise<void> {
     try {
-      const dbInstance = await getDb();
-      await addDoc(collection(dbInstance, this.collectionName), {
-        ...event,
-        timestamp: Timestamp.now(),
+      const client = this.getClient();
+      if (!client) return;
+
+      await client.from(this.tableName).insert({
+        level: event.type,
+        message: event.message,
+        source: event.source,
+        metadata: event.metadata || {},
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       console.error('❌ [AuditRepository] Failed to log event:', error);
@@ -43,17 +35,28 @@ export class AuditRepository {
   }
 
   async getRecentLogs(max: number = 20): Promise<AuditEvent[]> {
-    const dbInstance = await getDb();
-    const q = query(
-      collection(dbInstance, this.collectionName),
-      orderBy('timestamp', 'desc'),
-      limit(max)
-    );
+    const client = this.getClient();
+    if (!client) return [];
+
+    const { data, error } = await client
+      .from(this.tableName)
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(max);
     
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    if (error) {
+        console.error('❌ [AuditRepository] Failed to fetch logs:', error);
+        return [];
+    }
+
+    return data.map(log => ({
+      id: log.id,
+      type: log.level,
+      message: log.message,
+      source: log.source,
+      timestamp: log.timestamp,
+      metadata: log.metadata
     })) as AuditEvent[];
   }
 }
+

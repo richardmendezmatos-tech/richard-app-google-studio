@@ -16,7 +16,7 @@ import {
   Calculator,
   Banknote,
 } from 'lucide-react';
-import { AI_LEGAL_DISCLAIMER } from '@/shared/api/firebase/firebaseShared';
+import { AI_LEGAL_DISCLAIMER } from '@/shared/api/media/mediaShared';
 import GenUICarCard from '@/shared/brand-ui/layout/chat/GenUICarCard';
 
 import { useInventoryAnalytics } from '@/features/inventory';

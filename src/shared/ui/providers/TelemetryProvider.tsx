@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { getRealtimeDbService } from '@/shared/api/firebase/firebaseService';
-import { VehicleHealthStatus } from '@/shared/types/types';
-import type { DataSnapshot } from 'firebase/database';
+import { createClient } from '@/shared/api/supabase/client';
+import { VehicleHealthStatus, VehicleTelemetry } from '@/shared/types/types';
 import telemetry from '@/shared/api/metrics/analytics';
 
 interface TelemetryContextType {
@@ -34,22 +33,21 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     activeSubscriptions.current.add(vehicleId);
 
     try {
-      const rtdb = await getRealtimeDbService();
-      if (!rtdb) return;
+      const supabase = createClient();
+      if (!supabase) return;
 
-      const { ref, onValue } = await import('firebase/database');
-      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
+      const channel = supabase.channel('vehicle-telemetry');
 
-      onValue(vehicleRef, (snapshot: DataSnapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          // Import analyzeVehicleHealth dynamically to avoid circular dependencies
+      channel
+        .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
+          const data = payload.payload as VehicleTelemetry;
           import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
             const health = analyzeVehicleHealth(data);
             setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
           });
-        }
-      });
+        })
+        .subscribe();
+      
     } catch (error) {
       console.warn('[TelemetryProvider] Sync error:', error);
     } finally {
@@ -60,12 +58,12 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const unsubscribeFromVehicle = useCallback(async (vehicleId: string) => {
     activeSubscriptions.current.delete(vehicleId);
     try {
-      const rtdb = await getRealtimeDbService();
-      if (!rtdb) return;
-      const { ref, off } = await import('firebase/database');
-      const vehicleRef = ref(rtdb, `telemetry/${vehicleId}`);
-      off(vehicleRef);
+      const supabase = createClient();
+      if (!supabase) return;
       
+      // En una arquitectura más limpia, se debería guardar la referencia al canal
+      // y remover específicamente ese canal, pero para simplificar:
+      // removemos la key del mapa
       setTelemetryMap((prev) => {
         const next = { ...prev };
         delete next[vehicleId];

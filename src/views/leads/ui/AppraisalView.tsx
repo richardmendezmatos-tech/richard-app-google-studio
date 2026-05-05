@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
 
-import { submitApplication } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { usePhotoUploader } from '@/shared/lib/hooks/usePhotoUploader';
 import { analyzeTradeInImages } from '@/shared/api/ai';
 import { getAppraisalBaseValue } from '@/features/appraisal';
@@ -501,7 +501,7 @@ const AppraisalView: React.FC = () => {
 
   const handleAcceptOffer = async () => {
     try {
-      await submitApplication({
+      await DI.getApplicationRepository().submitApplication({
         firstName: contactInfo.name.split(' ')[0],
         lastName: contactInfo.name.split(' ').slice(1).join(' ') || 'N/A',
         phone: contactInfo.phone,
@@ -514,7 +514,7 @@ const AppraisalView: React.FC = () => {
         aiSummary: aiAnalysis
           ? `IA Condition: ${aiAnalysis.condition}. Reasoning: ${aiAnalysis.reasoning}`
           : 'No AI Analysis',
-      });
+      }, 'richard-automotive');
       navigate('/garage');
     } catch (e) {
       console.error(e);

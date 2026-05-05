@@ -2,8 +2,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { openaiService } from '@/shared/api/ai/openaiService';
-import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, createCar } from '@dataconnect/generated';
+
 
 
 
@@ -18,7 +17,7 @@ import { connectorConfig, createCar } from '@dataconnect/generated';
  * Security: Requires X-Antigravity-Token header.
  */
 export async function POST(req: Request) {
-  const dataConnect = getDataConnect(connectorConfig);
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -97,23 +96,7 @@ export async function POST(req: Request) {
       // We don't return here yet, we try to sync with Data Connect too
     }
 
-    // 5. Sync with Firebase Data Connect
-    try {
-      await createCar(dataConnect, {
-        year: parseInt(vehicle.year),
-        make: vehicle.make,
-        model: vehicle.model,
-        name: vehicle.name,
-        price: parseFloat(vehicle.price),
-        mileage: parseInt(vehicle.mileage || 0),
-        type: vehicle.type || 'Unknown',
-        category: vehicle.category || 'Inventory',
-        condition: vehicle.condition || 'Used',
-      });
-      console.log('[Ingest] Data Connect sync successful');
-    } catch (dcErr) {
-      console.error('[Ingest] Data Connect sync failed:', dcErr);
-    }
+// 5. Removed Data Connect sync since we are migrating exclusively to Supabase
 
     return NextResponse.json({
       success: true,
@@ -133,7 +116,6 @@ export async function POST(req: Request) {
  * Bulk sync: pulls all inventory from Java backend
  */
 export async function GET(req: Request) {
-  const dataConnect = getDataConnect(connectorConfig);
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 

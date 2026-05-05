@@ -18,7 +18,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
-import { submitApplication } from '@/shared/api/firebase/firebaseService';
+import { DI } from '@/app/(dashboard)/di/registry';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { encryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
@@ -138,8 +138,8 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
             }
           : {}),
       };
-
-      await submitApplication(submissionData);
+      
+      await DI.getApplicationRepository().submitApplication(submissionData, 'richard-automotive');
       const refId = `CASE-${Math.floor(Math.random() * 1000000)}`;
 
       // Full CRM update

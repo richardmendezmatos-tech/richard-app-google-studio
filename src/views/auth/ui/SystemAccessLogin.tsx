@@ -15,8 +15,6 @@ import {
   Cpu,
 } from 'lucide-react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/shared/api/firebase/firebaseService';
 import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -130,7 +128,14 @@ const SystemAccessLogin: FC = () => {
           console.log('Passkey verified (DEV override):', result.credential);
           const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
           const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
-          await signInWithEmailAndPassword(auth, devEmail, devPass);
+          const profile = await loginAdmin(devEmail, devPass);
+          setUser({
+            ...profile,
+            role: profile.role as UserRole,
+          });
+          setLoading(false);
+          navigate('/admin');
+          return;
         } else {
           const profile = await loginAdmin(result.email, 'PASSKEY_SECURED_SESSION');
           setUser({
@@ -141,14 +146,6 @@ const SystemAccessLogin: FC = () => {
           navigate('/admin');
           return;
         }
-
-        const normalized = normalizeUser(auth.currentUser!, 'admin');
-        setUser({
-          ...normalized,
-          role: normalized.role as UserRole,
-        });
-        setLoading(false);
-        navigate('/admin');
       }
     } catch (err: unknown) {
       console.error('Passkey Failed:', err);
@@ -171,17 +168,13 @@ const SystemAccessLogin: FC = () => {
     setLocalError(null);
     setLoading(true);
     try {
-      const { signInWithEmailAndPassword } = await import('firebase/auth');
-      const { auth } = await import('@/shared/api/firebase/firebaseService');
-
       const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'admin@richard.com';
       const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
 
-      await signInWithEmailAndPassword(auth, devEmail, devPass);
-      const normalized = normalizeUser(auth.currentUser!, 'admin');
+      const profile = await loginAdmin(devEmail, devPass);
       setUser({
-        ...normalized,
-        role: normalized.role as UserRole,
+        ...profile,
+        role: profile.role as UserRole,
       });
       setLoading(false);
       navigate('/admin');

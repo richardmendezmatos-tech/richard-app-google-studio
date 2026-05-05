@@ -5,7 +5,7 @@
 import React from 'react';
 import { Car } from '@/entities/inventory';
 import { Sparkles, Edit3, Trash2, Clock } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 
 interface InventoryRowProps {

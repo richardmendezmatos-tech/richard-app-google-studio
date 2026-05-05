@@ -1,8 +1,6 @@
-"use client";
-
 import React, { useEffect, useState } from 'react';
-import { getSubscribers } from '@/shared/api/firebase/firebaseService';
-import { Subscriber } from '@/shared/types/types';
+import { DI } from '@/app/(dashboard)/di/registry';
+import { SubscriberData as Subscriber } from '@/entities/lead/model/captureTypes';
 import { Users, Mail, Bell, Search, Filter, Loader2, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -14,7 +12,8 @@ const AudiencesView: React.FC = () => {
   useEffect(() => {
     const fetchSubs = async () => {
       try {
-        const data = await getSubscribers();
+        const repo = DI.getSubscriberRepository();
+        const data = await repo.getSubscribers();
         setSubscribers(data);
       } catch (e) {
         console.error('Error fetching subscribers:', e);
@@ -24,6 +23,7 @@ const AudiencesView: React.FC = () => {
     };
     fetchSubs();
   }, []);
+
 
   const handleBroadcast = () => {
     setIsBroadcasting(true);
@@ -129,10 +129,11 @@ const AudiencesView: React.FC = () => {
                     <td className="p-6 font-bold text-white">{sub.email}</td>
                     <td className="p-6 text-slate-400">Website Form</td>
                     <td className="p-6 text-slate-400">
-                      {sub.timestamp
-                        ? new Date((sub.timestamp as any).seconds * 1000).toLocaleDateString()
+                      {sub.created_at
+                        ? new Date(sub.created_at).toLocaleDateString()
                         : 'Reciente'}
                     </td>
+
                     <td className="p-6 text-right">
                       <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase rounded-full border border-emerald-500/30">
                         Activo

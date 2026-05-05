@@ -16,7 +16,7 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { AdminCarCard } from './AdminCarCard';
 import HyperInventoryList from './HyperInventoryList';

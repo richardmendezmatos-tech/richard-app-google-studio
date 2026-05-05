@@ -57,6 +57,22 @@
     {
       "path": "/api/cron/sync-inventory",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/email-scheduler",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/check-stale-leads",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-logs",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/market-scraper",
+      "schedule": "0 6 * * *"
     }
   ]
 }

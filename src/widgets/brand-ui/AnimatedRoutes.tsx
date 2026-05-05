@@ -171,13 +171,14 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
       return;
     }
 
-    let unsubscribe: () => void;
-    import('@/shared/api/firebase/firebaseService').then(({ auth }) => {
-      unsubscribe = auth.onAuthStateChanged(() => {
+    let unsubscribe: { data: { subscription: any } } | null = null;
+    import('@/shared/api/supabase/supabaseClient').then(({ supabase }) => {
+      const { data } = supabase.auth.onAuthStateChange(() => {
         setCheckingAuth(false);
       });
+      unsubscribe = { data: { subscription: data.subscription } };
     });
-    return () => unsubscribe?.();
+    return () => unsubscribe?.data.subscription.unsubscribe();
   }, []);
 
   const handleLogout = () => {

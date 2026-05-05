@@ -26,7 +26,8 @@ export class HoustonCollectorService {
       const inventoryRepo = new SupabaseInventoryRepository(
          createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
       );
-      const houstonRepo = new (await import('@/entities/houston/api/FirestoreHoustonRepository')).FirestoreHoustonRepository();
+      const { SupabaseHoustonRepository } = await import('@/entities/houston/api/SupabaseHoustonRepository');
+      const houstonRepo = new SupabaseHoustonRepository();
       const { NeuroScoringService } = await import('../lib/NeuroScoringService');
 
       // 1. Lead Velocity (Leads per hour)

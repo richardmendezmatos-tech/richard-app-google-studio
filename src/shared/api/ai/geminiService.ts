@@ -310,6 +310,36 @@ const callGeminiProxy = async (
   }
 };
 
+/**
+ * Vision-enabled AI description generator.
+ */
+export const generateVisionDescription = async (
+  prompt: string,
+  imageSource?: string, // base64
+  systemInstruction: string = 'Eres un vendedor experto de autos. Escribe en español.'
+): Promise<string> => {
+  let finalPrompt: GeminiPrompt = prompt;
+
+  if (imageSource) {
+    const mimeMatch = imageSource.match(/^data:(image\/\w+);base64,/);
+    const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const cleanBase64 = imageSource.replace(/^data:image\/\w+;base64,/, '');
+
+    finalPrompt = [
+      { text: prompt },
+      {
+        inlineData: {
+          data: cleanBase64,
+          mimeType: mimeType,
+        },
+      },
+    ];
+  }
+
+  return await callGeminiProxy(finalPrompt, systemInstruction, 'gemini-1.5-flash');
+};
+
+
 // Local Fallback Database
 const FALLBACK_RESPONSES: Record<string, string> = {
   suv: 'Tenemos excelentes SUVs como la Hyundai Tucson y Santa Fe. ¿Te gustaría ver detalles de alguna?',

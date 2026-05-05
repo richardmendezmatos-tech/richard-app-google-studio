@@ -26,6 +26,8 @@ import {
   Share2,
   Wifi,
   WifiOff,
+  Power,
+  PowerOff,
 } from 'lucide-react';
 import { DI } from '@/app/(dashboard)/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
@@ -553,6 +555,22 @@ const HoustonDashboard: React.FC = () => {
   const { businessData, refresh: refreshBusiness } = useBusinessTelemetry();
   const { containerRef } = useMouseGlow();
 
+  const [killSwitch, setKillSwitch] = useState(false);
+
+  useEffect(() => {
+    setKillSwitch(window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true');
+  }, []);
+
+  const toggleKillSwitch = () => {
+    const newState = !killSwitch;
+    setKillSwitch(newState);
+    if (newState) {
+      window.sessionStorage.setItem('RA_KILL_SWITCH', 'true');
+    } else {
+      window.sessionStorage.removeItem('RA_KILL_SWITCH');
+    }
+  };
+
   const getHoustonTelemetry = useMemo(() => DI.getHoustonTelemetryUseCase(), []);
   const identifyOutreachOpportunities = useMemo(() => DI.getIdentifyOutreachOpportunitiesUseCase(), []);
 
@@ -608,40 +626,64 @@ const HoustonDashboard: React.FC = () => {
             <span className="border-l border-white/10 pl-6 hidden sm:inline">HQ_SAN_JUAN</span>
           </div>
         </div>
-        {/* Autonomy Score Badge */}
-        <div className="glass-premium px-8 py-5 flex items-center gap-8 border border-white/5 hover:scale-[1.02] transition-all cursor-pointer shadow-xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="text-right">
-            <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">Autonomy Score</p>
-            <p className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
-              {telemetry.metrics.autonomyRate.value}<span className="text-lg text-cyan-500/50">%</span>
-            </p>
-          </div>
-          <div className="p-3 bg-cyan-500/10 rounded-2xl group-hover:bg-cyan-500/20 transition-colors">
-            <Activity className="text-cyan-500 animate-pulse" size={28} />
-          </div>
-        </div>
-        {/* PWA Install Action */}
-        {isInstallable && (
-          <motion.button
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={installPWA}
-            className="glass-premium px-6 py-5 flex items-center gap-4 border border-cyan-500/20 hover:bg-cyan-500/10 transition-all cursor-pointer shadow-xl group/install ml-auto md:ml-0"
-          >
+        <div className="flex flex-wrap items-center gap-4 ml-auto md:ml-0 w-full md:w-auto justify-end">
+          {/* Autonomy Score Badge */}
+          <div className="glass-premium px-6 md:px-8 py-5 flex items-center gap-4 md:gap-8 border border-white/5 hover:scale-[1.02] transition-all cursor-pointer shadow-xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="text-right">
-              <p className="text-[10px] text-cyan-500/70 uppercase font-black tracking-[0.3em] mb-1">Mobile Access</p>
-              <p className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
-                INSTALL APP
+              <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">Autonomy Score</p>
+              <p className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
+                {telemetry.metrics.autonomyRate.value}<span className="text-lg text-cyan-500/50">%</span>
               </p>
             </div>
-            <div className="p-2 bg-cyan-500/20 rounded-xl group-hover:animate-bounce">
-              <Download className="text-cyan-400" size={20} />
+            <div className="p-3 bg-cyan-500/10 rounded-2xl group-hover:bg-cyan-500/20 transition-colors">
+              <Activity className="text-cyan-500 animate-pulse" size={28} />
             </div>
-          </motion.button>
-        )}
+          </div>
+          
+          {/* Kill Switch */}
+          <button
+            onClick={toggleKillSwitch}
+            title="Activar o desactivar escucha de base de datos"
+            className={`glass-premium px-6 py-5 flex items-center gap-4 border transition-all cursor-pointer shadow-xl group/kill ${
+              killSwitch ? 'border-red-500/40 bg-red-500/10' : 'border-emerald-500/20 hover:bg-emerald-500/10'
+            }`}
+          >
+            <div className="text-right hidden sm:block">
+              <p className={`text-[10px] uppercase font-black tracking-[0.3em] mb-1 ${killSwitch ? 'text-red-500/70' : 'text-emerald-500/70'}`}>
+                {killSwitch ? 'Reposo' : 'Conexión DB'}
+              </p>
+              <p className={`text-xl font-black tracking-tighter ${killSwitch ? 'text-red-400' : 'text-emerald-400'}`}>
+                {killSwitch ? 'APAGADA' : 'ACTIVA'}
+              </p>
+            </div>
+            <div className={`p-3 rounded-2xl transition-all ${killSwitch ? 'bg-red-500/20 animate-pulse' : 'bg-emerald-500/20'}`}>
+              {killSwitch ? <PowerOff className="text-red-400" size={28} /> : <Power className="text-emerald-400" size={28} />}
+            </div>
+          </button>
+
+          {/* PWA Install Action */}
+          {isInstallable && (
+            <motion.button
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={installPWA}
+              className="glass-premium px-6 py-5 flex items-center gap-4 border border-cyan-500/20 hover:bg-cyan-500/10 transition-all cursor-pointer shadow-xl group/install"
+            >
+              <div className="text-right hidden sm:block">
+                <p className="text-[10px] text-cyan-500/70 uppercase font-black tracking-[0.3em] mb-1">Mobile Access</p>
+                <p className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
+                  INSTALL APP
+                </p>
+              </div>
+              <div className="p-3 bg-cyan-500/20 rounded-2xl group-hover:animate-bounce">
+                <Download className="text-cyan-400" size={28} />
+              </div>
+            </motion.button>
+          )}
+        </div>
       </motion.header>
 
       {/* Tab Navigation */}

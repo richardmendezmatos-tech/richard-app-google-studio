@@ -52,13 +52,15 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
 
     if (user) {
       try {
-        const [{ db }, { doc, getDoc }] = await Promise.all([
-          import('@/shared/api/firebase/firebaseService'),
-          import('firebase/firestore/lite'),
-        ]);
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().privacySettings) {
-          const dbSettings = userDoc.data().privacySettings as PrivacySettings;
+        const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+        const { data, error } = await supabase
+          .from('users')
+          .select('privacy_settings')
+          .eq('id', user.uid)
+          .single();
+
+        if (!error && data?.privacy_settings) {
+          const dbSettings = data.privacy_settings as PrivacySettings;
           const syncedSettings = { ...dbSettings, essential: true };
           set({ settings: syncedSettings, hasConsented: true });
 
@@ -68,7 +70,7 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
           }
         }
       } catch (error) {
-        console.error('Error fetching privacy settings from Firestore:', error);
+        console.error('Error fetching privacy settings from Supabase:', error);
       }
     }
 
@@ -89,15 +91,13 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
 
     if (user) {
       try {
-        const [{ db }, { doc, updateDoc }] = await Promise.all([
-          import('@/shared/api/firebase/firebaseService'),
-          import('firebase/firestore/lite'),
-        ]);
-        await updateDoc(doc(db, 'users', user.uid), {
-          privacySettings: updated,
-        });
+        const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+        await supabase
+          .from('users')
+          .update({ privacy_settings: updated })
+          .eq('id', user.uid);
       } catch (error) {
-        console.error('Error updating privacy settings in Firestore:', error);
+        console.error('Error updating privacy settings in Supabase:', error);
       }
     }
   },

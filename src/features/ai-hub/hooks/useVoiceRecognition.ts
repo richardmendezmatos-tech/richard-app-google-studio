@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface UseVoiceRecognitionOptions {
   onResult: (transcript: string) => void;
@@ -18,11 +17,6 @@ export function useVoiceRecognition({
 }: UseVoiceRecognitionOptions) {
   const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const functions = getFunctions();
-  const transcribeVoice = httpsCallable<
-    { audioBase64: string; mimeType: string },
-    { text: string }
-  >(functions, 'transcribeVoice');
 
   const startListening = useCallback(async () => {
     if (!Capacitor.isNativePlatform()) {
@@ -56,13 +50,21 @@ export function useVoiceRecognition({
       const { value: recordingData } = await VoiceRecorder.stopRecording();
 
       if (recordingData.recordDataBase64) {
-        const result = await transcribeVoice({
-          audioBase64: recordingData.recordDataBase64,
-          mimeType: recordingData.mimeType,
+        // Refactored from Firebase Function to Next.js API Route
+        const response = await fetch('/api/ai/transcribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            audioBase64: recordingData.recordDataBase64,
+            mimeType: recordingData.mimeType,
+          }),
         });
 
-        if (result.data.text) {
-          onResult(result.data.text);
+        if (response.ok) {
+          const { text } = await response.json();
+          if (text) onResult(text);
+        } else {
+          throw new Error('Transcription failed');
         }
       }
     } catch (err) {
@@ -70,7 +72,7 @@ export function useVoiceRecognition({
     } finally {
       setIsLoading(false);
     }
-  }, [isListening, transcribeVoice, onResult]);
+  }, [isListening, onResult]);
 
   const toggleListening = useCallback(() => {
     if (isListening) {
@@ -82,3 +84,4 @@ export function useVoiceRecognition({
 
   return { isListening, toggleListening, stopListening, isLoading };
 }
+

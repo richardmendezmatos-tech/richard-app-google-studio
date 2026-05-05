@@ -9,7 +9,6 @@ import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead/model/types';
 import { Subscriber } from '@/shared/types/types';
 import { ShieldCheck, Plus, DatabaseZap, User as UserIcon, Radio, Zap, Scale } from 'lucide-react';
-import { auth } from '@/shared/api/firebase/firebaseService';
 import { useAntigravity } from '@/features/automation';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';

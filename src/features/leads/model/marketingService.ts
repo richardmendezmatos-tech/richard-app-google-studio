@@ -145,25 +145,15 @@ export const generateCarMarketingContent = async (
     }
   }
 
-  try {
-    const { functions } = await import('@/shared/api/firebase/client');
-    const { httpsCallable } = await import('firebase/functions');
-    const askGemini = httpsCallable<any, string>(functions, 'askGemini');
+    const { generateStructuredJSON } = await import('@/shared/api/ai/geminiService');
 
-    const response = await askGemini({
-      contents,
-      model: 'gemini-1.5-flash',
-      config: { responseMimeType: 'application/json' },
-    });
+    const response = await generateStructuredJSON(
+      prompt,
+      undefined,
+      'gemini-1.5-flash'
+    );
 
-    let cleanText = response.data;
-    if (cleanText.includes('```json')) {
-      cleanText = cleanText.split('```json')[1].split('```')[0].trim();
-    } else if (cleanText.includes('```')) {
-      cleanText = cleanText.split('```')[1].split('```')[0].trim();
-    }
-
-    return JSON.parse(cleanText);
+    return response;
   } catch (error) {
     console.error('Marketing Gen Error:', error);
     return {

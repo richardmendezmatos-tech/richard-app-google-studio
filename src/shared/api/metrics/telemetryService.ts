@@ -1,23 +1,29 @@
-import { getRealtimeDbService } from '@/shared/api/firebase/firebaseService';
-import type { DataSnapshot } from 'firebase/database';
 import { VehicleTelemetry, VehicleHealthStatus, HealthAlert } from '@/shared/types/types';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
+import { createClient } from '@/shared/api/supabase/client';
 
-const TELEMETRY_PATH = 'telemetry';
+const TELEMETRY_CHANNEL = 'vehicle-telemetry';
 
 export const updateVehicleTelemetry = async (telemetry: VehicleTelemetry) => {
   try {
-    const rtdb = await getRealtimeDbService();
-    if (!rtdb) return;
-    const { ref, set } = await import('firebase/database');
-    const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${telemetry.vehicleId}`);
-    await set(vehicleRef, {
-      ...telemetry,
-      lastUpdate: Date.now(),
+    const supabase = createClient();
+    if (!supabase) return;
+
+    const channel = supabase.channel(TELEMETRY_CHANNEL);
+    
+    // In a real scenario, you'd subscribe first or keep a singleton channel,
+    // but for simple pushes you can do this, though keeping a singleton is better.
+    await channel.send({
+      type: 'broadcast',
+      event: `update-${telemetry.vehicleId}`,
+      payload: {
+        ...telemetry,
+        lastUpdate: Date.now(),
+      },
     });
   } catch (error) {
-    console.warn('[Telemetry] Update deferred or failed:', error);
+    console.warn('[Telemetry] Broadcast failed:', error);
   }
 };
 
@@ -29,41 +35,31 @@ export const useVehicleTelemetry = (vehicleId: string) => {
   useEffect(() => {
     if (!vehicleId) return;
 
-    let unsubscribe: (() => void) | undefined;
+    const supabase = createClient();
+    if (!supabase) {
+      setError('Supabase client not initialized');
+      setLoading(false);
+      return;
+    }
 
-    (async () => {
-      try {
-        const rtdb = await getRealtimeDbService();
-        const { ref, onValue, off } = await import('firebase/database');
-        const vehicleRef = ref(rtdb, `${TELEMETRY_PATH}/${vehicleId}`);
+    const channel = supabase.channel(TELEMETRY_CHANNEL);
 
-        onValue(
-          vehicleRef,
-          (snapshot: DataSnapshot) => {
-            if (snapshot.exists()) {
-              setTelemetry(snapshot.val() as VehicleTelemetry);
-            } else {
-              setTelemetry(null);
-            }
-            setLoading(false);
-          },
-          (err) => {
-            console.error('Telemetry Sync Error:', err);
-            setError(err.message);
-            setLoading(false);
-          },
-        );
-
-        unsubscribe = () => off(vehicleRef);
-      } catch (err) {
-        console.error('Telemetry Init Error:', err);
-        setError(err instanceof Error ? err.message : 'Telemetry init failed');
+    channel
+      .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
+        setTelemetry(payload.payload as VehicleTelemetry);
         setLoading(false);
-      }
-    })();
+      })
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          setLoading(false);
+        }
+        if (status === 'CHANNEL_ERROR') {
+          setError(err?.message || 'Error subscribing to telemetry');
+        }
+      });
 
     return () => {
-      unsubscribe?.();
+      supabase.removeChannel(channel);
     };
   }, [vehicleId]);
 

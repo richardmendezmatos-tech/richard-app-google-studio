@@ -25,7 +25,7 @@ import {
   RefreshCcw,
 } from 'lucide-react';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
-import { optimizeImage } from '@/shared/api/firebase/firebaseShared';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { InventoryHeatmap } from '@/features/inventory';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';

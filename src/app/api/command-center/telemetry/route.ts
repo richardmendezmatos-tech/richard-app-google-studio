@@ -1,27 +1,21 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { FirestoreLeadRepository } from '@/entities/lead/api/FirestoreLeadRepository';
+import { SupabaseLeadRepository } from '@/entities/lead/api/repositories/SupabaseLeadRepository';
 import { calculateLeadScore } from '@/entities/lead/api/leadScoringService';
+import { Lead } from '@/shared/types/lead';
 
-
-
-const leadRepo = new FirestoreLeadRepository();
-const DEALER_ID = 'richard-automotive-main'; // ID unificado del ecosistema
+const DEALER_ID = 'richard-automotive-main';
 
 /**
  * GET /api/command-center/telemetry
- * 
- * Central telemetry aggregator. Performs a "Sync Capture" of latest leads
- * from Firestore, calculates their AI scores, and merges with Supabase 
- * automation states for a real-time command view.
  */
 export async function GET(req: Request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    console.warn('[Telemetry API] Supabase keys missing. Returning degraded mode for build.');
+    console.warn('[Telemetry API] Supabase keys missing.');
     return NextResponse.json({ 
       timestamp: new Date().toISOString(),
       summary: { leads_last_24h: 0, avg_score: 0, inventory_coverage: 0 },
@@ -33,6 +27,8 @@ export async function GET(req: Request) {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
+  const leadRepo = new SupabaseLeadRepository(supabase);
+  
   const token = req.headers.get('x-antigravity-token');
   if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -48,7 +44,7 @@ export async function GET(req: Request) {
       searchGaps,
       messageStats,
       embeddingCount,
-      recentLeads,
+      rawLeads,
       purchaseOrders
     ] = await Promise.all([
       supabase.from('search_gaps').select('*').order('created_at', { ascending: false }).limit(10),
@@ -58,9 +54,17 @@ export async function GET(req: Request) {
       supabase.from('purchase_orders').select('*').in('status', ['draft', 'confirmed']).order('created_at', { ascending: false }).limit(10)
     ]);
 
-    // 2. Lead Intelligence Processing
-    // Calculate scores and priority for recent leads
-    const scoredLeads = recentLeads.map(lead => {
+    // 2. Map and Score Leads
+    const leads = (rawLeads as any[]).map(l => ({
+      ...l,
+      firstName: l.first_name,
+      lastName: l.last_name,
+      vehicleOfInterest: l.vehicle_of_interest,
+      aiScore: l.ai_analysis?.score || 50,
+      customerMemory: l.customer_memory || l.ai_analysis?.memory || {}
+    })) as Lead[];
+
+    const scoredLeads = leads.map(lead => {
       const scoring = calculateLeadScore(lead);
       return {
         id: lead.id,
@@ -70,7 +74,7 @@ export async function GET(req: Request) {
         score: scoring.score,
         priority: scoring.priority,
         factors: scoring.factors,
-        timestamp: lead.timestamp
+        timestamp: lead.createdAt || lead.timestamp
       };
     });
 
@@ -92,7 +96,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       timestamp: now.toISOString(),
       summary: {
-        leads_last_24h: recentLeads.filter(l => (l.timestamp as any)?.seconds * 1000 > new Date(last24h).getTime()).length,
+        leads_last_24h: leads.filter(l => new Date(l.createdAt as any).getTime() > new Date(last24h).getTime()).length,
         avg_score: scoredLeads.length ? Math.round(scoredLeads.reduce((a, b) => a + b.score, 0) / scoredLeads.length) : 0,
         inventory_coverage: embeddingCount.count || 0,
       },
