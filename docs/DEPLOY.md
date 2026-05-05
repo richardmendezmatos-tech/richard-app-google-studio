@@ -13,10 +13,11 @@ Asegúrate de configurar los siguientes secretos en el dashboard de Vercel para 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Key pública para el cliente del navegador |
 | `SUPABASE_SERVICE_ROLE_KEY` | **(CRÍTICO)** Requerido para operaciones de servidor y crons que saltan RLS |
 
-### AI & Intelligence
+### AI & Intelligence (Vercel AI SDK)
 | Variable | Propósito |
 | :--- | :--- |
-| `GEMINI_API_KEY` | Motor Neural Match, Visión de Unidades y Generación de POs |
+| `GEMINI_API_KEY` | Motor Neural Match, Visión de Unidades y Chat Copilot (Vercel AI SDK) |
+| `NEXT_PUBLIC_AI_ENDPOINT` | Opcional. Por defecto utiliza `/api/ai/chat` |
 
 ### Integrations
 | Variable | Propósito |

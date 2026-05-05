@@ -236,8 +236,8 @@ const callGeminiProxy = async (
   inventory?: Car[],
 ): Promise<string> => {
   try {
-    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.VITE_FIREBASE_API_KEY;
-    if (!apiKey) throw new Error('No Valid API Key found');
+    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const modelOptions: any = {
@@ -890,8 +890,8 @@ export const generateBlogPost = async (
 
 export const generateEmbedding = async (text: string): Promise<number[]> => {
   try {
-    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.VITE_FIREBASE_API_KEY;
-    if (!apiKey) throw new Error('No API Key for embeddings');
+    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });

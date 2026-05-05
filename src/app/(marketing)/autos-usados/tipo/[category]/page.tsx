@@ -180,7 +180,7 @@ export default async function CategoryPage({ params }: Props) {
     const result = await getPaginatedCars(50, null, 'all');
     const allInventory = result.cars;
     // Filter by type if possible, otherwise show all
-    inventory = allInventory.filter(
+    inventory = (allInventory || []).filter(
       (car: Car) => car.type?.toLowerCase() === cat.slug || !car.type
     );
     // If filter yields too few results, show all
