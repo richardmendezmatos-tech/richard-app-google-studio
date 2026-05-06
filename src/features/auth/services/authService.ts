@@ -162,10 +162,14 @@ export async function signInWithGoogle(useRedirect: boolean = false) {
   
   // Supabase handles the OAuth flow via redirects mostly
   // It provides signInWithOAuth
+  const redirectUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/auth/callback` 
+    : 'https://www.richard-automotive.com/auth/callback';
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+      redirectTo: redirectUrl,
     }
   });
 

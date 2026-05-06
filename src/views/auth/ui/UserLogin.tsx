@@ -98,12 +98,14 @@ const UserLogin: React.FC = () => {
       const google = (window as any).google;
       if (!google) return;
 
-      if (!process.env.VITE_GOOGLE_CLIENT_ID) {
-        console.warn('[AUTH] Missing VITE_GOOGLE_CLIENT_ID');
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
+
+      if (!clientId) {
+        console.warn('[AUTH] Missing GOOGLE_CLIENT_ID (check NEXT_PUBLIC_ or VITE_ prefix)');
       }
 
       google.accounts.id.initialize({
-        client_id: process.env.VITE_GOOGLE_CLIENT_ID || '',
+        client_id: clientId || '',
         callback: async (response: GoogleCredentialResponse) => {
           setLoading(true);
           setStoreLoading(true);
@@ -137,6 +139,9 @@ const UserLogin: React.FC = () => {
     setStoreLoading(true);
     try {
       let user;
+      const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '';
+      console.log(`[AUTH] Initiating ${provider} login with redirect: ${redirectUrl}`);
+
       if (provider === 'google') user = await signInWithGoogle();
       if (provider === 'facebook') user = await signInWithFacebook();
 
