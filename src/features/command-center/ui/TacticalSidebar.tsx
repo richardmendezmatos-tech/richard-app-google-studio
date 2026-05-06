@@ -29,11 +29,12 @@ export const TacticalSidebar: React.FC = () => {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: CarFront, label: 'Inventario', path: '/admin/inventory' },
+    { icon: Zap, label: 'In-Take', path: '/admin/intake' },
     { icon: Activity, label: 'Pipeline', path: '/admin/pipeline' },
     { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
     { icon: Newspaper, label: 'Newsroom', path: '/admin/newsroom' },
-    { icon: Users, label: 'Audiencias', path: '/admin/audiences' },
-    { icon: Zap, label: 'Strategy', path: '/strategy-lab' },
+    { icon: Users, label: 'Audiences', path: '/admin/audiences' },
+    { icon: LayoutGrid, label: 'Strategy', path: '/strategy-lab' },
   ];
 
   return (

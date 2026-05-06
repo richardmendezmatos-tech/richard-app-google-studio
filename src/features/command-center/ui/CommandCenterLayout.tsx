@@ -1,27 +1,21 @@
 "use client";
 
-"use client";
-
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { useNavigate, Outlet } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead/model/types';
 import { Subscriber } from '@/shared/types/types';
-import { ShieldCheck, Plus, DatabaseZap, User as UserIcon, Radio, Zap, Scale } from 'lucide-react';
+import { ShieldCheck, Plus, DatabaseZap, Zap } from 'lucide-react';
 import { useAntigravity } from '@/features/automation';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
-import { useCommandCenterData } from './_hooks/useCommandCenterData';
-import { TacticalSidebar } from './components/TacticalSidebar';
-import { CommandCenterWidget } from '@/widgets/houston/CommandCenterWidget';
+import { useCommandCenterData } from '../model/useCommandCenterData';
+import { TacticalSidebar } from './TacticalSidebar';
 
 // Lazy load modals & status bars that remain in layout
 const CommandCenterModal = React.lazy(() =>
   import('./CommandCenterModal').then((m) => ({ default: m.CommandCenterModal })),
-);
-const EnterpriseStatus = React.lazy(() =>
-  import('./EnterpriseStatus').then((m) => ({ default: m.EnterpriseStatus })),
 );
 const MarketingCreativeStudio = React.lazy(() =>
   import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })),
@@ -59,11 +53,11 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
   const { status: antigravityStatus, refresh: refreshAntigravity } = useAntigravity();
   const { containerRef } = useMouseGlow();
 
-  const { onInitializeDb, onUpdate, onAdd, onDelete, inventory } = props;
+  const { onInitializeDb, onUpdate, onAdd, onDelete } = props;
 
   // React Query Fetch Hook
   const dealerId = currentDealer.id || 'richard-automotive';
-  const { leads, isLoadingLeads, subscribers, refetchLeads } = useCommandCenterData(dealerId);
+  const { leads, subscribers, refetchLeads } = useCommandCenterData(dealerId);
 
   // Local state for modals & global data
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +66,6 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
   const [viralCar, setViralCar] = useState<Car | null>(null);
   const [isInitializing, setIsInitializing] = useState(false);
   const [deviceType, setDeviceType] = useState<'Mac' | 'iPhone'>('Mac');
-  const securityScore = 98;
 
   useEffect(() => {
     if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('Android')) {
@@ -205,8 +198,8 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
             onClose={() => setIsModalOpen(false)}
             onPhotoUploaded={handlePhotoUploaded}
             onSave={async (data: Omit<Car, 'id'>) => {
-              if (editingCar) await props.onUpdate({ ...data, id: editingCar.id } as Car);
-              else await props.onAdd(data);
+              if (editingCar) await onUpdate({ ...data, id: editingCar.id } as Car);
+              else await onAdd(data);
             }}
           />
         </Suspense>

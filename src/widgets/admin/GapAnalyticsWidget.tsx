@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TrendingDown, AlertCircle, RefreshCw, Zap, ShoppingCart, Loader2 } from 'lucide-react';
 import { createPurchaseOrderDraft } from '@/shared/api/supabase/supabaseClient';
 
@@ -19,7 +19,7 @@ export const GapAnalyticsWidget: React.FC = () => {
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const fetchGaps = async (signal?: AbortSignal) => {
+  const fetchGaps = useCallback(async (signal?: AbortSignal) => {
     if (!supabaseUrl || !supabaseAnonKey) {
       setLoading(false);
       return;
@@ -47,7 +47,7 @@ export const GapAnalyticsWidget: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabaseUrl, supabaseAnonKey]);
 
   const handleHoustonAnalyze = async (gap: Gap) => {
     setAnalyzingId(gap.id);
@@ -86,7 +86,7 @@ export const GapAnalyticsWidget: React.FC = () => {
     const controller = new AbortController();
     fetchGaps(controller.signal);
     return () => controller.abort();
-  }, []);
+  }, [fetchGaps]);
 
   return (
     <div className="bg-white dark:bg-slate-900/40 backdrop-blur-xl rounded-4xl p-8 border border-slate-100 dark:border-white/5 shadow-2xl h-full flex flex-col group/widget">

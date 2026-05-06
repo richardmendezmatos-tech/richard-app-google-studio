@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useAuthStore } from '@/entities/session';
-import { Link, useNavigate } from '@/shared/lib/next-route-adapter';
-import { Menu, X, User, LogOut, Car } from 'lucide-react';
+import { Menu, X, User, LogOut, Car, Radio } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { getInventoryCount } from '@/shared/api/supabase/supabaseClient';
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [stockCount, setStockCount] = useState<number | null>(null);
+
+  React.useEffect(() => {
+    getInventoryCount().then(setStockCount);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -31,9 +35,26 @@ const Navbar: React.FC = () => {
           <div className="hidden items-center space-x-8 md:flex">
             <Link
               to="/inventario"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
+              className="group relative flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 transition-all hover:text-white"
             >
-              Inventario
+              <div className="relative flex h-6 w-6 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">
+                <Car size={12} className="relative z-10 text-cyan-400 transition-transform group-hover:scale-110" />
+                <div className="absolute inset-0 -z-0 hidden animate-pulse rounded-lg bg-cyan-400/20 blur-sm group-hover:block" />
+              </div>
+              <span className="relative">
+                Inventario
+                {stockCount !== null && (
+                  <span className="absolute -top-3 -right-6 flex items-center gap-1 rounded-full bg-cyan-500/10 px-1.5 py-0.5 text-[7px] font-black text-cyan-300 border border-cyan-500/20 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                    <Radio size={6} className="animate-pulse" />
+                    {stockCount}
+                  </span>
+                )}
+                <motion.div 
+                  className="absolute -bottom-1 left-0 h-[1px] w-0 bg-cyan-400"
+                  whileHover={{ width: '100%' }}
+                  transition={{ duration: 0.3 }}
+                />
+              </span>
             </Link>
             <Link
               to="/financiamiento"
@@ -107,9 +128,17 @@ const Navbar: React.FC = () => {
         <div className="space-y-4 border-t border-cyan-300/15 bg-[#07111b] p-4 md:hidden">
           <Link
             to="/inventario"
-            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
+            className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4 text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
-            Inventario
+            <div className="flex items-center gap-3">
+              <Car size={16} className="text-cyan-400" />
+              <span>Inventario</span>
+            </div>
+            {stockCount !== null && (
+              <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-[9px] text-cyan-300">
+                {stockCount} UNIDADES
+              </span>
+            )}
           </Link>
           <Link
             to="/financiamiento"

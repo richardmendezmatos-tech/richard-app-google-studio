@@ -2,7 +2,8 @@
 
 // CinemaLayout.tsx
 import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Car as CarIcon } from 'lucide-react';
+import { Link } from '@/shared/lib/next-route-adapter';
 import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 import SentinelFlashTicker from '@/widgets/brand-ui/layout/SentinelFlashTicker';
@@ -127,14 +128,23 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         <span className="font-cinematic text-3xl tracking-[0.2em] text-white text-glow">
           RICHARD<span className="text-cyan-400 italic">AUTO</span>
         </span>
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          title="Abrir menú"
-          aria-label="Abrir menú"
-          className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
-        >
-          <Menu className="text-cyan-400" />
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/"
+            title="Ver Inventario"
+            className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
+          >
+            <CarIcon className="text-cyan-400" size={20} />
+          </Link>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            title="Abrir menú"
+            aria-label="Abrir menú"
+            className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
+          >
+            <Menu className="text-cyan-400" />
+          </button>
+        </div>
       </header>
 
       {/* Nivel 22: Living Background Parallax Layer */}

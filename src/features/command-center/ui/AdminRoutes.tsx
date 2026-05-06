@@ -9,8 +9,10 @@ import { useAuthStore } from '@/entities/session';
 import CommandCenterLayout, { CommandCenterContextType } from './CommandCenterLayout';
 
 // Lazy imports for admin tabs
-const SentinelInventoryTab = React.lazy(() => import('./SentinelInventoryTab'));
-const VisionIntake = React.lazy(() => import('../vision/VisionIntake').then(m => ({ default: m.VisionIntake })));
+const AdminInventoryTab = React.lazy(() => import('./AdminInventoryTab'));
+const SentinelVisionScanner = React.lazy(() =>
+  import('@/features/sentinel-vision').then((m) => ({ default: m.SentinelVisionScanner })),
+);
 const SentinelAnalyticsTab = React.lazy(() =>
   import('./SentinelAnalyticsTab').then((m) => ({ default: m.SentinelAnalyticsTab })),
 );
@@ -50,7 +52,7 @@ const DashboardWrapper = () => {
 const InventoryWrapper = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
   return (
-    <SentinelInventoryTab
+    <AdminInventoryTab
       onDelete={ctx.onDelete}
       onCreateNew={() => {
         ctx.setEditingCar(null);
@@ -167,7 +169,7 @@ export const AdminRoutes = (props: any) => {
         <Route path="inventory" element={<InventoryWrapper />} />
         <Route path="intake" element={
           <Suspense fallback={<div className="p-8 text-slate-500 font-black animate-pulse uppercase tracking-widest">Iniciando Sentinel Vision...</div>}>
-            <VisionIntake />
+            <SentinelVisionScanner />
           </Suspense>
         } />
         <Route path="analytics" element={<AnalyticsWrapper />} />

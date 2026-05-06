@@ -40,7 +40,7 @@
         "systemLog": "Registro del Sistema"
     },
     "sidebar": {
-        "storefront": "Tienda Digital",
+        "storefront": "Inventario",
         "garage": "Mi Garaje",
         "qualify": "Pre-Cualificación",
         "tradeIn": "Vender mi Auto",

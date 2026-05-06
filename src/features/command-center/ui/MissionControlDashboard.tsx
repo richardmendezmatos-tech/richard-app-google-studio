@@ -6,11 +6,9 @@ import {
   CarFront,
   BarChart3,
   Package,
-  Search,
   User as UserIcon,
   ShoppingBag,
   Activity,
-  DollarSign,
   Server,
   ArrowRight,
   Radio,
@@ -19,7 +17,7 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { Lead } from '@/shared/api/adapters/leads/crmService';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
-import { NeuralInsightsHeadlines } from './components/NeuralInsightsHeadlines';
+import { NeuralInsightsHeadlines } from './NeuralInsightsHeadlines';
 
 // Lazy components used within the tab
 const MissionControlWidget = React.lazy(() => import('./MissionControlWidget'));
@@ -256,6 +254,10 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           </div>
         </div>
       </motion.div>
+      
+      <React.Suspense fallback={<div className="h-64 rounded-4xl bg-white/5 animate-pulse" />}>
+        <MissionControlWidget />
+      </React.Suspense>
     </motion.div>
   );
 };

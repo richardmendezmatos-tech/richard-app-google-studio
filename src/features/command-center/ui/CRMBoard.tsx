@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useOutletContext } from '@/shared/lib/next-route-adapter';
@@ -16,8 +14,6 @@ import {
   Users,
   BadgeDollarSign,
   LayoutGrid,
-  ChevronUp,
-  AreaChart,
   Loader2,
 } from 'lucide-react';
 import {
@@ -28,7 +24,6 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragStartEvent,
   DragEndEvent,
   TouchSensor,
   useDroppable,
@@ -37,9 +32,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  useSortable,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { createPortal } from 'react-dom';
 import { Lead, subscribeToLeads, updateLeadStatus } from '@/shared/api/adapters/leads/crmService';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
@@ -125,7 +118,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
       className={`min-w-full md:min-w-[340px] w-full glass-sentinel rounded-4xl p-6 flex flex-col h-auto md:h-[calc(100vh-280px)] border transition-all duration-500 ease-[0.16, 1, 0.3, 1] ${styles.scanline} ${styles.columnGlow} ${
         isOver ? 'border-cyan-500/50 bg-cyan-500/5' : 'border-white/5'
       }`}
-      data-glow-color={col.glow}
+      style={{'--column-glow-color': col.glow} as any}
     >
       <div className="flex items-center gap-4 mb-8 px-2">
         <div
@@ -198,7 +191,6 @@ const CRMBoard: React.FC = () => {
     }
     return [];
   });
-  const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedLeadForDealSheet, setSelectedLeadForDealSheet] = useState<Lead | null>(null);
   const [selectedLeadForInbox, setSelectedLeadForInbox] = useState<Lead | null>(null);
@@ -257,7 +249,6 @@ const CRMBoard: React.FC = () => {
       } else if (typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') !== 'true') {
         setLeads([]);
       }
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -616,7 +607,7 @@ const CRMBoard: React.FC = () => {
           <SmartDealSheetModal
             lead={selectedLeadForDealSheet}
             onClose={handleCloseDealSheet}
-            onExportPDF={(data, lead) => {
+            onExportPDF={() => {
               addNotification('info', 'Exportación premium iniciada.');
             }}
           />

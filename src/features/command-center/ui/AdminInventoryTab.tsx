@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import React from 'react';
 import { Car, calculatePredictiveDTS } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';
@@ -12,10 +10,7 @@ import {
   LayoutGrid,
   List,
   Sparkles,
-  Edit3,
-  Trash2,
   DollarSign,
-  Clock,
   TrendingUp,
   Zap,
   Filter,
@@ -25,11 +20,9 @@ import {
   RefreshCcw,
 } from 'lucide-react';
 import { StatusWidget, CountUp } from './CommandCenterWidgets';
-import { optimizeImage } from '@/shared/api/media/mediaShared';
-import { InventoryHeatmap } from '@/features/inventory';
 import { CommandCenterCarCard } from './CommandCenterCarCard';
 import HyperInventoryList from './HyperInventoryList';
-import { useCommandCenterData } from './_hooks/useCommandCenterData';
+import { useCommandCenterData } from '../model/useCommandCenterData';
 import { useDealer } from '@/entities/dealer';
 import { useCars } from '@/features/inventory';
 
@@ -53,8 +46,8 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   isInitializing,
 }) => {
   const { currentDealer } = useDealer();
-  const { leads, isLoadingLeads } = useCommandCenterData(currentDealer.id || 'richard-automotive');
-  const { data: carData, isLoading: isLoadingCars } = useCars(12);
+  const { leads } = useCommandCenterData(currentDealer.id || 'richard-automotive');
+  const { data: carData } = useCars(12);
 
   const inventory = React.useMemo(() => {
     return carData?.pages.flatMap((page) => page.cars) || [];
@@ -135,28 +128,28 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
           icon={Package}
           label="Unidades en Stock"
           value={<CountUp end={totalStats.units} />}
-          color="bg-blue-500/20 text-cyan-400 border border-cyan-500/30"
+          color="bg-linear-to-br from-blue-500/20 to-cyan-400/20 text-cyan-400 border border-cyan-500/30"
           subValue="CAPACIDAD OPTIMA"
         />
         <StatusWidget
           icon={DollarSign}
           label="Capital de Inventario"
           value={`$${(totalStats.totalValue / 1000000).toFixed(1)}M`}
-          color="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+          color="bg-linear-to-br from-emerald-500/20 to-teal-400/20 text-emerald-400 border border-emerald-500/30"
           subValue="ASSET VALUATION"
         />
         <StatusWidget
           icon={TrendingUp}
           label="Advantage Global"
           value={`${totalStats.avgAdvantage.toFixed(1)}%`}
-          color="bg-primary/20 text-primary border border-primary/30"
+          color="bg-linear-to-br from-primary/20 to-indigo-500/20 text-primary border border-primary/30"
           subValue="VENTA PREDICTIVA"
         />
         <StatusWidget
           icon={Zap}
           label="Exp. Ventas (Mes)"
           value="12"
-          color="bg-amber-500/20 text-amber-500 border border-amber-500/30"
+          color="bg-linear-to-br from-amber-500/20 to-orange-400/20 text-amber-500 border border-amber-500/30"
           subValue="PROYECCIÓN HOUSTON"
         />
       </div>

@@ -171,3 +171,24 @@ export const recordPredictionOutcome = async (outcome: any) => {
     console.error('[Supabase] Exception in recordPredictionOutcome:', err);
   }
 };
+
+/**
+ * getInventoryCount
+ * Retorna el número total de unidades activas en el inventario.
+ */
+export const getInventoryCount = async (): Promise<number> => {
+  try {
+    const { count, error } = await supabase
+      .from('inventory')
+      .select('*', { count: 'exact', head: true });
+
+    if (error) {
+      console.error('[Supabase] Error fetching inventory count:', error);
+      return 0;
+    }
+    return count || 0;
+  } catch (err) {
+    console.error('[Supabase] Exception in getInventoryCount:', err);
+    return 0;
+  }
+};
