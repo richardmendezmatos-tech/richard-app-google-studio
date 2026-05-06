@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Scan, Upload, ShieldCheck, Zap, Activity, Info, Share2, Download } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
+import { Car } from '@/entities/inventory';
 
 interface ScanResult {
   brand: string;
