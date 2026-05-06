@@ -44,19 +44,34 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const privateRoutes = ['/admin', '/garage', '/profile', '/command-center'];
-  const isPrivateRoute = privateRoutes.some(route => request.nextUrl.pathname.startsWith(route));
+  const adminRoutes = ['/admin', '/command-center'];
+  const currentPath = request.nextUrl.pathname;
+  
+  const isPrivateRoute = privateRoutes.some(route => currentPath.startsWith(route));
+  const isAdminRoute = adminRoutes.some(route => currentPath.startsWith(route));
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    isPrivateRoute
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // 1. Protection for any private route (must be logged in)
+  if (!user && isPrivateRoute && !currentPath.startsWith('/login') && !currentPath.startsWith('/auth')) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    url.searchParams.set('from', request.nextUrl.pathname);
+    url.searchParams.set('from', currentPath);
     return NextResponse.redirect(url);
+  }
+
+  // 2. Strict Protection for Admin routes (must be an admin email)
+  if (user && isAdminRoute) {
+    const email = user.email?.toLowerCase() || '';
+    const isAdmin = 
+      email === 'richardmendezmatos@gmail.com' || 
+      email.endsWith('@richard-automotive.com') ||
+      email.includes('admin');
+
+    if (!isAdmin) {
+      // Not an admin, redirect to garage or home
+      const url = request.nextUrl.clone();
+      url.pathname = '/garage';
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
