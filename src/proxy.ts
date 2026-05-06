@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { updateSession } from '@/shared/api/supabase/middleware';
+import { updateSession } from './shared/api/supabase/middleware';
 
 /**
- * Richard Automotive Global Proxy (Sentinel N23)
+ * Richard Automotive Global Middleware (Sentinel N24-PRO Edge)
  * Handles Supabase sessions, protections, and security headers.
  */
 export async function proxy(request: NextRequest) {
