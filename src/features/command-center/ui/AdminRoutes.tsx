@@ -160,6 +160,11 @@ const MarketingWrapper = () => {
   );
 };
 
+const VisionIntakeWrapper = () => {
+  const ctx = useOutletContext<CommandCenterContextType>();
+  return <SentinelVisionScanner onLaunchMarketing={(car) => ctx.setMarketingCar(car as any)} />;
+};
+
 export const AdminRoutes = (props: any) => {
   return (
     <Routes>
@@ -169,7 +174,7 @@ export const AdminRoutes = (props: any) => {
         <Route path="inventory" element={<InventoryWrapper />} />
         <Route path="intake" element={
           <Suspense fallback={<div className="p-8 text-slate-500 font-black animate-pulse uppercase tracking-widest">Iniciando Sentinel Vision...</div>}>
-            <SentinelVisionScanner />
+            <VisionIntakeWrapper />
           </Suspense>
         } />
         <Route path="analytics" element={<AnalyticsWrapper />} />

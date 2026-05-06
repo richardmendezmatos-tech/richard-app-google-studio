@@ -22,7 +22,11 @@ interface ScanResult {
   };
 }
 
-export const SentinelVisionScanner: React.FC = () => {
+interface SentinelVisionScannerProps {
+  onLaunchMarketing?: (car: Partial<Car>) => void;
+}
+
+export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ onLaunchMarketing }) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -268,6 +272,24 @@ export const SentinelVisionScanner: React.FC = () => {
                   <Share2 className="w-4 h-4 mr-2 inline" />
                   <span className="relative z-10">SHARE REPORT</span>
                 </button>
+                {onLaunchMarketing && (
+                  <button 
+                    onClick={() => onLaunchMarketing({
+                      name: `${result.year} ${result.brand} ${result.model}`,
+                      make: result.brand,
+                      model: result.model,
+                      year: result.year,
+                      price: parseInt(result.marketValue.replace(/[^0-9]/g, '')),
+                      img: preview || '',
+                      features: [result.specs.hp, result.specs.torque, result.specs.acceleration],
+                      description: `Unidad identificada vía Sentinel Vision con un score de ${result.score}/100.`
+                    })}
+                    className="w-full py-4 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    GENERAR KIT DE MARKETING
+                  </button>
+                )}
                 <button className="w-full py-3 rounded-xl border border-white/10 text-white font-bold text-sm hover:bg-white/5 transition-all flex items-center justify-center">
                   <Download className="w-4 h-4 mr-2" />
                   DOWNLOAD PDF
