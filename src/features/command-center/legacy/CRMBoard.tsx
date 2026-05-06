@@ -122,7 +122,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className={`min-w-full md:min-w-[340px] w-full glass-sentinel rounded-[2.5rem] p-6 flex flex-col h-auto md:h-[calc(100vh-280px)] border transition-all duration-500 ease-[0.16, 1, 0.3, 1] ${styles.scanline} ${styles.columnGlow} ${
+      className={`min-w-full md:min-w-[340px] w-full glass-sentinel rounded-4xl p-6 flex flex-col h-auto md:h-[calc(100vh-280px)] border transition-all duration-500 ease-[0.16, 1, 0.3, 1] ${styles.scanline} ${styles.columnGlow} ${
         isOver ? 'border-cyan-500/50 bg-cyan-500/5' : 'border-white/5'
       }`}
       data-glow-color={col.glow}
@@ -156,7 +156,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
           ))}
         </SortableContext>
         {colLeads.length === 0 && (
-          <div className="h-48 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] opacity-30 mt-4 group">
+          <div className="h-48 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-4xl opacity-30 mt-4 group">
             <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center mb-3 group-hover:border-primary/50 transition-all">
               <Loader2 size={12} className="text-white/20 group-hover:animate-spin" />
             </div>
@@ -379,7 +379,7 @@ const CRMBoard: React.FC = () => {
       {/* NAVIGATION & SEGMENTATION CONTROLS - MINIMALIST */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-4">
-          <div className="flex p-1.5 bg-slate-900/60 rounded-[2rem] border border-white/5 backdrop-blur-xl">
+          <div className="flex p-1.5 bg-slate-900/60 rounded-4xl border border-white/5 backdrop-blur-xl">
             {[
               { id: 'all', label: 'Todos', icon: LayoutGrid },
               { id: 'contact', label: 'Aplicaciones', icon: Users },
@@ -457,7 +457,7 @@ const CRMBoard: React.FC = () => {
   const renderAnalyticsTab = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-1">
-        <div className="glass-premium rounded-3xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-cyan-500/30 transition-all">
+        <div className="glass-premium rounded-4xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-cyan-500/30 transition-all">
           <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
             <Activity size={24} className="group-hover:animate-pulse" />
           </div>
@@ -469,7 +469,7 @@ const CRMBoard: React.FC = () => {
           </div>
         </div>
 
-        <div className="glass-premium rounded-3xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-emerald-500/30 transition-all">
+        <div className="glass-premium rounded-4xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-emerald-500/30 transition-all">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
             <Zap size={24} />
           </div>
@@ -483,7 +483,7 @@ const CRMBoard: React.FC = () => {
           </div>
         </div>
 
-        <div className="glass-premium rounded-3xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-indigo-500/30 transition-all">
+        <div className="glass-premium rounded-4xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-indigo-500/30 transition-all">
           <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
             <Target size={24} />
           </div>
@@ -495,7 +495,7 @@ const CRMBoard: React.FC = () => {
           </div>
         </div>
 
-        <div className="glass-premium rounded-3xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-amber-500/30 transition-all">
+        <div className="glass-premium rounded-4xl p-8 border border-white/5 flex flex-col gap-4 group hover:border-amber-500/30 transition-all">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400">
             <BarChart3 size={24} />
           </div>
@@ -512,7 +512,7 @@ const CRMBoard: React.FC = () => {
 
   const renderToolsTab = () => (
     <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="glass-premium rounded-3xl p-8 border border-white/5">
+      <div className="glass-premium rounded-4xl p-8 border border-white/5">
         <h3 className="text-lg font-black text-white mb-6 uppercase tracking-tight">
           Data Management
         </h3>

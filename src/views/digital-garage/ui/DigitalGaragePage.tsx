@@ -167,7 +167,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                 ))}
               </div>
               <div className="space-y-6">
-                <div className="bg-slate-800/40 border border-white/5 rounded-3xl h-board-column-md animate-pulse" />
+                <div className="bg-slate-800/40 border border-white/5 rounded-4xl h-board-column-md animate-pulse" />
                 <div className="bg-slate-800/40 p-6 rounded-2xl border border-white/5 h-[100px] animate-pulse" />
               </div>
             </div>
@@ -198,7 +198,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                   ))}
                 </div>
                 <div className="space-y-6">
-                  <div className="bg-slate-900/50 border border-white/10 rounded-3xl p-8 relative overflow-hidden backdrop-blur-sm">
+                  <div className="bg-slate-900/50 border border-white/10 rounded-4xl p-8 relative overflow-hidden backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-6">
                       <Sparkles size={20} className="text-primary" />
                       <h3 className="text-lg font-black uppercase tracking-wide">
@@ -238,7 +238,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-20 opacity-50 bg-slate-800/20 rounded-3xl border border-dashed border-white/10"
+              className="text-center py-20 opacity-50 bg-slate-800/20 rounded-4xl border border-dashed border-white/10"
             >
               <FileText size={64} className="mx-auto text-slate-600 mb-4" />
               <h2 className="text-2xl font-bold text-slate-400">Sin Solicitudes</h2>
@@ -317,9 +317,9 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
         );
       case 'profile':
         return (
-          <div className="max-w-2xl bg-slate-800/50 p-8 rounded-3xl border border-white/5">
+          <div className="max-w-2xl bg-slate-800/50 p-8 rounded-4xl border border-white/5">
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-xl">
+              <div className="w-20 h-20 bg-linear-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-xl">
                 RM
               </div>
               <div>
@@ -420,7 +420,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
       <main className="flex-1 p-8 pt-4 relative z-10 overflow-y-auto custom-scrollbar">
         {isLocked ? (
           <div className="h-full flex flex-col items-center justify-center space-y-8 animate-in fade-in zoom-in duration-300">
-            <div className="w-32 h-32 bg-slate-800 rounded-3xl flex items-center justify-center relative overflow-hidden shadow-2xl border border-white/5">
+            <div className="w-32 h-32 bg-slate-800 rounded-4xl flex items-center justify-center relative overflow-hidden shadow-2xl border border-white/5">
               {isScanning ? (
                 <>
                   <div className="absolute inset-0 bg-primary/20 animate-pulse"></div>

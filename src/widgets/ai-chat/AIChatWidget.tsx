@@ -187,11 +187,11 @@ const AIChatWidget: React.FC<Props> = () => {
         className={`relative p-6 text-white flex items-center justify-between shadow-lg z-10 transition-colors duration-500 
         ${
           currentPersona === 'ricardo'
-            ? 'bg-gradient-to-r from-[#173d57] to-[#0f2a3d]'
+            ? 'bg-linear-to-r from-[#173d57] to-[#0f2a3d]'
             : currentPersona === 'sofia'
-              ? 'bg-gradient-to-r from-emerald-900 to-emerald-800'
+              ? 'bg-linear-to-r from-emerald-900 to-emerald-800'
               : currentPersona === 'jordan'
-                ? 'bg-gradient-to-r from-slate-900 to-rose-900 border-b border-rose-500/50'
+                ? 'bg-linear-to-r from-slate-900 to-rose-900 border-b border-rose-500/50'
                 : 'bg-slate-900'
         }`}
       >
@@ -296,7 +296,7 @@ const AIChatWidget: React.FC<Props> = () => {
                   const result = toolInvocation.result as any;
                   return (
                     <div key={toolCallId} className="flex justify-start">
-                      <div className="bg-primary/5 dark:bg-primary/10 p-5 rounded-3xl border border-primary/20 flex flex-col gap-3 max-w-[280px] shadow-sm">
+                      <div className="bg-primary/5 dark:bg-primary/10 p-5 rounded-4xl border border-primary/20 flex flex-col gap-3 max-w-[280px] shadow-sm">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg transform -rotate-12">
                             <ShieldCheck size={20} />
@@ -325,7 +325,7 @@ const AIChatWidget: React.FC<Props> = () => {
                   const result = toolInvocation.result as any;
                   return (
                     <div key={toolCallId} className="flex justify-start">
-                      <div className="bg-gradient-to-br from-[#0d2232] to-[#173d57] p-6 rounded-[30px] border border-primary/30 flex flex-col gap-4 max-w-[300px] shadow-2xl relative overflow-hidden group">
+                      <div className="bg-linear-to-br from-[#0d2232] to-[#173d57] p-6 rounded-[30px] border border-primary/30 flex flex-col gap-4 max-w-[300px] shadow-2xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                           <Banknote size={80} className="text-white" />
                         </div>

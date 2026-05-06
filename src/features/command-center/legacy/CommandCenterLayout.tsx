@@ -114,14 +114,14 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
       ref={containerRef as any}
       className="min-h-screen bg-transparent text-slate-200 font-sans transition-colors duration-300 relative overflow-hidden bg-noise"
     >
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/10 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-linear-to-b from-cyan-900/10 to-transparent pointer-events-none" />
       <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none" />
 
       <TacticalSidebar />
 
       <div className="px-4 md:pl-24 md:pr-10 pb-32 md:pb-6 max-w-[1800px] mx-auto py-6 space-y-6 relative z-10 flex flex-col h-full min-h-screen">
         {/* HEADER AREA */}
-        <header className="flex flex-col md:flex-row justify-between items-center gap-6 pb-6 shrink-0 bg-slate-900/40 backdrop-blur-md p-6 rounded-[2rem] border border-white/5">
+        <header className="flex flex-col md:flex-row justify-between items-center gap-6 pb-6 shrink-0 bg-slate-900/40 backdrop-blur-md p-6 rounded-4xl border border-white/5">
           <div className="flex items-center gap-6">
             <div className="hidden lg:block">
               <div className="flex items-center gap-2 text-primary font-black text-[8px] uppercase tracking-[0.4em] mb-1 opacity-60">

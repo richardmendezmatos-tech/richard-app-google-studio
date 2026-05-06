@@ -61,7 +61,7 @@ export const HoustonDashboard: React.FC = () => {
 
   if (!telemetry) {
     return (
-      <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-[2.5rem] flex items-center justify-center min-h-[400px]">
+      <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-4xl flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
           <Brain className="text-primary animate-pulse" size={48} />
           <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Initializing Houston Systems...</span>
@@ -71,7 +71,7 @@ export const HoustonDashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-[2.5rem] shadow-2xl shadow-cyan-500/5 relative overflow-hidden group">
+    <div className="p-8 bg-slate-950/40 backdrop-blur-xl border border-cyan-500/20 rounded-4xl shadow-2xl shadow-cyan-500/5 relative overflow-hidden group">
       {/* Background Glows */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-600/10 rounded-full blur-[100px] animate-pulse" />

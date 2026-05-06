@@ -79,7 +79,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
 
   return (
     <div className="p-4 lg:p-8 max-w-6xl mx-auto w-full space-y-8 pb-20 lg:pb-8">
-      <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+      <div className="bg-slate-800/50 p-6 rounded-4xl border border-slate-700 shadow-2xl backdrop-blur-sm">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <ImageIcon className="text-primary" />
@@ -124,7 +124,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {images.length === 0 && !loading && (
-          <div className="md:col-span-3 flex flex-col items-center justify-center text-center p-12 bg-slate-800/30 rounded-3xl border-2 border-dashed border-slate-700 text-slate-500">
+          <div className="md:col-span-3 flex flex-col items-center justify-center text-center p-12 bg-slate-800/30 rounded-4xl border-2 border-dashed border-slate-700 text-slate-500">
             <GalleryThumbnails size={48} className="mb-4 opacity-50" />
             <h3 className="font-bold text-lg text-slate-400">Tu galería está vacía</h3>
             <p className="text-sm">Usa el generador de arriba para forjar tu primera imagen.</p>
@@ -145,7 +145,7 @@ const ImageView: React.FC<Props> = ({ onSearchSimilar }) => {
             />
 
             {/* Overlay Actions */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end gap-2">
+            <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end gap-2">
               <p className="text-xs text-slate-300 line-clamp-2 mb-2">{img.prompt}</p>
 
               <div className="flex gap-2">

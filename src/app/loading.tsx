@@ -22,7 +22,7 @@ export default function Loading() {
         {[0, 1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="w-1.5 bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-full"
+            className="w-1.5 bg-linear-to-t from-cyan-600 to-cyan-400 rounded-full"
             style={{
               height: 'var(--h, 20px)',
               animation: `wave 1.2s infinite ease-in-out ${i * 0.1}s`,

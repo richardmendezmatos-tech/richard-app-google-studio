@@ -78,7 +78,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               className="absolute bottom-24 right-0 will-change-transform"
             >
-              <div className="shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] rounded-3xl overflow-hidden ring-1 ring-white/10">
+              <div className="shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] rounded-4xl overflow-hidden ring-1 ring-white/10">
                 {chatWidget}
               </div>
             </motion.div>
@@ -104,7 +104,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               className="absolute bottom-24 right-0 will-change-transform"
             >
-              <div className="shadow-[0_20px_60px_-15px_rgba(37,211,102,0.3)] rounded-3xl overflow-hidden ring-1 ring-white/10">
+              <div className="shadow-[0_20px_60px_-15px_rgba(37,211,102,0.3)] rounded-4xl overflow-hidden ring-1 ring-white/10">
                 {whatsappWidget}
               </div>
             </motion.div>

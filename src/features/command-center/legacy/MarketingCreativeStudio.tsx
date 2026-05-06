@@ -60,7 +60,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-950/90 backdrop-blur-2xl p-4 md:p-8 animate-in fade-in duration-500">
-      <div className="bg-[#0f172a] rounded-[48px] max-w-6xl w-full h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 relative">
+      <div className="bg-[#0f172a] rounded-5xl max-w-6xl w-full h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 relative">
         {/* Decorative Background */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-48 -mt-48 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] -ml-48 -mb-48 pointer-events-none" />
@@ -155,13 +155,13 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Left Column: Asset Preview */}
                 <div className="lg:col-span-5 space-y-6">
-                  <div className="group relative rounded-[40px] overflow-hidden border border-white/10 shadow-2xl bg-black">
+                  <div className="group relative rounded-5xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                     <img
                       src={optimizeImage(car.img || '', 800)}
                       alt={car.name}
                       className="w-full aspect-4/5 object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
 
                     {/* Overlay Content Preview */}
                     <div className="absolute bottom-10 left-10 right-10">
@@ -186,7 +186,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                     </div>
                   </div>
 
-                  <div className="p-6 bg-white/5 rounded-3xl border border-white/5 space-y-2">
+                  <div className="p-6 bg-white/5 rounded-4xl border border-white/5 space-y-2">
                     <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                       Sugerencia de Distribución
                     </h4>
@@ -202,10 +202,10 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                   {activeTab === 'text' ? (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                       {/* Instagram */}
-                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
+                      <div className="bg-white/3 p-8 rounded-4xl border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center shadow-lg">
+                            <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center shadow-lg">
                               <Instagram size={20} className="text-white" />
                             </div>
                             <div>
@@ -230,7 +230,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                             )}
                           </button>
                         </div>
-                        <div className="p-6 bg-black/20 rounded-3xl border border-white/5">
+                        <div className="p-6 bg-black/20 rounded-4xl border border-white/5">
                           <p className="text-md text-slate-300 whitespace-pre-wrap leading-relaxed font-medium">
                             {content.instagram}
                           </p>
@@ -238,7 +238,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                       </div>
 
                       {/* Facebook / Marketplace */}
-                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
+                      <div className="bg-white/3 p-8 rounded-4xl border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
@@ -266,7 +266,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                             )}
                           </button>
                         </div>
-                        <div className="p-6 bg-black/20 rounded-3xl border border-white/5">
+                        <div className="p-6 bg-black/20 rounded-4xl border border-white/5">
                           <p className="text-md text-slate-300 whitespace-pre-wrap leading-relaxed font-medium">
                             {content.facebook}
                           </p>
@@ -274,7 +274,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                       </div>
 
                       {/* WhatsApp Marketing */}
-                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-emerald-500/20 transition-all duration-300">
+                      <div className="bg-white/3 p-8 rounded-4xl border border-white/5 space-y-6 hover:border-emerald-500/20 transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg">
@@ -302,7 +302,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                             )}
                           </button>
                         </div>
-                        <div className="p-6 bg-emerald-500/[0.03] rounded-3xl border border-emerald-500/10 border-dashed">
+                        <div className="p-6 bg-emerald-500/[0.03] rounded-4xl border border-emerald-500/10 border-dashed">
                           <p className="text-md text-slate-300 whitespace-pre-wrap leading-relaxed font-mono text-sm">
                             {content.whatsapp}
                           </p>
@@ -310,7 +310,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                       </div>
 
                       {/* TikTok / Reels Script */}
-                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
+                      <div className="bg-white/3 p-8 rounded-4xl border border-white/5 space-y-6 hover:border-primary/20 transition-all duration-300">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-lg text-black">
@@ -338,7 +338,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                             )}
                           </button>
                         </div>
-                        <div className="p-6 bg-white/5 rounded-3xl border border-white/10 border-dashed italic">
+                        <div className="p-6 bg-white/5 rounded-4xl border border-white/10 border-dashed italic">
                           <p className="text-sm text-primary whitespace-pre-wrap leading-relaxed font-bold uppercase tracking-wide">
                             {content.tiktokScript}
                           </p>
@@ -347,7 +347,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                     </div>
                   ) : (
                     <div className="h-full space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                      <div className="bg-white/3 p-8 rounded-[38px] border border-white/5 h-full flex flex-col space-y-8">
+                      <div className="bg-white/3 p-8 rounded-4xl border border-white/5 h-full flex flex-col space-y-8">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-2xl bg-purple-600/20 flex items-center justify-center border border-purple-500/30">
                             <Layout size={24} className="text-purple-500" />
@@ -362,7 +362,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                           </div>
                         </div>
 
-                        <div className="flex-1 bg-black/40 rounded-[32px] border border-white/5 p-10 flex flex-col items-center justify-center space-y-6 text-center">
+                        <div className="flex-1 bg-black/40 rounded-4xl border border-white/5 p-10 flex flex-col items-center justify-center space-y-6 text-center">
                           <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center animate-pulse">
                             <Sparkles size={40} className="text-primary" />
                           </div>
@@ -423,7 +423,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                   key={i}
                   className="w-8 h-8 rounded-full border-2 border-[#0f172a] bg-slate-800 flex items-center justify-center overflow-hidden"
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-primary to-blue-600 opacity-50" />
+                  <div className="w-full h-full bg-linear-to-br from-primary to-blue-600 opacity-50" />
                 </div>
               ))}
             </div>

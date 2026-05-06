@@ -17,7 +17,7 @@ export const HoloDashboard: React.FC<Props> = ({
   const circles = useMemo(() => Array.from({ length: 3 }), []);
 
   return (
-    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden rounded-[3rem] bg-slate-950/20 border border-white/5 hud-brackets shadow-[inset_0_0_100px_rgba(0,242,255,0.05)]">
+    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden rounded-5xl bg-slate-950/20 border border-white/5 hud-brackets shadow-[inset_0_0_100px_rgba(0,242,255,0.05)]">
       {/* Background Grid Intelligence */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" 
            style={{ backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
@@ -48,7 +48,7 @@ export const HoloDashboard: React.FC<Props> = ({
         <motion.div 
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 3, repeat: Infinity }}
-          className="relative w-40 h-40 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 backdrop-blur-2xl rounded-full border border-cyan-500/30 flex flex-col items-center justify-center shadow-[0_0_80px_rgba(6,182,212,0.2)]"
+          className="relative w-40 h-40 bg-linear-to-br from-cyan-500/20 to-blue-600/20 backdrop-blur-2xl rounded-full border border-cyan-500/30 flex flex-col items-center justify-center shadow-[0_0_80px_rgba(6,182,212,0.2)]"
         >
           <div className="absolute inset-0 bg-cyan-400/5 rounded-full animate-ping" />
           <Cpu className="text-cyan-400 mb-2" size={32} />

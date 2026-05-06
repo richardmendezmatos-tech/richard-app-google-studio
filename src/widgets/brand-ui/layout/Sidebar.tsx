@@ -374,7 +374,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => navigate('/profile')}
               className={`group flex w-full items-center rounded-xl transition-colors hover:bg-white/10 ${isCollapsed ? 'justify-center p-2' : 'mb-3 gap-3 p-2 text-left'}`}
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 text-white">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-cyan-400 to-cyan-700 text-white">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}

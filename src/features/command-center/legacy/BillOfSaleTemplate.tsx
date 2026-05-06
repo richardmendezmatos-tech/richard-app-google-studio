@@ -121,7 +121,7 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-12 bg-slate-900 text-white p-8 rounded-3xl mb-12">
+      <div className="grid grid-cols-2 gap-12 bg-slate-900 text-white p-8 rounded-4xl mb-12">
         <div>
           <h2 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
             Resumen de Liquidación

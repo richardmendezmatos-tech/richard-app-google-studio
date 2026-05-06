@@ -20,7 +20,7 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
     return (
       <div
         style={style}
-        className={`flex items-center border-b border-white/5 hover:bg-primary/5 hover:border-primary/20 hover:shadow-[inset_0_0_30px_rgba(0,174,217,0.03)] transition-all duration-300 group px-6 h-24 ${style ? 'dnd-sortable' : ''}`}
+        className={`flex items-center border-b border-white/5 hover:bg-primary/5 hover:border-primary/20 hover:shadow-[inset_0_0_30px_rgba(0,174,217,0.03)] transition-all duration-300 group px-6 h-board-item ${style ? 'dnd-sortable' : ''}`}
       >
         {/* Unidad */}
         <div className="flex-1 flex items-center gap-4 min-w-board-column-lg">

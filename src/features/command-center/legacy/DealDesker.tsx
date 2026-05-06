@@ -353,7 +353,7 @@ const DealDesker: React.FC = () => {
             </div>
 
             {/* Panel de Cierre */}
-            <div className="w-full lg:w-96 bg-slate-900 rounded-3xl p-8 text-white flex flex-col justify-between shadow-xl">
+            <div className="w-full lg:w-96 bg-slate-900 rounded-4xl p-8 text-white flex flex-col justify-between shadow-xl">
               <div>
                 <h2 className="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-6">
                   El Checkpoint final

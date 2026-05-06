@@ -108,7 +108,7 @@ const LocalClusterView: React.FC<LocalClusterViewProps> = ({ inventory }) => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-cyan-300/20 bg-[#081726]/85 py-24 text-center">
+            <div className="flex flex-col items-center justify-center rounded-5xl border-2 border-dashed border-cyan-300/20 bg-[#081726]/85 py-24 text-center">
               <DatabaseZap size={48} className="mb-4 text-slate-500" />
               <h3 className="font-cinematic text-3xl text-white">
                 No hay {normalizedCategory} disponibles ahora

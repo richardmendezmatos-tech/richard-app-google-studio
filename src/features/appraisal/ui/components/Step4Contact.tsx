@@ -86,7 +86,7 @@ export const Step4Contact: React.FC<Step4ContactProps> = ({
         <button 
           onClick={onSimulate}
           disabled={loading}
-          className="flex-1 py-5 bg-gradient-to-r from-primary to-cyan-400 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_-10px_rgba(var(--primary-rgb),0.4)] disabled:opacity-50 flex items-center justify-center gap-3"
+          className="flex-1 py-5 bg-linear-to-r from-primary to-cyan-400 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_-10px_rgba(var(--primary-rgb),0.4)] disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {loading ? (
             <span className="flex items-center gap-2">

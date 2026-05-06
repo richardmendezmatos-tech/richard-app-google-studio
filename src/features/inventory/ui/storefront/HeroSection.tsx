@@ -98,8 +98,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
+        <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
         
         {/* Ambient Holographic Layer */}
         <div className="absolute inset-0 mesh-bg-elite z-[3]" />
@@ -139,7 +139,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 <h2 className="flex flex-col">
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter">{h.line1}</span>
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter">{h.line2}</span>
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none">
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-linear-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none">
                     {h.accent}
                   </span>
                 </h2>
@@ -177,13 +177,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             className="p-10 space-y-8 relative group"
           >
             {/* Holographic scanner effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
             
             <div className="space-y-3 relative">
               <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">
                 COMMAND HUB / <span className="text-primary animate-pulse">DIRECT ACTION</span>
               </p>
-              <div className="h-1 w-16 bg-gradient-to-r from-primary to-transparent rounded-full shadow-[0_0_10px_#00e5ff]" />
+              <div className="h-1 w-16 bg-linear-to-r from-primary to-transparent rounded-full shadow-[0_0_10px_#00e5ff]" />
             </div>
 
             <div className="space-y-4 relative">

@@ -78,7 +78,7 @@ const BetaOnboard = () => {
 
   return (
     <div className="min-h-screen bg-[#050b14] text-white flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-slate-900 border border-purple-500/30 rounded-3xl p-8 shadow-2xl shadow-purple-900/20">
+      <div className="max-w-md w-full bg-slate-900 border border-purple-500/30 rounded-4xl p-8 shadow-2xl shadow-purple-900/20">
         <div className="flex items-center gap-3 text-purple-400 mb-6">
           <Rocket size={32} />
           <h1 className="text-2xl font-black uppercase tracking-tighter">B2B Sandbox</h1>

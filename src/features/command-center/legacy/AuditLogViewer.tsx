@@ -68,7 +68,7 @@ export const AuditLogViewer: React.FC = () => {
   }
 
   return (
-    <div className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl">
+    <div className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-white/20 rounded-4xl overflow-hidden shadow-2xl">
       <div className="p-6 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">

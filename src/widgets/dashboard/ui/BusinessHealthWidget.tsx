@@ -94,7 +94,7 @@ export const BusinessHealthWidget: React.FC = () => {
         </div>
         <div className="mt-3 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
           <motion.div 
-            className="h-full bg-gradient-to-r from-cyan-500 to-violet-500"
+            className="h-full bg-linear-to-r from-cyan-500 to-violet-500"
             animate={{ 
               width: ['95%', '98%', '96%', '99%'],
               opacity: [0.6, 1, 0.8, 1]

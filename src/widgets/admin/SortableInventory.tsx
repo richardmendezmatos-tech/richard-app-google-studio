@@ -118,7 +118,7 @@ export const SortableInventory: React.FC<{
       </DndContext>
 
       {items.length === 0 && (
-        <div className="p-8 text-center border-2 border-dashed border-white/5 rounded-3xl text-slate-500 text-sm">
+        <div className="p-8 text-center border-2 border-dashed border-white/5 rounded-4xl text-slate-500 text-sm">
           No hay unidades destacadas seleccionadas.
         </div>
       )}

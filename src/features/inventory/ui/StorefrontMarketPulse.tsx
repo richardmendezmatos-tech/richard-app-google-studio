@@ -53,11 +53,11 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffi
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-      className={`group relative overflow-hidden rounded-[32px] border p-8 backdrop-blur-2xl transition-all hover:scale-[1.02] hover:bg-slate-900/60 shadow-xl ${toneStyles[tone]}`}
+      className={`group relative overflow-hidden rounded-4xl border p-8 backdrop-blur-2xl transition-all hover:scale-[1.02] hover:bg-slate-900/60 shadow-xl ${toneStyles[tone]}`}
     >
       {/* Holographic Scanning Line */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-[20%] w-full animate-sweep" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/10 to-transparent h-[20%] w-full animate-sweep" />
       </div>
 
       <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">

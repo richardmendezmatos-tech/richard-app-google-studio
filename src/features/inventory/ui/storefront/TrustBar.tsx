@@ -41,7 +41,7 @@ const TrustBar: React.FC = () => {
             className="flex group"
           >
             <div className="relative overflow-hidden rounded-full border border-emerald-500/30 bg-emerald-500/5 px-6 py-3 backdrop-blur-3xl transition-all hover:bg-emerald-500/10 hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <span className="relative flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400">
                 <BadgeCheck size={16} className="text-emerald-500" />
                 Verified Richard Elite Dealer
@@ -118,10 +118,10 @@ const TrustItem: React.FC<TrustItemProps> = ({ icon, title, desc, color, delay }
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative h-full rounded-[40px] border border-white/5 bg-slate-900/40 p-10 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/30 hover:bg-slate-900/70 shadow-2xl"
+      className="group relative h-full rounded-5xl border border-white/5 bg-slate-900/40 p-10 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/30 hover:bg-slate-900/70 shadow-2xl"
     >
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-[40px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px rounded-5xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background: useTransform(
             [mouseX, mouseY],

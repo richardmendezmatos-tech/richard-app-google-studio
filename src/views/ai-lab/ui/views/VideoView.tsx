@@ -135,7 +135,7 @@ const VideoView: React.FC = () => {
   if (!apiKeySelected) {
     return (
       <div className="p-4 lg:p-8 max-w-2xl mx-auto w-full flex flex-col items-center justify-center h-full text-center">
-        <div className="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 shadow-2xl">
+        <div className="bg-slate-800/50 p-10 rounded-4xl border border-slate-700 shadow-2xl">
           <div className="p-4 bg-primary/10 rounded-full inline-block mb-4">
             <KeyRound size={32} className="text-primary" />
           </div>
@@ -186,7 +186,7 @@ const VideoView: React.FC = () => {
             onDragEnter={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative aspect-video rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${
+            className={`relative aspect-video rounded-4xl border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${
               isDragging
                 ? 'border-primary bg-primary/10 text-primary scale-[1.02]'
                 : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:border-cyan-500 hover:text-cyan-400'
@@ -196,7 +196,7 @@ const VideoView: React.FC = () => {
               <img
                 src={imagePreview}
                 alt="Vista previa"
-                className="absolute inset-0 w-full h-full object-contain rounded-3xl z-0"
+                className="absolute inset-0 w-full h-full object-contain rounded-4xl z-0"
               />
             ) : (
               <div
@@ -235,7 +235,7 @@ const VideoView: React.FC = () => {
         </div>
 
         {/* Right Column: Controls */}
-        <div className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
+        <div className="bg-slate-800/50 p-6 rounded-4xl border border-slate-700 shadow-2xl space-y-6">
           <div>
             <label className="text-sm font-semibold mb-2 block">1. Describe la animación</label>
             <textarea

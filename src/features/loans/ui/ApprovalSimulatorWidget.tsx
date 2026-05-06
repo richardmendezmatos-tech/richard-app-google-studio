@@ -119,7 +119,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
   const currentProb = useMemo(() => PROBABILITY_BY_TIER[tier || 'good'], [tier]);
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto overflow-hidden rounded-[3rem] bg-slate-950/40 backdrop-blur-3xl border border-white/5 shadow-[0_48px_96px_-24px_rgba(0,0,0,0.8)] p-0.5 group/sim">
+    <div className="relative w-full max-w-2xl mx-auto overflow-hidden rounded-5xl bg-slate-950/40 backdrop-blur-3xl border border-white/5 shadow-[0_48px_96px_-24px_rgba(0,0,0,0.8)] p-0.5 group/sim">
       {/* Neural Background Glows */}
       <div className={`absolute -top-32 -right-32 w-80 h-80 blur-[120px] opacity-20 rounded-full transition-all duration-1000 ${currentProb.glow}`}></div>
       <div className={`absolute -bottom-32 -left-32 w-80 h-80 blur-[120px] opacity-10 rounded-full transition-all duration-1000 ${currentProb.glow}`}></div>
@@ -194,7 +194,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
               </div>
 
               {/* Financial Dashboard */}
-              <div className="p-8 glass-premium rounded-[2.5rem] border border-white/5 space-y-10 relative overflow-hidden group/dash">
+              <div className="p-8 glass-premium rounded-4xl border border-white/5 space-y-10 relative overflow-hidden group/dash">
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                    <TrendingUp size={120} />
                 </div>
@@ -288,7 +288,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
                   onClick={() => setStep(2)}
                   className="w-full md:w-auto px-12 py-6 bg-white text-black hover:bg-ra-primary transition-all rounded-full font-black text-sm uppercase tracking-widest shadow-[0_24px_48px_-12px_rgba(255,255,255,0.25)] flex items-center justify-center space-x-4 group overflow-hidden relative"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   <span className="relative z-10">Activar Aprobación</span>
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
                 </button>
@@ -320,7 +320,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
               onSubmit={handleSubmit}
               className="space-y-8"
             >
-              <div className="bg-ra-primary/5 border border-ra-primary/20 rounded-[2rem] p-8 flex space-x-6 items-center backdrop-blur-xl">
+              <div className="bg-ra-primary/5 border border-ra-primary/20 rounded-4xl p-8 flex space-x-6 items-center backdrop-blur-xl">
                 <div className="w-16 h-16 bg-ra-primary/20 rounded-2xl flex items-center justify-center flex-shrink-0 relative">
                   <div className="absolute inset-0 bg-ra-primary blur-md opacity-20 animate-pulse"></div>
                   <ShieldCheck className="w-8 h-8 text-ra-primary relative z-10" />
@@ -376,7 +376,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
             >
               <div className="relative w-32 h-32 mx-auto mb-10">
                 <div className="absolute inset-0 bg-ra-primary blur-[40px] opacity-30 rounded-full animate-pulse"></div>
-                <div className="relative w-full h-full bg-ra-primary/10 border border-ra-primary/30 rounded-[3rem] flex items-center justify-center backdrop-blur-xl">
+                <div className="relative w-full h-full bg-ra-primary/10 border border-ra-primary/30 rounded-5xl flex items-center justify-center backdrop-blur-xl">
                   <CheckCircle className="w-14 h-14 text-ra-primary" />
                 </div>
               </div>
@@ -385,7 +385,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
                 Reserva confirmada por <strong className="text-ra-primary">${Math.round(monthlyPayment)}/mes</strong>. Jules ha notificado a nuestro equipo VIP para tu atención inmediata.
               </p>
               
-              <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 flex flex-col items-center justify-center space-y-4 backdrop-blur-md group-hover/sim:border-ra-primary/20 transition-all">
+              <div className="bg-white/[0.03] border border-white/5 rounded-4xl p-8 flex flex-col items-center justify-center space-y-4 backdrop-blur-md group-hover/sim:border-ra-primary/20 transition-all">
                 <div className="flex items-center gap-3">
                   <Zap className="w-5 h-5 text-ra-primary animate-bounce" />
                   <span className="text-xs font-black text-white uppercase tracking-[0.4em]">Fast Track Activado</span>

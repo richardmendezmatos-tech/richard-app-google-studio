@@ -158,8 +158,8 @@ const LeadCard: React.FC<LeadCardProps> = ({
     <div
       className={`glass-card glass-premium group transition-all duration-500 relative ${
         isOverlay
-          ? 'shadow-2xl scale-105 rotate-2 cursor-grabbing z-50 ring-2 ring-cyan-500/50 bg-slate-900/40 p-6 rounded-[32px]'
-          : 'p-6 rounded-[32px] hover:border-cyan-500/30 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(34,211,238,0.15)] overflow-hidden'
+          ? 'shadow-2xl scale-105 rotate-2 cursor-grabbing z-50 ring-2 ring-cyan-500/50 bg-slate-900/40 p-6 rounded-4xl'
+          : 'p-6 rounded-4xl hover:border-cyan-500/30 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(34,211,238,0.15)] overflow-hidden'
       }`}
     >
       {/* Background Decorator - Grid Subraya el ADN de Richard Intelligence */}
@@ -282,7 +282,7 @@ const LeadCard: React.FC<LeadCardProps> = ({
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  className="absolute bottom-full right-0 mb-3 w-56 bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-2 z-50"
+                  className="absolute bottom-full right-0 mb-3 w-56 bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-4xl shadow-2xl p-2 z-50"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex flex-col gap-1">

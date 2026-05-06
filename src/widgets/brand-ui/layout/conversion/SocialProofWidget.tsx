@@ -79,7 +79,7 @@ export const SocialProofWidget: React.FC = () => {
           <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-black/60 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             <div className="flex items-start gap-3">
               <div className="relative">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-900 to-black border border-cyan-500/30">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-cyan-900 to-black border border-cyan-500/30">
                   <Icon size={18} className="text-cyan-400" />
                 </div>
                 <motion.div 
@@ -114,7 +114,7 @@ export const SocialProofWidget: React.FC = () => {
                 initial={{ left: '-100%' }}
                 animate={{ left: '100%' }}
                 transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                className="absolute top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent skew-x-12"
+                className="absolute top-0 h-full w-1/2 bg-linear-to-r from-transparent via-cyan-500/5 to-transparent skew-x-12"
             />
           </div>
         </motion.div>

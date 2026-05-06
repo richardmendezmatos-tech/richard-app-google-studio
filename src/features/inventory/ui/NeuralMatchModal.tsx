@@ -219,7 +219,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
         setStep('results');
       }
     },
-    [profile, inventory, analytics],
+    [profile, inventory, analytics, activeTags],
   );
 
   const onDrop = useCallback(
@@ -288,10 +288,10 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in">
       <div
         ref={containerRef}
-        className="glass-premium w-full max-w-4xl shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh] rounded-[40px]"
+        className="glass-premium w-full max-w-4xl shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh] rounded-5xl"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
         <button
           onClick={onClose}
@@ -394,7 +394,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                   <div
                     {...getRootProps()}
                     className={`
-                                        w-full md:w-1/3 min-h-[200px] border-2 border-dashed rounded-[40px] flex flex-col items-center justify-center p-6 text-center transition-all cursor-pointer group/drop
+                                        w-full md:w-1/3 min-h-[200px] border-2 border-dashed rounded-5xl flex flex-col items-center justify-center p-6 text-center transition-all cursor-pointer group/drop
                                         ${isDragActive ? 'border-primary bg-primary/10 scale-[1.02]' : 'border-slate-700 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/60'}
                                     `}
                   >
@@ -429,7 +429,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                 <div className="w-full mt-4 flex justify-center relative z-20 group pb-8">
                   <div
-                    className={`absolute -inset-1 bg-gradient-to-r from-ra-primary to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
+                    className={`absolute -inset-1 bg-linear-to-r from-ra-primary to-blue-600 rounded-2xl blur-lg opacity-40 transition-opacity duration-500 ${profile.trim() ? 'opacity-80 animate-pulse' : ''}`}
                   ></div>
                   <button
                     onClick={() => handleScan()}
@@ -480,7 +480,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
             {step === 'results' && (
               <div className="space-y-6">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 bg-[#173d57]/50 p-6 rounded-3xl border border-primary/30">
+                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 bg-[#173d57]/50 p-6 rounded-4xl border border-primary/30">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
                       <User size={24} className="text-white" />
@@ -527,10 +527,10 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                           }}
                           onClick={() => onSelectCar(car)}
                           className={`
-                                                    group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl cursor-pointer transition-all duration-300
+                                                    group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-4xl cursor-pointer transition-all duration-300
                                                     ${
                                                       isTopMatch
-                                                        ? 'bg-gradient-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
+                                                        ? 'bg-linear-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
                                                         : 'bg-slate-800/30 border border-slate-700 hover:bg-slate-800/80'
                                                     }
                                                 `}

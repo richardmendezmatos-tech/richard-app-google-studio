@@ -79,9 +79,9 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-white/5 rounded-[40px] p-8 lg:p-12 shadow-2xl relative overflow-hidden group">
+    <div className="bg-slate-900 border border-white/5 rounded-5xl p-8 lg:p-12 shadow-2xl relative overflow-hidden group">
       {/* Glow Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-20" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-20" />
       
       <div className="relative z-10 space-y-10">
         <header className="flex items-center justify-between">
@@ -101,8 +101,8 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
         </header>
 
         {/* PAYMENT DISPLAY */}
-        <div className="bg-white/[0.02] border border-white/5 rounded-[32px] p-8 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
+        <div className="bg-white/[0.02] border border-white/5 rounded-4xl p-8 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-b from-primary/[0.02] to-transparent pointer-events-none" />
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
             Inversión Mensual Estimada
           </p>
@@ -188,7 +188,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
             </div>
 
             {/* Approval Progress */}
-            <div className="bg-white/5 rounded-[32px] p-6 border border-white/5">
+            <div className="bg-white/5 rounded-4xl p-6 border border-white/5">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Probabilidad de Aprobación</span>
                 <span className={`text-[10px] font-black uppercase tracking-widest ${power.color}`}>{power.text}</span>

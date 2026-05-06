@@ -35,7 +35,7 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
     return (
       <div
         ref={rowRef}
-        className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-20 ${style ? 'dnd-sortable' : ''}`}
+        className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-board-item ${style ? 'dnd-sortable' : ''}`}
       >
         {/* Unidad */}
         <div className="flex-1 flex items-center gap-4 min-w-board-column-lg">

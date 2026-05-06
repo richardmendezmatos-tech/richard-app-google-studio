@@ -143,7 +143,7 @@ export const HoustonTelemetryTab: React.FC = () => {
 
         {/* 🧠 Side Panel: Intent & Infrastructure */}
         <div className="space-y-6">
-          <div className="glass-premium p-6 rounded-2xl border border-white/10 space-y-6 bg-gradient-to-br from-cyan-950/20 to-transparent">
+          <div className="glass-premium p-6 rounded-2xl border border-white/10 space-y-6 bg-linear-to-br from-cyan-950/20 to-transparent">
             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
               <Brain size={14} className="text-cyan-500" /> Neuro-Signals
             </h4>

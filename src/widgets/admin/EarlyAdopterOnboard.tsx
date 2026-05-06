@@ -62,7 +62,7 @@ const EarlyAdopterOnboard = () => {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-slate-900 border border-slate-700 rounded-3xl p-10 shadow-2xl">
+      <div className="max-w-md w-full bg-slate-900 border border-slate-700 rounded-4xl p-10 shadow-2xl">
         <div className="flex items-center gap-3 text-emerald-400 mb-8">
           <Handshake size={40} />
           <h1 className="text-3xl font-black uppercase tracking-tighter">COO Provisioning</h1>

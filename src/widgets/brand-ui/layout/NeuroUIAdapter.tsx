@@ -35,7 +35,7 @@ export const NeuroUIAdapter: React.FC = () => {
         >
           <div className="glass-premium border border-cyan-500/30 p-5 rounded-2xl shadow-2xl overflow-hidden relative group">
             {/* Background Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000" />
+            <div className="absolute -inset-1 bg-linear-to-r from-cyan-500/20 to-blue-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000" />
             
             <div className="relative">
               <div className="flex items-start justify-between mb-3">
@@ -67,7 +67,7 @@ export const NeuroUIAdapter: React.FC = () => {
 
               <button 
                 onClick={() => window.open('https://wa.me/17873682880', '_blank')}
-                className="w-full py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-900/40"
+                className="w-full py-3 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-900/40"
               >
                 Hablar con Richard <ArrowRight size={16} />
               </button>

@@ -77,7 +77,7 @@ const AILabView: React.FC = () => {
         /* Main Visualizer Container */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* HyperList Viewport */}
-          <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col h-[600px] shadow-2xl">
+          <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-4xl overflow-hidden flex flex-col h-[600px] shadow-2xl">
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-slate-900/80">
               <div className="flex items-center gap-3">
                 <Activity className="text-rose-500 animate-pulse" size={18} />
@@ -98,7 +98,7 @@ const AILabView: React.FC = () => {
 
           {/* Tech Specs Panel */}
           <div className="space-y-6">
-            <div className="bg-white/5 border border-white/5 p-8 rounded-[2rem] space-y-6">
+            <div className="bg-white/5 border border-white/5 p-8 rounded-4xl space-y-6">
               <div className="flex items-center gap-3 mb-2">
                 <Zap className="text-amber-500" size={20} />
                 <h3 className="text-lg font-black text-white uppercase tracking-tight">
@@ -141,7 +141,7 @@ const AILabView: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary/20 to-purple-600/20 border border-primary/20 p-8 rounded-[2rem] shadow-xl">
+            <div className="bg-linear-to-br from-primary/20 to-purple-600/20 border border-primary/20 p-8 rounded-4xl shadow-xl">
               <div className="text-xs font-black text-white uppercase tracking-widest mb-2">
                 Strategic Insight
               </div>
@@ -156,7 +156,7 @@ const AILabView: React.FC = () => {
       ) : (
         /* Sandbox View */
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-1 overflow-hidden shadow-2xl">
+          <div className="bg-slate-900 border border-white/10 rounded-4xl p-1 overflow-hidden shadow-2xl">
             <div className="bg-black/50 p-4 flex items-center justify-between border-b border-white/5">
               <div className="flex items-center gap-3 px-4">
                 <div className="flex gap-2">

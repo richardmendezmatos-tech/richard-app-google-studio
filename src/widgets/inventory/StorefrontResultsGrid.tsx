@@ -59,12 +59,12 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-[400px] animate-pulse rounded-[40px] border border-primary/15 bg-slate-900/40 backdrop-blur-xl"
+                className="h-[400px] animate-pulse rounded-5xl border border-primary/15 bg-slate-900/40 backdrop-blur-xl"
               />
             ))}
           </div>
         ) : (displayCars || []).length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-primary/20 bg-slate-900/60 backdrop-blur-xl py-20 text-center animate-in fade-in">
+          <div className="col-span-full flex flex-col items-center justify-center rounded-5xl border-2 border-dashed border-primary/20 bg-slate-900/60 backdrop-blur-xl py-20 text-center animate-in fade-in">
             {isSearching ? (
               <>
                 <p className="font-cinematic text-4xl tracking-[0.06em] text-slate-100">

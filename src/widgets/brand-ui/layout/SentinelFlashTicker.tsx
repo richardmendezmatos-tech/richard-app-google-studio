@@ -15,8 +15,8 @@ const TICKER_ITEMS = [
 const SentinelFlashTicker = () => {
   return (
     <div className="relative h-9 w-full overflow-hidden border-y border-white/5 bg-slate-950/80 backdrop-blur-md">
-      <div className="absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-slate-950 to-transparent" />
-      <div className="absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-slate-950 to-transparent" />
+      <div className="absolute inset-y-0 left-0 z-10 w-20 bg-linear-to-r from-slate-950 to-transparent" />
+      <div className="absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-slate-950 to-transparent" />
       
       <motion.div
         animate={{ x: [0, -1000] }}

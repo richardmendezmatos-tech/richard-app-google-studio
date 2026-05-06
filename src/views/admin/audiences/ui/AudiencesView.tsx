@@ -56,21 +56,21 @@ const AudiencesView: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#111c26] border border-white/5 p-8 rounded-3xl">
+        <div className="bg-[#111c26] border border-white/5 p-8 rounded-4xl">
           <div className="flex items-center gap-4 text-primary mb-4">
             <Users size={24} />
             <h3 className="font-bold uppercase tracking-widest text-xs">Total Suscriptores</h3>
           </div>
           <p className="text-5xl font-black text-white">{subscribers.length}</p>
         </div>
-        <div className="bg-[#111c26] border border-white/5 p-8 rounded-3xl">
+        <div className="bg-[#111c26] border border-white/5 p-8 rounded-4xl">
           <div className="flex items-center gap-4 text-amber-500 mb-4">
             <Mail size={24} />
             <h3 className="font-bold uppercase tracking-widest text-xs">Apertura Promedio</h3>
           </div>
           <p className="text-5xl font-black text-white">42%</p>
         </div>
-        <div className="bg-[#111c26] border border-white/5 p-8 rounded-3xl">
+        <div className="bg-[#111c26] border border-white/5 p-8 rounded-4xl">
           <div className="flex items-center gap-4 text-emerald-500 mb-4">
             <Bell size={24} />
             <h3 className="font-bold uppercase tracking-widest text-xs">CTR</h3>
@@ -80,7 +80,7 @@ const AudiencesView: React.FC = () => {
       </div>
 
       {/* Audience List */}
-      <div className="bg-[#111c26] border border-white/5 rounded-[32px] overflow-hidden">
+      <div className="bg-[#111c26] border border-white/5 rounded-4xl overflow-hidden">
         <div className="p-6 border-b border-white/5 flex justify-between items-center">
           <div className="relative w-72">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />

@@ -22,7 +22,7 @@ const TermsView: React.FC = () => {
           <ArrowLeft size={20} /> Volver
         </button>
 
-        <div className="bg-white dark:bg-slate-800 rounded-[40px] p-8 md:p-16 shadow-2xl border border-slate-100 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800 rounded-5xl p-8 md:p-16 shadow-2xl border border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
               <FileText size={24} />

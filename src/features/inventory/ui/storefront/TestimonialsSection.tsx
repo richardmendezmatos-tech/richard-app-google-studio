@@ -40,7 +40,7 @@ const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden rounded-[40px] border border-white/5 bg-slate-950 py-24">
+    <section className="relative overflow-hidden rounded-5xl border border-white/5 bg-slate-950 py-24">
       {/* Background Atmosphere */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] animate-pulse" />

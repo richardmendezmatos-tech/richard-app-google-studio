@@ -39,7 +39,7 @@ const PhotoAppraisal: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#131f2a] rounded-[40px] p-8 border border-white/5 relative overflow-hidden group">
+    <div className="bg-[#131f2a] rounded-5xl p-8 border border-white/5 relative overflow-hidden group">
       {/* Background Glow */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full group-hover:bg-primary/20 transition-all duration-700"></div>
 
@@ -61,7 +61,7 @@ const PhotoAppraisal: React.FC = () => {
         {!result && !isAnalyzing && (
           <div
             onClick={handleUpload}
-            className="border-2 border-dashed border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group/upload"
+            className="border-2 border-dashed border-white/10 rounded-4xl p-12 flex flex-col items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group/upload"
           >
             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover/upload:scale-110 group-hover/upload:bg-primary/20 transition-all">
               <ImageIcon className="text-slate-500 group-hover/upload:text-primary" size={32} />

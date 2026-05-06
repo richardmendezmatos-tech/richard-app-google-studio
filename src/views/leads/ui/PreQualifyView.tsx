@@ -191,7 +191,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
     return (
       <div className="min-h-screen bg-[#0d2232] flex items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-        <div className="bg-slate-900/90 backdrop-blur-xl p-12 rounded-[40px] shadow-[0_0_60px_rgba(0,174,217,0.1)] text-center max-w-lg w-full border border-white/10 animate-in zoom-in duration-500 relative z-10">
+        <div className="bg-slate-900/90 backdrop-blur-xl p-12 rounded-5xl shadow-[0_0_60px_rgba(0,174,217,0.1)] text-center max-w-lg w-full border border-white/10 animate-in zoom-in duration-500 relative z-10">
           <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(0,174,217,0.2)]">
             <FileText size={48} className="text-primary" />
           </div>
@@ -276,9 +276,9 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         {/* Visual Sidebar with Sofia */}
         <div className="w-full md:w-1/3 p-6 md:p-12 flex flex-col justify-center relative overflow-hidden">
           {/* Sofia Avatar Area */}
-          <div className="relative z-10 bg-slate-800/50 backdrop-blur-xl border border-white/10 p-6 rounded-3xl animate-in slide-in-from-left duration-700">
+          <div className="relative z-10 bg-slate-800/50 backdrop-blur-xl border border-white/10 p-6 rounded-4xl animate-in slide-in-from-left duration-700">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-primary/30">
+              <div className="w-14 h-14 rounded-full bg-linear-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-primary/30">
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/4128/4128335.png"
                   alt="Sofia AI"

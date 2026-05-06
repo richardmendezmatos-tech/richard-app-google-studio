@@ -56,7 +56,7 @@ export const GapAnalyticsWidget: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm h-full flex flex-col">
+    <div className="bg-white dark:bg-slate-800 rounded-4xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-black flex items-center gap-2 text-slate-800 dark:text-white uppercase tracking-tight">
           <TrendingDown className="text-rose-500" size={20} /> Oportunidades Perdidas

@@ -167,7 +167,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
               exit={{ y: 40, opacity: 0 }}
               className="mt-12 max-w-6xl mx-auto w-full z-50"
             >
-              <div className="rounded-[40px] border border-white/5 bg-slate-900/60 p-10 backdrop-blur-2xl shadow-[0_-20px_80px_-20px_rgba(0,0,0,0.5)]">
+              <div className="rounded-5xl border border-white/5 bg-slate-900/60 p-10 backdrop-blur-2xl shadow-[0_-20px_80px_-20px_rgba(0,0,0,0.5)]">
                 <div className="mb-10 flex flex-col items-center text-center">
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles size={16} className="text-cyan-400" />
@@ -254,7 +254,7 @@ const UnitPanel = ({ car, side, isWinner, isLoser, stats }: any) => {
 const VerdictCard = ({ cat, car1, car2 }: any) => {
   const winner = cat.winnerId === car1.id ? car1 : car2;
   return (
-    <div className="group relative rounded-3xl border border-white/5 bg-white/5 p-6 transition-all hover:bg-white/10">
+    <div className="group relative rounded-4xl border border-white/5 bg-white/5 p-6 transition-all hover:bg-white/10">
       <div className="mb-4 flex items-center justify-between">
         <span className="font-tech text-[9px] uppercase tracking-[0.2em] text-slate-500">{cat.name}</span>
         <div className={`h-2 w-2 rounded-full ${cat.winnerId === car1.id ? 'bg-cyan-500' : 'bg-primary'}`} />

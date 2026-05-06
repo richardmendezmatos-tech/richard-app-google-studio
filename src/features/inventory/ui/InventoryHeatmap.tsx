@@ -71,11 +71,11 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
           return (
             <div
               key={car.id}
-              className={`group relative h-32 rounded-3xl overflow-hidden border border-white/10 transition-all duration-500 hover:scale-[1.02] ${heat.glow}`}
+              className={`group relative h-32 rounded-4xl overflow-hidden border border-white/10 transition-all duration-500 hover:scale-[1.02] ${heat.glow}`}
             >
               {/* Background Heat Gradient */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br transition-opacity duration-700 ${heat.color}`}
+                className={`absolute inset-0 bg-linear-to-br transition-opacity duration-700 ${heat.color}`}
               ></div>
 
               {/* Content Overlay */}
@@ -140,13 +140,13 @@ export const InventoryHeatmap: React.FC<Props> = ({ inventory }) => {
       </div>
 
       {/* Strategic Insights Card */}
-      <div className="bg-slate-800/50 backdrop-blur-xl rounded-[32px] p-6 border border-white/5 mt-8 overflow-hidden relative group">
+      <div className="bg-slate-800/50 backdrop-blur-xl rounded-4xl p-6 border border-white/5 mt-8 overflow-hidden relative group">
         <div className="absolute top-0 right-0 p-8 opacity-5 -mr-4 -mt-4 text-primary group-hover:scale-110 transition-transform duration-700">
           <BrainCircuit size={120} />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/20">
+          <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/20">
             <Sparkles className="w-8 h-8 text-white animate-pulse" />
           </div>
           <div className="flex-1 space-y-1">

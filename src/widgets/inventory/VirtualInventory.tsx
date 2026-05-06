@@ -114,7 +114,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     updateVisibleRange(); 
 
     return () => window.removeEventListener('scroll', updateVisibleRange);
-  }, [(cars || []).length, columns, rowCount]);
+  }, [cars, columns, rowCount]);
 
   const visibleCars = useMemo(() => {
     return (cars || []).slice(visibleRange.start, visibleRange.end);

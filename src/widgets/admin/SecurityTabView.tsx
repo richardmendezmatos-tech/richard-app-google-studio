@@ -29,8 +29,8 @@ export const SecurityTabView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-900/40 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-r from-transparent via-primary/5 to-transparent pointer-events-none" />
+      <div className="bg-slate-900/40 backdrop-blur-xl p-8 rounded-4xl shadow-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-full bg-linear-to-r from-transparent via-primary/5 to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left">
           <h3 className="text-xl font-black flex items-center gap-3 text-white uppercase tracking-tight">
@@ -56,7 +56,7 @@ export const SecurityTabView: React.FC = () => {
       </div>
 
       <div className="min-h-[600px] relative">
-        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xl rounded-[2rem] border border-white/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xl rounded-4xl border border-white/10 pointer-events-none" />
         <div className="relative z-10">
           <Suspense
             fallback={

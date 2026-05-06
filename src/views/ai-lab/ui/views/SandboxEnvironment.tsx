@@ -54,7 +54,7 @@ export default function App() {
       <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
       <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
       <div className="relative z-10 grid h-full grid-cols-1 gap-5 p-6 lg:grid-cols-2">
-        <div className="rounded-3xl border border-white/10 bg-slate-900/55 p-6 backdrop-blur-xl">
+        <div className="rounded-4xl border border-white/10 bg-slate-900/55 p-6 backdrop-blur-xl">
           <h1 className="text-2xl font-black uppercase tracking-tight">Strategy Lab Lite</h1>
           <p className="mt-1 text-xs font-mono text-slate-400">CONNECTED: EDGE_NODE_PR_01</p>
           <div className="mt-8 space-y-4">
@@ -64,7 +64,7 @@ export default function App() {
             <Gauge value={telemetry.battery} max={100} color="#60a5fa" label="Battery" unit="%" />
           </div>
         </div>
-        <div className="rounded-3xl border border-cyan-400/20 bg-slate-900/45 p-6 backdrop-blur-xl">
+        <div className="rounded-4xl border border-cyan-400/20 bg-slate-900/45 p-6 backdrop-blur-xl">
           <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">Health Matrix</div>
           <div className="mb-6 text-5xl font-black tracking-tighter text-cyan-200">{health.toFixed(1)}%</div>
           <div className="grid grid-cols-2 gap-3 text-xs">

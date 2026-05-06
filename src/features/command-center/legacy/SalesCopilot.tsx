@@ -50,11 +50,11 @@ const SalesCopilot: React.FC = () => {
   const chatHistory = useRef<{ role: string; content: string }[]>([]);
 
   useEffect(() => {
-    // Inicializar historial con el mensaje de bienvenida y el prompt del sistema
     chatHistory.current = [
       { role: 'user', content: 'Inicia la conversación.' },
       { role: 'agent', content: messages[0].content }
     ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -171,11 +171,11 @@ const SalesCopilot: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#050c14] rounded-[3rem] p-6 lg:p-10 border border-white/5 shadow-3xl overflow-hidden route-fade-in flex flex-col h-[75vh] relative">
+    <div className="bg-[#050c14] rounded-5xl p-6 lg:p-10 border border-white/5 shadow-3xl overflow-hidden route-fade-in flex flex-col h-[75vh] relative">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 shrink-0 relative z-10">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-[1.25rem] flex items-center justify-center shadow-2xl shadow-cyan-500/20 group hover:rotate-3 transition-transform">
+          <div className="w-14 h-14 bg-linear-to-br from-primary via-blue-600 to-indigo-700 rounded-[1.25rem] flex items-center justify-center shadow-2xl shadow-cyan-500/20 group hover:rotate-3 transition-transform">
             <Target className="text-white" size={28} />
           </div>
           <div>
@@ -213,8 +213,8 @@ const SalesCopilot: React.FC = () => {
               <div
                 className={`w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center shadow-lg ${
                   msg.role === 'user'
-                    ? 'bg-gradient-to-br from-purple-500 to-indigo-600 border border-purple-400/30'
-                    : 'bg-gradient-to-br from-primary to-blue-600 border border-cyan-400/30'
+                    ? 'bg-linear-to-br from-purple-500 to-indigo-600 border border-purple-400/30'
+                    : 'bg-linear-to-br from-primary to-blue-600 border border-cyan-400/30'
                 }`}
               >
                 {msg.role === 'user' ? (
@@ -224,7 +224,7 @@ const SalesCopilot: React.FC = () => {
                 )}
               </div>
               <div
-                className={`p-5 rounded-3xl text-sm leading-relaxed whitespace-pre-wrap shadow-xl border ${
+                className={`p-5 rounded-4xl text-sm leading-relaxed whitespace-pre-wrap shadow-xl border ${
                   msg.role === 'user'
                     ? 'bg-[#1a2332] text-white border-purple-500/20 rounded-tr-sm'
                     : 'bg-[#131f2a] text-slate-200 border-cyan-500/20 rounded-tl-sm'
@@ -254,10 +254,10 @@ const SalesCopilot: React.FC = () => {
         {isTyping && (
           <div className="flex w-full justify-start">
             <div className="flex items-start gap-4 max-w-[85%]">
-              <div className="w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 opacity-50">
+              <div className="w-10 h-10 shrink-0 rounded-2xl flex items-center justify-center bg-linear-to-br from-primary to-blue-600 opacity-50">
                 <Bot size={20} className="text-white" />
               </div>
-              <div className="p-5 rounded-3xl bg-[#131f2a] border border-cyan-500/20 rounded-tl-sm flex gap-2 items-center">
+              <div className="p-5 rounded-4xl bg-[#131f2a] border border-cyan-500/20 rounded-tl-sm flex gap-2 items-center">
                 <div className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce" />
                 <div className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce delay-150" />
                 <div className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce delay-300" />
@@ -269,7 +269,7 @@ const SalesCopilot: React.FC = () => {
 
       {/* Input Area */}
       <form onSubmit={handleSendMessage} className="relative mt-auto shrink-0 group">
-        <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/0 via-purple-500/10 to-indigo-500/0 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+        <div className="absolute -inset-2 bg-linear-to-r from-cyan-500/0 via-purple-500/10 to-indigo-500/0 rounded-4xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
         <div className="relative flex items-center bg-[#131f2a] border border-white/10 rounded-2xl p-2 focus-within:border-primary/50 transition-colors shadow-2xl">
           <input
             type="text"

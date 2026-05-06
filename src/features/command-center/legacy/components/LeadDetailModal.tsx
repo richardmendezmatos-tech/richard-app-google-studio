@@ -112,7 +112,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden glass-premium border border-white/10 rounded-[2.5rem] flex flex-col shadow-2xl"
+          className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden glass-premium border border-white/10 rounded-4xl flex flex-col shadow-2xl"
         >
           {/* Header */}
           <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/2">
@@ -206,7 +206,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                   <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                     <Car size={14} className="text-cyan-500" /> Asset Interest
                   </h3>
-                  <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl border border-cyan-500/10">
+                  <div className="p-5 bg-linear-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl border border-cyan-500/10">
                     <h4 className="text-lg font-black text-white mb-2">
                       {lead.vehicleOfInterest || 'No Unit Selected'}
                     </h4>
@@ -249,7 +249,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                     />
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-8 bg-white/2 rounded-[2rem] border border-dashed border-white/10 opacity-60">
+                  <div className="flex flex-col items-center justify-center p-8 bg-white/2 rounded-4xl border border-dashed border-white/10 opacity-60">
                     <MessageSquare size={48} className="text-slate-700 mb-4" />
                     <p className="text-sm font-bold text-slate-500 text-center">
                       Standard Inquiry Profile
@@ -262,7 +262,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
 
                 {/* Predictive Vector Module */}
                 {(data.predictiveScore || data.aiAnalysis || data.aiScore) && (
-                  <div className="mt-8 p-6 bg-slate-900/60 rounded-3xl border border-white/5 relative overflow-hidden group">
+                  <div className="mt-8 p-6 bg-slate-900/60 rounded-4xl border border-white/5 relative overflow-hidden group">
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
                         <Activity size={16} className="text-cyan-400 animate-pulse" />

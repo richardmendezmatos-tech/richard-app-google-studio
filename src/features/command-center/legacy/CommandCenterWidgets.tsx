@@ -89,7 +89,7 @@ export const StatusWidget: React.FC<StatusWidgetProps> = ({
   subValue,
   trendData = [30, 40, 35, 50, 45, 60, 55],
 }) => (
-  <div className="glass-premium p-6 rounded-[2.5rem] flex items-center justify-between group cursor-default transition-all hover:bg-white/5 border border-white/5">
+  <div className="glass-premium p-6 rounded-4xl flex items-center justify-between group cursor-default transition-all hover:bg-white/5 border border-white/5">
     <div className="flex items-center gap-5">
       <div
         className={`p-4 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center transition-transform group-hover:rotate-12 duration-500`}

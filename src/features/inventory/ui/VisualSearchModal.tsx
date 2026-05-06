@@ -84,7 +84,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="relative w-full max-w-xl overflow-hidden rounded-[40px] border border-white/10 bg-slate-900 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.8)]"
+            className="relative w-full max-w-xl overflow-hidden rounded-5xl border border-white/10 bg-slate-900 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.8)]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Ambient Holographic Underlay */}
@@ -139,7 +139,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
 
               <div
                 className={`
-                  relative h-80 rounded-[32px] border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center overflow-hidden
+                  relative h-80 rounded-4xl border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center overflow-hidden
                   ${dragActive ? 'border-cyan-400 bg-cyan-400/5' : 'border-white/10 bg-white/5 hover:border-white/20'}
                 `}
                 onDragEnter={handleDrag}
@@ -164,7 +164,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                     <motion.div
                       animate={{ y: [-20, 320] }}
                       transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-                      className="absolute left-0 right-0 top-0 h-4 bg-gradient-to-b from-cyan-400/0 via-cyan-400/60 to-cyan-400/0 shadow-[0_0_40px_rgba(34,211,238,0.5)] z-30"
+                      className="absolute left-0 right-0 top-0 h-4 bg-linear-to-b from-cyan-400/0 via-cyan-400/60 to-cyan-400/0 shadow-[0_0_40px_rgba(34,211,238,0.5)] z-30"
                     >
                         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white opacity-80" />
                     </motion.div>
@@ -187,7 +187,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                         <motion.div
                           animate={{ x: [-192, 192] }}
                           transition={{ duration: 1.2, repeat: Infinity }}
-                          className="h-full w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent"
+                          className="h-full w-full bg-linear-to-r from-transparent via-cyan-500 to-transparent"
                         />
                       </div>
                     </div>
@@ -210,8 +210,8 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                     </div>
                   </div>
                 ) : (
-                  <label className="group flex h-full w-full cursor-pointer flex-col items-center justify-center p-10 text-center transition-all bg-gradient-to-br from-white/[0.02] to-transparent">
-                    <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/5 border border-white/10 transition-all group-hover:scale-110 group-hover:border-cyan-400/40 group-hover:bg-cyan-400/5 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                  <label className="group flex h-full w-full cursor-pointer flex-col items-center justify-center p-10 text-center transition-all bg-linear-to-br from-white/[0.02] to-transparent">
+                    <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-4xl bg-white/5 border border-white/10 transition-all group-hover:scale-110 group-hover:border-cyan-400/40 group-hover:bg-cyan-400/5 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]">
                       <UploadCloud className="h-10 w-10 text-slate-500 transition-colors group-hover:text-cyan-400" />
                     </div>
                     <div className="space-y-3">

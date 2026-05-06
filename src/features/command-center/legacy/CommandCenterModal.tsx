@@ -226,7 +226,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full sm:max-w-7xl sm:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
+      <div className="bg-white dark:bg-slate-900 w-full sm:max-w-7xl sm:rounded-5xl rounded-t-[40px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
         {/* Header */}
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 z-10 sticky top-0">
           <div>
@@ -262,7 +262,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
               <ImageUploader onUploadComplete={handleUploadComplete} onLog={logDebug} />
 
               {/* Stats or Preview Placeholder */}
-              <div className="p-6 rounded-3xl bg-gradient-to-br from-[#173d57]/10 to-transparent border border-primary/10">
+              <div className="p-6 rounded-4xl bg-linear-to-br from-[#173d57]/10 to-transparent border border-primary/10">
                 <div className="flex items-center gap-3 text-primary mb-3">
                   <Sparkles size={18} />
                   <span className="text-xs font-black uppercase tracking-widest">
@@ -459,7 +459,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full p-5 bg-slate-50 dark:bg-slate-800 rounded-[2rem] font-medium outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary/30 transition-all text-slate-700 dark:text-slate-200 resize-none"
+                  className="w-full p-5 bg-slate-50 dark:bg-slate-800 rounded-4xl font-medium outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary/30 transition-all text-slate-700 dark:text-slate-200 resize-none"
                   placeholder="Escribe la historia de este vehículo..."
                 />
                 {aiTier && (
@@ -473,7 +473,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
 
               {/* Strategic Debug Console */}
               {debugLogs.length > 0 && (
-                <div className="p-5 bg-slate-950 rounded-[2rem] border border-rose-500/20 space-y-2">
+                <div className="p-5 bg-slate-950 rounded-4xl border border-rose-500/20 space-y-2">
                   <div className="text-[9px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
                     Log de Diagnóstico (IT)
@@ -495,7 +495,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="w-full h-[64px] bg-gradient-to-r from-[#0d2232] to-[#173d57] text-white rounded-[2rem] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full h-[64px] bg-linear-to-r from-[#0d2232] to-[#173d57] text-white rounded-4xl font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cyan-900/20 disabled:opacity-50 flex items-center justify-center gap-3"
                 >
                   {isUploading ? (
                     <>

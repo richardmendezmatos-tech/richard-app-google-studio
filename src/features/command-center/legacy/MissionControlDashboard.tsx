@@ -67,7 +67,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       className="space-y-6 pb-12"
     >
       <NeuralInsightsHeadlines />
-      <React.Suspense fallback={<div className="h-48 rounded-[2rem] bg-white/5 animate-pulse" />}>
+      <React.Suspense fallback={<div className="h-48 rounded-4xl bg-white/5 animate-pulse" />}>
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">
           <div className="md:col-span-1">
             <QuickQualifyCard />
@@ -87,7 +87,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           icon={CarFront}
           label="Total Unidades"
           value={<CountUp end={inventory.length} prefix="" />}
-          color="bg-gradient-to-br from-blue-500/20 to-cyan-400/20 text-cyan-400 border border-cyan-500/30"
+          color="bg-linear-to-br from-blue-500/20 to-cyan-400/20 text-cyan-400 border border-cyan-500/30"
           subValue={inventory.length > 0 ? 'OPTIMAL' : 'OUT OF STOCK'}
           trendData={[20, 22, 21, 25, 24, 28, inventory.length]}
         />
@@ -95,7 +95,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           icon={BarChart3}
           label="Leads Activos"
           value={<CountUp end={leads.filter((l) => l.status === 'new').length} />}
-          color="bg-gradient-to-br from-emerald-500/20 to-teal-400/20 text-emerald-400 border border-emerald-500/30"
+          color="bg-linear-to-br from-emerald-500/20 to-teal-400/20 text-emerald-400 border border-emerald-500/30"
           subValue="CONV. PIPELINE"
           trendData={[10, 15, 12, 18, 20, 25, leads.length]}
         />
@@ -108,7 +108,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
               prefix="$"
             />
           }
-          color="bg-gradient-to-br from-purple-500/20 to-indigo-400/20 text-purple-400 border border-purple-500/30"
+          color="bg-linear-to-br from-purple-500/20 to-indigo-400/20 text-purple-400 border border-purple-500/30"
           subValue="CAPITAL ASSETS"
           trendData={[50, 45, 55, 60, 58, 65, 70]}
         />
@@ -129,7 +129,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       >
         {/* Strategy Lab Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-white/5 p-6 hover:border-primary/40 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-white/5 p-6 hover:border-primary/40 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/strategy-lab')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-all" />
@@ -151,7 +151,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
         {/* In-Take Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-emerald-500/10 p-6 hover:border-emerald-500/30 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-emerald-500/10 p-6 hover:border-emerald-500/30 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/admin/intake')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
@@ -173,7 +173,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
         {/* CRM Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-white/5 p-6 hover:border-cyan-500/30 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-white/5 p-6 hover:border-cyan-500/30 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/admin/pipeline')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
@@ -195,7 +195,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
         {/* Framework Lab Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-white/5 p-6 hover:border-purple-500/30 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-white/5 p-6 hover:border-purple-500/30 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/framework-lab')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all" />
@@ -217,7 +217,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
         {/* Analytics Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-white/5 p-6 hover:border-emerald-500/30 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-white/5 p-6 hover:border-emerald-500/30 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/admin/analytics')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />
@@ -239,7 +239,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
 
         {/* Houston Intelligence Hub Card */}
         <div
-          className="group relative overflow-hidden rounded-[2rem] glass-premium border border-cyan-500/10 p-6 hover:border-cyan-500/30 transition-all cursor-pointer hover-kinetic"
+          className="group relative overflow-hidden rounded-4xl glass-premium border border-cyan-500/10 p-6 hover:border-cyan-500/30 transition-all cursor-pointer hover-kinetic"
           onClick={() => navigate('/admin/houston')}
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />

@@ -89,7 +89,7 @@ export const GapAnalyticsWidget: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-slate-900/40 backdrop-blur-xl rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-2xl h-full flex flex-col group/widget">
+    <div className="bg-white dark:bg-slate-900/40 backdrop-blur-xl rounded-4xl p-8 border border-slate-100 dark:border-white/5 shadow-2xl h-full flex flex-col group/widget">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h3 className="text-xl font-black flex items-center gap-3 text-slate-800 dark:text-white uppercase tracking-tighter">
@@ -121,7 +121,7 @@ export const GapAnalyticsWidget: React.FC = () => {
           gaps.map((gap) => (
             <div
               key={gap.id}
-              className="p-5 bg-slate-50/50 dark:bg-white/[0.02] rounded-3xl border border-slate-100 dark:border-white/5 hover:border-rose-500/30 transition-all group/item relative overflow-hidden"
+              className="p-5 bg-slate-50/50 dark:bg-white/[0.02] rounded-4xl border border-slate-100 dark:border-white/5 hover:border-rose-500/30 transition-all group/item relative overflow-hidden"
             >
               <div className="flex justify-between items-start mb-3">
                 <div>

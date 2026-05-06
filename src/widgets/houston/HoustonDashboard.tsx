@@ -172,7 +172,7 @@ const PipelineTab: React.FC<{
               initial={{ width: 0 }}
               animate={{ width: '78%' }}
               transition={{ duration: 2, ease: 'circOut' }}
-              className="h-full bg-gradient-to-r from-cyan-600 via-cyan-400 to-white/40 rounded-full shadow-[0_0_20px_rgba(0,174,217,0.6)]"
+              className="h-full bg-linear-to-r from-cyan-600 via-cyan-400 to-white/40 rounded-full shadow-[0_0_20px_rgba(0,174,217,0.6)]"
             />
           </div>
         </div>
@@ -399,12 +399,12 @@ const TelemetryTab: React.FC<{ telemetry: HoustonTelemetry }> = ({ telemetry }) 
             { label: 'Avg Dwell Time', value: '42', suffix: 'd', style: 'bg-white/3 border-white/5', text: 'text-white' },
             { label: 'Critical Units', value: '0.8', suffix: 'k', style: 'bg-rose-500/[0.03] border-rose-500/10', text: 'text-rose-500' },
           ].map((stat, i) => (
-            <div key={i} className={`p-5 ${stat.style} rounded-3xl border hover:translate-y-[-4px] transition-all`}>
+            <div key={i} className={`p-5 ${stat.style} rounded-4xl border hover:translate-y-[-4px] transition-all`}>
               <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-2">{stat.label}</p>
               <p className={`text-3xl font-black ${stat.text} tracking-tighter`}>{stat.value}<span className="text-lg text-slate-500 ml-1">{stat.suffix}</span></p>
             </div>
           ))}
-          <div className="p-5 bg-emerald-500/[0.03] rounded-3xl border border-emerald-500/10 flex items-center gap-4 hover:translate-y-[-4px] transition-all">
+          <div className="p-5 bg-emerald-500/[0.03] rounded-4xl border border-emerald-500/10 flex items-center gap-4 hover:translate-y-[-4px] transition-all">
             <div className="p-3 bg-emerald-500/10 rounded-2xl"><CheckCircle2 size={24} className="text-emerald-500" /></div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-2">
@@ -631,7 +631,7 @@ const HoustonDashboard: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4 ml-auto md:ml-0 w-full md:w-auto justify-end">
           {/* Autonomy Score Badge */}
           <div className="glass-premium px-6 md:px-8 py-5 flex items-center gap-4 md:gap-8 border border-white/5 hover:scale-[1.02] transition-all cursor-pointer shadow-xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="text-right">
               <p className="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em] mb-1">Autonomy Score</p>
               <p className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter">
@@ -753,7 +753,7 @@ const HoustonDashboard: React.FC = () => {
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: '68%' }}
-                          className="h-full bg-gradient-to-r from-purple-600 to-violet-400 shadow-[0_0_15px_#8b5cf6]"
+                          className="h-full bg-linear-to-r from-purple-600 to-violet-400 shadow-[0_0_15px_#8b5cf6]"
                         />
                       </div>
                     </div>

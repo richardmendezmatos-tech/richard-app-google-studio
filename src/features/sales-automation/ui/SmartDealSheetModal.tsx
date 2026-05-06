@@ -74,12 +74,12 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-          className="relative w-full max-w-5xl max-h-full overflow-hidden bg-slate-50 dark:bg-slate-900 shadow-2xl rounded-3xl sm:rounded-[40px] border border-slate-200 dark:border-slate-800 flex flex-col"
+          className="relative w-full max-w-5xl max-h-full overflow-hidden bg-slate-50 dark:bg-slate-900 shadow-2xl rounded-4xl sm:rounded-5xl border border-slate-200 dark:border-slate-800 flex flex-col"
         >
           {/* Header */}
           <div className="p-6 sm:p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shrink-0">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20">
                 <FileText className="text-white" size={24} />
               </div>
               <div>
@@ -142,7 +142,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
             ) : dealData ? (
               <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4">
                 {/* Executive Summary */}
-                <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500 mb-3 flex items-center gap-2">
                     <Target size={14} /> Resumen Ejecutivo AI
                   </h3>
@@ -154,7 +154,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Psycological Profile */}
                   <div className="space-y-6">
-                    <div className="p-5 sm:p-6 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 dark:bg-slate-800/50 rounded-3xl border border-purple-500/10 dark:border-slate-700">
+                    <div className="p-5 sm:p-6 bg-linear-to-br from-purple-500/5 to-indigo-500/5 dark:bg-slate-800/50 rounded-4xl border border-purple-500/10 dark:border-slate-700">
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-500 mb-5 flex items-center gap-2">
                         <Brain size={14} /> Perfil Psicológico
                       </h3>
@@ -203,7 +203,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
 
                   {/* Financial & Pitch */}
                   <div className="space-y-6">
-                    <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                    <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl" />
 
                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-5 flex items-center gap-2">
@@ -247,7 +247,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
                 </div>
 
                 {/* The Pitch */}
-                <div className="p-5 sm:p-6 bg-gradient-to-r from-primary/10 to-cyan-500/10 dark:bg-primary/5 rounded-3xl border border-primary/20">
+                <div className="p-5 sm:p-6 bg-linear-to-r from-primary/10 to-cyan-500/10 dark:bg-primary/5 rounded-4xl border border-primary/20">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-3 flex items-center gap-2">
                     <Sparkles size={14} /> Pitch de Cierre (Copiar y Pegar / Leer)
                   </h3>

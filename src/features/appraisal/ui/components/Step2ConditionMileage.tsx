@@ -58,7 +58,7 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
         </div>
       </div>
       
-      <div className="p-6 bg-primary/5 rounded-3xl border border-primary/20 flex gap-4 items-start">
+      <div className="p-6 bg-primary/5 rounded-4xl border border-primary/20 flex gap-4 items-start">
          <Camera className="text-primary mt-1" size={24} />
          <div>
             <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1">Análisis de Condición</h4>

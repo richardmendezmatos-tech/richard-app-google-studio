@@ -97,7 +97,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
         ].map((stat, i) => (
           <div
             key={i}
-            className="group relative glass-premium p-6 rounded-3xl overflow-hidden hover-kinetic flex flex-col justify-center gap-3 cursor-default shadow-xl border border-white/5 bg-slate-900/40 backdrop-blur-xl"
+            className="group relative glass-premium p-6 rounded-4xl overflow-hidden hover-kinetic flex flex-col justify-center gap-3 cursor-default shadow-xl border border-white/5 bg-slate-900/40 backdrop-blur-xl"
           >
             <div
               className={`p-4 rounded-2xl bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${stat.color} z-10 inline-flex self-start`}
@@ -120,7 +120,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
         ))}
       </div>
 
-      <div className="flex-1 bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden flex flex-col relative">
+      <div className="flex-1 bg-slate-900/40 backdrop-blur-xl rounded-4xl shadow-2xl border border-white/10 overflow-hidden flex flex-col relative">
         <div className="p-6 md:px-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-950/40 relative z-10">
           <div className="relative w-full md:w-[400px] group">
             <Search
@@ -158,7 +158,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
             <button
               onClick={onCreateNew}
-              className="px-8 h-[56px] bg-gradient-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
+              className="px-8 h-[56px] bg-linear-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <Plus size={18} strokeWidth={3} className="relative z-10" />

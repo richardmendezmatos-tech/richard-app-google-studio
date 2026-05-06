@@ -93,7 +93,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
         animate={{ opacity: 1, y: 0 }}
         className="space-y-6"
       >
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-4">
+        <div className="bg-white/5 border border-white/10 rounded-4xl p-6 space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2 text-cyan-400">
               <Mic size={14} />
@@ -152,7 +152,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-2xl bg-[#0b1116] border border-white/10 rounded-[40px] shadow-2xl overflow-hidden"
+          className="relative w-full max-w-2xl bg-[#0b1116] border border-white/10 rounded-5xl shadow-2xl overflow-hidden"
         >
           <div className="p-8">
             <header className="flex justify-between items-start mb-8">

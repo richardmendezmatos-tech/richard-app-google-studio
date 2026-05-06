@@ -119,7 +119,7 @@ export default async function HomePage() {
               <div className="space-y-4">
                 <span className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">Visítanos Hoy</span>
                 <h2 className="text-4xl font-black text-white leading-tight">
-                  Tu Concesionario de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Autos Nuevos</span> en Vega Alta
+                  Tu Concesionario de <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">Autos Nuevos</span> en Vega Alta
                 </h2>
                 <p className="text-slate-400 text-lg leading-relaxed">
                   Ubicados estratégicamente en las facilidades de **Central Ford**. Somos especialistas en autos nuevos con una selección exclusiva de usados certificados. Ven y experimenta el mejor servicio de Puerto Rico con atención personalizada.
@@ -161,7 +161,7 @@ export default async function HomePage() {
             </div>
 
             {/* Map Embed Container */}
-            <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10">
+            <div className="relative aspect-video rounded-4xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/10">
               <iframe
                 title="Google Maps Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.8872688469887!2d-66.3378775238217!3d18.4116410826606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c03164964560737%3A0xe67ce97453535353!2sCentral%20Ford!5e0!3m2!1ses!2spr!4v171261!5m2!1ses!2spr"

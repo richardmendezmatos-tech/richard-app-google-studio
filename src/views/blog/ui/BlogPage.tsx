@@ -173,7 +173,7 @@ const BlogPage: React.FC = () => {
                     </p>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50 relative">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-px">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
                           <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
                             RA
                           </div>
@@ -195,7 +195,7 @@ const BlogPage: React.FC = () => {
 
         {/* Sidebar */}
         <aside className="space-y-8">
-          <div className="bg-gradient-to-br from-[#173d57] to-[#0d2232] p-8 rounded-[40px] text-white relative overflow-hidden shadow-2xl">
+          <div className="bg-linear-to-br from-[#173d57] to-[#0d2232] p-8 rounded-5xl text-white relative overflow-hidden shadow-2xl">
             <div className="relative z-10 space-y-6">
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
                 <Sparkles className="text-primary" />
@@ -220,7 +220,7 @@ const BlogPage: React.FC = () => {
                 <button
                   onClick={handleSubscribe}
                   disabled={isSubscribing}
-                  className="w-full bg-gradient-to-r from-primary to-[#008cb1] hover:brightness-110 disabled:opacity-50 text-white py-4 rounded-2xl flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-950/40"
+                  className="w-full bg-linear-to-r from-primary to-[#008cb1] hover:brightness-110 disabled:opacity-50 text-white py-4 rounded-2xl flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-950/40"
                 >
                   {isSubscribing ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -235,7 +235,7 @@ const BlogPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-card p-1 rounded-[40px] bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80">
+          <div className="glass-card p-1 rounded-5xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80">
             <div className="p-8 space-y-6">
               <h4 className="font-black text-lg text-slate-800 dark:text-white uppercase tracking-tighter flex items-center gap-2">
                 <TrendingUpIcon /> Trending Now
@@ -276,7 +276,7 @@ const BlogPage: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white dark:bg-slate-950 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] md:rounded-[48px] shadow-2xl custom-scrollbar border border-slate-200 dark:border-slate-800 relative flex flex-col"
+              className="bg-white dark:bg-slate-950 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-4xl md:rounded-[48px] shadow-2xl custom-scrollbar border border-slate-200 dark:border-slate-800 relative flex flex-col"
             >
               {/* Close & Share Navbar */}
               <div className="sticky top-0 z-20 flex justify-between items-center p-4 md:p-6 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-100 dark:border-slate-900/50">
@@ -336,7 +336,7 @@ const BlogPage: React.FC = () => {
                   </div>
 
                   {selectedPost.imageUrl && (
-                    <figure className="relative h-[300px] md:h-[400px] rounded-[32px] overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/50">
+                    <figure className="relative h-[300px] md:h-[400px] rounded-4xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/50">
                       <img
                         src={selectedPost.imageUrl}
                         alt="Cover"

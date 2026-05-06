@@ -117,7 +117,7 @@ export const ARViewOverlay: React.FC<Props> = ({ image, vehicleName, specs, onCl
              value="1:1 Ratio"
              subValue="Verified Precision"
            />
-           <div className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] hud-brackets">
+           <div className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-4xl hud-brackets">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Neural Analysis</p>
               <div className="space-y-3">
                  <ProgressBar label="Dynamics" progress={85} />
@@ -135,7 +135,7 @@ function HUDDataCard({ icon, label, value, subValue }: { icon: any, label: strin
   return (
     <motion.div 
       whileHover={{ scale: 1.05, x: 10 }}
-      className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] hud-brackets transition-all"
+      className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-4xl hud-brackets transition-all"
     >
       <div className="flex items-center gap-2 mb-2">
         {icon}

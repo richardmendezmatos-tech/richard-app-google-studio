@@ -114,7 +114,7 @@ export const CitySEOPage: React.FC = () => {
             alt={`Richard Automotive en ${config.name}, Puerto Rico`}
             className="w-full h-full object-cover opacity-50 scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
+          <div className="absolute inset-0 bg-linear-to-b from-[#0a0f1e]/80 via-[#0a0f1e]/40 to-[#0a0f1e]" />
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -132,7 +132,7 @@ export const CitySEOPage: React.FC = () => {
 
             <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9]">
               USADO DE{' '}
-              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent italic">
+              <span className="bg-linear-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent italic">
                 LUJO
               </span>
               <br />
@@ -150,7 +150,7 @@ export const CitySEOPage: React.FC = () => {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-950 font-black uppercase tracking-widest px-10 py-5 rounded-2xl hover:scale-105 transition-all shadow-[0_0_40px_rgba(0,174,217,0.4)] flex items-center gap-3"
+                className="bg-linear-to-r from-cyan-500 to-cyan-400 text-slate-950 font-black uppercase tracking-widest px-10 py-5 rounded-2xl hover:scale-105 transition-all shadow-[0_0_40px_rgba(0,174,217,0.4)] flex items-center gap-3"
               >
                 <MessageSquare size={20} />
                 Contactar en {config.name}
@@ -190,7 +190,7 @@ export const CitySEOPage: React.FC = () => {
           ].map((item, i) => (
             <div
               key={i}
-              className="p-8 bg-white/5 border border-white/5 rounded-3xl hover:border-cyan-500/30 transition-all group"
+              className="p-8 bg-white/5 border border-white/5 rounded-4xl hover:border-cyan-500/30 transition-all group"
             >
               <item.icon
                 className="text-cyan-400 mb-6 group-hover:scale-110 transition-transform"

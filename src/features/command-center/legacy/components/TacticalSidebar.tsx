@@ -43,7 +43,7 @@ export const TacticalSidebar: React.FC = () => {
         onHoverStart={() => setIsCollapsed(false)}
         onHoverEnd={() => setIsCollapsed(true)}
         animate={{ width: isCollapsed ? 80 : 240 }}
-        className="fixed left-4 top-4 bottom-4 bg-slate-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] z-[100] p-3 shadow-2xl overflow-hidden hidden md:flex md:flex-col"
+        className="fixed left-4 top-4 bottom-4 bg-slate-950/60 backdrop-blur-3xl border border-white/10 rounded-4xl z-[100] p-3 shadow-2xl overflow-hidden hidden md:flex md:flex-col"
       >
         {/* Brand/Logo Section */}
         <div className="flex items-center gap-4 px-3 py-6 mb-8 group/logo cursor-pointer overflow-hidden">
@@ -142,7 +142,7 @@ export const TacticalSidebar: React.FC = () => {
       </motion.aside>
 
       {/* Mobile Bottom Navigation (Native App Style) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-slate-950/80 backdrop-blur-3xl border border-white/10 rounded-[2rem] z-[100] flex items-center justify-around px-2 shadow-2xl md:hidden">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-slate-950/80 backdrop-blur-3xl border border-white/10 rounded-4xl z-[100] flex items-center justify-around px-2 shadow-2xl md:hidden">
         {menuItems.slice(0, 5).map((item) => {
           const isActive = location.pathname === item.path;
           return (

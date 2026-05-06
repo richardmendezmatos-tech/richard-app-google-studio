@@ -129,7 +129,7 @@ export const MissionControlWidget: React.FC = () => {
             return (
               <div
                 key={opp.id}
-                className={`bg-white/3 border border-white/5 rounded-3xl p-6 transition-all duration-300 group/card relative overflow-hidden flex flex-col h-full ${isCompleted ? 'opacity-50 grayscale' : 'hover:border-primary/30 hover:bg-white/5'}`}
+                className={`bg-white/3 border border-white/5 rounded-4xl p-6 transition-all duration-300 group/card relative overflow-hidden flex flex-col h-full ${isCompleted ? 'opacity-50 grayscale' : 'hover:border-primary/30 hover:bg-white/5'}`}
               >
                 {/* Priority Badge */}
                 <div className="flex justify-between items-center mb-4">

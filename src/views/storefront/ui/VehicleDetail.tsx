@@ -273,7 +273,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           <div className="relative z-10 w-full min-h-[400px] lg:min-h-[500px]">
             <React.Suspense
               fallback={
-                <div className="w-full h-[400px] lg:h-[500px] animate-pulse bg-white/5 rounded-[40px] border border-white/10" />
+                <div className="w-full h-[400px] lg:h-[500px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />
               }
             >
               <Viewer360
@@ -316,7 +316,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 />
               </motion.div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
           </GlassContainer>
         </div>
 
@@ -384,7 +384,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           <div className="h-px bg-white/5" />
 
           <div id="deal-builder-section" className="scroll-mt-32">
-            <React.Suspense fallback={<div className="w-full h-[600px] animate-pulse bg-white/5 rounded-[40px] border border-white/10" />}>
+            <React.Suspense fallback={<div className="w-full h-[600px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />}>
               <GlassContainer intensity="medium" opacity={0.02} className="p-1">
                 <ApprovalSimulatorWidget 
                   vehicleId={car.id} 
@@ -430,7 +430,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-slate-900 rounded-[40px] border border-white/10 p-1 w-full max-w-4xl relative shadow-2xl mt-20 lg:mt-0"
+              className="bg-slate-900 rounded-5xl border border-white/10 p-1 w-full max-w-4xl relative shadow-2xl mt-20 lg:mt-0"
             >
               <button
                 onClick={() => setIsPreQualifyOpen(false)}

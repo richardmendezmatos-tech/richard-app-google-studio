@@ -27,7 +27,7 @@ export const Step3PhotoUpload: React.FC<Step3PhotoUploadProps> = ({ onNext, onPr
       exit={{ opacity: 0, x: -20 }}
       className="space-y-8 text-center"
     >
-      <div className="py-12 border-2 border-dashed border-white/10 rounded-[2rem] bg-slate-900/40 relative group cursor-pointer hover:border-primary/40 transition-all">
+      <div className="py-12 border-2 border-dashed border-white/10 rounded-4xl bg-slate-900/40 relative group cursor-pointer hover:border-primary/40 transition-all">
         <div className="flex flex-col items-center gap-4">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
             <Camera size={32} />

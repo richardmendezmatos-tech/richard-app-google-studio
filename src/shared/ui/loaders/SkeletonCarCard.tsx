@@ -5,7 +5,7 @@ import React from 'react';
  */
 export const SkeletonCarCard: React.FC = () => {
   return (
-    <div className="bg-slate-800/40 rounded-[32px] overflow-hidden border border-white/5 animate-pulse w-full h-[400px] flex flex-col shadow-xl">
+    <div className="bg-slate-800/40 rounded-4xl overflow-hidden border border-white/5 animate-pulse w-full h-[400px] flex flex-col shadow-xl">
       {/* Image Placeholder */}
       <div className="h-[220px] bg-slate-700/30 w-full relative">
         <div className="absolute top-4 left-4 h-6 w-20 bg-slate-600/40 rounded-full" />

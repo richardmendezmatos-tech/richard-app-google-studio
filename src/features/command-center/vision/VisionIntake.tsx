@@ -133,7 +133,7 @@ export const VisionIntake: React.FC = () => {
                   animate={{ opacity: 1 }}
                   className="flex flex-col items-center gap-4 text-center"
                 >
-                  <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-20 h-20 rounded-4xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Upload className="text-slate-500 group-hover:text-primary transition-colors" size={40} />
                   </div>
                   <h3 className="text-xl font-bold text-white">Arrastra el Window Sticker o Foto</h3>

@@ -16,7 +16,7 @@ export const MobileBottomBar: React.FC = () => {
 
   return (
     <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm">
-      <div className="glass-liquid rounded-[2rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] px-4 py-3">
+      <div className="glass-liquid rounded-4xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] px-4 py-3">
         <div className="flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));

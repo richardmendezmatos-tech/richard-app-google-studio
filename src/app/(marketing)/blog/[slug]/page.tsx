@@ -239,7 +239,7 @@ export default async function BlogArticlePage({ params }: Props) {
               className="absolute inset-0 w-full h-full object-cover opacity-30"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent" />
           <div className="absolute bottom-0 inset-x-0 p-8 md:p-16 max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">

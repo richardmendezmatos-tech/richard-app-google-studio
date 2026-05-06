@@ -82,7 +82,7 @@ export default function BlogIndexPage() {
           {featured && (
             <Link
               href={`/blog/${featured.slug}`}
-              className="group block mb-12 rounded-3xl overflow-hidden border border-white/5 hover:border-cyan-500/20 transition-all bg-slate-900/40"
+              className="group block mb-12 rounded-4xl overflow-hidden border border-white/5 hover:border-cyan-500/20 transition-all bg-slate-900/40"
             >
               <div className="grid md:grid-cols-2">
                 {featured.imageUrl && (
@@ -171,7 +171,7 @@ export default function BlogIndexPage() {
           </div>
 
           {/* CTA Section */}
-          <section className="mt-16 text-center bg-gradient-to-r from-cyan-500/5 to-blue-500/5 border border-white/5 rounded-3xl p-12">
+          <section className="mt-16 text-center bg-linear-to-r from-cyan-500/5 to-blue-500/5 border border-white/5 rounded-4xl p-12">
             <h2 className="text-2xl font-black mb-3">¿Listo para encontrar tu próximo auto?</h2>
             <p className="text-slate-400 mb-6">
               Más de 50 vehículos certificados esperan por ti en Bayamón.

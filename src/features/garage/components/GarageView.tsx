@@ -46,7 +46,7 @@ const GarageView: React.FC = () => {
         ))}
 
         {/* Empty State / Add Card */}
-        <div className="border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center justify-center p-12 text-slate-700 hover:border-primary/30 hover:text-slate-500 transition-all cursor-pointer group">
+        <div className="border-2 border-dashed border-white/5 rounded-5xl flex flex-col items-center justify-center p-12 text-slate-700 hover:border-primary/30 hover:text-slate-500 transition-all cursor-pointer group">
           <div className="w-16 h-16 rounded-full border-2 border-dashed border-current flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <Plus size={32} />
           </div>
@@ -61,7 +61,7 @@ const GarageView: React.FC = () => {
 
 const VehicleCard = ({ vehicle }: { vehicle: GarageVehicle }) => {
   return (
-    <div className="group relative bg-[#131f2a]/80 backdrop-blur-xl border border-white/5 rounded-[40px] p-8 overflow-hidden transition-all hover:border-primary/40 hover:shadow-[0_0_40px_rgba(0,174,217,0.1)]">
+    <div className="group relative bg-[#131f2a]/80 backdrop-blur-xl border border-white/5 rounded-5xl p-8 overflow-hidden transition-all hover:border-primary/40 hover:shadow-[0_0_40px_rgba(0,174,217,0.1)]">
       {/* Header info */}
       <div className="flex justify-between items-start mb-6">
         <div>
@@ -84,7 +84,7 @@ const VehicleCard = ({ vehicle }: { vehicle: GarageVehicle }) => {
       </div>
 
       {/* Asset Value */}
-      <div className="mb-8 p-6 bg-white/5 rounded-3xl border border-white/5">
+      <div className="mb-8 p-6 bg-white/5 rounded-4xl border border-white/5">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
           Valor de Mercado (AI)
         </p>
@@ -116,7 +116,7 @@ const VehicleCard = ({ vehicle }: { vehicle: GarageVehicle }) => {
 
       {/* AI Nudge Button */}
       {vehicle.equityStatus === 'optimal' && (
-        <button className="w-full bg-gradient-to-r from-green-500/20 to-primary/20 hover:from-green-500/30 hover:to-primary/30 border border-green-500/30 p-4 rounded-2xl flex items-center justify-between group/btn transition-all">
+        <button className="w-full bg-linear-to-r from-green-500/20 to-primary/20 hover:from-green-500/30 hover:to-primary/30 border border-green-500/30 p-4 rounded-2xl flex items-center justify-between group/btn transition-all">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
               <Zap size={16} className="text-white fill-white" />

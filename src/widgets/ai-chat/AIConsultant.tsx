@@ -46,7 +46,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
         url="/consultant"
         type="website"
       />
-      <div className="flex-1 max-w-4xl mx-auto w-full flex flex-col bg-white dark:bg-slate-800 lg:rounded-[40px] shadow-2xl dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden">
+      <div className="flex-1 max-w-4xl mx-auto w-full flex flex-col bg-white dark:bg-slate-800 lg:rounded-5xl shadow-2xl dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden">
         {/* Header */}
         <div className="p-8 bg-[#173d57] dark:bg-slate-900/50 text-white flex items-center justify-between">
           <div className="flex items-center gap-4">

@@ -27,7 +27,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
     car.type === 'luxury';
 
   return (
-    <div className="group relative rounded-[2rem] glass-premium overflow-hidden shadow-2xl hover:bg-white/5 transition-all duration-500 border border-white/5 flex flex-col h-full route-fade-in group/card">
+    <div className="group relative rounded-4xl glass-premium overflow-hidden shadow-2xl hover:bg-white/5 transition-all duration-500 border border-white/5 flex flex-col h-full route-fade-in group/card">
       {/* Image Section */}
       <div className="relative h-72 overflow-hidden">
         <img
@@ -35,7 +35,7 @@ export const CommandCenterCarCard: React.FC<CommandCenterCarCardProps> = ({
           alt={car.name || 'Vehicle'}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050c14] via-transparent to-slate-950/40" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#050c14] via-transparent to-slate-950/40" />
 
         {/* Status Badges */}
         <div className="absolute top-6 left-6 flex flex-wrap gap-2">

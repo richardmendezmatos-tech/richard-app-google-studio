@@ -60,7 +60,7 @@ export const TradeInCalculator: React.FC = () => {
   };
 
   return (
-    <div className="trade-in-calculator-container p-6 bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 backdrop-blur-xl bg-opacity-80 max-w-6xl mx-auto my-10">
+    <div className="trade-in-calculator-container p-6 bg-slate-900 text-white rounded-4xl shadow-2xl border border-slate-800 backdrop-blur-xl bg-opacity-80 max-w-6xl mx-auto my-10">
       <header className="mb-8 flex justify-between items-center border-b border-slate-800 pb-4">
         <div>
           <h2 className="text-2xl font-bold text-cyan-400">Richard Automotive</h2>
@@ -191,7 +191,7 @@ export const TradeInCalculator: React.FC = () => {
 
         {/* PANEL CENTRAL: Cálculos y Resultados */}
         <section className="space-y-6">
-          <div className="p-8 bg-cyan-600 rounded-3xl shadow-xl shadow-cyan-900/40 text-white relative overflow-hidden group">
+          <div className="p-8 bg-cyan-600 rounded-4xl shadow-xl shadow-cyan-900/40 text-white relative overflow-hidden group">
             <div className="relative z-10">
               <p className="text-xs font-bold uppercase opacity-80 mb-2">Pago Mensual Estimado</p>
               <div className="text-5xl font-black mb-2 antialiased">
@@ -232,7 +232,7 @@ export const TradeInCalculator: React.FC = () => {
 
           <button
             onClick={handleGenerarPropuesta}
-            className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98] uppercase tracking-widest text-sm"
+            className="w-full py-4 bg-linear-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98] uppercase tracking-widest text-sm"
           >
             Generar Argumentos IA
           </button>

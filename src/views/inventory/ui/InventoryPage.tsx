@@ -38,7 +38,7 @@ const InventoryPage: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage })
         <div className="mx-auto max-w-[1600px] space-y-12 px-6 pb-28 lg:px-12 lg:pb-16 pt-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
-              Nuestro <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Inventario</span>
+              Nuestro <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">Inventario</span>
             </h1>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
               Encuentra el vehículo perfecto para ti. Usa nuestros filtros inteligentes o la búsqueda neural para explorar nuestra selección premium.

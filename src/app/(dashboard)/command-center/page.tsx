@@ -307,7 +307,7 @@ function KPICard({ icon, label, value, accent, className = '' }: { icon: React.R
 
   return (
     <motion.div
-      className={`relative bg-gradient-to-br ${colors.split(' ')[0]} to-slate-900/60 backdrop-blur-xl border ${colors.split(' ')[1]} rounded-2xl p-5 overflow-hidden ${className}`}
+      className={`relative bg-linear-to-br ${colors.split(' ')[0]} to-slate-900/60 backdrop-blur-xl border ${colors.split(' ')[1]} rounded-2xl p-5 overflow-hidden ${className}`}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
     >

@@ -84,7 +84,7 @@ const FAQSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/30 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/20 hover:bg-slate-900/50 open:border-cyan-500/40 open:bg-slate-900/60"
+              className="group overflow-hidden rounded-4xl border border-white/5 bg-slate-900/30 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/20 hover:bg-slate-900/50 open:border-cyan-500/40 open:bg-slate-900/60"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between p-8 text-base md:text-lg font-bold text-white transition-colors select-none">
                 <span className="flex items-center gap-4">

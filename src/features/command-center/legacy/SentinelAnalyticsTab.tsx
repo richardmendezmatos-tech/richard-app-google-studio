@@ -30,7 +30,7 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
     >
       {/* Row 0: High-Level Business KPIs (Fase 17) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-premium p-6 rounded-[2rem] border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)] relative overflow-hidden group">
+        <div className="glass-premium p-6 rounded-4xl border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)] relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-emerald-500/10 rounded-xl">
@@ -46,7 +46,7 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
           </div>
         </div>
 
-        <div className="glass-premium p-6 rounded-[2rem] border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] relative overflow-hidden group">
+        <div className="glass-premium p-6 rounded-4xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all" />
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-500/10 rounded-xl">
@@ -61,7 +61,7 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
           </div>
         </div>
 
-        <div className="glass-premium p-6 rounded-[2rem] border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)] relative overflow-hidden group">
+        <div className="glass-premium p-6 rounded-4xl border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)] relative overflow-hidden group">
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all" />
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-500/10 rounded-xl">
@@ -82,19 +82,19 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
       </div>
 
       {/* Row 1: Quick Stats & Heatmap */}
-      <div className="bg-white/5 backdrop-blur-md rounded-[2rem] p-8 border border-white/10 shadow-xl">
+      <div className="bg-white/5 backdrop-blur-md rounded-4xl p-8 border border-white/10 shadow-xl">
         <InventoryHeatmap inventory={inventory} />
       </div>
 
       {/* Row 2: Lead Intelligence */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-premium p-8 rounded-[2.5rem] border border-white/10">
+        <div className="glass-premium p-8 rounded-4xl border border-white/10">
           <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-2">
             <Zap className="text-primary" size={20} /> Origen de Leads
           </h3>
           <LeadSourceChart leads={leads} />
         </div>
-        <div className="glass-premium p-8 rounded-[2.5rem] border border-white/10">
+        <div className="glass-premium p-8 rounded-4xl border border-white/10">
           <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-2">
             <Activity className="text-purple-500" size={20} /> Embudo de Conversión
           </h3>
@@ -103,7 +103,7 @@ export const SentinelAnalyticsTab: React.FC<Props> = ({ inventory, leads }) => {
       </div>
 
       {/* Row 3: Financial Performance */}
-      <div className="glass-premium p-8 rounded-[2.5rem] border border-white/10">
+      <div className="glass-premium p-8 rounded-4xl border border-white/10">
         <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-2">
           <DollarSign className="text-emerald-500" size={20} /> Rendimiento de Unidades
         </h3>

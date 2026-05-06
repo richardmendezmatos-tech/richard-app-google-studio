@@ -63,7 +63,7 @@ const SocialFooter: React.FC = () => {
         {/* Intelligence Pulse */}
         <div className="space-y-6">
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">LIVE PULSE</h3>
-          <div className="rounded-3xl border border-white/5 bg-white/5 p-6 backdrop-blur-xl space-y-4">
+          <div className="rounded-4xl border border-white/5 bg-white/5 p-6 backdrop-blur-xl space-y-4">
             <div className="flex items-center justify-between">
               <span className="font-tech text-[10px] font-bold text-slate-400">AI SERVER</span>
               <div className="flex items-center gap-2">

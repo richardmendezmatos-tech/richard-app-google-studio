@@ -127,7 +127,7 @@ export const CreditApplicationForm: React.FC = () => {
         <div className="w-24 h-24 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">
           <CheckCircle2 size={56} />
         </div>
-        <h2 className="text-3xl md:text-4xl font-black mb-4 uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">
+        <h2 className="text-3xl md:text-4xl font-black mb-4 uppercase tracking-tight text-transparent bg-clip-text bg-linear-to-r from-emerald-300 to-cyan-300">
           Aplicación Recibida Exitosamente
         </h2>
         <p className="text-slate-300 text-lg mb-8 leading-relaxed font-medium">
@@ -139,7 +139,7 @@ export const CreditApplicationForm: React.FC = () => {
         </p>
         <button
           onClick={() => (window.location.href = '/')}
-          className="px-10 py-5 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-lg font-black tracking-widest uppercase rounded-2xl hover:scale-105 transition-transform shadow-xl hover:shadow-cyan-500/25"
+          className="px-10 py-5 bg-linear-to-r from-emerald-500 to-cyan-600 text-white text-lg font-black tracking-widest uppercase rounded-2xl hover:scale-105 transition-transform shadow-xl hover:shadow-cyan-500/25"
         >
           Explorar el Inventario
         </button>
@@ -152,7 +152,7 @@ export const CreditApplicationForm: React.FC = () => {
   const labelClasses = 'block text-sm font-bold text-slate-300 mb-2 tracking-wide uppercase';
 
   return (
-    <div className="relative bg-slate-900/40 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-12 shadow-[0_40px_100px_-20px_rgba(0,180,216,0.25)] border border-white/10 max-w-3xl mx-auto overflow-hidden">
+    <div className="relative bg-slate-900/40 backdrop-blur-3xl rounded-4xl p-8 md:p-12 shadow-[0_40px_100px_-20px_rgba(0,180,216,0.25)] border border-white/10 max-w-3xl mx-auto overflow-hidden">
       {/* Decorative Orbs inside the form container to match Hero */}
       <div className="absolute top-[-20%] left-[-10%] w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
@@ -186,7 +186,7 @@ export const CreditApplicationForm: React.FC = () => {
         ].map((s) => (
           <div key={s.id} className="flex-1">
             <div
-              className={`h-1.5 md:h-2 rounded-full mb-3 ${step >= s.id ? 'bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'bg-white/10'}`}
+              className={`h-1.5 md:h-2 rounded-full mb-3 ${step >= s.id ? 'bg-linear-to-r from-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'bg-white/10'}`}
             />
             <p
               className={`text-[10px] md:text-xs font-black uppercase tracking-widest ${step >= s.id ? 'text-cyan-400' : 'text-slate-500'}`}
@@ -471,7 +471,7 @@ export const CreditApplicationForm: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all focus:ring-4 focus:ring-cyan-500/30 disabled:opacity-50 disabled:hover:scale-100 shadow-[0_0_30px_rgba(0,200,240,0.3)] w-full"
+              className="flex items-center justify-center gap-3 px-10 py-5 bg-linear-to-r from-cyan-500 to-blue-600 text-white font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all focus:ring-4 focus:ring-cyan-500/30 disabled:opacity-50 disabled:hover:scale-100 shadow-[0_0_30px_rgba(0,200,240,0.3)] w-full"
             >
               <PersuasionWrapper
                 componentId="credit-submit-cta"

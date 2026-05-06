@@ -51,7 +51,7 @@ const PrivacyConsent: React.FC = () => {
 
   return (
     <div className="fixed bottom-6 left-6 right-6 z-[9999] route-fade-in md:left-auto md:right-10 md:w-[450px]">
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl group">
+      <div className="relative overflow-hidden rounded-4xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-2xl group">
         <div className="absolute -mr-10 -mt-10 right-0 top-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
 
         <div className="relative z-10">

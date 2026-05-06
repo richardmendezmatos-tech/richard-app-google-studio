@@ -58,14 +58,14 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
 
   if (error)
     return (
-      <div className="p-10 bg-red-50 text-red-600 rounded-3xl border border-red-200">
+      <div className="p-10 bg-red-50 text-red-600 rounded-4xl border border-red-200">
         <h3 className="font-bold text-lg mb-2">Error de Sincronización</h3>
         <p className="text-sm">{error}</p>
       </div>
     );
 
   return (
-    <div className="p-4 md:p-8 bg-slate-50 dark:bg-slate-900/50 rounded-3xl md:rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
+    <div className="p-4 md:p-8 bg-slate-50 dark:bg-slate-900/50 rounded-4xl md:rounded-4xl border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10 gap-4">
         <div>
           <h2 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3">
@@ -107,7 +107,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
       </div>
 
       {!telemetry && !simulator && (
-        <div className="text-center py-24 bg-white dark:bg-slate-800/80 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 route-fade-in">
+        <div className="text-center py-24 bg-white dark:bg-slate-800/80 rounded-4xl border-2 border-dashed border-slate-200 dark:border-slate-700 route-fade-in">
           <div className="bg-slate-100 dark:bg-slate-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Radio className="text-slate-400" size={32} />
           </div>
@@ -157,7 +157,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
           />
 
           {/* AI Smart Alerts Panel */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-slate-800/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-slate-800/80 p-6 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div
@@ -238,7 +238,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
             </div>
           </div>
 
-          <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-slate-800/80 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+          <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-slate-800/80 p-8 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 text-slate-200 dark:text-slate-700 -z-0">
               <MapPin size={120} strokeWidth={1} />
             </div>
@@ -323,7 +323,7 @@ const StatCard = ({
   color: string;
   percentage: number;
 }) => (
-  <div className="bg-white dark:bg-slate-800/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-2 group route-fade-in">
+  <div className="bg-white dark:bg-slate-800/80 p-6 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-2 group route-fade-in">
     <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-[0.15em]">
       {icon} {label}
     </div>

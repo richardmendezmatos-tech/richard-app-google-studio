@@ -161,7 +161,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
         />
       </div>
 
-      <div className="flex-1 bg-white/5 backdrop-blur-md rounded-[2.5rem] shadow-xl border border-white/10 overflow-hidden flex flex-col">
+      <div className="flex-1 bg-white/5 backdrop-blur-md rounded-4xl shadow-xl border border-white/10 overflow-hidden flex flex-col">
         <div className="p-4 border-b border-white/5 flex flex-col lg:flex-row justify-between items-center gap-6 bg-slate-900/60 backdrop-blur-xl">
           <div className="flex items-center gap-2 bg-slate-950/50 p-1.5 rounded-[1.5rem] border border-white/5 w-full lg:w-auto overflow-x-auto no-scrollbar">
             {[
@@ -220,7 +220,7 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
             <button
               onClick={onCreateNew}
-              className="px-8 h-[48px] bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
+              className="px-8 h-[48px] bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
             >
               <Plus size={18} strokeWidth={3} /> Nueva Unidad
             </button>

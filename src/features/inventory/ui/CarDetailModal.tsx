@@ -47,12 +47,16 @@ type TabType = 'overview' | 'financials' | 'specs' | 'contact';
 
 const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
   const [displayValue, setDisplayValue] = useState(0);
+  const startValueRef = useRef(0);
 
   useEffect(() => {
-    const controls = animate(displayValue, value, {
+    const controls = animate(startValueRef.current, value, {
       duration: 1.5,
       ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
+      onUpdate: (latest) => {
+        startValueRef.current = latest;
+        setDisplayValue(Math.round(latest));
+      },
     });
     return () => controls.stop();
   }, [value]);
@@ -278,7 +282,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               {activeTab === 'overview' && (
                 <div className="flex flex-col lg:flex-row gap-6 h-full">
                   {/* Digital Garage Area */}
-                  <div className="w-full lg:w-2/3 bg-white/5 rounded-[40px] border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner group">
+                  <div className="w-full lg:w-2/3 bg-white/5 rounded-5xl border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner group">
                     <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40 pointer-events-none" />
                     {showHeavyContent ? (
                       <div className="w-full h-full relative">
@@ -325,7 +329,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
                   {/* Quick Specs / Insight Area */}
                   <div className="w-full lg:w-1/3 flex flex-col gap-4">
-                    <GlassContainer intensity="high" className="p-8 rounded-[40px] flex-1 border-t-2 border-cyan-500/30 overflow-hidden flex flex-col shadow-2xl">
+                    <GlassContainer intensity="high" className="p-8 rounded-5xl flex-1 border-t-2 border-cyan-500/30 overflow-hidden flex flex-col shadow-2xl">
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                            <Cpu size={20} className="text-cyan-400" />
@@ -384,7 +388,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
               {activeTab === 'financials' && (
                 <div className="h-full flex flex-col lg:flex-row gap-6">
-                  <div className="w-full lg:w-2/3 bg-slate-900/60 rounded-[40px] border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
+                  <div className="w-full lg:w-2/3 bg-slate-900/60 rounded-5xl border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
                     <div className="flex items-center gap-2 mb-8">
                        <Calculator size={24} className="text-cyan-400" />
                        <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">Simulador de Aprobación</h3>
@@ -481,7 +485,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                         </div>
 
                         {/* Financial Audit Note */}
-                        <div className="mt-8 p-4 rounded-3xl bg-amber-500/5 border border-amber-500/10 flex gap-3">
+                        <div className="mt-8 p-4 rounded-4xl bg-amber-500/5 border border-amber-500/10 flex gap-3">
                            <AlertCircle size={14} className="text-amber-500 shrink-0 mt-0.5" />
                            <p className="text-[10px] text-slate-400 leading-tight">
                               <strong>Socio Financiero PR:</strong> Pago estimado basado en crédito de excelencia. Sujeto a aprobación por Banco Popular, FirstBank u Oriental. No incluye seguros ni arbitrios.
@@ -493,7 +497,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
               )}
 
               {activeTab === 'specs' && (
-                <div className="h-full bg-white/5 rounded-[40px] border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
+                <div className="h-full bg-white/5 rounded-5xl border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                       <div className="space-y-8">
                          <div className="flex items-center gap-3">
@@ -535,7 +539,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                             <Activity size={20} className="text-cyan-400" />
                             <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">Estado de Unidad</h4>
                          </div>
-                         <GlassContainer intensity="low" className="p-6 rounded-3xl border border-white/10">
+                         <GlassContainer intensity="low" className="p-6 rounded-4xl border border-white/10">
                             <div className="flex items-center gap-4 mb-4">
                                <ProgressRing value={100} max={100} size={50} label="CERT" strokeWidth={4} color="#00e5ff" />
                                <div>
@@ -566,13 +570,13 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
                            <div className="w-full flex flex-col md:flex-row gap-4">
                              <button
                                onClick={handleAction}
-                               className="flex-1 py-8 bg-white text-slate-950 rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-cyan-400 transition-all hover:scale-[1.05] shadow-xl"
+                               className="flex-1 py-8 bg-white text-slate-950 rounded-4xl font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-cyan-400 transition-all hover:scale-[1.05] shadow-xl"
                              >
                                 <MessageCircle size={24} /> WhatsApp
                              </button>
                              <button
                                onClick={handleCall}
-                               className="flex-1 py-8 bg-primary text-white rounded-[32px] font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-primary/80 transition-all hover:scale-[1.05] shadow-xl shadow-primary/20"
+                               className="flex-1 py-8 bg-primary text-white rounded-4xl font-black text-xl uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:bg-primary/80 transition-all hover:scale-[1.05] shadow-xl shadow-primary/20"
                              >
                                 <Phone size={24} /> Llamar
                              </button>
@@ -636,7 +640,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
            
            <button 
              onClick={handleAction}
-             className="w-full md:w-auto px-16 py-6 bg-linear-to-r from-primary to-cyan-500 text-white rounded-[32px] font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
+             className="w-full md:w-auto px-16 py-6 bg-linear-to-r from-primary to-cyan-500 text-white rounded-4xl font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
            >
               <Zap size={20} className="fill-white group-hover:animate-bounce" /> Autorizar Misión
            </button>

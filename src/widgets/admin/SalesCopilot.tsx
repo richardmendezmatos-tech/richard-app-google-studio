@@ -56,10 +56,10 @@ const SalesCopilot: React.FC = () => {
   }, [leads]);
 
   return (
-    <div className="bg-[#0b1116] rounded-[40px] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in">
+    <div className="bg-[#0b1116] rounded-5xl p-6 lg:p-10 border border-white/5 shadow-2xl overflow-hidden route-fade-in">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 hover:rotate-3">
+          <div className="w-12 h-12 bg-linear-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 hover:rotate-3">
             <Target className="text-white" size={24} />
           </div>
           <div>
@@ -90,7 +90,7 @@ const SalesCopilot: React.FC = () => {
             <div
               key={lead.id}
               style={{ animationDelay: `${Math.min(index * 60, 240)}ms` }}
-              className="group relative bg-[#131f2a] border border-white/5 rounded-3xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-primary/30"
+              className="group relative bg-[#131f2a] border border-white/5 rounded-4xl p-6 transition-all route-fade-in hover:-translate-y-1 hover:border-primary/30"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">

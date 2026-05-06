@@ -114,7 +114,7 @@ const IntakeView: React.FC = () => {
         <header className="relative z-10 mb-12 flex justify-between items-end">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <div className="w-10 h-10 bg-linear-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
                 <Zap className="text-white" size={20} />
               </div>
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
@@ -123,7 +123,7 @@ const IntakeView: React.FC = () => {
             </div>
             <h1 className="text-4xl font-black text-white uppercase tracking-tighter">
               Recepción de{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-white to-slate-500">
                 Unidades
               </span>
             </h1>
@@ -241,7 +241,7 @@ const IntakeView: React.FC = () => {
               onSubmit={handleSubmit}
               className="animate-in fade-in slide-in-from-right-4 duration-500"
             >
-              <div className="bg-white/5 border border-white/5 rounded-[40px] p-10 mb-8">
+              <div className="bg-white/5 border border-white/5 rounded-5xl p-10 mb-8">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 border border-emerald-500/20">
                     <DollarSign size={28} />
@@ -268,7 +268,7 @@ const IntakeView: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-10 p-6 bg-primary/5 border border-primary/20 rounded-3xl flex items-start gap-4">
+                <div className="mt-10 p-6 bg-primary/5 border border-primary/20 rounded-4xl flex items-start gap-4">
                   <ShieldCheck className="text-primary shrink-0" size={20} />
                   <div>
                     <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">

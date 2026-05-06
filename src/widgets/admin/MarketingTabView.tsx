@@ -21,7 +21,7 @@ export const MarketingTabView: React.FC<MarketingTabViewProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
-      <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl rounded-[2rem] p-8 border border-white/10 shadow-2xl space-y-6 relative overflow-hidden">
+      <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl rounded-4xl p-8 border border-white/10 shadow-2xl space-y-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.2em] relative z-10">
@@ -64,13 +64,13 @@ export const MarketingTabView: React.FC<MarketingTabViewProps> = ({
       <div className="lg:col-span-1 h-full space-y-6">
         <Suspense
           fallback={
-            <div className="h-48 rounded-[2rem] bg-slate-900/40 animate-pulse border border-white/5" />
+            <div className="h-48 rounded-4xl bg-slate-900/40 animate-pulse border border-white/5" />
           }
         >
           <GapAnalyticsWidget />
         </Suspense>
 
-        <div className="bg-slate-900/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[400px] relative">
+        <div className="bg-slate-900/40 backdrop-blur-xl rounded-4xl p-6 border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[400px] relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[50px] pointer-events-none" />
 
           <div className="flex justify-between items-center mb-6 relative z-10">

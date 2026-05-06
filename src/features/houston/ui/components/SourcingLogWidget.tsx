@@ -72,7 +72,7 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className={`p-5 rounded-[2rem] border transition-all relative overflow-hidden group/card ${
+              className={`p-5 rounded-4xl border transition-all relative overflow-hidden group/card ${
                 order.status === 'confirmed' 
                   ? 'bg-emerald-950/20 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
                   : 'bg-slate-900/40 border-white/[0.03] hover:border-cyan-500/30 hover:bg-slate-900/60'

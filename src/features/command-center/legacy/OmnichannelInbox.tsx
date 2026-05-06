@@ -79,13 +79,13 @@ export const OmnichannelInbox: React.FC<Props> = ({ lead, onClose }) => {
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-6 bg-slate-900/60 backdrop-blur-sm">
       <div
-        className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-300"
+        className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-4xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800/50 dark:to-slate-900">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800 bg-linear-to-r from-slate-50 to-white dark:from-slate-800/50 dark:to-slate-900">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg text-white font-black text-xl">
+            <div className="w-12 h-12 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg text-white font-black text-xl">
               {lead.name?.charAt(0) || lead.firstName?.charAt(0) || 'L'}
             </div>
             <div>

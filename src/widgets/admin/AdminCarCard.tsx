@@ -27,7 +27,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
     car.type === 'luxury';
 
   return (
-    <div className="group relative bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(0,174,217,0.15)] hover:border-white/10 transition-all duration-500 flex flex-col h-full route-fade-in hover:-translate-y-1">
+    <div className="group relative bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-4xl overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(0,174,217,0.15)] hover:border-white/10 transition-all duration-500 flex flex-col h-full route-fade-in hover:-translate-y-1">
       {/* Image Section */}
       <div className="relative h-64 overflow-hidden">
         <img
@@ -35,7 +35,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
           alt={car.name}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
         {/* Status Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
@@ -66,7 +66,7 @@ export const AdminCarCard: React.FC<AdminCarCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col relative z-20 bg-gradient-to-t from-slate-900/90 to-transparent">
+      <div className="p-6 md:p-8 space-y-6 flex-1 flex flex-col relative z-20 bg-linear-to-t from-slate-900/90 to-transparent">
         <div>
           <h3 className="text-xl font-black text-white uppercase tracking-tight truncate mb-1">
             {car.name}
