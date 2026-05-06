@@ -2,6 +2,22 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
+  "routes": [
+    {
+      "src": "/admin/(.*)",
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "PR|US"
+        }
+      ],
+      "mitigate": {
+        "action": "challenge"
+      },
+      "continue": true
+    }
+  ],
   "headers": [
     {
       "source": "/sitemap.xml",

@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GlitchText } from './GlitchText';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scan, Upload, ShieldCheck, Zap, Activity, Info, Share2, Download, Sparkles } from 'lucide-react';
+import { Scan, Upload, ShieldCheck, Zap, Activity, Info, Share2, Download, Sparkles, AlertTriangle, Copy } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
 import { Car } from '@/entities/inventory';
@@ -32,6 +32,8 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
   const [preview, setPreview] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [result, setResult] = useState<ScanResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [vin, setVin] = useState<string | null>(null);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -39,6 +41,8 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
     setResult(null);
+    setError(null);
+    setVin(null);
     setIsScanning(true);
 
     try {
@@ -50,6 +54,8 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
 
       const data = await inventoryIngestionService.processInventoryImage(fileBase64);
       
+      if (data.vin) setVin(data.vin);
+
       // Transform data to fit ScanResult if needed
       setResult({
         brand: data.make || 'Unknown',
@@ -73,6 +79,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
       });
     } catch (err) {
       console.error('Scan error:', err);
+      setError('Neural scan failed. The image might be too blurry or not a vehicle sticker.');
     } finally {
       setIsScanning(false);
     }
@@ -188,6 +195,33 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
             )}
           </AnimatePresence>
         </div>
+
+        {/* Error State UI */}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-rose-500" />
+                <p className="text-sm font-mono text-rose-200">{error}</p>
+              </div>
+              <button 
+                onClick={() => {
+                  setError(null);
+                  setPreview(null);
+                  setFile(null);
+                }}
+                className="px-4 py-2 bg-rose-500 text-white rounded-lg text-xs font-black uppercase tracking-widest hover:bg-rose-600 transition-colors"
+              >
+                Retry
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Results View */}
@@ -216,6 +250,26 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                     <p className="text-5xl font-cinematic text-ra-accent">{result.score}</p>
                   </div>
                 </div>
+
+                {vin && (
+                  <div className="flex items-center gap-4 bg-black/40 p-4 rounded-xl border border-white/5">
+                    <div className="flex-1">
+                      <p className="text-[10px] text-ra-primary font-mono uppercase tracking-[0.2em] mb-1">Decoded VIN</p>
+                      <p className="text-lg font-mono text-white tracking-widest">{vin}</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(vin);
+                        const btn = document.getElementById('copy-vin-btn');
+                        if (btn) btn.innerText = 'COPIED';
+                        setTimeout(() => { if (btn) btn.innerText = 'COPY'; }, 2000);
+                      }}
+                      className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border border-white/10"
+                    >
+                      <span id="copy-vin-btn">COPY</span>
+                    </button>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
                   <div className="space-y-1">

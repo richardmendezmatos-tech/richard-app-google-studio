@@ -34,6 +34,7 @@ export const GlitchText: React.FC<GlitchTextProps> = ({ text, className }) => {
         }}
         className="absolute inset-0 z-0 text-ra-primary opacity-0 select-none pointer-events-none"
         style={{ clipPath: 'inset(10% 0 30% 0)' }}
+        aria-hidden="true"
       >
         {text}
       </motion.span>
@@ -50,6 +51,7 @@ export const GlitchText: React.FC<GlitchTextProps> = ({ text, className }) => {
         }}
         className="absolute inset-0 z-0 text-ra-accent opacity-0 select-none pointer-events-none"
         style={{ clipPath: 'inset(40% 0 10% 0)' }}
+        aria-hidden="true"
       >
         {text}
       </motion.span>

@@ -1,5 +1,5 @@
 import { analyzeImageWithPrompt } from '@/shared/api/ai';
-import { Car } from '@/shared/types/types';
+import { Car } from '@/entities/inventory';
 import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 
 export const inventoryIngestionService = {
@@ -7,7 +7,7 @@ export const inventoryIngestionService = {
    * Process an image (Window Sticker, Auction Sheet, or Car Photo)
    * and extract structured inventory data using Gemini Vision.
    */
-  processInventoryImage: async (imageSource: string): Promise<Partial<Car>> => {
+  processInventoryImage: async (imageSource: string, retries = 2): Promise<Partial<Car>> => {
     const prompt = `
         ANALIZA ESTA IMAGEN DE UN VEHÍCULO O DOCUMENTO PARA RICHARD AUTOMOTIVE (PUERTO RICO).
         
@@ -22,7 +22,6 @@ export const inventoryIngestionService = {
         Si es un WINDOW STICKER (Monroney), extrae:
         - VIN exacto.
         - Año, Marca, Modelo, Trim (ej: SE, XLE, Limited).
-        ...
         
         RETORNA SOLO JSON (sin markdown) con este esquema:
         {
@@ -68,7 +67,12 @@ export const inventoryIngestionService = {
 
       return sanitized;
     } catch (error) {
-      console.error('Inventory Ingestion Error:', error);
+      if (retries > 0) {
+        console.log(`Retrying inventory ingestion... (${retries} attempts left)`);
+        return inventoryIngestionService.processInventoryImage(imageSource, retries - 1);
+      }
+      
+      console.error('Inventory Ingestion Error after retries:', error);
       raSentinel.reportFriction('vision_ingestion', 'AI Analysis Failed', { error: String(error) });
       throw new Error('Análisis de Visión fallido. Por favor carga una imagen más clara.', {
         cause: error,

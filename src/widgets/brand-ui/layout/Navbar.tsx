@@ -96,6 +96,7 @@ const Navbar: React.FC = () => {
                 <button
                   onClick={handleLogout}
                   className="p-2 text-slate-400 transition-colors hover:text-rose-400"
+                  aria-label="Cerrar Sesion"
                   title="Cerrar Sesion"
                 >
                   <LogOut size={18} />
@@ -120,7 +121,11 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="md:hidden">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-200">
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+              className="text-slate-200"
+              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>

@@ -134,8 +134,15 @@ export const HoustonTelemetryTab: React.FC = () => {
               ))}
             </AnimatePresence>
             {logs.length === 0 && (
-              <div className="text-slate-700 animate-pulse mt-4">
-                [WAITING FOR NEXT TELEMETRY BEACON...]
+              <div className="space-y-2 mt-4">
+                <div className="text-slate-700 animate-pulse">
+                  [WAITING FOR NEXT TELEMETRY BEACON...]
+                </div>
+                <div className="text-[9px] text-emerald-500/30 font-mono">
+                  &gt; SENTINEL_HEARTBEAT: NOMINAL<br/>
+                  &gt; UPLINK_STABILITY: 99.98%<br/>
+                  &gt; MISSION_CONTROL: READY
+                </div>
               </div>
             )}
           </div>
@@ -200,16 +207,26 @@ const HUDCard: React.FC<{ icon: React.ReactNode; label: string; value: string; t
   value,
   trend,
 }) => (
-  <div className="glass-premium p-5 rounded-2xl border border-white/10 group hover:border-cyan-500/50 transition-all">
-    <div className="flex items-start justify-between">
+  <div className="glass-premium p-5 rounded-2xl border border-white/10 group hover:border-cyan-500/50 transition-all relative overflow-hidden">
+    <motion.div 
+      animate={{ opacity: [0.05, 0.15, 0.05] }}
+      transition={{ duration: 4, repeat: Infinity }}
+      className="absolute inset-0 bg-cyan-500 pointer-events-none" 
+    />
+    <div className="flex items-start justify-between relative z-10">
       <div className="p-2.5 bg-white/5 rounded-xl group-hover:bg-cyan-500/10 transition-colors">
         {icon}
       </div>
-      <span className="text-[8px] font-black text-cyan-400 uppercase tracking-tighter bg-cyan-500/10 px-2 py-0.5 rounded">
-        {trend}
-      </span>
+      <div className="flex flex-col items-end">
+        <span className={`text-[8px] font-black uppercase tracking-tighter px-2 py-0.5 rounded flex items-center gap-1 ${
+          trend === 'High' || trend === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-cyan-500/10 text-cyan-400'
+        }`}>
+          {trend === 'High' && <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" />}
+          {trend}
+        </span>
+      </div>
     </div>
-    <div className="mt-4">
+    <div className="mt-4 relative z-10">
       <div className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-1">
         {label}
       </div>
