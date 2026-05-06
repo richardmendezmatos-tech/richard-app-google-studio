@@ -49,6 +49,9 @@ export interface Car {
   
   // SEO
   seoFaqs?: { question: string; answer: string }[];
+  
+  // AI Sentinel
+  aiScore?: number;
 }
 
 export const calculatePredictiveDTS = (car: any) => {

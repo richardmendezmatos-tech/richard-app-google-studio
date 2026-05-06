@@ -1,5 +1,8 @@
 "use client";
 
+import React, { useState } from 'react';
+import { useAuthStore } from '@/entities/session';
+import { Link, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Menu, X, User, LogOut, Car, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getInventoryCount } from '@/shared/api/supabase/supabaseClient';
