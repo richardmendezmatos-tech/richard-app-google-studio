@@ -27,7 +27,12 @@ export async function POST(req: Request) {
         "excerpt": "Breve resumen de 2 líneas para la tarjeta de blog",
         "content": "Contenido completo en Markdown...",
         "tags": ["Tag1", "Tag2"],
-        "estimatedReadingTime": "5 min"
+        "estimatedReadingTime": "5 min",
+        "specs": [
+          { "label": "Motor", "value": "V8 5.0L", "icon": "engine" },
+          { "label": "Potencia", "value": "480 HP", "icon": "performance" },
+          { "label": "Consumo", "value": "18 MPG City", "icon": "fuel" }
+        ]
       }
     `;
 

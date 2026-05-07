@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { PostConversionWidget } from '@/features/blog/ui/components/PostConversionWidget';
+import { SpecCard } from '@/features/blog/ui/components/SpecCard';
 import { DI } from '@/app/(dashboard)/di/registry';
 
 import { BlogPost } from '@/shared/types/types';
@@ -254,6 +255,20 @@ const BlogPage: React.FC = () => {
             </div>
           </div>
 
+          {/* N24 Trade-In Mini-Widget */}
+          <div className="bg-white/5 border border-white/10 rounded-[3rem] p-8 space-y-6 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+               <TrendingUpIcon />
+            </div>
+            <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">¿Qué vale tu auto?</h4>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+              Obtén una tasación Sentinel en 30 segundos.
+            </p>
+            <button className="w-full py-4 bg-white/10 hover:bg-primary hover:text-black border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
+               Tasar mi Unidad
+            </button>
+          </div>
+
           <div className="glass-card p-1 rounded-5xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80">
             <div className="p-8 space-y-6">
               <h4 className="font-black text-lg text-slate-800 dark:text-white uppercase tracking-tighter flex items-center gap-2">
@@ -375,13 +390,21 @@ const BlogPage: React.FC = () => {
                       </figure>
                     )}
 
+                    {selectedPost.specs && selectedPost.specs.length > 0 && (
+                      <SpecCard specs={selectedPost.specs as any} />
+                    )}
+
                     <div className="prose prose-2xl prose-invert prose-p:text-slate-300 prose-p:leading-[1.8] prose-p:font-medium prose-headings:text-white prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-primary prose-a:text-primary max-w-none">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {selectedPost.content}
                       </ReactMarkdown>
                     </div>
 
-                    <PostConversionWidget tag={selectedPost.tags?.[0]} />
+                    <PostConversionWidget 
+                      tag={selectedPost.tags?.[0]} 
+                      postTitle={selectedPost.title}
+                      specs={selectedPost.specs}
+                    />
                   </div>
                 </div>
               </div>

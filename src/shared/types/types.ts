@@ -68,6 +68,8 @@ export interface BlogPost {
   tags: string[];
   slug?: string;
   metaDescription?: string;
+  estimatedReadingTime?: string;
+  specs?: Array<{ label: string; value: string; icon: 'engine' | 'fuel' | 'performance' | 'transmission' }>;
 }
 
 // Lead types moved to @/entities/lead

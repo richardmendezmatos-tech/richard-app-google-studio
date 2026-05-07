@@ -55,6 +55,54 @@ export const sendWhatsAppRetargeting = async (lead: Lead): Promise<void> => {
 };
 
 /**
+ * Sentinel Nurture - AI Enhanced WhatsApp
+ */
+export const triggerSentinelNurture = async (lead: Lead, context: string, specs?: any[]): Promise<void> => {
+  try {
+    // 1. Generate Personalized Intel via AI
+    const res = await fetch('/api/command-center/nurture/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lead, context, specs })
+    });
+
+    if (res.ok) {
+      const { message } = await res.json();
+      
+      // 2. Dispatch (Simulation or Real API)
+      if (!WHATSAPP_API_URL || !WHATSAPP_TOKEN) {
+        console.log(`
+        ==== [SENTINEL AI NURTURE DISPATCH] ====
+        Para: ${lead.name} (${lead.phone})
+        Contexto: ${context}
+        Mensaje Generado por IA:
+        "${message}"
+        ========================================
+        `);
+        return;
+      }
+
+      // Real Dispatch logic here...
+      await fetch(`${WHATSAPP_API_URL}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: formatPhoneNumber(lead.phone),
+          type: 'text',
+          text: { body: message }
+        })
+      });
+    }
+  } catch (error) {
+    console.error('[WhatsAppService] Sentinel Nurture failed:', error);
+  }
+};
+
+/**
  * Formats phone number to E.164 standard (e.g., +17871234567)
  */
 const formatPhoneNumber = (phone: string): string => {

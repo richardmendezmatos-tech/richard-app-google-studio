@@ -1,13 +1,32 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calculator, ArrowRight, Zap, ShieldCheck } from 'lucide-react';
+import { Calculator, ArrowRight, Zap, ShieldCheck, Loader2 } from 'lucide-react';
+import { triggerSentinelNurture } from '@/shared/api/communications/whatsappService';
 
 interface Props {
   tag?: string;
+  postTitle?: string;
+  specs?: any[];
 }
 
-export const PostConversionWidget: React.FC<Props> = ({ tag }) => {
+export const PostConversionWidget: React.FC<Props> = ({ tag, postTitle, specs }) => {
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  const handleNurtureTrigger = async () => {
+    setIsCapturing(true);
+    // Simulate lead capture for now
+    const mockLead = {
+      name: 'Cliente Interesado',
+      phone: '787-555-1234',
+      email: 'interesado@test.com'
+    };
+
+    await triggerSentinelNurture(mockLead as any, `Interés en post: ${postTitle}`, specs);
+    alert('🚀 Sentinel Nurture activado. Revisa la consola para ver el mensaje generado por IA.');
+    setIsCapturing(false);
+  };
+
   return (
     <div className="mt-20 p-1 bg-linear-to-r from-primary/30 via-purple-500/30 to-primary/30 rounded-[3rem] shadow-[0_0_50px_rgba(6,182,212,0.15)]">
       <div className="bg-slate-900/90 backdrop-blur-3xl rounded-[2.9rem] p-10 md:p-16 overflow-hidden relative">
@@ -43,11 +62,14 @@ export const PostConversionWidget: React.FC<Props> = ({ tag }) => {
 
           <div className="bg-white/5 rounded-[2.5rem] p-8 border border-white/10 space-y-6">
             <div className="space-y-4">
-              <div className="p-6 bg-black/40 rounded-2xl border border-white/5 group hover:border-primary/30 transition-all cursor-pointer">
+              <div 
+                onClick={handleNurtureTrigger}
+                className="p-6 bg-black/40 rounded-2xl border border-white/5 group hover:border-primary/30 transition-all cursor-pointer"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-primary/10 rounded-xl">
-                       <Calculator className="text-primary" size={20} />
+                       {isCapturing ? <Loader2 size={20} className="animate-spin text-primary" /> : <Calculator className="text-primary" size={20} />}
                     </div>
                     <div className="text-left">
                        <p className="text-xs font-black text-white uppercase tracking-widest">FlexDrive™ Simulator</p>
