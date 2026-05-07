@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/shared/api/supabase/client';
 import { LeadRepository } from '../LeadRepository';
 import { Lead } from '../../model/types';
 
@@ -9,9 +10,7 @@ export class SupabaseLeadRepository implements LeadRepository {
     if (client) {
       this.client = client;
     } else {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      this.client = createClient(supabaseUrl, supabaseKey);
+      this.client = createClient();
     }
   }
 

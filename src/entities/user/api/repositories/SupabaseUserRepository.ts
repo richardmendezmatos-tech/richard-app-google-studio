@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/shared/api/supabase/client';
 import { UserProfile, UserRole } from '../../model/types';
 
 export class SupabaseUserRepository {
@@ -8,9 +9,7 @@ export class SupabaseUserRepository {
     if (client) {
       this.client = client;
     } else {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      this.client = createClient(supabaseUrl, supabaseKey);
+      this.client = createClient();
     }
   }
 
@@ -46,12 +45,17 @@ export class SupabaseUserRepository {
   }
 
   async logActivity(activity: any): Promise<void> {
-    const { error } = await this.client
-      .from('audit_logs')
-      .insert([activity]);
+    try {
+      const { error } = await this.client
+        .from('audit_logs')
+        .insert([activity]);
 
-    if (error) {
-      console.error('[SupabaseUserRepository] Error logging activity:', error);
+      if (error) {
+        // Silently log to console, don't break the app if table is missing
+        console.warn('[SupabaseUserRepository] Audit log skipped (Table might be missing):', error.message);
+      }
+    } catch (e) {
+      console.warn('[SupabaseUserRepository] Critical fail in audit log (Non-blocking):', e);
     }
   }
 

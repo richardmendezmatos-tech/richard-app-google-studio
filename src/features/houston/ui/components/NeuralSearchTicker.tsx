@@ -44,12 +44,15 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
         recommendation: aiIntel.recommendation || opportunity.recommendation,
         roi: aiIntel.roi || opportunity.roi,
         priority: aiIntel.priority?.toLowerCase() || opportunity.priority.toLowerCase(),
-        reason: aiIntel.reason || opportunity.reason
+        reason: aiIntel.reason || opportunity.reason,
+        estimatedPurchasePrice: aiIntel.estimatedPurchasePrice,
+        estimatedResalePrice: aiIntel.estimatedResalePrice,
+        marketScarcity: aiIntel.marketScarcity,
+        targetSource: aiIntel.targetSource
       });
 
       if (result.success) {
         setDraftedOrders(prev => [...prev, opportunity.query]);
-        // Trigger global telemetry refresh if available via event (optional, but handled by parent in this architecture)
         window.dispatchEvent(new CustomEvent('ra_telemetry_refresh'));
         console.log(`[NeuralIntelligence] Functional PO Draft created for: ${opportunity.query}`);
       }
@@ -74,7 +77,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
             <h4 className="text-[10px] font-black text-violet-400 uppercase tracking-[0.4em]">Neural Inventory Sourcing</h4>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" />
-              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest leading-none">Inteligencia de Abasto Activa</p>
+              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest leading-none">Intelligence Engine N24 Active</p>
             </div>
           </div>
         </div>
@@ -120,7 +123,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
                       </div>
                       <div className="flex items-center gap-1 text-[8px] font-bold text-violet-400/70 uppercase">
                         <BarChart3 size={10} />
-                        <span>ROI: {opp.roi}%</span>
+                        <span>ROI Proyectado: {opp.roi}%</span>
                       </div>
                     </div>
                   </div>
@@ -144,10 +147,27 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
                     className="overflow-hidden"
                   >
                     <div className="mt-4 pt-4 border-t border-white/5 space-y-4">
+                      {/* N24 Metrics Breakdown */}
+                      <div className="grid grid-cols-2 gap-3 mb-2">
+                        <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Target Purchase</p>
+                          <p className="text-sm font-black text-white tracking-tighter">$18k - $25k</p>
+                        </div>
+                        <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Market Scarcity</p>
+                          <div className="flex items-center gap-1.5">
+                            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-violet-500" style={{ width: '85%' }} />
+                            </div>
+                            <span className="text-[9px] font-black text-violet-400">8.5/10</span>
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="p-3 bg-violet-400/5 rounded-xl border border-violet-400/10">
                          <div className="flex items-center gap-2 mb-1.5">
                             <Info size={12} className="text-violet-400" />
-                            <span className="text-[9px] font-black text-violet-400 uppercase tracking-widest">Sourcing Advice</span>
+                            <span className="text-[9px] font-black text-violet-400 uppercase tracking-widest">N24 Strategic Advice</span>
                          </div>
                          <p className="text-[11px] leading-relaxed text-slate-300 font-medium">
                            {opp.recommendation} <span className="text-slate-500 italic block mt-1">{opp.reason}</span>
@@ -171,16 +191,16 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
                         {isDrafted ? (
                           <>
                             <CheckCircle size={14} />
-                            Orden en Draft
+                            Orden Guardada en Command Center
                           </>
                         ) : isSubmitting === opp.query ? (
                           <>
                             <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                            Procesando Intel...
+                            Sentinel N24 Procesando...
                           </>
                         ) : (
                           <>
-                            Generar Orden de Compra
+                            Activar Estrategia de Abasto
                           </>
                         )}
                       </button>

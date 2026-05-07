@@ -4,6 +4,7 @@ import Storefront from '@/pages/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { MapPin, Phone, Clock, ShieldCheck } from 'lucide-react';
+import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos y Usados en Vega Alta',
@@ -107,6 +108,7 @@ export default async function HomePage() {
       <HomeJsonLd />
       
       <main className="relative">
+        <SessionRecoveryBridge />
         <Suspense fallback={null}>
           <Storefront inventory={inventory} />
         </Suspense>

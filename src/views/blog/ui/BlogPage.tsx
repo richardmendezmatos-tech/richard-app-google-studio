@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { PostConversionWidget } from '@/features/blog/ui/components/PostConversionWidget';
 import { DI } from '@/app/(dashboard)/di/registry';
 
 import { BlogPost } from '@/shared/types/types';
@@ -91,99 +92,120 @@ const BlogPage: React.FC = () => {
     posts.length > 0 ? posts.filter((p) => !p.id.includes('draft_')) : dummyPosts;
 
   return (
-    <div className="p-6 lg:p-12 max-w-[1700px] mx-auto min-h-screen space-y-16">
+    <div className="p-6 lg:p-12 max-w-[1700px] mx-auto min-h-screen space-y-20 bg-slate-950">
       <SEO
-        title="Blog | Richard Automotive Newsroom"
-        description="Noticias, tendencias y análisis profundos del mercado automotriz."
+        title="Newsroom | Sentinel N24 Intelligence"
+        description="Perspectivas estratégicas, análisis de mercado y la vanguardia del financiamiento automotriz."
         url="/blog"
         type="website"
       />
 
-      {/* Header Section */}
-      <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-12">
+      {/* Sentinel Header */}
+      <header className="relative py-20 overflow-hidden rounded-[4rem] bg-slate-900/50 border border-white/5 shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
+        
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-4 max-w-3xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative z-10 px-12 space-y-6 text-center max-w-4xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest border border-primary/20">
-            <Newspaper size={12} /> Public Newsroom
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Sentinel Intelligence Newsroom</span>
           </div>
-          <h1 className="newsroom-title text-slate-800 dark:text-white text-4xl xl:text-5xl font-black tracking-tighter decoration-primary decoration-4 underline-offset-8">
-            The <span className="text-gradient-premium">Automotive</span> Daily
+          
+          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter italic leading-none">
+            The <span className="text-ra-primary">Automotive</span> <br />
+            <span className="text-white/20">Digital Intel</span>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xl font-light leading-relaxed">
-            Explora noticias exclusivas, reseñas a fondo y análisis del mercado automotriz curados
-            por nuestro equipo.
+          
+          <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-2xl mx-auto uppercase tracking-wide">
+            Estrategia, mercado y tecnología financiera para el consumidor moderno de Puerto Rico.
           </p>
         </motion.div>
       </header>
 
+      {/* Editorial Ticker */}
+      <div className="bg-white/[0.02] border-y border-white/5 py-4 overflow-hidden whitespace-nowrap">
+        <motion.div 
+          animate={{ x: [0, -1000] }} 
+          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+          className="flex gap-20 items-center"
+        >
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className="flex items-center gap-4">
+              <Sparkles className="text-primary" size={14} />
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">N24 Market Update: Demanda de Ford F-150 sube 12% en el área norte</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">Sentinel Sourcing: 4 Gaps detectados en SUVs Compactas</span>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         {/* Feed Section */}
-        <div className="lg:col-span-3 space-y-12 relative min-h-[400px]">
+        <div className="lg:col-span-8 space-y-12 relative min-h-[400px]">
           {isLoadingPosts && posts.length === 0 ? (
             <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              <Loader2 className="w-12 h-12 text-primary animate-spin" />
             </div>
           ) : (
             publishedPosts.map((post, idx) => (
               <motion.article
                 key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="group cyber-glow bg-white dark:bg-slate-900/40 rounded-[48px] overflow-hidden border border-slate-100 dark:border-slate-800/50 shadow-sm hover:shadow-2xl hover:border-primary/30 transition-all duration-700 cursor-pointer"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="group relative bg-slate-900/40 rounded-[3rem] overflow-hidden border border-white/5 hover:border-primary/40 transition-all duration-700 cursor-pointer shadow-2xl"
                 onClick={() => setSelectedPost(post)}
               >
-                <div className="flex flex-col md:row-span-1 md:flex-row h-full">
-                  <div className="w-full md:w-5/12 h-72 md:h-auto relative overflow-hidden bg-slate-100 dark:bg-slate-800">
+                <div className="flex flex-col md:flex-row h-full">
+                  <div className="w-full md:w-5/12 h-80 md:h-auto relative overflow-hidden">
                     {post.imageUrl ? (
                       <img
                         src={post.imageUrl}
                         alt={post.title}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-2"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                        <Newspaper className="text-slate-400 opacity-20" size={64} />
+                      <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                        <Newspaper className="text-slate-700" size={64} />
                       </div>
                     )}
-                    <div className="absolute top-6 left-6 flex flex-col gap-2">
-                      <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg">
-                        {post.tags?.[0] || 'NOTICIAS'}
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-60" />
                   </div>
-                  <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center space-y-6">
-                    <div className="flex items-center gap-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                      <span className="flex items-center gap-2">
-                        <Calendar size={12} className="text-primary" /> {post.date}
-                      </span>
-                      <span className="flex items-center gap-2 text-slate-500">
-                        <Clock size={12} /> Leído rápido
-                      </span>
-                    </div>
-                    <h3 className="text-3xl lg:text-4xl font-black text-slate-800 dark:text-white leading-[1.1] group-hover:text-gradient-cyan transition-all">
-                      {post.title}
-                    </h3>
-                    <p className="text-slate-500 dark:text-slate-400 line-clamp-2 text-lg font-light leading-relaxed">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/50 relative">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-purple-500 p-px">
-                          <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-black">
-                            RA
-                          </div>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200 underline decoration-primary/30">
-                          {post.author}
+                  <div className="flex-1 p-10 lg:p-14 flex flex-col justify-between">
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-4">
+                        <span className="bg-primary/20 text-primary px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-primary/30">
+                          {post.tags?.[0] || 'ANALYSIS'}
                         </span>
+                        <div className="flex items-center gap-2 text-[9px] text-slate-500 font-bold uppercase tracking-widest">
+                           <Calendar size={12} /> {post.date}
+                        </div>
                       </div>
-                      <div className="flex items-center text-primary font-black text-[10px] uppercase tracking-widest gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                        Leer Artículo <ArrowRight size={14} />
+                      
+                      <h3 className="text-4xl font-black text-white leading-[1.05] tracking-tighter italic group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                      
+                      <p className="text-slate-400 line-clamp-3 text-lg font-medium leading-relaxed">
+                        {post.excerpt}
+                      </p>
+                    </div>
+
+                    <div className="mt-10 pt-6 border-t border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                         <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
+                            <User size={16} className="text-slate-500" />
+                         </div>
+                         <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{post.author}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-4 transition-all">
+                        Leer Intel <ArrowRight size={14} />
                       </div>
                     </div>
                   </div>
@@ -194,44 +216,41 @@ const BlogPage: React.FC = () => {
         </div>
 
         {/* Sidebar */}
-        <aside className="space-y-8">
-          <div className="bg-linear-to-br from-[#173d57] to-[#0d2232] p-8 rounded-5xl text-white relative overflow-hidden shadow-2xl">
-            <div className="relative z-10 space-y-6">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-                <Sparkles className="text-primary" />
+        <aside className="lg:col-span-4 space-y-12">
+          {/* Enhanced Subscription Box */}
+          <div className="bg-linear-to-br from-slate-900 to-black p-10 rounded-[3rem] border border-white/5 relative overflow-hidden shadow-[0_48px_96px_-24px_rgba(0,0,0,0.8)]">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-[80px] rounded-full" />
+            
+            <div className="relative z-10 space-y-8">
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
+                <Sparkles className="text-primary" size={24} />
               </div>
+              
               <div>
-                <h4 className="font-black text-2xl tracking-tighter uppercase mb-2">
-                  Be the First
+                <h4 className="font-black text-3xl text-white tracking-tighter uppercase leading-tight italic">
+                  Neural <br /> Newsroom
                 </h4>
-                <p className="text-sm text-slate-300 font-light leading-relaxed">
-                  Noticias exclusivas, análisis de mercado y drops VIP directamente en tu bandeja.
+                <p className="text-sm text-slate-400 font-medium leading-relaxed mt-4">
+                  Recibe análisis de mercado y oportunidades de abasto exclusivas de Richard Automotive.
                 </p>
               </div>
-              <div className="space-y-3">
+
+              <div className="space-y-4">
                 <input
                   type="email"
                   value={subscriberEmail}
                   onChange={(e) => setSubscriberEmail(e.target.value)}
-                  placeholder="Tu correo electrónico"
-                  disabled={isSubscribing}
-                  className="w-full bg-black/20 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white placeholder:text-slate-400 outline-none focus:border-primary focus:bg-white/10 transition-all font-medium disabled:opacity-50"
+                  placeholder="CORREO ELECTRÓNICO"
+                  className="w-full h-16 bg-white/[0.03] border border-white/5 rounded-2xl px-6 text-sm text-white placeholder:text-white/10 outline-none focus:border-primary/50 transition-all font-black uppercase tracking-widest"
                 />
                 <button
                   onClick={handleSubscribe}
                   disabled={isSubscribing}
-                  className="w-full bg-linear-to-r from-primary to-[#008cb1] hover:brightness-110 disabled:opacity-50 text-white py-4 rounded-2xl flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-950/40"
+                  className="w-full h-16 bg-primary text-black hover:bg-white transition-all rounded-2xl flex items-center justify-center font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-primary/20"
                 >
-                  {isSubscribing ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    'Unirse al Newsroom'
-                  )}
+                  {isSubscribing ? <Loader2 className="animate-spin" /> : 'Activar Intel'}
                 </button>
               </div>
-            </div>
-            <div className="absolute -bottom-10 -right-10 text-white/5 rotate-12 z-0">
-              <Newspaper size={180} />
             </div>
           </div>
 
@@ -269,34 +288,37 @@ const BlogPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0d2232]/80 backdrop-blur-xl flex justify-center items-center p-4 md:p-8"
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-3xl flex justify-center items-center p-0 md:p-8"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 30 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white dark:bg-slate-950 w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-4xl md:rounded-[48px] shadow-2xl custom-scrollbar border border-slate-200 dark:border-slate-800 relative flex flex-col"
+              exit={{ opacity: 0, scale: 0.9, y: 50 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="bg-slate-950 w-full max-w-7xl h-full md:h-[95vh] overflow-hidden rounded-none md:rounded-[4rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] border-0 md:border border-white/10 relative flex flex-col"
             >
               {/* Close & Share Navbar */}
-              <div className="sticky top-0 z-20 flex justify-between items-center p-4 md:p-6 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-100 dark:border-slate-900/50">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/20" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/20" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/20" />
+              <div className="sticky top-0 z-30 flex justify-between items-center p-6 bg-slate-950/80 backdrop-blur-2xl border-b border-white/5">
+                <div className="flex items-center gap-6">
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-rose-500" />
+                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  </div>
+                  <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] hidden sm:block">Sentinel Reader v2.4</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <button
                     onClick={() => handleSharePost(selectedPost)}
-                    className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-600 dark:text-slate-300 hover:text-primary transition-colors flex items-center justify-center"
-                    title="Compartir"
+                    className="p-3 bg-white/5 rounded-2xl text-white/60 hover:text-primary transition-colors flex items-center justify-center border border-white/5"
+                    title="Compartir Intel"
                   >
                     <Share2 size={18} />
                   </button>
                   <button
                     onClick={() => setSelectedPost(null)}
-                    className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors flex items-center justify-center"
-                    title="Cerrar artículo"
+                    className="p-3 bg-white/5 rounded-2xl text-white/60 hover:text-rose-500 transition-colors flex items-center justify-center border border-white/5"
+                    title="Cerrar"
                   >
                     <X size={18} />
                   </button>
@@ -304,51 +326,62 @@ const BlogPage: React.FC = () => {
               </div>
 
               {/* Reader View */}
-              <div className="flex-1 overflow-y-auto w-full custom-scrollbar">
-                <div className="max-w-3xl mx-auto p-8 md:p-12 space-y-10 pb-20">
-                  <div className="space-y-6">
-                    <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-primary">
-                      <span className="bg-primary/10 px-4 py-1.5 rounded-full">
-                        {selectedPost.tags?.[0] || 'Artículo Especial'}
-                      </span>
-                      <span className="flex items-center gap-2 text-slate-400">
-                        <Calendar size={14} /> {selectedPost.date}
-                      </span>
-                    </div>
+              <div className="flex-1 overflow-y-auto w-full custom-scrollbar pb-20">
+                <div className="max-w-4xl mx-auto">
+                  {/* Hero Header */}
+                  <div className="p-8 md:p-20 space-y-10">
+                    <div className="space-y-8">
+                      <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-primary italic">
+                        <span className="bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
+                          {selectedPost.tags?.[0] || 'Strategic Briefing'}
+                        </span>
+                        <span className="flex items-center gap-2 opacity-60">
+                          <Clock size={14} /> {selectedPost.estimatedReadingTime || '4 MIN READ'}
+                        </span>
+                      </div>
 
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 dark:text-white leading-[1.1] tracking-tighter">
-                      {selectedPost.title}
-                    </h1>
+                      <h1 className="text-5xl md:text-7xl font-black text-white leading-[1] tracking-tighter italic">
+                        {selectedPost.title}
+                      </h1>
 
-                    <div className="flex items-center gap-4 py-6 border-y border-slate-100 dark:border-slate-800/50 text-slate-500">
-                      <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-primary">
-                          <User size={18} />
+                      <div className="flex items-center gap-6 py-10 border-y border-white/5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-14 h-14 bg-linear-to-br from-primary to-purple-600 rounded-2xl p-px">
+                            <div className="w-full h-full rounded-2xl bg-slate-950 flex items-center justify-center text-xs font-black text-white">
+                              RA
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-white uppercase tracking-widest">
+                              Por {selectedPost.author}
+                            </p>
+                            <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1 font-bold">Sentinel AI Editorial Staff</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                            Por {selectedPost.author}
-                          </p>
-                          <p className="text-[10px] uppercase tracking-widest">Staff Editorial</p>
+                        <div className="ml-auto flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                           <Calendar size={14} /> {selectedPost.date}
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {selectedPost.imageUrl && (
-                    <figure className="relative h-[300px] md:h-[400px] rounded-4xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/50">
-                      <img
-                        src={selectedPost.imageUrl}
-                        alt="Cover"
-                        className="w-full h-full object-cover"
-                      />
-                    </figure>
-                  )}
+                    {selectedPost.imageUrl && (
+                      <figure className="relative aspect-video rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                        <img
+                          src={selectedPost.imageUrl}
+                          alt="Cover"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 to-transparent" />
+                      </figure>
+                    )}
 
-                  <div className="prose prose-lg prose-slate dark:prose-invert prose-p:leading-relaxed prose-headings:font-black prose-headings:tracking-tighter prose-a:text-primary max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {selectedPost.content}
-                    </ReactMarkdown>
+                    <div className="prose prose-2xl prose-invert prose-p:text-slate-300 prose-p:leading-[1.8] prose-p:font-medium prose-headings:text-white prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-primary prose-a:text-primary max-w-none">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {selectedPost.content}
+                      </ReactMarkdown>
+                    </div>
+
+                    <PostConversionWidget tag={selectedPost.tags?.[0]} />
                   </div>
                 </div>
               </div>

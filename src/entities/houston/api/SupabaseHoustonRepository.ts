@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { createClient } from '@/shared/api/supabase/client';
 import { HoustonRepository } from './HoustonRepository';
 import { HoustonTelemetry, PurchaseOrder } from '../model/types';
 
@@ -19,36 +19,54 @@ export class SupabaseHoustonRepository implements HoustonRepository {
   }
 
   async getPurchaseOrders(): Promise<PurchaseOrder[]> {
+    const supabase = createClient();
     if (!supabase) {
       console.warn('[SupabaseHoustonRepository] Supabase client not initialized. Returning empty PO list.');
       return [];
     }
-    const { data, error } = await supabase
-      .from('purchase_orders')
-      .select('*')
-      .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('[SupabaseHoustonRepository] Error fetching POs:', error);
+    try {
+      const { data, error } = await supabase
+        .from('purchase_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.code === 'PGRST204' || error.code === '42P01') {
+          console.warn('[SupabaseHoustonRepository] Table purchase_orders not found. Returning empty list.');
+          return [];
+        }
+        console.error('[SupabaseHoustonRepository] Error fetching POs:', error);
+        return [];
+      }
+      
+      return (data || []) as PurchaseOrder[];
+    } catch (e) {
+      console.warn('[SupabaseHoustonRepository] Failed to fetch POs (Non-blocking):', e);
       return [];
     }
-    
-    return (data || []) as PurchaseOrder[];
   }
 
   async updatePurchaseOrderStatus(id: string, status: 'confirmed' | 'archived'): Promise<void> {
+    const supabase = createClient();
     if (!supabase) {
       console.error('[SupabaseHoustonRepository] Cannot update PO: Supabase client not initialized.');
       return;
     }
-    const { error } = await supabase
-      .from('purchase_orders')
-      .update({ status })
-      .eq('id', id);
 
-    if (error) {
-      console.error('[SupabaseHoustonRepository] Error updating PO status:', error);
-      throw error;
+    try {
+      const { error } = await supabase
+        .from('purchase_orders')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) {
+        console.error('[SupabaseHoustonRepository] Error updating PO status:', error);
+        throw error;
+      }
+    } catch (e) {
+      console.error('[SupabaseHoustonRepository] Exception updating PO status:', e);
+      throw e;
     }
   }
 }

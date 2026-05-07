@@ -15,6 +15,10 @@ export interface PurchaseOrder {
   reason: string;
   status: 'draft' | 'confirmed' | 'archived';
   unit_type?: string;
+  estimated_purchase_price?: number;
+  estimated_resale_price?: number;
+  market_scarcity?: number;
+  target_source?: string;
   created_at: string;
   updated_at: string;
 }

@@ -7,7 +7,8 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Prefer ANON_KEY as it's the standard for Supabase Auth in middleware
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     console.warn('⚠️ [Supabase Middleware] Missing environment variables. Skipping session update.');
@@ -23,10 +24,15 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            supabaseResponse.cookies.set(name, value, options);
+          });
+          // Update the response with the modified request
           supabaseResponse = NextResponse.next({
             request,
           });
+          // Re-apply cookies to the new response
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           );
@@ -50,8 +56,12 @@ export async function updateSession(request: NextRequest) {
   const isPrivateRoute = privateRoutes.some(route => currentPath.startsWith(route));
   const isAdminRoute = adminRoutes.some(route => currentPath.startsWith(route));
 
+  // DEBUG LOG
+  console.log(`[Middleware] 📍 Path: ${currentPath} | 👤 User: ${user?.email || 'None'}`);
+
   // 1. Protection for any private route (must be logged in)
   if (!user && isPrivateRoute && !currentPath.startsWith('/login') && !currentPath.startsWith('/auth')) {
+    console.log(`[Middleware] 🔒 Redirecting to login: No user session found for ${currentPath}`);
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('from', currentPath);
@@ -60,14 +70,15 @@ export async function updateSession(request: NextRequest) {
 
   // 2. Strict Protection for Admin routes (must be an admin email)
   if (user && isAdminRoute) {
-    const email = user.email?.toLowerCase() || '';
+    const email = user.email?.toLowerCase().trim() || '';
     const isAdmin = 
       email === 'richardmendezmatos@gmail.com' || 
+      email.includes('richardmendezmatos') ||
       email.endsWith('@richard-automotive.com') ||
       email.includes('admin');
 
     if (!isAdmin) {
-      // Not an admin, redirect to garage or home
+      console.log(`[Middleware] 🚫 Access Denied: User ${email} is not in the admin list. Redirecting to /garage`);
       const url = request.nextUrl.clone();
       url.pathname = '/garage';
       return NextResponse.redirect(url);

@@ -577,9 +577,19 @@ const HoustonDashboard: React.FC = () => {
   const identifyOutreachOpportunities = useMemo(() => DI.getIdentifyOutreachOpportunitiesUseCase(), []);
 
   useEffect(() => {
-    const unsubscribe = getHoustonTelemetry.subscribe((data: HoustonTelemetry) => setTelemetry(data));
-    identifyOutreachOpportunities.execute(80).then(setOpportunities);
-    return () => unsubscribe();
+    let unsubscribeFn: (() => void) | undefined;
+    
+    const init = async () => {
+      unsubscribeFn = await getHoustonTelemetry.subscribe((data: HoustonTelemetry) => setTelemetry(data));
+      const opportunitiesData = await identifyOutreachOpportunities.execute(80);
+      setOpportunities(opportunitiesData);
+    };
+
+    init();
+
+    return () => {
+      if (unsubscribeFn) unsubscribeFn();
+    };
   }, [getHoustonTelemetry, identifyOutreachOpportunities]);
 
   if (!telemetry)

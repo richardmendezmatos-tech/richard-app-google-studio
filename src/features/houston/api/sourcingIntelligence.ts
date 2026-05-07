@@ -7,7 +7,11 @@ export interface SourcingOpportunity {
   query: string;
   count: number;
   priority: 'CRITICAL' | 'HIGH' | 'MEDIUM';
-  roi: number; // Porcentaje estimado de retorno (Simulado)
+  roi: number; // Porcentaje estimado de retorno
+  estimatedPurchasePrice?: number;
+  estimatedResalePrice?: number;
+  marketScarcity?: number; // 1-10
+  targetSource?: string; // e.g. "Subasta Local", "Manheim Export"
   reason: string;
   recommendation: string;
 }

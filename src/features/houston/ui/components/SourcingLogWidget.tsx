@@ -102,7 +102,33 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
                     Target: {order.query}
                   </h5>
                   
+                  {/* N24 Metrics Breakdown */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                    <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Precio Compra Est.</p>
+                      <p className="text-xs font-black text-white tracking-tighter">
+                        {order.estimated_purchase_price ? `$${order.estimated_purchase_price.toLocaleString()}` : 'Analizando...'}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Precio Venta Est.</p>
+                      <p className="text-xs font-black text-emerald-400 tracking-tighter">
+                        {order.estimated_resale_price ? `$${order.estimated_resale_price.toLocaleString()}` : 'Analizando...'}
+                      </p>
+                    </div>
+                    <div className="hidden sm:block p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fuente Sugerida</p>
+                      <p className="text-xs font-black text-cyan-400 tracking-tighter truncate uppercase">
+                        {order.target_source || 'Subasta Local'}
+                      </p>
+                    </div>
+                  </div>
+
                   <div className="p-3 bg-black/20 rounded-xl border border-white/[0.02] mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                       <Info size={10} className="text-cyan-400" />
+                       <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">Análisis de Mercado N24</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
                       {order.recommendation}
                     </p>

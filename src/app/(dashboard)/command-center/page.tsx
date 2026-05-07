@@ -22,6 +22,7 @@ import {
 import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearchTicker';
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
 import { HoloDashboard } from '@/features/houston/ui/components/HoloDashboard';
+import { NewsroomControlWidget } from '@/features/houston/ui/components/NewsroomControlWidget';
 import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 
@@ -274,6 +275,10 @@ export default function CommandCenterPage() {
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <SourcingLogWidget orders={data?.purchaseOrders || []} onUpdate={fetchTelemetry} />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <NewsroomControlWidget />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>

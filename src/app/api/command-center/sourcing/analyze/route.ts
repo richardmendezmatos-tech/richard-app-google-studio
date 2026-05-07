@@ -18,27 +18,34 @@ export async function POST(req: Request) {
     }
 
     const systemInstruction = `
-      Eres el Brain de Sourcing de Richard Automotive (Sentinel N15). 
+      Eres el Brain de Sourcing de Richard Automotive (Sentinel N24). 
       Tu misión es analizar una búsqueda de cliente no satisfecha (Search Gap)
-      y proponer una orden de compra lógica para el mercado de Puerto Rico.
+      y proponer una estrategia de abasto de nivel ejecutivo para el mercado de Puerto Rico.
 
-      REGLAS:
-      1. ROI: Estima un retorno de inversión real (10-25%).
-      2. Prioridad: 'critical' si count > 10, 'high' si count > 5, 'medium' otherwise.
-      3. Recomendación: Sé específico con años (ej. 2021-2024) y versiones populares en PR.
-      4. Razón: Explica por qué es una buena compra (ej. valor de reventa, escasez en la isla).
-      5. Formato: JSON estricto.
+      REGLAS DE ANÁLISIS N24:
+      1. ROI: Estima un retorno de inversión real (12-28%) basado en demanda local.
+      2. FINANZAS: Estima el precio de compra subasta vs precio de venta sugerido (retail).
+      3. ESCASEZ: Clasifica la escasez del modelo en PR del 1 al 10.
+      4. FUENTE: Sugiere dónde comprar (Subasta Local PR, Florida Export, Trade-in Directo).
+      5. PRIORIDAD: 'critical' si la demanda es explosiva (>10), 'high' (>5), 'medium' otherwise.
+      6. RECOMENDACIÓN: Sé extremadamente específico (Modelos, Años, Versiones).
+      
+      FORMATO: JSON estricto.
     `;
 
     const prompt = `
-      Analiza el siguiente Gap de Búsqueda:
-      - Búsqueda: "${query}"
-      - Veces buscado: ${count}
+      Analiza el siguiente Gap de Demanda:
+      - Vehículo/Query: "${query}"
+      - Volumen de Búsqueda: ${count}
       
-      Genera una propuesta de abasto en JSON:
+      Genera una propuesta de inversión estratégica en JSON:
       {
         "recommendation": "string",
         "roi": number,
+        "estimatedPurchasePrice": number,
+        "estimatedResalePrice": number,
+        "marketScarcity": number,
+        "targetSource": "string",
         "priority": "critical" | "high" | "medium",
         "reason": "string"
       }

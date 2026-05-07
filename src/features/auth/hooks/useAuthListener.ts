@@ -9,16 +9,20 @@ export const useAuthListener = () => {
     setLoading(true);
     
     const unsubscribe = subscribeToAuthChanges(async (user) => {
+      console.log('🔄 [useAuthListener] Auth State Change Detected:', user ? `User: ${user.email}` : 'User: None');
+      
       if (user) {
         try {
           const role = await getUserRole(user.uid);
+          console.log('✅ [useAuthListener] User authenticated with role:', role);
           setRole(role);
           setUser(normalizeUser(user, role));
         } catch (error) {
-          console.error('Error fetching user role:', error);
+          console.error('❌ [useAuthListener] Error fetching user role:', error);
           logout();
         }
       } else {
+        console.warn('⚠️ [useAuthListener] No user detected, logging out.');
         logout();
       }
       setLoading(false);

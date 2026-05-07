@@ -1,14 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from './client';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = (supabaseUrl && supabaseAnonKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : {
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }), order: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }), order: () => ({ limit: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }) }) }), insert: () => Promise.resolve({ error: new Error('Supabase not configured') }), update: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }), delete: () => ({ eq: () => Promise.resolve({ error: new Error('Supabase not configured') }) }) }),
-      rpc: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }),
-    } as any;
+export const supabase = createClient();
 
 export interface SemanticMatch {
   car_id: string;
@@ -89,6 +81,10 @@ export const createPurchaseOrderDraft = async (orderData: {
   roi: number;
   priority: string;
   reason: string;
+  estimatedPurchasePrice?: number;
+  estimatedResalePrice?: number;
+  marketScarcity?: number;
+  targetSource?: string;
 }) => {
   try {
     const { error } = await supabase.from('purchase_orders').insert({
@@ -97,6 +93,10 @@ export const createPurchaseOrderDraft = async (orderData: {
       estimated_roi: orderData.roi,
       priority: orderData.priority,
       reason: orderData.reason,
+      estimated_purchase_price: orderData.estimatedPurchasePrice,
+      estimated_resale_price: orderData.estimatedResalePrice,
+      market_scarcity: orderData.marketScarcity,
+      target_source: orderData.targetSource,
       status: 'draft',
       created_at: new Date().toISOString()
     });

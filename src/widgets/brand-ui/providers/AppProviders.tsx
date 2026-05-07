@@ -11,23 +11,29 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 
 import { RehydrationService } from '@/shared/lib/resilience/RehydrationService';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { useAuthListener } from '@/features/auth';
 
 interface AppProvidersProps {
   children: React.ReactNode;
 }
 
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
+  useAuthListener();
+
   useEffect(() => {
     // Initialize Google Analytics 4
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
     initGA(gaId);
 
     // [Nivel 13] Initialize Resilience Layer (Auto-healing)
-    const leadRepo = DI.getLeadRepository();
-    const rehydration = new RehydrationService(leadRepo);
-    rehydration.start(30000); // Check every 30s
-    console.log('🛡️ [Sentinel:Resilience] Rehydration Service initialized.');
+    // Dynamic import to avoid circular dependencies with DI registry at startup
+    import('@/app/(dashboard)/di/registry').then(async ({ DI }) => {
+      console.log('🛡️ [AppProviders] DI Registry loaded dynamically.');
+      const leadRepo = await DI.getLeadRepository();
+      const rehydration = new RehydrationService(leadRepo as any);
+      rehydration.start(30000); // Check every 30s
+      console.log('🛡️ [Sentinel:Resilience] Rehydration Service initialized.');
+    });
   }, []);
 
   return (

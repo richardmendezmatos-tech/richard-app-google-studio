@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/shared/api/supabase/client';
 import { SubscriberRepository, SurveyRepository } from '../ApplicationRepository';
 import { SubscriberData, SurveyData } from '../../model/captureTypes';
 
@@ -9,9 +10,7 @@ export class SupabaseSubscriberRepository implements SubscriberRepository {
     if (client) {
       this.client = client;
     } else {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      this.client = createClient(supabaseUrl, supabaseKey);
+      this.client = createClient();
     }
   }
 
@@ -48,9 +47,7 @@ export class SupabaseSurveyRepository implements SurveyRepository {
     if (client) {
       this.client = client;
     } else {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      this.client = createClient(supabaseUrl, supabaseKey);
+      this.client = createClient();
     }
   }
 

@@ -1,10 +1,4 @@
-// Repository Registry for Dependency Injection
-import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseInventoryRepository';
-import { createClient } from '@supabase/supabase-js';
-import { SupabaseUserRepository } from '@/entities/user/api/repositories/SupabaseUserRepository';
-import { SupabaseHoustonRepository } from '@/entities/houston/api/SupabaseHoustonRepository';
-import { SupabaseLeadRepository } from '@/entities/lead/api/repositories/SupabaseLeadRepository';
-import { SupabaseSubscriberRepository, SupabaseSurveyRepository } from '@/entities/lead/api/repositories/SupabaseCaptureRepository';
+import { createClient } from '@/shared/api/supabase/client';
 
 /**
  * DI Registry - Richard Automotive Sentinel (Nivel 13)
@@ -13,29 +7,28 @@ import { SupabaseSubscriberRepository, SupabaseSurveyRepository } from '@/entiti
  */
 export const DI = {
   getInventoryUseCase: () => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.warn('⚠️ [DI] Supabase credentials missing. Inventory UseCase will be disabled.');
-      return { execute: async () => [] };
-    }
-
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
-    const repository = new SupabaseInventoryRepository(supabaseClient);
     return {
-      execute: (dealerId: string) => repository.getInventory(dealerId)
+      execute: async (dealerId: string) => {
+        const { SupabaseInventoryRepository } = await import('@/entities/inventory/api/SupabaseInventoryRepository');
+        const supabaseClient = createClient();
+        const repository = new SupabaseInventoryRepository(supabaseClient);
+        return repository.getInventory(dealerId);
+      }
     };
   },
   
   getLeadsUseCase: () => {
-    const repository = new SupabaseLeadRepository();
     return {
-      execute: (dealerId: string, limitCount: number = 100) => repository.getLeads(dealerId, limitCount)
+      execute: async (dealerId: string, limitCount: number = 100) => {
+        const { SupabaseLeadRepository } = await import('@/entities/lead/api/repositories/SupabaseLeadRepository');
+        const repository = new SupabaseLeadRepository();
+        return repository.getLeads(dealerId, limitCount);
+      }
     };
   },
   
-  getLeadRepository: () => {
+  getLeadRepository: async () => {
+    const { SupabaseLeadRepository } = await import('@/entities/lead/api/repositories/SupabaseLeadRepository');
     return new SupabaseLeadRepository();
   },
 
@@ -43,9 +36,7 @@ export const DI = {
     return {
       uploadImage: async (file: File | Blob, path?: string, contentType?: string): Promise<string> => {
         // Migration Note: Firebase Storage replaced by Supabase Storage
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = createClient();
         
         const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
         const fileName = path || `uploads/${Math.random()}.${fileExt}`;
@@ -85,16 +76,25 @@ export const DI = {
     };
   },
 
-  getSubscriberRepository: () => {
+  getSubscriberRepository: async () => {
+    const { SupabaseSubscriberRepository } = await import('@/entities/lead/api/repositories/SupabaseCaptureRepository');
     return new SupabaseSubscriberRepository();
   },
 
-  getSurveyRepository: () => {
+  getSurveyRepository: async () => {
+    const { SupabaseSurveyRepository } = await import('@/entities/lead/api/repositories/SupabaseCaptureRepository');
     return new SupabaseSurveyRepository();
   },
 
-  getUserRepository: () => {
-    return new SupabaseUserRepository();
+  getUserRepository: async () => {
+    console.log('📡 [DI:Registry] Accessing UserRepository...');
+    try {
+      const { SupabaseUserRepository } = await import('@/entities/user/api/repositories/SupabaseUserRepository');
+      return new SupabaseUserRepository();
+    } catch (error) {
+      console.error('❌ [DI:Registry] Failed to load UserRepository:', error);
+      throw error;
+    }
   },
 
   // Sentinel Outreach & Communications
@@ -122,9 +122,12 @@ export const DI = {
   },
 
   getHoustonTelemetryUseCase: () => {
-    const repository = new SupabaseHoustonRepository();
     return {
-      subscribe: (callback: any) => repository.subscribeToTelemetry(callback)
+      subscribe: async (callback: any) => {
+        const { SupabaseHoustonRepository } = await import('@/entities/houston/api/SupabaseHoustonRepository');
+        const repository = new SupabaseHoustonRepository();
+        return repository.subscribeToTelemetry(callback);
+      }
     };
   },
 
@@ -148,10 +151,17 @@ export const DI = {
   },
 
   getPurchaseOrdersUseCase: () => {
-    const repository = new SupabaseHoustonRepository();
     return {
-      execute: () => repository.getPurchaseOrders(),
-      updateStatus: (id: string, status: 'confirmed' | 'archived') => repository.updatePurchaseOrderStatus(id, status)
+      execute: async () => {
+        const { SupabaseHoustonRepository } = await import('@/entities/houston/api/SupabaseHoustonRepository');
+        const repository = new SupabaseHoustonRepository();
+        return repository.getPurchaseOrders();
+      },
+      updateStatus: async (id: string, status: 'confirmed' | 'archived') => {
+        const { SupabaseHoustonRepository } = await import('@/entities/houston/api/SupabaseHoustonRepository');
+        const repository = new SupabaseHoustonRepository();
+        return repository.updatePurchaseOrderStatus(id, status);
+      }
     };
   }
 };

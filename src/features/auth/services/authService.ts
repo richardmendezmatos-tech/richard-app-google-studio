@@ -1,6 +1,8 @@
-import { DI } from '@/app/(dashboard)/di/registry';
 import { UserRole, AppUser } from '@/entities/user';
 import { createClient } from '@/shared/api/supabase/client';
+import { SupabaseUserRepository } from '@/entities/user/api/repositories/SupabaseUserRepository';
+
+const getUserRepo = () => new SupabaseUserRepository();
 
 
 // --- Types & Constants ---
@@ -63,7 +65,7 @@ const mapSupabaseUser = (sbUser: any): User => {
 };
 
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
-  const userRepo = DI.getUserRepository();
+  const userRepo = getUserRepo();
   const existing = await userRepo.getUserProfile(user.uid);
   const currentDealerId = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') || 'richard-automotive' : 'richard-automotive';
   const currentDealerName = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_name') || 'Richard Automotive' : 'Richard Automotive';
@@ -82,7 +84,7 @@ const createUserProfile = async (user: User, role: UserRole = 'user') => {
 };
 
 export const getUserRole = async (uid: string): Promise<UserRole> => {
-  return await DI.getUserRepository().getUserRole(uid);
+  return await getUserRepo().getUserRole(uid);
 };
 
 // --- Audit & Security ---
@@ -103,7 +105,7 @@ export const logAuthActivity = async (
   const device = typeof navigator !== 'undefined' ? navigator.userAgent : 'server';
 
   try {
-    await DI.getUserRepository().logActivity({
+    await getUserRepo().logActivity({
       email,
       ip,
       device,
@@ -162,14 +164,23 @@ export async function signInWithGoogle(useRedirect: boolean = false) {
   
   // Supabase handles the OAuth flow via redirects mostly
   // It provides signInWithOAuth
-  const redirectUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/auth/callback` 
-    : 'https://www.richard-automotive.com/auth/callback';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.richard-automotive-command-center.vercel.app';
+  const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+  
+  const redirectUrl = isLocal 
+    ? 'http://localhost:3000/auth/callback' 
+    : `${origin}/auth/callback`;
+
+  console.log('🚀 [AuthService] Initiating Google Sign-In with redirect:', redirectUrl);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: redirectUrl,
+      queryParams: {
+        prompt: 'select_account',
+        access_type: 'offline',
+      }
     }
   });
 
@@ -285,7 +296,7 @@ export const updateUserProfile = async (
     
     if (error) throw error;
     
-    await DI.getUserRepository().saveUserProfile(user.uid, data);
+    await getUserRepo().saveUserProfile(user.uid, data);
     await logAuthActivity(user.email || 'unknown', true, 'profile_update');
   } catch (error: unknown) {
     const errorMessage = (error as { message?: string }).message;
@@ -335,7 +346,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
     const sanitizedIP = (ip || '0_0_0_0').replace(/[.:]/g, '_');
     const attemptId = `${sanitizedEmail}_${sanitizedIP}`;
 
-    const userRepo = DI.getUserRepository();
+    const userRepo = getUserRepo();
     const profile = await userRepo.getUserProfile(data.user.id);
 
     if (profile?.isBlocked) {
@@ -403,7 +414,7 @@ export const registerPasskey = async (user: User) => {
     })) as PublicKeyCredential;
 
     if (credential) {
-      await DI.getUserRepository().saveUserProfile(user.uid, {
+      await getUserRepo().saveUserProfile(user.uid, {
         passkeyEnabled: true,
         passkeyId: credential.id,
       });
@@ -411,9 +422,12 @@ export const registerPasskey = async (user: User) => {
       return credential;
     }
   } catch (err: unknown) {
-    const errorMessage = (err as { message?: string }).message;
-    console.error('Passkey Error:', err);
-    throw new Error('Error registrando Passkey: ' + errorMessage, { cause: err });
+    if (err instanceof Error) {
+      const errorMessage = err.message;
+      console.error('Passkey Error:', err);
+      throw new Error('Error registrando Passkey: ' + errorMessage, { cause: err });
+    }
+    throw new Error('Error registrando Passkey desconocido', { cause: err });
   }
 };
 
@@ -435,7 +449,7 @@ export const loginWithPasskey = async () => {
     })) as PublicKeyCredential;
 
     if (credential) {
-      const userRepo = DI.getUserRepository();
+      const userRepo = getUserRepo();
       const userData = await userRepo.getUserByPasskeyId(credential.id);
 
       if (!userData || !userData.email) {
@@ -456,8 +470,8 @@ export const loginWithPasskey = async () => {
       };
     }
   } catch (err: unknown) {
-    const errorName = (err as { name?: string }).name;
-    const errorMessage = (err as { message?: string }).message;
+    const errorName = err instanceof Error ? err.name : 'UnknownError';
+    const errorMessage = err instanceof Error ? err.message : String(err);
 
     if (errorName === 'NotAllowedError') {
       throw new Error('Operación biométrica cancelada por el usuario.', { cause: err });
