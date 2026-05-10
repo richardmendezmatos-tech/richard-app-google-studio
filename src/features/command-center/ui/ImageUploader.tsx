@@ -7,7 +7,9 @@ import {
   generateBlurPlaceholder,
 } from '@/shared/api/media/imageOptimizationService';
 // We use the standard new URL() syntax for workers for Next.js/Turbopack compatibility.
-const WORKER_URL = new URL('@/shared/lib/workers/imageOptimizer.worker.ts', import.meta.url);
+// We use a relative path for the worker to ensure better resolution in all environments.
+const WORKER_URL = new URL('../../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url);
+import { optimizeImageComplete } from '@/shared/api/media/imageOptimizationService';
 
 interface WorkerResponse {
   id: string;
@@ -60,11 +62,18 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    workerRef.current = new Worker(WORKER_URL);
+    try {
+      workerRef.current = new Worker(WORKER_URL);
+      log('Worker initialized successfully.');
+    } catch (err) {
+      console.error('[ImgUp] Failed to initialize worker, will use main-thread fallback:', err);
+      workerRef.current = null;
+    }
+    
     return () => {
       workerRef.current?.terminate();
     };
-  }, []);
+  }, [log]);
 
   const log = useCallback(
     (msg: string) => {
@@ -117,53 +126,56 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             prev.map((f, idx) => (idx === i ? { ...f, status: 'optimizing', progress: 10 } : f)),
           );
 
-          // Process image with Worker
-          const workerPromise = new Promise<{
-            jpeg: Blob;
-            width: number;
-            height: number;
-          }>((resolve, reject) => {
-            const id = Math.random().toString(36).substring(7);
+          // Process image: Try Worker first, fallback to Main Thread
+          let optimizedResult;
+          const id = Math.random().toString(36).substring(7);
 
-            const handleMessage = (e: MessageEvent<WorkerResponse>) => {
-              if (e.data.id === id) {
-                workerRef.current?.removeEventListener('message', handleMessage);
-                if (e.data.success && e.data.data) {
-                  resolve({
-                    jpeg: e.data.data.blob,
-                    width: e.data.data.width,
-                    height: e.data.data.height,
-                  });
-                } else {
-                  reject(new Error(e.data.error || 'Worker error'));
+          if (workerRef.current) {
+            log(`Optimizing file ${i} via Worker...`);
+            optimizedResult = await new Promise<{
+              jpeg: Blob;
+              width: number;
+              height: number;
+            }>((resolve, reject) => {
+              const handleMessage = (e: MessageEvent<WorkerResponse>) => {
+                if (e.data.id === id) {
+                  workerRef.current?.removeEventListener('message', handleMessage);
+                  if (e.data.success && e.data.data) {
+                    resolve({
+                      jpeg: e.data.data.blob,
+                      width: e.data.data.width,
+                      height: e.data.data.height,
+                    });
+                  } else {
+                    reject(new Error(e.data.error || 'Worker error'));
+                  }
                 }
-              }
-            };
+              };
 
-            workerRef.current?.addEventListener('message', handleMessage);
-            workerRef.current?.postMessage({
-              file: uploadFile.file,
-              id,
-              options: {
-                quality: 0.85,
-                maxWidth: 1600,
-              },
+              workerRef.current?.addEventListener('message', handleMessage);
+              workerRef.current?.postMessage({
+                file: uploadFile.file,
+                id,
+                options: { quality: 0.85, maxWidth: 1600 },
+              });
             });
-          });
+          } else {
+            log(`Optimizing file ${i} via Main Thread (Fallback)...`);
+            const complete = await optimizeImageComplete(uploadFile.file, {
+              quality: 0.85,
+              maxWidth: 1600,
+              generateWebP: false
+            });
+            optimizedResult = {
+              jpeg: complete.jpeg,
+              width: complete.dimensions.width,
+              height: complete.dimensions.height
+            };
+          }
 
-          const [optimizedData, blurPlaceholder, thumbnail] = await Promise.all([
-            workerPromise,
+          const [blurPlaceholder, thumbnail] = await Promise.all([
             generateBlurPlaceholder(uploadFile.file),
-            // Keep thumbnail on main thread for now or move to worker too (simple resize)
             new Promise<Blob>((resolve) => {
-              // Simple creating of thumbnail can be done here or in worker.
-              // For simplicity and to not overcomplicate worker interface yet,
-              // we can re-use worker or just simple canvas here.
-              // Let's use the worker for thumbnail effectively by sending another message or
-              // just downscaling the result.
-              // Actually, sticking to main thread for tiny thumbnail is fine for now to save complexity
-              // but ideally everything should be in worker.
-              // Let's use simple canvas for thumbnail on main thread for now as it's fast.
               const img = new Image();
               img.src = URL.createObjectURL(uploadFile.file);
               img.onload = () => {
@@ -178,13 +190,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           ]);
 
           const optimized = {
-            jpeg: optimizedData.jpeg,
-            webp: undefined, // Worker currently only does JPEG for simplicity in V1
+            jpeg: optimizedResult.jpeg,
+            webp: undefined,
             thumbnail: thumbnail,
             blurPlaceholder,
             savings: {
               percentage:
-                ((uploadFile.file.size - optimizedData.jpeg.size) / uploadFile.file.size) * 100,
+                ((uploadFile.file.size - optimizedResult.jpeg.size) / uploadFile.file.size) * 100,
             },
           };
 

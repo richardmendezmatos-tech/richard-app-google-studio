@@ -30,6 +30,7 @@ const IntakeView: React.FC = () => {
     color: '',
     millaje: 0,
     costoAdquisicion: 0,
+    images: [],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,6 +96,7 @@ const IntakeView: React.FC = () => {
         anio: carData.year || prev.anio,
         millaje: carData.mileage || prev.millaje,
         color: carData.color || prev.color,
+        images: results.map(r => r.url),
       }));
       
       addNotification('success', '¡Datos extraídos con éxito! Revisa los campos antes de continuar.');
@@ -159,12 +161,28 @@ const IntakeView: React.FC = () => {
                 </div>
                 <div className={isAnalysing ? 'pointer-events-none' : ''}>
                   <ImageUploader 
-                    maxFiles={1} 
+                    maxFiles={5} 
                     onUploadComplete={handleMagicFill} 
                     storagePath="temp-intake"
                     onLog={(msg) => console.log(`[MagicIntake] ${msg}`)}
                   />
                 </div>
+
+                {/* Photo Preview Strip */}
+                {formData.images && formData.images.length > 0 && (
+                  <div className="flex gap-4 mt-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                    {formData.images.map((img, idx) => (
+                      <div key={idx} className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary/20 relative group">
+                        <img src={img} alt="Vehicle intake" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    ))}
+                    <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-slate-500 text-[8px] font-black uppercase tracking-widest">
+                       <CheckCircle2 size={16} className="text-primary mb-1" />
+                       Sentinel Ingested
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 mt-8">

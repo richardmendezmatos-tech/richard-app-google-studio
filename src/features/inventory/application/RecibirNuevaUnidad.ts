@@ -1,5 +1,6 @@
 import { Unidad, EstadoUnidad } from '../domain/Unidad';
 import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
+import { createClient } from '@/shared/api/supabase/client';
 
 export interface RecibirUnidadParams {
   vin: string;
@@ -9,6 +10,7 @@ export interface RecibirUnidadParams {
   color: string;
   millaje: number;
   costoAdquisicion: number;
+  images?: string[];
 }
 
 /**
@@ -35,6 +37,7 @@ export class RecibirNuevaUnidad {
       costoRecondicionamiento: recondEstimado,
       estado: EstadoUnidad.EN_RECONDICIONAMIENTO,
       fechaIngreso: new Date(),
+      images: params.images || [],
     };
 
     // 2. Reportar a Sentinel (Proactividad)
@@ -51,6 +54,29 @@ export class RecibirNuevaUnidad {
       },
       operationalScore: raSentinel.calculateBusinessHealthScore('inventory_in_take', nuevaUnidad),
     });
+
+    // 3. Persist to Supabase
+    const supabase = createClient();
+    if (supabase) {
+      const { error } = await supabase.from('inventory').insert({
+        vin: nuevaUnidad.vin,
+        make: nuevaUnidad.marca,
+        model: nuevaUnidad.modelo,
+        year: nuevaUnidad.anio,
+        price: nuevaUnidad.precioVenta,
+        mileage: nuevaUnidad.millaje,
+        images: nuevaUnidad.images,
+        status: 'AVAILABLE',
+        condition: 'USED',
+        exterior_color: nuevaUnidad.color,
+        last_scraped_at: new Date().toISOString()
+      });
+
+      if (error) {
+        console.error('[Inventory] Database persistence failed:', error);
+        throw new Error(`Error al guardar en base de datos: ${error.message}`);
+      }
+    }
 
     console.log(
       `[Inventory] Unidad ${nuevaUnidad.vin} recibida. Recondicionamiento estimado: $${recondEstimado.toFixed(2)}`,

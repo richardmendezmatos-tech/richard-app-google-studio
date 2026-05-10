@@ -34,16 +34,16 @@ export const uploadVehicleImages = async (files: File[], vin: string): Promise<s
     const filePath = `${vin}/${fileName}`;
 
     const { data, error } = await supabase.storage
-      .from('vehicles')
+      .from('inventory')
       .upload(filePath, file);
 
     if (error) {
-      console.error(`[StorageService] Vehicle image upload failed for VIN ${vin}:`, error);
+      console.error(`[StorageService] Vehicle image upload failed for VIN ${vin} in bucket 'inventory':`, error);
       throw error;
     }
 
     const { data: { publicUrl } } = supabase.storage
-      .from('vehicles')
+      .from('inventory')
       .getPublicUrl(filePath);
 
     return publicUrl;

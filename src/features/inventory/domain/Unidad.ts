@@ -18,6 +18,7 @@ export interface Unidad {
   costoRecondicionamiento: number;
   estado: EstadoUnidad;
   fechaIngreso: Date;
+  images?: string[];
 }
 
 export interface HistorialMantenimiento {
