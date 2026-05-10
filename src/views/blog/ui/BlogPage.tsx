@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { PostConversionWidget } from '@/features/blog/ui/components/PostConversionWidget';
 import { SpecCard } from '@/features/blog/ui/components/SpecCard';
+import { BlogRelatedInventory } from '@/features/blog/ui/components/BlogRelatedInventory';
+import { BlogArticleSidebar } from '@/features/blog/ui/components/BlogArticleSidebar';
 import { DI } from '@/app/(dashboard)/di/registry';
 
 import { BlogPost } from '@/shared/types/types';
@@ -394,17 +396,25 @@ const BlogPage: React.FC = () => {
                       <SpecCard specs={selectedPost.specs as any} />
                     )}
 
-                    <div className="prose prose-2xl prose-invert prose-p:text-slate-300 prose-p:leading-[1.8] prose-p:font-medium prose-headings:text-white prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-primary prose-a:text-primary max-w-none">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {selectedPost.content}
-                      </ReactMarkdown>
-                    </div>
+                    <div className="flex flex-col lg:flex-row gap-16">
+                      <div className="flex-1 space-y-12">
+                        <div className="prose prose-2xl prose-invert prose-p:text-slate-300 prose-p:leading-[1.8] prose-p:font-medium prose-headings:text-white prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-primary prose-a:text-primary max-w-none">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {selectedPost.content}
+                          </ReactMarkdown>
+                        </div>
 
-                    <PostConversionWidget 
-                      tag={selectedPost.tags?.[0]} 
-                      postTitle={selectedPost.title}
-                      specs={selectedPost.specs}
-                    />
+                        <BlogRelatedInventory tag={selectedPost.tags?.[0] || 'Car'} />
+
+                        <PostConversionWidget 
+                          tag={selectedPost.tags?.[0]} 
+                          postTitle={selectedPost.title}
+                          specs={selectedPost.specs}
+                        />
+                      </div>
+
+                      <BlogArticleSidebar post={selectedPost} />
+                    </div>
                   </div>
                 </div>
               </div>
