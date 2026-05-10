@@ -23,6 +23,7 @@ import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearc
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
 import { HoloDashboard } from '@/features/houston/ui/components/HoloDashboard';
 import { NewsroomControlWidget } from '@/features/houston/ui/components/NewsroomControlWidget';
+import { SentinelLocalSEO } from '@/features/command-center/ui/SentinelLocalSEO';
 import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 
@@ -279,6 +280,10 @@ export default function CommandCenterPage() {
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <NewsroomControlWidget />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <SentinelLocalSEO inventory={data?.purchaseOrders as any || []} />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
