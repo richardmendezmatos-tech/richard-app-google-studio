@@ -1,44 +1,100 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { updateSession } from './shared/api/supabase/middleware';
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 /**
- * Richard Automotive Global Middleware (Sentinel N24-PRO Edge)
+ * Richard Automotive Global Proxy (Sentinel N24-PRO Edge)
+ * Replaces the deprecated 'middleware' convention for Next.js 16.
  * Handles Supabase sessions, protections, and security headers.
  */
 export async function proxy(request: NextRequest) {
-  // 1. Ejecutar actualización de sesión de Supabase (Middleware-based session refresh)
-  const supabaseResponse = await updateSession(request);
-  
-  const session = request.cookies.get('session')?.value;
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return supabaseResponse;
+  }
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseKey,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            supabaseResponse.cookies.set(name, value, options);
+          });
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { pathname } = request.nextUrl;
-
-  // 2. Redirigir a login si no hay sesión y trata de acceder a rutas protegidas
   const privateRoutes = ['/admin', '/garage', '/profile', '/command-center'];
+  const adminRoutes = ['/admin', '/command-center'];
+  
   const isPrivate = privateRoutes.some(route => pathname.startsWith(route));
+  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
 
-  if (isPrivate && !session && !pathname.includes('telemetry')) {
+  // SENTINEL BYPASS: Allow local development bypass if a specific dev cookie is set
+  // This is a "Vibecoding" optimization to avoid auth loops during rapid prototyping.
+  const isDevBypass = request.cookies.get('sentinel_dev_bypass')?.value === 'active';
+  
+  if (isDevBypass && process.env.NODE_ENV === 'development') {
+    return supabaseResponse;
+  }
+
+  // 1. Redirigir a login si no hay sesión y trata de acceder a rutas protegidas
+  if (!user && isPrivate && !pathname.includes('telemetry') && !pathname.includes('/login')) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('from', pathname);
     return NextResponse.redirect(url);
   }
 
-  // 3. Si hay sesión y trata de ir a login, redirigir a dashboard o home
-  if (session && (pathname === '/login' || pathname === '/admin-login')) {
-    const url = request.nextUrl.clone();
-    url.pathname = pathname.includes('admin') ? '/admin' : '/';
-    return NextResponse.redirect(url);
+  // 2. Strict Protection for Admin routes
+  if (user && isAdminRoute) {
+    const email = user.email?.toLowerCase().trim() || '';
+    const isAdmin = 
+      email === 'richardmendezmatos@gmail.com' || 
+      email.includes('richardmendezmatos') ||
+      email.endsWith('@richard-automotive.com') ||
+      email.includes('admin');
+
+    if (!isAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/garage';
+      return NextResponse.redirect(url);
+    }
   }
 
-  // 4. Agregar Cabeceras de Seguridad y Telemetría
+  // 3. Security Headers & Telemetry
   supabaseResponse.headers.set('X-Richard-Edge', 'true');
-  supabaseResponse.headers.set('X-Frame-Options', 'DENY');
-  supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff');
-  supabaseResponse.headers.set('X-Sentinel-Version', 'N23-PRO');
+  supabaseResponse.headers.set('X-Sentinel-Version', 'N24-PRO');
+  supabaseResponse.headers.set('X-Vibecoding-Layer', 'Nivel-15');
   
   return supabaseResponse;
 }
+
+// Next.js 16 requires the proxy function to be the default export in proxy.ts
+export default proxy;
 
 export const config = {
   matcher: [

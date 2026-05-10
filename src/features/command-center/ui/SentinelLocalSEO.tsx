@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Star, Share2, TrendingUp, Zap, CheckCircle, Loader2 } from 'lucide-react';
-import { localSEOAgent } from '../application/LocalSEOAgent';
+import { localSEOAgent } from '@/features/marketing/application/LocalSEOAgent';
 import { Car } from '@/entities/inventory';
 
 export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) => {

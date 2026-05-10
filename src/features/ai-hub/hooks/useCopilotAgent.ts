@@ -1,7 +1,7 @@
 "use client";
 
-import { useChat } from 'ai/react';
-import type { Message as AIMessage } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
+import type { Message as AIMessage } from '@ai-sdk/react';
 
 export interface Message extends AIMessage {
   data?: any;
