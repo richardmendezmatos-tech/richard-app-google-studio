@@ -1,7 +1,8 @@
 import { WorkflowAgent } from '@ai-sdk/workflow';
 import { google } from '@ai-sdk/google';
 import { createClient } from '@/shared/api/supabase/client';
-import { triggerWhatsAppMessage } from '@/shared/api/communications/whatsappService';
+import { triggerSentinelNurture } from '@/shared/api/communications/whatsappService';
+
 
 export const runtime = 'edge';
 
@@ -32,8 +33,9 @@ export async function POST(req: Request) {
 
   // Step 2: Dispatch via WhatsApp
   await "use step" (async () => {
-    await triggerWhatsAppMessage(phone, firstContact, { leadId, type: 'initial_nurture' });
+    await triggerSentinelNurture({ id: leadId, phone, name } as any, firstContact);
   });
+
 
   // Step 3: Strategic Wait (24 hours)
   // We use the durable wait which allows the function to suspend and resume efficiently.
@@ -116,9 +118,10 @@ export async function POST(req: Request) {
 
     if (isApproved) {
       await "use step" (async () => {
-        await triggerWhatsAppMessage(phone, nudge, { leadId, type: 'incentive_nudge' });
+        await triggerSentinelNurture({ id: leadId, phone, name } as any, nudge);
       });
     }
+
   }
 
   return Response.json({ status: 'workflow_initiated', leadId });
