@@ -1,6 +1,6 @@
 import { sendTemplateMessage, sendTextMessage } from '@/shared/api/messaging/whatsappClient';
 import { supabase } from '@/shared/api/supabase/supabaseClient';
-import { openaiService } from '@/shared/api/ai/openaiService';
+import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 
 export interface LeadContext {
   id: string;
@@ -89,7 +89,7 @@ export class WhatsAppAgent {
 
     try {
       // 1. Generate embedding for the interest
-      const queryEmbedding = await openaiService.generateEmbedding(lead.vehicleInterest);
+      const queryEmbedding = await sentinelAI.generateEmbedding(lead.vehicleInterest);
 
       // 2. Query Supabase RPC
       const { data, error } = await supabase.rpc('match_inventory', {

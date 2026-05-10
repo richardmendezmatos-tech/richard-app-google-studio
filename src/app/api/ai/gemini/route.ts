@@ -1,5 +1,6 @@
+import { google } from '@ai-sdk/google';
+import { generateText } from 'ai';
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
@@ -10,20 +11,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'GEMINI_API_KEY not configured' }, { status: 500 });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const genModel = genAI.getGenerativeModel({ model });
-
-    // Format contents for Google Generative AI SDK
-    // The SDK expects parts to be strings or inlineData
-    const formattedParts = contents.map((part: any) => {
-      if (typeof part === 'string') return part;
-      if (part.inlineData) return part;
-      return part;
+    // Convert contents array to Vercel AI SDK parts format
+    const parts = contents.map((part: any) => {
+      if (typeof part === 'string') return { type: 'text', text: part };
+      if (part.text) return { type: 'text', text: part.text };
+      if (part.inlineData) {
+        return { 
+          type: 'image', 
+          image: part.inlineData.data,
+          mimeType: part.inlineData.mimeType 
+        };
+      }
+      return { type: 'text', text: '' };
     });
 
-    const result = await genModel.generateContent(formattedParts);
-    const response = await result.response;
-    const text = response.text();
+    const { text } = await generateText({
+      model: google(model),
+      messages: [{ role: 'user', content: parts }],
+    });
 
     return NextResponse.json({ data: text });
   } catch (error: any) {

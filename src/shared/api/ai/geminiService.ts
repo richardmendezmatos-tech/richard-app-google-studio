@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
 import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
+import { sentinelAI } from './sentinelAI';
 
 // Helper: Call Vercel Serverless Function (Hides API Key)
 // Helper: Direct Client-Side Call (Restored and Hardened)
@@ -318,25 +319,10 @@ export const generateVisionDescription = async (
   imageSource?: string, // base64
   systemInstruction: string = 'Eres un vendedor experto de autos. Escribe en español.'
 ): Promise<string> => {
-  let finalPrompt: GeminiPrompt = prompt;
-
-  if (imageSource) {
-    const mimeMatch = imageSource.match(/^data:(image\/\w+);base64,/);
-    const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-    const cleanBase64 = imageSource.replace(/^data:image\/\w+;base64,/, '');
-
-    finalPrompt = [
-      { text: prompt },
-      {
-        inlineData: {
-          data: cleanBase64,
-          mimeType: mimeType,
-        },
-      },
-    ];
+  if (!imageSource) {
+    return await sentinelAI.quickGen(prompt, systemInstruction);
   }
-
-  return await callGeminiProxy(finalPrompt, systemInstruction, 'gemini-1.5-flash');
+  return await sentinelAI.generateVisionDescription(prompt, imageSource, systemInstruction);
 };
 
 
@@ -531,18 +517,17 @@ export const compareCars = async (car1: Car, car2: Car): Promise<Record<string, 
 };
 
 export const generateText = async (prompt: string, instruction?: string): Promise<string> => {
-  return await callGeminiProxy(prompt, instruction, 'gemini-1.5-flash');
+  return await sentinelAI.quickGen(prompt, instruction);
 };
 
 export const generateStructuredJSON = async (
   prompt: string,
   instruction?: string,
-  modelName: string = 'gemini-2.0-flash',
+  modelName: string = 'gemini-1.5-flash',
 ): Promise<any> => {
-  const text = await callGeminiProxy(prompt, instruction, modelName, {
-    responseMimeType: 'application/json',
-  });
-  return JSON.parse(text);
+  // Use a generic schema for unstructured JSON requests
+  const schema = z.record(z.any());
+  return await sentinelAI.generateStructuredObject(schema, prompt, instruction, modelName);
 };
 
 export const generateCode = async (prompt: string, instruction?: string): Promise<string> => {

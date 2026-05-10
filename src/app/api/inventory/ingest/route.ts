@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { openaiService } from '@/shared/api/ai/openaiService';
+import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 
 
 
@@ -43,29 +43,16 @@ export async function POST(req: Request) {
     const semanticContent = buildSemanticContent(vehicle);
 
     // 2. Step 1: Generate Embedding
-    const embedding = await openaiService.generateEmbedding(semanticContent);
+    const embedding = await sentinelAI.generateEmbedding(semanticContent);
 
     // 3. Step 2: Generate Intelligence (Pitch & Buyer)
     let salesPitch = '';
     let idealBuyer = '';
 
     try {
-      const aiResponse = await openaiService.generateCompletion([
-        { 
-          role: 'system', 
-          content: 'Eres un experto en ventas de autos para Richard Automotive en Puerto Rico. Tu tono es profesional, persuasivo y utiliza términos locales como "guagua", "unidad" y "pronto".' 
-        },
-        { 
-          role: 'user', 
-          content: `Genera un "Sales Pitch" (máximo 280 caracteres) y un "Perfil de Comprador Ideal" para esta unidad: 
-          ${semanticContent}. 
-          Responde en formato JSON: { "sales_pitch": "...", "ideal_buyer": "..." }` 
-        }
-      ], true);
-      
-      const intel = JSON.parse(aiResponse);
-      salesPitch = intel.sales_pitch;
-      idealBuyer = intel.ideal_buyer;
+      const intel = await sentinelAI.generateInventoryIntelligence(semanticContent);
+      salesPitch = intel.salesPitch;
+      idealBuyer = intel.idealBuyer;
     } catch (aiErr) {
       console.error('[Ingest] Intelligence generation failed, falling back:', aiErr);
     }
