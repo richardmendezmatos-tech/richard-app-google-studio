@@ -65,7 +65,7 @@ export async function POST(req: Request) {
             const { data, error } = await supabase
               .from('inventory')
               .select('*')
-              .or(`name.ilike.%${query}%,type.ilike.%${query}%`)
+              .or(`make.ilike.%${query}%,model.ilike.%${query}%,condition.ilike.%${query}%`)
               .limit(5);
 
             if (error) {
@@ -80,10 +80,10 @@ export async function POST(req: Request) {
 
             return filtered.map((c: any) => ({
               id: c.id,
-              name: c.name,
+              name: `${c.year} ${c.make} ${c.model}`,
               price: c.price,
               year: c.year,
-              type: c.type,
+              type: c.condition || 'Usado',
               status: c.status || 'Disponible',
             }));
           },
