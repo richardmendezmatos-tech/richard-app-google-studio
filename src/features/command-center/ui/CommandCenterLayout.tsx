@@ -12,6 +12,7 @@ import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
 import { BrandErrorBoundary } from '@/shared/ui/common/BrandErrorBoundary';
 import { useCommandCenterData } from '../model/useCommandCenterData';
 import { TacticalSidebar } from './TacticalSidebar';
+import { SentinelInbox } from './SentinelInbox';
 
 // Lazy load modals & status bars that remain in layout
 const CommandCenterModal = React.lazy(() =>
@@ -221,6 +222,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
       <Suspense fallback={null}>
         <SentinelStatusBar />
       </Suspense>
+      <SentinelInbox />
     </div>
   );
 };
