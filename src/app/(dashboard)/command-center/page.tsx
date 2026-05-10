@@ -24,6 +24,7 @@ import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogW
 import { HoloDashboard } from '@/features/houston/ui/components/HoloDashboard';
 import { NewsroomControlWidget } from '@/features/houston/ui/components/NewsroomControlWidget';
 import { SentinelLocalSEO } from '@/features/command-center/ui/SentinelLocalSEO';
+import { SentinelFinancialOptimizer } from '@/features/command-center/ui/SentinelFinancialOptimizer';
 import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 
@@ -284,6 +285,10 @@ export default function CommandCenterPage() {
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <SentinelLocalSEO inventory={data?.purchaseOrders as any || []} />
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+              <SentinelFinancialOptimizer />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
