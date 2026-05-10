@@ -5,6 +5,7 @@ import { Car } from '@/entities/inventory';
 /**
  * GET /api/distribution/facebook-feed
  * Genera un feed XML dinámico para el Catálogo de Autos de Meta (Facebook Marketplace).
+ * Cumple con el estándar "Automotive Catalog" de Meta.
  */
 export async function GET() {
   const supabase = createClient();
@@ -18,16 +19,30 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const cars = inventory as Car[];
+  const fbPageId = process.env.FB_PAGE_ID || 'RICHARD_AUTOMOTIVE_FB_ID';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://richard-automotive.com';
 
   // Construcción del XML Feed (Automotive Standard)
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <listings>
   <title>Richard Automotive Inventory Feed</title>
-  <link>https://richard-automotive.com</link>
-  <description>Inventario actualizado de Richard Automotive</description>
+  <link>${siteUrl}</link>
+  <description>Inventario actualizado de Richard Automotive - Vega Alta, PR</description>
   `;
 
   cars.forEach(car => {
+    // Limpiar descripción para XML
+    const description = (car.description || `Hermoso ${car.make} ${car.model} ${car.year} disponible en Richard Automotive.`).replace(/[<>&'"]/g, c => {
+      switch (c) {
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '&': return '&amp;';
+        case '\'': return '&apos;';
+        case '"': return '&quot;';
+        default: return c;
+      }
+    });
+
     xml += `
   <listing>
     <vehicle_id>${car.id}</vehicle_id>
@@ -39,13 +54,17 @@ export async function GET() {
       <unit>MI</unit>
     </mileage>
     <price>${car.price} USD</price>
-    <exterior_color>${car.color}</exterior_color>
+    <exterior_color>${car.color || 'N/A'}</exterior_color>
     <state_of_vehicle>${car.condition === 'new' ? 'new' : 'used'}</state_of_vehicle>
-    <url>https://richard-automotive.com/inventory/${car.id}</url>
+    <url>${siteUrl}/inventory/${car.id}</url>
     <image>
       <url>${car.image}</url>
     </image>
-    <fb_page_id>RICHARD_AUTOMOTIVE_FB_ID</fb_page_id>
+    <description>${description}</description>
+    <body_style>${car.type || 'Other'}</body_style>
+    <fuel_type>${car.fuel || car.fuelType || 'Gasoline'}</fuel_type>
+    <transmission>${car.transmission || 'Automatic'}</transmission>
+    <fb_page_id>${fbPageId}</fb_page_id>
   </listing>`;
   });
 

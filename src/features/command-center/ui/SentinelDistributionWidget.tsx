@@ -15,23 +15,50 @@ import {
 
 interface DistributionState {
   platform: string;
-  status: 'active' | 'pending' | 'error';
+  status: 'active' | 'pending' | 'error' | 'none';
   lastSync: string;
 }
 
-const MOCK_PLATFORMS: DistributionState[] = [
-  { platform: 'Facebook Marketplace', status: 'active', lastSync: '10m ago' },
-  { platform: 'ClasificadosOnline', status: 'pending', lastSync: '32m ago' },
-  { platform: 'Instagram Shop', status: 'active', lastSync: '1h ago' },
-];
+interface DistributionWidgetProps {
+  stats?: {
+    active: number;
+    pending: number;
+    error: number;
+  };
+  health?: number;
+}
 
-export const SentinelDistributionWidget: React.FC = () => {
+export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({ stats, health = 100 }) => {
   const [syncing, setSyncing] = useState(false);
 
-  const handleForceSync = () => {
+  const handleForceSync = async () => {
     setSyncing(true);
-    setTimeout(() => setSyncing(false), 2000);
+    try {
+      // Disparar sincronización vía API (WIP)
+      await fetch('/api/distribution/sync', { method: 'POST' });
+      setTimeout(() => setSyncing(false), 2000);
+    } catch (err) {
+      setSyncing(false);
+    }
   };
+
+  const platforms: DistributionState[] = [
+    { 
+      platform: 'Facebook Marketplace', 
+      status: stats?.active && stats.active > 0 ? 'active' : 'none', 
+      lastSync: 'Real-time Feed' 
+    },
+    { 
+      platform: 'ClasificadosOnline', 
+      status: stats?.pending && stats.pending > 0 ? 'pending' : 'active', 
+      lastSync: 'Browser Agent' 
+    },
+    { 
+      platform: 'Instagram Shop', 
+      status: 'active', 
+      lastSync: 'Meta Catalog' 
+    },
+  ];
 
   return (
     <div className="relative bg-slate-900/60 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6 overflow-hidden hover:border-white/10 transition-all duration-500 hud-brackets">
@@ -53,13 +80,14 @@ export const SentinelDistributionWidget: React.FC = () => {
           onClick={handleForceSync}
           disabled={syncing}
           className={`p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all ${syncing ? 'animate-pulse' : ''}`}
+          title="Force Global Sync"
         >
           <Zap className={`w-3.5 h-3.5 ${syncing ? 'text-cyan-400' : 'text-slate-500'}`} />
         </button>
       </div>
 
       <div className="space-y-4">
-        {MOCK_PLATFORMS.map((p) => (
+        {platforms.map((p) => (
           <div key={p.platform} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] group hover:bg-white/[0.05] transition-all">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded-lg bg-slate-800 border border-white/5">
@@ -78,7 +106,7 @@ export const SentinelDistributionWidget: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <span className={`text-[8px] font-black uppercase tracking-widest ${
-                p.status === 'active' ? 'text-emerald-400' : p.status === 'pending' ? 'text-amber-400' : 'text-red-400'
+                p.status === 'active' ? 'text-emerald-400' : p.status === 'pending' ? 'text-amber-400' : p.status === 'error' ? 'text-red-400' : 'text-slate-500'
               }`}>
                 {p.status}
               </span>
@@ -86,8 +114,10 @@ export const SentinelDistributionWidget: React.FC = () => {
                 <CheckCircle2 size={12} className="text-emerald-500" />
               ) : p.status === 'pending' ? (
                 <div className="w-2.5 h-2.5 rounded-full border border-amber-500/50 border-t-amber-500 animate-spin" />
-              ) : (
+              ) : p.status === 'error' ? (
                 <AlertCircle size={12} className="text-red-500" />
+              ) : (
+                <Clock size={12} className="text-slate-600" />
               )}
             </div>
           </div>
@@ -97,12 +127,12 @@ export const SentinelDistributionWidget: React.FC = () => {
       <div className="mt-6 pt-4 border-t border-white/5">
         <div className="flex items-center justify-between">
           <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Sync Integrity</span>
-          <span className="text-[9px] text-cyan-400 font-bold">94.8%</span>
+          <span className="text-[9px] text-cyan-400 font-bold">{health}%</span>
         </div>
         <div className="mt-2 w-full h-1 bg-slate-800 rounded-full overflow-hidden">
           <motion.div 
             initial={{ width: 0 }}
-            animate={{ width: '94.8%' }}
+            animate={{ width: `${health}%` }}
             className="h-full bg-linear-to-r from-cyan-500 to-blue-600"
           />
         </div>

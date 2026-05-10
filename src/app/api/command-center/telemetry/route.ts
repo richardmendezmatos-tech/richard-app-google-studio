@@ -45,13 +45,15 @@ export async function GET(req: Request) {
       messageStats,
       embeddingCount,
       rawLeads,
-      purchaseOrders
+      purchaseOrders,
+      distributionStats
     ] = await Promise.all([
       supabase.from('search_gaps').select('*').order('created_at', { ascending: false }).limit(10),
       supabase.from('message_queue').select('status').gte('created_at', last7d),
       supabase.from('vehicle_embeddings').select('car_id', { count: 'exact', head: true }),
       leadRepo.getLeads(DEALER_ID, 20),
-      supabase.from('purchase_orders').select('*').in('status', ['draft', 'confirmed']).order('created_at', { ascending: false }).limit(10)
+      supabase.from('purchase_orders').select('*').in('status', ['draft', 'confirmed']).order('created_at', { ascending: false }).limit(10),
+      supabase.from('distribution_logs').select('status')
     ]);
 
     // 2. Map and Score Leads
@@ -87,7 +89,16 @@ export async function GET(req: Request) {
       }
     }
 
-    // 4. Hot Leads Filter (Top 5)
+    // 4. Distribution Statistics
+    const distribution = { active: 0, pending: 0, error: 0 };
+    if (distributionStats.data) {
+      for (const log of distributionStats.data) {
+        const s = log.status as keyof typeof distribution;
+        if (distribution[s] !== undefined) distribution[s]++;
+      }
+    }
+
+    // 5. Hot Leads Filter (Top 5)
     const hotLeads = scoredLeads
       .filter(l => l.score >= 70)
       .sort((a, b) => b.score - a.score)
@@ -99,6 +110,7 @@ export async function GET(req: Request) {
         leads_last_24h: leads.filter(l => new Date(l.createdAt as any).getTime() > new Date(last24h).getTime()).length,
         avg_score: scoredLeads.length ? Math.round(scoredLeads.reduce((a, b) => a + b.score, 0) / scoredLeads.length) : 0,
         inventory_coverage: embeddingCount.count || 0,
+        distribution_health: distribution.active > 0 ? Math.round((distribution.active / (distribution.active + distribution.error || 1)) * 100) : 100
       },
       hotLeads,
       neuralSearch: {
@@ -106,6 +118,7 @@ export async function GET(req: Request) {
         gap_count: searchGaps.data?.length || 0,
       },
       whatsapp,
+      distribution,
       purchaseOrders: purchaseOrders.data || [],
     });
   } catch (error: any) {

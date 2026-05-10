@@ -47,10 +47,12 @@ interface TelemetryData {
     leads_last_24h: number;
     avg_score: number;
     inventory_coverage: number;
+    distribution_health?: number;
   };
   hotLeads: HotLead[];
   neuralSearch: { recent_gaps: any[]; gap_count: number };
   whatsapp: { sent: number; scheduled: number; failed: number };
+  distribution?: { active: number; pending: number; error: number };
   purchaseOrders: PurchaseOrder[];
 }
 
@@ -283,7 +285,10 @@ export default function CommandCenterPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelDistributionWidget />
+              <SentinelDistributionWidget 
+                stats={data?.distribution} 
+                health={data?.summary.distribution_health}
+              />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>

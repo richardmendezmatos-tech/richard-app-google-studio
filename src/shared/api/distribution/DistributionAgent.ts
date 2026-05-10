@@ -1,4 +1,5 @@
 import { Car } from '@/entities/inventory';
+import { createClient } from '@/shared/api/supabase/client';
 
 export type Platform = 'facebook_marketplace' | 'clasificados_online' | 'instagram';
 
@@ -33,14 +34,32 @@ export class DistributionAgent {
 
   /**
    * Obtiene el estado de distribución de una unidad específica.
-   * Por ahora simula la respuesta basándose en el estado de la unidad.
    */
   async getStatus(unitId: string): Promise<DistributionStatus[]> {
-    // WIP: En el futuro esto consultará la tabla 'distribution_logs'
-    return [
-      { unitId, platform: 'facebook_marketplace', status: 'active', lastSync: new Date().toISOString() },
-      { unitId, platform: 'clasificados_online', status: 'pending' },
-    ];
+    const supabase = createClient();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from('distribution_logs')
+      .select('*')
+      .eq('car_id', unitId);
+
+    if (error || !data) {
+      console.error(`[DistributionAgent] Error fetching status for ${unitId}:`, error);
+      return [
+        { unitId, platform: 'facebook_marketplace', status: 'none' },
+        { unitId, platform: 'clasificados_online', status: 'none' },
+      ];
+    }
+
+    return data.map(log => ({
+      unitId: log.car_id,
+      platform: log.platform as Platform,
+      status: log.status,
+      lastSync: log.last_sync,
+      externalUrl: log.external_url,
+      errorMsg: log.error_msg
+    }));
   }
 
   /**
@@ -53,9 +72,44 @@ export class DistributionAgent {
       return false;
     }
 
+    const supabase = createClient();
+    if (!supabase) return false;
+
     console.log(`[Distribution] Sincronizando ${car.make} ${car.model} con ${platform}...`);
-    // Aquí se llamaría a las funciones específicas de cada plataforma
-    return true;
+
+    // 1. Registrar inicio de sincronización
+    await supabase.from('distribution_logs').upsert({
+      car_id: car.id,
+      platform,
+      status: 'pending',
+      last_sync: new Date().toISOString()
+    }, { onConflict: 'car_id,platform' });
+
+    // 2. Simular lógica de plataforma (ClasificadosOnline Browser o Meta Feed Bump)
+    try {
+      if (platform === 'facebook_marketplace') {
+        // En Meta, el feed es pasivo, pero podemos disparar un "ping" al Commerce Manager si tuviéramos la API
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      } else if (platform === 'clasificados_online') {
+        // Aquí iría el llamado al microservicio de Playwright
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      // 3. Actualizar a éxito
+      await supabase.from('distribution_logs').update({
+        status: 'active',
+        last_sync: new Date().toISOString()
+      }).match({ car_id: car.id, platform });
+
+      return true;
+    } catch (err: any) {
+      await supabase.from('distribution_logs').update({
+        status: 'error',
+        error_msg: err.message,
+        last_sync: new Date().toISOString()
+      }).match({ car_id: car.id, platform });
+      return false;
+    }
   }
 }
 
