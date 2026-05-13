@@ -41,16 +41,24 @@ export class LocalSEOAgent {
   }
 
   /**
-   * Proposes a reply to a customer review.
+   * Proposes a reply to a customer review with sentiment awareness.
    */
   async generateReviewReply(reviewText: string, rating: number, customerName: string) {
+    const isPositive = rating >= 4;
+    
     const prompt = `
-      Genera una respuesta profesional y agradecida para una reseña de Google de 5 estrellas.
-      Cliente: ${customerName}
-      Reseña: "${reviewText}"
-      Calificación: ${rating}/5
+      Eres el Gerente de Reputación de Richard Automotive en Puerto Rico.
+      Debes responder a una reseña de Google.
       
-      Enfoque: Resalta el compromiso de Richard Automotive con la transparencia y el servicio Sentinel.
+      Cliente: ${customerName}
+      Calificación: ${rating}/5
+      Reseña: "${reviewText}"
+      
+      Instrucciones:
+      1. Usa un tono Boricua profesional y empático.
+      2. Si es POSITIVA (${rating} estrellas): Agradece efusivamente, menciona la familia de Richard Automotive y refuerza la confianza.
+      3. Si es NEGATIVA o NEUTRAL (< 4 estrellas): Mantén la calma, ofrece disculpas por la percepción, invita a una conversación privada y asegura que Richard Mendez personalmente revisa la calidad. No seas defensivo.
+      4. Mantén la respuesta concisa y humana.
     `;
 
     const { text } = await generateText({

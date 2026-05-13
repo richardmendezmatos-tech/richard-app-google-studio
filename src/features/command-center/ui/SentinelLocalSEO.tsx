@@ -6,9 +6,10 @@ import { Car } from '@/entities/inventory';
 export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isIndexing, setIsIndexing] = useState(false);
-  const [proposal, setProposal] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'posts' | 'reviews' | 'indexing'>('posts');
   const [lastIndexed, setLastIndexed] = useState<string | null>(null);
+  const [isReplying, setIsReplying] = useState<number | null>(null);
+  const [reviewReplies, setReviewReplies] = useState<Record<number, string>>({});
 
   const generatePost = async () => {
     if (inventory.length === 0) return;
@@ -30,6 +31,18 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
       console.error('Indexing failed:', err);
     } finally {
       setIsIndexing(false);
+    }
+  };
+
+  const proposeReply = async (index: number, review: any) => {
+    setIsReplying(index);
+    try {
+      const reply = await localSEOAgent.generateReviewReply(review.text, review.stars, review.name);
+      setReviewReplies(prev => ({ ...prev, [index]: reply }));
+    } catch (err) {
+      console.error('Reply generation failed:', err);
+    } finally {
+      setIsReplying(null);
     }
   };
 
@@ -179,17 +192,56 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
           <div className="space-y-3">
              {[
                { name: 'Carlos Rivera', text: 'Excelente servicio, Richard me ayudó en todo el proceso...', stars: 5 },
-               { name: 'Marta Ortiz', text: 'La Tacoma que compré está impecable. Recomendado.', stars: 5 }
+               { name: 'Marta Ortiz', text: 'La Tacoma que compré está impecable. Recomendado.', stars: 5 },
+               { name: 'Jose Davila', text: 'Esperaba un poco más de rapidez en la entrega, pero el auto está bien.', stars: 3 }
              ].map((review, i) => (
-               <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+               <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3 transition-all hover:bg-white/10">
                   <div className="flex justify-between items-center">
-                     <span className="text-[10px] font-black text-white uppercase tracking-widest">{review.name}</span>
+                     <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-slate-800 rounded-full flex items-center justify-center text-[10px] font-black text-slate-400">
+                           {review.name[0]}
+                        </div>
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest">{review.name}</span>
+                     </div>
                      <div className="flex text-amber-500 gap-0.5">
-                        {[...Array(review.stars)].map((_, s) => <Star key={s} size={10} fill="currentColor" />)}
+                        {[...Array(5)].map((_, s) => (
+                          <Star key={s} size={8} fill={s < review.stars ? "currentColor" : "none"} stroke="currentColor" />
+                        ))}
                      </div>
                   </div>
-                  <p className="text-[9px] text-slate-400 font-medium line-clamp-1 italic">"{review.text}"</p>
-                  <button className="text-primary text-[8px] font-black uppercase tracking-widest hover:underline">Proponer Respuesta IA</button>
+                  <p className="text-[9px] text-slate-400 font-medium italic">"{review.text}"</p>
+                  
+                  {reviewReplies[i] ? (
+                    <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 space-y-2 animate-in fade-in zoom-in-95 duration-300">
+                       <p className="text-[9px] text-primary-200 leading-relaxed font-medium">
+                          {reviewReplies[i]}
+                       </p>
+                       <div className="flex gap-2">
+                          <button 
+                            onClick={() => setReviewReplies(prev => {
+                               const next = { ...prev };
+                               delete next[i];
+                               return next;
+                            })}
+                            className="flex-1 py-1.5 bg-slate-800 text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-slate-700 transition-colors"
+                          >
+                             Editar
+                          </button>
+                          <button className="flex-1 py-1.5 bg-primary text-black text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-white transition-all">
+                             Post Reply
+                          </button>
+                       </div>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => proposeReply(i, review)}
+                      disabled={isReplying === i}
+                      className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-primary text-[8px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all flex items-center justify-center gap-2"
+                    >
+                      {isReplying === i ? <Loader2 size={10} className="animate-spin" /> : <Zap size={10} />}
+                      Proponer Respuesta IA
+                    </button>
+                  )}
                </div>
              ))}
           </div>
