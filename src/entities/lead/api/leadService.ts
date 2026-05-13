@@ -27,9 +27,19 @@ export const leadService = {
 
   async saveLead(data: any) {
     try {
+      // Sentinel N20: Anti-Duplicate Protection
+      const sessionKey = `lead_lock_${data.phone}`;
+      if (typeof window !== 'undefined' && sessionStorage.getItem(sessionKey)) {
+        console.warn('[leadService] Duplicate submission blocked for:', data.phone);
+        return { success: false, error: 'duplicate_submission' };
+      }
+      
       const repo = await DI.getLeadRepository();
       const savedLead = await repo.saveLead(data);
       
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(sessionKey, 'locked');
+      }
       // Async trigger for AI Agent Follow-up (Jules WhatsApp Webhook)
       if (data.phone) {
         // Option 1: Trigger external webhook
