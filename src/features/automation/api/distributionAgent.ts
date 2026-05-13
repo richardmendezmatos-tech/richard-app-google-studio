@@ -3,6 +3,7 @@ import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { distributionAgent as legacyAgent, Platform } from '@/shared/api/distribution/DistributionAgent';
 import { DistributionMapper } from '../lib/DistributionMapper';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 /**
  * Sentinel Autonomous Distribution Agent v3.0
@@ -27,9 +28,22 @@ export class AutonomousDistributionAgent {
       .eq('status', 'available');
 
     if (error || !cars) {
+      const audit = await getAuditRepository();
+      await audit.log({
+        type: 'error',
+        message: `Failed to fetch inventory for distribution: ${error?.message || 'Empty response'}`,
+        source: 'SentinelDistribution'
+      });
       console.error('[Sentinel Distribution] Failed to fetch inventory:', error);
       return { processed: 0, errors: 1 };
     }
+
+    const audit = await getAuditRepository();
+    await audit.log({
+      type: 'info',
+      message: `Starting distribution cycle for ${cars.length} units`,
+      source: 'SentinelDistribution'
+    });
 
     let processed = 0;
     let errors = 0;
@@ -43,6 +57,13 @@ export class AutonomousDistributionAgent {
         errors++;
       }
     }
+
+    await audit.log({
+      type: 'info',
+      message: `Cycle complete. Processed: ${processed}, Errors: ${errors}`,
+      source: 'SentinelDistribution',
+      metadata: { processed, errors }
+    });
 
     return { processed, errors };
   }
@@ -90,6 +111,13 @@ export class AutonomousDistributionAgent {
       console.log(`[Sentinel Distribution] Payload ready for ${platform}:`, mappedData);
 
       const success = await legacyAgent.triggerSync(car, platform);
+      const audit = await getAuditRepository();
+      await audit.log({
+        type: success ? 'info' : 'error',
+        message: `${success ? 'Synced' : 'Failed to sync'} unit ${car.id} to ${platform}`,
+        source: 'SentinelDistribution',
+        metadata: { carId: car.id, platform, success }
+      });
       if (!success) return false;
     }
 

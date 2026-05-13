@@ -11,7 +11,7 @@ export interface AuditEvent {
 }
 
 export class AuditRepository {
-  private tableName = 'logs';
+  private tableName = 'system_logs';
 
   private getClient() {
     return typeof window === 'undefined' ? createServerSupabaseClient() : supabase;
@@ -22,16 +22,15 @@ export class AuditRepository {
       const client = this.getClient();
       if (!client) return;
 
-      // Temporarily disabled to avoid 404 in console until table 'logs' is created
-      /*
+      // Sentinel N25: Operationalizing telemetry insertion
       await client.from(this.tableName).insert({
         level: event.type,
         message: event.message,
-        source: event.source,
+        category: event.source, // Mapping source to category for schema alignment
         metadata: event.metadata || {},
         timestamp: new Date().toISOString(),
       });
-      */
+      
       console.log(`[Audit] ${event.type.toUpperCase()}: ${event.message} (${event.source})`);
     } catch (error) {
       console.error('❌ [AuditRepository] Failed to log event:', error);
@@ -57,7 +56,7 @@ export class AuditRepository {
       id: log.id,
       type: log.level,
       message: log.message,
-      source: log.source,
+      source: log.category || log.source,
       timestamp: log.timestamp,
       metadata: log.metadata
     })) as AuditEvent[];
