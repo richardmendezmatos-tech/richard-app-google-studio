@@ -4,6 +4,7 @@ import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
 import { getCarById, getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 interface Props {
   params: Promise<{ id: string; slug: string }>;
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: car?.img ? [car.img] : [],
     },
     alternates: {
-      canonical: `https://richard-automotive.com/inventario/${slug}/${id}`,
+      canonical: `${SITE_CONFIG.url}/inventario/${slug}/${id}`,
     },
     other: {
       'product:price:amount': car?.price?.toString() || '',
@@ -191,6 +192,10 @@ export default async function VehicleDetailPage({ params }: Props) {
         {
           question: '¿Ofrecen financiamiento para este vehículo?',
           answer: 'Sí, trabajamos con múltiples instituciones financieras para ofrecer las mejores tasas del mercado. Estructuras desde 4.9% APR, incluso con historial crediticio limitado.',
+        },
+        {
+          question: '¿Entregan vehículos a toda la isla?',
+          answer: 'Richard Automotive ofrece entrega rápida y segura en todo Puerto Rico. Si estás en San Juan, Bayamón, Caguas o Ponce, podemos llevarte tu auto directamente a tu hogar o trabajo.',
         },
       ]
     : [];

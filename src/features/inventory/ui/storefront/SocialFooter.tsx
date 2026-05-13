@@ -44,20 +44,28 @@ const SocialFooter: React.FC = () => {
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">OPERATIONS</h3>
           <ul className="space-y-3 font-tech text-sm">
             <li><FooterLink label="Inventario Elite" href="/inventario" /></li>
-            <li><FooterLink label="Neural Appraisal" /></li>
-            <li><FooterLink label="Mission: Financials" /></li>
-            <li><FooterLink label="Richard AI Portal" /></li>
+            <li><FooterLink label="Neural Appraisal" href="/tasacion" /></li>
+            <li><FooterLink label="Mission: Financials" href="/financiamiento" /></li>
+            <li><FooterLink label="Richard AI Chat" href="/api/ai/chat" /></li>
           </ul>
         </div>
 
         <div className="space-y-6">
-          <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">COMMAND HUB</h3>
-          <ul className="space-y-3 font-tech text-sm">
-            <li><FooterLink label="Bayamón HQ" /></li>
-            <li><FooterLink label="Fleet Solutions" /></li>
-            <li><FooterLink label="VIP Concierge" /></li>
-            <li><FooterLink label="Tech Support" /></li>
-          </ul>
+          <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">NETWORK NODES</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <ul className="space-y-3 font-tech text-[11px]">
+              <li><FooterLink label="Vega Alta" href="/autos-usados/vega-alta" /></li>
+              <li><FooterLink label="Bayamón" href="/autos-usados/bayamon" /></li>
+              <li><FooterLink label="San Juan" href="/autos-usados/san-juan" /></li>
+              <li><FooterLink label="Dorado" href="/autos-usados/dorado" /></li>
+            </ul>
+            <ul className="space-y-3 font-tech text-[11px]">
+              <li><FooterLink label="SUVs Elite" href="/autos-usados/tipo/suv" /></li>
+              <li><FooterLink label="Pickups" href="/autos-usados/tipo/pickup" /></li>
+              <li><FooterLink label="Luxury" href="/autos-usados/tipo/luxury" /></li>
+              <li><FooterLink label="Sedanes" href="/autos-usados/tipo/sedan" /></li>
+            </ul>
+          </div>
         </div>
 
         {/* Intelligence Pulse */}
