@@ -22,6 +22,8 @@ export class AuditRepository {
       const client = this.getClient();
       if (!client) return;
 
+      // Temporarily disabled to avoid 404 in console until table 'logs' is created
+      /*
       await client.from(this.tableName).insert({
         level: event.type,
         message: event.message,
@@ -29,6 +31,8 @@ export class AuditRepository {
         metadata: event.metadata || {},
         timestamp: new Date().toISOString(),
       });
+      */
+      console.log(`[Audit] ${event.type.toUpperCase()}: ${event.message} (${event.source})`);
     } catch (error) {
       console.error('❌ [AuditRepository] Failed to log event:', error);
     }

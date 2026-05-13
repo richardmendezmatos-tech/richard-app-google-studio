@@ -53,12 +53,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `Vehículo ${slug.replace(/-/g, ' ')} | Richard Automotive`;
 
   const description = car
-    ? `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Vega Alta.`
+    ? car.description || `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Vega Alta.`
     : `Encuentra los mejores vehículos nuevos y usados en Richard Automotive, Puerto Rico. Financiamiento disponible.`;
 
   return {
     title,
-    description,
+    description: description.slice(0, 160), // Clamp for SEO best practices
+    keywords: [
+      `${car?.make} ${car?.model} usado puerto rico`,
+      `${car?.make} ${car?.year}`,
+      'Richard Automotive',
+      'dealer autos usados vega alta',
+      'autos reposeidos puerto rico'
+    ],
     openGraph: {
       title,
       description,
