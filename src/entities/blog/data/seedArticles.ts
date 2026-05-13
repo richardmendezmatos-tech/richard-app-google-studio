@@ -345,10 +345,10 @@ La Toyota Tacoma 2024 no solo mantiene el trono, sino que lo refuerza. Es más i
     metaDescription: 'Análisis profundo de la Toyota Tacoma 2024 para el mercado de Puerto Rico. Rendimiento, motor i-FORCE, valor de reventa y veredicto experto.',
     imageUrl: 'https://images.porsche.com/image/fetch/q_auto:eco,f_auto,c_fill,w_1200,h_630/https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1200&auto=format',
     specs: [
-      { label: 'Eficiencia', value: '18-24 MPG' },
-      { label: 'Caballos', value: '278 HP' },
-      { label: 'Capacidad', value: '6,500 LBS' },
-      { label: 'Sentinel Score', value: '9.5' }
+      { label: 'Eficiencia', value: '18-24 MPG', icon: 'fuel' },
+      { label: 'Caballos', value: '278 HP', icon: 'performance' },
+      { label: 'Capacidad', value: '6,500 LBS', icon: 'engine' },
+      { label: 'Sentinel Score', value: '9.5', icon: 'performance' }
     ]
   },
 ];

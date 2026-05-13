@@ -61,6 +61,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workerRef = useRef<Worker | null>(null);
 
+  const log = useCallback(
+    (msg: string) => {
+      if (onLog) onLog(`[ImgUp] ${msg}`);
+      console.log(`[ImgUp] ${msg}`);
+    },
+    [onLog],
+  );
+
   useEffect(() => {
     try {
       workerRef.current = new Worker(WORKER_URL);
@@ -74,14 +82,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       workerRef.current?.terminate();
     };
   }, [log]);
-
-  const log = useCallback(
-    (msg: string) => {
-      if (onLog) onLog(`[ImgUp] ${msg}`);
-      console.log(`[ImgUp] ${msg}`);
-    },
-    [onLog],
-  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

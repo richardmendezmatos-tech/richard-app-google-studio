@@ -44,18 +44,6 @@ const nextConfig = {
     ],
   },
   
-  turbopack: {
-    root: process.cwd(),
-    resolveAlias: {
-      '@': './src',
-      '@/shared': './src/shared',
-      '@/entities': './src/entities',
-      '@/features': './src/features',
-      '@/widgets': './src/widgets',
-      '@/pages': './src/views',
-      '@/processes': './src/processes',
-    },
-  },
 
   webpack: (config) => {
     config.resolve.alias = {

@@ -38,6 +38,7 @@ export const sentinelAI = {
       const { object } = await generateObject({
         model: google(model),
         schema,
+        output: 'object',
         system: system || 'Eres un asistente experto en Richard Automotive.',
         prompt,
       });
@@ -106,6 +107,7 @@ export const sentinelAI = {
       const { object } = await generateObject({
         model: google('gemini-1.5-flash'),
         schema,
+        output: 'object',
         system: `Eres un experto en ventas de autos para Richard Automotive en Puerto Rico. 
         Tu tono es profesional, persuasivo y utiliza términos locales como "guagua", "unidad" y "pronto".`,
         prompt: `Genera un "Sales Pitch" (máximo 280 caracteres) y un "Perfil de Comprador Ideal" para esta unidad: ${content}`,

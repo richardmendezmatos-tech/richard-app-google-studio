@@ -34,15 +34,21 @@ export const HoustonDashboard: React.FC = () => {
   
   // Real-time Telemetry Subscription (Nivel 13)
   useEffect(() => {
-    const unsub = DI.getHoustonTelemetryUseCase().subscribe((data: HoustonTelemetry) => {
-      setTelemetry(data);
-    });
+    let unsub: (() => void) | null = null;
+    
+    const setupSubscription = async () => {
+      unsub = await DI.getHoustonTelemetryUseCase().subscribe((data: HoustonTelemetry) => {
+        setTelemetry(data);
+      });
+    };
+
+    setupSubscription();
 
     const handleRefresh = () => refreshBiz();
     window.addEventListener('ra_telemetry_refresh', handleRefresh);
 
     return () => {
-      unsub();
+      if (unsub) unsub();
       window.removeEventListener('ra_telemetry_refresh', handleRefresh);
     };
   }, [refreshBiz]);

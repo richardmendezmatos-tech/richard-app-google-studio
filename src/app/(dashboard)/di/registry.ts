@@ -61,9 +61,10 @@ export const DI = {
   },
 
   getApplicationRepository: () => {
-    const sqlRepo = new SupabaseLeadRepository();
     return {
       submitApplication: async (data: any, dealerId: string) => {
+         const { SupabaseLeadRepository } = await import('@/entities/lead/api/repositories/SupabaseLeadRepository');
+         const sqlRepo = new SupabaseLeadRepository();
          return await sqlRepo.saveLead({
             ...data,
             location: dealerId,
@@ -71,6 +72,8 @@ export const DI = {
          });
       },
       getApplicationById: async (id: string) => {
+         const { SupabaseLeadRepository } = await import('@/entities/lead/api/repositories/SupabaseLeadRepository');
+         const sqlRepo = new SupabaseLeadRepository();
          return await sqlRepo.getLeadById(id, 'richard-automotive') as any;
       }
     };

@@ -12,11 +12,11 @@ export const aiTools = {
     description: 'Calcula el pago mensual exacto para un préstamo de auto basado en el precio, pronto y términos.',
     parameters: z.object({
       price: z.number().describe('Precio total de la unidad incluyendo gastos de dealer ($495).'),
-      downPayment: z.number().optional().default(0).describe('Cantidad de pronto o trade-in aportada.'),
+      downPayment: z.number().optional().describe('Cantidad de pronto o trade-in aportada.'),
       term: z.number().describe('Término del préstamo en meses (ej. 72, 84).'),
-      apr: z.number().optional().default(6.95).describe('Tasa de interés estimada (ej. 5.95).'),
+      apr: z.number().optional().describe('Tasa de interés estimada (ej. 5.95).'),
     }),
-    execute: async ({ price, downPayment, term, apr }) => {
+    execute: (async ({ price, downPayment = 0, term, apr = 6.95 }: any) => {
       const balance = price - downPayment;
       const monthlyRate = apr / 100 / 12;
       const payment = (balance * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
@@ -26,8 +26,8 @@ export const aiTools = {
         balanceToFinance: balance,
         disclaimer: 'Estimado basado en crédito excelente. Sujeto a aprobación bancaria.',
       };
-    },
-  }),
+    }) as any,
+  } as any),
 
   searchInventory: tool({
     description: 'Busca vehículos en el inventario actual de Richard Automotive.',
@@ -35,7 +35,7 @@ export const aiTools = {
       query: z.string().describe('Marca, modelo o tipo de auto (ej. "Toyota", "SUV").'),
       maxPrice: z.number().optional().describe('Presupuesto máximo.'),
     }),
-    execute: async ({ query, maxPrice }) => {
+    execute: (async ({ query, maxPrice }: any) => {
       const { data, error } = await supabase
         .from('inventory')
         .select('*')
@@ -53,8 +53,8 @@ export const aiTools = {
         price: c.price,
         status: c.status || 'Disponible',
       }));
-    },
-  }),
+    }) as any,
+  } as any),
 
   captureCustomerLead: tool({
     description: 'Registra los datos de contacto de un cliente interesado.',
@@ -65,7 +65,7 @@ export const aiTools = {
       vehicleOfInterest: z.string().optional().describe('Auto que le interesa.'),
       notes: z.string().optional().describe('Notas adicionales.'),
     }),
-    execute: async (leadData) => {
+    execute: (async (leadData: any) => {
       const { error } = await supabase.from('leads').insert({
         first_name: leadData.firstName,
         phone: leadData.phone,
@@ -82,6 +82,6 @@ export const aiTools = {
         success: true,
         message: `¡Gracias ${leadData.firstName}! Hemos recibido tus datos. Richard se pondrá en contacto contigo pronto.`,
       };
-    },
-  }),
+    }) as any,
+  } as any),
 };

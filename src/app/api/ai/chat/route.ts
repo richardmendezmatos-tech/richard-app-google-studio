@@ -2,6 +2,8 @@ import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { RICHARD_KNOWLEDGE_BASE } from '@/entities/knowledge';
 import { aiTools } from '@/shared/api/ai/tools';
+import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
+import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error: any) {
     console.error('[AI Chat API] Error:', error);
     return new Response(JSON.stringify({ error: error.message || 'Internal AI Error' }), {

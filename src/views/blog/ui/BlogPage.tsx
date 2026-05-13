@@ -55,7 +55,7 @@ const BlogPage: React.FC = () => {
     }
     setIsSubscribing(true);
     try {
-      const repo = DI.getSubscriberRepository();
+      const repo = await DI.getSubscriberRepository();
       await repo.subscribe({ 
         email: subscriberEmail,
         source: 'blog_page',

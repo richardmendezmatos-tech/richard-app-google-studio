@@ -17,7 +17,8 @@ export const leadService = {
 
   async updateStatus(id: string, status: string) {
     try {
-      await DI.getLeadRepository().updateLead(id, { status: status as any });
+      const repo = await DI.getLeadRepository();
+      await repo.updateLead(id, { status: status as any });
     } catch (error) {
       console.error('[leadService.updateStatus] Error:', error);
       throw error;
@@ -26,7 +27,8 @@ export const leadService = {
 
   async saveLead(data: any) {
     try {
-      const savedLead = await DI.getLeadRepository().saveLead(data);
+      const repo = await DI.getLeadRepository();
+      const savedLead = await repo.saveLead(data);
       
       // Async trigger for AI Agent Follow-up (Jules WhatsApp Webhook)
       if (data.phone) {

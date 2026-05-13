@@ -22,7 +22,7 @@ export const useCommandCenterData = (dealerId: string) => {
   const subscribersQuery = useQuery<Subscriber[]>({
     queryKey: ['subscribers', dealerId],
     queryFn: async () => {
-      const repo = DI.getSubscriberRepository();
+      const repo = await DI.getSubscriberRepository();
       const data = await repo.getSubscribers();
       return data.map((s: any) => ({
         id: s.id || '',

@@ -12,7 +12,7 @@ const AudiencesView: React.FC = () => {
   useEffect(() => {
     const fetchSubs = async () => {
       try {
-        const repo = DI.getSubscriberRepository();
+        const repo = await DI.getSubscriberRepository();
         const data = await repo.getSubscribers();
         setSubscribers(data);
       } catch (e) {

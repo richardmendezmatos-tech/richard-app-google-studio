@@ -13,7 +13,8 @@ export const IntentSchema = z.enum([
 export const classificationFlow = async (input: string) => {
     const result = await generateObject({
         model: gemini15Flash,
-        schema: IntentSchema,
+        output: 'enum',
+        enum: IntentSchema.options,
         prompt: `Analiza el mensaje del usuario y clasifícalo en UNA sola categoría:
         - SALES_INQUIRY: Preguntas genéricas de ventas o sobre el dealer.
         - FINANCE_QUERY: Preguntas sobre pagos, tasas, crédito o bancos.
