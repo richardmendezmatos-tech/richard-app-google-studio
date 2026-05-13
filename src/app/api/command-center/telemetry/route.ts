@@ -53,7 +53,7 @@ export async function GET(req: Request) {
       supabase.from('vehicle_embeddings').select('car_id', { count: 'exact', head: true }),
       leadRepo.getLeads(DEALER_ID, 20),
       supabase.from('purchase_orders').select('*').in('status', ['draft', 'confirmed']).order('created_at', { ascending: false }).limit(10),
-      supabase.from('distribution_logs').select('status')
+      supabase.from('system_logs').select('level').eq('category', 'SentinelDistribution')
     ]);
 
     // 2. Map and Score Leads
@@ -89,12 +89,17 @@ export async function GET(req: Request) {
       }
     }
 
-    // 4. Distribution Statistics
+    // 4. Distribution Statistics (from system_logs)
     const distribution = { active: 0, pending: 0, error: 0 };
     if (distributionStats.data) {
       for (const log of distributionStats.data) {
-        const s = log.status as keyof typeof distribution;
-        if (distribution[s] !== undefined) distribution[s]++;
+        if (log.level === 'info' || log.level === 'conversion') {
+          distribution.active++;
+        } else if (log.level === 'error' || log.level === 'critical') {
+          distribution.error++;
+        } else {
+          distribution.pending++;
+        }
       }
     }
 

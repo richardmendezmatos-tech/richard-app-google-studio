@@ -23,9 +23,9 @@ export class AutonomousDistributionAgent {
     
     // 1. Fetch inventory from Supabase
     const { data: cars, error } = await supabase
-      .from('cars')
+      .from('inventory')
       .select('*')
-      .eq('status', 'available');
+      .eq('status', 'AVAILABLE');
 
     if (error || !cars) {
       const audit = await getAuditRepository();
@@ -99,7 +99,7 @@ export class AutonomousDistributionAgent {
         const aiPitch = await this.generateNeuralPitch(car);
         car.description = aiPitch;
         // Optionally update the car record in Supabase
-        await supabase.from('cars').update({ description: aiPitch }).eq('id', car.id);
+        await supabase.from('inventory').update({ description: aiPitch }).eq('id', car.id);
       }
 
       // 4. Trigger Sync with Mapped Data
@@ -112,12 +112,12 @@ export class AutonomousDistributionAgent {
 
       const success = await legacyAgent.triggerSync(car, platform);
       const audit = await getAuditRepository();
-      await audit.log({
-        type: success ? 'info' : 'error',
-        message: `${success ? 'Synced' : 'Failed to sync'} unit ${car.id} to ${platform}`,
-        source: 'SentinelDistribution',
-        metadata: { carId: car.id, platform, success }
-      });
+      await audit.log(
+        success ? 'info' : 'error',
+        `${success ? 'Synced' : 'Failed to sync'} unit ${car.id} to ${platform}`,
+        { carId: car.id, platform, success },
+        'SentinelDistribution'
+      );
       if (!success) return false;
     }
 

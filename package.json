@@ -17,7 +17,7 @@
     "lint": "eslint . --report-unused-disable-directives --max-warnings 500",
     "predeploy": "npm run build",
     "optimize": "node scripts/optimize-assets.js",
-    "sitemap:generate": "tsx scripts/generate-sitemap.ts",
+    "sitemap:generate": "dotenvx run -- tsx scripts/generate-sitemap.ts",
     "commit": "cz",
     "prepare": "husky",
     "format": "npx prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\" \"README.md\"",

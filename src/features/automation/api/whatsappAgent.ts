@@ -1,6 +1,7 @@
 import { sendTemplateMessage, sendTextMessage } from '@/shared/api/messaging/whatsappClient';
 import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
+import { getAuditRepository } from '@/shared/api/houston/AuditRepository';
 
 export interface LeadContext {
   id: string;
@@ -129,6 +130,8 @@ export class WhatsAppAgent {
     } catch (err) {
       console.error('[WhatsApp Agent] Error in sequence:', err);
       await this.logInteraction(lead.id, lead.firstName, lead.phone, 'welcome_validation', 'failed');
+      const audit = await getAuditRepository();
+      await audit.log('error', `WhatsApp Welcome failed for ${lead.firstName}`, { leadId: lead.id, error: err });
     }
   }
 
@@ -166,6 +169,8 @@ export class WhatsAppAgent {
       } catch (err) {
         console.error(`[WhatsApp Agent] Step ${msg.step_label} failed:`, err);
         await supabase.from('message_queue').update({ status: 'failed' }).eq('id', msg.id);
+        const audit = await getAuditRepository();
+        await audit.log('error', `WhatsApp Step ${msg.step_label} failed for ${msg.lead_name}`, { msgId: msg.id, error: err });
         failed++;
       }
     }
@@ -193,6 +198,16 @@ export class WhatsAppAgent {
       });
     } catch (err) {
       console.error('[WhatsApp Agent] Failed to log interaction:', err);
+    }
+    
+    // Centralized Audit Log
+    try {
+      const audit = await getAuditRepository();
+      await audit.log(status === 'failed' ? 'error' : 'info', 
+        `WhatsApp ${status}: ${stepLabel} for ${leadName}`, 
+        { leadId, stepLabel, status, scheduledAt });
+    } catch (auditErr) {
+      console.error('[WhatsApp Agent] Audit logging failed:', auditErr);
     }
   }
 }

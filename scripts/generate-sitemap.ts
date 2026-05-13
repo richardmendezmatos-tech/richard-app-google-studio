@@ -9,10 +9,17 @@ const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');
 const baseUrl = (process.env.SITE_URL || SITE_CONFIG.url).replace(/\/$/, '');
 const today = new Date().toISOString().slice(0, 10);
 
-// Initialize Supabase (Using env vars or placeholders for script)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Initialize Supabase lazily
+let supabase: any = null;
+const getSupabase = () => {
+  if (supabase) return supabase;
+  if (!supabaseUrl || !supabaseKey) return null;
+  supabase = createClient(supabaseUrl, supabaseKey);
+  return supabase;
+};
 
 type SitemapEntry = {
   loc: string;
@@ -54,15 +61,16 @@ const normalizeImageUrl = (value: unknown) => {
 };
 
 const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
-  if (!supabaseUrl || !supabaseKey) {
+  const client = getSupabase();
+  if (!client) {
     console.warn('[sitemap] Supabase credentials missing. Skipping vehicle URLs.');
     return [];
   }
 
-  const { data: cars, error } = await supabase
+  const { data: cars, error } = await client
     .from('inventory')
     .select('*')
-    .eq('status', 'available');
+    .eq('status', 'AVAILABLE');
 
   if (error || !cars) {
     console.error('[sitemap] Error fetching from Supabase:', error);
@@ -71,7 +79,7 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
 
   return cars.map((car) => {
     const vehicleName = `${car.year} ${car.make} ${car.model}`.trim();
-    const slug = generateVehicleSlug({ name: vehicleName });
+    const slug = generateVehicleSlug({ name: vehicleName }, false);
     
     // Priority: New inventory and priority conditions get higher visibility
     const isNew = car.condition?.toUpperCase() === 'NEW';
@@ -88,7 +96,7 @@ const loadVehicleEntries = async (): Promise<SitemapEntry[]> => {
     }));
 
     return {
-      loc: `${baseUrl}/v/${slug}/${car.vin}`,
+      loc: `${baseUrl}/inventario/${slug}/${car.id || car.vin}`,
       changefreq: 'daily',
       priority,
       lastmod: car.last_scraped_at ? car.last_scraped_at.slice(0, 10) : today,
@@ -131,7 +139,7 @@ const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
 
     // Base location URL
     entries.push({
-      loc: `${baseUrl}/comprar/${locSlug}`,
+      loc: `${baseUrl}/autos-usados/${locSlug}`,
       changefreq: 'weekly',
       priority: 0.8,
       lastmod: today
@@ -140,7 +148,7 @@ const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
     // Category specific location URLs
     for (const cat of categories) {
       entries.push({
-        loc: `${baseUrl}/comprar/${locSlug}/${cat}`,
+        loc: `${baseUrl}/autos-usados/tipo/${cat}`,
         changefreq: 'weekly',
         priority: 0.7,
         lastmod: today

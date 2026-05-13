@@ -296,6 +296,30 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
               </p>
             </div>
           </div>
+
+          {/* New Trust Banner: Partner Banks of Puerto Rico */}
+          <div className="mt-8 relative z-10 animate-in fade-in slide-in-from-bottom duration-1000 delay-300">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 text-center">
+              Nuestros Socios Bancarios
+            </p>
+            <div className="p-4 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
+              <img 
+                src="/assets/branding/bank-partners-pr.png" 
+                alt="Bank Partners PR" 
+                className="w-full opacity-80 hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-4 text-slate-500">
+              <div className="flex items-center gap-1">
+                <ShieldCheck size={14} className="text-emerald-500" />
+                <span className="text-[9px] font-bold uppercase tracking-widest">FDIC INSURED</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Lock size={14} className="text-primary" />
+                <span className="text-[9px] font-bold uppercase tracking-widest">SSL 256-BIT</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Form Area */}

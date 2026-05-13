@@ -47,7 +47,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   useEffect(() => {
     if (car) {
       // SEO Automatic Redirection (Canonical URL Enforcement)
-      const correctSlug = generateVehicleSlug(car);
+      const correctSlug = generateVehicleSlug(car, false);
       if (!slug || slug !== correctSlug) {
         navigate(`/inventario/${correctSlug}/${car.id}`, { replace: true });
         return;
@@ -345,7 +345,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             .map(item => (
               <a 
                 key={item.id}
-                href={`/inventario/${generateVehicleSlug(item)}/${item.id}`}
+                href={`/inventario/${generateVehicleSlug(item, false)}/${item.id}`}
                 className="group relative bg-white/5 border border-white/10 rounded-4xl overflow-hidden hover:border-primary/40 transition-all"
               >
                 <div className="aspect-video relative overflow-hidden">
@@ -460,10 +460,10 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                     dealContext={{
                       vehicle: car,
                       quote: {
-                        monthlyPayment: Math.round((car.price - 2000) * (1.08 / 60)),
+                        monthlyPayment: Math.round((car.price - 2000) * (1.049 / 60)),
                         downPayment: 2000,
                         term: 60,
-                        apr: 8
+                        apr: 4.9
                       }
                     }} 
                   />
