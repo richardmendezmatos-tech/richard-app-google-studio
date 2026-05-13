@@ -39,6 +39,7 @@ interface MatchResult {
   carId: string;
   score: number;
   reason: string;
+  intent?: any;
 }
 
 const LIFESTYLE_TAGS = [
@@ -186,31 +187,20 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
           metadata: { profile_length: finalProfile.length, tags: activeTags }
         });
 
-        const embeddingRes = await fetch('/api/embeddings', {
+        const matchRes = await fetch('/api/ai/match', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: finalProfile }),
+          body: JSON.stringify({ query: finalProfile }),
         });
 
-        if (!embeddingRes.ok) {
-           throw new Error('AI Engine Offline');
+        if (!matchRes.ok) {
+           throw new Error('AI Intelligence Offline');
         }
 
-        const { embedding } = await embeddingRes.json();
+        const { results, intent } = await matchRes.json();
 
-        const [supabaseMatches] = await Promise.all([
-          searchSemanticInventory(embedding, 0.4, 3),
-          new Promise((resolve) => setTimeout(resolve, 3500)), // Artificial delay for effect
-        ]);
-
-        const matchesMapped = supabaseMatches.map((m: any) => ({
-           carId: m.car_id,
-           score: Math.round(m.similarity * 100),
-           reason: "Concordancia semántica detectada por AI Neural Engine."
-        }));
-
-        setResults(matchesMapped);
-        setUserPersona(activeTags.length > 0 ? activeTags.join(', ') : 'Comprador Standard');
+        setResults(results);
+        setUserPersona(intent?.detected_lifestyle?.join(', ') || activeTags.join(', ') || 'Perfil Detectado');
       } catch (error) {
         console.error('Scan failed', error);
         setResults([]);
@@ -501,6 +491,27 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     Nuevo Análisis
                   </button>
                 </div>
+
+                {/* Intent Parameter Chips */}
+                {results.length > 0 && results[0].intent && (
+                  <div className="flex flex-wrap gap-2 mb-4 animate-in fade-in slide-in-from-top-2">
+                    {results[0].intent.budget?.maxMonthlyPayment && (
+                      <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                        Pago Max: ${results[0].intent.budget.maxMonthlyPayment}/mes
+                      </div>
+                    )}
+                    {results[0].intent.vehicleConstraints?.minSeats && (
+                      <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-lg text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                        {results[0].intent.vehicleConstraints.minSeats}+ Asientos
+                      </div>
+                    )}
+                     {results[0].intent.vehicleConstraints?.type && (
+                      <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-lg text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                        Tipo: {results[0].intent.vehicleConstraints.type}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {results.length === 0 ? (
                   <div className="text-center py-20">

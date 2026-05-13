@@ -144,6 +144,45 @@ export const sentinelAI = {
   },
 
   /**
+   * Extracts structured search intent from a natural language query.
+   */
+  async extractSearchIntent(query: string) {
+    const schema = z.object({
+      budget: z.object({
+        maxPrice: z.number().optional(),
+        maxMonthlyPayment: z.number().optional(),
+      }).optional(),
+      vehicleConstraints: z.object({
+        minSeats: z.number().optional(),
+        type: z.string().optional(),
+        features: z.array(z.string()).optional(),
+      }).optional(),
+      lifestyle: z.array(z.string()),
+      refinedQuery: z.string(),
+      justification_template: z.string().describe('Un template breve de por qué este tipo de auto encaja. Ej: "Ideal para tus aventuras en la montaña"'),
+    });
+
+    try {
+      return await this.generateStructuredObject(
+        schema,
+        `Analiza la siguiente consulta de búsqueda de un cliente de Richard Automotive en Puerto Rico: "${query}"
+        
+        Extrae los parámetros estructurados. Si el cliente menciona "guagua", asume tipo "SUV" o "Truck".
+        Si menciona un presupuesto mensual, ponlo en maxMonthlyPayment.
+        Lifestyle tags sugeridos: family, adventure, luxury, budget, performance, work, eco.`,
+        'Eres un analista de intención experto en el mercado automotriz de Puerto Rico.'
+      );
+    } catch (error) {
+      this.logError('ExtractIntent', error);
+      return {
+        lifestyle: ['standard'],
+        refinedQuery: query,
+        justification_template: 'Basado en tu búsqueda general.'
+      };
+    }
+  },
+
+  /**
    * Internal logging helper
    */
   logError(operation: string, error: any) {
