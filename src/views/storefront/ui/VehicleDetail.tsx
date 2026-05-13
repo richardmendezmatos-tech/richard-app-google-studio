@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ChevronLeft, Share2, Sparkles, Loader2, ShieldCheck, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
@@ -322,6 +322,17 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
 
         {/* Right Column: Details & Finance */}
         <div className="space-y-12">
+          {/* Breadcrumbs (Nivel 18 Precision) */}
+          <nav className="hidden lg:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+            <a href="/" className="hover:text-white transition-colors">INICIO</a>
+            <ChevronRight size={10} className="text-slate-700" />
+            <a href="/inventario" className="hover:text-white transition-colors">INVENTARIO</a>
+            <ChevronRight size={10} className="text-slate-700" />
+            <a href={`/autos-usados/tipo/${car.type?.toLowerCase() || 'sedan'}`} className="hover:text-white transition-colors">{car.type || 'AUTO'}</a>
+            <ChevronRight size={10} className="text-primary/40" />
+            <span className="text-primary">{car.name}</span>
+          </nav>
+
           {/* Header (Nivel 18 Precision) */}
           <div className="space-y-4">
             <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
@@ -397,6 +408,93 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           </div>
         </div>
       </main>
+
+      <section className="max-w-[1400px] mx-auto px-6 lg:px-12 mt-32">
+        <div className="flex items-center justify-between mb-12">
+          <div className="space-y-2">
+            <h2 className="font-cinematic text-3xl lg:text-5xl text-white tracking-tighter uppercase">Unidades Similares</h2>
+            <p className="font-tech text-[10px] text-primary font-black uppercase tracking-[0.4em]">Sugerencias de la Red Sentinel</p>
+          </div>
+          <a href="/inventario" className="hidden lg:flex items-center gap-3 text-white/50 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest">
+            VER TODO EL INVENTARIO <ArrowRight size={14} />
+          </a>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {inventory
+            .filter(i => i.id !== car.id && (i.type === car.type || i.make === car.make))
+            .slice(0, 3)
+            .map(item => (
+              <a 
+                key={item.id}
+                href={`/inventario/${generateVehicleSlug(item)}/${item.id}`}
+                className="group relative bg-white/5 border border-white/10 rounded-4xl overflow-hidden hover:border-primary/40 transition-all"
+              >
+                <div className="aspect-video relative overflow-hidden">
+                  <img 
+                    src={item.img} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-[#020617] via-transparent to-transparent opacity-80" />
+                </div>
+                <div className="p-6 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <p className="font-tech text-[9px] text-primary font-black uppercase tracking-widest">{item.year} • {item.type}</p>
+                    <p className="font-tech text-lg font-black text-white">${item.price.toLocaleString()}</p>
+                  </div>
+                  <h3 className="font-cinematic text-xl text-white uppercase tracking-tight group-hover:text-primary transition-colors">{item.name}</h3>
+                </div>
+              </a>
+            ))}
+        </div>
+      </section>
+
+      {/* Discovery Hub: Internal Linking for SEO Authority Distribution */}
+      <section className="max-w-[1400px] mx-auto px-6 lg:px-12 mt-24 mb-12">
+        <GlassContainer intensity="low" opacity={0.03} className="p-10 border-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="space-y-4">
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Explorar Categoría</h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">Descubre más unidades similares en nuestra colección curada.</p>
+              <a 
+                href={`/autos-usados/tipo/${car.type?.toLowerCase() || 'sedan'}`}
+                className="inline-flex items-center gap-2 text-white font-bold hover:text-primary transition-all group"
+              >
+                Ver todos los {car.type || 'Autos'}
+                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Inventario Local</h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">Encuentra los mejores autos usados certificados cerca de ti.</p>
+              <div className="flex flex-wrap gap-3">
+                {['Vega Alta', 'Bayamón', 'San Juan'].map(city => (
+                  <a 
+                    key={city}
+                    href={`/autos-usados/${city.toLowerCase().replace(' ', '-')}`}
+                    className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
+                  >
+                    #{city}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Richard Automotive</h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">Especialistas en pickups y guaguas de lujo en Puerto Rico.</p>
+              <a 
+                href="/"
+                className="text-xs font-black text-white hover:text-primary transition-all underline underline-offset-8 decoration-primary/30"
+              >
+                IR AL HUB DE INVENTARIO
+              </a>
+            </div>
+          </div>
+        </GlassContainer>
+      </section>
 
       {/* Mobile Sticky CTA (Nivel 18: Kinetic Bar) */}
       <div className="fixed bottom-0 left-0 right-0 p-5 bg-[#020617]/90 backdrop-blur-3xl border-t border-white/10 shadow-2xl z-50 lg:hidden flex items-center justify-between">

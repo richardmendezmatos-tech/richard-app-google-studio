@@ -156,7 +156,7 @@ export const CitySEOPage: React.FC = () => {
                 Contactar en {config.name}
               </a>
               <Link
-                to="/"
+                to="/inventario"
                 className="bg-white/5 border border-white/10 backdrop-blur-md text-white font-black uppercase tracking-widest px-10 py-5 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-3"
               >
                 Ver Inventario
