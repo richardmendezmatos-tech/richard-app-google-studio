@@ -1,47 +1,32 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/shared/api/supabase/client';
-import { distributionAgent } from '@/shared/api/distribution/DistributionAgent';
-import { Car } from '@/entities/inventory';
+import { autonomousDistributionAgent } from '@/features/automation/api/distributionAgent';
 
 /**
  * POST /api/distribution/sync
- * Dispara una sincronización global de todas las unidades 'available'.
+ * Dispara el ciclo autónomo de distribución Sentinel (Nivel 26).
  */
 export async function POST(req: Request) {
-  const supabase = createClient();
-  if (!supabase) return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+  // En producción, aquí verificaríamos el rol de admin vía middleware o token
+  
+  try {
+    console.log('[Sync API] Iniciando Ciclo Autónomo de Distribución...');
+    
+    // Disparar ciclo (podemos esperar a que termine o correrlo en background)
+    // Para esta fase, esperaremos para devolver métricas precisas al dashboard.
+    const results = await autonomousDistributionAgent.runCycle();
 
-  // 1. Obtener todas las unidades disponibles
-  const { data: inventory, error } = await supabase
-    .from('inventory')
-    .select('*')
-    .eq('status', 'available');
-
-  if (error || !inventory) {
-    return NextResponse.json({ error: error?.message || 'Inventory not found' }, { status: 404 });
-  }
-
-  const cars = inventory as Car[];
-  const platforms = ['facebook_marketplace', 'clasificados_online'] as const;
-
-  // 2. Disparar sincronización (No esperamos a que termine todo para responder)
-  // En una arquitectura real, esto se mandaría a una cola (Redis/SQS)
-  const syncPromises = cars.flatMap(car => 
-    platforms.map(platform => distributionAgent.triggerSync(car, platform))
-  );
-
-  // Ejecutamos en paralelo (limitado o secuencial sería mejor para producción)
-  Promise.all(syncPromises)
-    .then(results => {
-      console.log(`[Sync API] Sincronización global completada. Éxitos: ${results.filter(Boolean).length}/${results.length}`);
-    })
-    .catch(err => {
-      console.error('[Sync API] Error crítico en sincronización global:', err);
+    return NextResponse.json({ 
+      success: true,
+      message: 'Ciclo autónomo completado con éxito', 
+      processed: results.processed,
+      errors: results.errors,
+      timestamp: new Date().toISOString()
     });
-
-  return NextResponse.json({ 
-    message: 'Sincronización global iniciada', 
-    units: cars.length,
-    platforms: platforms.length
-  });
+  } catch (err: any) {
+    console.error('[Sync API] Fallo crítico en ciclo autónomo:', err);
+    return NextResponse.json({ 
+      success: false,
+      error: err.message || 'Error interno en la orquestación'
+    }, { status: 500 });
+  }
 }

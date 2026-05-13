@@ -12,21 +12,28 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { AuditRepository, AuditEvent } from '@/shared/api/houston/AuditRepository';
+import { useAuthStore } from '@/entities/session';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const auditRepo = new AuditRepository();
 
 const TelemetryFeedWidget: React.FC = () => {
+  const { role } = useAuthStore();
   const [logs, setLogs] = useState<AuditEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchLogs = async () => {
+    if (role !== 'admin') return;
+    
     try {
+      setError(null);
       const recentLogs = await auditRepo.getRecentLogs(10);
       setLogs(recentLogs);
-    } catch (error) {
-      console.error('Failed to fetch telemetry logs:', error);
+    } catch (err) {
+      console.error('Failed to fetch telemetry logs:', err);
+      setError('Error de conexión');
     } finally {
       setLoading(false);
     }
@@ -46,6 +53,20 @@ const TelemetryFeedWidget: React.FC = () => {
       default: return <Info size={14} className="text-slate-400" />;
     }
   };
+
+  if (role !== 'admin') {
+    return (
+      <div className="glass-premium p-6 flex flex-col items-center justify-center text-center h-full min-h-[400px]">
+        <div className="p-3 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4">
+          <AlertCircle size={24} className="text-amber-500" />
+        </div>
+        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Acceso Restringido</h3>
+        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest max-w-[200px]">
+          Se requiere nivel de administrador para visualizar Sentinel Telemetry
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-premium p-6 flex flex-col h-full min-h-[400px]">

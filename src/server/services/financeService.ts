@@ -3,6 +3,8 @@
  * Specialized for Puerto Rico Local Banks (Popular, BPPR, Coops)
  */
 import { getMarketInsight } from './marketIntelService';
+import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
+import { CONSTANTES_PR } from '@/entities/finance/lib/fiConstants';
 
 export interface LoanSimulation {
   bankName: string;
@@ -14,19 +16,14 @@ export interface LoanSimulation {
   monthlyPayment: number;
   totalInterest: number;
   estimatedCreditTier: 'excellent' | 'good' | 'fair' | 'poor';
+  isBankable: boolean;
+  ltvRatio: number;
   marketComparison?: {
     averagePrice: number;
     lowestPrice: number;
     savingsVsAverage: number;
   };
 }
-
-export const BANK_TERMS = {
-  Popular: { baseApr: 6.95, maxTerm: 84 },
-  BPPR: { baseApr: 7.25, maxTerm: 72 },
-  Oriental: { baseApr: 7.5, maxTerm: 84 },
-  COOP: { baseApr: 5.95, maxTerm: 72 }, // Local Credit Unions usually have better rates
-};
 
 export async function simulateLoan(
   price: number,
@@ -36,14 +33,19 @@ export async function simulateLoan(
   vehicleInfo?: { make: string; model: string },
 ): Promise<LoanSimulation[]> {
   const loanAmount = price - downPayment;
+  
+  // Calculate LTV (Assumed wholesale is 90% of price for risk scoring)
+  const estimatedWholesale = price * 0.9;
+  const ltvRatio = Number((loanAmount / estimatedWholesale).toFixed(2));
 
   // --- MARKET INTEL INJECTION ---
   let marketData = null;
   if (vehicleInfo) {
     marketData = await getMarketInsight(vehicleInfo.make, vehicleInfo.model);
   }
+
   const tiers = {
-    excellent_plus: 780, // Superior Tier for best terms
+    excellent_plus: 780,
     excellent: 720,
     good: 680,
     fair: 600,
@@ -64,8 +66,8 @@ export async function simulateLoan(
     poor: 10.0,
   };
 
-  const simulations = Object.entries(BANK_TERMS).map(([bank, config]) => {
-    const baseApr = config.baseApr;
+  const simulations = FINANCIAL_ENTITIES_PR.map((entity) => {
+    const baseApr = entity.baseRate;
     const adjustment = adjustments[tier];
     const finalApr = Number((baseApr + adjustment).toFixed(2));
 
@@ -73,7 +75,6 @@ export async function simulateLoan(
     let payment = 0;
 
     if (monthlyRate > 0 && term > 0) {
-      // Standard Amortization Formula: P = [r*PV] / [1 - (1 + r)^-n]
       payment =
         (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -term));
     } else if (term > 0) {
@@ -85,8 +86,14 @@ export async function simulateLoan(
       (monthlyPayment * term - loanAmount).toFixed(2),
     );
 
+    // Business Logic: Bankability
+    // - LTV must be under MAX_LTV_RATIO
+    // - Score must meet entity tier requirements (Simplified)
+    const isBankable = ltvRatio <= CONSTANTES_PR.MAX_LTV_RATIO && 
+                       (entity.tier === 1 || creditScore >= 640);
+
     return {
-      bankName: bank,
+      bankName: entity.name,
       totalPrice: price,
       downPayment,
       loanAmount,
@@ -94,6 +101,8 @@ export async function simulateLoan(
       apr: finalApr,
       monthlyPayment,
       totalInterest,
+      isBankable,
+      ltvRatio,
       estimatedCreditTier:
         tier === 'excellent_plus' ? 'excellent' : (tier as any),
       marketComparison: marketData
@@ -109,10 +118,10 @@ export async function simulateLoan(
   });
 
   return simulations.sort((a, b) => {
-    // Preference logic: Popular for high tier, COOP for mid-tiers
-    if (tier === 'excellent_plus' && a.bankName === 'Popular') return -1;
-    if ((tier === 'fair' || tier === 'good') && a.bankName === 'COOP')
-      return -1;
+    // Priority 1: Bankable deals first
+    if (a.isBankable && !b.isBankable) return -1;
+    if (!a.isBankable && b.isBankable) return 1;
+    // Priority 2: Lowest payment
     return a.monthlyPayment - b.monthlyPayment;
   });
 }

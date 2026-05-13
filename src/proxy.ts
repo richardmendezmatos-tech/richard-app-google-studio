@@ -1,12 +1,43 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Sentinel N20: Anti-Spam Rate Limiting Engine (Edge Persistent Map per instance)
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const LIMIT = 5; // 5 requests
+const WINDOW = 60 * 1000; // per minute
+
 /**
  * Richard Automotive Global Proxy (Sentinel N24-PRO Edge)
  * Replaces the deprecated 'middleware' convention for Next.js 16.
  * Handles Supabase sessions, protections, and security headers.
  */
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const ip = request.ip || 'anonymous';
+
+  // 0. Sentinel N20: Anti-Spam Rate Limiting
+  if (pathname.startsWith('/api/webhooks/leads') || pathname.startsWith('/api/ai/chat')) {
+    const now = Date.now();
+    const rateData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
+
+    if (now - rateData.lastReset > WINDOW) {
+      rateData.count = 1;
+      rateData.lastReset = now;
+    } else {
+      rateData.count++;
+    }
+
+    rateLimitMap.set(ip, rateData);
+
+    if (rateData.count > LIMIT) {
+      console.warn(`🚨 [Rate Limit] Blocking ${ip} for too many requests on ${pathname}`);
+      return NextResponse.json(
+        { error: 'Too many requests. Please slow down.' },
+        { status: 429 }
+      );
+    }
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -46,7 +77,6 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const privateRoutes = ['/admin', '/garage', '/profile', '/command-center'];
   const adminRoutes = ['/admin', '/command-center'];
   
@@ -54,7 +84,6 @@ export async function proxy(request: NextRequest) {
   const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
 
   // SENTINEL BYPASS: Allow local development bypass if a specific dev cookie is set
-  // This is a "Vibecoding" optimization to avoid auth loops during rapid prototyping.
   const isDevBypass = request.cookies.get('sentinel_dev_bypass')?.value === 'active';
   
   if (isDevBypass && process.env.NODE_ENV === 'development') {

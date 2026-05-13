@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Share2, 
   Facebook, 
@@ -10,7 +10,9 @@ import {
   Zap, 
   CheckCircle2, 
   Clock, 
-  AlertCircle 
+  AlertCircle,
+  Activity,
+  Sparkles
 } from 'lucide-react';
 
 interface DistributionState {
@@ -30,14 +32,20 @@ interface DistributionWidgetProps {
 
 export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({ stats, health = 100 }) => {
   const [syncing, setSyncing] = useState(false);
+  const [results, setResults] = useState<{ processed: number; errors: number } | null>(null);
 
-  const handleForceSync = async () => {
+  const handleAutonomousCycle = async () => {
     setSyncing(true);
+    setResults(null);
     try {
-      // Disparar sincronización vía API (WIP)
-      await fetch('/api/distribution/sync', { method: 'POST' });
-      setTimeout(() => setSyncing(false), 2000);
+      const res = await fetch('/api/distribution/sync', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setResults({ processed: data.processed, errors: data.errors });
+      }
     } catch (err) {
+      console.error('Failed to run autonomous cycle:', err);
+    } finally {
       setSyncing(false);
     }
   };
@@ -72,19 +80,42 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({ 
           </div>
           <div>
             <h2 className="font-bold text-sm tracking-wide">Distribution Tower</h2>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Nivel 16 • Omni-Channel</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Nivel 26 • Autonomous</p>
           </div>
         </div>
         
-        <button 
-          onClick={handleForceSync}
-          disabled={syncing}
-          className={`p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all ${syncing ? 'animate-pulse' : ''}`}
-          title="Force Global Sync"
-        >
-          <Zap className={`w-3.5 h-3.5 ${syncing ? 'text-cyan-400' : 'text-slate-500'}`} />
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={handleAutonomousCycle}
+            disabled={syncing}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all group ${syncing ? 'animate-pulse' : ''}`}
+            title="Ejecutar Ciclo Autónomo (Neural Pitch)"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${syncing ? 'text-cyan-400' : 'text-cyan-400'}`} />
+            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-tighter">Run Cycle</span>
+          </button>
+        </div>
       </div>
+
+      <AnimatePresence>
+        {results && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-4 p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={12} className="text-emerald-400" />
+              <span className="text-[10px] text-emerald-400 font-bold uppercase">Ciclo Completado</span>
+            </div>
+            <div className="flex gap-3 text-[10px] font-mono">
+              <span className="text-slate-300">Proc: {results.processed}</span>
+              <span className="text-rose-400">Err: {results.errors}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="space-y-4">
         {platforms.map((p) => (

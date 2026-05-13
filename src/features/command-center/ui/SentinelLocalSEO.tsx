@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { MapPin, Star, Share2, TrendingUp, Zap, CheckCircle, Loader2 } from 'lucide-react';
+import { MapPin, Star, Share2, TrendingUp, Zap, CheckCircle, Loader2, Globe, Search, RefreshCcw } from 'lucide-react';
 import { localSEOAgent } from '@/features/marketing/application/LocalSEOAgent';
 import { Car } from '@/entities/inventory';
 
 export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isIndexing, setIsIndexing] = useState(false);
   const [proposal, setProposal] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'posts' | 'reviews'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'reviews' | 'indexing'>('posts');
+  const [lastIndexed, setLastIndexed] = useState<string | null>(null);
 
   const generatePost = async () => {
     if (inventory.length === 0) return;
@@ -15,6 +17,20 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
     const text = await localSEOAgent.generateNewArrivalPost(car);
     setProposal(text);
     setIsGenerating(false);
+  };
+
+  const handleReindex = async () => {
+    setIsIndexing(true);
+    try {
+      const res = await fetch('/api/seo/reindex', { method: 'POST' });
+      if (res.ok) {
+        setLastIndexed(new Date().toLocaleTimeString());
+      }
+    } catch (err) {
+      console.error('Indexing failed:', err);
+    } finally {
+      setIsIndexing(false);
+    }
   };
 
   return (
@@ -32,19 +48,25 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
           </div>
           <div>
             <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">Local SEO Radar</h3>
-            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">Vega Alta, PR • KM 28.5 • Online</p>
+            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">Vega Alta, PR • KM 28.5 • N27</p>
           </div>
         </div>
-        <div className="flex bg-white/5 p-1 rounded-xl border border-white/5">
+        <div className="flex bg-white/5 p-1 rounded-xl border border-white/5 overflow-x-auto no-scrollbar">
           <button 
             onClick={() => setActiveTab('posts')}
-            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === 'posts' ? 'bg-primary text-black' : 'text-slate-500 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'posts' ? 'bg-primary text-black' : 'text-slate-500 hover:text-white'}`}
           >
             Posts
           </button>
           <button 
+            onClick={() => setActiveTab('indexing')}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'indexing' ? 'bg-primary text-black' : 'text-slate-500 hover:text-white'}`}
+          >
+            Indexing
+          </button>
+          <button 
             onClick={() => setActiveTab('reviews')}
-            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === 'reviews' ? 'bg-primary text-black' : 'text-slate-500 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'reviews' ? 'bg-primary text-black' : 'text-slate-500 hover:text-white'}`}
           >
             Reviews
           </button>
@@ -69,7 +91,7 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
       </div>
 
       <div className="space-y-4 relative z-10">
-        {activeTab === 'posts' ? (
+        {activeTab === 'posts' && (
           <div className="space-y-4">
              {proposal ? (
                <div className="p-5 bg-white/5 rounded-2xl border border-primary/20 space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -105,7 +127,55 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
                </button>
              )}
           </div>
-        ) : (
+        )}
+
+        {activeTab === 'indexing' && (
+          <div className="space-y-4">
+            <div className="p-6 bg-slate-800/50 rounded-3xl border border-white/5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Globe size={14} className="text-cyan-400" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Sitemap Sovereignty</span>
+                </div>
+                {lastIndexed && (
+                  <span className="text-[8px] text-emerald-400 font-bold uppercase tracking-widest">
+                    Last: {lastIndexed}
+                  </span>
+                )}
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-slate-500 font-bold uppercase tracking-wider">Inventory Nodes</span>
+                  <span className="text-white font-mono">{inventory.length}</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-slate-500 font-bold uppercase tracking-wider">City Pages</span>
+                  <span className="text-white font-mono">12</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleReindex}
+                disabled={isIndexing}
+                className="w-full py-4 bg-linear-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-900/20"
+              >
+                {isIndexing ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <>
+                    <RefreshCcw size={14} /> Ping Search Engines
+                  </>
+                )}
+              </button>
+              <p className="text-[8px] text-slate-600 text-center uppercase font-bold tracking-tighter">
+                Forces Google to re-crawl sitemap and inventory nodes
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'reviews' && (
           <div className="space-y-3">
              {[
                { name: 'Carlos Rivera', text: 'Excelente servicio, Richard me ayudó en todo el proceso...', stars: 5 },

@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { DollarSign, PieChart, TrendingDown, TrendingUp, Cpu, CreditCard, Activity } from 'lucide-react';
+import { 
+  DollarSign, 
+  TrendingUp, 
+  CreditCard, 
+  ShieldCheck, 
+  BarChart3,
+  AlertTriangle,
+  Zap,
+  Loader2
+} from 'lucide-react';
 
 interface FinancialMetric {
   label: string;
@@ -12,40 +21,67 @@ interface FinancialMetric {
 }
 
 export const SentinelFinancialOptimizer: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<FinancialMetric[]>([
     { 
-      label: 'CAC (Ad Spend)', 
-      value: '$242', 
-      subLabel: 'Per Sold Unit', 
-      trend: 'down', 
+      label: 'Inventory Yield', 
+      value: '$0', 
+      subLabel: 'Avg Profit / Unit', 
+      trend: 'stable', 
       status: 'good', 
       icon: DollarSign 
     },
     { 
-      label: 'Operational Burn', 
-      value: '$48.12', 
-      subLabel: 'Cloud/APIs Today', 
+      label: 'Lending Radar', 
+      value: '4.89%', 
+      subLabel: 'Best PR Rate (Coop)', 
+      trend: 'down', 
+      status: 'good', 
+      icon: Zap 
+    },
+    { 
+      label: 'Bankability Rate', 
+      value: '0%', 
+      subLabel: 'Deals within LTV', 
       trend: 'stable', 
       status: 'good', 
-      icon: Cpu 
+      icon: ShieldCheck 
     },
     { 
-      label: 'Automation ROI', 
-      value: '22.4x', 
-      subLabel: 'Efficiency Multiplier', 
+      label: 'Backend Velocity', 
+      value: '2.4x', 
+      subLabel: 'Products / Deal', 
       trend: 'up', 
       status: 'good', 
-      icon: PieChart 
-    },
-    { 
-      label: 'Labor Savings', 
-      value: '$1,240', 
-      subLabel: 'AI Task Hours/Mo', 
-      trend: 'up', 
-      status: 'good', 
-      icon: TrendingUp 
+      icon: BarChart3 
     },
   ]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/finance/stats');
+        const data = await response.json();
+        
+        if (data.success) {
+          const { inventoryYield, bankabilityRate } = data.stats;
+          
+          setMetrics(prev => [
+            { ...prev[0], value: `$${inventoryYield.toLocaleString()}`, trend: 'up' },
+            prev[1],
+            { ...prev[2], value: `${bankabilityRate}%`, trend: bankabilityRate > 70 ? 'up' : 'stable' },
+            prev[3]
+          ]);
+        }
+      } catch (error) {
+        console.error('[FinancialOptimizer] Failed to fetch stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <div className="bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 relative overflow-hidden group">
@@ -59,12 +95,18 @@ export const SentinelFinancialOptimizer: React.FC = () => {
           </div>
           <div>
             <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">Financial Intelligence</h3>
-            <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">Budget & ROI Optimizer • Sentinel N25</p>
+            <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">Deal & Yield Optimizer • Sentinel N28</p>
           </div>
         </div>
         <div className="px-3 py-1 bg-white/5 rounded-full border border-white/5 flex items-center gap-2">
-           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-           <span className="text-[8px] font-black text-white/40 uppercase tracking-widest italic">Live Optimization</span>
+           {loading ? (
+             <Loader2 size={10} className="text-cyan-500 animate-spin" />
+           ) : (
+             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+           )}
+           <span className="text-[8px] font-black text-white/40 uppercase tracking-widest italic">
+             {loading ? 'Analyzing...' : 'Profit Maximizer'}
+           </span>
         </div>
       </div>
 
@@ -76,14 +118,18 @@ export const SentinelFinancialOptimizer: React.FC = () => {
                   <metric.icon size={14} className="text-cyan-400" />
                </div>
                <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md ${
-                 metric.trend === 'down' && metric.label.includes('CAC') ? 'bg-emerald-500/20 text-emerald-400' :
-                 metric.trend === 'up' && !metric.label.includes('Burn') ? 'bg-emerald-500/20 text-emerald-400' :
+                 metric.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' :
+                 metric.trend === 'down' && metric.label.includes('Rate') ? 'bg-emerald-500/20 text-emerald-400' :
                  'bg-white/5 text-slate-400'
                }`}>
-                 {metric.trend === 'up' ? '↑ Increasing' : metric.trend === 'down' ? '↓ Optimizing' : '• Stable'}
+                 {metric.trend === 'up' ? '↑ Rising' : metric.trend === 'down' ? '↓ Optimal' : '• Stable'}
                </span>
             </div>
-            <p className="text-2xl font-black text-white italic tracking-tighter">{metric.value}</p>
+            {loading && metric.value === '$0' ? (
+              <div className="h-8 w-24 bg-white/5 animate-pulse rounded-lg" />
+            ) : (
+              <p className="text-2xl font-black text-white italic tracking-tighter">{metric.value}</p>
+            )}
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">{metric.label}</p>
             <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">{metric.subLabel}</p>
           </div>
@@ -92,25 +138,31 @@ export const SentinelFinancialOptimizer: React.FC = () => {
 
       <div className="bg-black/40 rounded-[2rem] border border-white/5 p-6 relative z-10">
          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Sentinel Burn Watcher</h4>
-            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Efficiency: 98.4%</span>
+            <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">LTV Radar (Guardrails)</h4>
+            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Cap: 125%</span>
          </div>
          <div className="space-y-4">
             {[
-               { name: 'Vercel Edge Runtime', usage: 74, limit: 100 },
-               { name: 'Supabase DB Ops', usage: 22, limit: 100 },
-               { name: 'Gemini 2.0 Tokens', usage: 45, limit: 100 },
-            ].map(service => (
-               <div key={service.name} className="space-y-1.5">
+               { name: 'Prime Portfolio (720+)', ltv: 94, status: 'safe' },
+               { name: 'Near-Prime (660-719)', ltv: 112, status: 'warning' },
+               { name: 'Sub-Prime (<600)', ltv: 122, status: 'critical' },
+            ].map(tier => (
+               <div key={tier.name} className="space-y-1.5">
                   <div className="flex justify-between text-[8px] font-black uppercase tracking-widest">
-                     <span className="text-slate-400">{service.name}</span>
-                     <span className="text-white">{service.usage}%</span>
+                     <span className="text-slate-400">{tier.name}</span>
+                     <span className={`${tier.ltv > 120 ? 'text-rose-400' : tier.ltv > 110 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                       {tier.ltv}% LTV
+                     </span>
                   </div>
                   <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                      <motion.div 
                         initial={{ width: 0 }}
-                        animate={{ width: `${service.usage}%` }}
-                        className={`h-full bg-linear-to-r ${service.usage > 80 ? 'from-rose-500 to-rose-400' : 'from-cyan-500 to-emerald-500'}`}
+                        animate={{ width: `${(tier.ltv / 125) * 100}%` }}
+                        className={`h-full bg-linear-to-r ${
+                          tier.ltv > 120 ? 'from-rose-500 to-rose-400' : 
+                          tier.ltv > 110 ? 'from-amber-500 to-amber-400' : 
+                          'from-cyan-500 to-emerald-500'
+                        }`}
                      />
                   </div>
                </div>
@@ -119,7 +171,7 @@ export const SentinelFinancialOptimizer: React.FC = () => {
       </div>
 
       <button className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-2">
-         <TrendingDown size={14} className="text-emerald-400" /> Generar Reporte de Optimización
+         <TrendingUp size={14} className="text-emerald-400" /> Generar Reporte de Rentabilidad
       </button>
     </div>
   );

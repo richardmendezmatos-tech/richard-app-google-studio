@@ -2,8 +2,9 @@ import { MetadataRoute } from 'next';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
-const SITE_URL = 'https://richard-automotive.com';
+const SITE_URL = SITE_CONFIG.url;
 export const revalidate = 86400; // Revalidate sitemap every 24 hours
 
 // ── All PR cities with programmatic pages ──

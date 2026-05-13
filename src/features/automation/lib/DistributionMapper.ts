@@ -1,4 +1,5 @@
 import { Car } from '@/entities/inventory';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 export interface ClasificadosOnlineSchema {
   titulo: string;
@@ -33,8 +34,8 @@ export class DistributionMapper {
       precio: car.price || 0,
       descripcion: car.description || `${car.make} ${car.model} disponible en Richard Automotive.`,
       fotos: car.images || (car.img ? [car.img] : []),
-      pueblo: 'Vega Alta',
-      telefono: '787-123-4567', // Richard's standard or from config
+      pueblo: SITE_CONFIG.contact.address.split(',')[0].trim() || 'Vega Alta',
+      telefono: SITE_CONFIG.contact.phone,
       condicion: car.condition === 'new' ? 'Nuevo' : 'Usado',
       transmision: (car.transmission || 'Automatic').toLowerCase().includes('man') ? 'Manual' : 'Automatica',
     };
@@ -48,7 +49,7 @@ export class DistributionMapper {
       condition: car.condition === 'new' ? 'new' : 'used',
       category: 'vehicles',
       images: car.images || (car.img ? [car.img] : []),
-      location: 'Vega Alta, Puerto Rico',
+      location: SITE_CONFIG.contact.address,
     };
   }
 }
