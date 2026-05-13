@@ -526,7 +526,7 @@ export const generateStructuredJSON = async (
   modelName: string = 'gemini-1.5-flash',
 ): Promise<any> => {
   // Use a generic schema for unstructured JSON requests
-  const schema = z.record(z.any());
+  const schema = z.record(z.string(), z.any());
   return await sentinelAI.generateStructuredObject(schema, prompt, instruction, modelName);
 };
 

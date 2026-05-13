@@ -42,7 +42,7 @@ export const sentinelAI = {
         system: system || 'Eres un asistente experto en Richard Automotive.',
         prompt,
       });
-      return object;
+      return object as any;
     } catch (error: any) {
       this.logError('StructuredObject', error);
       throw error;
@@ -114,8 +114,8 @@ export const sentinelAI = {
       });
 
       return {
-        salesPitch: object.sales_pitch,
-        idealBuyer: object.ideal_buyer,
+        salesPitch: (object as any).sales_pitch,
+        idealBuyer: (object as any).ideal_buyer,
       };
     } catch (error: any) {
       this.logError('InventoryIntelligence', error);

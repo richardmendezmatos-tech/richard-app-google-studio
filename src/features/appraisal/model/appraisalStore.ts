@@ -92,7 +92,7 @@ export const useAppraisalStore = create<AppraisalState>()(
         } catch (err) {
           if (err instanceof z.ZodError) {
             const newErrors: any = {};
-            err.errors.forEach((e) => {
+            err.issues.forEach((e) => {
               if (e.path[0]) newErrors[e.path[0]] = e.message;
             });
             set({ errors: newErrors });
