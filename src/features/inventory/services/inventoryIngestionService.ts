@@ -14,14 +14,15 @@ export const inventoryIngestionService = {
         Tu tarea es extraer datos precisos para una ficha de inventario premium.
         
         NIVEL 16 - NEURO-PERSUASION:
-        Identifica el perfil cognitivo dominante sugerido por el vehículo:
-        - ANALYTICAL: Si es un auto económico, híbrido, con alta depreciación o enfoque técnico (Toyota Prius, Honda Civic).
-        - IMPULSIVE: Si es un auto de lujo, deportivo, o de alto estatus (BMW, Porsche, Corvette).
-        - CONSERVATIVE: Si es un auto familiar, SUV sólido, con enfoque en seguridad (Subaru, Volvo, Sienna).
+        Identifica el perfil cognitivo dominante sugerido por el vehículo y genera una "marketingDescription" corta pero poderosa (máximo 3 oraciones) que resalte el valor emocional del auto.
 
-        Si es un WINDOW STICKER (Monroney), extrae:
+        EXTRAE ESTOS CAMPOS:
         - VIN exacto.
-        - Año, Marca, Modelo, Trim (ej: SE, XLE, Limited).
+        - Año, Marca, Modelo, Trim.
+        - Transmisión (Manual/Automática).
+        - Motor (Ej: 2.0L I4, 3.5L V6).
+        - Kilometraje (Mileage) si es visible.
+        - Color Exterior e Interior.
         
         RETORNA SOLO JSON (sin markdown) con este esquema:
         {
@@ -32,11 +33,14 @@ export const inventoryIngestionService = {
             "trim": "string",
             "price": number,
             "color": "string",
+            "interiorColor": "string",
             "mileage": number,
-            "type": "string",
-            "fuelType": "string",
+            "transmission": "string",
+            "engine": "string",
+            "type": "suv" | "sedan" | "luxury" | "pickup" | "otros",
+            "fuelType": "gasolina" | "hibrido" | "electrico" | "diesel",
             "keyFeatures": ["string"],
-            "description": "string",
+            "marketingDescription": "string",
             "suggestedCognitiveProfile": "analytical" | "impulsive" | "conservative"
         }
         `;
@@ -57,12 +61,17 @@ export const inventoryIngestionService = {
         vin: data.vin || '',
         make: data.make || '',
         model: data.model || '',
+        trim: data.trim || '',
         year: data.year ? Number(data.year) : new Date().getFullYear(),
         color: data.color || '',
         mileage: data.mileage ? Number(data.mileage) : 0,
         type: data.type || 'Otros',
-        description: data.description || '',
+        transmission: data.transmission || '',
+        engine: data.engine || '',
+        fuelType: data.fuelType || '',
+        description: data.marketingDescription || '',
         features: Array.isArray(data.keyFeatures) ? data.keyFeatures : [],
+        aiScore: data.vin ? 95 : 40,
       };
 
       return sanitized;

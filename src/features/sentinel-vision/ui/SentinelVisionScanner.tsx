@@ -8,6 +8,7 @@ import { Scan, Upload, ShieldCheck, Zap, Activity, Info, Share2, Download, Spark
 import confetti from 'canvas-confetti';
 import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
 import { Car } from '@/entities/inventory';
+import { storageService } from '@/shared/api/supabase/storage';
 
 interface ScanResult {
   brand: string;
@@ -34,6 +35,9 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
   const [result, setResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [vin, setVin] = useState<string | null>(null);
+  const [extractedData, setExtractedData] = useState<Partial<Car> | null>(null);
+  const [isIngesting, setIsIngesting] = useState(false);
+  const [isIngested, setIsIngested] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -56,7 +60,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
       
       if (data.vin) setVin(data.vin);
 
-      // Transform data to fit ScanResult if needed
+      setExtractedData(data);
       setResult({
         brand: data.make || 'Unknown',
         model: data.model || 'Unknown',
@@ -90,6 +94,43 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
     accept: { 'image/*': [] },
     multiple: false,
   });
+
+  const handleIngest = async () => {
+    if (!extractedData || !vin) return;
+    setIsIngesting(true);
+    try {
+      // 1. Upload the image to Supabase Storage first
+      let publicImageUrl = preview;
+      if (file) {
+        try {
+          publicImageUrl = await storageService.uploadImage(file, 'inventory');
+        } catch (uploadErr) {
+          console.error('Image upload failed, falling back to preview URL:', uploadErr);
+        }
+      }
+
+      // 2. Send the public URL to the ingestion API
+      const response = await fetch('/api/inventory/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...extractedData, image: publicImageUrl }),
+      });
+      
+      if (!response.ok) throw new Error('Ingestion failed');
+      
+      setIsIngested(true);
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.5 },
+        colors: ['#00ff00', '#ffffff']
+      });
+    } catch (err) {
+      setError('Failed to ingest vehicle. VIN might already exist.');
+    } finally {
+      setIsIngesting(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8">
@@ -327,6 +368,33 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                   <Share2 className="w-4 h-4 mr-2 inline" />
                   <span className="relative z-10">SHARE REPORT</span>
                 </button>
+                <button 
+                  onClick={handleIngest}
+                  disabled={isIngesting || isIngested}
+                  className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 ${
+                    isIngested 
+                    ? 'bg-green-500/20 text-green-500 border border-green-500/50 cursor-default' 
+                    : 'bg-ra-primary hover:bg-ra-primary/80 text-black border border-white/20 animate-kinetic-pulse'
+                  }`}
+                >
+                  {isIngesting ? (
+                    <>
+                      <Activity className="w-4 h-4 animate-spin" />
+                      INGESTING TO DATABASE...
+                    </>
+                  ) : isIngested ? (
+                    <>
+                      <ShieldCheck className="w-4 h-4" />
+                      UNIT ONLINE - STOCK READY
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 fill-current" />
+                      CONFIRM & INGEST TO STOCK
+                    </>
+                  )}
+                </button>
+
                 {onLaunchMarketing && (
                   <button 
                     onClick={() => onLaunchMarketing({
@@ -337,7 +405,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                       price: parseInt(result.marketValue.replace(/[^0-9]/g, '')),
                       img: preview || '',
                       features: [result.specs.hp, result.specs.torque, result.specs.acceleration],
-                      description: `Unidad identificada vía Sentinel Vision con un score de ${result.score}/100.`
+                      description: extractedData?.description || `Unidad identificada vía Sentinel Vision con un score de ${result.score}/100.`
                     })}
                     className="w-full py-4 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
                   >

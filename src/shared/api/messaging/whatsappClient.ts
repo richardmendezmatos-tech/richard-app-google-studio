@@ -51,14 +51,9 @@ export async function sendTemplateMessage(msg: TemplateMessage): Promise<{ succe
   }
 
   try {
-    const res = await fetch(`${WHATSAPP_API_URL}/${config.phoneNumberId}/messages`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.accessToken}`,
-      },
-      body: JSON.stringify({
+    const payload = {
         messaging_product: 'whatsapp',
+        recipient_type: 'individual',
         to: formatPhoneForWhatsApp(msg.to),
         type: 'template',
         template: {
@@ -66,19 +61,24 @@ export async function sendTemplateMessage(msg: TemplateMessage): Promise<{ succe
           language: { code: msg.languageCode || 'es' },
           components: msg.components || [],
         },
-      }),
+    };
+
+    const res = await fetch(`${WHATSAPP_API_URL}/${config.phoneNumberId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.accessToken}`,
+      },
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
-      const errorBody = await res.text();
-      console.error('[WhatsApp] Template send failed:', errorBody);
       return { success: false };
     }
 
     const data = await res.json();
     return { success: true, messageId: data.messages?.[0]?.id };
   } catch (error) {
-    console.error('[WhatsApp] Network error:', error);
     return { success: false };
   }
 }
@@ -103,6 +103,7 @@ export async function sendTextMessage(msg: TextMessage): Promise<{ success: bool
       },
       body: JSON.stringify({
         messaging_product: 'whatsapp',
+        recipient_type: 'individual',
         to: formatPhoneForWhatsApp(msg.to),
         type: 'text',
         text: { body: msg.body },
@@ -110,15 +111,12 @@ export async function sendTextMessage(msg: TextMessage): Promise<{ success: bool
     });
 
     if (!res.ok) {
-      const errorBody = await res.text();
-      console.error('[WhatsApp] Text send failed:', errorBody);
       return { success: false };
     }
 
     const data = await res.json();
     return { success: true, messageId: data.messages?.[0]?.id };
   } catch (error) {
-    console.error('[WhatsApp] Network error:', error);
     return { success: false };
   }
 }

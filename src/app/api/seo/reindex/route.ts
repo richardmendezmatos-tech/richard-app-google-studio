@@ -19,15 +19,15 @@ export async function POST(req: Request) {
     revalidatePath('/(dashboard)/command-center', 'page');
 
     // 2. Log de auditoría
-    await audit.log({
-      type: 'info',
-      message: 'Sitemap & Inventory revalidation triggered via Command Center',
-      source: 'SentinelSEO',
-      metadata: { 
+    await audit.log(
+      'info',
+      'Sitemap & Inventory revalidation triggered via Command Center',
+      { 
         paths: ['/sitemap.xml', '/inventario'],
         timestamp: new Date().toISOString()
-      }
-    });
+      },
+      'SentinelSEO'
+    );
 
     return NextResponse.json({
       success: true,

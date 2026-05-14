@@ -13,7 +13,7 @@ const WINDOW = 60 * 1000; // per minute
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const ip = request.ip || 'anonymous';
+  const ip = (request as any).ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'anonymous';
 
   // 0. Sentinel N20: Anti-Spam Rate Limiting
   if (pathname.startsWith('/api/webhooks/leads') || pathname.startsWith('/api/ai/chat')) {

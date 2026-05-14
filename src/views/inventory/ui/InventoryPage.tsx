@@ -56,7 +56,7 @@ const InventoryPage: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage })
                 isSearching={state.isSearching}
                 searchTerm={state.searchTerm}
                 visualContext={state.visualContext}
-                savedIdsCount={state.savedCars.savedIds.length}
+                savedIdsCount={state.savedCars?.savedIds?.length || 0}
                 status={state.status as 'pending' | 'success' | 'error'}
                 error={state.error}
                 hasNextPage={state.hasNextPage}
@@ -72,8 +72,8 @@ const InventoryPage: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage })
                 onOpenGarage={onOpenGarage}
                 onSelectCar={actions.handleSelectCar}
                 onCompare={actions.handleToggleCompare}
-                isComparing={(id) => state.compareList.some((c: Car) => c.id === id)}
-                isSaved={(id) => state.savedCars.isSaved(id)}
+                isComparing={(id) => (state.compareList || []).some((c: Car) => c.id === id)}
+                isSaved={(id) => state.savedCars?.isSaved?.(id) || false}
                 onToggleSave={actions.handleToggleSave}
                 onFetchNextPage={actions.fetchNextPage}
               />

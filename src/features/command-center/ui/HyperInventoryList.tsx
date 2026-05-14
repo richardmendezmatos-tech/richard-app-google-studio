@@ -50,10 +50,10 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
     }
   }, []);
 
-  const totalHeight = inventory.length * itemHeight;
+  const totalHeight = (inventory || []).length * itemHeight;
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
   const endIndex = Math.min(
-    inventory.length,
+    (inventory || []).length,
     Math.floor((scrollTop + containerHeight) / itemHeight) + overscan,
   );
 
@@ -71,7 +71,7 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
 
   const leadCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    leads.forEach((l) => {
+    (leads || []).forEach((l) => {
       if (l.vehicleId) {
         counts.set(l.vehicleId, (counts.get(l.vehicleId) || 0) + 1);
       }
@@ -131,7 +131,7 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
         </div>
       </div>
 
-      {inventory.length === 0 && (
+      {(inventory || []).length === 0 && (
         <div className="absolute inset-0 flex flex-col items-center justify-center opacity-30 pointer-events-none">
           <p className="font-bold uppercase tracking-widest text-sm text-white">
             Cargando hyper-lista...

@@ -150,9 +150,9 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             className="p-8 lg:p-12 reveal-up"
           >
             <StorefrontMarketPulse
-              avgPrice={state.marketPulse.avgPrice}
-              premiumUnits={state.marketPulse.premiumUnits}
-              compactUnits={state.marketPulse.compactUnits}
+              avgPrice={state.marketPulse?.avgPrice || 0}
+              premiumUnits={state.marketPulse?.premiumUnits || 0}
+              compactUnits={state.marketPulse?.compactUnits || 0}
             />
           </GlassContainer>
 
@@ -177,7 +177,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
               isSearching={false}
               searchTerm=""
               visualContext={null}
-              savedIdsCount={state.savedCars.savedIds.length}
+              savedIdsCount={state.savedCars?.savedIds?.length || 0}
               status={state.status as 'pending' | 'success' | 'error'}
               error={state.error}
               hasNextPage={false}
@@ -188,8 +188,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
               onOpenGarage={onOpenGarage}
               onSelectCar={actions.handleSelectCar}
               onCompare={actions.handleToggleCompare}
-              isComparing={(id) => state.compareList.some((c: Car) => c.id === id)}
-              isSaved={(id) => state.savedCars.isSaved(id)}
+              isComparing={(id) => (state.compareList || []).some((c: Car) => c.id === id)}
+              isSaved={(id) => state.savedCars?.isSaved?.(id) || false}
               onToggleSave={actions.handleToggleSave}
               onFetchNextPage={() => {}}
             />

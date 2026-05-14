@@ -90,17 +90,18 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div
         className={`relative border-b border-white/5 px-7 py-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}
       >
-        <button className="group text-left overflow-hidden" onClick={() => navigate('/')}>
+        <button className="group text-left overflow-hidden relative" onClick={() => navigate('/')}>
+          <div className="scanline-overlay opacity-10" />
           {!isCollapsed ? (
             <div className="relative">
-              <p className="font-cinematic text-5xl leading-[0.82] text-white transition-all group-hover:text-primary group-hover:drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]">
+              <p className="font-cinematic text-5xl leading-[0.82] text-white transition-all group-hover:text-primary group-hover:drop-shadow-[0_0_15px_rgba(0,229,255,0.4)] glitch-hover">
                 RICHARD
               </p>
               <p className="font-cinematic text-3xl tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors uppercase">AUTOMOTIVE</p>
               <div className="mt-2 flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-primary animate-pulse" />
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
-                  COMMAND CENTER
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#00e5ff]" />
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
+                  COMMAND CENTER / <span className="text-primary/60">LIVE OPS</span>
                 </p>
               </div>
             </div>
@@ -394,9 +395,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <p className="truncate text-xs font-black uppercase tracking-[0.04em] text-white group-hover:text-cyan-200">
                     {user.displayName || user.email}
                   </p>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">
-                    {role === 'admin' ? 'Administrador' : 'Editar Perfil'}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="h-1 w-1 rounded-full bg-cyan-400 animate-pulse" />
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">
+                      {role === 'admin' ? 'System Admin' : 'Agent Access'}
+                    </p>
+                  </div>
                 </div>
               )}
             </button>

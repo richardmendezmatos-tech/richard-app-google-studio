@@ -187,11 +187,11 @@ export const sentinelAI = {
    */
   logError(operation: string, error: any) {
     console.error(`❌ [Sentinel AI] ${operation} Failed:`, error);
-    getAuditRepository().then(repo => repo.log({
-      type: 'error',
-      message: `AI Failure: ${operation}`,
-      source: 'SentinelAI',
-      metadata: { error: error.message, stack: error.stack }
-    })).catch(() => {});
+    getAuditRepository().then(repo => repo.log(
+      'error',
+      `AI Failure: ${operation}`,
+      { error: error.message, stack: error.stack },
+      'SentinelAI'
+    )).catch(() => {});
   }
 };

@@ -108,12 +108,12 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
   useEffect(() => {
     analytics.trackTabChange(car.id, activeTab);
-    auditRepo.log({
-      type: 'info',
-      message: `User viewed ${activeTab} tab for ${car.name}`,
-      source: 'CarDetailModal',
-      metadata: { vehicleId: car.id, tab: activeTab }
-    });
+    auditRepo.log(
+      'info',
+      `User viewed ${activeTab} tab for ${car.name}`,
+      { vehicleId: car.id, tab: activeTab },
+      'CarDetailModal'
+    );
   }, [activeTab, car.id, car.name, analytics]);
 
   useEffect(() => {
@@ -145,12 +145,12 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     });
 
     analytics.trackCarConfigure(car.id);
-    auditRepo.log({
-      type: 'conversion',
-      message: `WhatsApp Conversion attempt for ${car.name}`,
-      source: 'CarDetailModal',
-      metadata: { vehicleId: car.id, payment: calculatedPayment }
-    });
+    auditRepo.log(
+      'conversion',
+      `WhatsApp Conversion attempt for ${car.name}`,
+      { vehicleId: car.id, payment: calculatedPayment },
+      'CarDetailModal'
+    );
 
     window.open(
       `https://wa.me/17873682880?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
@@ -167,12 +167,12 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       source: `CarDetailModal_Call`,
     });
 
-    auditRepo.log({
-      type: 'conversion',
-      message: `Call Conversion attempt for ${car.name}`,
-      source: 'CarDetailModal',
-      metadata: { vehicleId: car.id }
-    });
+    auditRepo.log(
+      'conversion',
+      `Call Conversion attempt for ${car.name}`,
+      { vehicleId: car.id },
+      'CarDetailModal'
+    );
 
     window.location.href = 'tel:7873682880';
   };

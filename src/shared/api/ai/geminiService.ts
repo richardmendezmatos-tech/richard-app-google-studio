@@ -289,23 +289,23 @@ const callGeminiProxy = async (
     const duration = Date.now() - startTime;
     
     // Nivel 14 AI Traceability
-    getAuditRepository().then(repo => repo.log({
-      type: 'info',
-      message: `IA Inferencia completada (${modelName})`,
-      source: 'GeminiService',
-      metadata: { latency: duration, model: modelName }
-    }));
+    getAuditRepository().then(repo => repo.log(
+      'info',
+      `IA Inferencia completada (${modelName})`,
+      { latency: duration, model: modelName },
+      'GeminiService'
+    ));
 
     return response.text();
   } catch (error: any) {
     console.error('AI Proxy Error:', error);
     
-    getAuditRepository().then(repo => repo.log({
-      type: 'error',
-      message: `Fallo en IA Inferencia: ${error.message}`,
-      source: 'GeminiService',
-      metadata: { model: modelName }
-    }));
+    getAuditRepository().then(repo => repo.log(
+      'error',
+      `Fallo en IA Inferencia: ${error.message}`,
+      { model: modelName },
+      'GeminiService'
+    ));
     
     throw error;
   }

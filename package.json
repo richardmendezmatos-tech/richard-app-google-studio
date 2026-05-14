@@ -7,7 +7,7 @@
     "node": "^22.0.0 || ^25.0.0"
   },
   "scripts": {
-    "dev": "dotenvx run -- next dev",
+    "dev": "dotenvx run -- next dev --webpack",
     "build": "dotenvx run -- next build --webpack",
     "start": "next start",
     "deploy:vercel": "dotenvx run -- npx vercel --prod",

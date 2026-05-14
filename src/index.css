@@ -65,6 +65,21 @@
     50% { transform: scale(1.1) translate(2%, 2%); opacity: 0.8; }
     100% { transform: scale(1) translate(-2%, -2%); opacity: 0.5; }
   }
+
+  @keyframes kinetic-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-5px) rotate(0.5deg); }
+    66% { transform: translateY(2px) rotate(-0.5deg); }
+  }
+
+  @keyframes tech-glitch {
+    0% { clip-path: inset(0 0 0 0); }
+    20% { clip-path: inset(20% -6px 80% 0); }
+    40% { clip-path: inset(80% -6px 20% 0); }
+    60% { clip-path: inset(40% -6px 60% 0); }
+    80% { clip-path: inset(10% -6px 90% 0); }
+    100% { clip-path: inset(0 0 0 0); }
+  }
 }
 /* Essential Utilities (Sentinel N23) handled in @theme and below */
 
@@ -148,6 +163,11 @@
   --board-column-sm: 120px;
   --board-column-md: 200px;
   --board-column-lg: 320px;
+
+  /* Nivel 25: Cinematic Depth */
+  --neon-cyan-glow: 0 0 30px hsla(184, 100%, 50%, 0.3);
+  --neon-amber-glow: 0 0 30px hsla(38, 92%, 50%, 0.3);
+  --premium-gradient-dark: linear-gradient(165deg, #02060a 0%, #051421 50%, #0a1929 100%);
 }
 
 .glass-liquid {
@@ -443,11 +463,24 @@ body {
 }
 
 .glass-premium:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(1.02) translateZ(0);
   box-shadow:
     0 35px 70px -15px rgba(0, 229, 255, 0.2),
     0 0 0 1px rgba(0, 229, 255, 0.3);
   border-color: rgba(0, 229, 255, 0.4);
+}
+
+.text-kinetic {
+  animation: kinetic-float 6s ease-in-out infinite;
+}
+
+.glitch-hover:hover {
+  animation: tech-glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.hud-tag {
+  @apply font-tech text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-sm border border-white/10 bg-white/5;
+  box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.05);
 }
 
 .btn-premium {

@@ -80,8 +80,9 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
     >
       {/* Image Section */}
       <div 
-        className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5 h-card-image"
+        className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5 h-card-image hud-brackets"
       >
+        <div className="scanline-overlay opacity-10" />
         {/* Dynamic Shine Overlay */}
         <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
@@ -164,7 +165,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           </div>
           <h3
             id={`car-title-${car.id}`}
-            className="font-cinematic text-[2rem] tracking-[0.04em] text-white transition-colors group-hover:text-primary line-clamp-1 drop-shadow-md text-glow"
+            className="font-cinematic text-[2rem] tracking-[0.04em] text-white transition-colors group-hover:text-primary line-clamp-1 drop-shadow-md text-glow glitch-hover"
           >
             {car.name}
           </h3>
@@ -176,15 +177,9 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
         {/* Specs */}
         <div className="flex gap-2 mb-6 flex-wrap">
-          <span className="font-tech rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-slate-300 backdrop-blur-sm">
-            Auto
-          </span>
-          <span className="font-tech rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-slate-300 backdrop-blur-sm">
-            Gasolina
-          </span>
-          <span className="font-tech rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-slate-300 backdrop-blur-sm">
-            4 Puertas
-          </span>
+          <span className="hud-tag">Auto</span>
+          <span className="hud-tag">Gasolina</span>
+          <span className="hud-tag">4 Puertas</span>
         </div>
 
         <div className="mt-auto border-t border-white/10 pt-6">

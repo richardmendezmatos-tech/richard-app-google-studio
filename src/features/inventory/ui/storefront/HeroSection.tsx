@@ -137,9 +137,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 className="flex flex-col gap-0"
               >
                 <h2 className="flex flex-col">
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter">{h.line1}</span>
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter">{h.line2}</span>
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-linear-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none">
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter text-kinetic drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">{h.line1}</span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter mix-blend-overlay">{h.line2}</span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-linear-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none drop-shadow-[0_0_40px_rgba(0,229,255,0.3)]">
                     {h.accent}
                   </span>
                 </h2>
@@ -174,10 +174,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <GlassContainer 
             intensity="high"
             opacity={0.07}
-            className="p-10 space-y-8 relative group"
+            className="p-10 space-y-8 relative group hud-brackets"
           >
             {/* Holographic scanner effect */}
             <div className="absolute inset-0 bg-linear-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            <div className="scanline-overlay opacity-20" />
             
             <div className="space-y-3 relative">
               <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">

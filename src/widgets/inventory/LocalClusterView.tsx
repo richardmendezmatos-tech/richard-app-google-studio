@@ -29,7 +29,7 @@ const LocalClusterView: React.FC<LocalClusterViewProps> = ({ inventory }) => {
 
   // Lógica de Filtrado
   const filteredCars = useMemo(() => {
-    return inventory.filter((car) => {
+    return (inventory || []).filter((car) => {
       const matchesCategory = normalizedCategory === 'all' || car.type === normalizedCategory;
       // Por ahora el inventario no tiene campo de "uicación", así que mostramos todo el inventario de Richard Automotive
       // pero filtrado por categoría si se especifica. En el futuro se podría añadir un campo location a Car.

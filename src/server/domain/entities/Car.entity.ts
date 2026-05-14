@@ -9,6 +9,10 @@ export interface Car {
     type: string;
     category: string;    // SUV, Sedan, Truck
     condition: string;   // New, Used, Certified
+    vin?: string;
+    color?: string;
+    image?: string;
+    img?: string;
     features?: string[];
     description?: string;
     embedding?: number[];

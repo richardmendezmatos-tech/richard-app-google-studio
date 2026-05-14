@@ -39,7 +39,7 @@ const CollectionPage: React.FC<Props> = ({ inventory }) => {
   }, [brand, maxPrice, isBrandView, isBudgetView]);
 
   const filteredInventory = useMemo(() => {
-    let list = [...inventory];
+    let list = [...(inventory || [])];
     if (isBrandView && brand) {
       list = list.filter((car) => {
         const _make = car.make

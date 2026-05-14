@@ -180,12 +180,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
       try {
         analytics.trackNeuralMatch(finalProfile);
-        auditRepo.log({
-          type: 'info',
-          message: `Neural Match Scan Initiated`,
-          source: 'NeuralMatchModal',
-          metadata: { profile_length: finalProfile.length, tags: activeTags }
-        });
+        auditRepo.log(
+          'info',
+          `Neural Match Scan Initiated`,
+          { profile_length: finalProfile.length, tags: activeTags },
+          'NeuralMatchModal'
+        );
 
         const matchRes = await fetch('/api/ai/match', {
           method: 'POST',

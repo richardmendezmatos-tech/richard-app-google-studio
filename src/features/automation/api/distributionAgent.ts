@@ -29,21 +29,23 @@ export class AutonomousDistributionAgent {
 
     if (error || !cars) {
       const audit = await getAuditRepository();
-      await audit.log({
-        type: 'error',
-        message: `Failed to fetch inventory for distribution: ${error?.message || 'Empty response'}`,
-        source: 'SentinelDistribution'
-      });
+      await audit.log(
+        'error',
+        `Failed to fetch inventory for distribution: ${error?.message || 'Empty response'}`,
+        {},
+        'SentinelDistribution'
+      );
       console.error('[Sentinel Distribution] Failed to fetch inventory:', error);
       return { processed: 0, errors: 1 };
     }
 
     const audit = await getAuditRepository();
-    await audit.log({
-      type: 'info',
-      message: `Starting distribution cycle for ${cars.length} units`,
-      source: 'SentinelDistribution'
-    });
+    await audit.log(
+      'info',
+      `Starting distribution cycle for ${cars.length} units`,
+      {},
+      'SentinelDistribution'
+    );
 
     let processed = 0;
     let errors = 0;
@@ -58,12 +60,12 @@ export class AutonomousDistributionAgent {
       }
     }
 
-    await audit.log({
-      type: 'info',
-      message: `Cycle complete. Processed: ${processed}, Errors: ${errors}`,
-      source: 'SentinelDistribution',
-      metadata: { processed, errors }
-    });
+    await audit.log(
+      'info',
+      `Cycle complete. Processed: ${processed}, Errors: ${errors}`,
+      { processed, errors },
+      'SentinelDistribution'
+    );
 
     return { processed, errors };
   }

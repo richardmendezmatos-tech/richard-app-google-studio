@@ -10,9 +10,10 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
   const [lastIndexed, setLastIndexed] = useState<string | null>(null);
   const [isReplying, setIsReplying] = useState<number | null>(null);
   const [reviewReplies, setReviewReplies] = useState<Record<number, string>>({});
+  const [proposal, setProposal] = useState<string | null>(null);
 
   const generatePost = async () => {
-    if (inventory.length === 0) return;
+    if ((inventory || []).length === 0) return;
     setIsGenerating(true);
     const car = inventory[0]; // Propose post for the latest unit
     const text = await localSEOAgent.generateNewArrivalPost(car);
@@ -160,7 +161,7 @@ export const SentinelLocalSEO: React.FC<{ inventory: Car[] }> = ({ inventory }) 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[10px]">
                   <span className="text-slate-500 font-bold uppercase tracking-wider">Inventory Nodes</span>
-                  <span className="text-white font-mono">{inventory.length}</span>
+                  <span className="text-white font-mono">{(inventory || []).length}</span>
                 </div>
                 <div className="flex items-center justify-between text-[10px]">
                   <span className="text-slate-500 font-bold uppercase tracking-wider">City Pages</span>

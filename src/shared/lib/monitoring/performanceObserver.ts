@@ -19,12 +19,12 @@ export const observerPerformance = () => {
 
     raSentinel.reportPerformance('LCP', lcp, score);
     
-    getAuditRepository().then(repo => repo.log({
-      type: lcp < 2500 ? 'info' : 'warning',
-      message: `RUM LCP Detectado: ${Math.round(lcp)}ms`,
-      source: 'Sentinel-Vitals',
-      metadata: { lcp }
-    }));
+    getAuditRepository().then(repo => repo.log(
+      lcp < 2500 ? 'info' : 'warning',
+      `RUM LCP Detectado: ${Math.round(lcp)}ms`,
+      { lcp },
+      'Sentinel-Vitals'
+    ));
   });
 
   lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -38,16 +38,16 @@ export const observerPerformance = () => {
 
       raSentinel.reportPerformance('FID', fid, score);
 
-      getAuditRepository().then(repo => repo.log({
-        type: 'info',
-        message: `Performance Trace: ${entry.name}`,
-        source: 'PerformanceObserver',
-        metadata: {
+      getAuditRepository().then(repo => repo.log(
+        'info',
+        `Performance Trace: ${entry.name}`,
+        {
           duration: entry.duration,
           startTime: entry.startTime,
           entryType: entry.entryType
-        }
-      }));
+        },
+        'PerformanceObserver'
+      ));
     });
   });
 
@@ -66,12 +66,12 @@ export const observerPerformance = () => {
     raSentinel.reportPerformance('CLS', clsValue, score);
 
     if (clsValue > 0) {
-      getAuditRepository().then(repo => repo.log({
-        type: clsValue < 0.1 ? 'info' : 'warning',
-        message: `RUM CLS Detectado: ${clsValue.toFixed(4)}`,
-        source: 'Sentinel-Vitals',
-        metadata: { cls: clsValue }
-      }));
+      getAuditRepository().then(repo => repo.log(
+        clsValue < 0.1 ? 'info' : 'warning',
+        `RUM CLS Detectado: ${clsValue.toFixed(4)}`,
+        { cls: clsValue },
+        'Sentinel-Vitals'
+      ));
     }
   });
 

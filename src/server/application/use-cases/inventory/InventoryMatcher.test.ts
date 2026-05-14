@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { MatchReasoningService } from '@/shared/api/ai/MatchReasoningService';
 import { InventoryMatcher } from './InventoryMatcher.usecase';
 import { LeadRepository } from '../../../domain/repositories';
 import { Lead, Car } from '../../../domain/entities';
@@ -66,6 +67,13 @@ describe('InventoryMatcher', () => {
             model: 'Camry',
             mileage: 0
         };
+
+        vi.spyOn(MatchReasoningService, 'analyzeMatchIntelligence').mockResolvedValue({
+            score: 85,
+            reasoning: 'Match perfecto',
+            whatsappDraft: 'Hola!',
+            confidence: 0.9
+        });
 
         const result = await matcher.execute('car-1', car);
         expect(result.isSuccess()).toBe(true);
