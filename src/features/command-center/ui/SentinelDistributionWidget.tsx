@@ -88,11 +88,21 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({ 
           <button 
             onClick={handleAutonomousCycle}
             disabled={syncing}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all group ${syncing ? 'animate-pulse' : ''}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/30 transition-all group relative overflow-hidden ${syncing ? 'cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
             title="Ejecutar Ciclo Autónomo (Neural Pitch)"
           >
-            <Sparkles className={`w-3.5 h-3.5 ${syncing ? 'text-cyan-400' : 'text-cyan-400'}`} />
-            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-tighter">Run Cycle</span>
+            {syncing && (
+              <motion.div 
+                layoutId="loader"
+                className="absolute inset-0 bg-cyan-400/10"
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              />
+            )}
+            <Zap className={`w-3.5 h-3.5 ${syncing ? 'animate-pulse text-cyan-400' : 'text-cyan-400 group-hover:rotate-12 transition-transform'}`} />
+            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-tighter">
+              {syncing ? 'Syncing...' : 'Run Neural Cycle'}
+            </span>
           </button>
         </div>
       </div>

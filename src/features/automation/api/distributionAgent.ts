@@ -127,21 +127,34 @@ export class AutonomousDistributionAgent {
   }
 
   /**
-   * Uses Sentinel AI to generate high-conversion listing copy.
+   * Uses Sentinel AI to generate high-conversion listing copy (Neural Pitch).
+   * Refined for Richard Automotive - Puerto Rico Market.
    */
   private async generateNeuralPitch(car: Car): Promise<string> {
-    const prompt = `Genera un anuncio de venta irresistible para un ${car.year} ${car.make} ${car.model}. 
-    Precio: $${car.price}. Millaje: ${car.mileage}. Condición: ${car.condition}.
-    Usa un tono persuasivo, profesional y adaptado al mercado de Puerto Rico (términos como "guagua", "unidad", "trato").
-    Incluye un llamado a la acción para contactar a Richard Automotive.`;
+    const prompt = `
+      CREA UN ANUNCIO DE VENTA IRRESISTIBLE PARA ESTA UNIDAD:
+      - Vehículo: ${car.year} ${car.make} ${car.model} ${car.trim || ''}
+      - Precio: $${car.price?.toLocaleString()}
+      - Millaje: ${car.mileage?.toLocaleString()} mi
+      - Condición: ${car.condition === 'new' ? 'NUEVA' : 'CERTIFICADA'}
+      
+      ESTILO REQUERIDO:
+      1. Tono: Profesional, agresivo en ventas, pero honesto. 
+      2. Lenguaje: Español de Puerto Rico (usa términos como "guagua", "trato", "unidad", "brutal").
+      3. Estructura:
+         - Gancho (Headline) impactante.
+         - Beneficios clave (por qué comprar esta unidad ahora).
+         - Llamado a la acción (CTA) directo a Richard Automotive.
+         - Hashatgs relevantes (#RichardAutomotive #VentaDeAutosPR).
+    `;
 
-    const instruction = 'Eres un copywriter experto en ventas de autos de lujo y certificados.';
+    const instruction = 'Eres el Director de Ventas de Richard Automotive. Tu objetivo es que el cliente sienta que pierde una oportunidad única si no llama ahora mismo.';
     
     try {
       const result = await sentinelAI.quickGen(prompt, instruction);
-      return result || `Excelente ${car.make} ${car.model} disponible hoy en Richard Automotive.`;
+      return result || `🔥 ¡NUEVA ENTRADA! ${car.make} ${car.model} ${car.year} disponible hoy en Richard Automotive. Llama ahora.`;
     } catch (err) {
-      return `${car.make} ${car.model} ${car.year} disponible en Richard Automotive. Contáctanos para detalles.`;
+      return `${car.make} ${car.model} ${car.year} - Unidad certificada disponible en Richard Automotive. Contáctanos para detalles.`;
     }
   }
 }

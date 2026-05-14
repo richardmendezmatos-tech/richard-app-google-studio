@@ -15,7 +15,7 @@ export const storageService = {
     const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
 
-    console.log(`📤 Uploading image to bucket '${bucket}': ${filePath}`);
+    console.log(`📤 [Storage] Uploading to '${bucket}': ${filePath}`);
 
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -25,8 +25,8 @@ export const storageService = {
       });
 
     if (error) {
-      console.error('❌ Storage Upload Error:', error.message);
-      throw error;
+      console.error(`❌ [Storage] Upload Failed: ${error.message}`, error);
+      throw new Error(`Error de Almacenamiento: ${error.message}`);
     }
 
     // Get Public URL
@@ -34,7 +34,12 @@ export const storageService = {
       .from(bucket)
       .getPublicUrl(filePath);
 
-    console.log('✅ Upload Successful. Public URL:', publicUrl);
+    if (!publicUrl) {
+      console.error('❌ [Storage] Failed to generate public URL');
+      throw new Error('No se pudo generar la URL pública de la imagen.');
+    }
+
+    console.log('✅ [Storage] Upload Successful:', publicUrl);
     return publicUrl;
   }
 };

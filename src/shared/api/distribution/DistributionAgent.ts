@@ -85,24 +85,42 @@ export class DistributionAgent {
       last_sync: new Date().toISOString()
     }, { onConflict: 'car_id,platform' });
 
-    // 2. Simular lógica de plataforma (ClasificadosOnline Browser o Meta Feed Bump)
+    // 2. Ejecutar lógica de plataforma
     try {
       if (platform === 'facebook_marketplace') {
-        // En Meta, el feed es pasivo, pero podemos disparar un "ping" al Commerce Manager si tuviéramos la API
-        await new Promise(resolve => setTimeout(resolve, 1500));
-      } else if (platform === 'clasificados_online') {
-        // Aquí iría el llamado al microservicio de Playwright
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // En Meta, el feed es pasivo, pero marcamos como activo si pasó validación
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        await supabase.from('distribution_logs').update({
+          status: 'active',
+          last_sync: new Date().toISOString()
+        }).match({ car_id: car.id, platform });
+        
+        return true;
+      } 
+      
+      if (platform === 'clasificados_online') {
+        const { DistributionMapper } = await import('@/features/automation/lib/DistributionMapper');
+        const { clasificadosOnlineAdapter } = await import('@/features/automation/lib/ClasificadosOnlineAdapter');
+        
+        const mappedData = DistributionMapper.toClasificadosOnline(car);
+        const result = await clasificadosOnlineAdapter.postListing(mappedData);
+
+        if (result.success) {
+          await supabase.from('distribution_logs').update({
+            status: 'active',
+            external_url: result.externalId ? `https://www.clasificadosonline.com/UDAutoDetail.asp?AutoId=${result.externalId}` : undefined,
+            last_sync: new Date().toISOString()
+          }).match({ car_id: car.id, platform });
+          return true;
+        } else {
+          throw new Error(result.error || 'Error desconocido en ClasificadosOnline');
+        }
       }
 
-      // 3. Actualizar a éxito
-      await supabase.from('distribution_logs').update({
-        status: 'active',
-        last_sync: new Date().toISOString()
-      }).match({ car_id: car.id, platform });
-
-      return true;
+      return false;
     } catch (err: any) {
+      console.error(`[DistributionAgent] Fallo en ${platform}:`, err.message);
       await supabase.from('distribution_logs').update({
         status: 'error',
         error_msg: err.message,

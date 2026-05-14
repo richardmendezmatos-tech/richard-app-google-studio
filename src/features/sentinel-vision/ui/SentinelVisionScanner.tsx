@@ -98,15 +98,25 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
   const handleIngest = async () => {
     if (!extractedData || !vin) return;
     setIsIngesting(true);
+    setError(null);
+
     try {
       // 1. Upload the image to Supabase Storage first
-      let publicImageUrl = preview;
+      let publicImageUrl = '';
+      
       if (file) {
         try {
           publicImageUrl = await storageService.uploadImage(file, 'inventory');
-        } catch (uploadErr) {
-          console.error('Image upload failed, falling back to preview URL:', uploadErr);
+        } catch (uploadErr: any) {
+          console.error('Image upload failed:', uploadErr);
+          setError(`FALLO DE CARGA: El bucket "inventory" podría no estar configurado. (${uploadErr.message})`);
+          setIsIngesting(false);
+          return; // Stop here if photo fails, we don't want units without photos
         }
+      } else {
+        setError('No hay imagen para subir. Escanea la unidad primero.');
+        setIsIngesting(false);
+        return;
       }
 
       // 2. Send the public URL to the ingestion API
@@ -116,7 +126,11 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
         body: JSON.stringify({ ...extractedData, image: publicImageUrl }),
       });
       
-      if (!response.ok) throw new Error('Ingestion failed');
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Ingestion failed');
+      }
       
       setIsIngested(true);
       confetti({
@@ -125,8 +139,9 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
         origin: { y: 0.5 },
         colors: ['#00ff00', '#ffffff']
       });
-    } catch (err) {
-      setError('Failed to ingest vehicle. VIN might already exist.');
+    } catch (err: any) {
+      console.error('Ingestion error:', err);
+      setError(`FALLO DE INGESTIÓN: ${err.message}`);
     } finally {
       setIsIngesting(false);
     }
