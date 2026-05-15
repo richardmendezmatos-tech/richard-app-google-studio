@@ -5,7 +5,8 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
-import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
+import Script from 'next/script';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
@@ -117,6 +118,9 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           <span className="font-tech flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/60 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-slate-200 shadow-sm backdrop-blur-md">
             <ShieldCheck size={12} className="text-primary" /> Richard Certified
           </span>
+          <span className="font-tech flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)] backdrop-blur-xl">
+            🎁 BONO DE $300 WEB
+          </span>
           
           {/* Nivel 13: Neuro-Badge Predictive Social Proof */}
           {isHighInterest && (
@@ -131,18 +135,20 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
         {/* Actions */}
         <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 scale-90 origin-top-right">
-          <div
+          <button
             onClick={onToggleSave}
+            aria-label={isSaved ? "Quitar de favoritos" : "Añadir a favoritos"}
             className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isSaved ? 'border-rose-500 bg-rose-500 text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-rose-400'}`}
           >
             <Heart size={18} fill={isSaved ? 'currentColor' : 'none'} />
-          </div>
-          <div
+          </button>
+          <button
             onClick={handleCompareToggle}
+            aria-label={isComparing ? "Quitar de comparación" : "Añadir a comparación"}
             className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isComparing ? 'border-primary bg-primary text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-primary'}`}
           >
             <GitCompare size={18} />
-          </div>
+          </button>
         </div>
 
         {/* Image */}
@@ -150,9 +156,39 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
           alt={`${car.year} ${car.make} ${car.model} en venta Puerto Rico - Richard Automotive`}
           priority={priority}
+          width={500}
+          height={300}
           className="w-full h-full object-contain transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.25)]"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
       </div>
+
+      {/* SEO Schema.org: Rich Results Injection */}
+      <Script
+        id={`schema-car-${car.id}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": car.name,
+            "image": car.images ? car.images[0] : (car.image || car.img),
+            "description": `Compra este ${car.name} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
+            "brand": {
+              "@type": "Brand",
+              "name": car.make
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": `https://www.richard-automotive.com/inventario/${car.id}`,
+              "priceCurrency": "USD",
+              "price": car.price,
+              "availability": "https://schema.org/InStock",
+              "itemCondition": "https://schema.org/UsedCondition"
+            }
+          })
+        }}
+      />
 
       {/* Content Section */}
       <div className="p-6 flex-1 flex flex-col relative z-20">
@@ -169,9 +205,15 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           >
             {car.name}
           </h3>
-          <div className="mt-2 flex items-center gap-1.5 text-[9px] text-orange-400 font-tech uppercase tracking-wider animate-pulse">
-            <Activity size={12} />
-            <span>🔥 {((car.id?.charCodeAt(0) || 0) % 5) + 3} personas cotizaron esta unidad hoy</span>
+          <div className="mt-2 flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-[9px] text-orange-400 font-tech uppercase tracking-wider animate-pulse">
+              <Activity size={12} />
+              <span>🔥 {((car.id?.charCodeAt(0) || 0) % 5) + 3} personas cotizaron hoy</span>
+            </div>
+            <div className="h-1 w-1 rounded-full bg-slate-700" />
+            <div className="text-[9px] text-cyan-400 font-tech uppercase tracking-widest">
+              Vista {((car.id?.charCodeAt(1) || 0) % 20) + 12} veces
+            </div>
           </div>
         </div>
 

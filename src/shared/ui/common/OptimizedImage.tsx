@@ -15,6 +15,7 @@ interface OptimizedImageProps {
   placeholder?: 'blur' | 'empty';
   loading?: 'lazy' | 'eager';
   fill?: boolean;
+  sizes?: string;
 }
 
 /**
@@ -25,45 +26,52 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
   className = '',
-  width = 800,
-  height = 600,
+  width,
+  height,
   priority = false,
   onLoad,
   placeholder = 'empty',
-  loading,
   fill = false,
   fallbackSrc = '/placeholder-car.webp',
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 }) => {
   const [error, setError] = React.useState(false);
-  const [retryWithOriginal, setRetryWithOriginal] = React.useState(false);
 
-  // Use the Richard Automotive Edge (Antigravity) for pre-optimization
-  const optimizedSrc = React.useMemo(() => optimizeWithAntigravity(src || '', width), [src, width]);
-  
   // Decide which source to use
   const displaySrc = React.useMemo(() => {
-    if (error) return fallbackSrc;
-    if (retryWithOriginal) return src || fallbackSrc;
-    return optimizedSrc || src || fallbackSrc;
-  }, [error, retryWithOriginal, optimizedSrc, src, fallbackSrc]);
+    if (error || !src) return fallbackSrc;
+    // We can still use Antigravity for the initial source, but next/image will optimize it further
+    return optimizeWithAntigravity(src, width || 800) || src;
+  }, [error, src, fallbackSrc, width]);
 
-  const handleError = () => {
-    if (!retryWithOriginal && optimizedSrc !== src) {
-      setRetryWithOriginal(true);
-    } else {
-      setError(true);
-    }
-  };
+  if (fill) {
+    return (
+      <div className={`relative h-full w-full ${className}`}>
+        <Image
+          src={displaySrc}
+          alt={alt}
+          fill
+          priority={priority}
+          className="object-cover"
+          onLoad={onLoad}
+          onError={() => setError(true)}
+          sizes={sizes}
+        />
+      </div>
+    );
+  }
 
   return (
-    <img
+    <Image
       src={displaySrc}
-      alt={error ? 'Imagen no disponible' : alt}
-      className={`${className} ${error ? 'opacity-50 grayscale' : ''}`}
-      loading={loading || (priority ? 'eager' : 'lazy')}
-      fetchPriority={priority ? 'high' : 'auto'}
+      alt={alt}
+      width={width || 800}
+      height={height || 600}
+      priority={priority}
+      className={className}
       onLoad={onLoad}
-      onError={handleError}
+      onError={() => setError(true)}
+      sizes={sizes}
     />
   );
 };

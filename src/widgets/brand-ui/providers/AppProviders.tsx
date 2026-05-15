@@ -9,6 +9,7 @@ import { TelemetryProvider } from '@/shared/ui/providers/TelemetryProvider';
 import { initGA } from '@/shared/api/metrics/analytics';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
+import { LazyMotion, domAnimation } from 'framer-motion';
 
 import { RehydrationService } from '@/shared/lib/resilience/RehydrationService';
 import { useAuthListener } from '@/features/auth';
@@ -42,7 +43,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         <NotificationProvider>
           <TelemetryProvider>
             <I18nextProvider i18n={i18n}>
-              {children}
+              <LazyMotion features={domAnimation}>
+                {children}
+              </LazyMotion>
             </I18nextProvider>
           </TelemetryProvider>
         </NotificationProvider>

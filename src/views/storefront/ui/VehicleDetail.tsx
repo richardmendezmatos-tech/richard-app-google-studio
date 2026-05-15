@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle } from 'lucide-react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
@@ -41,6 +41,12 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const [isPreQualifyOpen, setIsPreQualifyOpen] = useState(false);
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
+  
+  // Mocked dynamic urgency (for CRO)
+  const [viewersCount, setViewersCount] = React.useState(5);
+  React.useEffect(() => {
+    setViewersCount(Math.floor(Math.random() * 5) + 3);
+  }, []);
 
   const car = propCar || inventory.find((c) => c.id === id);
 
@@ -138,6 +144,12 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
       alert('Enlace copiado al portapapeles');
     }
   };
+
+  const whatsappUrl = `https://wa.me/${BUSINESS_CONTACT.phone.replace(/-/g, '')}?text=${encodeURIComponent(
+    `Hola Richard, vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. Quisiera más información para comprarlo.`
+  )}`;
+
+
 
   return (
     <div className="min-h-screen bg-[#020617] pb-24 pt-24 lg:pt-0 selection:bg-primary/30">
@@ -275,13 +287,40 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 </div>
               </div>
               
-              <button
-                onClick={() => setIsPreQualifyOpen(true)}
-                className="w-full lg:w-auto mt-4 px-8 py-4 bg-primary hover:bg-cyan-500 text-slate-900 font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 animate-btn-glow"
+              <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <button
+                  onClick={() => setIsPreQualifyOpen(true)}
+                  className="flex-1 px-8 py-4 bg-primary hover:bg-cyan-500 text-slate-900 font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-cyan-500/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 animate-btn-glow"
+                >
+                  <Zap size={18} className="animate-pulse" />
+                  Pre-cualifícate Express
+                </button>
+                
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 px-8 py-4 bg-white/5 border border-white/20 hover:bg-white/10 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3 group"
+                >
+                  <MessageCircle size={18} className="text-emerald-400 group-hover:scale-125 transition-transform" />
+                  Hagamos Negocio
+                </a>
+              </div>
+
+              {/* Urgency Badge */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/5 border border-cyan-500/10 mt-2"
               >
-                <Zap size={18} className="animate-pulse" />
-                Pre-cualifícate Express
-              </button>
+                <span className="flex h-1.5 w-1.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
+                </span>
+                <span className="text-[10px] font-bold text-cyan-400/80 uppercase tracking-widest">
+                  {viewersCount} personas viendo esta unidad ahora
+                </span>
+              </motion.div>
             </div>
           </div>
 
@@ -424,14 +463,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             ${car.price.toLocaleString()}
           </p>
         </div>
-        <button
-          onClick={() => {
-            document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className="bg-primary hover:bg-primary/90 text-slate-900 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
-        >
-          ME INTERESA
-        </button>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-emerald-500 hover:bg-emerald-400 text-white p-4 rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] transition-all active:scale-90"
+          >
+            <MessageCircle size={20} />
+          </a>
+          <button
+            onClick={() => {
+              document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex-1 bg-primary hover:bg-primary/90 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
+          >
+            ME INTERESA
+          </button>
       </div>
       {/* Pre-Qualification Modal */}
       <AnimatePresence>

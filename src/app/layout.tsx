@@ -14,8 +14,8 @@ import { Bebas_Neue, Sora, Manrope, Cormorant_Garamond } from 'next/font/google'
 
 const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-cinematic', display: 'swap' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-tech', display: 'swap' });
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
-const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-editorial', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap', preload: false });
+const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-editorial', display: 'swap', preload: false });
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos Ford en Puerto Rico',

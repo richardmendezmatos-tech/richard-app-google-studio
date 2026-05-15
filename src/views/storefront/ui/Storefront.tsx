@@ -16,12 +16,12 @@ const TestimonialsSection = dynamic(() => import('@/features/inventory/ui/storef
 const FAQSection = dynamic(() => import('@/shared/ui/components/FAQSection'), { ssr: false });
 const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), { ssr: false });
 const AuthoritySection = dynamic(() => import('@/features/marketing').then(mod => ({ default: mod.AuthoritySection })), { ssr: false });
+const StorefrontMarketPulse = dynamic(() => import('@/features/inventory/ui/StorefrontMarketPulse'), { ssr: false });
 
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 
 // Extracted UI Components
 import { StorefrontToolbar } from '@/features/inventory';
-import StorefrontMarketPulse from '@/features/inventory/ui/StorefrontMarketPulse';
 import StorefrontResultsGrid from '@/widgets/inventory/StorefrontResultsGrid';
 import StorefrontComparisonBar from '@/widgets/comparison/StorefrontComparisonBar';
 import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
@@ -95,6 +95,37 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                   '@type': 'AggregateRating',
                   ratingValue: '5.0',
                   reviewCount: '124',
+                },
+              },
+              {
+                '@type': 'Organization',
+                '@id': `${SITE_CONFIG.url}/#organization`,
+                name: BUSINESS_CONTACT.name,
+                url: SITE_CONFIG.url,
+                logo: `${SITE_CONFIG.url}/logo.png`,
+                sameAs: [
+                  'https://www.facebook.com/richardautomotivepr',
+                  'https://www.instagram.com/richardautomotive',
+                ],
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  telephone: BUSINESS_CONTACT.phone,
+                  contactType: 'Sales',
+                  areaServed: 'PR',
+                  availableLanguage: ['Spanish', 'English'],
+                },
+              },
+              {
+                '@type': 'WebSite',
+                '@id': `${SITE_CONFIG.url}/#website`,
+                url: SITE_CONFIG.url,
+                name: 'Richard Automotive',
+                description: SITE_CONFIG.description,
+                publisher: { '@id': `${SITE_CONFIG.url}/#organization` },
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: `${SITE_CONFIG.url}/inventario?search={search_term_string}`,
+                  'query-input': 'required name=search_term_string',
                 },
               },
               {

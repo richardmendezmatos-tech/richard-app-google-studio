@@ -28,13 +28,13 @@ Para asegurar despliegues predecibles y una gestión de dependencias robusta en 
 - **Infraestructura:** Desplegado en **Vercel** con integración profunda de Supabase CLI.
 
 ### 🧠 Capacidades de Vanguardia
-
-- **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs) con ROI estimado.
+- **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs).
+- **Sistema de Resiliencia de Imágenes (N24-R):** Motor inteligente en `OptimizedImage` que maneja fallos de carga mediante re-intentos automáticos y fallbacks a placeholders optimizados, garantizando una UI impecable incluso ante inconsistencias de red o datos.
+- **Protocolo de Normalización de Inventario:** Auditoría automatizada que consolida campos legados (`img`) al nuevo estándar `image` y sincroniza galerías multimedia.
 - **Houston Command Center:** Panel de control táctico con telemetría en tiempo real:
-    - **Sourcing Management:** Aprobación inmediata de inventario estratégico detectado por la IA.
-    - **Pipeline de Prospección:** Seguimiento de leads con integración directa a WhatsApp.
-    - **Telemetría Sentinel:** Monitor de salud del sistema, latencia de IA y estabilidad de API.
-- **Approval Simulator:** Widget premium para la pre-cualificación financiera de clientes con perfiles de crédito dinámicos.
+    - **Sourcing Management:** Aprobación inmediata de inventario estratégico.
+    - **Performance Sentinel:** Optimización dinámica de LCP y TBT para garantizar una experiencia fluida de 60 FPS en dispositivos móviles.
+- **Approval Simulator:** Widget premium para la pre-cualificación financiera dinámica.
 
 ## 🏗️ Arquitectura del Proyecto (FSD Strict)
 

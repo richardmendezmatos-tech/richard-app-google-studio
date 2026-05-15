@@ -39,6 +39,7 @@ const HEADLINES = [
 
 const TICKER_ITEMS = [
   '⚡ ESTRUCTURAS DESDE 4.9% APR',
+  '🎁 BONO DE $300 WEB ACTIVO',
   '🛡 SEGURIDAD SENTINEL CERTIFICADA',
   '🔁 VALORACIÓN NEURAL EN 90S',
   '📍 HUB CENTRAL: BAYAMÓN, PR',
@@ -51,25 +52,28 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onBrowseInventory,
   onSellCar,
 }) => {
-  const [idx, setIdx] = useState(0);
-  const tickerRef = useRef<HTMLDivElement>(null);
-  const animFrameRef = useRef<number>(0);
-
-  const [videoLoaded, setVideoLoaded] = useState(false);
-
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setIdx((p) => (p + 1) % HEADLINES.length);
-    }, 8000);
+    const [isMobile, setIsMobile] = useState(true);
+    
+    useEffect(() => {
+      const mql = window.matchMedia('(max-width: 1024px)');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsMobile(mql.matches);
+      const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+      mql.addEventListener('change', handler);
+      
+      const iv = setInterval(() => {
+        setIdx((p) => (p + 1) % HEADLINES.length);
+      }, 8000);
     
     // Delay video loading to prioritize LCP
     const timer = setTimeout(() => setVideoLoaded(true), 2000);
     
-    return () => {
-      clearInterval(iv);
-      clearTimeout(timer);
-    };
-  }, []);
+      return () => {
+        clearInterval(iv);
+        clearTimeout(timer);
+        mql.removeEventListener('change', handler);
+      };
+    }, []);
 
   useEffect(() => {
     let pos = 0;
@@ -95,14 +99,24 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-slate-950 z-[1]" />
         
-        {/* Living Video Layer - Only load after initial LCP */}
-        {videoLoaded && (
+        {/* Static Background for LCP Optimization */}
+        <div className="absolute inset-0 z-0">
+           <OptimizedImage
+              src="/hero.avif"
+              alt="Richard Automotive Hero"
+              priority
+              className="h-full w-full object-cover opacity-30"
+              fill
+           />
+        </div>
+
+        {/* Living Video Layer - Only Desktop & only after initial LCP */}
+        {videoLoaded && !isMobile && (
           <video
             autoPlay
             loop
             muted
             playsInline
-            poster="/hero.avif"
             className="h-full w-full object-cover opacity-30 scale-105 transition-opacity duration-1000"
           >
             <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
@@ -121,11 +135,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         
         {/* Left: Intelligence & Branding */}
         <div className="flex-1 space-y-10 text-left">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-6"
-          >
+          <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-2 backdrop-blur-3xl shadow-[0_0_20px_rgba(0,229,255,0.1)]">
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_12px_#00e5ff]" />
               <span className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
@@ -135,7 +145,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <span className="font-tech text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
               {h.eyebrow}
             </span>
-          </motion.div>
+          </div>
 
           <div className="min-h-[300px] lg:min-h-[400px]">
             <AnimatePresence mode="wait">

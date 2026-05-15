@@ -31,6 +31,7 @@ import { MarketPulseWidget } from '@/features/market-intelligence/ui/MarketPulse
 import { SentinelDistributionWidget } from '@/features/command-center/ui/SentinelDistributionWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 import { SentinelIntelligenceWidget, IntelligenceSignal } from '@/features/command-center/ui/SentinelIntelligenceWidget';
+import { RichardAIAdvisor } from '@/features/command-center/ui/RichardAIAdvisor';
 
 interface HotLead {
   id: string;
@@ -138,7 +139,7 @@ export default function CommandCenterPage() {
                 Command <span className="text-cyan-400">Center</span>
               </h1>
               <p className="text-[10px] text-slate-500 tracking-widest uppercase font-bold">
-                Nivel 19 • Inteligencia Neural Activa
+                Nivel 24 • Inteligencia Neural Activa
               </p>
             </div>
           </div>
@@ -199,6 +200,11 @@ export default function CommandCenterPage() {
 
         {/* Sentinel Neural Signals */}
         <SentinelIntelligenceWidget signals={signals} loading={loading} />
+
+        {/* Richard AI Advisor - Personal Strategy Channel */}
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+          <RichardAIAdvisor businessContext={data} />
+        </div>
 
         {/* Phase 3: Holo-Dashboard Intelligence */}
         <motion.div
