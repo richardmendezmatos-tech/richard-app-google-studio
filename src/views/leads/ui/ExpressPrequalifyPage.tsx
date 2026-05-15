@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/shared/lib/next-route-adapter';
+import { useNavigate, useSearchParams } from '@/shared/lib/next-route-adapter';
 import {
   Timer,
   CheckCircle2,
@@ -17,9 +17,12 @@ import {
 } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { getWhatsAppDeepLink } from '@/shared/api/messaging/whatsappClient';
+import { logInventoryVelocityEvent } from '@/entities/inventory/api/adapters/inventoryService';
 
 export const ExpressPrequalifyPage: React.FC = () => {
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const vin = searchParams.get('vin');
 
   // --- Scarcity Timer State ---
   const [timeLeft, setTimeLeft] = useState(86399); // 24 horas en segundos
@@ -78,8 +81,13 @@ export const ExpressPrequalifyPage: React.FC = () => {
         name: expressForm.name,
         phone: expressForm.phone,
         email: expressForm.email || undefined,
-        notes: `[BONO_300_ACTIVO] Pre-cualificación Express desde Ruta Dedicada (/bono-300).`,
+        notes: `[BONO_300_ACTIVO] Pre-cualificación Express desde Ruta Dedicada (/bono-300).${vin ? ` [VIN: ${vin}]` : ''}`,
       });
+
+      // Si hay un VIN, registrar evento de velocidad (Inteligencia Sentinel)
+      if (vin) {
+        logInventoryVelocityEvent(vin, 'BONO_CLAIM', 5);
+      }
 
       // Generar código de cupón único
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
@@ -103,7 +111,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
   const handleWhatsAppClaim = () => {
     const url = getWhatsAppDeepLink({
       phone: '17875550000', // Real dealer WhatsApp
-      text: `¡Hola Richard! 👋 Acabo de asegurar mi Bono de Acción Rápida ($300) en el Command Center. Mi código de cupón es: ${generatedVoucher}. Favor de aplicarlo a mi expediente.`,
+      text: `¡Hola Richard! 👋 Acabo de asegurar mi Bono de Acción Rápida ($300) en el Command Center.${vin ? ` Estoy interesado en el vehículo con VIN: ${vin}.` : ''} Mi código de cupón es: ${generatedVoucher}. Favor de aplicarlo a mi expediente.`,
       source: 'Sentinel_Express_Bono300',
       campaign: 'BONO_ACCION_RAPIDA_24H'
     });

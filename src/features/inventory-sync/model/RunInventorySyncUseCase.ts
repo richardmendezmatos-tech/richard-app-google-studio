@@ -33,6 +33,14 @@ export class RunInventorySyncUseCase {
       // 3. Reconciliación Pura (Memoria O(N))
       const diff = this.engine.calculateDiff(currentInventory, webInventory);
 
+      // 3.5. Enriquecimiento de Inteligencia (Telemetry Data)
+      // Recuperamos métricas de los últimos 7 días para priorizar unidades "Hot"
+      const { getRecentVelocityMetrics } = await import('@/entities/inventory/api/adapters/inventoryService');
+      const metrics = await getRecentVelocityMetrics(7);
+      
+      diff.inserts = this.engine.enrichWithVelocity(diff.inserts, metrics);
+      diff.updates = this.engine.enrichWithVelocity(diff.updates, metrics);
+
       // 4. Efectuar cambios en infraestructura (Base de Datos)
       // Se ejecutan en paralelo o de manera secuencial dependiendo de las restricciones del ORM
       await Promise.all([

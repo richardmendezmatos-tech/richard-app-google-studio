@@ -20,6 +20,7 @@ export interface VehicleProps {
   status: SyncStatus;
   condition: 'NEW' | 'USED';
   lastScrapedAt: Date;
+  metadata?: Record<string, any>;
 }
 
 export class Vehicle {
@@ -68,5 +69,12 @@ export class Vehicle {
   public updatePrice(newPrice: number): void {
     if (newPrice < 0) throw new Error('Precio inválido');
     this._props.price = newPrice;
+  }
+
+  public updateMetadata(metadata: Record<string, any>): void {
+    this._props.metadata = {
+      ...(this._props.metadata || {}),
+      ...metadata
+    };
   }
 }

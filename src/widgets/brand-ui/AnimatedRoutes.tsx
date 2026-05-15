@@ -374,7 +374,7 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             }
           />
           <Route
-            path="/bono-300"
+            path="/bono-300/:vin?"
             element={
               <PageWrapper>
                 <ExpressPrequalifyPage />

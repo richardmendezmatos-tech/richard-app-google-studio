@@ -58,4 +58,37 @@ export class ReconciliationEngine {
 
     return result;
   }
+
+  /**
+   * Enriquece las unidades con puntuaciones de 'Hotness' basadas en telemetría real.
+   * Esto permite al frontend priorizar visualmente las unidades con alta tracción.
+   */
+  public enrichWithVelocity(vehicles: Vehicle[], metrics: any[]): Vehicle[] {
+    const velocityMap = new Map<string, number>();
+
+    // 1. Agregar pesos de métricas por VIN
+    metrics.forEach(m => {
+      const vin = m.data?.vin;
+      const weight = m.operational_score || 1;
+      if (vin) {
+        velocityMap.set(vin, (velocityMap.get(vin) || 0) + weight);
+      }
+    });
+
+    // 2. Inyectar score en los objetos Vehicle
+    return vehicles.map(v => {
+      const score = velocityMap.get(v.vin) || 0;
+      
+      // Si el vehículo tiene tracción significativa, marcamos como "HOT"
+      if (score >= 5) {
+        v.updateMetadata({
+          sentinel_status: 'HOT_INVENTORY',
+          velocity_weight: score,
+          hot_score: score
+        });
+      }
+      
+      return v;
+    });
+  }
 }

@@ -89,4 +89,4 @@ export const Navigate: React.FC<{ to: string; replace?: boolean; state?: any }> 
   return null;
 };
 
-export { useNextRouter };
+export { useNextRouter, useSearchParams };

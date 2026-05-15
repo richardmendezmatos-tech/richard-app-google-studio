@@ -53,6 +53,47 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
   return (data || []).map(mapRowToVehicle);
 };
 
+export const logInventoryVelocityEvent = async (vin: string, action: string, weight: number = 1) => {
+  if (!supabase) return;
+
+  try {
+    const { error } = await supabase
+      .from('sentinel_metrics')
+      .insert([{
+        type: 'inventory_velocity',
+        data: { vin, action, weight },
+        operational_score: weight,
+        metadata: { source: 'command_center_conversion' }
+      }]);
+
+    if (error) {
+      console.warn('[InventoryService] Error logging velocity event:', error);
+    }
+  } catch (err) {
+    console.warn('[InventoryService] Exception logging velocity event:', err);
+  }
+};
+
+export const getRecentVelocityMetrics = async (days: number = 7) => {
+  if (!supabase) return [];
+
+  const dateLimit = new Date();
+  dateLimit.setDate(dateLimit.getDate() - days);
+
+  const { data, error } = await supabase
+    .from('sentinel_metrics')
+    .select('*')
+    .eq('type', 'inventory_velocity')
+    .gte('timestamp', dateLimit.toISOString());
+
+  if (error) {
+    console.error('[InventoryService] Error fetching velocity metrics:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
 export const incrementCarView = async (carId: string) => {
   // Migration Note: Firebase Analytics replaced by native event logging or simple DB increment
   if (!supabase) return;
