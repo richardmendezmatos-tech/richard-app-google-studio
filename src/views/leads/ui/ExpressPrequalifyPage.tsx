@@ -13,8 +13,10 @@ import {
   Send,
   ArrowLeft,
   ShieldCheck,
+  Zap,
 } from 'lucide-react';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
+import { getWhatsAppDeepLink } from '@/shared/api/messaging/whatsappClient';
 
 export const ExpressPrequalifyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -43,9 +45,24 @@ export const ExpressPrequalifyPage: React.FC = () => {
   const [isSubmittingExpress, setIsSubmittingExpress] = useState(false);
   const [generatedVoucher, setGeneratedVoucher] = useState<string | null>(null);
   const [expressError, setExpressError] = useState<string | null>(null);
+  const [isKnownUser, setIsKnownUser] = useState(false);
 
-  const handleExpressSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Load from localStorage for frictionless re-entry
+  useEffect(() => {
+    const saved = localStorage.getItem('sentinel_user_info');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setExpressForm(parsed);
+        setIsKnownUser(true);
+      } catch (e) {
+        console.error("Error loading saved info", e);
+      }
+    }
+  }, []);
+
+  const handleExpressSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!expressForm.name || !expressForm.phone) {
       setExpressError('Por favor ingresa tu Nombre y Teléfono/WhatsApp.');
       return;
@@ -68,6 +85,9 @@ export const ExpressPrequalifyPage: React.FC = () => {
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       const voucherCode = `RA-BONO-24H-${randomSuffix}`;
 
+      // Persistir para futuras sesiones
+      localStorage.setItem('sentinel_user_info', JSON.stringify(expressForm));
+
       // Simular retardo de red para dar percepción de procesamiento seguro
       await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -81,8 +101,13 @@ export const ExpressPrequalifyPage: React.FC = () => {
   };
 
   const handleWhatsAppClaim = () => {
-    const message = `¡Hola! Acabo de completar mi Pre-cualificación Express en richardautomotive.com/bono-300. Mi código de cupón es ${generatedVoucher} para asegurar la exención de $300 en Tablilla, Marbete y Registro.`;
-    window.open(`https://wa.me/17875550000?text=${encodeURIComponent(message)}`, '_blank');
+    const url = getWhatsAppDeepLink({
+      phone: '17875550000', // Real dealer WhatsApp
+      text: `¡Hola Richard! 👋 Acabo de asegurar mi Bono de Acción Rápida ($300) en el Command Center. Mi código de cupón es: ${generatedVoucher}. Favor de aplicarlo a mi expediente.`,
+      source: 'Sentinel_Express_Bono300',
+      campaign: 'BONO_ACCION_RAPIDA_24H'
+    });
+    window.open(url, '_blank');
   };
 
   return (
@@ -179,6 +204,36 @@ export const ExpressPrequalifyPage: React.FC = () => {
                   Explorar Vehículos Disponibles
                 </button>
               </div>
+            </div>
+          ) : isKnownUser ? (
+            <div className="text-center py-4 animate-in fade-in duration-500">
+              <div className="mb-6">
+                <h2 className="text-xl font-black text-white">¡Hola de nuevo, <span className="text-amber-400">{expressForm.name.split(' ')[0]}</span>!</h2>
+                <p className="text-xs text-slate-400 mt-1">Detectamos tu perfil Sentinel. Puedes reclamar tu bono instantáneamente.</p>
+              </div>
+              
+              <button
+                onClick={() => handleExpressSubmit()}
+                disabled={isSubmittingExpress}
+                className="w-full py-5 bg-linear-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black rounded-2xl text-sm uppercase tracking-widest transition-all shadow-xl shadow-amber-500/30 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 mb-6"
+              >
+                {isSubmittingExpress ? (
+                  <span className="animate-pulse">Procesando Flash...</span>
+                ) : (
+                  <>Reclamar Bono Flash ($300) <Zap size={18} fill="currentColor" /></>
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  localStorage.removeItem('sentinel_user_info');
+                  setIsKnownUser(false);
+                  setExpressForm({ name: '', phone: '', email: '' });
+                }}
+                className="text-[10px] font-tech text-slate-500 hover:text-slate-300 uppercase tracking-widest underline decoration-slate-700 underline-offset-4 transition-colors"
+              >
+                No soy {expressForm.name.split(' ')[0]} / Usar otros datos
+              </button>
             </div>
           ) : (
             <form onSubmit={handleExpressSubmit} className="space-y-4">

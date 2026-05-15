@@ -122,6 +122,25 @@ export async function sendTextMessage(msg: TextMessage): Promise<{ success: bool
 }
 
 /**
+ * Generates a WhatsApp deep link with tracking metadata and cinematic copy.
+ */
+export function getWhatsAppDeepLink(params: {
+  phone: string;
+  text: string;
+  source?: string;
+  campaign?: string;
+}): string {
+  const base = 'https://wa.me';
+  const targetPhone = formatPhoneForWhatsApp(params.phone);
+  
+  // Enriquecer mensaje con metadatos invisibles para el CRM (parsing posterior)
+  const metadata = `\n\n[SENTINEL_TRACE: ${params.source || 'Direct'}]${params.campaign ? ` [CAMPAIGN: ${params.campaign}]` : ''}`;
+  const fullText = `${params.text}${metadata}`;
+  
+  return `${base}/${targetPhone}?text=${encodeURIComponent(fullText)}`;
+}
+
+/**
  * Normalizes a PR phone number (787/939) into WhatsApp international format.
  */
 function formatPhoneForWhatsApp(phone: string): string {

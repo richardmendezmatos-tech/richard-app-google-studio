@@ -12,6 +12,7 @@ import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrb
 import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
 import { NeuroTrajectoryDriver } from '@/features/predictive/ui/NeuroTrajectoryDriver';
 import { NeuroUIAdapter } from '@/widgets/brand-ui/layout/NeuroUIAdapter';
+import SentinelPulseFeed from '@/widgets/brand-ui/layout/SentinelPulseFeed';
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { usePathname } from 'next/navigation';
 import { Car } from '@/shared/types/types';
@@ -189,6 +190,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         {/* Nivel 13: Autonomous Drivers & Adaptive UI */}
         <NeuroTrajectoryDriver />
         <NeuroUIAdapter />
+        <SentinelPulseFeed />
       </main>
 
       {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}
