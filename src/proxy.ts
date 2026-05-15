@@ -16,7 +16,14 @@ export async function proxy(request: NextRequest) {
   const ip = (request as any).ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'anonymous';
 
   // 0. Sentinel N20: Anti-Spam Rate Limiting
-  if (pathname.startsWith('/api/webhooks/leads') || pathname.startsWith('/api/ai/chat')) {
+  const protectedApiRoutes = [
+    '/api/webhooks/leads', 
+    '/api/ai/chat', 
+    '/api/command-center/telemetry',
+    '/api/command-center/intelligence'
+  ];
+
+  if (protectedApiRoutes.some(route => pathname.startsWith(route))) {
     const now = Date.now();
     const rateData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
 
@@ -41,6 +48,11 @@ export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  // 0.5. Edge Caching for Intelligence (Nivel 22)
+  if (pathname.includes('/api/command-center/intelligence') && request.method === 'GET') {
+    supabaseResponse.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=30');
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
