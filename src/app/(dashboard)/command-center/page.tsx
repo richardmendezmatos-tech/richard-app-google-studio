@@ -30,7 +30,7 @@ import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidge
 import { MarketPulseWidget } from '@/features/market-intelligence/ui/MarketPulseWidget';
 import { SentinelDistributionWidget } from '@/features/command-center/ui/SentinelDistributionWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
-
+import { SentinelIntelligenceWidget, IntelligenceSignal } from '@/features/command-center/ui/SentinelIntelligenceWidget';
 
 interface HotLead {
   id: string;
@@ -62,6 +62,7 @@ const CARD_CLASSES =
 
 export default function CommandCenterPage() {
   const [data, setData] = useState<TelemetryData | null>(null);
+  const [signals, setSignals] = useState<IntelligenceSignal[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -69,16 +70,28 @@ export default function CommandCenterPage() {
   const fetchTelemetry = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/command-center/telemetry', {
-        headers: { 'x-antigravity-token': 'client-internal' },
-      });
-      if (res.ok) {
-        const json = await res.json();
+      const [telemetryRes, intelligenceRes] = await Promise.all([
+        fetch('/api/command-center/telemetry', {
+          headers: { 'x-antigravity-token': 'client-internal' },
+        }),
+        fetch('/api/command-center/intelligence', {
+          headers: { 'x-antigravity-token': 'client-internal' },
+        })
+      ]);
+
+      if (telemetryRes.ok) {
+        const json = await telemetryRes.json();
         setData(json);
-        setLastRefresh(new Date());
       }
+
+      if (intelligenceRes.ok) {
+        const json = await intelligenceRes.json();
+        setSignals(json.signals || []);
+      }
+
+      setLastRefresh(new Date());
     } catch (err) {
-      console.error('[CommandCenter] Telemetry fetch failed:', err);
+      console.error('[CommandCenter] Data fetch failed:', err);
     } finally {
       setLoading(false);
     }
@@ -183,6 +196,9 @@ export default function CommandCenterPage() {
             className="hud-brackets"
           />
         </div>
+
+        {/* Sentinel Neural Signals */}
+        <SentinelIntelligenceWidget signals={signals} loading={loading} />
 
         {/* Phase 3: Holo-Dashboard Intelligence */}
         <motion.div
