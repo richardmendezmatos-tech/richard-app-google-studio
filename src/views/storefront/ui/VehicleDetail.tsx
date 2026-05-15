@@ -195,7 +195,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               }
             >
               <Viewer360
-                images={(car.images || [car.img]).filter(Boolean) as string[]}
+                images={(car.images || [car.image || car.img]).filter(Boolean) as string[]}
                 alt={car.name}
                 badge={car.badge}
                 carPrice={car.price}
@@ -348,11 +348,11 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 href={`/inventario/${generateVehicleSlug(item, false)}/${item.id}`}
                 className="group relative bg-white/5 border border-white/10 rounded-4xl overflow-hidden hover:border-primary/40 transition-all"
               >
-                <div className="aspect-video relative overflow-hidden">
+                <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-slate-900/20">
                   <img 
-                    src={item.img} 
+                    src={item.image || item.img || item.images?.[0]} 
                     alt={item.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-[#020617] via-transparent to-transparent opacity-80" />
                 </div>

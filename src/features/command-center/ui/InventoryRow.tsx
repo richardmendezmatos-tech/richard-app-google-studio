@@ -41,9 +41,12 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
         <div className="flex-1 flex items-center gap-4 min-w-board-column-lg">
           <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:scale-105 transition-transform shrink-0">
             <img
-              src={optimizeImage(car.img || '', 100)}
+              src={optimizeImage(car.image || car.img || '', 100)}
               alt={car.name}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/placeholder-car.webp';
+              }}
             />
           </div>
           <div className="flex flex-col">

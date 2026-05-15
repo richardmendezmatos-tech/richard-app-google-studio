@@ -32,17 +32,37 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   placeholder = 'empty',
   loading,
   fill = false,
+  fallbackSrc = '/placeholder-car.webp',
 }) => {
+  const [error, setError] = React.useState(false);
+  const [retryWithOriginal, setRetryWithOriginal] = React.useState(false);
+
   // Use the Richard Automotive Edge (Antigravity) for pre-optimization
-  const displaySrc = optimizeWithAntigravity(src || '', width);
+  const optimizedSrc = React.useMemo(() => optimizeWithAntigravity(src || '', width), [src, width]);
+  
+  // Decide which source to use
+  const displaySrc = React.useMemo(() => {
+    if (error) return fallbackSrc;
+    if (retryWithOriginal) return src || fallbackSrc;
+    return optimizedSrc || src || fallbackSrc;
+  }, [error, retryWithOriginal, optimizedSrc, src, fallbackSrc]);
+
+  const handleError = () => {
+    if (!retryWithOriginal && optimizedSrc !== src) {
+      setRetryWithOriginal(true);
+    } else {
+      setError(true);
+    }
+  };
 
   return (
     <img
       src={displaySrc}
-      alt={alt}
-      className={className}
+      alt={error ? 'Imagen no disponible' : alt}
+      className={`${className} ${error ? 'opacity-50 grayscale' : ''}`}
       loading={loading || (priority ? 'eager' : 'lazy')}
       onLoad={onLoad}
+      onError={handleError}
     />
   );
 };

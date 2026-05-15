@@ -283,6 +283,11 @@ const Viewer360: React.FC<Props> = ({
           className={`max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           draggable={false}
           onLoad={() => setLoadedIndices(prev => new Set(prev).add(currentFrame))}
+          onError={(e) => {
+            if (!(e.target as HTMLImageElement).src.includes('placeholder-car.webp')) {
+              (e.target as HTMLImageElement).src = '/placeholder-car.webp';
+            }
+          }}
         />
       </div>
 

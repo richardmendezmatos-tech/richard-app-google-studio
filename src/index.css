@@ -808,6 +808,26 @@ body {
   opacity: 1;
 }
 
+/* Cinematic Viewport Centering (Nivel 25) */
+.cinematic-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.cinematic-parallax-layer {
+  width: 110%;
+  height: 110%;
+  top: -5%;
+  left: -5%;
+  transform: translate(var(--p-x, 0), var(--p-y, 0));
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
 .active-scan-laser-glow {
   position: absolute;
   width: 1rem;
