@@ -61,6 +61,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       alt={error ? 'Imagen no disponible' : alt}
       className={`${className} ${error ? 'opacity-50 grayscale' : ''}`}
       loading={loading || (priority ? 'eager' : 'lazy')}
+      fetchPriority={priority ? 'high' : 'auto'}
       onLoad={onLoad}
       onError={handleError}
     />

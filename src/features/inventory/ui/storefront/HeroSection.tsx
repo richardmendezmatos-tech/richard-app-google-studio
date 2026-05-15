@@ -55,11 +55,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const tickerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number>(0);
 
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
   useEffect(() => {
     const iv = setInterval(() => {
       setIdx((p) => (p + 1) % HEADLINES.length);
     }, 8000);
-    return () => clearInterval(iv);
+    
+    // Delay video loading to prioritize LCP
+    const timer = setTimeout(() => setVideoLoaded(true), 2000);
+    
+    return () => {
+      clearInterval(iv);
+      clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -86,17 +95,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-slate-950 z-[1]" />
         
-        {/* Living Video Layer */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/hero.avif"
-          className="h-full w-full object-cover opacity-30 scale-105"
-        >
-          <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
-        </video>
+        {/* Living Video Layer - Only load after initial LCP */}
+        {videoLoaded && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/hero.avif"
+            className="h-full w-full object-cover opacity-30 scale-105 transition-opacity duration-1000"
+          >
+            <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
+          </video>
+        )}
 
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
         <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
@@ -130,10 +141,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <AnimatePresence mode="wait">
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 60, scale: 0.98, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -60, scale: 1.02, filter: 'blur(10px)' }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 0, y: 20, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 1.01 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="flex flex-col gap-0"
               >
                 <h2 className="flex flex-col">
