@@ -81,6 +81,9 @@ interface PreQualifyViewProps {
 const PreQualifyView = React.lazy(() =>
   lazyRetry(() => import('@/pages/leads/ui/PreQualifyView')),
 ) as unknown as React.ComponentType<PreQualifyViewProps>;
+const ExpressPrequalifyPage = React.lazy(() =>
+  lazyRetry(() => import('@/pages/leads/ui/ExpressPrequalifyPage')),
+);
 const PrivacyView = React.lazy(() => lazyRetry(() => import('@/pages/privacy/ui/PrivacyView')));
 const TermsView = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/TermsView')));
 const NotFound = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/NotFound')));
@@ -367,6 +370,14 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
             element={
               <PageWrapper>
                 <PreQualifyView onExit={() => navigate('/')} />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/bono-300"
+            element={
+              <PageWrapper>
+                <ExpressPrequalifyPage />
               </PageWrapper>
             }
           />

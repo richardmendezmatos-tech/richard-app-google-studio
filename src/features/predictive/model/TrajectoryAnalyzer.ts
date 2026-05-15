@@ -12,6 +12,7 @@ export interface ScoreInsight {
     formFocus: boolean;
     dwellTime: number;
   };
+  events?: TrajectoryEvent[];
 }
 
 export class TrajectoryAnalyzer {
@@ -26,16 +27,13 @@ export class TrajectoryAnalyzer {
   /**
    * Calcula el Neuro-Score basado en la trayectoria de la sesión actual.
    */
-  /**
-   * Calcula el Neuro-Score basado en la trayectoria de la sesión actual.
-   */
   static analyze(events: TrajectoryEvent[], dwellTimes: Record<string, number> = {}): ScoreInsight {
     let score = 0;
     const factorLabels: string[] = [];
     const signals = { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 };
     
     if (!events || events.length === 0) {
-      return { score: 0, category: 'discovery', factors: [], signals };
+      return { score: 0, category: 'discovery', factors: [], signals, events: [] };
     }
 
     const uniqueVisits = new Set(events.filter(e => e.type === 'page_view').map(e => e.path));
@@ -82,7 +80,8 @@ export class TrajectoryAnalyzer {
       score: Math.min(100, score),
       category,
       factors: factorLabels,
-      signals
+      signals,
+      events
     };
   }
 

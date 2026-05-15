@@ -7,7 +7,7 @@ async function testIngestion() {
   console.log('🚀 Testing Inventory Ingestion API...');
 
   const mockVehicle = {
-    vin: 'TESTVIN' + Math.floor(Math.random() * 1000000),
+    vin: 'TEST-I-O-Q-' + Math.floor(Math.random() * 100000),
     make: 'Tesla',
     model: 'Model S',
     year: 2024,

@@ -2,6 +2,7 @@
 import { InventoryRepository } from '@/entities/inventory/api/InventoryRepository';
 import { WebExtractorPort, ExtractorConfig } from '@/shared/api/scrapers/WebExtractorPort';
 import { ReconciliationEngine } from './ReconciliationEngine';
+import { ProactiveInventoryBroadcaster } from './ProactiveInventoryBroadcaster';
 
 export class RunInventorySyncUseCase {
   constructor(
@@ -39,6 +40,13 @@ export class RunInventorySyncUseCase {
         this.repository.updateBatch(diff.updates),
         this.repository.markAsSoldBatch(diff.markAsSoldVins),
       ]);
+
+      // 5. Difusión Proactiva Automatizada (WhatsApp a Leads afines)
+      // Disparo asíncrono para no demorar la culminación de la sincronización
+      const broadcaster = new ProactiveInventoryBroadcaster();
+      broadcaster.broadcast(diff.inserts, diff.updates).catch(err => {
+        console.error('[RunInventorySyncUseCase] Fallo en la difusión proactiva:', err);
+      });
 
       return {
         status: 'SUCCESS',

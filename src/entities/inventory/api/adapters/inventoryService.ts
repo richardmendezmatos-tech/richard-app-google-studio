@@ -5,6 +5,35 @@ import { Car } from '@/entities/inventory/model/types';
 // Legacy alias for backwards compatibility
 export type Vehicle = Car;
 
+const mapRowToVehicle = (item: any): Vehicle => {
+  const make = item.make || 'Ford';
+  const model = item.model || '';
+  const year = item.year || 2025;
+  const name = item.name || `${make} ${model} ${year}`.trim();
+  const condition = (item.condition || 'used').toLowerCase();
+  
+  return {
+    id: item.vin || item.id,
+    vin: item.vin || item.id,
+    make,
+    model,
+    year,
+    price: item.price || 0,
+    mileage: item.mileage || 0,
+    image: item.images?.[0] || item.image_url || '/images/placeholders/car.webp',
+    images: item.images || (item.image_url ? [item.image_url] : []),
+    gallery: item.images || (item.image_url ? [item.image_url] : []),
+    status: (item.status || 'available').toLowerCase() as any,
+    condition: condition as any,
+    type: (item.body_style || item.type || 'suv').toLowerCase(),
+    color: item.exterior_color || item.color || 'N/A',
+    name,
+    category: item.category || (condition === 'new' ? 'nuevos' : 'usados'),
+    dealerId: item.dealer_id || 'central-ford',
+    ...item
+  };
+};
+
 export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
   if (!supabase) {
     console.error('[InventoryService] Supabase client not available');
@@ -21,15 +50,7 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
     return [];
   }
 
-  return (data || []).map(item => ({
-    id: item.id,
-    name: item.name || `${item.year} ${item.make} ${item.model}`,
-    price: item.price,
-    image: item.image_url,
-    category: item.category,
-    vin: item.vin,
-    dealerId: item.dealer_id
-  }));
+  return (data || []).map(mapRowToVehicle);
 };
 
 export const incrementCarView = async (carId: string) => {
@@ -49,10 +70,12 @@ export const incrementCarView = async (carId: string) => {
 export const getCarById = async (id: string): Promise<Vehicle | null> => {
   if (!supabase) return null;
 
+  // Support querying by either primary ID or VIN
   const { data, error } = await supabase
     .from('inventory')
     .select('*')
-    .eq('id', id)
+    .or(`id.eq.${id},vin.eq.${id}`)
+    .limit(1)
     .single();
 
   if (error) {
@@ -60,16 +83,7 @@ export const getCarById = async (id: string): Promise<Vehicle | null> => {
     return null;
   }
 
-  return {
-    id: data.id,
-    name: data.name || `${data.year} ${data.make} ${data.model}`,
-    price: data.price,
-    image: data.image_url,
-    category: data.category,
-    vin: data.vin,
-    dealerId: data.dealer_id,
-    ...data
-  } as Vehicle;
+  return mapRowToVehicle(data);
 }
 
 export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
@@ -94,7 +108,13 @@ export const getPaginatedCars = async (
     .select('*', { count: 'exact' });
 
   if (filterType !== 'all') {
-    query = query.eq('category', filterType);
+    if (filterType === 'nuevos') {
+      query = query.or('category.eq.nuevos,condition.ilike.new');
+    } else if (filterType === 'usados') {
+      query = query.or('category.eq.usados,condition.ilike.used');
+    } else {
+      query = query.eq('category', filterType);
+    }
   }
 
   if (sortOrder) {
@@ -110,15 +130,7 @@ export const getPaginatedCars = async (
     return { cars: [], nextOffset: null };
   }
 
-  const cars = (data || []).map(item => ({
-    id: item.id,
-    name: item.name || `${item.year} ${item.make} ${item.model}`,
-    price: item.price,
-    image: item.image_url,
-    category: item.category,
-    vin: item.vin,
-    dealerId: item.dealer_id
-  }));
+  const cars = (data || []).map(mapRowToVehicle);
 
   const nextOffset = (count && start + pageSize < count) ? start + pageSize : null;
   return { cars, nextOffset };

@@ -12,6 +12,10 @@ export class VIN {
    * Arrojará un error si el VIN es inválido.
    */
   public static create(vin: string): VIN {
+    if (!vin || typeof vin !== 'string') {
+      throw new Error('Dominio: El VIN es requerido y debe ser una cadena de texto.');
+    }
+
     // Soft normalization for OCR errors (Nivel 16 Resilience)
     const normalizedVin = vin.trim().toUpperCase()
       .replace(/I/g, '1')

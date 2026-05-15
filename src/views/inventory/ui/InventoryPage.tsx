@@ -10,6 +10,7 @@ import { StorefrontToolbar } from '@/features/inventory';
 import StorefrontResultsGrid from '@/widgets/inventory/StorefrontResultsGrid';
 import StorefrontComparisonBar from '@/widgets/comparison/StorefrontComparisonBar';
 import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
+import SentinelDiscoverySuite from '@/widgets/inventory/SentinelDiscoverySuite';
 
 // Custom Hook
 import { useStorefrontState } from '@/features/inventory';
@@ -44,6 +45,9 @@ const InventoryPage: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage })
               Encuentra el vehículo perfecto para ti. Usa nuestros filtros inteligentes o la búsqueda neural para explorar nuestra selección premium.
             </p>
           </div>
+
+          {/* Sentinel Discovery Suite (Gamified UI Hook) */}
+          <SentinelDiscoverySuite inventory={inventory} />
 
           {/* Search, Filters, Grid */}
           <section id="inventory-grid" aria-labelledby="inventory-heading">

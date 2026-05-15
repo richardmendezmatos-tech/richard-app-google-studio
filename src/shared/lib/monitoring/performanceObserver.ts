@@ -11,7 +11,10 @@ export const observerPerformance = () => {
   // LCP (Largest Contentful Paint)
   const lcpObserver = new PerformanceObserver((entryList) => {
     const entries = entryList.getEntries();
+    if (!entries || entries.length === 0) return;
+    
     const lastEntry = entries[entries.length - 1];
+    if (!lastEntry) return;
     
     // Nivel 16: Calibración de score por impacto en persuasión
     const lcp = lastEntry.startTime;
