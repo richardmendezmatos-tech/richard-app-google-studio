@@ -123,6 +123,49 @@ export const sentinelAI = {
   },
 
   /**
+   * Generates a deep technical and psychological analysis for a vehicle.
+   */
+  async generateVehicleDeepAnalysis(car: any): Promise<any> {
+    const schema = z.object({
+      technicalProfile: z.string().describe('Un resumen técnico de alto nivel del vehículo.'),
+      keyFeatures: z.array(z.object({
+        label: z.string(),
+        value: z.string(),
+        icon: z.string().optional().describe('Un nombre de icono de lucide (ej: "Shield", "Zap", "Wind").')
+      })).max(6),
+      marketPosition: z.string().describe('Cómo se posiciona este auto frente a la competencia en PR.'),
+      psychologicalHook: z.string().describe('Por qué emocionalmente este auto es la mejor opción.'),
+      advantageScore: z.number().min(0).max(100)
+    });
+
+    try {
+      const { object } = await generateObject({
+        model: google('gemini-2.0-flash'),
+        schema,
+        output: 'object',
+        system: `Eres un analista experto de Richard Automotive. Tu especialidad es desglosar vehículos 
+        no solo por sus specs, sino por su valor emocional y técnico en el mercado de Puerto Rico.`,
+        prompt: `Analiza esta unidad: ${car.year} ${car.name}. 
+        Precio: $${car.price}. 
+        Specs actuales: ${JSON.stringify(car.specs || [])}. 
+        Features: ${JSON.stringify(car.features || [])}.
+        
+        Genera un análisis profundo que ayude a cerrar la venta.`
+      });
+      return object;
+    } catch (error: any) {
+      this.logError('VehicleDeepAnalysis', error);
+      return {
+        technicalProfile: car.description || 'Unidad de alta calidad seleccionada por Richard Automotive.',
+        keyFeatures: [],
+        marketPosition: 'Excelente valor en el mercado local.',
+        psychologicalHook: 'La combinación perfecta de estilo y funcionalidad.',
+        advantageScore: 85
+      };
+    }
+  },
+
+  /**
    * Generates multiple embeddings in bulk.
    */
   async generateBulkEmbeddings(texts: string[]): Promise<number[][]> {

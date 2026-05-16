@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle, TrendingUp } from 'lucide-react';
 import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
@@ -100,17 +100,16 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
     });
   };
 
-  // Generate AI Pitch on load
-  const { data: aiPitchData, isLoading: loadingPitch } = useQuery({
-    queryKey: ['carPitch', car?.id],
+  // Generate Deep AI Analysis on load
+  const { data: deepAnalysis, isLoading: loadingAnalysis } = useQuery({
+    queryKey: ['deepAnalysis', car?.id],
     queryFn: async () => {
       if (!car) throw new Error('No vehicle found');
-      return await generateCarPitch(car);
+      return await sentinelAI.generateVehicleDeepAnalysis(car);
     },
     enabled: !!car,
-    staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours to prevent unnecessary Gemini API calls
+    staleTime: 1000 * 60 * 60 * 24,
   });
-  const aiPitch = aiPitchData || null;
 
   // Helper to parse vehicle details if structured data is missing
   const { year, make, model } = React.useMemo(() => {
@@ -151,8 +150,6 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
     `Hola Richard, vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. Quisiera más información para comprarlo.`
   )}`;
 
-
-
   return (
     <div className="min-h-screen bg-[#020617] pb-24 pt-24 lg:pt-0 selection:bg-primary/30">
       <SEO
@@ -162,7 +159,6 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
         url={`/inventario/${slug || generateVehicleSlug(car)}/${car.id}`}
         type="product"
       />
-      {/* VehicleSchema removed to avoid duplicate JSON-LD injection */}
 
       {/* Navigation Bar (Mobile) / Breadcrumb (Nivel 18: Liquid Glass) */}
       <div className="fixed top-0 left-0 right-0 bg-[#020617]/80 backdrop-blur-3xl p-5 z-40 flex justify-between items-center lg:hidden border-b border-white/10 shadow-lg">
@@ -224,28 +220,43 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             <div className="flex items-center gap-3 mb-6 relative z-10">
               <Sparkles className="text-primary animate-pulse" size={20} />
               <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
-                RICHARD'S <span className="text-primary">AI INSIGHT</span>
+                SENTINEL <span className="text-primary">DEEP ANALYSIS</span>
               </h3>
             </div>
-            {loadingPitch ? (
-              <div className="h-32 flex flex-col items-center justify-center gap-4 text-primary relative z-10">
+            
+            {loadingAnalysis ? (
+              <div className="h-48 flex flex-col items-center justify-center gap-4 text-primary relative z-10">
                 <Loader2 className="w-8 h-8 animate-spin" />
                 <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
-                  NEURAL SCAN IN PROGRESS...
+                  EXECUTING NEURAL SCAN...
                 </span>
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="relative z-10">
-                <div
-                  className="prose prose-sm dark:prose-invert text-slate-300 leading-relaxed font-medium"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      (aiPitch || '')
-                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary font-black">$1</strong>')
-                        .replace(/\n/g, '<br/>'),
-                    ),
-                  }}
-                />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 relative z-10">
+                <div className="space-y-3">
+                  <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Technical Profile</p>
+                  <p className="text-sm font-medium text-slate-300 leading-relaxed italic">
+                    "{deepAnalysis?.technicalProfile}"
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => (
+                    <div key={i} className="bg-white/5 p-4 rounded-2xl border border-white/5 hover:border-primary/20 transition-all">
+                      <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">{feature.label}</p>
+                      <p className="text-xs font-bold text-white">{feature.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
+                  <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <ShieldCheck size={12} /> Psychological Hook
+                  </p>
+                  <p className="text-sm font-bold text-white leading-snug">
+                    {deepAnalysis?.psychologicalHook}
+                  </p>
+                </div>
               </motion.div>
             )}
             <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
@@ -337,18 +348,42 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             ))}
           </div>
 
-          <GlassContainer intensity="high" opacity={0.04} className="p-8 group shadow-2xl">
+          <GlassContainer intensity="high" opacity={0.04} className="p-8 group shadow-2xl relative overflow-hidden">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-1 w-8 bg-primary rounded-full group-hover:w-12 transition-all" />
               <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
-                POTENCIA Y DESEMPEÑO <span className="text-white">/ LAB MODE</span>
+                PERFORMANCE INDEX <span className="text-white">/ SENTINEL LAB</span>
               </h3>
             </div>
-            <div className="grid grid-cols-2 gap-8">
-              <ProgressRing label="CABALLOS (HP)" value={car.price > 60000 ? 550 : car.price > 40000 ? 380 : 250} max={600} size={140} strokeWidth={12} />
-              <ProgressRing label="TECH SCORE" value={car.type === 'luxury' ? 98 : 92} max={100} size={140} strokeWidth={12} color="#f59e0b" />
+            <div className="grid grid-cols-2 gap-8 mb-8">
+              <ProgressRing 
+                label="SENTINEL SCORE" 
+                value={deepAnalysis?.advantageScore || 85} 
+                max={100} 
+                size={140} 
+                strokeWidth={12} 
+              />
+              <ProgressRing 
+                label="TECH RANK" 
+                value={car.type === 'luxury' ? 98 : 92} 
+                max={100} 
+                size={140} 
+                strokeWidth={12} 
+                color="#f59e0b" 
+              />
             </div>
-            <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-primary/5 blur-3xl" />
+
+            <div className="p-6 rounded-3xl bg-indigo-500/5 border border-indigo-500/10 relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp size={16} className="text-indigo-400" />
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Market Position</span>
+              </div>
+              <p className="text-xs font-bold text-slate-300 leading-relaxed">
+                {deepAnalysis?.marketPosition || "Unidad con alta demanda proyectada en el mercado local."}
+              </p>
+            </div>
+            
+            <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-primary/5 blur-3xl pointer-events-none" />
           </GlassContainer>
 
           <div className="h-px bg-white/5" />

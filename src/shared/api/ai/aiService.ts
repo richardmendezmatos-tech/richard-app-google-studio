@@ -174,3 +174,33 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
     return null;
   }
 };
+/**
+ * Uses Gemini to find the best car matches based on a natural language vibe/need.
+ */
+export const generateNeuralMatch = async (query: string, inventory: Car[]): Promise<string[]> => {
+  const inventoryContext = inventory
+    .slice(0, 50) // Limit context for safety
+    .map(c => `${c.id}: ${c.year} ${c.name} ($${c.price}) - ${c.type}`)
+    .join('\n');
+    
+  const prompt = `
+    Como el motor neural de Richard Automotive, ayuda al cliente a encontrar el auto ideal.
+    Usuario busca: "${query}"
+    
+    Inventario disponible:
+    ${inventoryContext}
+    
+    Instrucciones:
+    1. Selecciona los 3-5 mejores autos que encajen con la vibración, presupuesto o necesidad descrita.
+    2. Retorna estrictamente un array JSON con los IDs de los autos seleccionados.
+  `;
+  
+  try {
+    const text = await callAiApi([prompt], 'gemini-1.5-flash');
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : [];
+  } catch (error) {
+    console.error('Neural Match Error:', error);
+    return [];
+  }
+};

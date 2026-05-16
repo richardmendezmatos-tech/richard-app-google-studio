@@ -52,6 +52,13 @@ export interface Car {
   
   // AI Sentinel
   aiScore?: number;
+  aiAnalysis?: {
+    technicalProfile?: string;
+    keyFeatures?: { label: string; value: string; icon?: string }[];
+    marketPosition?: string;
+    psychologicalHook?: string;
+    advantageScore?: number;
+  };
 }
 
 export const calculatePredictiveDTS = (car: any) => {
