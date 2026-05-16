@@ -31,6 +31,10 @@
     "gitkraken": {
       "command": "gk",
       "args": ["mcp"]
+    },
+    "sentinel-bi": {
+      "command": "npx",
+      "args": ["tsx", "./scripts/sentinel-mcp-server.js"]
     }
   }
 }

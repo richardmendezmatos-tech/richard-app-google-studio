@@ -8,10 +8,11 @@ interface GlassContainerProps extends HTMLMotionProps<'div'> {
   opacity?: number;
   className?: string;
   style?: React.CSSProperties;
+  withBrackets?: boolean;
 }
 
 /**
- * GlassContainer Master v3.0 (Sentinel N23)
+ * GlassContainer Master v3.1 (Sentinel N24)
  * Componente atómico de Nivel 18.
  * Proporciona un contenedor con efecto de vidrio esmerilado dinámico y animaciones proactivas.
  */
@@ -19,6 +20,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
   children,
   intensity = 'medium',
   hoverable = false,
+  withBrackets = false,
   opacity,
   className = '',
   style = {},
@@ -50,12 +52,21 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className={`glass-premium rounded-2xl p-6 ${hoverClass} ${className}`}
+      className={`glass-premium relative rounded-2xl p-6 ${hoverClass} ${className}`}
       style={dynamicStyle}
       {...motionProps}
     >
+      {withBrackets && (
+        <div className="absolute inset-0 pointer-events-none opacity-40">
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary/40 rounded-tl-sm" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary/40 rounded-tr-sm" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary/40 rounded-bl-sm" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary/40 rounded-br-sm" />
+        </div>
+      )}
       {children}
     </motion.div>
   );

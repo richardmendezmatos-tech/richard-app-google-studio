@@ -21,6 +21,8 @@ import { auditCommand } from './commands/audit';
 import { marketingCommand } from './commands/marketing';
 import { distributeCommand } from './commands/distribute';
 import { leadsCommand } from './commands/leads';
+import { commitCommand } from './commands/commit';
+import { deployCommand } from './commands/deploy';
 
 const program = new Command();
 
@@ -51,6 +53,8 @@ program.addCommand(auditCommand);
 program.addCommand(marketingCommand);
 program.addCommand(distributeCommand);
 program.addCommand(leadsCommand);
+program.addCommand(commitCommand);
+program.addCommand(deployCommand);
 
 // Root command action (just show banner if no subcommands)
 program.action(() => {

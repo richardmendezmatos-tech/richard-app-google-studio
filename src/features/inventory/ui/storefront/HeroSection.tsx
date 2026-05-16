@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
+import { NeuralBackground } from '@/shared/ui/common/NeuralBackground';
+import { PremiumCTA } from '@/shared/ui/common/PremiumCTA';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 
 interface HeroSectionProps {
@@ -134,10 +136,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         
         {/* Ambient Holographic Layer */}
         <div className="absolute inset-0 mesh-bg-elite z-[3]" />
+        
+        {/* Neural Depth Layer */}
+        <NeuralBackground className="z-[4]" count={isMobile ? 10 : 30} />
       </div>
 
       {/* ── Tactical Content Grid ── */}
-      <div className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0">
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        variants={{
+          animate: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+        }}
+        className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0"
+      >
         
         {/* Left: Intelligence & Branding */}
         <div className="flex-1 space-y-10 text-left">
@@ -157,16 +169,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <AnimatePresence mode="wait">
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20, scale: 0.99 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 1.01 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                initial={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col gap-0"
               >
                 <h2 className="flex flex-col">
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter text-kinetic drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">{h.line1}</span>
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter mix-blend-overlay">{h.line2}</span>
-                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-linear-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none drop-shadow-[0_0_40px_rgba(0,229,255,0.3)]">
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                    {h.line1}
+                  </span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white/40 leading-[0.8] tracking-tighter mix-blend-overlay">
+                    {h.line2}
+                  </span>
+                  <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-transparent bg-clip-text bg-linear-to-r from-white via-primary to-cyan-400 leading-[0.8] tracking-tighter select-none drop-shadow-[0_0_40px_rgba(0,229,255,0.3)] animate-tech-glitch">
                     {h.accent}
                   </span>
                 </h2>
@@ -197,11 +213,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Right: Command Panel CTAs */}
-        <div className="w-full lg:w-[460px]">
+        <motion.div 
+          variants={{
+            initial: { opacity: 0, x: 20 },
+            animate: { opacity: 1, x: 0 }
+          }}
+          className="w-full lg:w-[460px]"
+        >
           <GlassContainer 
             intensity="high"
             opacity={0.07}
-            className="p-10 space-y-8 relative group hud-brackets"
+            withBrackets
+            className="p-10 space-y-8 relative group"
           >
             {/* Holographic scanner effect */}
             <div className="absolute inset-0 bg-linear-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
@@ -215,21 +238,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             <div className="space-y-4 relative">
-              <HeroCTA 
+              <PremiumCTA 
                 label="EXPLORAR INVENTARIO" 
                 tag="UNIT DATABASE" 
                 icon={<ArrowRight size={22} />} 
                 variant="primary" 
                 onClick={onBrowseInventory}
               />
-              <HeroCTA 
+              <PremiumCTA 
                 label="NEURAL MATCH" 
                 tag="AI DISCOVERY" 
                 icon={<BrainCircuit size={22} />} 
                 variant="secondary" 
                 onClick={onNeuralMatch}
               />
-              <HeroCTA 
+              <PremiumCTA 
                 label="COTIZAR MI AUTO" 
                 tag="TRADE-IN EVAL" 
                 icon={<DollarSign size={22} />} 
@@ -254,11 +277,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             
             <Sparkles className="absolute bottom-6 right-6 text-primary/10 group-hover:text-primary/30 transition-colors animate-spin-slow" size={60} />
           </GlassContainer>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* ── Global Ticker Protocol ── */}
-      <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4">
+      <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4 mt-auto">
         <div className="flex overflow-hidden whitespace-nowrap" ref={tickerRef}>
           {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
             <span key={i} className="mx-8 font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 hover:text-cyan-400 transition-colors cursor-default">
@@ -283,33 +306,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         }
       `}</style>
     </section>
-  );
-};
-
-const HeroCTA = ({ label, tag, icon, variant, onClick }: any) => {
-  const styles: any = {
-    primary: "bg-cyan-500 text-slate-950 hover:bg-cyan-400 shadow-[0_10px_30px_-5px_rgba(0,229,255,0.4)]",
-    secondary: "bg-white/5 text-white border border-white/10 hover:bg-white/10",
-    tertiary: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
-  };
-
-  return (
-    <button 
-      onClick={onClick}
-      className={`group w-full flex items-center justify-between p-5 rounded-2xl transition-all duration-300 transform active:scale-95 ${styles[variant]}`}
-    >
-      <div className="flex flex-col items-start text-left">
-        <span className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1 opacity-60 ${variant === 'primary' ? 'text-slate-900' : ''}`}>
-          {tag}
-        </span>
-        <span className="font-cinematic text-xl tracking-wider leading-none">
-          {label}
-        </span>
-      </div>
-      <div className={`p-2 rounded-xl transition-transform group-hover:translate-x-1 ${variant === 'primary' ? 'bg-slate-950/10' : 'bg-white/5'}`}>
-        {icon}
-      </div>
-    </button>
   );
 };
 

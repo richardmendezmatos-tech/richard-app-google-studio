@@ -1,22 +1,20 @@
 #!/usr/bin/env node
 // =============================================================================
-// scripts/bq-dry-run.js — Richard Automotive v2026.1
-// Standard #4: Escudo Financiero BigQuery — Dry Run Guard
+// scripts/bq-dry-run.js — Richard Automotive v2.0 (Expert Edition)
+// Standard #4: Escudo Financiero BigQuery — Intelligence & Guard
 //
 // Uso: node scripts/bq-dry-run.js "<SQL_QUERY>"
-//      node scripts/bq-dry-run.js --file path/to/query.sql
-//
-// Calcula el costo ANTES de ejecutar. Bloquea si supera 500 MB.
-// Si pasa, ejecuta la query y devuelve los resultados.
+//      node scripts/bq-dry-run.js --file path/to/query.sql --limit 1GB --output table
 // =============================================================================
 
 import { BigQuery } from '@google-cloud/bigquery';
 import { readFileSync } from 'fs';
+import readline from 'readline';
 
 // ── Configuración ─────────────────────────────────────────────────────────────
-const MAX_BYTES = 500 * 1024 * 1024;    // 500 MB en bytes
-const BYTES_PER_TB = 1_099_511_627_776; // 1 TB
-const COST_PER_TB = 5.00;               // USD por TB (BigQuery on-demand pricing)
+const DEFAULT_MAX_BYTES = 500 * 1024 * 1024;    // 500 MB
+const BYTES_PER_TB = 1_099_511_627_776; 
+const COST_PER_TB = 5.00;               
 const PROJECT_ID = process.env.GCP_PROJECT_ID || 'richard-automotive';
 
 const RED = '\x1b[31m';
@@ -25,53 +23,82 @@ const YELLOW = '\x1b[33m';
 const CYAN = '\x1b[36m';
 const RESET = '\x1b[0m';
 
-// ── Leer SQL ──────────────────────────────────────────────────────────────────
-function getQuery() {
-    const args = process.argv.slice(2);
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const ask = (query) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans.toLowerCase());
+    }));
+};
 
-    if (args.length === 0) {
-        console.error(`${RED}❌ ERROR: Proporciona una query o archivo SQL.${RESET}`);
-        console.error(`   Uso: node scripts/bq-dry-run.js "<SQL>"`);
-        console.error(`   Uso: node scripts/bq-dry-run.js --file query.sql`);
+function parseLimit(limitStr) {
+    if (!limitStr) return DEFAULT_MAX_BYTES;
+    const num = parseFloat(limitStr);
+    if (limitStr.toUpperCase().endsWith('GB')) return num * 1024 * 1024 * 1024;
+    if (limitStr.toUpperCase().endsWith('MB')) return num * 1024 * 1024;
+    return num;
+}
+
+// ── Argument Parsing ──────────────────────────────────────────────────────────
+function getArgs() {
+    const args = process.argv.slice(2);
+    const config = {
+        sql: '',
+        limit: DEFAULT_MAX_BYTES,
+        output: 'json', // Default to json for easy parsing
+        interactive: true
+    };
+
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === '--file') {
+            config.sql = readFileSync(args[++i], 'utf8');
+        } else if (args[i] === '--limit') {
+            config.limit = parseLimit(args[++i]);
+        } else if (args[i] === '--output') {
+            config.output = args[++i];
+        } else if (!args[i].startsWith('--')) {
+            config.sql = args[i];
+        }
+    }
+
+    if (!config.sql) {
+        console.error(`${RED}❌ ERROR: Proporciona SQL o --file.${RESET}`);
         process.exit(1);
     }
 
-    if (args[0] === '--file') {
-        if (!args[1]) {
-            console.error(`${RED}❌ ERROR: Especifica la ruta del archivo SQL.${RESET}`);
-            process.exit(1);
-        }
-        return readFileSync(args[1], 'utf8');
-    }
-
-    return args.join(' ');
+    return config;
 }
 
-// ── Validaciones de buenas prácticas SQL ──────────────────────────────────────
+// ── SQL Intelligence ──────────────────────────────────────────────────────────
 function validateSQL(sql) {
     const warnings = [];
+    const suggestions = [];
 
-    // Detectar SELECT * (anti-patrón BigQuery)
     if (/SELECT\s+\*/i.test(sql)) {
-        warnings.push('⚠️  Evita SELECT * — especifica columnas explícitas para reducir bytes escaneados');
+        warnings.push('⚠️  Anti-patrón SELECT * detectado.');
+        suggestions.push('💡 Especifica columnas explícitas para reducir el costo de escaneo.');
     }
 
-    // Detectar ausencia de filtro WHERE con fecha
+    if (/\bORDER\s+BY\b/i.test(sql) && !/\bLIMIT\b/i.test(sql)) {
+        warnings.push('⚠️  ORDER BY sin LIMIT en query de alto nivel.');
+        suggestions.push('💡 El ordenamiento global consume muchos slots. Añade LIMIT si es para exploración.');
+    }
+
+    if (/\bCROSS\s+JOIN\b/i.test(sql)) {
+        warnings.push('🔥 CROSS JOIN detectado — ¡Peligro de explosión de datos!');
+        suggestions.push('💡 Verifica si puedes usar un INNER JOIN con condiciones específicas.');
+    }
+
     const hasDateFilter = /WHERE.*(_date|_at|timestamp|created|updated|date|fecha)/i.test(sql);
-    const hasFrom = /FROM\s+`?[\w.]+`?/i.test(sql);
-    if (hasFrom && !hasDateFilter) {
-        warnings.push('⚠️  Sin filtro de fecha detectado — usa particiones WHERE date = ... para evitar full scans');
+    if (!hasDateFilter && sql.length > 50) {
+        warnings.push('⚠️  Ausencia de filtro temporal (Partitioning).');
+        suggestions.push('💡 Filtra por columnas particionadas para ahorrar un ~90% de costo.');
     }
 
-    // Detectar JOINs sin condición LIMIT en subqueries
-    if (/CROSS\s+JOIN/i.test(sql)) {
-        warnings.push('⚠️  CROSS JOIN detectado — puede generar producto cartesiano muy costoso');
-    }
-
-    return warnings;
+    return { warnings, suggestions };
 }
 
-// ── Formatear bytes a unidad legible ──────────────────────────────────────────
 function formatBytes(bytes) {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(2)} KB`;
@@ -79,90 +106,72 @@ function formatBytes(bytes) {
     return `${(bytes / 1024 ** 3).toFixed(2)} GB`;
 }
 
-// ── Calcular costo estimado ───────────────────────────────────────────────────
-function estimateCost(bytes) {
-    const terabytes = bytes / BYTES_PER_TB;
-    return (terabytes * COST_PER_TB).toFixed(6);
-}
-
-// ── Main ──────────────────────────────────────────────────────────────────────
+// ── Main Engine ───────────────────────────────────────────────────────────────
 async function main() {
-    const sql = getQuery();
+    const config = getArgs();
     const bigquery = new BigQuery({ projectId: PROJECT_ID });
 
-    console.log('');
-    console.log(`${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
-    console.log(`${CYAN}🛡️  BigQuery Dry-Run Guard — Richard Automotive v2026.1${RESET}`);
-    console.log(`${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
-    console.log(`📊 Proyecto: ${PROJECT_ID}`);
-    console.log(`🔒 Límite:   ${formatBytes(MAX_BYTES)}`);
-    console.log('');
+    if (config.output !== 'json') {
+        console.log(`\n${CYAN}🛡️  Sentinel BigQuery Guard v2.0 — ${PROJECT_ID}${RESET}\n`);
+    }
 
-    // Validaciones SQL
-    const sqlWarnings = validateSQL(sql);
-    if (sqlWarnings.length > 0) {
-        console.log(`${YELLOW}📋 Recomendaciones SQL:${RESET}`);
-        sqlWarnings.forEach(w => console.log(`   ${w}`));
+    const { warnings, suggestions } = validateSQL(config.sql);
+    
+    if (config.output !== 'json' && warnings.length > 0) {
+        console.log(`${YELLOW}📋 Intelligence Report:${RESET}`);
+        warnings.forEach(w => console.log(`   ${w}`));
+        suggestions.forEach(s => console.log(`   ${s}`));
         console.log('');
     }
 
-    // Dry run
-    console.log('🔍 Ejecutando dry run...');
     try {
         const [job] = await bigquery.createQueryJob({
-            query: sql,
+            query: config.sql,
             dryRun: true,
             location: 'US',
         });
 
         const bytesProcessed = parseInt(job.metadata.statistics.totalBytesProcessed, 10);
-        const cost = estimateCost(bytesProcessed);
+        const cost = (bytesProcessed / BYTES_PER_TB * COST_PER_TB).toFixed(6);
         const formatted = formatBytes(bytesProcessed);
 
-        console.log('');
-        console.log(`📏 Bytes a procesar: ${formatted}`);
-        console.log(`💵 Costo estimado:   $${cost} USD`);
-
-        // ── GUARD: Bloquear si supera 500 MB ─────────────────────────────────────
-        if (bytesProcessed > MAX_BYTES) {
-            console.log('');
-            console.log(`${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
-            console.log(`${RED}❌ QUERY BLOQUEADA — Supera el límite de ${formatBytes(MAX_BYTES)}${RESET}`);
-            console.log(`${RED}   Cette query procesaría ${formatted} (${((bytesProcessed / MAX_BYTES) * 100).toFixed(1)}% del límite)${RESET}`);
-            console.log(`${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
-            console.log('');
-            console.log('💡 Soluciones:');
-            console.log('   1. Añade filtro WHERE con fecha (particionamiento)');
-            console.log('   2. Reemplaza SELECT * con columnas específicas');
-            console.log('   3. Usa LIMIT para exploración de datos');
-            console.log('   4. Crea una vista materializada en BigQuery');
-            process.exit(2); // Exit code 2 = query bloqueada (diferente a error de sistema)
+        if (config.output !== 'json') {
+            console.log(`📏 Análisis de Escaneo: ${formatted}`);
+            console.log(`💵 Costo Proyectado:  $${cost} USD`);
         }
 
-        // ── APPROVED: Ejecutar la query ───────────────────────────────────────────
-        console.log('');
-        console.log(`${GREEN}✅ APROBADA — Dentro del límite de ${formatBytes(MAX_BYTES)}${RESET}`);
-        console.log(`${GREEN}🚀 Ejecutando query...${RESET}`);
-        console.log('');
+        // BLOQUEO HARD: Supera límite establecido
+        if (bytesProcessed > config.limit) {
+            console.error(`\n${RED}🛑 BLOQUEO DE SEGURIDAD: La query supera el límite de ${formatBytes(config.limit)}.${RESET}`);
+            process.exit(2);
+        }
 
-        const [rows] = await bigquery.query({ query: sql });
+        // APROBACIÓN SOFT: Si el costo es significativo, preguntar
+        if (config.output !== 'json' && bytesProcessed > 100 * 1024 * 1024) { // > 100 MB
+            const confirm = await ask(`\n${YELLOW}⚠️  La query procesará ${formatted}. ¿Deseas proceder? (s/n): ${RESET}`);
+            if (confirm !== 's' && confirm !== 'si' && confirm !== 'y') {
+                console.log(`${RED}Aborted.${RESET}`);
+                process.exit(0);
+            }
+        }
 
-        console.log(`📦 Resultados: ${rows.length} filas`);
-        console.log('');
+        if (config.output !== 'json') {
+            console.log(`\n${GREEN}🚀 Ejecutando query...${RESET}\n`);
+        }
 
-        if (rows.length > 0) {
+        const [rows] = await bigquery.query({ query: config.sql });
+
+        if (config.output === 'json') {
             console.log(JSON.stringify(rows, null, 2));
+        } else if (config.output === 'table') {
+            console.table(rows.slice(0, 50));
+            if (rows.length > 50) console.log(`... y ${rows.length - 50} filas más.`);
         } else {
-            console.log('(Sin resultados)');
+            console.log(rows);
         }
-
-        console.log('');
-        console.log(`${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
-        console.log(`${GREEN}✅ Query completada. Costo real: ~$${cost} USD${RESET}`);
-        console.log(`${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
 
     } catch (error) {
-        console.error(`${RED}❌ Error en dry run: ${error.message}${RESET}`);
+        console.error(`\n${RED}❌ ERROR BIGQUERY: ${error.message}${RESET}\n`);
         process.exit(1);
     }
 }
