@@ -4,6 +4,7 @@ import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
 import { extractMarketingData } from './marketingCaptureService';
 import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookService';
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
+import { leadIntelligenceService } from './leadIntelligenceService';
 
 export type { Lead };
 
@@ -57,6 +58,13 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
 
     // WhatsApp Retargeting (Sentinel Funnel Optimization)
     sendWhatsAppRetargeting(newLead).catch((e) => console.error('WhatsApp dispatch failed', e));
+
+    // Sentinel Lead Intelligence Enrichment (Asynchronous)
+    leadIntelligenceService.enrichLead(
+      data.id, 
+      (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest,
+      notes
+    ).catch((e: any) => console.error('[CRM] Intelligence Enrichment failed', e));
 
     return data.id;
   } catch (error) {
@@ -130,7 +138,8 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
           phone: d.phone,
           status: d.status,
           createdAt: d.created_at,
-          customerMemory: d.customer_memory
+          customerMemory: d.customer_memory,
+          aiAnalysis: d.ai_analysis
         } as any)));
       }
     })
@@ -147,7 +156,8 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
         phone: d.phone,
         status: d.status,
         createdAt: d.created_at,
-        customerMemory: d.customer_memory
+        customerMemory: d.customer_memory,
+        aiAnalysis: d.ai_analysis
       } as any)));
     }
   });

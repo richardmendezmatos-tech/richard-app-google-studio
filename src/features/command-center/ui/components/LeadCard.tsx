@@ -216,6 +216,15 @@ const LeadCard: React.FC<LeadCardProps> = ({
           {scoring.score > 85 && <Zap size={14} className="text-cyan-400 animate-pulse" />}
         </div>
 
+        {lead.aiAnalysis?.nextAction && (
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-3 bg-cyan-500 rounded-full animate-pulse" />
+            <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">
+              Neural Insight: {lead.aiAnalysis.nextAction}
+            </span>
+          </div>
+        )}
+
         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-start gap-2.5 mb-5 bg-white/3 p-2.5 rounded-2xl border border-white/5">
           <Car size={14} className="text-cyan-500/50 mt-0.5" />
           <span className="leading-relaxed line-clamp-2">

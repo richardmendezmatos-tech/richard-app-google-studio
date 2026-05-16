@@ -312,6 +312,64 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                 )}
               </div>
             </div>
+
+            {/* Sentinel Intelligence Module - NEW */}
+            {lead.aiAnalysis && (
+              <div className="mt-12 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <Zap size={20} className="text-cyan-400" /> Sentinel Intelligence Core
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Psychological Profile */}
+                  <div className="glass-premium p-6 rounded-4xl border border-cyan-500/10 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Users size={40} className="text-cyan-400" />
+                    </div>
+                    <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest block mb-4">
+                      Ideal Buyer Profile
+                    </span>
+                    <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10">
+                      {lead.aiAnalysis.buyerProfile || "Análisis de perfil en progreso..."}
+                    </p>
+                  </div>
+
+                  {/* Strategic Sales Pitch */}
+                  <div className="glass-premium p-6 rounded-4xl border border-emerald-500/10 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Target size={40} className="text-emerald-400" />
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest block mb-4">
+                      Strategic Sales Pitch
+                    </span>
+                    <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10 italic">
+                      "{lead.aiAnalysis.salesPitch || "Generando pitch táctico..."}"
+                    </p>
+                  </div>
+                </div>
+
+                {/* Score & Key Insights */}
+                <div className="p-6 bg-slate-900/40 rounded-4xl border border-white/5">
+                  <div className="flex flex-wrap gap-3">
+                    {lead.aiAnalysis.insights?.map((insight: string, i: number) => (
+                      <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <TrendingUp size={12} className="text-cyan-500" />
+                        {insight}
+                      </span>
+                    ))}
+                    {lead.aiAnalysis.nextAction && (
+                      <span className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-[10px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                        <ArrowRight size={12} />
+                        Next: {lead.aiAnalysis.nextAction}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Footer Actions */}
