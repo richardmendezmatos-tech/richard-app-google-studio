@@ -55,6 +55,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     const [isMobile, setIsMobile] = useState(true);
     const [idx, setIdx] = useState(0);
     const [videoLoaded, setVideoLoaded] = useState(false);
+    const tickerRef = useRef<HTMLDivElement>(null);
+    const animFrameRef = useRef<number>(0);
 
 
     

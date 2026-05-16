@@ -9,6 +9,8 @@ import { generateCarPitch } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
+
 
 const ApprovalSimulatorWidget = React.lazy(() =>
   import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => ({ default: m.ApprovalSimulatorWidget })),
