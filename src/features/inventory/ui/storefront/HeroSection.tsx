@@ -53,6 +53,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onSellCar,
 }) => {
     const [isMobile, setIsMobile] = useState(true);
+    const [idx, setIdx] = useState(0);
+    const [videoLoaded, setVideoLoaded] = useState(false);
+
+
     
     useEffect(() => {
       const mql = window.matchMedia('(max-width: 1024px)');

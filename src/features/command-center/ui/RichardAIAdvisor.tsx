@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Brain, 
@@ -23,19 +25,28 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
   const [isOpen, setIsOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/command-center/ai-advisor',
-    body: {
-      context: businessContext
-    },
-    initialMessages: [
-      {
-        id: 'welcome',
-        role: 'system',
-        content: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?'
-      }
-    ]
-  });
+  const [inputValue, setInputValue] = useState('');
+
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/command-center/ai-advisor',
+    }),
+    messages: [{
+      id: 'welcome',
+      role: 'assistant',
+      content: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
+      parts: [{ type: 'text', text: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?' }]
+    }] as any,
+  } as any);
+
+  const isLoading = status === 'streaming' || status === 'submitted';
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim() || isLoading) return;
+    sendMessage({ text: inputValue });
+    setInputValue('');
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -108,17 +119,20 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
               ref={scrollRef}
               className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
             >
-              {messages.map((m) => (
-                <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed ${
-                    m.role === 'user' 
-                      ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-50' 
-                      : 'bg-slate-800/40 border border-white/5 text-slate-300'
-                  }`}>
-                    {m.content}
+              {messages.map((m) => {
+                const text = ((m.parts as any[])?.find((p) => p.type === 'text') as any)?.text ?? (m as any).content ?? '';
+                return (
+                  <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed ${
+                      m.role === 'user' 
+                        ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-50' 
+                        : 'bg-slate-800/40 border border-white/5 text-slate-300'
+                    }`}>
+                      {text}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-slate-800/40 border border-white/5 p-4 rounded-2xl flex items-center gap-2">
@@ -133,17 +147,17 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSubmit} className="p-4 bg-slate-950/60 border-t border-white/5">
+            <form onSubmit={handleSend} className="p-4 bg-slate-950/60 border-t border-white/5">
               <div className="relative">
                 <input
-                  value={input}
-                  onChange={handleInputChange}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Pregúntame sobre la estrategia de hoy..."
                   className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-hidden focus:border-cyan-500/50 transition-all pr-12"
                 />
                 <button 
                   type="submit"
-                  disabled={isLoading || !input.trim()}
+                  disabled={isLoading || !inputValue.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-cyan-500 text-slate-950 rounded-lg hover:bg-cyan-400 disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20"
                 >
                   <Send className="w-3.5 h-3.5" />

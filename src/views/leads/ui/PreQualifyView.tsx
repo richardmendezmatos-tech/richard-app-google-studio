@@ -98,11 +98,12 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
       if (step === 1) {
         try {
           addLead({
-            type: 'chat', // Mark as chat/express to differentiate
+            type: 'chat',
             name: `${formData.firstName}`,
             phone: formData.phone,
             notes: `Express Lead Capture - Initial Interest`,
-          });
+            category: 'WARM',
+          } as any);
         } catch (e) {
           console.error('Silent fail on express capture:', e);
         }
@@ -148,8 +149,11 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         name: `${formData.firstName} ${formData.lastName}`,
         phone: formData.phone,
         email: formData.email,
-        notes: `Finance Application #${refId} - Pronto: $${formData.downPayment} - Término: ${formData.term}m - Total Completion (SSN Protected)`,
-      });
+        vehicleOfInterest: dealContext?.vehicle?.name || '',
+        vehicle_of_interest: dealContext?.vehicle?.name || '',
+        category: 'HOT',
+        notes: `Finance Application #${refId} - Pronto: $${formData.downPayment} - Término: ${formData.term}m`,
+      } as any);
 
       setReferenceId(refId);
 

@@ -32,7 +32,7 @@ export const sentinelAI = {
     schema: T,
     prompt: string,
     system?: string,
-    model: string = 'gemini-1.5-flash'
+    model: string = 'gemini-2.0-flash'
   ): Promise<z.infer<T>> {
     try {
       const { object } = await generateObject({
@@ -54,19 +54,22 @@ export const sentinelAI = {
    */
   async generateVisionDescription(
     prompt: string,
-    imageSource: string, // base64
+    imageSource: string, // base64 or URL
     system: string = 'Eres un vendedor experto de autos. Escribe en español.'
   ): Promise<string> {
     try {
+      const isUrl = imageSource.startsWith('http');
       const { text } = await generateText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.0-flash'),
         system,
         messages: [
           {
             role: 'user',
             content: [
               { type: 'text', text: prompt },
-              { type: 'image', image: imageSource.replace(/^data:image\/\w+;base64,/, '') },
+              isUrl 
+                ? { type: 'image', image: new URL(imageSource) }
+                : { type: 'image', image: imageSource.replace(/^data:image\/\w+;base64,/, '') },
             ],
           },
         ],
@@ -74,6 +77,47 @@ export const sentinelAI = {
       return text;
     } catch (error: any) {
       this.logError('VisionDescription', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Analyzes a vehicle image and extracts technical specifications.
+   */
+  async analyzeVehicleImage(imageSource: string): Promise<any> {
+    const schema = z.object({
+      make: z.string(),
+      model: z.string(),
+      year: z.number(),
+      color: z.string(),
+      type: z.enum(['suv', 'sedan', 'luxury', 'pickup', 'coupe', 'hatchback']),
+      condition: z.enum(['new', 'used']),
+      key_features: z.array(z.string()),
+      confidence: z.number().min(0).max(1),
+    });
+
+    try {
+      const isUrl = imageSource.startsWith('http');
+      const { object } = await generateObject({
+        model: google('gemini-2.0-flash'),
+        schema,
+        output: 'object',
+        system: 'Eres un analista técnico de inventario automotriz experto en reconocimiento visual.',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: 'Analiza esta imagen y extrae los detalles técnicos del vehículo.' },
+              isUrl 
+                ? { type: 'image', image: new URL(imageSource) }
+                : { type: 'image', image: imageSource.replace(/^data:image\/\w+;base64,/, '') },
+            ],
+          },
+        ],
+      });
+      return object;
+    } catch (error: any) {
+      this.logError('AnalyzeVehicleImage', error);
       throw error;
     }
   },
@@ -105,7 +149,7 @@ export const sentinelAI = {
       });
 
       const { object } = await generateObject({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.0-flash'),
         schema,
         output: 'object',
         system: `Eres un experto en ventas de autos para Richard Automotive en Puerto Rico. 
@@ -132,7 +176,7 @@ export const sentinelAI = {
   async quickGen(prompt: string, system?: string): Promise<string> {
     try {
       const { text } = await generateText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.0-flash'),
         system: system || 'Eres un asistente administrativo para Richard Automotive.',
         prompt,
       });

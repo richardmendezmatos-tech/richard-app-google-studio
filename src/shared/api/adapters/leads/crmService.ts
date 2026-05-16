@@ -15,23 +15,37 @@ const LEADS_TABLE = 'leads';
 export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): Promise<string> => {
   try {
     if (!supabase) throw new Error('Supabase client not initialized');
-    const marketingData = extractMarketingData();
+
+    // Support both { firstName, lastName } and { name } call patterns
+    let firstName = (lead as any).firstName || '';
+    let lastName  = (lead as any).lastName  || '';
+    if (!firstName && (lead as any).name) {
+      const parts = ((lead as any).name as string).trim().split(' ');
+      firstName = parts[0] || '';
+      lastName  = parts.slice(1).join(' ') || '';
+    }
+
+    // Determine category from notes or explicit field
+    const notes = (lead as any).notes || '';
+    const category = (lead as any).category || null;
 
     const { data, error } = await supabase.from(LEADS_TABLE).insert({
-      first_name: lead.firstName || '',
-      last_name: lead.lastName || '',
+      first_name: firstName,
+      last_name: lastName,
       phone: lead.phone || '',
       email: lead.email || '',
-      vehicle_id: lead.vehicleId,
-      marketing_data: marketingData,
+      vehicle_id: (lead as any).vehicleId || null,
+      vehicle_of_interest: (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || null,
+      category,
       status: 'new',
+      behavioral_metrics: { source: (lead as any).type || 'web', notes },
       created_at: new Date().toISOString(),
     }).select('id').single();
 
     if (error) throw error;
-    console.log('Lead added successfully to Supabase');
+    console.log('[CRM] ✅ Lead guardado en Supabase:', data.id);
 
-    const newLead = { ...lead, marketingData, id: data.id, status: 'new' } as Lead;
+    const newLead = { ...lead, id: data.id, status: 'new' } as Lead;
 
     // HubSpot Sync
     hubspotService
@@ -46,7 +60,7 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
 
     return data.id;
   } catch (error) {
-    console.error('Error adding lead:', error);
+    console.error('[CRM] ❌ Error adding lead:', error);
     throw error;
   }
 };

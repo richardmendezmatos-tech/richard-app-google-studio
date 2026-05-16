@@ -22,9 +22,11 @@
       "command": "node",
       "args": ["./.agents/chrome-devtools-mcp/build/src/index.js"]
     },
-    "firebase": {
+    "supabase": {
       "command": "npx",
-      "args": ["-y", "firebase-tools", "experimental:mcp"]
+      "args": ["-y", "@supabase/mcp-server-supabase@latest",
+        "--supabase-url", "${env:NEXT_PUBLIC_SUPABASE_URL}",
+        "--supabase-key", "${env:SUPABASE_SERVICE_ROLE_KEY}"]
     },
     "gitkraken": {
       "command": "gk",

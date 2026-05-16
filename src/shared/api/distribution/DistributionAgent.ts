@@ -24,7 +24,7 @@ export class DistributionAgent {
     const missing: string[] = [];
     if (!car.price || car.price <= 0) missing.push('Precio');
     if (!car.image) missing.push('Imagen Principal');
-    if (!car.mileage && car.condition !== 'new') missing.push('Millaje');
+    if ((car.mileage === undefined || car.mileage === null) && car.condition !== 'new') missing.push('Millaje');
     
     return {
       valid: missing.length === 0,
@@ -78,8 +78,9 @@ export class DistributionAgent {
     console.log(`[Distribution] Sincronizando ${car.make} ${car.model} con ${platform}...`);
 
     // 1. Registrar inicio de sincronización
+    const carId = car.id || car.vin;
     await supabase.from('distribution_logs').upsert({
-      car_id: car.id,
+      car_id: carId,
       platform,
       status: 'pending',
       last_sync: new Date().toISOString()
@@ -94,7 +95,7 @@ export class DistributionAgent {
         await supabase.from('distribution_logs').update({
           status: 'active',
           last_sync: new Date().toISOString()
-        }).match({ car_id: car.id, platform });
+        }).match({ car_id: carId, platform });
         
         return true;
       } 
@@ -111,7 +112,7 @@ export class DistributionAgent {
             status: 'active',
             external_url: result.externalId ? `https://www.clasificadosonline.com/UDAutoDetail.asp?AutoId=${result.externalId}` : undefined,
             last_sync: new Date().toISOString()
-          }).match({ car_id: car.id, platform });
+          }).match({ car_id: carId, platform });
           return true;
         } else {
           throw new Error(result.error || 'Error desconocido en ClasificadosOnline');
@@ -125,7 +126,7 @@ export class DistributionAgent {
         status: 'error',
         error_msg: err.message,
         last_sync: new Date().toISOString()
-      }).match({ car_id: car.id, platform });
+      }).match({ car_id: carId, platform });
       return false;
     }
   }
