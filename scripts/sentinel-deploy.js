@@ -44,17 +44,31 @@ async function sentinelDeploy() {
     log(chalk.magenta.bold('\n🚀 DEPLOYING TO VERCEL EDGE LAYER...\n'));
     execSync('npx vercel --prod', { stdio: 'inherit' });
 
-    // 5. Post-Deploy Log
-    const logPath = path.join(process.cwd(), 'deploy_log.txt');
+    // 5. Post-Deploy Log & Telemetry
+    const endTime = Date.now();
+    const duration = endTime - startTime;
     const timestamp = new Date().toISOString();
-    fs.appendFileSync(logPath, `\n[${timestamp}] SENTINEL N24 DEPLOYED SUCCESSFULLY.`);
     
     log(chalk.green.bold('\n✅ MISSION ACCOMPLISHED: Sentinel N24 is Live.'));
-    log(chalk.gray(`Timestamp: ${timestamp}\n`));
+    log(chalk.gray(`   Timestamp: ${timestamp}`));
+    log(chalk.gray(`   Duration: ${(duration / 1000).toFixed(2)}s\n`));
+
+    try {
+      const bqCount = fs.existsSync(queryDir) ? fs.readdirSync(queryDir).filter(f => f.endsWith('.sql')).length : 0;
+      execSync(`node scripts/sentinel-telemetry.js SUCCESS ${duration} ${bqCount}`, { stdio: 'inherit' });
+    } catch (e) {
+      log(chalk.yellow('   ⚠️ Telemetry link failed, but deployment is secure.'));
+    }
 
   } catch (error) {
     spinner.fail(chalk.red('MISSION ABORTED: Critical failure detected.'));
-    log(chalk.red('\n❌ System unstable. Deployment halted to protect production.'));
+    log(chalk.red(`\n❌ Error: ${error.message}`));
+    
+    try {
+      execSync(`node scripts/sentinel-telemetry.js FAILURE 0 0`, { stdio: 'inherit' });
+    } catch (e) {}
+
+    log(chalk.yellow('\nSystem unstable. Deployment halted to protect production.\n'));
     process.exit(1);
   }
 }
