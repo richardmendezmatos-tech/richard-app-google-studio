@@ -20,10 +20,10 @@ export interface GamificationState {
 
 // Opciones de premios premium (delivery gifts)
 export const PREMIUM_DELIVERY_GIFTS = [
-  { id: 'tintes', label: 'Tintes de Cerámica Premium', value: 350 },
-  { id: 'ceramica', label: 'Tratamiento Cerámico de Pintura N24', value: 600 },
-  { id: 'alfombras', label: 'Alfombras Todo Clima Originales', value: 200 },
-  { id: 'seguro', label: 'Seguro de Vida Richard Protection (1er Año)', value: 450 }
+  { id: 'gasolina', label: 'Gasolina Gratis (Tanque Lleno)', value: 100 },
+  { id: 'asistencia', label: 'Asistencia en Carretera 24/7 (1er Año)', value: 150 },
+  { id: 'lavado', label: 'Lavado de Autos Full Detail Premium', value: 80 },
+  { id: 'accesorios', label: '15% de Descuento en Accesorios Originales', value: 200 }
 ];
 
 // Probabilidades ponderadas para el bono de pronto

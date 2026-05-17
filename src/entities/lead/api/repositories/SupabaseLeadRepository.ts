@@ -45,10 +45,69 @@ export class SupabaseLeadRepository implements LeadRepository {
     return data as any;
   }
 
-  async saveLead(lead: Partial<Lead>): Promise<string> {
+  async saveLead(lead: Partial<Lead> & Record<string, any>): Promise<string> {
+    const firstName = lead.first_name || lead.firstName || '';
+    const lastName = lead.last_name || lead.lastName || '';
+    const email = lead.email || '';
+    const phone = lead.phone || '';
+    const status = lead.status || 'new';
+    const location = lead.location || lead.dealerId || 'richard-automotive';
+    const category = lead.category || null;
+    const ssn = lead.ssn || null;
+    const ssn_encrypted = lead.ssn_encrypted || null;
+    const vehicle_id = lead.vehicle_id || lead.vehicleId || lead.vehicleInfo?.id || null;
+    const vehicle_of_interest = lead.vehicle_of_interest || lead.vehicleOfInterest || lead.vehicleInfo?.name || null;
+
+    const baseKeys = [
+      'id', 'first_name', 'firstName', 'last_name', 'lastName', 'email', 'phone',
+      'status', 'location', 'dealerId', 'category', 'ssn', 'ssn_encrypted',
+      'vehicle_id', 'vehicleId', 'vehicle_of_interest', 'vehicleOfInterest', 'vehicleInfo',
+      'behavioral_metrics', 'behavioralMetrics', 'customer_memory', 'customerMemory',
+      'ai_analysis', 'aiAnalysis', 'created_at', 'createdAt'
+    ];
+
+    const extraData: Record<string, any> = {};
+    for (const key of Object.keys(lead)) {
+      if (!baseKeys.includes(key)) {
+        extraData[key] = lead[key];
+      }
+    }
+
+    const behavioral_metrics = {
+      source: lead.type || 'web',
+      notes: lead.notes || '',
+      ...extraData,
+      ...(lead.behavioral_metrics || lead.behavioralMetrics || {})
+    };
+
+    const customer_memory = lead.customer_memory || lead.customerMemory || null;
+    const ai_analysis = lead.ai_analysis || lead.aiAnalysis || null;
+
+    const dbPayload: any = {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone,
+      status,
+      location,
+      category,
+      ssn,
+      ssn_encrypted,
+      vehicle_id,
+      vehicle_of_interest,
+      behavioral_metrics,
+      customer_memory,
+      ai_analysis,
+      created_at: lead.created_at || lead.createdAt || new Date().toISOString()
+    };
+
+    if (lead.id) {
+      dbPayload.id = lead.id;
+    }
+
     const { data, error } = await this.client
       .from('leads')
-      .insert([lead])
+      .insert([dbPayload])
       .select('id')
       .single();
 
@@ -60,10 +119,28 @@ export class SupabaseLeadRepository implements LeadRepository {
     return data.id;
   }
 
-  async updateLead(id: string, data: Partial<Lead>): Promise<void> {
+  async updateLead(id: string, data: Partial<Lead> & Record<string, any>): Promise<void> {
+    const dbUpdates: any = {};
+    
+    if ('firstName' in data || 'first_name' in data) dbUpdates.first_name = data.firstName || data.first_name;
+    if ('lastName' in data || 'last_name' in data) dbUpdates.last_name = data.lastName || data.last_name;
+    if ('email' in data) dbUpdates.email = data.email;
+    if ('phone' in data) dbUpdates.phone = data.phone;
+    if ('status' in data) dbUpdates.status = data.status;
+    if ('category' in data) dbUpdates.category = data.category;
+    if ('ssn' in data) dbUpdates.ssn = data.ssn;
+    if ('ssn_encrypted' in data) dbUpdates.ssn_encrypted = data.ssn_encrypted;
+    if ('vehicleId' in data || 'vehicle_id' in data) dbUpdates.vehicle_id = data.vehicleId || data.vehicle_id;
+    if ('vehicleOfInterest' in data || 'vehicle_of_interest' in data) dbUpdates.vehicle_of_interest = data.vehicleOfInterest || data.vehicle_of_interest;
+    if ('customerMemory' in data || 'customer_memory' in data) dbUpdates.customer_memory = data.customerMemory || data.customer_memory;
+    if ('aiAnalysis' in data || 'ai_analysis' in data) dbUpdates.ai_analysis = data.aiAnalysis || data.ai_analysis;
+    if ('behavioralMetrics' in data || 'behavioral_metrics' in data) dbUpdates.behavioral_metrics = data.behavioralMetrics || data.behavioral_metrics;
+
+    if (Object.keys(dbUpdates).length === 0) return;
+
     const { error } = await this.client
       .from('leads')
-      .update(data)
+      .update(dbUpdates)
       .eq('id', id);
 
     if (error) {
