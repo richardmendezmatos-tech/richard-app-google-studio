@@ -97,10 +97,10 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
             <Timer className="text-amber-500 animate-spin" size={20} style={{ animationDuration: '4s' }} />
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">
-                Reserva Temporal Activa
+                Reserva Prioritaria de Tasa y Manifiesto Activos
               </p>
               <p className="text-xs text-slate-300">
-                Completa tu solicitud para asegurar tus regalos elegidos.
+                Complete su solicitud para asegurar su bono y privilegios de entrega.
               </p>
             </div>
           </div>
@@ -114,15 +114,14 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
 
       {/* Título y Copy Psicológico */}
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] text-[10px] font-bold uppercase tracking-widest">
           <Sparkles size={12} /> Club de Entrega VIP Richard
         </div>
         <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter">
-          Tus Regalos Exclusivos
+          Manifiesto de Entrega VIP
         </h2>
         <p className="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
-          En Richard Automotive celebramos tu compra desde el primer segundo. Selecciona hasta{' '}
-          <span className="text-white font-bold">2 regalos de entrega</span> y gira la Llave de Oro para financiar tu pronto.
+          Personalice los beneficios exclusivos para la entrega de su nueva <span className="text-white font-bold">unidad</span>. Marque hasta <span className="text-white font-bold">2 regalos de entrega</span> y gire la Llave de Oro para financiar su pronto.
         </p>
       </div>
 
@@ -175,17 +174,17 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
 
       {/* Giro de Llave Virtual (Ruleta Ponderada de Pronto) */}
       <div className="bg-slate-900/50 p-6 md:p-8 rounded-4xl border border-white/5 flex flex-col items-center space-y-6 relative overflow-hidden shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,174,217,0.05)_0%,transparent_100%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,168,128,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         <div className="text-center space-y-1">
-          <p className="text-[10px] font-black uppercase text-primary tracking-widest">
-            Aportación Financiera F&I
+          <p className="text-[10px] font-black uppercase text-[#C5A880] tracking-widest">
+            Aportación Financiera F&I de la Unidad
           </p>
           <h3 className="text-xl font-bold text-white uppercase tracking-tight">
-            Gira la Llave de Oro de Richard
+            Activar Llave de Oro en la Ignición
           </h3>
           <p className="text-xs text-slate-500 max-w-sm">
-            Desbloquea un bono dinámico directo a tu pronto para rebajar tu pago mensual.
+            Inserte y gire la llave de entrega en el encendido digital para liberar su bono de pronto garantizado.
           </p>
         </div>
 
@@ -240,11 +239,11 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
           </button>
         ) : (
           <div className="text-center bg-slate-950/50 px-6 py-3 rounded-2xl border border-white/5">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              Bono Acreditado Seguro
+            <p className="text-[10px] font-black text-[#C5A880] uppercase tracking-widest">
+              Bono de Pronto Certificado Seguro
             </p>
             <p className="text-2xl font-black text-emerald-400">
-              +${prontoBonus} USD a tu Pronto
+              +${prontoBonus} USD a su Pronto
             </p>
           </div>
         )}
@@ -262,7 +261,7 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
           }`}
         >
           {selectedRewards.length === 0
-            ? 'Selecciona tus Regalos'
+            ? 'Seleccione sus Regalos'
             : !isKeySpun
             ? 'Gira la Llave para Continuar'
             : 'Confirmar Recompensas VIP'}
@@ -271,19 +270,19 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
 
       {/* Modal / Alerta de Felicitaciones al Ganar */}
       {showPrizeModal && (
-        <div className="fixed inset-0 bg-[#070b0e]/90 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-[#070b0e]/95 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="bg-slate-900 border border-white/10 p-8 rounded-5xl shadow-[0_0_80px_rgba(0,174,217,0.2)] text-center max-w-sm w-full animate-in zoom-in-95 duration-300">
             <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
               <Sparkles size={36} className="text-emerald-400" />
             </div>
-            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-1">
-              ¡Felicidades, Ganador!
+            <p className="text-[10px] font-black text-[#C5A880] uppercase tracking-[0.2em] mb-1">
+              ¡Aportación de Pronto Aprobada!
             </p>
             <h3 className="text-3xl font-black text-white uppercase tracking-tight mb-4">
               +${prontoBonus} USD
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed mb-6">
-              Hemos inyectado este bono de pronto en tu cotización financiera. Se aplicará de forma automática en el siguiente paso.
+              Hemos certificado este bono directo a su pronto para la unidad seleccionada. Se aplicará de forma automática en el siguiente paso.
             </p>
             <button
               onClick={() => setShowPrizeModal(false)}

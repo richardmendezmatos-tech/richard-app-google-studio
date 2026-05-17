@@ -45,49 +45,49 @@ describe('RewardPicker Component', () => {
     render(<RewardPicker onComplete={mockOnComplete} />);
 
     // Verificar presencia de títulos y copys
-    expect(screen.getByText('Tus Regalos Exclusivos')).toBeInTheDocument();
-    expect(screen.getByText('Tintes de Cerámica Premium')).toBeInTheDocument();
-    expect(screen.getByText('Tratamiento Cerámico de Pintura N24')).toBeInTheDocument();
-    expect(screen.getByText('Alfombras Todo Clima Originales')).toBeInTheDocument();
-    expect(screen.getByText('Seguro de Vida Richard Protection (1er Año)')).toBeInTheDocument();
+    expect(screen.getByText('Manifiesto de Entrega VIP')).toBeInTheDocument();
+    expect(screen.getByText('Gasolina Gratis (Tanque Lleno)')).toBeInTheDocument();
+    expect(screen.getByText('Asistencia en Carretera 24/7 (1er Año)')).toBeInTheDocument();
+    expect(screen.getByText('Lavado de Autos Full Detail Premium')).toBeInTheDocument();
+    expect(screen.getByText('15% de Descuento en Accesorios Originales')).toBeInTheDocument();
 
     // El temporizador de urgencia no debe estar activo al inicio (se activa tras el giro de ruleta)
-    expect(screen.queryByText('Reserva Temporal Activa')).not.toBeInTheDocument();
+    expect(screen.queryByText('Reserva Prioritaria de Tasa y Manifiesto Activos')).not.toBeInTheDocument();
   });
 
   it('debe permitir la selección de regalos respetando el máximo de 2 elementos', () => {
     render(<RewardPicker onComplete={mockOnComplete} />);
 
-    const tintesCard = screen.getByText('Tintes de Cerámica Premium').closest('div');
-    const ceramicaCard = screen.getByText('Tratamiento Cerámico de Pintura N24').closest('div');
-    const carpetsCard = screen.getByText('Alfombras Todo Clima Originales').closest('div');
+    const gasolinaCard = screen.getByText('Gasolina Gratis (Tanque Lleno)').closest('div');
+    const asistenciaCard = screen.getByText('Asistencia en Carretera 24/7 (1er Año)').closest('div');
+    const lavadoCard = screen.getByText('Lavado de Autos Full Detail Premium').closest('div');
 
-    expect(tintesCard).toBeInTheDocument();
-    expect(ceramicaCard).toBeInTheDocument();
+    expect(gasolinaCard).toBeInTheDocument();
+    expect(asistenciaCard).toBeInTheDocument();
 
     // Seleccionar primer regalo
-    fireEvent.click(tintesCard!);
-    expect(useGamificationStore.getState().selectedRewards).toEqual(['tintes']);
+    fireEvent.click(gasolinaCard!);
+    expect(useGamificationStore.getState().selectedRewards).toEqual(['gasolina']);
 
     // Seleccionar segundo regalo
-    fireEvent.click(ceramicaCard!);
-    expect(useGamificationStore.getState().selectedRewards).toEqual(['tintes', 'ceramica']);
+    fireEvent.click(asistenciaCard!);
+    expect(useGamificationStore.getState().selectedRewards).toEqual(['gasolina', 'asistencia']);
 
     // Intentar seleccionar tercer regalo (debe mantenerse bloqueado en 2)
-    fireEvent.click(carpetsCard!);
-    expect(useGamificationStore.getState().selectedRewards).toEqual(['tintes', 'ceramica']);
+    fireEvent.click(lavadoCard!);
+    expect(useGamificationStore.getState().selectedRewards).toEqual(['gasolina', 'asistencia']);
   });
 
   it('debe mantener deshabilitado el botón siguiente hasta cumplir los requisitos de CRO', () => {
     render(<RewardPicker onComplete={mockOnComplete} />);
 
     // Botón inicial
-    const submitBtn = screen.getByRole('button', { name: /Selecciona tus Regalos/i });
+    const submitBtn = screen.getByRole('button', { name: /Seleccione sus Regalos/i });
     expect(submitBtn).toBeDisabled();
 
     // Seleccionar un regalo de entrega
-    const tintesCard = screen.getByText('Tintes de Cerámica Premium').closest('div');
-    fireEvent.click(tintesCard!);
+    const gasolinaCard = screen.getByText('Gasolina Gratis (Tanque Lleno)').closest('div');
+    fireEvent.click(gasolinaCard!);
 
     // Aún debe estar deshabilitado porque falta girar la llave
     expect(screen.getByRole('button', { name: /Gira la Llave para Continuar/i })).toBeDisabled();
@@ -101,7 +101,7 @@ describe('RewardPicker Component', () => {
 
     render(<RewardPicker onComplete={mockOnComplete} />);
 
-    expect(screen.getByText('Reserva Temporal Activa')).toBeInTheDocument();
+    expect(screen.getByText('Reserva Prioritaria de Tasa y Manifiesto Activos')).toBeInTheDocument();
     expect(screen.getByText('15:00')).toBeInTheDocument();
 
     // Avanzar 5 segundos en el tiempo ficticio
@@ -116,8 +116,8 @@ describe('RewardPicker Component', () => {
     render(<RewardPicker onComplete={mockOnComplete} />);
 
     // Seleccionar regalo obligatorio
-    const tintesCard = screen.getByText('Tintes de Cerámica Premium').closest('div');
-    fireEvent.click(tintesCard!);
+    const gasolinaCard = screen.getByText('Gasolina Gratis (Tanque Lleno)').closest('div');
+    fireEvent.click(gasolinaCard!);
 
     // Presionar el botón de girar la Llave de Oro
     const spinBtn = screen.getByRole('button', { name: /Girar Llave de Oro/i });
@@ -129,7 +129,7 @@ describe('RewardPicker Component', () => {
     });
 
     // Validar aparición de modal de felicitaciones al ganar bono
-    expect(screen.getByText('¡Felicidades, Ganador!')).toBeInTheDocument();
+    expect(screen.getByText('¡Aportación de Pronto Aprobada!')).toBeInTheDocument();
     expect(screen.getAllByText(/USD/i).length).toBeGreaterThan(0);
 
     // Aceptar bono en modal interactivo
