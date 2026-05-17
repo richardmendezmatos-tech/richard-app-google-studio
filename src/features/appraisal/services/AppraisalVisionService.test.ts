@@ -53,4 +53,48 @@ describe('AppraisalVisionService', () => {
 
     expect(result.suggestedAppraisal).toBe(10000);
   });
+
+  it('should apply high mileage depreciation penalty', async () => {
+    (analyzeTradeInImages as any).mockResolvedValue({
+      condition: 'Bueno',
+      defects: [],
+      estimatedValueAdjustment: 1.0,
+      reasoning: 'N/A',
+    });
+
+    // 2024 model in 2026 has age 2. Expected mileage = 24k miles. 50k mileage is 26k over.
+    // Penalty: (26k / 5k) * 0.005 = 2.6%. Adjustment = 0.974.
+    const result = await appraisalVisionService.appraiseVehicle(['base64image'], 10000, 2024, 'Generic', 50000);
+
+    expect(result.suggestedAppraisal).toBe(9740);
+  });
+
+  it('should apply low mileage preservation bonus', async () => {
+    (analyzeTradeInImages as any).mockResolvedValue({
+      condition: 'Bueno',
+      defects: [],
+      estimatedValueAdjustment: 1.0,
+      reasoning: 'N/A',
+    });
+
+    // 2024 model in 2026 has age 2. Expected mileage = 24k miles. 4k mileage is 20k under.
+    // Bonus: (20k / 5k) * 0.005 = 2%. Adjustment = 1.02.
+    const result = await appraisalVisionService.appraiseVehicle(['base64image'], 10000, 2024, 'Generic', 4000);
+
+    expect(result.suggestedAppraisal).toBe(10200);
+  });
+
+  it('should apply PR power brand demand bonus and Toyota pickup incentive', async () => {
+    (analyzeTradeInImages as any).mockResolvedValue({
+      condition: 'Bueno',
+      defects: [],
+      estimatedValueAdjustment: 1.0,
+      reasoning: 'N/A',
+    });
+
+    // Toyota brand bonus: 1.08. Toyota pickup bonus: 1.05. Total bonus: 1.134
+    const result = await appraisalVisionService.appraiseVehicle(['base64image'], 10000, 2026, 'Toyota', 12000);
+
+    expect(result.suggestedAppraisal).toBe(11340);
+  });
 });
