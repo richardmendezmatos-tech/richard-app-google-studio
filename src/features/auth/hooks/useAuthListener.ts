@@ -16,7 +16,6 @@ export const useAuthListener = () => {
         email: 'richardmendezmatos@gmail.com',
         displayName: 'Richard Mendez (Bypass)',
         photoURL: null,
-        emailVerified: true,
         role: 'admin'
       });
       setLoading(false);

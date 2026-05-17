@@ -13,7 +13,7 @@ import {
   FileDown,
 } from 'lucide-react';
 import { calculateOTD, calculateLoan, CreditTier, FinancingStructure } from '@/entities/finance';
-import { CONSTANTES_PR, PRODUCTOS_BACKEND_RANGOS } from '@/entities/finance';
+import { CONSTANTES_PR, PRODUCTOS_BACKEND_RANGOS, PREMIER_WARRANTY, calculateProductAmortization } from '@/entities/finance';
 import { workspaceManager } from '@/features/automation/api/workspaceManager';
 import { generatePDFFromDOM } from '@/features/sales-automation/lib/pdfGenerator';
 import { BillOfSaleTemplate } from './BillOfSaleTemplate';
@@ -29,6 +29,10 @@ const DealDesker: React.FC = () => {
   const [gapInsurance, setGapInsurance] = useState(0);
   const [extendedWarranty, setExtendedWarranty] = useState(0);
   const [paintProtection, setPaintProtection] = useState(0);
+  const [powerPack, setPowerPack] = useState(0);
+
+  // UX Control: Richard Mode (Oculta precios totales por defecto al cliente)
+  const [showPrices, setShowPrices] = useState(false);
 
   // Terms Control State
   const [termMonths, setTermMonths] = useState(72);
@@ -43,6 +47,7 @@ const DealDesker: React.FC = () => {
     gapInsurance,
     extendedWarranty,
     paintProtection,
+    powerPack,
     creditLife: 0,
     termMonths,
     creditTier,
@@ -57,9 +62,16 @@ const DealDesker: React.FC = () => {
     extendedWarranty,
     paintProtection,
     0,
+    powerPack,
   );
 
   const loanCalculation = calculateLoan(currentStructure);
+
+  // Amortized dynamic payment impacts for product-centric pitch
+  const gapAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.GAP, termMonths, creditTier);
+  const warrantyAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO, termMonths, creditTier);
+  const ceramicAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CERAMICA, termMonths, creditTier);
+  const powerPackAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.POWER_PACK, termMonths, creditTier);
 
   const formatCurrency = (val: number) => `$${Math.round(val).toLocaleString()}`;
 
@@ -217,68 +229,169 @@ const DealDesker: React.FC = () => {
         </section>
 
         {/* Cuadro 2: Backend (F&I Products) */}
-        <section className="bg-white rounded-4xl p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 p-8 opacity-5">
-            <ShieldCheck size={150} />
+        <section className="bg-white rounded-4xl p-8 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between">
+          <div>
+            <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+              <ShieldCheck size={150} />
+            </div>
+            
+            <div className="flex justify-between items-center mb-6 relative z-10">
+              <div>
+                <h2 className="text-xl font-black text-slate-800 uppercase tracking-widest text-primary">
+                  Cuadro 2: Protección F&I (Backend)
+                </h2>
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  Productor: {PREMIER_WARRANTY.PRODUCER}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPrices(!showPrices)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                  showPrices 
+                    ? 'bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100' 
+                    : 'bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {showPrices ? '🔓 Ocultar Precios' : '🔒 Modo Richard'}
+              </button>
+            </div>
+
+            <div className="space-y-4 relative z-10">
+              {/* Contrato de Servicio */}
+              <div
+                className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                  extendedWarranty > 0 
+                    ? 'bg-emerald-50/50 border-emerald-500/30 shadow-sm shadow-emerald-100 scale-[1.01]' 
+                    : 'bg-slate-50 border-slate-200/60 hover:bg-slate-100/60'
+                }`}
+                onClick={() =>
+                  setExtendedWarranty(
+                    extendedWarranty === 0 ? PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO : 0,
+                  )
+                }
+              >
+                <div className="flex flex-col">
+                  <span className="font-black text-slate-700 text-sm">Contrato de Servicio</span>
+                  <span className="text-[10px] font-medium text-slate-400 uppercase">Garantía VIP Oficial</span>
+                </div>
+                <div className="text-right flex flex-col justify-center">
+                  <span className={`font-black text-base ${extendedWarranty > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {extendedWarranty > 0 ? `+$${warrantyAmortized}/mes` : 'NO APLICA'}
+                  </span>
+                  {showPrices && (
+                    <span className="text-[10px] text-slate-400 font-bold block">
+                      {formatCurrency(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Seguro GAP */}
+              <div
+                className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                  gapInsurance > 0 
+                    ? 'bg-emerald-50/50 border-emerald-500/30 shadow-sm shadow-emerald-100 scale-[1.01]' 
+                    : 'bg-slate-50 border-slate-200/60 hover:bg-slate-100/60'
+                }`}
+                onClick={() =>
+                  setGapInsurance(
+                    gapInsurance === 0 ? PREMIER_WARRANTY.PRECIOS.GAP : 0,
+                  )
+                }
+              >
+                <div className="flex flex-col">
+                  <span className="font-black text-slate-700 text-sm">Seguro GAP</span>
+                  <span className="text-[10px] font-medium text-slate-400 uppercase">Protección por Pérdida Total</span>
+                </div>
+                <div className="text-right flex flex-col justify-center">
+                  <span className={`font-black text-base ${gapInsurance > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {gapInsurance > 0 ? `+$${gapAmortized}/mes` : 'NO APLICA'}
+                  </span>
+                  {showPrices && (
+                    <span className="text-[10px] text-slate-400 font-bold block">
+                      {formatCurrency(PREMIER_WARRANTY.PRECIOS.GAP)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Tratamiento Cerámica */}
+              <div
+                className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                  paintProtection > 0 
+                    ? 'bg-emerald-50/50 border-emerald-500/30 shadow-sm shadow-emerald-100 scale-[1.01]' 
+                    : 'bg-slate-50 border-slate-200/60 hover:bg-slate-100/60'
+                }`}
+                onClick={() =>
+                  setPaintProtection(
+                    paintProtection === 0 ? PREMIER_WARRANTY.PRECIOS.CERAMICA : 0,
+                  )
+                }
+              >
+                <div className="flex flex-col">
+                  <span className="font-black text-slate-700 text-sm">Tratamiento Cerámica</span>
+                  <span className="text-[10px] font-medium text-slate-400 uppercase">Protección de Pintura Exterior</span>
+                </div>
+                <div className="text-right flex flex-col justify-center">
+                  <span className={`font-black text-base ${paintProtection > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {paintProtection > 0 ? `+$${ceramicAmortized}/mes` : 'NO APLICA'}
+                  </span>
+                  {showPrices && (
+                    <span className="text-[10px] text-slate-400 font-bold block">
+                      {formatCurrency(PREMIER_WARRANTY.PRECIOS.CERAMICA)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Power Pack */}
+              <div
+                className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
+                  powerPack > 0 
+                    ? 'bg-emerald-50/50 border-emerald-500/30 shadow-sm shadow-emerald-100 scale-[1.01]' 
+                    : 'bg-slate-50 border-slate-200/60 hover:bg-slate-100/60'
+                }`}
+                onClick={() =>
+                  setPowerPack(
+                    powerPack === 0 ? PREMIER_WARRANTY.PRECIOS.POWER_PACK : 0,
+                  )
+                }
+              >
+                <div className="flex flex-col">
+                  <span className="font-black text-slate-700 text-sm">Power Pack</span>
+                  <span className="text-[10px] font-medium text-slate-400 uppercase">Kit de Entrega VIP y Aditivos</span>
+                </div>
+                <div className="text-right flex flex-col justify-center">
+                  <span className={`font-black text-base ${powerPack > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {powerPack > 0 ? `+$${powerPackAmortized}/mes` : 'NO APLICA'}
+                  </span>
+                  {showPrices && (
+                    <span className="text-[10px] text-slate-400 font-bold block">
+                      {formatCurrency(PREMIER_WARRANTY.PRECIOS.POWER_PACK)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-          <h2 className="text-xl font-black text-slate-800 mb-6 relative z-10 uppercase tracking-widest text-primary">
-            Cuadro 2: Productos F&I (Backend)
-          </h2>
 
-          <div className="space-y-6 relative z-10">
-            <div
-              className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors"
-              onClick={() =>
-                setGapInsurance(
-                  gapInsurance === 0 ? PRODUCTOS_BACKEND_RANGOS.GAP_INSURANCE.default : 0,
-                )
-              }
-            >
-              <span className="font-bold text-slate-700">Seguro GAP</span>
-              <span
-                className={`font-black tracking-widest ${gapInsurance > 0 ? 'text-emerald-500' : 'text-slate-400'}`}
-              >
-                {gapInsurance > 0 ? formatCurrency(gapInsurance) : 'NO APLICA'}
+          <div className="pt-6 mt-6 border-t border-slate-100 flex justify-between items-center text-sm relative z-10">
+            <span className="font-black text-slate-500 uppercase tracking-widest text-xs">Total F&I Añadido</span>
+            <div className="text-right">
+              <span className="font-black text-xl text-emerald-600 block">
+                {`+$${
+                  (extendedWarranty > 0 ? warrantyAmortized : 0) +
+                  (gapInsurance > 0 ? gapAmortized : 0) +
+                  (paintProtection > 0 ? ceramicAmortized : 0) +
+                  (powerPack > 0 ? powerPackAmortized : 0)
+                }/mes`}
               </span>
-            </div>
-
-            <div
-              className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors"
-              onClick={() =>
-                setExtendedWarranty(
-                  extendedWarranty === 0 ? PRODUCTOS_BACKEND_RANGOS.WARRANTY_EXT.default : 0,
-                )
-              }
-            >
-              <span className="font-bold text-slate-700">Garantía Extendida (RichCare)</span>
-              <span
-                className={`font-black tracking-widest ${extendedWarranty > 0 ? 'text-emerald-500' : 'text-slate-400'}`}
-              >
-                {extendedWarranty > 0 ? formatCurrency(extendedWarranty) : 'NO APLICA'}
-              </span>
-            </div>
-
-            <div
-              className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors"
-              onClick={() =>
-                setPaintProtection(
-                  paintProtection === 0 ? PRODUCTOS_BACKEND_RANGOS.PAINT_PROTECTION.default : 0,
-                )
-              }
-            >
-              <span className="font-bold text-slate-700">Protección Cerámica Externa</span>
-              <span
-                className={`font-black tracking-widest ${paintProtection > 0 ? 'text-emerald-500' : 'text-slate-400'}`}
-              >
-                {paintProtection > 0 ? formatCurrency(paintProtection) : 'NO APLICA'}
-              </span>
-            </div>
-
-            <div className="pt-4 flex justify-between items-center text-lg">
-              <span className="font-bold text-slate-500">Total Backend</span>
-              <span className="font-black text-slate-900">
-                {formatCurrency(otdCalculation.totalBackendProducts)}
-              </span>
+              {showPrices && (
+                <span className="text-[10px] font-bold text-slate-400">
+                  Total OTD: {formatCurrency(otdCalculation.totalBackendProducts)}
+                </span>
+              )}
             </div>
           </div>
         </section>

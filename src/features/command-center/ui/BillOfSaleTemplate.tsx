@@ -1,5 +1,5 @@
 import React from 'react';
-import { FinancingStructure } from '@/entities/finance';
+import { FinancingStructure, PREMIER_WARRANTY, calculateProductAmortization } from '@/entities/finance';
 
 interface BillOfSaleProps {
   structure: FinancingStructure;
@@ -20,7 +20,20 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
   const gap = structure.gapInsurance || 0;
   const wty = structure.extendedWarranty || 0;
   const ceramic = structure.paintProtection || 0;
+  const power = structure.powerPack || 0;
   const down = structure.downPayment || 0;
+
+  // Calculo de amortización en cuotas para el PDF orientado a ventas
+  const gapAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.GAP, structure.termMonths, structure.creditTier);
+  const warrantyAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO, structure.termMonths, structure.creditTier);
+  const ceramicAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CERAMICA, structure.termMonths, structure.creditTier);
+  const powerPackAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.POWER_PACK, structure.termMonths, structure.creditTier);
+
+  const totalFiCuota = 
+    (wty > 0 ? warrantyAmortized : 0) +
+    (gap > 0 ? gapAmortized : 0) +
+    (ceramic > 0 ? ceramicAmortized : 0) +
+    (power > 0 ? powerPackAmortized : 0);
 
   return (
     <div
@@ -88,7 +101,7 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
               <span className="font-black">{formatSec(otdCalculation.municipalTax)}</span>
             </div>
             <div className="flex justify-between border-b border-slate-100 pb-1">
-              <span className="font-bold text-slate-600">Gargos Administrativos (Doc / Reg)</span>
+              <span className="font-bold text-slate-600">Cargos Administrativos (Doc / Reg)</span>
               <span className="font-black">{formatSec(otdCalculation.dealerFees)}</span>
             </div>
           </div>
@@ -96,26 +109,30 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
       </div>
 
       <div className="mb-8">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
-          Productos Backend F&I
+        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">
+          Productos de Cobertura y Protección F&I — {PREMIER_WARRANTY.PRODUCER}
         </h2>
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Seguro GAP</span>
-              <span className="font-black">{gap > 0 ? formatSec(gap) : 'NO APLICA'}</span>
+              <span className="font-bold text-slate-600">Contrato de Servicio (Garantía VIP)</span>
+              <span className="font-black text-slate-700">{wty > 0 ? `+$${warrantyAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-bold text-slate-600">RichCare Ext. Warranty</span>
-              <span className="font-black">{wty > 0 ? formatSec(wty) : 'NO APLICA'}</span>
+              <span className="font-bold text-slate-600">Seguro GAP (Pérdida Total)</span>
+              <span className="font-black text-slate-700">{gap > 0 ? `+$${gapAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Ceramic Protection</span>
-              <span className="font-black">{ceramic > 0 ? formatSec(ceramic) : 'NO APLICA'}</span>
+              <span className="font-bold text-slate-600">Tratamiento Cerámica (Pintura)</span>
+              <span className="font-black text-slate-700">{ceramic > 0 ? `+$${ceramicAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Total Añadido F&I</span>
-              <span className="font-black">{formatSec(otdCalculation.totalBackendProducts)}</span>
+              <span className="font-bold text-slate-600">Power Pack (Kit VIP)</span>
+              <span className="font-black text-slate-700">{power > 0 ? `+$${powerPackAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
+            </div>
+            <div className="flex justify-between col-span-2 pt-2 border-t border-slate-200">
+              <span className="font-bold text-slate-800">Total F&I Añadido (Mensualidad)</span>
+              <span className="font-black text-emerald-700">+{formatSec(totalFiCuota)}/mes</span>
             </div>
           </div>
         </div>

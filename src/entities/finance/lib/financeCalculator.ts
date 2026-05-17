@@ -36,6 +36,7 @@ export interface FinancingStructure {
   gapInsurance?: number;
   extendedWarranty?: number;
   paintProtection?: number;
+  powerPack?: number;
   creditLife?: number;
 }
 
@@ -50,6 +51,7 @@ export const calculateOTD = (
   extendedWarranty: number = 0,
   paintProtection: number = 0,
   creditLife: number = 0,
+  powerPack: number = 0,
 ): OTDResult => {
   // 1. Net Trade-In (Equidad)
   const netTradeIn = tradeInValue - tradeInPayoff;
@@ -70,7 +72,7 @@ export const calculateOTD = (
     CONSTANTES_PR.TITLE_TRANSFER_FEE;
 
   // 4. Backend Products
-  const totalBackendProducts = gapInsurance + extendedWarranty + paintProtection + creditLife;
+  const totalBackendProducts = gapInsurance + extendedWarranty + paintProtection + creditLife + powerPack;
 
   // 5. Out The Door (OTD) Computation
   // OTD = Auto + Taxes + Fees + Products - NetTradeIn
@@ -107,6 +109,7 @@ export const calculateLoan = (structure: FinancingStructure): PaymentResult => {
     gapInsurance = 0,
     extendedWarranty = 0,
     paintProtection = 0,
+    powerPack = 0,
     creditLife = 0,
   } = structure;
 
@@ -119,6 +122,7 @@ export const calculateLoan = (structure: FinancingStructure): PaymentResult => {
     extendedWarranty,
     paintProtection,
     creditLife,
+    powerPack,
   );
 
   // Apply down payment to OTD to formulate the True Principal
@@ -165,6 +169,33 @@ export const calculateLoan = (structure: FinancingStructure): PaymentResult => {
     principalFinanced: Math.round(principalFinanced),
     ltvRatio: Number(ltvRatio.toFixed(2)),
   };
+};
+
+/**
+ * Calcula la cuota mensual amortizada para un producto individual basándose en la tasa de interés del perfil.
+ * Esto permite mostrar exclusivamente la cuota mensual agregada al cliente final (estrategia de F&I de Richard).
+ */
+export const calculateProductAmortization = (
+  price: number,
+  termMonths: number,
+  creditTier: CreditTier,
+): number => {
+  if (price <= 0) return 0;
+
+  const rates: Record<CreditTier, number> = {
+    excellent: 4.9,
+    good: 7.5,
+    fair: 11.9,
+    poor: 18.9,
+  };
+
+  const annualRate = rates[creditTier];
+  const monthlyRate = annualRate / 100 / 12;
+
+  const x = Math.pow(1 + monthlyRate, termMonths);
+  const monthlyPayment = (price * x * monthlyRate) / (x - 1);
+
+  return Math.round(monthlyPayment);
 };
 
 /**

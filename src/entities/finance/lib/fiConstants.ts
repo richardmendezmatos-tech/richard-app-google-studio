@@ -15,8 +15,19 @@ export const CONSTANTES_PR = {
 };
 
 export const PRODUCTOS_BACKEND_RANGOS = {
-  GAP_INSURANCE: { min: 495, max: 1200, default: 895 },
-  WARRANTY_EXT: { min: 1200, max: 3500, default: 1995 },
-  PAINT_PROTECTION: { min: 395, max: 800, default: 595 },
+  GAP_INSURANCE: { min: 495, max: 1200, default: 998 },
+  WARRANTY_EXT: { min: 1200, max: 5000, default: 4216 },
+  PAINT_PROTECTION: { min: 395, max: 1500, default: 995 },
+  POWER_PACK: { min: 395, max: 1500, default: 895 },
   CREDIT_LIFE: { min: 500, max: 1500, default: 800 },
+};
+
+export const PREMIER_WARRANTY = {
+  PRODUCER: 'Premier Warranty Services',
+  PRECIOS: {
+    CERAMICA: 995.00,
+    POWER_PACK: 895.00,
+    CONTRATO_SERVICIO: 4216.00,
+    GAP: 998.00,
+  }
 };
