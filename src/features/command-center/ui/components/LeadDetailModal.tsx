@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -21,6 +19,10 @@ import {
   MessageSquare,
   Activity,
   ArrowRight,
+  Zap,
+  Users,
+  Target,
+  TrendingUp,
 } from 'lucide-react';
 import { Lead, getSecureLeadData } from '@/shared/api/adapters/leads/crmService';
 import { decryptSSN } from '@/shared/api/security/ssnEncryptionService';
@@ -314,7 +316,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
             </div>
 
             {/* Sentinel Intelligence Module - NEW */}
-            {lead.aiAnalysis && (
+            {data.aiAnalysis && (
               <div className="mt-12 space-y-6">
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
@@ -333,7 +335,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                       Ideal Buyer Profile
                     </span>
                     <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10">
-                      {lead.aiAnalysis.buyerProfile || "Análisis de perfil en progreso..."}
+                      {data.aiAnalysis.buyerProfile || "Análisis de perfil en progreso..."}
                     </p>
                   </div>
 
@@ -346,7 +348,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                       Strategic Sales Pitch
                     </span>
                     <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10 italic">
-                      "{lead.aiAnalysis.salesPitch || "Generando pitch táctico..."}"
+                      "{data.aiAnalysis.salesPitch || "Generando pitch táctico..."}"
                     </p>
                   </div>
                 </div>
@@ -354,16 +356,16 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                 {/* Score & Key Insights */}
                 <div className="p-6 bg-slate-900/40 rounded-4xl border border-white/5">
                   <div className="flex flex-wrap gap-3">
-                    {lead.aiAnalysis.insights?.map((insight: string, i: number) => (
+                    {data.aiAnalysis.insights?.map((insight: string, i: number) => (
                       <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <TrendingUp size={12} className="text-cyan-500" />
                         {insight}
                       </span>
                     ))}
-                    {lead.aiAnalysis.nextAction && (
+                    {data.aiAnalysis.nextAction && (
                       <span className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-[10px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
                         <ArrowRight size={12} />
-                        Next: {lead.aiAnalysis.nextAction}
+                        Next: {data.aiAnalysis.nextAction}
                       </span>
                     )}
                   </div>

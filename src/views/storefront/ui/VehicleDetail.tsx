@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle, TrendingUp } from 'lucide-react';
-import { generateCarPitch } from '@/shared/api/ai';
+import { generateCarPitch, sentinelAI } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';

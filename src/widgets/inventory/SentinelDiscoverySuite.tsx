@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Car } from '@/entities/inventory';
-import { Sparkles, Sliders, Flame, Heart, X, RotateCcw, DollarSign, Activity, ChevronRight, Timer, CheckCircle2, User, Mail, Phone, Gift, Send, Brain, Search } from 'lucide-react';
+import { Sparkles, Sliders, Flame, Heart, X, RotateCcw, DollarSign, Activity, ChevronRight, Timer, CheckCircle2, User, Mail, Phone, Gift, Send, Brain, Search, Loader2 } from 'lucide-react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';

@@ -25,6 +25,8 @@ import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import SEO from '@/shared/ui/seo/SEO';
 import { useSaveApplication } from '@/features/garage/hooks/useApplications';
 import { FinancialApplication } from '@/shared/types/types';
+import { RewardPicker } from '@/features/gamification/ui/RewardPicker';
+import { useGamificationStore } from '@/features/gamification/model/useGamificationStore';
 
 interface Props {
   onExit?: () => void;
@@ -74,6 +76,14 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
     term: '60',
   });
 
+  const { prontoBonus, selectedRewards, rewardToken } = useGamificationStore();
+  const bonusAmount = prontoBonus || 0;
+  const vehiclePrice = dealContext?.vehicle.price || 35000;
+  const downPaymentVal = parseInt(formData.downPayment) || 0;
+  const termVal = parseInt(formData.term) || 60;
+  const principal = vehiclePrice - downPaymentVal - bonusAmount;
+  const estimatedMonthly = Math.round((principal > 0 ? principal : 0) * (1.08 / termVal));
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -81,27 +91,25 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
 
   const validateStep = (currentStep: number) => {
     const d = formData;
-    // Step 1: Ultra-low friction (Express Capture)
-    if (currentStep === 1) return d.firstName && d.phone;
-    // Step 2: Basic Contact Refinement
-    if (currentStep === 2) return d.lastName && d.email;
-    // Step 3: Financial Profile
-    if (currentStep === 4) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
-    // Step 4: Legal & Security
-    if (currentStep === 5) return d.dob && d.ssn.replace(/\D/g, '').length === 9 && d.creditAuth;
-    return true; // Step 3 (Info block) is just informational
+    if (currentStep === 1) return true; // Gamification is internally validated
+    if (currentStep === 2) return d.firstName && d.phone;
+    if (currentStep === 3) return d.lastName && d.email;
+    if (currentStep === 4) return true; // Cotizador is informational
+    if (currentStep === 5) return d.address && d.city && d.zip && d.employer && d.monthlyIncome;
+    if (currentStep === 6) return d.dob && d.ssn.replace(/\D/g, '').length === 9 && d.creditAuth;
+    return true;
   };
 
   const nextStep = async () => {
     if (validateStep(step)) {
-      // Early Conversion: Save lead to CRM at Step 1
-      if (step === 1) {
+      // Early Conversion: Save lead to CRM at Step 2 (formerly Step 1)
+      if (step === 2) {
         try {
           addLead({
             type: 'chat',
             name: `${formData.firstName}`,
             phone: formData.phone,
-            notes: `Express Lead Capture - Initial Interest`,
+            notes: `Express Lead Capture - Initial Interest - [REWARDS: ${selectedRewards.join(', ')}] - [BONO PRONTO: $${bonusAmount}]`,
             category: 'WARM',
           } as any);
         } catch (e) {
@@ -117,7 +125,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
   const prevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStep(6)) return;
 
     setIsSubmitting(true);
 
@@ -131,6 +139,9 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         ...formData,
         ssn: '[ENCRYPTED]', // Ofuscar el campo original en el objeto de datos
         ssn_encrypted: ssnEncryptedValue,
+        selectedRewards,
+        prontoBonus: bonusAmount,
+        rewardToken,
         ...(dealContext
           ? {
               vehicleInfo: dealContext.vehicle,
@@ -152,7 +163,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         vehicleOfInterest: dealContext?.vehicle?.name || '',
         vehicle_of_interest: dealContext?.vehicle?.name || '',
         category: 'HOT',
-        notes: `Finance Application #${refId} - Pronto: $${formData.downPayment} - Término: ${formData.term}m`,
+        notes: `Finance App #${refId} - Pronto: $${formData.downPayment} - Término: ${formData.term}m - [PREMIOS: ${selectedRewards.join(', ')}] - [BONO PRONTO: $${bonusAmount}]`,
       } as any);
 
       setReferenceId(refId);
@@ -240,9 +251,10 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
 
   // SOFIA AI AGENT HELP TEXTS (REALISTIC)
   const sofiaTips = [
-    'Hola, soy Sofia 👩‍💼. Recopilaré tu información de forma segura para crear tu expediente.',
-    'Excelente. Ahora un poco más sobre tus datos de contacto.',
-    'Ajusta tu pronto y el término para ver un estimado mensual de tu pago.',
+    'Hola, soy Sofia 👩‍💼. ¡Gira la Llave de Oro de Richard para ganar tu bono de pronto y selecciona tus regalos!',
+    'Excelente. Ahora un poco más sobre tus datos de contacto básicos.',
+    'Añade tus apellidos y correo electrónico para registrar tu cuenta VIP.',
+    'Ajusta tu pronto y el término para ver un estimado mensual de tu pago con tu bono aplicado.',
     'Estos datos ayudarán a nuestros analistas humanos a encontrar el mejor banco para ti 🏦.',
     'Tu seguridad es legalmente sagrada 🔒. Esta conexión está encriptada.',
   ];
@@ -331,7 +343,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
           <div className="w-full max-w-2xl">
             {/* Progress */}
             <div className="flex gap-2 mb-8">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
                   className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-primary shadow-[0_0_10px_#00aed9]' : 'bg-slate-800'}`}
@@ -352,6 +364,10 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
               )}
 
               {step === 1 && (
+                <RewardPicker onComplete={() => setStep(2)} />
+              )}
+
+              {step === 2 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                   <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tighter">
                     Consulta Rápida
@@ -386,7 +402,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                 </div>
               )}
 
-              {step === 2 && (
+              {step === 3 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                   <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tighter">
                     Un poco más sobre ti
@@ -412,7 +428,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                 </div>
               )}
 
-              {step === 3 && (
+              {step === 4 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500 py-4">
                   <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter text-center">
                     Simula tu Pago
@@ -486,24 +502,29 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                         Pago Mensual Estimado
                       </p>
                       <p className="text-5xl font-black text-white tracking-tight animate-pulse">
-                        ${Math.round(((dealContext?.vehicle.price || 35000) - parseInt(formData.downPayment)) * (1.08 / parseInt(formData.term))).toLocaleString()}<span className="text-sm text-slate-500">/m*</span>
+                        ${estimatedMonthly.toLocaleString()}<span className="text-sm text-slate-500">/m*</span>
                       </p>
+                      {bonusAmount > 0 && (
+                        <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-1.5 flex items-center justify-center gap-1 animate-pulse">
+                          ✓ ¡Bono de Pronto de ${bonusAmount} APLICADO!
+                        </p>
+                      )}
                       <p className="text-[9px] text-slate-600 mt-2 italic">
-                        *Estimado basado en un precio de unidad de ${(dealContext?.vehicle.price || 35000).toLocaleString()} e interés del 8%.
+                        *Estimado basado en un precio de unidad de ${vehiclePrice.toLocaleString()} e interés del 8%, restando tu pronto de ${downPaymentVal.toLocaleString()}{bonusAmount > 0 ? ` y bono de $${bonusAmount}` : ''}.
                       </p>
                     </div>
                   </div>
 
                   <button
-                    onClick={() => setStep(4)}
+                    onClick={() => setStep(5)}
                     className="mt-6 w-full py-4 bg-primary hover:bg-cyan-500 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 animate-btn-glow"
                   >
-                    Validar Mi Pago de ${Math.round(((dealContext?.vehicle.price || 35000) - parseInt(formData.downPayment)) * (1.08 / parseInt(formData.term))).toLocaleString()}/m <ChevronRight size={16} />
+                    Validar Mi Pago de ${estimatedMonthly.toLocaleString()}/m <ChevronRight size={16} />
                   </button>
                 </div>
               )}
 
-              {step === 4 && (
+              {step === 5 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                   <h2 className="text-3xl font-black text-white mb-6">Perfil Financiero</h2>
                   <Input
@@ -555,7 +576,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                 </div>
               )}
 
-              {step === 5 && (
+              {step === 6 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
                   <h2 className="text-3xl font-black text-white mb-6">Seguridad Legal</h2>
 
@@ -582,7 +603,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                       </label>
                       <div className="relative">
                         <input
-                          type={showSSN ? 'text' : 'password'}
+                           type={showSSN ? 'text' : 'password'}
                           name="ssn"
                           autoComplete="off"
                           maxLength={11}
@@ -625,39 +646,36 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                 </div>
               )}
 
-              <div className="mt-10 flex justify-between items-center">
-                {step > 1 ? (
+              {step > 1 && (
+                <div className="mt-10 flex justify-between items-center">
                   <button
                     onClick={prevStep}
                     className="text-slate-500 hover:text-white font-bold text-sm px-4 py-2 transition-colors"
                   >
                     ATRAS
                   </button>
-                ) : (
-                  <div></div>
-                )}
 
-                <button
-                  onClick={step === 5 ? handleSubmit : nextStep}
-                  disabled={isSubmitting}
-                  className="px-10 py-4 bg-primary hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      {' '}
-                      <Loader2 className="animate-spin" /> Procesando...{' '}
-                    </>
-                  ) : step === 5 ? (
-                    'Enviar Solicitud Segura'
-                  ) : step === 1 ? (
-                    'Ver Mi Pre-Calificación'
-                  ) : (
-                    <>
-                      Siguiente <ChevronRight size={18} />
-                    </>
-                  )}
-                </button>
-              </div>
+                  <button
+                    onClick={step === 6 ? handleSubmit : nextStep}
+                    disabled={isSubmitting}
+                    className="px-10 py-4 bg-primary hover:bg-cyan-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-cyan-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="animate-spin" /> Procesando...
+                      </>
+                    ) : step === 6 ? (
+                      'Enviar Solicitud Segura'
+                    ) : step === 2 ? (
+                      'Ver Mi Pre-Calificación'
+                    ) : (
+                      <>
+                        Siguiente <ChevronRight size={18} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

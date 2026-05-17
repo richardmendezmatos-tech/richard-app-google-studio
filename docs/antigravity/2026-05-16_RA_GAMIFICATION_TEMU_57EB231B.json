@@ -1,0 +1,62 @@
+{
+  "sessionId": "RA-GAMIFICATION-TEMU-57EB231B",
+  "date": "2026-05-16",
+  "category": "GAMIFICATION_STRATEGY",
+  "brand": "Richard Automotive",
+  "location": "San Juan, Puerto Rico",
+  "author": "Richard O. Méndez Matos",
+  "psychologicalModels": [
+    "Endowment Effect",
+    "Goal-Gradient Effect",
+    "Loss Aversion",
+    "Zero-Price Effect",
+    "IKEA Effect"
+  ],
+  "prizes": [
+    {
+      "name": "El Multiplicador de Pronto",
+      "concept": "Multiplica el valor del pronto ingresado mediante una llave virtual premium.",
+      "fiBenefit": "Disminuye el Loan-to-Value (LTV) bancario, incrementando la probabilidad de aprobación.",
+      "urgencyTrigger": "Temporizador de 15 minutos en navegador."
+    },
+    {
+      "name": "Kit de Entrega Customizado (Endowment Pack)",
+      "concept": "El cliente selecciona 2 regalos premium antes de iniciar el formulario.",
+      "options": [
+        "Tintes de Cerámica Premium",
+        "Tratamiento Cerámico de Pintura N24",
+        "Alfombras Todo Clima Originales",
+        "Seguro de Vida - Richard Credit Protection (1er Año Gratis)"
+      ]
+    },
+    {
+      "name": "Bono de Super-Tasación (Trade-In Booster)",
+      "concept": "Añade un bono garantizado de $1,500 sobre el valor de tasación del trade-in según el millaje.",
+      "conversionGoal": "Subir fotos de la unidad actual de inmediato."
+    },
+    {
+      "name": "Bóveda de Tasa VIP",
+      "concept": "Desbloquea una tasa de interés preferencial (APR) encriptando el Seguro Social en la bóveda del cliente.",
+      "securityStandard": "Cifrado del lado del cliente (Zero-Knowledge)."
+    },
+    {
+      "name": "Club de la Llave de Oro (Social Loop)",
+      "concept": "Bucle viral de referidos en Puerto Rico.",
+      "reward": "$250 en efectivo de comisión para el referente y referido al cerrar la compra."
+    }
+  ],
+  "architecture": {
+    "layer": "features/gamification",
+    "components": [
+      "KeySpinner.tsx",
+      "RewardPicker.tsx",
+      "GoalProgressBar.tsx"
+    ],
+    "store": "useGamificationStore.ts"
+  },
+  "metrics": {
+    "expectedPreQualifyCvrIncrease": "32%",
+    "expectedCacReduction": "20%",
+    "systemCompliance": "Level 14 - Predictive Orchestration"
+  }
+}

@@ -5,6 +5,7 @@ import { extractMarketingData } from './marketingCaptureService';
 import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookService';
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
 import { leadIntelligenceService } from './leadIntelligenceService';
+import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
 
 export type { Lead };
 
@@ -65,6 +66,48 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
       (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest,
       notes
     ).catch((e: any) => console.error('[CRM] Intelligence Enrichment failed', e));
+
+    // Real-time Email Notification to Richard
+    const richardEmail = process.env.VITE_RICHARD_NOTIFICATION_EMAIL || 'richardmendezmatos@gmail.com';
+    sendTransactionalEmail({
+      to: richardEmail,
+      subject: `🚨 ¡NUEVO LEAD ENTRANDO! - ${firstName} ${lastName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; background-color: #0b1116; color: #fff; padding: 30px; border-radius: 16px; border: 1px solid #1e293b; max-width: 600px; margin: auto;">
+          <h2 style="color: #00aed9; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #1e293b; padding-bottom: 15px; letter-spacing: 0.05em;">
+            🚨 Richard Automotive Command Center
+          </h2>
+          <p style="font-size: 16px; font-weight: bold; margin-bottom: 25px; color: #cbd5e1; text-align: center;">
+            Un nuevo cliente potencial acaba de registrarse en la plataforma.
+          </p>
+          
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Nombre:</strong> ${firstName} ${lastName}</p>
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Teléfono:</strong> <a href="tel:${lead.phone}" style="color: #38bdf8; text-decoration: none;">${lead.phone}</a></p>
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Correo:</strong> <a href="mailto:${lead.email}" style="color: #38bdf8; text-decoration: none;">${lead.email}</a></p>
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Unidad de Interés:</strong> ${ (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || 'Ninguna seleccionada' }</p>
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Categoría:</strong> ${category || 'WARM'}</p>
+          </div>
+          
+          ${notes ? `
+          <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
+            <p style="margin: 0; font-size: 13px; color: #f59e0b; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">Notas / Contexto:</p>
+            <p style="margin: 0; font-size: 13px; color: #f59e0b; font-style: italic; line-height: 1.5;">${notes}</p>
+          </div>
+          ` : ''}
+          
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="https://richard-automotive-command-center.vercel.app/admin" style="background-color: #00aed9; color: #000; padding: 15px 35px; border-radius: 12px; font-weight: bold; text-decoration: none; display: inline-block; text-transform: uppercase; font-size: 12px; letter-spacing: 0.1em; box-shadow: 0 4px 15px rgba(0, 174, 217, 0.3);">
+              Ir a la Bóveda del Command Center
+            </a>
+          </div>
+          
+          <p style="font-size: 10px; color: #475569; text-align: center; margin-top: 30px; border-top: 1px solid #1e293b; padding-top: 15px;">
+            Enviado de forma segura por el Núcleo de Inteligencia Artificial Sentinel de Richard Automotive.
+          </p>
+        </div>
+      `
+    }).catch(e => console.error('[CRM] Failed to send email alert to Richard:', e));
 
     return data.id;
   } catch (error) {
