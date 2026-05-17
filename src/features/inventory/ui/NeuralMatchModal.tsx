@@ -209,7 +209,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
         setStep('results');
       }
     },
-    [profile, inventory, analytics, activeTags],
+    [profile, analytics, activeTags],
   );
 
   const onDrop = useCallback(

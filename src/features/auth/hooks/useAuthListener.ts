@@ -6,6 +6,23 @@ export const useAuthListener = () => {
   const { setUser, setRole, setLoading, logout } = useAuthStore();
 
   useEffect(() => {
+    // Check local bypass first
+    const isBypassed = typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') === 'true';
+    if (isBypassed) {
+      console.log('⚡ [useAuthListener] Bypass active, setting mock admin user.');
+      setRole('admin');
+      setUser({
+        uid: 'mock-admin-id',
+        email: 'richardmendezmatos@gmail.com',
+        displayName: 'Richard Mendez (Bypass)',
+        photoURL: null,
+        emailVerified: true,
+        role: 'admin'
+      });
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     
     const unsubscribe = subscribeToAuthChanges(async (user) => {

@@ -63,10 +63,12 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Cleanup on unmount
   useEffect(() => {
+    const currentSupabase = supabase.current;
+    const currentSubscriptions = activeSubscriptions.current;
     return () => {
-      if (supabase.current) {
-        Object.values(activeSubscriptions.current).forEach(channel => {
-          supabase.current?.removeChannel(channel);
+      if (currentSupabase) {
+        Object.values(currentSubscriptions).forEach(channel => {
+          currentSupabase.removeChannel(channel);
         });
       }
     };

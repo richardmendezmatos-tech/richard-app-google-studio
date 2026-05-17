@@ -29,10 +29,10 @@ export default function AdminPage() {
           </h1>
         </div>
         
-        <nav className="flex bg-slate-900/50 rounded-full p-1 border border-white/5">
+        <nav className="flex bg-slate-900/50 rounded-full p-1 border border-white/5 items-center gap-1">
           <button 
             onClick={() => setActiveView('crm')}
-            className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
               activeView === 'crm' ? 'bg-cyan-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -40,12 +40,18 @@ export default function AdminPage() {
           </button>
           <button 
             onClick={() => setActiveView('houston')}
-            className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
               activeView === 'houston' ? 'bg-cyan-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'
             }`}
           >
             Telemetría
           </button>
+          <a 
+            href="/admin/houston"
+            className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
+          >
+            Terminal Cockpit ⚡
+          </a>
         </nav>
       </header>
 

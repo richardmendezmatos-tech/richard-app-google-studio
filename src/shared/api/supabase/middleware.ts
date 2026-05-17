@@ -59,6 +59,18 @@ export async function updateSession(request: NextRequest) {
   // DEBUG LOG
   console.log(`[Middleware] 📍 Path: ${currentPath} | 👤 User: ${user?.email || 'None'}`);
 
+  // Local development bypass (strictly gated to NODE_ENV === 'development')
+  const bypassCookie = request.cookies.get('e2e_bypass')?.value;
+  const isDevBypass = process.env.NODE_ENV === 'development' && (bypassCookie === 'true' || request.nextUrl.searchParams.get('bypass') === 'true');
+
+  if (isDevBypass) {
+    console.log(`[Middleware] ⚡ Development bypass active for: ${currentPath}`);
+    if (request.nextUrl.searchParams.get('bypass') === 'true' && bypassCookie !== 'true') {
+      supabaseResponse.cookies.set('e2e_bypass', 'true', { path: '/' });
+    }
+    return supabaseResponse;
+  }
+
   // 1. Protection for any private route (must be logged in)
   if (!user && isPrivateRoute && !currentPath.startsWith('/login') && !currentPath.startsWith('/auth')) {
     console.log(`[Middleware] 🔒 Redirecting to login: No user session found for ${currentPath}`);

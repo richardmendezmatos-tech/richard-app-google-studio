@@ -24,7 +24,7 @@ const TelemetryFeedWidget: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     if (role !== 'admin') return;
     
     try {
@@ -37,13 +37,13 @@ const TelemetryFeedWidget: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [role]);
 
   useEffect(() => {
     fetchLogs();
     const interval = setInterval(fetchLogs, 5000); // Poll every 5s for now
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchLogs]);
 
   const getIcon = (type: string) => {
     switch (type) {
