@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle, TrendingUp, Wind, Gauge, Compass, Cpu, Coins, Flame, Crown, Activity, Key } from 'lucide-react';
 import { generateCarPitch, sentinelAI } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
@@ -215,17 +215,23 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </React.Suspense>
           </div>
 
-          <GlassContainer intensity="medium" opacity={0.06} className="p-8 group relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_20px_#00e5ff] opacity-0 group-hover:opacity-100 animate-scan transition-opacity" />
-            <div className="flex items-center gap-3 mb-6 relative z-10">
-              <Sparkles className="text-primary animate-pulse" size={20} />
-              <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
-                SENTINEL <span className="text-primary">DEEP ANALYSIS</span>
-              </h3>
+          <GlassContainer intensity="medium" opacity={0.06} className="p-8 group relative overflow-hidden border-[#C5A880]/15 hover:border-[#C5A880]/40 transition-all duration-500">
+            {/* Gold Laser Scanner (CRO / Nivel 18 Precision) */}
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-[#C5A880] shadow-[0_0_20px_#C5A880] opacity-0 group-hover:opacity-100 animate-scan transition-opacity" />
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <div className="flex items-center gap-3">
+                <Sparkles className="text-[#C5A880] animate-pulse" size={20} />
+                <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
+                  SENTINEL <span className="text-[#C5A880]">DEEP ANALYSIS</span>
+                </h3>
+              </div>
+              <span className="text-[8px] font-tech font-black text-slate-500 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
+                S-AI v2.4 Active
+              </span>
             </div>
             
             {loadingAnalysis ? (
-              <div className="h-48 flex flex-col items-center justify-center gap-4 text-primary relative z-10">
+              <div className="h-48 flex flex-col items-center justify-center gap-4 text-[#C5A880] relative z-10">
                 <Loader2 className="w-8 h-8 animate-spin" />
                 <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
                   EXECUTING NEURAL SCAN...
@@ -234,32 +240,56 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 relative z-10">
                 <div className="space-y-3">
-                  <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Technical Profile</p>
-                  <p className="text-sm font-medium text-slate-300 leading-relaxed italic">
+                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Technical Profile</p>
+                  <p className="text-sm font-medium text-slate-200 leading-relaxed italic border-l-2 border-[#C5A880]/40 pl-4 py-1">
                     "{deepAnalysis?.technicalProfile}"
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => (
-                    <div key={i} className="bg-white/5 p-4 rounded-2xl border border-white/5 hover:border-primary/20 transition-all">
-                      <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">{feature.label}</p>
-                      <p className="text-xs font-bold text-white">{feature.value}</p>
-                    </div>
-                  ))}
+                  {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => {
+                    const iconName = feature.icon || 'Sparkles';
+                    return (
+                      <div key={i} className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 hover:border-[#C5A880]/30 transition-all flex items-start gap-3">
+                        <div className="h-8 w-8 shrink-0 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
+                          {(() => {
+                            const iconClass = "text-[#C5A880] shrink-0";
+                            switch (iconName) {
+                              case 'ShieldCheck': return <ShieldCheck className={iconClass} size={16} />;
+                              case 'Zap': return <Zap className={iconClass} size={16} />;
+                              case 'Wind': return <Wind className={iconClass} size={16} />;
+                              case 'Gauge': return <Gauge className={iconClass} size={16} />;
+                              case 'Compass': return <Compass className={iconClass} size={16} />;
+                              case 'Cpu': return <Cpu className={iconClass} size={16} />;
+                              case 'Coins': return <Coins className={iconClass} size={16} />;
+                              case 'Flame': return <Flame className={iconClass} size={16} />;
+                              case 'Crown': return <Crown className={iconClass} size={16} />;
+                              case 'Activity': return <Activity className={iconClass} size={16} />;
+                              case 'Key': return <Key className={iconClass} size={16} />;
+                              default: return <Sparkles className={iconClass} size={16} />;
+                            }
+                          })()}
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-0.5">{feature.label}</p>
+                          <p className="text-xs font-bold text-white">{feature.value}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
-                  <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <ShieldCheck size={12} /> Psychological Hook
+                <div className="p-5 rounded-2xl bg-[#C5A880]/5 border border-[#C5A880]/10">
+                  <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <ShieldCheck size={12} className="text-[#C5A880]" /> Psychological Hook
                   </p>
-                  <p className="text-sm font-bold text-white leading-snug">
+                  <p className="text-xs md:text-sm font-semibold text-slate-300 leading-relaxed pl-1">
                     {deepAnalysis?.psychologicalHook}
                   </p>
                 </div>
               </motion.div>
             )}
-            <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-br from-[#C5A880]/5 to-transparent pointer-events-none" />
           </GlassContainer>
         </div>
 

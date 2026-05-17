@@ -174,25 +174,36 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
     return null;
   }
 };
-/**
- * Uses Gemini to find the best car matches based on a natural language vibe/need.
- */
 export const generateNeuralMatch = async (query: string, inventory: Car[]): Promise<string[]> => {
   const inventoryContext = inventory
-    .slice(0, 50) // Limit context for safety
-    .map(c => `${c.id}: ${c.year} ${c.name} ($${c.price}) - ${c.type}`)
+    .slice(0, 60) // Safe volume slice
+    .map(c => {
+      const specsSummary = (c.specs || []).map(s => `${s.label}: ${s.value}`).join(', ');
+      return `${c.id} | ${c.year} ${c.make} ${c.model} | $${c.price} | Condición: ${c.condition || 'used'} | Tipo: ${c.type} | Millaje: ${c.mileage || 0} mi | Color: ${c.color} | Specs: [${specsSummary}]`;
+    })
     .join('\n');
     
   const prompt = `
-    Como el motor neural de Richard Automotive, ayuda al cliente a encontrar el auto ideal.
-    Usuario busca: "${query}"
+    Eres el motor neural de búsqueda de Richard Automotive. Tu objetivo es emparejar las búsquedas conversacionales y coloquiales de los clientes en Puerto Rico con las mejores unidades de nuestro inventario.
     
-    Inventario disponible:
+    Búsqueda del Usuario: "${query}"
+    
+    Reglas de Interpretación de Dialecto Local (PR):
+    1. "guagua" -> Se refiere a SUVs, Crossovers o Pickup Trucks (ej: RAV4, Tacoma, Highlander, F-150).
+    2. "pronto" -> Down payment / pago inicial. Si el usuario menciona "con poco pronto", busca opciones con un precio total más accesible o alta retención de valor.
+    3. "trade-in" -> Carro de intercambio.
+    4. "millaje" -> Kilometraje / millas recorridas. "Poco millaje" o "bajito millaje" significa autos con pocas millas (ej. menos de 50,000 millas).
+    5. Fórmulas de Pago Mensual Heurísticas:
+       - Si el cliente busca pagos de "menos de $400/mes", filtra preferiblemente unidades con precio menor a $28,000.
+       - Si busca pagos de "menos de $600/mes", filtra preferiblemente unidades con precio menor a $42,000.
+       
+    Inventario Real de Richard Automotive:
     ${inventoryContext}
     
-    Instrucciones:
-    1. Selecciona los 3-5 mejores autos que encajen con la vibración, presupuesto o necesidad descrita.
-    2. Retorna estrictamente un array JSON con los IDs de los autos seleccionados.
+    Instrucciones de Respuesta:
+    1. Selecciona rigurosamente los mejores 3 a 5 vehículos que cumplan con la intención real del usuario.
+    2. Retorna únicamente un array JSON con los IDs exactos de los carros seleccionados, sin texto explicativo adicional.
+    Ejemplo: ["car-id-1", "car-id-2"]
   `;
   
   try {

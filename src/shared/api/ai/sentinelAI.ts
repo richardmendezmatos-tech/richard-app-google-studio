@@ -127,14 +127,14 @@ export const sentinelAI = {
    */
   async generateVehicleDeepAnalysis(car: any): Promise<any> {
     const schema = z.object({
-      technicalProfile: z.string().describe('Un resumen técnico de alto nivel del vehículo.'),
+      technicalProfile: z.string().describe('Un resumen técnico de alto nivel del vehículo en tono sofisticado.'),
       keyFeatures: z.array(z.object({
-        label: z.string(),
-        value: z.string(),
-        icon: z.string().optional().describe('Un nombre de icono de lucide (ej: "Shield", "Zap", "Wind").')
+        label: z.string().describe('Ej: "Rendimiento", "Seguridad", "Tecnología", "Suspensión".'),
+        value: z.string().describe('Ej: "Hasta 32 MPG estimados", "Frenado Autónomo", "Pantalla de 12.3 pulgadas".'),
+        icon: z.string().optional().describe('Obligatorio de la siguiente lista exacta de iconos de lucide: "ShieldCheck", "Zap", "Wind", "Gauge", "Compass", "Cpu", "Coins", "Flame", "Crown", "Activity", "Key".')
       })).max(6),
-      marketPosition: z.string().describe('Cómo se posiciona este auto frente a la competencia en PR.'),
-      psychologicalHook: z.string().describe('Por qué emocionalmente este auto es la mejor opción.'),
+      marketPosition: z.string().describe('Cómo se posiciona estratégicamente esta unidad frente al mercado de autos usados en PR.'),
+      psychologicalHook: z.string().describe('Un gancho de ventas de alto impacto emocional y exclusividad.'),
       advantageScore: z.number().min(0).max(100)
     });
 
@@ -143,24 +143,37 @@ export const sentinelAI = {
         model: google('gemini-2.0-flash'),
         schema,
         output: 'object',
-        system: `Eres un analista experto de Richard Automotive. Tu especialidad es desglosar vehículos 
-        no solo por sus specs, sino por su valor emocional y técnico en el mercado de Puerto Rico.`,
-        prompt: `Analiza esta unidad: ${car.year} ${car.name}. 
-        Precio: $${car.price}. 
-        Specs actuales: ${JSON.stringify(car.specs || [])}. 
-        Features: ${JSON.stringify(car.features || [])}.
+        system: `Eres el Director de Inteligencia de Ventas en Richard Automotive, un concesionario boutique de alta gama en Puerto Rico. 
+        Tu tono es de absoluto prestigio, lujo e innovación tecnológica.
+        Debes expresarte con total fluidez y sofisticación, utilizando de manera natural los términos locales del mercado automotriz en Puerto Rico:
+        - Utiliza "guagua" al referirte a SUVs o Pickups (ej: "Esta guagua familiar redefine la comodidad").
+        - Utiliza "unidad" para referirte de forma profesional a cualquier auto.
+        - Utiliza "pronto" al referirte al pago inicial / down payment.
+        - Utiliza "trade-in" al hablar del carro que el cliente entrega a cuenta de pago.
+        - Utiliza "millaje" al hablar de la distancia recorrida.
         
-        Genera un análisis profundo que ayude a cerrar la venta.`
+        Destaca por qué esta unidad es un negocio inigualable en la isla. Evita sonar genérico o barato.`,
+        prompt: `Analiza detalladamente esta unidad de nuestro inventario:
+        - Nombre: ${car.year} ${car.name} (${car.make} ${car.model})
+        - Precio: $${car.price.toLocaleString()}
+        - Millaje: ${car.mileage?.toLocaleString() || 'Bajo millaje'} millas
+        - Specs actuales: ${JSON.stringify(car.specs || [])}
+        - Features actuales: ${JSON.stringify(car.features || [])}
+        
+        Genera un informe estratégico de alto valor de conversión.`
       });
       return object;
     } catch (error: any) {
       this.logError('VehicleDeepAnalysis', error);
       return {
-        technicalProfile: car.description || 'Unidad de alta calidad seleccionada por Richard Automotive.',
-        keyFeatures: [],
-        marketPosition: 'Excelente valor en el mercado local.',
-        psychologicalHook: 'La combinación perfecta de estilo y funcionalidad.',
-        advantageScore: 85
+        technicalProfile: car.description || 'Unidad de prestigio seleccionada rigurosamente por Richard Automotive.',
+        keyFeatures: [
+          { label: 'Condición', value: 'Excelente estado de conservación', icon: 'ShieldCheck' },
+          { label: 'Tracción', value: 'Lista para las carreteras de PR', icon: 'Compass' }
+        ],
+        marketPosition: 'Posicionamiento privilegiado con excelente retención de valor en Puerto Rico.',
+        psychologicalHook: 'La sofisticación que mereces con la confianza del respaldo de Richard.',
+        advantageScore: 88
       };
     }
   },
