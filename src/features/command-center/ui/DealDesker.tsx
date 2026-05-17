@@ -272,13 +272,13 @@ const DealDesker: React.FC = () => {
               <ShieldCheck size={150} />
             </div>
             
-            <div className="flex justify-between items-center mb-6 relative z-10">
+            <div className="flex justify-between items-center mb-4 relative z-10">
               <div>
                 <h2 className="text-xl font-black text-slate-800 uppercase tracking-widest text-primary">
                   Cuadro 2: Protección F&I (Backend)
                 </h2>
                 <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                  Productor: {PREMIER_WARRANTY.PRODUCER}
+                  Productor: {PREMIER_WARRANTY.PRODUCER} • <span className="text-amber-500 font-extrabold animate-pulse">⭐ PRODUCTO VITAL: CONTRATO DE SERVICIO</span>
                 </p>
               </div>
               <button
@@ -293,14 +293,18 @@ const DealDesker: React.FC = () => {
                 {showPrices ? '🔓 Ocultar Precios' : '🔒 Modo Richard'}
               </button>
             </div>
+            
+            <p className="text-[11px] text-slate-500 leading-relaxed font-medium mb-4 relative z-10 border-l-2 border-amber-500 pl-3">
+              <span className="font-extrabold text-slate-700">Estrategia de Venta Unificada:</span> Presenta al cliente el pago mensual total con los productos incluidos y listo. El <span className="text-amber-600 font-extrabold">Contrato de Servicio</span> es el componente vital e imprescindible para resguardar la transmisión, el motor y sistema eléctrico de su auto.
+            </p>
 
             <div className="space-y-4 relative z-10">
               {/* Contrato de Servicio */}
               <div
                 className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
                   extendedWarranty > 0 
-                    ? 'bg-emerald-50/50 border-emerald-500/30 shadow-sm shadow-emerald-100 scale-[1.01]' 
-                    : 'bg-slate-50 border-slate-200/60 hover:bg-slate-100/60'
+                    ? 'bg-amber-50/70 border-amber-500 shadow-md shadow-amber-200/50 scale-[1.02]' 
+                    : 'bg-slate-50 border-slate-200/80 hover:bg-slate-100/60'
                 }`}
                 onClick={() =>
                   setExtendedWarranty(
@@ -309,11 +313,13 @@ const DealDesker: React.FC = () => {
                 }
               >
                 <div className="flex flex-col">
-                  <span className="font-black text-slate-700 text-sm">Contrato de Servicio</span>
-                  <span className="text-[10px] font-medium text-slate-400 uppercase">Garantía VIP Oficial</span>
+                  <span className="font-black text-slate-800 text-sm flex items-center gap-1.5">
+                    👑 Contrato de Servicio <span className="text-[10px] font-black uppercase bg-amber-600 text-white px-2 py-0.5 rounded-md tracking-wider">★ VITAL</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-amber-600 uppercase mt-0.5">Garantía VIP Oficial de Premier Warranty</span>
                 </div>
                 <div className="text-right flex flex-col justify-center">
-                  <span className={`font-black text-base ${extendedWarranty > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  <span className={`font-black text-base ${extendedWarranty > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
                     {extendedWarranty > 0 ? `+$${warrantyAmortized}/mes` : 'NO APLICA'}
                   </span>
                   {showPrices && (
@@ -470,10 +476,7 @@ const DealDesker: React.FC = () => {
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty > 0 && gapInsurance > 0 && paintProtection > 0 && powerPack > 0
                     ? 'bg-gradient-to-br from-slate-900 to-emerald-950/70 border-emerald-500 shadow-lg shadow-emerald-950/50 scale-[1.03]'
-                    : 'bg-slate-950/40 border-slate-800 hover:border-slate-700/60 hover:bg-slate-950/70'
-                }`}
-              >
-                <div className="absolute top-3 right-3">
+                    : 'bg-slate-950/40 border-slate-800 hover:border-slate-700/60 hover:bg-slate-                <div className="absolute top-3 right-3">
                   <span className="text-[9px] font-black uppercase bg-emerald-600/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
                     VIP / Recomendado
                   </span>
@@ -487,9 +490,9 @@ const DealDesker: React.FC = () => {
                   <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase">Protección Absoluta</p>
                   
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                      <CheckCircle size={14} className="text-emerald-400 shrink-0" />
-                      <span>Garantía de Fábrica VIP</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-350">
+                      <CheckCircle size={14} className="text-amber-500 shrink-0" />
+                      <span className="font-extrabold text-amber-300">Contrato Servicio 👑 [VITAL]</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-slate-300">
                       <CheckCircle size={14} className="text-emerald-400 shrink-0" />
@@ -507,7 +510,7 @@ const DealDesker: React.FC = () => {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-900">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block">Cuota Mensual</span>
+                  <span className="text-[10px] text-emerald-400 uppercase tracking-widest font-black block animate-pulse">PAGO MENSUAL TODO INCLUIDO</span>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-3xl font-black text-emerald-400">${loanPlatinum.monthlyPayment}</span>
                     <span className="text-xs text-slate-400">/mes</span>
@@ -540,9 +543,9 @@ const DealDesker: React.FC = () => {
                   <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase">Tranquilidad Total</p>
                   
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                      <CheckCircle size={14} className="text-amber-400 shrink-0" />
-                      <span>Garantía de Fábrica VIP</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-350">
+                      <CheckCircle size={14} className="text-amber-500 shrink-0" />
+                      <span className="font-extrabold text-amber-300">Contrato Servicio 👑 [VITAL]</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-slate-300">
                       <CheckCircle size={14} className="text-amber-400 shrink-0" />
@@ -560,7 +563,7 @@ const DealDesker: React.FC = () => {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-900">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block">Cuota Mensual</span>
+                  <span className="text-[10px] text-amber-400 uppercase tracking-widest font-black block">PAGO MENSUAL TODO INCLUIDO</span>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-3xl font-black text-amber-400">${loanGold.monthlyPayment}</span>
                     <span className="text-xs text-slate-400">/mes</span>
@@ -593,9 +596,9 @@ const DealDesker: React.FC = () => {
                   <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase">Cobertura Esencial</p>
                   
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                      <CheckCircle size={14} className="text-indigo-400 shrink-0" />
-                      <span>Garantía de Fábrica VIP</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-350">
+                      <CheckCircle size={14} className="text-amber-500 shrink-0" />
+                      <span className="font-extrabold text-amber-300">Contrato Servicio 👑 [VITAL]</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-slate-300">
                       <CheckCircle size={14} className="text-indigo-400 shrink-0" />
@@ -613,7 +616,7 @@ const DealDesker: React.FC = () => {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-900">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block">Cuota Mensual</span>
+                  <span className="text-[10px] text-indigo-400 uppercase tracking-widest font-black block">PAGO MENSUAL TODO INCLUIDO</span>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-3xl font-black text-indigo-400">${loanSilver.monthlyPayment}</span>
                     <span className="text-xs text-slate-400">/mes</span>
@@ -639,8 +642,8 @@ const DealDesker: React.FC = () => {
                 }`}
               >
                 <div className="absolute top-3 right-3">
-                  <span className="text-[9px] font-black uppercase bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20">
-                    100% Sin Protección
+                  <span className="text-[9px] font-black uppercase bg-rose-600/20 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20 animate-pulse">
+                    ⚠️ SIN COBERTURA VITAL
                   </span>
                 </div>
 
@@ -648,37 +651,37 @@ const DealDesker: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-slate-500/10 border border-slate-500/20 flex items-center justify-center text-slate-400 mb-4 group-hover:scale-110 transition-transform">
                     <AlertTriangle size={20} className="text-rose-400" />
                   </div>
-                  <h3 className="text-lg font-black text-slate-100 uppercase tracking-wider">Base Vehículo</h3>
-                  <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase">Solo Unidad</p>
+                  <h3 className="text-lg font-black text-slate-100 uppercase tracking-wider text-rose-300">Base Vehículo</h3>
+                  <p className="text-[10px] text-rose-500 font-bold mt-1 uppercase">UNIDAD EXPUESTA</p>
                   
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 opacity-40">
-                      <span className="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
-                      <span>Garantía de Fábrica Excluida</span>
+                    <div className="flex items-center gap-2 text-xs text-rose-500/80 font-bold">
+                      <span className="w-3.5 h-3.5 rounded-full border border-rose-500/50 flex items-center justify-center text-[8px] font-black shrink-0 bg-rose-950/40">!</span>
+                      <span>Contrato Servicio Excluido ⚠️</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 opacity-40">
-                      <span className="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-550 opacity-40">
+                      <span className="w-3.5 h-3.5 rounded-full border border-slate-750 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
                       <span>Seguro GAP Excluido</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 opacity-40">
-                      <span className="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-550 opacity-40">
+                      <span className="w-3.5 h-3.5 rounded-full border border-slate-750 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
                       <span>Cerámica Excluida</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 opacity-40">
-                      <span className="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
+                    <div className="flex items-center gap-2 text-xs text-slate-550 opacity-40">
+                      <span className="w-3.5 h-3.5 rounded-full border border-slate-750 flex items-center justify-center text-[8px] font-black shrink-0">X</span>
                       <span>Power Pack Excluido</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-900">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block">Cuota Mensual</span>
+                  <span className="text-[10px] text-rose-500 uppercase tracking-widest font-black block">PAGO MÍNIMO (SIN PROTECCIÓN)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl font-black text-slate-300">${loanBase.monthlyPayment}</span>
+                    <span className="text-3xl font-black text-rose-400">${loanBase.monthlyPayment}</span>
                     <span className="text-xs text-slate-400">/mes</span>
                   </div>
-                  <span className="text-[9px] text-slate-600 block font-semibold mt-1">
-                    (Base de Referencia)
+                  <span className="text-[9px] text-rose-600 block font-bold mt-1 uppercase tracking-tighter">
+                    ¡Cliente Asume 100% del Riesgo!
                   </span>
                 </div>
               </div>
@@ -798,12 +801,12 @@ const DealDesker: React.FC = () => {
               </div>
 
               <div className="mt-8">
-                <span className="text-xs uppercase font-bold tracking-widest text-slate-500 block">
-                  Pago Mensual
+                <span className="text-xs uppercase font-extrabold tracking-widest text-emerald-400 block animate-pulse">
+                  PAGO MENSUAL TODO INCLUIDO (Y LISTO)
                 </span>
                 <div className="flex items-start text-white gap-1 mt-1">
                   <span className="text-2xl font-bold opacity-50 mt-2">$</span>
-                  <span className="text-7xl font-black tracking-tighter shadow-primary/50">
+                  <span className="text-7xl font-black tracking-tighter text-emerald-400">
                     {loanCalculation.monthlyPayment}
                   </span>
                 </div>

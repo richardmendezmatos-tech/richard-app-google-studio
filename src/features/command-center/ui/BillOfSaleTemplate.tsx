@@ -110,29 +110,78 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
 
       <div className="mb-8">
         <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">
-          Productos de Cobertura y Protección F&I — {PREMIER_WARRANTY.PRODUCER}
+          Garantías de Protección Activas — {PREMIER_WARRANTY.PRODUCER}
         </h2>
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Contrato de Servicio (Garantía VIP)</span>
-              <span className="font-black text-slate-700">{wty > 0 ? `+$${warrantyAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
+        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-1 gap-3.5">
+            {/* Contrato de Servicio */}
+            <div className={`flex items-center justify-between p-3 rounded-xl border ${
+              wty > 0 
+                ? 'bg-amber-50/40 border-amber-300 text-amber-900' 
+                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+            }`}>
+              <div className="flex flex-col">
+                <span className="font-extrabold text-sm flex items-center gap-1.5 text-slate-900">
+                  👑 Contrato de Servicio Premier <span className="text-[9px] font-black uppercase bg-amber-600 text-white px-2 py-0.5 rounded tracking-wider">BENEFICIO VITAL</span>
+                </span>
+                <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                  Protección VIP contra averías mecánicas y eléctricas de transmisión, motor y aire acondicionado.
+                </span>
+              </div>
+              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${wty > 0 ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {wty > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Seguro GAP (Pérdida Total)</span>
-              <span className="font-black text-slate-700">{gap > 0 ? `+$${gapAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
+
+            {/* Seguro GAP */}
+            <div className={`flex items-center justify-between p-3 rounded-xl border ${
+              gap > 0 
+                ? 'bg-slate-900 text-white border-slate-800' 
+                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+            }`}>
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-slate-900">🛡️ Cobertura GAP Total (Pérdida Total)</span>
+                <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                  Protección de saldo contra pérdida o robo total de la unidad.
+                </span>
+              </div>
+              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${gap > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {gap > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Tratamiento Cerámica (Pintura)</span>
-              <span className="font-black text-slate-700">{ceramic > 0 ? `+$${ceramicAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
+
+            {/* Tratamiento Cerámica */}
+            <div className={`flex items-center justify-between p-3 rounded-xl border ${
+              ceramic > 0 
+                ? 'bg-slate-900 text-white border-slate-800' 
+                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+            }`}>
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-slate-900">✨ Tratamiento de Cerámica Profesional</span>
+                <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                  Sellador protector nanotecnológico para preservación del brillo exterior.
+                </span>
+              </div>
+              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${ceramic > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {ceramic > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="font-bold text-slate-600">Power Pack (Kit VIP)</span>
-              <span className="font-black text-slate-700">{power > 0 ? `+$${powerPackAmortized.toFixed(2)}/mes` : 'NO ADQUIRIDO'}</span>
-            </div>
-            <div className="flex justify-between col-span-2 pt-2 border-t border-slate-200">
-              <span className="font-bold text-slate-800">Total F&I Añadido (Mensualidad)</span>
-              <span className="font-black text-emerald-700">+{formatSec(totalFiCuota)}/mes</span>
+
+            {/* Power Pack */}
+            <div className={`flex items-center justify-between p-3 rounded-xl border ${
+              power > 0 
+                ? 'bg-slate-900 text-white border-slate-800' 
+                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+            }`}>
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-slate-900">⚡ Power Pack VIP (Kit de Entrega)</span>
+                <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                  Cuidado estético integral y kit de bienvenida oficial.
+                </span>
+              </div>
+              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${power > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {power > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
+              </span>
             </div>
           </div>
         </div>
@@ -164,10 +213,10 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
         </div>
 
         <div className="text-right">
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-            Cuota Estimada Oficial
+          <h2 className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">
+            Pago Mensual Todo Incluido (Y Listo)
           </h2>
-          <p className="text-6xl font-black tracking-tighter mb-2">
+          <p className="text-6xl font-black tracking-tighter mb-2 text-emerald-400">
             ${loanCalculation.monthlyPayment}
           </p>
           <div className="flex flex-col items-end gap-1 text-sm font-bold text-slate-400">
