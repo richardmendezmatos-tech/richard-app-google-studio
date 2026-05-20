@@ -53,7 +53,7 @@ export const NeuroUIAdapter: React.FC = () => {
                 </button>
               </div>
 
-              <h4 className="text-white font-outfit font-bold text-lg leading-tight mb-2">
+              <h4 className="text-white font-manrope font-bold text-lg leading-tight mb-2">
                 ¿Listo para el siguiente paso?
               </h4>
 

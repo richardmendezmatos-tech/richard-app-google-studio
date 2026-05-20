@@ -1,15 +1,9 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
+import { Bebas_Neue, Sora, Manrope } from 'next/font/google';
 import '@/index.css';
 import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
 import Script from 'next/script';
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
-
-// Essential Project Fonts
-import { Bebas_Neue, Sora, Manrope, Cormorant_Garamond } from 'next/font/google';
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -22,14 +16,6 @@ const manrope = Manrope({
   subsets: ['latin'],
   variable: '--font-manrope',
   display: 'swap',
-  preload: false,
-});
-const cormorant = Cormorant_Garamond({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  variable: '--font-editorial',
-  display: 'swap',
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -114,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable} ${sora.variable} ${manrope.variable} ${cormorant.variable} antialiased`}
+      className={`${bebasNeue.variable} ${sora.variable} ${manrope.variable} antialiased`}
     >
       <head>
         <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
