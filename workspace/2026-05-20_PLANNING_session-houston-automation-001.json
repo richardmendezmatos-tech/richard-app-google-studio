@@ -1,0 +1,14 @@
+{
+  "id": "session-houston-automation-001",
+  "fecha": "2026-05-20",
+  "categoria": "PLANNING",
+  "titulo": "Planning Phase for Houston Mission Control and Retargeting Agent",
+  "resumen": "Detailed plan created for building both Option A (Mission Control Terminal /admin/houston) and Option B (Omnichannel Retargeting Agent) with live DB telemetry subscriptions, real-time ROI charts, automated procurement actions, and Clean Architecture retargeting triggers.",
+  "estatus": "IN_PROGRESS",
+  "datos": {
+    "optionA": "Houston Terminal",
+    "optionB": "Omnichannel Retargeting Agent",
+    "fsdCompliance": "Strict FSD layer rules and Clean Architecture separation"
+  },
+  "eficiencia_estimada_Ew": 0.99
+}

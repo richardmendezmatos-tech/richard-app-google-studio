@@ -18,7 +18,28 @@ export async function POST(req: Request) {
       notes: data.notes || '',
     });
 
-    return NextResponse.json({ success: true, processedBy: 'Jules AI' });
+    // Option B: Omnichannel Retargeting Automation
+    const score = Number(data.closureProbability || data.aiScore || 80);
+    if (score >= 75) {
+      try {
+        const { TriggerRetargeting } = await import('@/server/application/use-cases/automation/TriggerRetargeting.usecase');
+        await TriggerRetargeting.execute({
+          leadId: data.id,
+          leadName: `${data.firstName || 'Cliente'} ${data.lastName || ''}`.trim(),
+          phone: data.phone,
+          email: data.email,
+          vehicleInterest: data.vehicleOfInterest || data.interest || data.vehicle,
+          score: score,
+          monthlyBudget: data.monthlyBudget || data.budget,
+          downPayment: data.downPayment || data.pronto,
+        });
+        console.log(`[Webhook Leads] Triggered advanced retargeting for ${data.firstName}`);
+      } catch (automationErr) {
+        console.error('[Webhook Leads] Failed to execute retargeting automation:', automationErr);
+      }
+    }
+
+    return NextResponse.json({ success: true, processedBy: 'Jules AI + Sentinel N24' });
   } catch (error: any) {
     console.error('Lead Webhook Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
