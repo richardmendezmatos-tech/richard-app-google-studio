@@ -3,10 +3,10 @@ import { whatsappAgent } from '@/features/automation/api/whatsappAgent';
 
 /**
  * GET /api/cron/messages
- * 
+ *
  * Vercel Cron Job endpoint that processes scheduled WhatsApp follow-ups.
  * Add to vercel.json: { "crons": [{ "path": "/api/cron/messages", "schedule": "every 4 hours" }] }
- * 
+ *
  * Security: Protected by CRON_SECRET (set in Vercel env vars).
  */
 export async function GET(req: Request) {

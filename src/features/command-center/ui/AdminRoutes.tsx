@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate, useOutletContext } from '@/shared/lib/next-route-adapter';
@@ -82,7 +82,7 @@ const CRMBoardWrapper = () => {
 const MarketingWrapper = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
   const { user } = useAuthStore();
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -172,11 +172,20 @@ export const AdminRoutes = (props: any) => {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="inventory" element={<InventoryWrapper />} />
-        <Route path="intake" element={
-          <Suspense fallback={<div className="p-8 text-slate-500 font-black animate-pulse uppercase tracking-widest">Iniciando Sentinel Vision...</div>}>
-            <VisionIntakeWrapper />
-          </Suspense>
-        } />
+        <Route
+          path="intake"
+          element={
+            <Suspense
+              fallback={
+                <div className="p-8 text-slate-500 font-black animate-pulse uppercase tracking-widest">
+                  Iniciando Sentinel Vision...
+                </div>
+              }
+            >
+              <VisionIntakeWrapper />
+            </Suspense>
+          }
+        />
         <Route path="analytics" element={<AnalyticsWrapper />} />
         <Route path="analytics/:leadId" element={<LeadAnalyticsPage />} />
         <Route path="billing" element={<B2BBillingDashboard />} />

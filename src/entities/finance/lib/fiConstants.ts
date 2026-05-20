@@ -25,9 +25,9 @@ export const PRODUCTOS_BACKEND_RANGOS = {
 export const PREMIER_WARRANTY = {
   PRODUCER: 'Premier Warranty Services',
   PRECIOS: {
-    CERAMICA: 995.00,
-    POWER_PACK: 895.00,
-    CONTRATO_SERVICIO: 4216.00,
-    GAP: 998.00,
-  }
+    CERAMICA: 995.0,
+    POWER_PACK: 895.0,
+    CONTRATO_SERVICIO: 4216.0,
+    GAP: 998.0,
+  },
 };

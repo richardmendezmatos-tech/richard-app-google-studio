@@ -31,7 +31,10 @@ export const getAntigravityConfig = (): AntigravityConfig => {
   const healthPath = getAntigravityEnv('HEALTH_PATH', DEFAULT_HEALTH_PATH);
   const imagePath = getAntigravityEnv('IMAGE_PATH', DEFAULT_IMAGE_PATH);
   const leadActionPath = getAntigravityEnv('LEAD_ACTION_PATH', DEFAULT_LEAD_ACTION_PATH);
-  const outreachActionPath = getAntigravityEnv('OUTREACH_ACTION_PATH', DEFAULT_OUTREACH_ACTION_PATH);
+  const outreachActionPath = getAntigravityEnv(
+    'OUTREACH_ACTION_PATH',
+    DEFAULT_OUTREACH_ACTION_PATH,
+  );
 
   return {
     enabled: Boolean(edgeUrl || apiUrl),
@@ -69,7 +72,7 @@ export const optimizeWithAntigravity = (url: string, width: number = 800): strin
   // Allow Firebase optimization if explicitly enabled via environment variable
   const shouldProxyStorage = getAntigravityEnv('PROXY_STORAGE', 'false') === 'true';
   const isFirebaseStorage = url.includes('firebasestorage.googleapis.com');
-  
+
   if (isFirebaseStorage && !shouldProxyStorage) return url;
 
   // Keep Unsplash optimization path as fallback if Antigravity is not configured.

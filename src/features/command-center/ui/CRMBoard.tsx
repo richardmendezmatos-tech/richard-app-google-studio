@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -118,7 +118,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
       className={`min-w-full md:min-w-[340px] w-full glass-sentinel rounded-4xl p-6 flex flex-col h-auto md:h-[calc(100vh-280px)] border transition-all duration-500 ease-[0.16, 1, 0.3, 1] ${styles.scanline} ${styles.columnGlow} ${
         isOver ? 'border-cyan-500/50 bg-cyan-500/5' : 'border-white/5'
       }`}
-      style={{'--column-glow-color': col.glow} as any}
+      style={{ '--column-glow-color': col.glow } as any}
     >
       <div className="flex items-center gap-4 mb-8 px-2">
         <div
@@ -576,24 +576,26 @@ const CRMBoard: React.FC = () => {
         </div>
       </div>
 
-      {typeof window !== 'undefined' && document.body && createPortal(
-        <DragOverlay adjustScale={false}>
-          {activeId ? (
-            <div className="rotate-2 scale-105 transition-transform">
-              <LeadCard
-                lead={leads.find((l) => l.id === activeId)!}
-                onPrint={() => {}}
-                onOpenDealSheet={() => {}}
-                onOpenInbox={() => {}}
-                onOpenDetail={() => {}}
-                userRole={userRole}
-                isOverlay
-              />
-            </div>
-          ) : null}
-        </DragOverlay>,
-        document.body,
-      )}
+      {typeof window !== 'undefined' &&
+        document.body &&
+        createPortal(
+          <DragOverlay adjustScale={false}>
+            {activeId ? (
+              <div className="rotate-2 scale-105 transition-transform">
+                <LeadCard
+                  lead={leads.find((l) => l.id === activeId)!}
+                  onPrint={() => {}}
+                  onOpenDealSheet={() => {}}
+                  onOpenInbox={() => {}}
+                  onOpenDetail={() => {}}
+                  userRole={userRole}
+                  isOverlay
+                />
+              </div>
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
 
       {/* Smart Deal Sheet Modal - Wrapped in Suspense */}
       <React.Suspense

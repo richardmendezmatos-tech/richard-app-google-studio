@@ -33,7 +33,7 @@ export async function simulateLoan(
   vehicleInfo?: { make: string; model: string },
 ): Promise<LoanSimulation[]> {
   const loanAmount = price - downPayment;
-  
+
   // Calculate LTV (Assumed wholesale is 90% of price for risk scoring)
   const estimatedWholesale = price * 0.9;
   const ltvRatio = Number((loanAmount / estimatedWholesale).toFixed(2));
@@ -75,22 +75,19 @@ export async function simulateLoan(
     let payment = 0;
 
     if (monthlyRate > 0 && term > 0) {
-      payment =
-        (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -term));
+      payment = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -term));
     } else if (term > 0) {
       payment = loanAmount / term;
     }
 
     const monthlyPayment = Number(payment.toFixed(2));
-    const totalInterest = Number(
-      (monthlyPayment * term - loanAmount).toFixed(2),
-    );
+    const totalInterest = Number((monthlyPayment * term - loanAmount).toFixed(2));
 
     // Business Logic: Bankability
     // - LTV must be under MAX_LTV_RATIO
     // - Score must meet entity tier requirements (Simplified)
-    const isBankable = ltvRatio <= CONSTANTES_PR.MAX_LTV_RATIO && 
-                       (entity.tier === 1 || creditScore >= 640);
+    const isBankable =
+      ltvRatio <= CONSTANTES_PR.MAX_LTV_RATIO && (entity.tier === 1 || creditScore >= 640);
 
     return {
       bankName: entity.name,
@@ -103,8 +100,7 @@ export async function simulateLoan(
       totalInterest,
       isBankable,
       ltvRatio,
-      estimatedCreditTier:
-        tier === 'excellent_plus' ? 'excellent' : (tier as any),
+      estimatedCreditTier: tier === 'excellent_plus' ? 'excellent' : (tier as any),
       marketComparison: marketData
         ? {
             averagePrice: marketData.averagePrice,

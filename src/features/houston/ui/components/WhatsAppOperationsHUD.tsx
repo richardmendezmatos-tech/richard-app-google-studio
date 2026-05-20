@@ -27,7 +27,9 @@ export const WhatsAppOperationsHUD: React.FC<Props> = ({ stats }) => {
           <div className="p-2 bg-emerald-500/10 rounded-xl">
             <MessageCircle className="text-emerald-400" size={20} />
           </div>
-          <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">Omnichannel Hub</h4>
+          <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">
+            Omnichannel Hub
+          </h4>
         </div>
         <div className="text-[10px] font-black text-white italic">{successRate}% Health</div>
       </div>
@@ -51,7 +53,7 @@ export const WhatsAppOperationsHUD: React.FC<Props> = ({ stats }) => {
       </div>
 
       <div className="mt-6 h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-        <div 
+        <div
           className="h-full bg-emerald-500 transition-all duration-1000"
           style={{ width: `${successRate}%` }}
         />

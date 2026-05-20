@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Activity, 
-  Terminal, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Activity,
+  Terminal,
+  AlertCircle,
+  CheckCircle2,
   Info,
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
 } from 'lucide-react';
 import { AuditRepository, AuditEvent } from '@/shared/api/houston/AuditRepository';
 import { useAuthStore } from '@/entities/session';
@@ -26,7 +26,7 @@ const TelemetryFeedWidget: React.FC = () => {
 
   const fetchLogs = React.useCallback(async () => {
     if (role !== 'admin') return;
-    
+
     try {
       setError(null);
       const recentLogs = await auditRepo.getRecentLogs(10);
@@ -47,10 +47,14 @@ const TelemetryFeedWidget: React.FC = () => {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'conversion': return <CheckCircle2 size={14} className="text-ra-primary" />;
-      case 'critical': return <AlertCircle size={14} className="text-red-500" />;
-      case 'warning': return <AlertCircle size={14} className="text-amber-500" />;
-      default: return <Info size={14} className="text-slate-400" />;
+      case 'conversion':
+        return <CheckCircle2 size={14} className="text-ra-primary" />;
+      case 'critical':
+        return <AlertCircle size={14} className="text-red-500" />;
+      case 'warning':
+        return <AlertCircle size={14} className="text-amber-500" />;
+      default:
+        return <Info size={14} className="text-slate-400" />;
     }
   };
 
@@ -60,7 +64,9 @@ const TelemetryFeedWidget: React.FC = () => {
         <div className="p-3 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4">
           <AlertCircle size={24} className="text-amber-500" />
         </div>
-        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Acceso Restringido</h3>
+        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">
+          Acceso Restringido
+        </h3>
         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest max-w-[200px]">
           Se requiere nivel de administrador para visualizar Sentinel Telemetry
         </p>
@@ -76,13 +82,15 @@ const TelemetryFeedWidget: React.FC = () => {
             <Terminal size={18} className="text-ra-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-black text-white uppercase tracking-widest">Sentinel Telemetry</h3>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">
+              Sentinel Telemetry
+            </h3>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1">
               <Activity size={10} className="animate-pulse text-ra-primary" /> Live Feed N23
             </p>
           </div>
         </div>
-        <button 
+        <button
           onClick={fetchLogs}
           className="p-2 hover:bg-white/5 rounded-lg transition-colors group"
         >
@@ -111,12 +119,20 @@ const TelemetryFeedWidget: React.FC = () => {
                       {log.source || 'SYS'}
                     </span>
                     <span className="text-[9px] font-medium text-slate-600">
-                      {log.timestamp ? formatDistanceToNow(new Date(log.timestamp), { addSuffix: true, locale: es }) : 'ahora mismo'}
+                      {log.timestamp
+                        ? formatDistanceToNow(new Date(log.timestamp), {
+                            addSuffix: true,
+                            locale: es,
+                          })
+                        : 'ahora mismo'}
                     </span>
                   </div>
                 </div>
                 {log.type === 'conversion' && (
-                  <ArrowUpRight size={12} className="text-ra-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <ArrowUpRight
+                    size={12}
+                    className="text-ra-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
                 )}
               </div>
             </motion.div>
@@ -133,7 +149,10 @@ const TelemetryFeedWidget: React.FC = () => {
 
       <div className="mt-4 pt-4 border-t border-white/5 flex gap-2 overflow-x-auto hide-scrollbar">
         {['Info', 'Conversion', 'Alert'].map((label) => (
-          <div key={label} className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[8px] font-black uppercase text-slate-500 whitespace-nowrap">
+          <div
+            key={label}
+            className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[8px] font-black uppercase text-slate-500 whitespace-nowrap"
+          >
             {label}
           </div>
         ))}

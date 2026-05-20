@@ -4,151 +4,230 @@
 
   <url>
     <loc>https://www.richard-automotive.com/</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/appraisal</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/aguadilla</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/arecibo</loc>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/bayamon</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/cabo-rojo</loc>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/caguas</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/carolina</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/dorado</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/fajardo</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/guayama</loc>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/guaynabo</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/hatillo</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/humacao</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/isabela</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/manati</loc>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/mayaguez</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/ponce</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/san-juan</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/coupe</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/hatchback</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/luxury</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/performance</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/sedan</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/autos-usados/tipo/suv</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
+    <loc>https://www.richard-automotive.com/autos-usados/toa-baja</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/trujillo-alto</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/vega-alta</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/autos-usados/vega-baja</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://www.richard-automotive.com/blog</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/compare</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/consultant</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2006-ford-ford-f-550-tumba-2006-puerto-rico/1FDAW56P56EB07847</loc>
-    <lastmod>2026-04-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/6XAwNRYp/media_69bc211b0facb.jpg</image:loc>
-      <image:title>2006 Ford Ford F-550 Tumba 2006 - Richard Automotive</image:title>
-      <image:caption>Detalles de 2006 Ford Ford F-550 Tumba 2006. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
-    </image:image>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/inventario/2021-ford-2021-ford-bronco-sport-big-bend-puerto-rico/3FMCR9B63MRA46416</loc>
+    <loc>https://www.richard-automotive.com/inventario/2021-ford-2021-ford-bronco-sport-big-bend/3FMCR9B63MRA46416</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -160,7 +239,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2021-ford-2021-ford-bronco-sport-big-bend-puerto-rico/3FMCR9B65MRA54646</loc>
+    <loc>https://www.richard-automotive.com/inventario/2021-ford-2021-ford-bronco-sport-big-bend/3FMCR9B65MRA54646</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -172,7 +251,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2021-ford-ford-f-250-xl-2021-puerto-rico/1FTBF2A69MEC83660</loc>
+    <loc>https://www.richard-automotive.com/inventario/2021-ford-ford-f-250-xl-2021/1FTBF2A69MEC83660</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -184,7 +263,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2022-ford-2022-ford-explorer-base-puerto-rico/1FMSK7BH4NGA43605</loc>
+    <loc>https://www.richard-automotive.com/inventario/2022-ford-2022-ford-explorer-base/1FMSK7BH4NGA43605</loc>
     <lastmod>2026-05-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -196,7 +275,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2022-ford-2022-ford-super-duty-f-250-srw-xl-puerto-rico/1FT8W2BT5NEE48653</loc>
+    <loc>https://www.richard-automotive.com/inventario/2022-ford-2022-ford-super-duty-f-250-srw-xl/1FT8W2BT5NEE48653</loc>
     <lastmod>2026-05-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -208,7 +287,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-escape-phev-puerto-rico/1FMCU0E17PUA48094</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-escape-phev/1FMCU0E17PUA48094</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -220,7 +299,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-f-150-raptor-puerto-rico/1FTFW1RG0PFB54486</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-f-150-raptor/1FTFW1RG0PFB54486</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -232,7 +311,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-f-150-xl-puerto-rico/1FTFW1E85PFB03435</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-f-150-xl/1FTFW1E85PFB03435</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -244,7 +323,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-ranger-xl-puerto-rico/1FTER4FH6PLE31712</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-ranger-xl/1FTER4FH6PLE31712</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -256,7 +335,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van-puerto-rico/1FTBR1X80PKB11274</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van/1FTBR1X80PKB11274</loc>
     <lastmod>2026-04-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -268,7 +347,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van-puerto-rico/1FTBR1Y80PKB60036</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van/1FTBR1Y80PKB60036</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -280,7 +359,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van-puerto-rico/1FTBR1Y85PKA53189</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van/1FTBR1Y85PKA53189</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -292,7 +371,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van-puerto-rico/1FTBR1Y89PKB60780</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-cargo-van/1FTBR1Y89PKB60780</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -304,7 +383,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl-puerto-rico/NM0LS7S21P1557869</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl/NM0LS7S21P1557869</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -316,7 +395,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl-puerto-rico/NM0LS7S26P1560346</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl/NM0LS7S26P1560346</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -328,7 +407,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl-puerto-rico/NM0LS7S26P1560377</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl/NM0LS7S26P1560377</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -340,7 +419,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl-puerto-rico/NM0LS7S29P1568439</loc>
+    <loc>https://www.richard-automotive.com/inventario/2023-ford-2023-ford-transit-connect-van-xl/NM0LS7S29P1568439</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -352,7 +431,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-bronco-puerto-rico/1FMDE7BHXRLA63435</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-bronco/1FMDE7BHXRLA63435</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -364,7 +443,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150-king-ranch-puerto-rico/1FTFW6L82RFA95555</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150-king-ranch/1FTFW6L82RFA95555</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -376,7 +455,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150-platinum-puerto-rico/1FTFW7L83RFA99247</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150-platinum/1FTFW7L83RFA99247</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -388,7 +467,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150-puerto-rico/1FTMF1KP0RKE08824</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-f-150/1FTMF1KP0RKE08824</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -400,19 +479,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick-puerto-rico/3FTTW8A96RRB83442</loc>
-    <lastmod>2026-04-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/media_67f9433bc75cc.png</image:loc>
-      <image:title>2024 Ford 2024 Ford Maverick - Richard Automotive</image:title>
-      <image:caption>Detalles de 2024 Ford 2024 Ford Maverick. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
-    </image:image>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick-xl-puerto-rico/3FTTW8A98RRB83393</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick-xl/3FTTW8A98RRB83393</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -424,7 +491,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick-xlt-puerto-rico/3FTTW8J93RRB13591</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick-xlt/3FTTW8J93RRB13591</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -436,7 +503,19 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-mustang-gt-puerto-rico/1FA6P8CF2R5415900</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-maverick/3FTTW8A96RRB83442</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://apicdn.inventario360.com/vehicles/media_67f9433bc75cc.png</image:loc>
+      <image:title>2024 Ford 2024 Ford Maverick - Richard Automotive</image:title>
+      <image:caption>Detalles de 2024 Ford 2024 Ford Maverick. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-mustang-gt/1FA6P8CF2R5415900</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -448,7 +527,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl-puerto-rico/1FT8W2BT2RED83914</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl/1FT8W2BT2RED83914</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -460,7 +539,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl-puerto-rico/1FTBF2AA0REF23416</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl/1FTBF2AA0REF23416</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -472,7 +551,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl-puerto-rico/1FTBF2AAXRED33736</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl/1FTBF2AAXRED33736</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -484,7 +563,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl-puerto-rico/1FTBF2BA1REF23357</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-250-srw-xl/1FTBF2BA1REF23357</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -496,7 +575,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-550-drw-xl-puerto-rico/1FDUF5GT1RED86436</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-super-duty-f-550-drw-xl/1FDUF5GT1RED86436</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -508,7 +587,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-transit-cargo-van-puerto-rico/1FTBR1Y88RKB38580</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-2024-ford-transit-cargo-van/1FTBR1Y88RKB38580</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -520,7 +599,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-e-series-cutaway-2024-puerto-rico/1FDXE4FN3RDD15290</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-e-series-cutaway-2024/1FDXE4FN3RDD15290</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -532,7 +611,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-maverick-2024-puerto-rico/3FTTW8A36RRB83498</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-maverick-2024/3FTTW8A36RRB83498</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -544,7 +623,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-transit-cargo-lr-2024-puerto-rico/1FTYE1Y82RKB37267</loc>
+    <loc>https://www.richard-automotive.com/inventario/2024-ford-ford-transit-cargo-lr-2024/1FTYE1Y82RKB37267</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -556,7 +635,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-base-puerto-rico/1FMDE6AH8SLB18840</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-base/1FMDE6AH8SLB18840</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -568,7 +647,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-big-bend-puerto-rico/1FMDE7BH0SLB18920</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-big-bend/1FMDE7BH0SLB18920</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -580,7 +659,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sasquatch-puerto-rico/1FMDE6AH1SLB18680</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sasquatch/1FMDE6AH1SLB18680</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -592,7 +671,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-badlands-puerto-rico/3FMCR9DA6SRE87018</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-badlands/3FMCR9DA6SRE87018</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -604,7 +683,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN1SRE84730</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN1SRE84730</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -616,7 +695,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN2SRE84686</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN2SRE84686</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -628,7 +707,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN5SRF45559</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN5SRF45559</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -640,7 +719,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN7SRE84683</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN7SRE84683</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -652,7 +731,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN7SRE84733</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN7SRE84733</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -664,7 +743,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BN8SRE84773</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BN8SRE84773</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -676,7 +755,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend-puerto-rico/3FMCR9BNXSRF45573</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-big-bend/3FMCR9BNXSRF45573</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -688,7 +767,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport-puerto-rico/3FMCR9BN7SRE84781</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-bronco-sport/3FMCR9BN7SRE84781</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -700,7 +779,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-e-series-cutaway-puerto-rico/1FDXE4FN1SDD38881</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-e-series-cutaway/1FDXE4FN1SDD38881</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -712,7 +791,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-explorer-puerto-rico/1FMUK7DH1SGA53185</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-explorer/1FMUK7DH1SGA53185</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -724,7 +803,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch-puerto-rico/1FTFW6L85SFB73347</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch/1FTFW6L85SFB73347</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -736,7 +815,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch-puerto-rico/1FTFW6L85SFB73350</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch/1FTFW6L85SFB73350</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -748,7 +827,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch-puerto-rico/1FTFW6L89SFB73349</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-king-ranch/1FTFW6L89SFB73349</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -760,7 +839,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-platinum-puerto-rico/1FTFW7L81SFB98722</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-platinum/1FTFW7L81SFB98722</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -772,31 +851,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-puerto-rico/1FTEW2KP8SKD99886</loc>
-    <lastmod>2026-04-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/media_6839ffec3b66f.png</image:loc>
-      <image:title>2025 Ford 2025 Ford F-150 - Richard Automotive</image:title>
-      <image:caption>Detalles de 2025 Ford 2025 Ford F-150. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
-    </image:image>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-puerto-rico/1FTEW2LP2SKD99154</loc>
-    <lastmod>2026-04-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/media_68597d47ada8e.png</image:loc>
-      <image:title>2025 Ford 2025 Ford F-150 - Richard Automotive</image:title>
-      <image:caption>Detalles de 2025 Ford 2025 Ford F-150. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
-    </image:image>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor-puerto-rico/1FTFW1RG1SFB39651</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor/1FTFW1RG1SFB39651</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -808,7 +863,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor-puerto-rico/1FTFW1RG2SFB02009</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor/1FTFW1RG2SFB02009</loc>
     <lastmod>2026-05-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -820,7 +875,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor-puerto-rico/1FTFW1RG6SFA96960</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-raptor/1FTFW1RG6SFA96960</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -832,7 +887,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTEW2KP7SKE81432</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTEW2KP7SKE81432</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -844,7 +899,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTEW2KP9SKE81545</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTEW2KP9SKE81545</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -856,7 +911,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTEW2LP5SKF57860</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTEW2LP5SKF57860</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -868,7 +923,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTFW2L50SKE47236</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTFW2L50SKE47236</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -880,7 +935,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTFW2L51SKF58667</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTFW2L51SKF58667</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -892,7 +947,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx-puerto-rico/1FTFW2L56SKF57675</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-stx/1FTFW2L56SKF57675</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -904,7 +959,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl-puerto-rico/1FTFW1L89SKF04604</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl/1FTFW1L89SKF04604</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -916,7 +971,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl-puerto-rico/1FTFX1L56SKF72684</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl/1FTFX1L56SKF72684</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -928,7 +983,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl-puerto-rico/1FTMF1L51SKF53437</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl/1FTMF1L51SKF53437</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -940,7 +995,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl-puerto-rico/1FTMF1L51SKF58654</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xl/1FTMF1L51SKF58654</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -952,7 +1007,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xlt-puerto-rico/1FTFW3L5XSKF56423</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150-xlt/1FTFW3L5XSKF56423</loc>
     <lastmod>2026-04-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -964,19 +1019,31 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-puerto-rico/3FTTW8NA6SRB00540</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150/1FTEW2KP8SKD99886</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/6XAwNRYp/media_68cad86c834ae.png</image:loc>
-      <image:title>2025 Ford 2025 Ford Maverick - Richard Automotive</image:title>
-      <image:caption>Detalles de 2025 Ford 2025 Ford Maverick. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
+      <image:loc>https://apicdn.inventario360.com/vehicles/media_6839ffec3b66f.png</image:loc>
+      <image:title>2025 Ford 2025 Ford F-150 - Richard Automotive</image:title>
+      <image:caption>Detalles de 2025 Ford 2025 Ford F-150. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
     </image:image>
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-tremor-puerto-rico/3FTTW8NA3SRB00768</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-f-150/1FTEW2LP2SKD99154</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://apicdn.inventario360.com/vehicles/media_68597d47ada8e.png</image:loc>
+      <image:title>2025 Ford 2025 Ford F-150 - Richard Automotive</image:title>
+      <image:caption>Detalles de 2025 Ford 2025 Ford F-150. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-tremor/3FTTW8NA3SRB00768</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -988,7 +1055,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-xl-puerto-rico/3FTTW8BAXSRB00545</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-xl/3FTTW8BAXSRB00545</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1000,7 +1067,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-xlt-puerto-rico/3FTTW8JA5SRB61870</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick-xlt/3FTTW8JA5SRB61870</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1012,7 +1079,19 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang-gt-puerto-rico/1FA6P8CF4S5407996</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-maverick/3FTTW8NA6SRB00540</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://apicdn.inventario360.com/vehicles/6XAwNRYp/media_68cad86c834ae.png</image:loc>
+      <image:title>2025 Ford 2025 Ford Maverick - Richard Automotive</image:title>
+      <image:caption>Detalles de 2025 Ford 2025 Ford Maverick. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang-gt/1FA6P8CF4S5407996</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1024,7 +1103,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang-gt-puerto-rico/1FA6P8CF5S5408056</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang-gt/1FA6P8CF5S5408056</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1036,7 +1115,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang-puerto-rico/1FA6P8CFXS5408019</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-mustang/1FA6P8CFXS5408019</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1048,19 +1127,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger-puerto-rico/1FTER4PH4SLE11868</loc>
-    <lastmod>2026-04-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://apicdn.inventario360.com/vehicles/media_684c8cf57ef5f.png</image:loc>
-      <image:title>2025 Ford 2025 Ford Ranger - Richard Automotive</image:title>
-      <image:caption>Detalles de 2025 Ford 2025 Ford Ranger. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
-    </image:image>
-  </url>
-
-  <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger-xl-puerto-rico/1FTER4BHXSLE26236</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger-xl/1FTER4BHXSLE26236</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1072,7 +1139,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger-xlt-puerto-rico/1FTER4HH5SLE51682</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger-xlt/1FTER4HH5SLE51682</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1084,7 +1151,19 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-250-srw-puerto-rico/1FT8W2BT5SEC98894</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-ranger/1FTER4PH4SLE11868</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://apicdn.inventario360.com/vehicles/media_684c8cf57ef5f.png</image:loc>
+      <image:title>2025 Ford 2025 Ford Ranger - Richard Automotive</image:title>
+      <image:caption>Detalles de 2025 Ford 2025 Ford Ranger. Calidad certificada y transparencia total en Puerto Rico.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-250-srw/1FT8W2BT5SEC98894</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -1096,7 +1175,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-250-srw-puerto-rico/1FT8W2BTXSEC96509</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-250-srw/1FT8W2BTXSEC96509</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1108,7 +1187,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-550-drw-xl-puerto-rico/1FDUF5GT0SEC97690</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-super-duty-f-550-drw-xl/1FDUF5GT0SEC97690</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1120,7 +1199,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-transit-cargo-van-puerto-rico/1FTBF4XG9SKB01790</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-2025-ford-transit-cargo-van/1FTBF4XG9SKB01790</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1132,7 +1211,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-bronco-sport-big-bend-2025-puerto-rico/3FMCR9BN2SRF45471</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-bronco-sport-big-bend-2025/3FMCR9BN2SRF45471</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1144,7 +1223,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-bronco-sport-bigbend-2025-puerto-rico/3FMCR9BN4SRF44922</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-bronco-sport-bigbend-2025/3FMCR9BN4SRF44922</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1156,7 +1235,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-2025-puerto-rico/1FTEW2LP4SFA95302</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-2025/1FTEW2LP4SFA95302</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1168,7 +1247,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-king-ranch-puerto-rico/1FTFW6L8XSFB73344</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-king-ranch/1FTFW6L8XSFB73344</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1180,7 +1259,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025-puerto-rico/1FTFW1RG1SFC53729</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025/1FTFW1RG1SFC53729</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1192,7 +1271,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025-puerto-rico/1FTFW1RG6SFC42631</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025/1FTFW1RG6SFC42631</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1204,7 +1283,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025-puerto-rico/1FTFW1RG7SFC54562</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-2025/1FTFW1RG7SFC54562</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1216,7 +1295,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-r-2025-puerto-rico/1FTFW1RJ6SFC05025</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-raptor-r-2025/1FTFW1RJ6SFC05025</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1228,7 +1307,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-xl-2025-puerto-rico/1FTMF1L57SKF58660</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-150-xl-2025/1FTMF1L57SKF58660</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1240,7 +1319,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-550-xl-2025-puerto-rico/1FDUF5GT5SED01040</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-f-550-xl-2025/1FDUF5GT5SED01040</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1252,7 +1331,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-lobo-2025-puerto-rico/3FTCW8PA2SRA98704</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-lobo-2025/3FTCW8PA2SRA98704</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1264,7 +1343,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025-puerto-rico/3FTTW8NA1SRB00249</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025/3FTTW8NA1SRB00249</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1276,7 +1355,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025-puerto-rico/3FTTW8NA4SRB00262</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025/3FTTW8NA4SRB00262</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1288,7 +1367,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025-puerto-rico/3FTTW8NA8SRB00975</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-tremor-2025/3FTTW8NA8SRB00975</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1300,7 +1379,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-2025-puerto-rico/3FTTW8BA1SRB00241</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-2025/3FTTW8BA1SRB00241</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1312,7 +1391,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-2025-puerto-rico/3FTTW8BA5SRB00176</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-2025/3FTTW8BA5SRB00176</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1324,7 +1403,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-canopy-2025-puerto-rico/3FTTW8BA7SRB00194</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xl-canopy-2025/3FTTW8BA7SRB00194</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1336,7 +1415,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xlt-2025-puerto-rico/3FTTW8JA3SRB62113</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xlt-2025/3FTTW8JA3SRB62113</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1348,7 +1427,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xtl-2025-puerto-rico/3FTTW8JAXSRA67905</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-maverick-xtl-2025/3FTTW8JAXSRA67905</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1360,7 +1439,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-mustang-2025-puerto-rico/1FA6P8TH3S5116052</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-mustang-2025/1FA6P8TH3S5116052</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1372,7 +1451,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-lariat-2025-puerto-rico/1FTER4KHXSLE41545</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-lariat-2025/1FTER4KHXSLE41545</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1384,7 +1463,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025-puerto-rico/1FTER4LR0SLE41321</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025/1FTER4LR0SLE41321</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1396,7 +1475,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025-puerto-rico/1FTER4LR2SLE65040</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025/1FTER4LR2SLE65040</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1408,7 +1487,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025-puerto-rico/1FTER4LR6SLE64974</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025/1FTER4LR6SLE64974</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1420,7 +1499,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025-puerto-rico/1FTER4LR6SLE65011</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-raptor-2025/1FTER4LR6SLE65011</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1432,7 +1511,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-stx-2025-puerto-rico/1FTER4PH2SLE41371</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-stx-2025/1FTER4PH2SLE41371</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1444,7 +1523,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-stx-canopy-2025-puerto-rico/1FTER4BH2SLE26344</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-ranger-stx-canopy-2025/1FTER4BH2SLE26344</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1456,7 +1535,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-transit-350-hr-2025-puerto-rico/1FTBW1XG6SKB10588</loc>
+    <loc>https://www.richard-automotive.com/inventario/2025-ford-ford-transit-350-hr-2025/1FTBW1XG6SKB10588</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1468,7 +1547,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-bronco-base-puerto-rico/1FMDE6AH9TLA70038</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-bronco-base/1FMDE6AH9TLA70038</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1480,7 +1559,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-escape-active-puerto-rico/1FMCU0GN8TUA33288</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-escape-active/1FMCU0GN8TUA33288</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1492,7 +1571,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-explorer-active-w100a-pkg-puerto-rico/1FMUK7DHXTGA79804</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-explorer-active-w100a-pkg/1FMUK7DHXTGA79804</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1504,7 +1583,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-mustang-gt-puerto-rico/1FA6P8CF5T5402940</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-mustang-gt/1FA6P8CF5T5402940</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1516,7 +1595,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-mustang-gt-puerto-rico/1FA6P8CF8T5403032</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-mustang-gt/1FA6P8CF8T5403032</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1528,7 +1607,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-250-srw-king-ranch-puerto-rico/1FT8W2BT0TEC65450</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-250-srw-king-ranch/1FT8W2BT0TEC65450</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1540,7 +1619,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-250-srw-puerto-rico/1FT8W2BT4TEC67993</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-250-srw/1FT8W2BT4TEC67993</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1552,7 +1631,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-550-drw-xl-puerto-rico/1FDUF5GT7TEC77941</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-550-drw-xl/1FDUF5GT7TEC77941</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1564,7 +1643,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-550-drw-xl-puerto-rico/1FDUF5GT8TEC77558</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-2026-ford-super-duty-f-550-drw-xl/1FDUF5GT8TEC77558</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1576,7 +1655,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-escape-active-2026-puerto-rico/1FMCU0GN6TUA33161</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-escape-active-2026/1FMCU0GN6TUA33161</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1588,7 +1667,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-escape-active-2026-puerto-rico/1FMCU0GN7TUA33461</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-escape-active-2026/1FMCU0GN7TUA33461</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1600,7 +1679,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026-puerto-rico/1FMUK7DH1TGA79559</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026/1FMUK7DH1TGA79559</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1612,7 +1691,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026-puerto-rico/1FMUK7DH2TGA79439</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026/1FMUK7DH2TGA79439</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1624,7 +1703,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026-puerto-rico/1FMUK7DH2TGA80834</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-active-2026/1FMUK7DH2TGA80834</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1636,7 +1715,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-tremor-2026-puerto-rico/1FMWK8JC9TGA75203</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-explorer-tremor-2026/1FMWK8JC9TGA75203</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1648,7 +1727,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026-puerto-rico/1FTFW1RJ2TFA42827</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026/1FTFW1RJ2TFA42827</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1660,7 +1739,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026-puerto-rico/1FTFW1RJ3TFA43193</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026/1FTFW1RJ3TFA43193</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1672,7 +1751,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026-puerto-rico/1FTFW1RJ4TFA42795</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026/1FTFW1RJ4TFA42795</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1684,7 +1763,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026-puerto-rico/1FTFW1RJ9TFA47796</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-150-raptor-r-2026/1FTFW1RJ9TFA47796</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1696,7 +1775,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-harley-davidson-2026-puerto-rico/1FT8W2BM9TEC08933</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-harley-davidson-2026/1FT8W2BM9TEC08933</loc>
     <lastmod>2026-05-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1708,7 +1787,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-king-ranch-2026-puerto-rico/1FT8W2BT6TEC77490</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-king-ranch-2026/1FT8W2BT6TEC77490</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1720,7 +1799,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-platinum-2026-puerto-rico/1FT8W2BT1TED10637</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-f-250-platinum-2026/1FT8W2BT1TED10637</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1732,7 +1811,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-coupe-2026-puerto-rico/1FA6P8TH9T5110435</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-coupe-2026/1FA6P8TH9T5110435</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1744,7 +1823,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-california-2026-puerto-rico/1FA6P8CF9T5403265</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-california-2026/1FA6P8CF9T5403265</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1756,7 +1835,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-california-special-2026-puerto-rico/1FA6P8CF2T5403415</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-california-special-2026/1FA6P8CF2T5403415</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1768,7 +1847,7 @@
   </url>
 
   <url>
-    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-coupe-2026-puerto-rico/1FA6P8CF3T5403147</loc>
+    <loc>https://www.richard-automotive.com/inventario/2026-ford-ford-mustang-gt-coupe-2026/1FA6P8CF3T5403147</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -1781,28 +1860,28 @@
 
   <url>
     <loc>https://www.richard-automotive.com/privacidad</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/qualify</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/terminos</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
     <loc>https://www.richard-automotive.com/trade-in</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>

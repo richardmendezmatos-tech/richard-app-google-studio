@@ -17,36 +17,42 @@ export async function POST(req: Request) {
     // 1. RAG Semántico en Tiempo Real
     let semanticContext = '';
     const lastMessage = messages[messages.length - 1];
-    
+
     if (lastMessage && lastMessage.role === 'user' && typeof lastMessage.content === 'string') {
       const text = lastMessage.content;
       // Interceptamos consultas con más de 5 caracteres que puedan expresar búsqueda de vehículos
-      const hasSearchIntent = /quiero|busco|interes|auto|carro|guagua|pickup|suv|sedan|precio|pago|cuota|financiar|comprar/i.test(text);
-      
+      const hasSearchIntent =
+        /quiero|busco|interes|auto|carro|guagua|pickup|suv|sedan|precio|pago|cuota|financiar|comprar/i.test(
+          text,
+        );
+
       if (hasSearchIntent && text.length > 5) {
         console.log(`[AI Chat RAG] Detectada intención de búsqueda en mensaje: "${text}"`);
         try {
           const embedding = await sentinelAI.generateEmbedding(text);
           const matches = await searchSemanticInventory(embedding, 0.35, 3);
-          
+
           if (matches && matches.length > 0) {
-            console.log(`[AI Chat RAG] Se encontraron ${matches.length} coincidencias en inventario.`);
-            const carIds = matches.map(m => m.car_id);
-            const { data: dbCars } = await supabase
-              .from('inventory')
-              .select('*')
-              .in('id', carIds);
-              
+            console.log(
+              `[AI Chat RAG] Se encontraron ${matches.length} coincidencias en inventario.`,
+            );
+            const carIds = matches.map((m) => m.car_id);
+            const { data: dbCars } = await supabase.from('inventory').select('*').in('id', carIds);
+
             if (dbCars && dbCars.length > 0) {
               semanticContext = `
               UNIDADES RELEVANTES DISPONIBLES EN INVENTARIO (EN TIEMPO REAL):
-              ${dbCars.map(c => `
+              ${dbCars
+                .map(
+                  (c) => `
                 - Unidad: ${c.year} ${c.make} ${c.model} (${c.condition === 'new' ? 'Nueva' : 'Usada'})
                   ID: ${c.id}
                   Precio de Venta: $${c.price?.toLocaleString()}
                   Pago Mensual Estimado: (Simula la cuota incorporando el Contrato de Servicio)
                   Detalles: ${c.description || 'Prestigiosa unidad en excelentes condiciones.'}
-              `).join('\n')}
+              `,
+                )
+                .join('\n')}
               
               REGLAS DE RECOMENDACIÓN DE INVENTARIO:
               - Recomienda proactivamente y con orgullo estas unidades que ya están en nuestro inventario físico.
@@ -68,11 +74,13 @@ export async function POST(req: Request) {
 
         ESTRATEGIA FINANCIERA PUERTO RICO:
         - Prioriza bancos locales: Banco Popular de PR y FirstBank PR. Son los socios principales para cierres rápidos.
-        - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter(e => e.tier === 1).map(e => `${e.name} (${e.baseRate}% APR)`).join(', ')}.
+        - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter((e) => e.tier === 1)
+          .map((e) => `${e.name} (${e.baseRate}% APR)`)
+          .join(', ')}.
         
         INTELIGENCIA DE MERCADO LOCAL (PR):
         - Contexto regional: ${MARKET_INTELLIGENCE_PR.regionalInsights.metro}
-        - Marcas dominantes: ${MARKET_INTELLIGENCE_PR.powerBrands.map(b => b.name).join(', ')}
+        - Marcas dominantes: ${MARKET_INTELLIGENCE_PR.powerBrands.map((b) => b.name).join(', ')}
         - Tono Richard: Usa terminología local (guagua, pronto, marbete, trade-in, millaje) de forma profesional, premium y estratégica.
         
         ESTRATEGIA EXCLUSIVA DE VENTAS (F&I - PAGO TODO INCLUIDO):

@@ -45,7 +45,7 @@ export class LocalSEOAgent {
    */
   async generateReviewReply(reviewText: string, rating: number, customerName: string) {
     const isPositive = rating >= 4;
-    
+
     const prompt = `
       Eres el Gerente de Reputación de Richard Automotive en Puerto Rico.
       Debes responder a una reseña de Google.

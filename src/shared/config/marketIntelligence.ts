@@ -6,19 +6,40 @@
 
 export const MARKET_INTELLIGENCE_PR = {
   powerBrands: [
-    { name: 'Toyota', demand: 'Extrema', resaleValue: 'Máximo', sentiment: 'Confiabilidad absoluta en la isla.' },
-    { name: 'Hyundai', demand: 'Alta', resaleValue: 'Muy Bueno', sentiment: 'Favorito por garantía y tecnología.' },
-    { name: 'Honda', demand: 'Alta', resaleValue: 'Excelente', sentiment: 'Prestigio y durabilidad.' },
-    { name: 'Kia', demand: 'Media-Alta', resaleValue: 'Bueno', sentiment: 'Diseño y accesibilidad.' },
+    {
+      name: 'Toyota',
+      demand: 'Extrema',
+      resaleValue: 'Máximo',
+      sentiment: 'Confiabilidad absoluta en la isla.',
+    },
+    {
+      name: 'Hyundai',
+      demand: 'Alta',
+      resaleValue: 'Muy Bueno',
+      sentiment: 'Favorito por garantía y tecnología.',
+    },
+    {
+      name: 'Honda',
+      demand: 'Alta',
+      resaleValue: 'Excelente',
+      sentiment: 'Prestigio y durabilidad.',
+    },
+    {
+      name: 'Kia',
+      demand: 'Media-Alta',
+      resaleValue: 'Bueno',
+      sentiment: 'Diseño y accesibilidad.',
+    },
   ],
   regionalInsights: {
-    metro: 'Preferencia por sedanes y SUVs compactas (ahorro de combustible y facilidad de parking).',
+    metro:
+      'Preferencia por sedanes y SUVs compactas (ahorro de combustible y facilidad de parking).',
     isla: 'Alta demanda por 4x4 y Pickups (Tacoma, Frontier) debido al terreno.',
     finanzas: 'Los puertorriqueños valoran el pago mensual sobre el precio total.',
   },
   costBaselines: {
     gasolineLiters: 0.95, // Precio estimado por litro
-    marbeteAnnual: 180,   // Base para autos de pasajeros
+    marbeteAnnual: 180, // Base para autos de pasajeros
     insuranceCompulsory: 99, // ACAA + Compulsorio básico
   },
   depreciationNotes: {
@@ -33,5 +54,5 @@ export const MARKET_INTELLIGENCE_PR = {
     { term: 'Empírica', meaning: 'Credit Score' },
     { term: 'Unidad', meaning: 'Auto/Vehicle' },
     { term: 'G-Matrix', meaning: 'Inspección certificada Richard Automotive' },
-  ]
+  ],
 };

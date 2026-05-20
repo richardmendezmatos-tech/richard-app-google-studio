@@ -18,14 +18,13 @@ export const SecurityTabView: React.FC = () => {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
-        photoURL: user.photoURL
+        photoURL: user.photoURL,
       });
       alert('✅ Dispositivo vinculado exitosamente.');
     } catch (err: any) {
       alert('Error: ' + err.message);
     }
   };
-
 
   return (
     <div className="space-y-6">

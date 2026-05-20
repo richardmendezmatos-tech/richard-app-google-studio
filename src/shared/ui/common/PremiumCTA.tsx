@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useRef, useState } from 'react';
 import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
@@ -18,7 +18,7 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({
   icon,
   variant = 'secondary',
   onClick,
-  className = ""
+  className = '',
 }) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -38,7 +38,7 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({
     const centerY = rect.top + rect.height / 2;
     const distanceX = e.clientX - centerX;
     const distanceY = e.clientY - centerY;
-    
+
     // Attract center to mouse within bounds
     x.set(distanceX * 0.2);
     y.set(distanceY * 0.2);
@@ -51,9 +51,9 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({
   };
 
   const styles: any = {
-    primary: "bg-brand-cyan text-slate-950 shadow-[0_20px_50px_-10px_rgba(0,229,255,0.3)]",
-    secondary: "bg-white/5 text-white border border-white/10",
-    tertiary: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+    primary: 'bg-brand-cyan text-slate-950 shadow-[0_20px_50px_-10px_rgba(0,229,255,0.3)]',
+    secondary: 'bg-white/5 text-white border border-white/10',
+    tertiary: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
   };
 
   return (
@@ -68,27 +68,27 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({
       className={`group relative overflow-hidden flex items-center justify-between p-5 rounded-2xl transition-colors duration-500 ${styles[variant]} ${className}`}
     >
       {/* Cinematic Flare Effect */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         initial={{ x: '-100%', opacity: 0 }}
         animate={hovered ? { x: '100%', opacity: 1 } : { x: '-100%', opacity: 0 }}
-        transition={{ duration: 0.8, ease: "circOut" }}
+        transition={{ duration: 0.8, ease: 'circOut' }}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)"
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
         }}
       />
 
       {/* Content */}
       <div className="flex flex-col items-start text-left relative z-10">
-        <span className={`text-[8px] font-black uppercase tracking-[0.4em] mb-1 opacity-60 ${variant === 'primary' ? 'text-slate-900' : ''}`}>
+        <span
+          className={`text-[8px] font-black uppercase tracking-[0.4em] mb-1 opacity-60 ${variant === 'primary' ? 'text-slate-900' : ''}`}
+        >
           {tag}
         </span>
-        <span className="font-cinematic text-xl tracking-wider leading-none">
-          {label}
-        </span>
+        <span className="font-cinematic text-xl tracking-wider leading-none">{label}</span>
       </div>
 
-      <motion.div 
+      <motion.div
         animate={hovered ? { x: 5, scale: 1.1 } : { x: 0, scale: 1 }}
         className={`relative z-10 p-2 rounded-xl transition-all ${variant === 'primary' ? 'bg-black/10' : 'bg-white/5'}`}
       >

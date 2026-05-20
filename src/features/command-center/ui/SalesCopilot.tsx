@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Target, MessageSquare, Save, Zap, Bot, User, Loader2 } from 'lucide-react';
@@ -52,7 +52,7 @@ const SalesCopilot: React.FC = () => {
   useEffect(() => {
     chatHistory.current = [
       { role: 'user', content: 'Inicia la conversación.' },
-      { role: 'agent', content: messages[0].content }
+      { role: 'agent', content: messages[0].content },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,8 +79,8 @@ const SalesCopilot: React.FC = () => {
     try {
       // Usar el aiService que llama a nuestra API interna (segura)
       const responseText = await generateText(
-        `History:\n${chatHistory.current.map(h => `${h.role}: ${h.content}`).join('\n')}\nUser: ${newUserMsg}`,
-        fiSystemPrompt
+        `History:\n${chatHistory.current.map((h) => `${h.role}: ${h.content}`).join('\n')}\nUser: ${newUserMsg}`,
+        fiSystemPrompt,
       );
 
       let finalContent = responseText;

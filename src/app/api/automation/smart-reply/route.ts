@@ -22,10 +22,12 @@ export async function POST(req: Request) {
       3. Sé servicial y empático.
     `;
 
-    const suggestion = await sentinelAI.quickGen(prompt, 'Eres un cerrador de ventas experto en Richard Automotive.');
+    const suggestion = await sentinelAI.quickGen(
+      prompt,
+      'Eres un cerrador de ventas experto en Richard Automotive.',
+    );
 
     return NextResponse.json({ suggestion });
-
   } catch (error: any) {
     console.error('Smart Reply API Error:', error);
     return NextResponse.json({ error: 'Failed to generate reply' }, { status: 500 });

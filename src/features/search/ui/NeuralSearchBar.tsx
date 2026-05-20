@@ -37,7 +37,7 @@ export const NeuralSearchBar: React.FC<NeuralSearchBarProps> = ({ onResults, cla
 
       // 2. Query Supabase for semantic matches
       const matches = await searchSemanticInventory(embedding, 0.4, 5);
-      
+
       if (onResults) {
         onResults(matches);
       }
@@ -75,7 +75,9 @@ export const NeuralSearchBar: React.FC<NeuralSearchBarProps> = ({ onResults, cla
         </div>
       </form>
       {error && (
-        <p className="absolute -bottom-8 left-0 text-red-400 text-xs font-tech tracking-wider">{error}</p>
+        <p className="absolute -bottom-8 left-0 text-red-400 text-xs font-tech tracking-wider">
+          {error}
+        </p>
       )}
     </div>
   );

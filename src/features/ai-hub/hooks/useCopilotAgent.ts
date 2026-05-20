@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useMemo } from 'react';
 import { useChat } from '@ai-sdk/react';
@@ -43,12 +43,23 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         const rawMessage = (event as any).message || event;
         const parts = rawMessage.parts || [];
         const message = {
-            ...rawMessage,
-            content: rawMessage.content || parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || '',
-            toolInvocations: rawMessage.toolInvocations || parts.filter((p: any) => p.type.startsWith('tool-')).map((p: any) => ({
+          ...rawMessage,
+          content:
+            rawMessage.content ||
+            parts
+              .filter((p: any) => p.type === 'text')
+              .map((p: any) => p.text)
+              .join('') ||
+            '',
+          toolInvocations:
+            rawMessage.toolInvocations ||
+            parts
+              .filter((p: any) => p.type.startsWith('tool-'))
+              .map((p: any) => ({
                 ...p,
                 toolName: p.type.replace('tool-', ''),
-            })) || []
+              })) ||
+            [],
         };
         options.onFinish(message as Message);
       }
@@ -60,22 +71,33 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
 
   // Map messages to include content and toolInvocations for backward compatibility
   const messages = useMemo(() => {
-    return chatProps.messages.map(m => {
-        const parts = (m as any).parts || [];
-        const toolInvocations = (m as any).toolInvocations || parts.filter((p: any) => p.type.startsWith('tool-')).map((p: any) => {
+    return chatProps.messages.map((m) => {
+      const parts = (m as any).parts || [];
+      const toolInvocations =
+        (m as any).toolInvocations ||
+        parts
+          .filter((p: any) => p.type.startsWith('tool-'))
+          .map((p: any) => {
             // Map new SDK part format to old toolInvocation format if necessary
             // In many cases, the properties (toolCallId, state, args) are already in the part object
             return {
-                ...p,
-                toolName: p.toolName || p.type.replace('tool-', ''),
+              ...p,
+              toolName: p.toolName || p.type.replace('tool-', ''),
             };
-        }) || [];
+          }) ||
+        [];
 
-        return {
-          ...m,
-          content: (m as any).content || parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || '',
-          toolInvocations
-        };
+      return {
+        ...m,
+        content:
+          (m as any).content ||
+          parts
+            .filter((p: any) => p.type === 'text')
+            .map((p: any) => p.text)
+            .join('') ||
+          '',
+        toolInvocations,
+      };
     }) as Message[];
   }, [chatProps.messages]);
 
@@ -86,13 +108,13 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
-    
+
     if ((chatProps as any).append) {
-        (chatProps as any).append({ role: 'user', content: input } as any);
+      (chatProps as any).append({ role: 'user', content: input } as any);
     } else if ((chatProps as any).sendMessage) {
-        (chatProps as any).sendMessage(input);
+      (chatProps as any).sendMessage(input);
     }
-    
+
     setInput('');
   };
 

@@ -13,10 +13,11 @@ export const orchestrateResponse = async (input: {
 }): Promise<{ response: string; metadata: any }> => {
   console.log(`[RAG Synergy Logic] Processing message: "${input.message.substring(0, 50)}..."`);
   return {
-    response: "I'm your AI assistant, but my backend logic is currently awaiting Phase 2 integration.",
+    response:
+      "I'm your AI assistant, but my backend logic is currently awaiting Phase 2 integration.",
     metadata: {
       status: 'stub',
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   };
 };

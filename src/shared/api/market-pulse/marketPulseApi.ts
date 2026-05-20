@@ -38,16 +38,16 @@ export const getMarketTrend = async (make: string, model: string): Promise<Marke
 const simulateMarketTrend = (make: string, model: string): MarketTrend => {
   // Heurística base: Precios promedio en PR
   const basePrices: Record<string, number> = {
-    'Toyota': 25000,
-    'Honda': 23000,
-    'Lexus': 45000,
-    'BMW': 55000,
-    'Ford': 30000,
-    'Jeep': 35000,
+    Toyota: 25000,
+    Honda: 23000,
+    Lexus: 45000,
+    BMW: 55000,
+    Ford: 30000,
+    Jeep: 35000,
   };
 
   const avg = basePrices[make] || 20000;
-  
+
   return {
     make,
     model,
@@ -61,7 +61,7 @@ const simulateMarketTrend = (make: string, model: string): MarketTrend => {
 
 export const calculateCompetitiveness = (price: number, marketAvg: number) => {
   const diff = ((marketAvg - price) / marketAvg) * 100;
-  
+
   if (diff > 5) return { status: 'excellent', label: 'Precio Agresivo', score: 95 };
   if (diff > 0) return { status: 'good', label: 'Buen Precio', score: 85 };
   if (diff > -5) return { status: 'fair', label: 'Precio de Mercado', score: 70 };

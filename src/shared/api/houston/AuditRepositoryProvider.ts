@@ -6,5 +6,5 @@ import { AuditRepository } from './AuditRepository';
  * de forma asíncrona, evitando fugas de dependencias de cliente.
  */
 export const getAuditRepository = async () => {
-    return new AuditRepository();
+  return new AuditRepository();
 };

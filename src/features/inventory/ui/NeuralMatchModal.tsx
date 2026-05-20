@@ -7,7 +7,6 @@ import { AuditRepository } from '@/shared/api/houston/AuditRepository';
 
 const auditRepo = new AuditRepository();
 
-
 import {
   X,
   BrainCircuit,
@@ -184,7 +183,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
           'info',
           `Neural Match Scan Initiated`,
           { profile_length: finalProfile.length, tags: activeTags },
-          'NeuralMatchModal'
+          'NeuralMatchModal',
         );
 
         const matchRes = await fetch('/api/ai/match', {
@@ -194,13 +193,15 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
         });
 
         if (!matchRes.ok) {
-           throw new Error('AI Intelligence Offline');
+          throw new Error('AI Intelligence Offline');
         }
 
         const { results, intent } = await matchRes.json();
 
         setResults(results);
-        setUserPersona(intent?.detected_lifestyle?.join(', ') || activeTags.join(', ') || 'Perfil Detectado');
+        setUserPersona(
+          intent?.detected_lifestyle?.join(', ') || activeTags.join(', ') || 'Perfil Detectado',
+        );
       } catch (error) {
         console.error('Scan failed', error);
         setResults([]);
@@ -505,7 +506,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                         {results[0].intent.vehicleConstraints.minSeats}+ Asientos
                       </div>
                     )}
-                     {results[0].intent.vehicleConstraints?.type && (
+                    {results[0].intent.vehicleConstraints?.type && (
                       <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-lg text-[10px] font-bold text-purple-400 uppercase tracking-wider">
                         Tipo: {results[0].intent.vehicleConstraints.type}
                       </div>

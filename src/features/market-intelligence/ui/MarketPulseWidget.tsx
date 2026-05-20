@@ -1,9 +1,13 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Info, AlertCircle, CheckCircle2, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getMarketTrend, calculateCompetitiveness, MarketTrend } from '@/shared/api/market-pulse/marketPulseApi';
+import {
+  getMarketTrend,
+  calculateCompetitiveness,
+  MarketTrend,
+} from '@/shared/api/market-pulse/marketPulseApi';
 
 interface MarketPulseWidgetProps {
   make: string;
@@ -11,7 +15,11 @@ interface MarketPulseWidgetProps {
   currentPrice: number;
 }
 
-export const MarketPulseWidget: React.FC<MarketPulseWidgetProps> = ({ make, model, currentPrice }) => {
+export const MarketPulseWidget: React.FC<MarketPulseWidgetProps> = ({
+  make,
+  model,
+  currentPrice,
+}) => {
   const [trend, setTrend] = useState<MarketTrend | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,19 +51,28 @@ export const MarketPulseWidget: React.FC<MarketPulseWidgetProps> = ({ make, mode
     >
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl" />
-      
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-            Market Pulse <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20">SENTINEL N25</span>
+            Market Pulse{' '}
+            <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20">
+              SENTINEL N25
+            </span>
           </h3>
-          <p className="text-xs text-slate-500 mt-1">Comparativa Local: {make} {model}</p>
+          <p className="text-xs text-slate-500 mt-1">
+            Comparativa Local: {make} {model}
+          </p>
         </div>
-        <div className={`p-2 rounded-xl border ${
-          comp?.status === 'excellent' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
-          comp?.status === 'good' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' :
-          'bg-amber-500/10 border-amber-500/20 text-amber-400'
-        }`}>
+        <div
+          className={`p-2 rounded-xl border ${
+            comp?.status === 'excellent'
+              ? 'bg-green-500/10 border-green-500/20 text-green-400'
+              : comp?.status === 'good'
+                ? 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+          }`}
+        >
           {comp?.status === 'excellent' ? <CheckCircle2 size={20} /> : <Info size={20} />}
         </div>
       </div>
@@ -82,9 +99,11 @@ export const MarketPulseWidget: React.FC<MarketPulseWidgetProps> = ({ make, mode
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${comp?.score}%` }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 1, ease: 'easeOut' }}
             className={`h-full bg-linear-to-r ${
-              comp?.status === 'excellent' ? 'from-green-500 to-emerald-400' : 'from-cyan-500 to-blue-600'
+              comp?.status === 'excellent'
+                ? 'from-green-500 to-emerald-400'
+                : 'from-cyan-500 to-blue-600'
             }`}
           />
         </div>
@@ -93,9 +112,9 @@ export const MarketPulseWidget: React.FC<MarketPulseWidgetProps> = ({ make, mode
       <div className="mt-6 p-4 bg-cyan-500/5 rounded-2xl border border-cyan-500/10 flex items-start gap-3">
         <TrendingUp className="text-cyan-400 mt-0.5 shrink-0" size={16} />
         <p className="text-[11px] text-slate-300 leading-relaxed">
-          {comp?.status === 'excellent' 
-            ? "Tu precio está significativamente por debajo del promedio. Alta probabilidad de venta rápida (DTS < 15 días)."
-            : "Estás alineado con el mercado. Considera resaltar el millaje o extras para diferenciar la unidad."}
+          {comp?.status === 'excellent'
+            ? 'Tu precio está significativamente por debajo del promedio. Alta probabilidad de venta rápida (DTS < 15 días).'
+            : 'Estás alineado con el mercado. Considera resaltar el millaje o extras para diferenciar la unidad.'}
         </p>
       </div>
     </motion.div>

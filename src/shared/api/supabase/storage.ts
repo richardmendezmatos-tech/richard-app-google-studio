@@ -9,7 +9,7 @@ export const storageService = {
    */
   uploadImage: async (file: File, bucket: string = 'inventory'): Promise<string> => {
     const supabase = createClient();
-    
+
     // Create a unique file name
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
@@ -17,12 +17,10 @@ export const storageService = {
 
     console.log(`📤 [Storage] Uploading to '${bucket}': ${filePath}`);
 
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
-      });
+    const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
 
     if (error) {
       console.error(`❌ [Storage] Upload Failed: ${error.message}`, error);
@@ -30,9 +28,9 @@ export const storageService = {
     }
 
     // Get Public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(filePath);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
     if (!publicUrl) {
       console.error('❌ [Storage] Failed to generate public URL');
@@ -41,5 +39,5 @@ export const storageService = {
 
     console.log('✅ [Storage] Upload Successful:', publicUrl);
     return publicUrl;
-  }
+  },
 };

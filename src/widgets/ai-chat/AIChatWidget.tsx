@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Car } from '@/shared/types/types';
@@ -311,7 +311,8 @@ const AIChatWidget: React.FC<Props> = () => {
                           </div>
                         </div>
                         <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                          {result.message} Richard ha sido notificado y se pondrá en contacto pronto.
+                          {result.message} Richard ha sido notificado y se pondrá en contacto
+                          pronto.
                         </p>
                         <div className="pt-2 border-t border-primary/10 flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-primary">
                           <span>Status: Secured</span>
@@ -342,19 +343,31 @@ const AIChatWidget: React.FC<Props> = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-3 relative z-10">
                           <div className="flex justify-between items-end border-b border-white/10 pb-2">
-                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Poder de Pago</span>
-                            <span className="text-lg font-black text-white">${result.buyingPower.toLocaleString()}</span>
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                              Poder de Pago
+                            </span>
+                            <span className="text-lg font-black text-white">
+                              ${result.buyingPower.toLocaleString()}
+                            </span>
                           </div>
                           <div className="flex justify-between items-end border-b border-white/10 pb-2">
-                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Pago Estimado</span>
-                            <span className="text-md font-bold text-primary">${result.maxMonthlyPayment}/mes</span>
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                              Pago Estimado
+                            </span>
+                            <span className="text-md font-bold text-primary">
+                              ${result.maxMonthlyPayment}/mes
+                            </span>
                           </div>
                           <div className="flex justify-between items-end">
-                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Interés (APR)</span>
-                            <span className="text-sm font-mono text-emerald-400">{result.apr}%</span>
+                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                              Interés (APR)
+                            </span>
+                            <span className="text-sm font-mono text-emerald-400">
+                              {result.apr}%
+                            </span>
                           </div>
                         </div>
 
@@ -362,12 +375,14 @@ const AIChatWidget: React.FC<Props> = () => {
                           *Análisis preliminar basado en crédito {result.creditTier}.
                         </p>
 
-                        <button 
+                        <button
                           onClick={() => {
                             // Event to open formal pre-qual view
-                            window.dispatchEvent(new CustomEvent('ra_open_formal_prequal', { 
-                              detail: { creditTier: result.creditTier, monthlyIncome: 1 } 
-                            }));
+                            window.dispatchEvent(
+                              new CustomEvent('ra_open_formal_prequal', {
+                                detail: { creditTier: result.creditTier, monthlyIncome: 1 },
+                              }),
+                            );
                           }}
                           className="w-full py-3 bg-primary hover:bg-cyan-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 relative z-10"
                         >

@@ -11,7 +11,7 @@ export const executeSecureSale = async (carId: string, leadData: any, dealerId: 
   try {
     const repository = new SupabaseSaleRepository();
     const result = await repository.executeSecureSale(carId, leadData, dealerId);
-    
+
     console.log('✅ Transacción de venta completada con éxito');
     return result;
   } catch (error: any) {

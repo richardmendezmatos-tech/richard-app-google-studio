@@ -66,7 +66,7 @@ export class IdentifyOutreachOpportunities {
       determineAction: (lead) => {
         const score = lead.predictiveScore || 0;
         const hasFinancialIntent = (lead as any).metadata?.financialsViewed;
-        
+
         if (score > 92 && hasFinancialIntent) return 'Sentinel Elite Closing (Immediate)';
         if (score > 85) return 'Strategic Priority Follow-up';
         return 'Standard Nurturing Loop';
@@ -75,11 +75,11 @@ export class IdentifyOutreachOpportunities {
         const vehicle = lead.vehicleOfInterest || 'el vehículo de tus sueños';
         const score = lead.predictiveScore || 0;
         const firstName = lead.firstName || 'amigo';
-        
+
         if (score > 92) {
           return `Hola ${firstName}, soy Jules. 💎 He detectado que el ${vehicle} está en su fase crítica de rotación. Richard me ha autorizado una ventana de cierre preferencial para ti. ¿Te llamo ahora?`;
         }
-        
+
         return `Hola ${firstName}, el ${vehicle} sigue disponible con beneficios Sentinel. Richard acaba de optimizar las cuotas para esta unidad. ¿Te gustaría ver el nuevo desglose?`;
       },
       estimateRoi: (lead) => {

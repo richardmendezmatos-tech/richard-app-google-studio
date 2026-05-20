@@ -3,6 +3,7 @@ import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { SITE_CONFIG } from '../src/shared/config/siteConfig.ts';
 import { slugify, generateVehicleSlug } from '../src/shared/lib/utils/seo.ts';
+import { CITIES_PR } from '../src/shared/config/cities.ts';
 
 const ROOT = process.cwd();
 const OUTPUT_PATH = path.join(ROOT, 'public', 'sitemap.xml');
@@ -129,13 +130,13 @@ const buildXml = (urls: any[]) => {
 };
 
 const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
-  const locations = ['Bayamon', 'San Juan', 'Guaynabo', 'Carolina', 'Caguas', 'Ponce', 'Mayaguez', 'Dorado'];
+  const locations = Object.values(CITIES_PR);
   const categories = ['suv', 'sedan', 'coupe', 'hatchback', 'performance', 'luxury'];
 
   const entries: SitemapEntry[] = [];
 
-  for (const location of locations) {
-    const locSlug = location.toLowerCase().replace(/\s+/g, '-');
+  for (const city of locations) {
+    const locSlug = city.slug;
 
     // Base location URL
     entries.push({

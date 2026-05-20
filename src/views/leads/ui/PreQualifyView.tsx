@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { useLocation } from '@/shared/lib/next-route-adapter';
@@ -43,12 +43,14 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
   const saveApplication = useSaveApplication();
 
   // Retrieve vehicle context if available
-  const dealContext = propDealContext || (location.state as
-    | {
-        vehicle: { id: string; name: string; price: number; image?: string; img?: string };
-        quote: { monthlyPayment: number; downPayment: number; term: number };
-      }
-    | undefined);
+  const dealContext =
+    propDealContext ||
+    (location.state as
+      | {
+          vehicle: { id: string; name: string; price: number; image?: string; img?: string };
+          quote: { monthlyPayment: number; downPayment: number; term: number };
+        }
+      | undefined);
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +152,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
             }
           : {}),
       };
-      
+
       await DI.getApplicationRepository().submitApplication(submissionData, 'richard-automotive');
       const refId = `CASE-${Math.floor(Math.random() * 1000000)}`;
 
@@ -175,10 +177,12 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         status: 'pending',
         type: 'pre-qualification',
         referenceId: refId,
-        vehicle: dealContext ? {
-          name: dealContext.vehicle.name,
-          price: dealContext.vehicle.price
-        } : undefined
+        vehicle: dealContext
+          ? {
+              name: dealContext.vehicle.name,
+              price: dealContext.vehicle.price,
+            }
+          : undefined,
       };
 
       saveApplication.mutate(newApp);
@@ -319,9 +323,9 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
               Nuestros Socios Bancarios
             </p>
             <div className="p-4 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
-              <img 
-                src="/assets/branding/bank-partners-pr.png" 
-                alt="Bank Partners PR" 
+              <img
+                src="/assets/branding/bank-partners-pr.png"
+                alt="Bank Partners PR"
                 className="w-full opacity-80 hover:opacity-100 transition-opacity"
               />
             </div>
@@ -363,9 +367,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                 </div>
               )}
 
-              {step === 1 && (
-                <RewardPicker onComplete={() => setStep(2)} />
-              )}
+              {step === 1 && <RewardPicker onComplete={() => setStep(2)} />}
 
               {step === 2 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">
@@ -436,7 +438,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                   <p className="text-slate-400 text-sm mb-6 text-center">
                     Ajusta tu pronto y el término para ver un estimado mensual.
                   </p>
-                  
+
                   {/* CRO: Social Proof / Urgency */}
                   <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-center gap-2 mb-4">
                     <span className="text-sm">🔥</span>
@@ -444,7 +446,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                       Alta Demanda: 4 personas han cotizado este término hoy
                     </span>
                   </div>
-                  
+
                   <div className="space-y-6 bg-slate-900/40 p-6 rounded-2xl border border-white/5">
                     {/* Down Payment Slider */}
                     <div className="space-y-2">
@@ -483,7 +485,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                           <button
                             key={t}
                             type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, term: t }))}
+                            onClick={() => setFormData((prev) => ({ ...prev, term: t }))}
                             className={`py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
                               formData.term === t
                                 ? 'bg-primary text-white shadow-lg shadow-primary/20'
@@ -502,7 +504,8 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                         Pago Mensual Estimado
                       </p>
                       <p className="text-5xl font-black text-white tracking-tight animate-pulse">
-                        ${estimatedMonthly.toLocaleString()}<span className="text-sm text-slate-500">/m*</span>
+                        ${estimatedMonthly.toLocaleString()}
+                        <span className="text-sm text-slate-500">/m*</span>
                       </p>
                       {bonusAmount > 0 && (
                         <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-1.5 flex items-center justify-center gap-1 animate-pulse">
@@ -510,7 +513,9 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                         </p>
                       )}
                       <p className="text-[9px] text-slate-600 mt-2 italic">
-                        *Estimado basado en un precio de unidad de ${vehiclePrice.toLocaleString()} e interés del 8%, restando tu pronto de ${downPaymentVal.toLocaleString()}{bonusAmount > 0 ? ` y bono de $${bonusAmount}` : ''}.
+                        *Estimado basado en un precio de unidad de ${vehiclePrice.toLocaleString()}{' '}
+                        e interés del 8%, restando tu pronto de ${downPaymentVal.toLocaleString()}
+                        {bonusAmount > 0 ? ` y bono de $${bonusAmount}` : ''}.
                       </p>
                     </div>
                   </div>
@@ -519,7 +524,8 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                     onClick={() => setStep(5)}
                     className="mt-6 w-full py-4 bg-primary hover:bg-cyan-500 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/30 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 animate-btn-glow"
                   >
-                    Validar Mi Pago de ${estimatedMonthly.toLocaleString()}/m <ChevronRight size={16} />
+                    Validar Mi Pago de ${estimatedMonthly.toLocaleString()}/m{' '}
+                    <ChevronRight size={16} />
                   </button>
                 </div>
               )}
@@ -603,7 +609,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                       </label>
                       <div className="relative">
                         <input
-                           type={showSSN ? 'text' : 'password'}
+                          type={showSSN ? 'text' : 'password'}
                           name="ssn"
                           autoComplete="off"
                           maxLength={11}

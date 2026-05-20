@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect } from 'react';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';

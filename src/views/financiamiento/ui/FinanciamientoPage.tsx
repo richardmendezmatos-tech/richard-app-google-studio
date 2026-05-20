@@ -160,11 +160,14 @@ const FinanciamientoPage: React.FC = () => {
               </span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">
-              Calcula tu Pago <span className="bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Mensual Ahora</span>
+              Calcula tu Pago{' '}
+              <span className="bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Mensual Ahora
+              </span>
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Sin impacto a tu crédito. Sin presión. Selecciona tu perfil crediticio, ajusta el pronto y 
-              descubre exactamente cuánto pagas al mes — en segundos.
+              Sin impacto a tu crédito. Sin presión. Selecciona tu perfil crediticio, ajusta el
+              pronto y descubre exactamente cuánto pagas al mes — en segundos.
             </p>
           </div>
           <ApprovalSimulatorWidget dealerId="richard-automotive" />

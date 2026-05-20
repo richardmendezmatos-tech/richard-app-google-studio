@@ -43,9 +43,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         <NotificationProvider>
           <TelemetryProvider>
             <I18nextProvider i18n={i18n}>
-              <LazyMotion features={domAnimation}>
-                {children}
-              </LazyMotion>
+              <LazyMotion features={domAnimation}>{children}</LazyMotion>
             </I18nextProvider>
           </TelemetryProvider>
         </NotificationProvider>

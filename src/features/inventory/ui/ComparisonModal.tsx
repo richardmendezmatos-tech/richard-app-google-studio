@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Car } from '@/shared/types/types';
@@ -61,7 +61,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
       <div className="relative z-10 flex h-full w-full flex-col p-6 lg:p-12">
         {/* Header Protocol */}
         <div className="mb-12 text-center">
-          <motion.div 
+          <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             className="flex flex-col items-center gap-3"
@@ -81,11 +81,10 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
 
         {/* Binary Arena */}
         <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-0 relative">
-          
           {/* Unit Alpha */}
-          <UnitPanel 
-            car={car1} 
-            side="left" 
+          <UnitPanel
+            car={car1}
+            side="left"
             isWinner={result?.winnerId === car1.id}
             isLoser={result && result.winnerId !== car1.id}
             stats={mockStats(car1)}
@@ -99,33 +98,35 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
                   key="battle-btn"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  whileHover={{ scale: 1.1, boxShadow: "0 0 40px rgba(0, 174, 217, 0.4)" }}
+                  whileHover={{ scale: 1.1, boxShadow: '0 0 40px rgba(0, 174, 217, 0.4)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleBattle}
                   className="group relative flex h-28 w-28 items-center justify-center rounded-full border-2 border-cyan-500/50 bg-slate-900 shadow-2xl transition-all"
                 >
-                  <span className="font-tech text-3xl font-black italic text-white group-hover:text-cyan-400">VS</span>
+                  <span className="font-tech text-3xl font-black italic text-white group-hover:text-cyan-400">
+                    VS
+                  </span>
                   <div className="absolute inset-0 rounded-full border-t-2 border-cyan-400 animate-spin-slow" />
                 </motion.button>
               ) : loading ? (
-                <motion.div 
-                  key="loading-node"
-                  className="flex flex-col items-center gap-6"
-                >
+                <motion.div key="loading-node" className="flex flex-col items-center gap-6">
                   <div className="relative h-24 w-24">
-                    <motion.div 
+                    <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       className="h-full w-full rounded-full border-4 border-white/5 border-t-cyan-500"
                     />
-                    <Cpu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-cyan-400 animate-pulse" size={32} />
+                    <Cpu
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-cyan-400 animate-pulse"
+                      size={32}
+                    />
                   </div>
                   <p className="font-tech text-[10px] uppercase tracking-[0.4em] text-cyan-400 animate-pulse">
                     Computing Vectors...
                   </p>
                 </motion.div>
               ) : (
-                <motion.div 
+                <motion.div
                   key="result-node"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -136,7 +137,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
                       Sync Complete
                     </span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setResult(null)}
                     className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors underline underline-offset-4"
                   >
@@ -148,20 +149,19 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
           </div>
 
           {/* Unit Beta */}
-          <UnitPanel 
-            car={car2} 
-            side="right" 
+          <UnitPanel
+            car={car2}
+            side="right"
             isWinner={result?.winnerId === car2.id}
             isLoser={result && result.winnerId !== car2.id}
             stats={mockStats(car2)}
           />
-
         </div>
 
         {/* Richard's Strategic Verdict Overlay */}
         <AnimatePresence>
           {result && (
-            <motion.div 
+            <motion.div
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 40, opacity: 0 }}
@@ -196,11 +196,11 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
 
 const UnitPanel = ({ car, side, isWinner, isLoser, stats }: any) => {
   return (
-    <motion.div 
-      animate={{ 
+    <motion.div
+      animate={{
         scale: isWinner ? 1.05 : isLoser ? 0.95 : 1,
         opacity: isLoser ? 0.4 : 1,
-        filter: isLoser ? 'grayscale(1)' : 'grayscale(0)'
+        filter: isLoser ? 'grayscale(1)' : 'grayscale(0)',
       }}
       className={`flex-1 flex flex-col items-center transition-all duration-700 w-full ${side === 'left' ? 'lg:pr-12' : 'lg:pl-12'}`}
     >
@@ -212,31 +212,44 @@ const UnitPanel = ({ car, side, isWinner, isLoser, stats }: any) => {
           className={`w-full object-contain drop-shadow-[0_30px_60px_rgba(34,211,238,0.2)] ${side === 'right' ? '-scale-x-100' : ''}`}
         />
         {isWinner && (
-          <motion.div 
+          <motion.div
             initial={{ scale: 0, rotate: -20 }}
             animate={{ scale: 1, rotate: 0 }}
             className="absolute -top-12 left-1/2 -translate-x-1/2"
           >
             <div className="flex flex-col items-center">
-              <Trophy size={56} className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]" fill="currentColor" />
-              <span className="mt-2 font-tech text-[10px] font-black uppercase tracking-[0.3em] text-amber-400">Dominio Richard</span>
+              <Trophy
+                size={56}
+                className="text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]"
+                fill="currentColor"
+              />
+              <span className="mt-2 font-tech text-[10px] font-black uppercase tracking-[0.3em] text-amber-400">
+                Dominio Richard
+              </span>
             </div>
           </motion.div>
         )}
       </div>
 
       <div className="text-center w-full">
-        <h3 className="font-tech text-3xl font-black uppercase tracking-tight text-white mb-2">{car.name}</h3>
+        <h3 className="font-tech text-3xl font-black uppercase tracking-tight text-white mb-2">
+          {car.name}
+        </h3>
         <p className="font-cinematic text-2xl text-cyan-400 mb-8">${car.price.toLocaleString()}</p>
-        
+
         {/* Simplified Radar/Stats Bar */}
         <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
           {stats.map((s: any, i: number) => (
-            <div key={i} className="rounded-2xl border border-white/5 bg-white/5 p-4 flex flex-col items-center gap-2">
+            <div
+              key={i}
+              className="rounded-2xl border border-white/5 bg-white/5 p-4 flex flex-col items-center gap-2"
+            >
               <div className="text-slate-500">{s.icon}</div>
-              <span className="font-tech text-[9px] uppercase tracking-widest text-slate-400">{s.label}</span>
+              <span className="font-tech text-[9px] uppercase tracking-widest text-slate-400">
+                {s.label}
+              </span>
               <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${s.value}%` }}
                   transition={{ delay: 0.5, duration: 1 }}
@@ -256,8 +269,12 @@ const VerdictCard = ({ cat, car1, car2 }: any) => {
   return (
     <div className="group relative rounded-4xl border border-white/5 bg-white/5 p-6 transition-all hover:bg-white/10">
       <div className="mb-4 flex items-center justify-between">
-        <span className="font-tech text-[9px] uppercase tracking-[0.2em] text-slate-500">{cat.name}</span>
-        <div className={`h-2 w-2 rounded-full ${cat.winnerId === car1.id ? 'bg-cyan-500' : 'bg-primary'}`} />
+        <span className="font-tech text-[9px] uppercase tracking-[0.2em] text-slate-500">
+          {cat.name}
+        </span>
+        <div
+          className={`h-2 w-2 rounded-full ${cat.winnerId === car1.id ? 'bg-cyan-500' : 'bg-primary'}`}
+        />
       </div>
       <div className="mb-3 font-tech text-xs font-black uppercase text-white">{winner.name}</div>
       <p className="text-xs leading-relaxed text-slate-400 italic">"{cat.reason}"</p>

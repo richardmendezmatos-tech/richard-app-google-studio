@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from '@/shared/lib/next-route-adapter';
@@ -59,7 +59,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
         setExpressForm(parsed);
         setIsKnownUser(true);
       } catch (e) {
-        console.error("Error loading saved info", e);
+        console.error('Error loading saved info', e);
       }
     }
   }, []);
@@ -113,7 +113,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
       phone: '17875550000', // Real dealer WhatsApp
       text: `¡Hola Richard! 👋 Acabo de asegurar mi Bono de Acción Rápida ($300) en el Command Center.${vin ? ` Estoy interesado en el vehículo con VIN: ${vin}.` : ''} Mi código de cupón es: ${generatedVoucher}. Favor de aplicarlo a mi expediente.`,
       source: 'Sentinel_Express_Bono300',
-      campaign: 'BONO_ACCION_RAPIDA_24H'
+      campaign: 'BONO_ACCION_RAPIDA_24H',
     });
     window.open(url, '_blank');
   };
@@ -122,7 +122,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
     <div className="min-h-screen bg-[#0a1622] text-white flex flex-col justify-between relative overflow-hidden font-sans">
       {/* Glow cinemático de fondo */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.15),transparent_70%)] pointer-events-none" />
-      
+
       {/* Barra de Navegación Minimalista */}
       <header className="w-full max-w-4xl mx-auto px-4 py-6 flex items-center justify-between relative z-10 border-b border-white/5">
         <button
@@ -151,7 +151,11 @@ export const ExpressPrequalifyPage: React.FC = () => {
             Ahorra <span className="text-amber-400">$300.00</span> en Gastos de Cierre
           </h1>
           <p className="text-slate-300 text-sm md:text-base leading-relaxed font-light max-w-md mx-auto">
-            Regístrate ahora y al completar tu compra te cubrimos el 100% del costo de <span className="text-white font-bold underline decoration-amber-500 decoration-2">Tablilla, Marbete y Registro</span>.
+            Regístrate ahora y al completar tu compra te cubrimos el 100% del costo de{' '}
+            <span className="text-white font-bold underline decoration-amber-500 decoration-2">
+              Tablilla, Marbete y Registro
+            </span>
+            .
           </p>
         </div>
 
@@ -162,18 +166,34 @@ export const ExpressPrequalifyPage: React.FC = () => {
           </span>
           <div className="flex items-center justify-center gap-3">
             <div className="w-20 py-2 bg-slate-900 rounded-xl border border-white/5 text-center">
-              <span className="font-cinematic text-2xl md:text-3xl font-black text-white block">{hours}</span>
-              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">Horas</span>
+              <span className="font-cinematic text-2xl md:text-3xl font-black text-white block">
+                {hours}
+              </span>
+              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">
+                Horas
+              </span>
             </div>
-            <span className="font-cinematic text-2xl font-black text-amber-500 animate-pulse">:</span>
+            <span className="font-cinematic text-2xl font-black text-amber-500 animate-pulse">
+              :
+            </span>
             <div className="w-20 py-2 bg-slate-900 rounded-xl border border-white/5 text-center">
-              <span className="font-cinematic text-2xl md:text-3xl font-black text-white block">{minutes}</span>
-              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">Mins</span>
+              <span className="font-cinematic text-2xl md:text-3xl font-black text-white block">
+                {minutes}
+              </span>
+              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">
+                Mins
+              </span>
             </div>
-            <span className="font-cinematic text-2xl font-black text-amber-500 animate-pulse">:</span>
+            <span className="font-cinematic text-2xl font-black text-amber-500 animate-pulse">
+              :
+            </span>
             <div className="w-20 py-2 bg-slate-900 rounded-xl border border-white/5 text-center">
-              <span className="font-cinematic text-2xl md:text-3xl font-black text-rose-400 block">{seconds}</span>
-              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">Segs</span>
+              <span className="font-cinematic text-2xl md:text-3xl font-black text-rose-400 block">
+                {seconds}
+              </span>
+              <span className="text-[8px] font-tech text-slate-500 uppercase tracking-wider">
+                Segs
+              </span>
             </div>
           </div>
         </div>
@@ -196,7 +216,8 @@ export const ExpressPrequalifyPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed mb-6 max-w-sm mx-auto">
-                ¡Expediente asegurado con éxito! Envía tu código por WhatsApp para que nuestros asesores apliquen el crédito directo a tu compra.
+                ¡Expediente asegurado con éxito! Envía tu código por WhatsApp para que nuestros
+                asesores apliquen el crédito directo a tu compra.
               </p>
               <div className="space-y-3">
                 <button
@@ -216,10 +237,15 @@ export const ExpressPrequalifyPage: React.FC = () => {
           ) : isKnownUser ? (
             <div className="text-center py-4 animate-in fade-in duration-500">
               <div className="mb-6">
-                <h2 className="text-xl font-black text-white">¡Hola de nuevo, <span className="text-amber-400">{expressForm.name.split(' ')[0]}</span>!</h2>
-                <p className="text-xs text-slate-400 mt-1">Detectamos tu perfil Sentinel. Puedes reclamar tu bono instantáneamente.</p>
+                <h2 className="text-xl font-black text-white">
+                  ¡Hola de nuevo,{' '}
+                  <span className="text-amber-400">{expressForm.name.split(' ')[0]}</span>!
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Detectamos tu perfil Sentinel. Puedes reclamar tu bono instantáneamente.
+                </p>
               </div>
-              
+
               <button
                 onClick={() => handleExpressSubmit()}
                 disabled={isSubmittingExpress}
@@ -228,7 +254,9 @@ export const ExpressPrequalifyPage: React.FC = () => {
                 {isSubmittingExpress ? (
                   <span className="animate-pulse">Procesando Flash...</span>
                 ) : (
-                  <>Reclamar Bono Flash ($300) <Zap size={18} fill="currentColor" /></>
+                  <>
+                    Reclamar Bono Flash ($300) <Zap size={18} fill="currentColor" />
+                  </>
                 )}
               </button>
 
@@ -247,7 +275,9 @@ export const ExpressPrequalifyPage: React.FC = () => {
             <form onSubmit={handleExpressSubmit} className="space-y-4">
               <div className="text-center mb-4">
                 <h2 className="text-lg font-black text-white">Congela tu Bono Inmediatamente</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Ingresa tus datos para enlazar el código de $300</p>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Ingresa tus datos para enlazar el código de $300
+                </p>
               </div>
 
               {expressError && (
@@ -286,7 +316,8 @@ export const ExpressPrequalifyPage: React.FC = () => {
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-tech font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                  <Mail size={12} className="text-slate-500" /> Correo Electrónico <span className="text-slate-600 font-normal">(Opcional)</span>
+                  <Mail size={12} className="text-slate-500" /> Correo Electrónico{' '}
+                  <span className="text-slate-600 font-normal">(Opcional)</span>
                 </label>
                 <input
                   type="email"
@@ -305,12 +336,15 @@ export const ExpressPrequalifyPage: React.FC = () => {
                 {isSubmittingExpress ? (
                   <span className="animate-pulse">Asegurando Código...</span>
                 ) : (
-                  <>Reclamar Descuento de $300 <ChevronRight size={16} /></>
+                  <>
+                    Reclamar Descuento de $300 <ChevronRight size={16} />
+                  </>
                 )}
               </button>
 
               <div className="pt-2 border-t border-white/5 flex items-center justify-center gap-2 text-[10px] text-slate-500 font-tech">
-                <ShieldCheck size={14} className="text-emerald-500" /> Transmisión Cifrada de Extremo a Extremo
+                <ShieldCheck size={14} className="text-emerald-500" /> Transmisión Cifrada de
+                Extremo a Extremo
               </div>
             </form>
           )}

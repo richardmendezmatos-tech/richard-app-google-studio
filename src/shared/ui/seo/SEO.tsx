@@ -52,7 +52,7 @@ const SEO: React.FC<SEOProps> = ({
   const defaultImage = SITE_CONFIG.seo.ogImage.startsWith('http')
     ? SITE_CONFIG.seo.ogImage
     : `${siteUrl}${SITE_CONFIG.seo.ogImage}`;
-  
+
   const imageUrl = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : defaultImage;
   const currentUrl = normalizePath(url);
   const robotsValue = `${noIndex ? 'noindex' : 'index'},${noFollow ? 'nofollow' : 'follow'},max-image-preview:large,max-snippet:-1,max-video-preview:-1`;

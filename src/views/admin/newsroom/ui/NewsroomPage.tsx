@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { generateBlogPost, generateCoverImage } from '@/shared/api/ai';
@@ -115,15 +115,14 @@ const NewsroomPage: React.FC = () => {
     setIsSubscribing(true);
     try {
       const repo = await DI.getSubscriberRepository();
-      await repo.subscribe({ 
+      await repo.subscribe({
         email: subscriberEmail,
         source: 'newsroom_admin',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       } as any);
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {
-
       console.error(error);
       addNotification('error', 'Error al suscribirse. Intenta de nuevo.');
     } finally {

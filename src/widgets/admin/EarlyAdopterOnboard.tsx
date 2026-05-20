@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
@@ -39,7 +39,8 @@ const EarlyAdopterOnboard = () => {
           price: 98000,
           type: 'luxury' as CarType,
           status: 'available' as const,
-          image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
           img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
           badge: 'Prestige Certified',
           featured: true,

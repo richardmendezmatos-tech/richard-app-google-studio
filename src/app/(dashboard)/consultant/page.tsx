@@ -9,7 +9,7 @@ import { Car } from '@/entities/inventory';
  */
 export default async function ConsultantRoute() {
   let inventory: Car[] = [];
-  
+
   try {
     const result = await getPaginatedCars(20, null, 'all');
     inventory = result.cars;

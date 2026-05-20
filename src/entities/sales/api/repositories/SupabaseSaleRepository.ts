@@ -10,10 +10,10 @@ export class SupabaseSaleRepository {
 
   async executeSecureSale(carId: string, leadData: any, dealerId: string) {
     try {
-      // Supabase transaction simulation (sequential with error rollback logic if needed, 
+      // Supabase transaction simulation (sequential with error rollback logic if needed,
       // but here we use a single RPC if we wanted true atomicity).
       // For simplicity in this migration, we'll do sequential calls.
-      
+
       // 1. Check availability
       const { data: car, error: carError } = await this.client
         .from('inventory')
@@ -31,7 +31,7 @@ export class SupabaseSaleRepository {
         .from('inventory')
         .update({
           status: 'PENDING',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('vin', carId);
 
@@ -40,13 +40,15 @@ export class SupabaseSaleRepository {
       // 3. Create Lead/Application
       const { data: lead, error: leadError } = await this.client
         .from('leads')
-        .insert([{
-          ...leadData,
-          vehicle_id: carId,
-          location: dealerId,
-          status: 'new',
-          created_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...leadData,
+            vehicle_id: carId,
+            location: dealerId,
+            status: 'new',
+            created_at: new Date().toISOString(),
+          },
+        ])
         .select('id')
         .single();
 

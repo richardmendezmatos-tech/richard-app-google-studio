@@ -35,7 +35,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
   const blurMap = {
     low: '8px',
     medium: '16px',
-    high: '32px'
+    high: '32px',
   };
 
   const dynamicStyle = {

@@ -12,14 +12,31 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 
 // Essential Project Fonts
 import { Bebas_Neue, Sora, Manrope, Cormorant_Garamond } from 'next/font/google';
 
-const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-cinematic', display: 'swap' });
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-cinematic',
+  display: 'swap',
+});
 const sora = Sora({ subsets: ['latin'], variable: '--font-tech', display: 'swap' });
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap', preload: false });
-const cormorant = Cormorant_Garamond({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-editorial', display: 'swap', preload: false });
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+  preload: false,
+});
+const cormorant = Cormorant_Garamond({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-editorial',
+  display: 'swap',
+  preload: false,
+});
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos Ford en Puerto Rico',
-  description: 'Tu destino premium para autos nuevos Ford y usados certificados en Vega Alta, Puerto Rico. Richard Automotive ofrece financiamiento digital y tasaciones inteligentes.',
+  description:
+    'Tu destino premium para autos nuevos Ford y usados certificados en Vega Alta, Puerto Rico. Richard Automotive ofrece financiamiento digital y tasaciones inteligentes.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -28,7 +45,8 @@ export const metadata: Metadata = {
     startupImage: [
       {
         url: '/app-icon.png',
-        media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
+        media:
+          '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
       },
     ],
   },
@@ -40,7 +58,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Richard Automotive | Dealer de Autos Nuevos en Puerto Rico',
-    description: 'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Vega Alta.',
+    description:
+      'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Vega Alta.',
     images: ['https://richard-automotive.com/og-image.jpg'],
     locale: 'es_PR',
     type: 'website',
@@ -59,11 +78,7 @@ export const viewport = {
 import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceInitializer';
 import { Suspense } from 'react';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -98,8 +113,8 @@ export default function RootLayout({
   };
 
   return (
-    <html 
-      lang="es" 
+    <html
+      lang="es"
       className={`${inter.variable} ${outfit.variable} ${bebasNeue.variable} ${sora.variable} ${manrope.variable} ${cormorant.variable} antialiased`}
     >
       <head>
@@ -122,9 +137,7 @@ export default function RootLayout({
             }}
           />
         )}
-        <AppProviders>
-          {children}
-        </AppProviders>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

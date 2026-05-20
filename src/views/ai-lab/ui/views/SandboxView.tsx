@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useRef } from 'react';
 // @ts-expect-error: Vanilla HyperList is not typed for 2026 vite standard

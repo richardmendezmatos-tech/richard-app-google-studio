@@ -25,13 +25,13 @@ export const PersuasionWrapper: React.FC<PersuasionWrapperProps> = ({
   componentId,
 }) => {
   const { profile } = useCustomerMemory();
-  
+
   // Registrar intento de persuasión neuro-cognitiva (Nivel 16)
   useEffect(() => {
     if (profile !== 'neutral') {
       raSentinel.reportNeuroPersuasion(profile, componentId, {
         timestamp: Date.now(),
-        location: typeof window !== 'undefined' ? window.location.pathname : 'unknown'
+        location: typeof window !== 'undefined' ? window.location.pathname : 'unknown',
       });
     }
   }, [profile, componentId]);

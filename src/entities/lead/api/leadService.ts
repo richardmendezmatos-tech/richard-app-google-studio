@@ -33,10 +33,10 @@ export const leadService = {
         console.warn('[leadService] Duplicate submission blocked for:', data.phone);
         return { success: false, error: 'duplicate_submission' };
       }
-      
+
       const repo = await DI.getLeadRepository();
       const savedLead = await repo.saveLead(data);
-      
+
       if (typeof window !== 'undefined') {
         sessionStorage.setItem(sessionKey, 'locked');
       }
@@ -46,16 +46,24 @@ export const leadService = {
         fetch('/api/webhooks/leads', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, id: savedLead || 'synthetic_id' })
-        }).catch(err => console.error('Failed to trigger Jules webhook:', err));
+          body: JSON.stringify({ ...data, id: savedLead || 'synthetic_id' }),
+        }).catch((err) => console.error('Failed to trigger Jules webhook:', err));
 
         // Option 2: Pure Local Autonomous Orchestration (WhatsApp Nudge)
         if (data.closureProbability && data.closureProbability >= 70) {
-          import('@/features/leads/model/whatsappService').then(({ triggerSentinelNudge }) => {
-            triggerSentinelNudge(savedLead || 'synthetic_id', data.firstName || 'Cliente', data.phone)
-              .then(res => console.log(`[leadService] WhatsApp Nudge triggered: ${res.success}`))
-              .catch(err => console.error('[leadService] WhatsApp Nudge failed', err));
-          }).catch(err => console.error('Failed to load whatsappService:', err));
+          import('@/features/leads/model/whatsappService')
+            .then(({ triggerSentinelNudge }) => {
+              triggerSentinelNudge(
+                savedLead || 'synthetic_id',
+                data.firstName || 'Cliente',
+                data.phone,
+              )
+                .then((res) =>
+                  console.log(`[leadService] WhatsApp Nudge triggered: ${res.success}`),
+                )
+                .catch((err) => console.error('[leadService] WhatsApp Nudge failed', err));
+            })
+            .catch((err) => console.error('Failed to load whatsappService:', err));
         }
       }
 

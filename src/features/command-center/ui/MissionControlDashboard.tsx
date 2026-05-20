@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -25,8 +25,8 @@ const InventoryProfitabilityWidget = React.lazy(() => import('./InventoryProfita
 const QuickQualifyCard = React.lazy(() =>
   import('@/features/loans').then((m) => ({ default: m.QuickQualifyCard })),
 );
-const WhatsAppStatusWidget = React.lazy(() => 
-  import('./WhatsAppStatusWidget').then(m => ({ default: m.WhatsAppStatusWidget }))
+const WhatsAppStatusWidget = React.lazy(() =>
+  import('./WhatsAppStatusWidget').then((m) => ({ default: m.WhatsAppStatusWidget })),
 );
 
 interface Props {
@@ -126,18 +126,23 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
       {/* INTELLIGENCE & COMMS ROW */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
-           <React.Suspense fallback={<div className="h-48 rounded-4xl bg-white/5 animate-pulse" />}>
-              <WhatsAppStatusWidget />
-           </React.Suspense>
+          <React.Suspense fallback={<div className="h-48 rounded-4xl bg-white/5 animate-pulse" />}>
+            <WhatsAppStatusWidget />
+          </React.Suspense>
         </div>
         <div className="lg:col-span-2">
-           <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-3xl p-6 h-full flex flex-col justify-center">
-              <h4 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">IA Follow-up Active</h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
-                Sentinel está monitoreando <span className="text-white font-bold">{leads.length} leads</span>. 
-                Los seguimientos están programados basándose en el <span className="text-emerald-400 font-bold italic">Neural Match Engine</span> de Nivel 29.
-              </p>
-           </div>
+          <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-3xl p-6 h-full flex flex-col justify-center">
+            <h4 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">
+              IA Follow-up Active
+            </h4>
+            <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+              Sentinel está monitoreando{' '}
+              <span className="text-white font-bold">{leads.length} leads</span>. Los seguimientos
+              están programados basándose en el{' '}
+              <span className="text-emerald-400 font-bold italic">Neural Match Engine</span> de
+              Nivel 29.
+            </p>
+          </div>
         </div>
       </motion.div>
 
@@ -275,7 +280,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           </div>
         </div>
       </motion.div>
-      
+
       <React.Suspense fallback={<div className="h-64 rounded-4xl bg-white/5 animate-pulse" />}>
         <MissionControlWidget />
       </React.Suspense>

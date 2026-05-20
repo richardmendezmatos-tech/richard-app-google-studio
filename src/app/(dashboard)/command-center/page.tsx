@@ -30,7 +30,10 @@ import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidge
 import { MarketPulseWidget } from '@/features/market-intelligence/ui/MarketPulseWidget';
 import { SentinelDistributionWidget } from '@/features/command-center/ui/SentinelDistributionWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
-import { SentinelIntelligenceWidget, IntelligenceSignal } from '@/features/command-center/ui/SentinelIntelligenceWidget';
+import {
+  SentinelIntelligenceWidget,
+  IntelligenceSignal,
+} from '@/features/command-center/ui/SentinelIntelligenceWidget';
 import { RichardAIAdvisor } from '@/features/command-center/ui/RichardAIAdvisor';
 
 interface HotLead {
@@ -77,7 +80,7 @@ export default function CommandCenterPage() {
         }),
         fetch('/api/command-center/intelligence', {
           headers: { 'x-antigravity-token': 'client-internal' },
-        })
+        }),
       ]);
 
       if (telemetryRes.ok) {
@@ -135,7 +138,10 @@ export default function CommandCenterPage() {
               <div className="absolute inset-0 w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-40" />
             </div>
             <div>
-              <h1 className="text-lg font-black uppercase tracking-[0.25em]" style={{ fontFamily: 'var(--font-cinematic)' }}>
+              <h1
+                className="text-lg font-black uppercase tracking-[0.25em]"
+                style={{ fontFamily: 'var(--font-cinematic)' }}
+              >
                 Command <span className="text-cyan-400">Center</span>
               </h1>
               <p className="text-[10px] text-slate-500 tracking-widest uppercase font-bold">
@@ -212,7 +218,7 @@ export default function CommandCenterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <HoloDashboard 
+          <HoloDashboard
             leadsCount={data?.summary.leads_last_24h}
             inventoryHealth={data?.summary.inventory_coverage}
             aiConfidence={98}
@@ -222,9 +228,9 @@ export default function CommandCenterPage() {
         {/* Intelligence Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Hot Leads Monitor */}
-          <motion.div 
-            className={`${CARD_CLASSES} lg:col-span-2 hud-brackets`} 
-            initial={{ opacity: 0, x: -20 }} 
+          <motion.div
+            className={`${CARD_CLASSES} lg:col-span-2 hud-brackets`}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
             <div className="flex items-center justify-between mb-6">
@@ -234,7 +240,9 @@ export default function CommandCenterPage() {
                 </div>
                 <div>
                   <h2 className="font-bold text-sm tracking-wide">Hot Leads Monitor</h2>
-                  <p className="text-[10px] text-slate-500">Prospectos con alta probabilidad de cierre</p>
+                  <p className="text-[10px] text-slate-500">
+                    Prospectos con alta probabilidad de cierre
+                  </p>
                 </div>
               </div>
             </div>
@@ -242,13 +250,20 @@ export default function CommandCenterPage() {
             <div className="space-y-3">
               {data?.hotLeads.length ? (
                 data.hotLeads.map((lead) => (
-                  <div key={lead.id} className={`group p-4 bg-slate-800/30 rounded-2xl border border-white/[0.04] hover:border-cyan-500/30 transition-all flex items-center justify-between ${
-                    lead.priority === 'urgent' ? 'priority-pulse-urgent border-rose-500/20' : ''
-                  }`}>
+                  <div
+                    key={lead.id}
+                    className={`group p-4 bg-slate-800/30 rounded-2xl border border-white/[0.04] hover:border-cyan-500/30 transition-all flex items-center justify-between ${
+                      lead.priority === 'urgent' ? 'priority-pulse-urgent border-rose-500/20' : ''
+                    }`}
+                  >
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
-                        lead.score > 85 ? 'bg-orange-500/20 text-orange-400' : 'bg-cyan-500/20 text-cyan-400'
-                      }`}>
+                      <div
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
+                          lead.score > 85
+                            ? 'bg-orange-500/20 text-orange-400'
+                            : 'bg-cyan-500/20 text-cyan-400'
+                        }`}
+                      >
                         {lead.score}
                       </div>
                       <div>
@@ -258,12 +273,14 @@ export default function CommandCenterPage() {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-6">
                       <div className="hidden md:block text-right">
-                        <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                          lead.priority === 'urgent' ? 'text-red-400' : 'text-cyan-400'
-                        }`}>
+                        <p
+                          className={`text-[10px] font-bold uppercase tracking-widest ${
+                            lead.priority === 'urgent' ? 'text-red-400' : 'text-cyan-400'
+                          }`}
+                        >
                           Prioridad {lead.priority}
                         </p>
                         <p className="text-[9px] text-slate-600 truncate max-w-[150px]">
@@ -285,7 +302,11 @@ export default function CommandCenterPage() {
 
           {/* WhatsApp & Search Health */}
           <div className="space-y-6">
-            <motion.div className={CARD_CLASSES} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+            <motion.div
+              className={CARD_CLASSES}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-xl bg-green-500/10">
                   <MessageSquare className="w-5 h-5 text-green-400" />
@@ -293,9 +314,21 @@ export default function CommandCenterPage() {
                 <h2 className="font-bold text-sm">Nurturing Status</h2>
               </div>
               <div className="space-y-4">
-                <StatusRow icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />} label="Completados" value={data?.whatsapp.sent ?? 0} />
-                <StatusRow icon={<Activity className="w-4 h-4 text-amber-400" />} label="En Secuencia" value={data?.whatsapp.scheduled ?? 0} />
-                <StatusRow icon={<AlertTriangle className="w-4 h-4 text-red-400" />} label="Fallidos" value={data?.whatsapp.failed ?? 0} />
+                <StatusRow
+                  icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                  label="Completados"
+                  value={data?.whatsapp.sent ?? 0}
+                />
+                <StatusRow
+                  icon={<Activity className="w-4 h-4 text-amber-400" />}
+                  label="En Secuencia"
+                  value={data?.whatsapp.scheduled ?? 0}
+                />
+                <StatusRow
+                  icon={<AlertTriangle className="w-4 h-4 text-red-400" />}
+                  label="Fallidos"
+                  value={data?.whatsapp.failed ?? 0}
+                />
               </div>
             </motion.div>
 
@@ -308,8 +341,8 @@ export default function CommandCenterPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelDistributionWidget 
-                stats={data?.distribution} 
+              <SentinelDistributionWidget
+                stats={data?.distribution}
                 health={data?.summary.distribution_health}
               />
             </motion.div>
@@ -322,13 +355,12 @@ export default function CommandCenterPage() {
               <TelemetryFeedWidget />
             </motion.div>
 
-
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
               <MarketPulseWidget make="Toyota" model="Corolla" currentPrice={22900} />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelLocalSEO inventory={data?.purchaseOrders as any || []} />
+              <SentinelLocalSEO inventory={(data?.purchaseOrders as any) || []} />
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
@@ -355,7 +387,19 @@ export default function CommandCenterPage() {
 
 // ─── Subcomponents ──────────────────────────────────────────────────
 
-function KPICard({ icon, label, value, accent, className = '' }: { icon: React.ReactNode; label: string; value: number | string; accent: string; className?: string }) {
+function KPICard({
+  icon,
+  label,
+  value,
+  accent,
+  className = '',
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  accent: string;
+  className?: string;
+}) {
   const colorMap: Record<string, string> = {
     cyan: 'from-cyan-500/10 border-cyan-500/10 text-cyan-400',
     emerald: 'from-emerald-500/10 border-emerald-500/10 text-emerald-400',
@@ -372,12 +416,25 @@ function KPICard({ icon, label, value, accent, className = '' }: { icon: React.R
     >
       <div className={`mb-3 ${colors.split(' ')[2]}`}>{icon}</div>
       <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">{label}</p>
-      <p className="text-3xl font-black tabular-nums" style={{ fontFamily: 'var(--font-cinematic)' }}>{value}</p>
+      <p
+        className="text-3xl font-black tabular-nums"
+        style={{ fontFamily: 'var(--font-cinematic)' }}
+      >
+        {value}
+      </p>
     </motion.div>
   );
 }
 
-function StatusRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+function StatusRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+}) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2.5">

@@ -1,6 +1,7 @@
 import { Car } from '@/entities/inventory';
 
-const JAVA_BACKEND_URL = process.env.JAVA_BACKEND_URL || 'https://api-java-gcp.richard-automotive.com';
+const JAVA_BACKEND_URL =
+  process.env.JAVA_BACKEND_URL || 'https://api-java-gcp.richard-automotive.com';
 
 export async function fetchInventoryFromJava(limit: number = 10): Promise<Car[]> {
   try {
@@ -15,13 +16,16 @@ export async function fetchInventoryFromJava(limit: number = 10): Promise<Car[]>
     });
 
     if (!response.ok) {
-       console.warn('Java Backend error (Not OK), returning empty inventory for stability.');
-       return [];
+      console.warn('Java Backend error (Not OK), returning empty inventory for stability.');
+      return [];
     }
 
     return response.json();
   } catch (err) {
-    console.error('Java Backend Unreachable (ENOTFOUND/Timeout), falling back to empty list for build stability:', err);
+    console.error(
+      'Java Backend Unreachable (ENOTFOUND/Timeout), falling back to empty list for build stability:',
+      err,
+    );
     return [];
   }
 }

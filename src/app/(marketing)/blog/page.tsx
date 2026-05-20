@@ -5,7 +5,8 @@ import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 
 export const metadata: Metadata = {
   title: 'Blog | Richard Automotive — Guías y Consejos de Autos en PR',
-  description: 'Guías, consejos y recursos para comprar, financiar y mantener tu auto en Puerto Rico. Artículos escritos por expertos del mercado automotriz puertorriqueño.',
+  description:
+    'Guías, consejos y recursos para comprar, financiar y mantener tu auto en Puerto Rico. Artículos escritos por expertos del mercado automotriz puertorriqueño.',
   alternates: {
     canonical: 'https://richard-automotive.com/blog',
   },
@@ -73,8 +74,7 @@ export default function BlogIndexPage() {
               Guías & Recursos
             </h1>
             <p className="text-slate-400 max-w-xl text-lg">
-              Consejos expertos para comprar, financiar y mantener tu vehículo en
-              Puerto Rico.
+              Consejos expertos para comprar, financiar y mantener tu vehículo en Puerto Rico.
             </p>
           </header>
 
@@ -101,9 +101,7 @@ export default function BlogIndexPage() {
                   <h2 className="text-2xl md:text-3xl font-black mb-4 group-hover:text-cyan-400 transition leading-tight">
                     {featured.title}
                   </h2>
-                  <p className="text-slate-400 mb-6 leading-relaxed">
-                    {featured.excerpt}
-                  </p>
+                  <p className="text-slate-400 mb-6 leading-relaxed">{featured.excerpt}</p>
                   <div className="flex items-center gap-3 text-sm text-slate-500">
                     <span>{featured.author}</span>
                     <span>•</span>
@@ -151,9 +149,7 @@ export default function BlogIndexPage() {
                   <h3 className="text-lg font-bold mb-2 group-hover:text-cyan-400 transition leading-snug line-clamp-2">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-slate-400 mb-4 line-clamp-3">
-                    {article.excerpt}
-                  </p>
+                  <p className="text-sm text-slate-400 mb-4 line-clamp-3">{article.excerpt}</p>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
                     <span>{article.author}</span>
                     <span>•</span>

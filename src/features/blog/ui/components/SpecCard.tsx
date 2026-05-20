@@ -16,10 +16,14 @@ interface Props {
 export const SpecCard: React.FC<Props> = ({ specs }) => {
   const getIcon = (type: string) => {
     switch (type) {
-      case 'engine': return <Settings2 className="text-primary" size={18} />;
-      case 'fuel': return <Fuel className="text-primary" size={18} />;
-      case 'performance': return <Gauge className="text-primary" size={18} />;
-      default: return <Zap className="text-primary" size={18} />;
+      case 'engine':
+        return <Settings2 className="text-primary" size={18} />;
+      case 'fuel':
+        return <Fuel className="text-primary" size={18} />;
+      case 'performance':
+        return <Gauge className="text-primary" size={18} />;
+      default:
+        return <Zap className="text-primary" size={18} />;
     }
   };
 
@@ -36,7 +40,9 @@ export const SpecCard: React.FC<Props> = ({ specs }) => {
           <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             {getIcon(spec.icon)}
           </div>
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{spec.label}</p>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">
+            {spec.label}
+          </p>
           <p className="text-lg font-black text-white italic tracking-tighter">{spec.value}</p>
         </motion.div>
       ))}

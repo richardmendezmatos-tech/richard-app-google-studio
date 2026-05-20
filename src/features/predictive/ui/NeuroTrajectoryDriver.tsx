@@ -14,8 +14,9 @@ import { houstonBus, HoustonEventType } from '@/shared/lib/events/HoustonBus';
  */
 export const NeuroTrajectoryDriver: React.FC = () => {
   const pathname = usePathname();
-  const { addEvent, updateDwellTime, events, dwellTimes, setScore, setFactors } = useTrajectoryStore();
-  
+  const { addEvent, updateDwellTime, events, dwellTimes, setScore, setFactors } =
+    useTrajectoryStore();
+
   const lastPathRef = useRef<string | null>(pathname);
   const startTimeRef = useRef<number>(0);
 
@@ -28,7 +29,7 @@ export const NeuroTrajectoryDriver: React.FC = () => {
   useEffect(() => {
     const now = Date.now();
     const duration = now - startTimeRef.current;
-    
+
     // Guardar tiempo de permanencia en la página anterior
     if (lastPathRef.current) {
       updateDwellTime(lastPathRef.current, duration);
@@ -38,10 +39,10 @@ export const NeuroTrajectoryDriver: React.FC = () => {
     addEvent({
       type: 'page_view',
       path: pathname || '',
-      metadata: { 
+      metadata: {
         referrer: lastPathRef.current || '',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
 
     // Actualizar estado para la nueva página
@@ -53,7 +54,7 @@ export const NeuroTrajectoryDriver: React.FC = () => {
   // Se ejecuta cuando cambian los eventos o el dwellTime acumulado
   useEffect(() => {
     const insight = TrajectoryAnalyzer.analyze(events, dwellTimes);
-    
+
     // Sincronización proactiva con el store
     setScore(insight.score);
     setFactors(insight.signals);
@@ -61,22 +62,22 @@ export const NeuroTrajectoryDriver: React.FC = () => {
     // Lógica de "High Intent" (Criterio de Nivel 13+)
     if (insight.score >= 60) {
       houstonBus.emit(HoustonEventType.PREDICTIVE_HIGH_INTENT, insight, 'NeuroTrajectoryDriver');
-      
+
       // Intentar recuperar contexto de lead persistido para Nudge proactivo
       const context = {
         id: typeof window !== 'undefined' ? localStorage.getItem('last_lead_id') : null,
         phone: typeof window !== 'undefined' ? localStorage.getItem('last_lead_phone') : null,
-        name: typeof window !== 'undefined' ? localStorage.getItem('last_lead_name') : null
+        name: typeof window !== 'undefined' ? localStorage.getItem('last_lead_name') : null,
       };
 
       if (context.id && context.phone && context.name) {
         NudgeService.evaluateAndDispatch(context.id, context.phone, context.name, insight)
-          .then(result => {
+          .then((result) => {
             if (result.dispatched) {
               houstonBus.emit(HoustonEventType.PREDICTIVE_NUDGE_DISPATCHED, result, 'NudgeService');
             }
           })
-          .catch(err => console.error('[NeuroDriver] Nudge error:', err));
+          .catch((err) => console.error('[NeuroDriver] Nudge error:', err));
       }
     }
   }, [events, dwellTimes, setScore, setFactors]);

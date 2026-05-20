@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Activity, ScanSearch, TrendingUp, Cpu, Gauge } from 'lucide-react';
@@ -10,7 +10,7 @@ interface AnimatedNumberProps {
   suffix?: string;
 }
 
-const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, prefix = "", suffix = "" }) => {
+const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, prefix = '', suffix = '' }) => {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
@@ -24,7 +24,9 @@ const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, prefix = "", suf
 
   return (
     <span className="font-cinematic tabular-nums">
-      {prefix}{displayValue.toLocaleString('en-US')}{suffix}
+      {prefix}
+      {displayValue.toLocaleString('en-US')}
+      {suffix}
     </span>
   );
 };
@@ -40,7 +42,16 @@ interface PulseCardProps {
   delay?: number;
 }
 
-const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffix, tone, trend, delay = 0 }) => {
+const PulseCard: React.FC<PulseCardProps> = ({
+  icon,
+  label,
+  value,
+  prefix,
+  suffix,
+  tone,
+  trend,
+  delay = 0,
+}) => {
   const toneStyles = {
     cyan: 'border-cyan-500/20 bg-cyan-500/5 text-cyan-400',
     slate: 'border-slate-500/20 bg-slate-500/5 text-slate-400',
@@ -48,7 +59,7 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffi
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -89,7 +100,7 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffi
             <AnimatedNumber value={value} prefix={prefix} suffix={suffix} />
           </div>
           <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: '100%' }}
               transition={{ delay: delay + 0.5, duration: 1 }}
@@ -101,8 +112,12 @@ const PulseCard: React.FC<PulseCardProps> = ({ icon, label, value, prefix, suffi
 
       <style jsx>{`
         @keyframes sweep {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(500%); }
+          0% {
+            transform: translateY(-100%);
+          }
+          100% {
+            transform: translateY(500%);
+          }
         }
         .animate-sweep {
           animation: sweep 4s linear infinite;
@@ -124,7 +139,10 @@ const StorefrontMarketPulse: React.FC<StorefrontMarketPulseProps> = ({
   compactUnits,
 }) => {
   return (
-    <section aria-label="Richard Intelligence Dashboard" className="reveal-up grid gap-6 md:grid-cols-3">
+    <section
+      aria-label="Richard Intelligence Dashboard"
+      className="reveal-up grid gap-6 md:grid-cols-3"
+    >
       <PulseCard
         icon={<Gauge size={24} />}
         label="RICHARD MARKET INDEX"

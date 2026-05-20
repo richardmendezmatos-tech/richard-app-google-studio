@@ -1,9 +1,9 @@
 import twilio from 'twilio';
 
 const getTwilioClient = () => {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    return (accountSid && authToken) ? twilio(accountSid, authToken) : null;
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  return accountSid && authToken ? twilio(accountSid, authToken) : null;
 };
 
 const getFromNumber = () => process.env.TWILIO_PHONE_NUMBER || 'whatsapp:+14155238886'; // Default sandbox
@@ -14,29 +14,30 @@ const getFromNumber = () => process.env.TWILIO_PHONE_NUMBER || 'whatsapp:+141552
  * @param body The message text
  */
 export const sendTwilioMessage = async (to: string, body: string) => {
-    const client = getTwilioClient();
+  const client = getTwilioClient();
 
-    if (!client) {
-        console.warn("Twilio credentials not found. Message suppressed.", { to, body });
-        return;
-    }
+  if (!client) {
+    console.warn('Twilio credentials not found. Message suppressed.', { to, body });
+    return;
+  }
 
-    const isWhatsApp = to.startsWith('whatsapp:');
-    const fromStr = getFromNumber();
-    const finalFrom = isWhatsApp && !fromStr.startsWith('whatsapp:') ? `whatsapp:${fromStr}` : fromStr;
+  const isWhatsApp = to.startsWith('whatsapp:');
+  const fromStr = getFromNumber();
+  const finalFrom =
+    isWhatsApp && !fromStr.startsWith('whatsapp:') ? `whatsapp:${fromStr}` : fromStr;
 
-    try {
-        const message = await client.messages.create({
-            body,
-            from: finalFrom,
-            to: to // Assume caller formats it correctly or passes an SMS number
-        });
-        console.log(`Twilio message sent: ${message.sid}`);
-        return message;
-    } catch (error) {
-        console.error("Error sending Twilio message:", error);
-        throw error;
-    }
+  try {
+    const message = await client.messages.create({
+      body,
+      from: finalFrom,
+      to: to, // Assume caller formats it correctly or passes an SMS number
+    });
+    console.log(`Twilio message sent: ${message.sid}`);
+    return message;
+  } catch (error) {
+    console.error('Error sending Twilio message:', error);
+    throw error;
+  }
 };
 
 /**
@@ -44,8 +45,7 @@ export const sendTwilioMessage = async (to: string, body: string) => {
  * @param message The message to reply with
  */
 export const createTwiMLReply = (message: string): string => {
-    const response = new twilio.twiml.MessagingResponse();
-    response.message(message);
-    return response.toString();
+  const response = new twilio.twiml.MessagingResponse();
+  response.message(message);
+  return response.toString();
 };
-

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { useAuthStore } from '@/entities/session';
@@ -41,7 +41,10 @@ const Navbar: React.FC = () => {
               className="group relative flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 transition-all hover:text-white"
             >
               <div className="relative flex h-6 w-6 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">
-                <Car size={12} className="relative z-10 text-cyan-400 transition-transform group-hover:scale-110" />
+                <Car
+                  size={12}
+                  className="relative z-10 text-cyan-400 transition-transform group-hover:scale-110"
+                />
                 <div className="absolute inset-0 -z-0 hidden animate-pulse rounded-lg bg-cyan-400/20 blur-sm group-hover:block" />
               </div>
               <span className="relative">
@@ -52,7 +55,7 @@ const Navbar: React.FC = () => {
                     {stockCount}
                   </span>
                 )}
-                <motion.div 
+                <motion.div
                   className="absolute -bottom-1 left-0 h-[1px] w-0 bg-cyan-400"
                   whileHover={{ width: '100%' }}
                   transition={{ duration: 0.3 }}
@@ -121,10 +124,10 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="md:hidden">
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-slate-200"
-              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>

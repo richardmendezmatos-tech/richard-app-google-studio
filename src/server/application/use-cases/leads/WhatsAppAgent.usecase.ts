@@ -11,7 +11,7 @@ import { WHATSAPP_AGENT_PROMPT } from './WhatsAppAgent.prompt';
  */
 async function syncToHubspot(data: any): Promise<void> {
   console.log('[Composio:HubSpot] Sincronizando Deal/Lead:', JSON.stringify(data));
-  
+
   try {
     const apiKey = process.env.COMPOSIO_API_KEY;
     if (!apiKey) {
@@ -21,7 +21,7 @@ async function syncToHubspot(data: any): Promise<void> {
 
     const headers = {
       'Content-Type': 'application/json',
-      'x-api-key': apiKey
+      'x-api-key': apiKey,
     };
 
     // Create/Update Contact
@@ -34,12 +34,12 @@ async function syncToHubspot(data: any): Promise<void> {
           properties: {
             phone: data.phone,
             firstname: data.name || 'WhatsApp Lead',
-            lifecyclestage: 'lead'
-          }
-        }
-      })
+            lifecyclestage: 'lead',
+          },
+        },
+      }),
     });
-    
+
     console.log('[Composio:HubSpot] Contact ResponseStatus:', contactRes.status);
 
     // Create Deal
@@ -53,10 +53,10 @@ async function syncToHubspot(data: any): Promise<void> {
             dealname: `WhatsApp Lead - ${data.suggestedVehicle || 'Auto'}`,
             dealstage: 'appointmentscheduled',
             pipeline: 'default',
-            amount: data.budget ? String(data.budget) : ''
-          }
-        }
-      })
+            amount: data.budget ? String(data.budget) : '',
+          },
+        },
+      }),
     });
 
     console.log('[Composio:HubSpot] Deal ResponseStatus:', dealRes.status);
@@ -100,18 +100,21 @@ export class WhatsAppAgent {
 
     const { text } = await generateText({
       model: gemini15Flash,
-      prompt
+      prompt,
     });
 
     let parsedResponse;
     try {
-      const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      const cleanText = text
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .trim();
       parsedResponse = JSON.parse(cleanText);
     } catch (e) {
-      console.warn("Error parsing agent JSON directly, using fallback");
+      console.warn('Error parsing agent JSON directly, using fallback');
       parsedResponse = {
         reply: text || 'Entendido. Un especialista de Richard Automotive te contactará en breve.',
-        extractedData: { intentLevel: 'medium' }
+        extractedData: { intentLevel: 'medium' },
       };
     }
 
@@ -126,7 +129,7 @@ export class WhatsAppAgent {
       justSuggestedAppointment = true;
     } else if (
       (input.message.toLowerCase().includes('cita') ||
-      input.message.toLowerCase().includes('ver')) &&
+        input.message.toLowerCase().includes('ver')) &&
       nextStage !== 'appointment_suggested'
     ) {
       nextStage = 'appointment_suggested';
@@ -137,14 +140,14 @@ export class WhatsAppAgent {
     if (justSuggestedAppointment) {
       await syncToHubspot({
         phone: input.from,
-        ...parsedResponse.extractedData
+        ...parsedResponse.extractedData,
       });
     }
 
     return {
       reply: parsedResponse.reply,
       nextStage,
-      hubspotData: parsedResponse.extractedData
+      hubspotData: parsedResponse.extractedData,
     };
   }
 }

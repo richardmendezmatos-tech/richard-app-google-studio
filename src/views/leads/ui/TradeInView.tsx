@@ -15,7 +15,7 @@ const TradeInView: React.FC = () => {
         url="/trade-in"
         type="website"
       />
-      
+
       {/* Background Atmosphere */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none" />
@@ -39,27 +39,40 @@ const TradeInView: React.FC = () => {
             <span className="text-primary text-glow-sm">Al Instante</span>
           </h1>
           <p className="text-slate-400 text-sm md:text-base font-medium uppercase tracking-widest leading-relaxed opacity-60">
-            Richard Automotive utiliza inteligencia predictiva para darte el valor real de mercado. Sin regateos, directo al punto.
+            Richard Automotive utiliza inteligencia predictiva para darte el valor real de mercado.
+            Sin regateos, directo al punto.
           </p>
         </div>
 
         <div className="w-full">
           <TradeInWizard />
         </div>
-        
+
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl px-4 text-center">
-            <div className="p-6">
-                <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">Paso 1: Identificación</h4>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider">Ingresa el VIN o datos básicos para que nuestra IA reconozca tu unidad.</p>
-            </div>
-            <div className="p-6">
-                <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">Paso 2: Diagnóstico</h4>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider">Describe el estado actual para una valoración quirúrgica.</p>
-            </div>
-            <div className="p-6">
-                <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">Paso 3: Richard Certified</h4>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider">Recibe tu oferta y agenda la inspección final en el Bunker RA.</p>
-            </div>
+          <div className="p-6">
+            <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">
+              Paso 1: Identificación
+            </h4>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">
+              Ingresa el VIN o datos básicos para que nuestra IA reconozca tu unidad.
+            </p>
+          </div>
+          <div className="p-6">
+            <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">
+              Paso 2: Diagnóstico
+            </h4>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">
+              Describe el estado actual para una valoración quirúrgica.
+            </p>
+          </div>
+          <div className="p-6">
+            <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-2">
+              Paso 3: Richard Certified
+            </h4>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">
+              Recibe tu oferta y agenda la inspección final en el Bunker RA.
+            </p>
+          </div>
         </div>
       </main>
     </div>

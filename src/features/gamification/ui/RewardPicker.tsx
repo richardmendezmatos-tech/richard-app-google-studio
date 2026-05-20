@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
@@ -19,7 +19,7 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
     selectReward,
     deselectReward,
     spinKey,
-    tickTimer
+    tickTimer,
   } = useGamificationStore();
 
   const [spinning, setSpinning] = useState(false);
@@ -69,7 +69,7 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
       200: 45,
       450: 135,
       600: 225,
-      800: 315
+      800: 315,
     };
 
     const targetAngle = bonusAngles[wonBonus] || 135;
@@ -80,8 +80,8 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
       rotate: finalRotation,
       transition: {
         duration: 4,
-        ease: [0.25, 0.1, 0.25, 1] // Inercia natural suave
-      }
+        ease: [0.25, 0.1, 0.25, 1], // Inercia natural suave
+      },
     });
 
     setSpinning(false);
@@ -94,7 +94,11 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
       {timerActive && (
         <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl animate-pulse">
           <div className="flex items-center gap-3">
-            <Timer className="text-amber-500 animate-spin" size={20} style={{ animationDuration: '4s' }} />
+            <Timer
+              className="text-amber-500 animate-spin"
+              size={20}
+              style={{ animationDuration: '4s' }}
+            />
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">
                 Reserva Prioritaria de Tasa y Manifiesto Activos
@@ -121,7 +125,10 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
           Manifiesto de Entrega VIP
         </h2>
         <p className="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
-          Personalice los beneficios exclusivos para la entrega de su nueva <span className="text-white font-bold">unidad</span>. Marque hasta <span className="text-white font-bold">2 regalos de entrega</span> y gire la Llave de Oro para financiar su pronto.
+          Personalice los beneficios exclusivos para la entrega de su nueva{' '}
+          <span className="text-white font-bold">unidad</span>. Marque hasta{' '}
+          <span className="text-white font-bold">2 regalos de entrega</span> y gire la Llave de Oro
+          para financiar su pronto.
         </p>
       </div>
 
@@ -139,8 +146,8 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
                 isSelected
                   ? 'bg-slate-900/90 border-primary shadow-[0_0_30px_rgba(0,174,217,0.15)] scale-[1.02]'
                   : isDisabled
-                  ? 'bg-slate-950/20 border-white/5 opacity-40 cursor-not-allowed'
-                  : 'bg-slate-900/40 border-white/5 hover:border-white/20 hover:bg-slate-800/30'
+                    ? 'bg-slate-950/20 border-white/5 opacity-40 cursor-not-allowed'
+                    : 'bg-slate-900/40 border-white/5 hover:border-white/20 hover:bg-slate-800/30'
               }`}
             >
               <div
@@ -184,7 +191,8 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
             Activar Llave de Oro en la Ignición
           </h3>
           <p className="text-xs text-slate-500 max-w-sm">
-            Inserte y gire la llave de entrega en el encendido digital para liberar su bono de pronto garantizado.
+            Inserte y gire la llave de entrega en el encendido digital para liberar su bono de
+            pronto garantizado.
           </p>
         </div>
 
@@ -242,9 +250,7 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
             <p className="text-[10px] font-black text-[#C5A880] uppercase tracking-widest">
               Bono de Pronto Certificado Seguro
             </p>
-            <p className="text-2xl font-black text-emerald-400">
-              +${prontoBonus} USD a su Pronto
-            </p>
+            <p className="text-2xl font-black text-emerald-400">+${prontoBonus} USD a su Pronto</p>
           </div>
         )}
       </div>
@@ -263,8 +269,8 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
           {selectedRewards.length === 0
             ? 'Seleccione sus Regalos'
             : !isKeySpun
-            ? 'Gira la Llave para Continuar'
-            : 'Confirmar Recompensas VIP'}
+              ? 'Gira la Llave para Continuar'
+              : 'Confirmar Recompensas VIP'}
         </button>
       </div>
 
@@ -282,7 +288,8 @@ export const RewardPicker: React.FC<RewardPickerProps> = ({ onComplete }) => {
               +${prontoBonus} USD
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed mb-6">
-              Hemos certificado este bono directo a su pronto para la unidad seleccionada. Se aplicará de forma automática en el siguiente paso.
+              Hemos certificado este bono directo a su pronto para la unidad seleccionada. Se
+              aplicará de forma automática en el siguiente paso.
             </p>
             <button
               onClick={() => setShowPrizeModal(false)}

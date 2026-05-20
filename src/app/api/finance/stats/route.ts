@@ -24,12 +24,12 @@ export async function GET() {
     // 3. Calculate Metrics
     const totalInventoryValue = inventory.reduce((sum, item) => sum + (item.price || 0), 0);
     const avgInventoryPrice = inventory.length > 0 ? totalInventoryValue / inventory.length : 0;
-    
+
     // Assume 12% profit margin for yield estimation if cost is not tracked
     const estimatedYield = avgInventoryPrice * 0.12;
 
     // Calculate Bankability (Credit Score > 640 as simple proxy)
-    const bankableLeads = leads.filter(l => (l.credit_score || 0) >= 640).length;
+    const bankableLeads = leads.filter((l) => (l.credit_score || 0) >= 640).length;
     const bankabilityRate = leads.length > 0 ? (bankableLeads / leads.length) * 100 : 0;
 
     return NextResponse.json({
@@ -39,9 +39,9 @@ export async function GET() {
         bankabilityRate: Math.round(bankabilityRate),
         avgInventoryPrice: Math.round(avgInventoryPrice),
         totalUnits: inventory.length,
-        maxLtvLimit: CONSTANTES_PR.MAX_LTV_RATIO * 100
+        maxLtvLimit: CONSTANTES_PR.MAX_LTV_RATIO * 100,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
     console.error('❌ [FinanceStatsAPI] Error:', error);

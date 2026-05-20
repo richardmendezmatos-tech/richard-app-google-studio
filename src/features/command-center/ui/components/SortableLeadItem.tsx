@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';

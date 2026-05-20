@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState, useRef } from 'react';
 import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
@@ -111,7 +111,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
       }
 
       const { generateText } = await import('@/shared/api/ai/geminiService');
-      
+
       let multimodalData: any = null;
       if (uploadResults.length > 0) {
         try {
@@ -120,10 +120,10 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
           const blob = await imgResponse.blob();
           const base64Data = await blobToBase64(blob);
           const base64Content = base64Data.split(',')[1];
-          
+
           multimodalData = {
             mimeType: blob.type,
-            data: base64Content
+            data: base64Content,
           };
           logDebug('AI Vision: Imagen preparada para análisis multimodal.');
         } catch (imgError) {

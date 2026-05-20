@@ -45,39 +45,42 @@ export const CreditApplicationForm: React.FC = () => {
   React.useEffect(() => {
     const trackInteraction = () => setLastInteraction(Date.now());
     const events = ['mousemove', 'keydown', 'touchstart', 'scroll'];
-    events.forEach(e => window.addEventListener(e, trackInteraction));
-    
+    events.forEach((e) => window.addEventListener(e, trackInteraction));
+
     // Sentinel Watcher: Vigilancia de Abandono de Nivel 13
     const watcher = setInterval(async () => {
       // Solo rescatar si no se ha enviado con éxito y tiene datos mínimos
       if (!isSuccess && !hasRescued && formData.firstName && formData.phone) {
-        const leadData = { ...formData, id: `rescue_${Date.now()}`, status: 'new' as const, type: 'finance' as const };
-        
+        const leadData = {
+          ...formData,
+          id: `rescue_${Date.now()}`,
+          status: 'new' as const,
+          type: 'finance' as const,
+        };
+
         if (LeadHealthSensor.isAbandoned(leadData as any, lastInteraction)) {
-          console.warn('🛡️ Sentinel Watcher: Abandono detectado. Iniciando Protocolo de Rescate...');
+          console.warn(
+            '🛡️ Sentinel Watcher: Abandono detectado. Iniciando Protocolo de Rescate...',
+          );
           setHasRescued(true);
-          
+
           // 1. Guardado de Emergencia
           await LeadHealthSensor.emergencySave(leadData as any);
-          
+
           // 2. Sentinel Nudge (WhatsApp)
           const { triggerSentinelNudge } = await import('../../leads/model/whatsappService');
-          await triggerSentinelNudge(
-            leadData.id, 
-            leadData.firstName, 
-            leadData.phone
-          );
+          await triggerSentinelNudge(leadData.id, leadData.firstName, leadData.phone);
         }
       }
     }, 30000); // Revisión cada 30s
 
     return () => {
-      events.forEach(e => window.removeEventListener(e, trackInteraction));
+      events.forEach((e) => window.removeEventListener(e, trackInteraction));
       clearInterval(watcher);
     };
   }, [formData, lastInteraction, isSuccess, hasRescued]);
 
-  const recordSignal = useCustomerMemory(state => state.recordInteraction);
+  const recordSignal = useCustomerMemory((state) => state.recordInteraction);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setLastInteraction(Date.now());
@@ -165,10 +168,26 @@ export const CreditApplicationForm: React.FC = () => {
         <div>
           <PersuasionWrapper
             componentId="credit-vault-title"
-            analytical={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Análisis de ROI</h2>}
-            impulsive={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Aprobación Instantánea VIP</h2>}
-            conservative={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Seguridad Garantizada</h2>}
-            neutral={<h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">Bóveda de Pre-Cualificación</h2>}
+            analytical={
+              <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
+                Bóveda de Análisis de ROI
+              </h2>
+            }
+            impulsive={
+              <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
+                Aprobación Instantánea VIP
+              </h2>
+            }
+            conservative={
+              <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
+                Bóveda de Seguridad Garantizada
+              </h2>
+            }
+            neutral={
+              <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
+                Bóveda de Pre-Cualificación
+              </h2>
+            }
           />
           <p className="text-xs md:text-sm font-bold text-slate-400 flex items-center gap-2 mt-2 uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></span>
@@ -216,10 +235,30 @@ export const CreditApplicationForm: React.FC = () => {
                 </div>
                 <PersuasionWrapper
                   componentId="credit-step1-callout"
-                  analytical={<p className="text-sm font-medium text-slate-300">Minimizamos el impacto en tu perfil crediticio mediante un análisis puramente algorítmico y técnico.</p>}
-                  impulsive={<p className="text-sm font-medium text-slate-300">Acelera tu proceso ahora. Tus datos fluyen directo a la aprobación sin esperas innecesarias.</p>}
-                  conservative={<p className="text-sm font-medium text-slate-300">Protegemos tu identidad civil rigurosamente. Encriptación bancaria de grado militar para tu paz mental.</p>}
-                  neutral={<p className="text-sm font-medium text-slate-300">Protegemos tu identidad civil rigurosamente. Usa tu nombre legal exactamente como aparece en tu Licencia de Conducir.</p>}
+                  analytical={
+                    <p className="text-sm font-medium text-slate-300">
+                      Minimizamos el impacto en tu perfil crediticio mediante un análisis puramente
+                      algorítmico y técnico.
+                    </p>
+                  }
+                  impulsive={
+                    <p className="text-sm font-medium text-slate-300">
+                      Acelera tu proceso ahora. Tus datos fluyen directo a la aprobación sin esperas
+                      innecesarias.
+                    </p>
+                  }
+                  conservative={
+                    <p className="text-sm font-medium text-slate-300">
+                      Protegemos tu identidad civil rigurosamente. Encriptación bancaria de grado
+                      militar para tu paz mental.
+                    </p>
+                  }
+                  neutral={
+                    <p className="text-sm font-medium text-slate-300">
+                      Protegemos tu identidad civil rigurosamente. Usa tu nombre legal exactamente
+                      como aparece en tu Licencia de Conducir.
+                    </p>
+                  }
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -475,10 +514,34 @@ export const CreditApplicationForm: React.FC = () => {
             >
               <PersuasionWrapper
                 componentId="credit-submit-cta"
-                analytical={isSubmitting ? 'Optimizando...' : step < 3 ? 'Continuar Análisis' : 'Ejecutar Inversión'}
-                impulsive={isSubmitting ? 'Acelerando...' : step < 3 ? 'Asegurar Bono' : '¡Cerrar Trato Ahora!'}
-                conservative={isSubmitting ? 'Protegiendo...' : step < 3 ? 'Validar Seguridad' : 'Finalizar con Garantía'}
-                neutral={isSubmitting ? 'Bunker Procesando...' : step < 3 ? 'Avanzar al Paso ' + (step + 1) : 'Ejecutar Solicitud VIP'}
+                analytical={
+                  isSubmitting
+                    ? 'Optimizando...'
+                    : step < 3
+                      ? 'Continuar Análisis'
+                      : 'Ejecutar Inversión'
+                }
+                impulsive={
+                  isSubmitting
+                    ? 'Acelerando...'
+                    : step < 3
+                      ? 'Asegurar Bono'
+                      : '¡Cerrar Trato Ahora!'
+                }
+                conservative={
+                  isSubmitting
+                    ? 'Protegiendo...'
+                    : step < 3
+                      ? 'Validar Seguridad'
+                      : 'Finalizar con Garantía'
+                }
+                neutral={
+                  isSubmitting
+                    ? 'Bunker Procesando...'
+                    : step < 3
+                      ? 'Avanzar al Paso ' + (step + 1)
+                      : 'Ejecutar Solicitud VIP'
+                }
               />
               {!isSubmitting && <ChevronRight size={22} />}
             </button>

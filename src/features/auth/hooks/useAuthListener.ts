@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@/entities/session';
-import { subscribeToAuthChanges, getUserRole, normalizeUser } from '@/features/auth/services/authService';
+import {
+  subscribeToAuthChanges,
+  getUserRole,
+  normalizeUser,
+} from '@/features/auth/services/authService';
 
 export const useAuthListener = () => {
   const { setUser, setRole, setLoading, logout } = useAuthStore();
 
   useEffect(() => {
     // Check local bypass first
-    const isBypassed = typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') === 'true';
+    const isBypassed =
+      typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') === 'true';
     if (isBypassed) {
       console.log('⚡ [useAuthListener] Bypass active, setting mock admin user.');
       setRole('admin');
@@ -16,17 +21,20 @@ export const useAuthListener = () => {
         email: 'richardmendezmatos@gmail.com',
         displayName: 'Richard Mendez (Bypass)',
         photoURL: null,
-        role: 'admin'
+        role: 'admin',
       });
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    
+
     const unsubscribe = subscribeToAuthChanges(async (user) => {
-      console.log('🔄 [useAuthListener] Auth State Change Detected:', user ? `User: ${user.email}` : 'User: None');
-      
+      console.log(
+        '🔄 [useAuthListener] Auth State Change Detected:',
+        user ? `User: ${user.email}` : 'User: None',
+      );
+
       if (user) {
         try {
           const role = await getUserRole(user.uid);
@@ -49,4 +57,3 @@ export const useAuthListener = () => {
     };
   }, [setUser, setRole, setLoading, logout]);
 };
-

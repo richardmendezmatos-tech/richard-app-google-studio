@@ -89,7 +89,7 @@ export class EvaluarAprobacionVenta {
                   clientName: solicitud.nombreSolicitante,
                   vehicleDesc: `vehículo (${solicitud.precioUnidad})`,
                 },
-              })
+              }),
             }).catch((e) => console.error('Error enviando SMS de Lead [Twilio API]:', e));
           } catch (error) {
             console.error('Error invocando Twilio:', error);

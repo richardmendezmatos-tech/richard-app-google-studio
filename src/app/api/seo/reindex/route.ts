@@ -10,7 +10,7 @@ import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider
 export async function POST(req: Request) {
   try {
     const audit = await getAuditRepository();
-    
+
     console.log('[SEO API] Invocando revalidación on-demand...');
 
     // 1. Revalidar rutas críticas
@@ -22,23 +22,26 @@ export async function POST(req: Request) {
     await audit.log(
       'info',
       'Sitemap & Inventory revalidation triggered via Command Center',
-      { 
+      {
         paths: ['/sitemap.xml', '/inventario'],
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
-      'SentinelSEO'
+      'SentinelSEO',
     );
 
     return NextResponse.json({
       success: true,
       message: 'SEO Revalidation triggered successfully',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (err: any) {
     console.error('[SEO API] Error during revalidation:', err);
-    return NextResponse.json({
-      success: false,
-      error: err.message || 'Internal server error during SEO sync'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: err.message || 'Internal server error during SEO sync',
+      },
+      { status: 500 },
+    );
   }
 }

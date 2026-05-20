@@ -15,9 +15,7 @@ export class SupabaseSubscriberRepository implements SubscriberRepository {
   }
 
   async subscribe(data: SubscriberData): Promise<void> {
-    const { error } = await this.client
-      .from('subscribers')
-      .insert([data]);
+    const { error } = await this.client.from('subscribers').insert([data]);
 
     if (error) {
       console.error('[SupabaseSubscriberRepository] Error subscribing:', error);
@@ -52,9 +50,7 @@ export class SupabaseSurveyRepository implements SurveyRepository {
   }
 
   async submitSurvey(data: SurveyData): Promise<void> {
-    const { error } = await this.client
-      .from('surveys')
-      .insert([data]);
+    const { error } = await this.client.from('surveys').insert([data]);
 
     if (error) {
       console.error('[SupabaseSurveyRepository] Error submitting survey:', error);

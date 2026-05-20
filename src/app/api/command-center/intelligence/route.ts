@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -16,7 +15,7 @@ export async function GET(req: Request) {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
-  
+
   // Security Check (Internal Token)
   const token = req.headers.get('x-antigravity-token');
   if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
@@ -31,24 +30,23 @@ export async function GET(req: Request) {
     // 1. Parallel Data Extraction
     const [velocityData, searchGaps, hotLeads] = await Promise.all([
       // High velocity events (views, claims)
-      supabase.from('sentinel_metrics')
+      supabase
+        .from('sentinel_metrics')
         .select('*')
         .eq('type', 'inventory_velocity')
         .gte('timestamp', last7d)
         .order('operational_score', { ascending: false }),
-      
+
       // Search terms with no results
-      supabase.from('search_gaps')
+      supabase
+        .from('search_gaps')
         .select('*')
         .gte('created_at', last7d)
         .order('count', { ascending: false })
         .limit(10),
-        
+
       // Top scoring leads
-      supabase.from('leads')
-        .select('*')
-        .order('ai_analysis->score', { ascending: false })
-        .limit(5)
+      supabase.from('leads').select('*').order('ai_analysis->score', { ascending: false }).limit(5),
     ]);
 
     // 2. Intelligence Processing (Signal Synthesis)
@@ -56,7 +54,7 @@ export async function GET(req: Request) {
 
     // Signal: Hot Inventory Units
     const vinMap = new Map<string, number>();
-    velocityData.data?.forEach(m => {
+    velocityData.data?.forEach((m) => {
       const vin = m.data?.vin;
       if (vin) vinMap.set(vin, (vinMap.get(vin) || 0) + (m.operational_score || 1));
     });
@@ -70,13 +68,13 @@ export async function GET(req: Request) {
           message: `Unidad con alta velocidad de conversión detectada.`,
           vin,
           score,
-          action: 'BUMP_PRICE_OR_PROMOTE'
+          action: 'BUMP_PRICE_OR_PROMOTE',
         });
       }
     });
 
     // Signal: Inventory Gaps (Sourcing Opportunities)
-    searchGaps.data?.forEach(gap => {
+    searchGaps.data?.forEach((gap) => {
       if (gap.count >= 3) {
         signals.push({
           id: `SIG-GAP-${gap.id}`,
@@ -85,13 +83,13 @@ export async function GET(req: Request) {
           message: `Demanda insatisfecha para: "${gap.query}".`,
           query: gap.query,
           hits: gap.count,
-          action: 'SOURCE_UNIT'
+          action: 'SOURCE_UNIT',
         });
       }
     });
 
     // Signal: Immediate Lead Follow-up
-    hotLeads.data?.forEach(lead => {
+    hotLeads.data?.forEach((lead) => {
       const score = lead.ai_analysis?.score || 0;
       if (score >= 90) {
         signals.push({
@@ -101,7 +99,7 @@ export async function GET(req: Request) {
           message: `Lead de alta intención listo para cierre: ${lead.first_name}.`,
           leadId: lead.id,
           score,
-          action: 'CALL_NOW'
+          action: 'CALL_NOW',
         });
       }
     });
@@ -116,10 +114,9 @@ export async function GET(req: Request) {
       metrics: {
         velocity_events_7d: velocityData.data?.length || 0,
         gap_count_7d: searchGaps.data?.length || 0,
-        lead_count: hotLeads.data?.length || 0
-      }
+        lead_count: hotLeads.data?.length || 0,
+      },
     });
-
   } catch (error: any) {
     console.error('[Intelligence API] Sentinel System Fault:', error);
     return NextResponse.json({ error: 'Internal Signal Error' }, { status: 500 });

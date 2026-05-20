@@ -7,8 +7,14 @@ import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 export const metadata: Metadata = {
   title: 'Inventario de Autos Nuevos y Usados | Richard Automotive',
-  description: 'Explora nuestro inventario completo de autos nuevos y usados en Vega Alta, Puerto Rico. Filtra por marca, modelo, precio y tipo de vehículo.',
-  keywords: ['inventario autos', 'buscar autos', 'carros puerto rico', 'richard automotive inventario'],
+  description:
+    'Explora nuestro inventario completo de autos nuevos y usados en Vega Alta, Puerto Rico. Filtra por marca, modelo, precio y tipo de vehículo.',
+  keywords: [
+    'inventario autos',
+    'buscar autos',
+    'carros puerto rico',
+    'richard automotive inventario',
+  ],
   alternates: {
     canonical: 'https://richard-automotive.com/inventario',
   },
@@ -20,7 +26,6 @@ export default async function InventoryRoute() {
   noStore();
   let inventory: Car[] = [];
 
-  
   try {
     const result = await getPaginatedCars(12, null, 'all');
     inventory = result.cars;
@@ -30,11 +35,13 @@ export default async function InventoryRoute() {
 
   return (
     <main className="relative min-h-screen pt-24 bg-[#0a0a0a]">
-      <Suspense fallback={
-        <div className="flex h-[50vh] items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="flex h-[50vh] items-center justify-center">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+          </div>
+        }
+      >
         <InventoryPage inventory={inventory} />
       </Suspense>
     </main>

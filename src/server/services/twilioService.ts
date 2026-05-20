@@ -33,4 +33,3 @@ export async function sendTwilioMessage(to: string, body: string): Promise<boole
     return false;
   }
 }
-

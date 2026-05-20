@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
@@ -35,7 +35,8 @@ const OfflineIndicator = () => {
         <WifiOff size={14} />
       </div>
       <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-        Modo Offline Activo <span className="mx-2 opacity-40">•</span> Sincronización Sentinel Pausada
+        Modo Offline Activo <span className="mx-2 opacity-40">•</span> Sincronización Sentinel
+        Pausada
       </span>
     </div>
   );

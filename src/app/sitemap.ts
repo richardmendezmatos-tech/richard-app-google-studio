@@ -9,8 +9,17 @@ export const revalidate = 86400; // Revalidate sitemap every 24 hours
 
 // ── All PR cities with programmatic pages ──
 const SEO_CITIES = [
-  'bayamon', 'san-juan', 'guaynabo', 'ponce', 'caguas',
-  'carolina', 'mayaguez', 'arecibo', 'toa-baja', 'humacao', 'vega-alta',
+  'bayamon',
+  'san-juan',
+  'guaynabo',
+  'ponce',
+  'caguas',
+  'carolina',
+  'mayaguez',
+  'arecibo',
+  'toa-baja',
+  'humacao',
+  'vega-alta',
 ];
 
 // ── Vehicle category pages ──
@@ -61,7 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Programmatic SEO: City Pages
-  const cityRoutes: MetadataRoute.Sitemap = SEO_CITIES.map(city => ({
+  const cityRoutes: MetadataRoute.Sitemap = SEO_CITIES.map((city) => ({
     url: `${SITE_URL}/autos-usados/${city}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
@@ -69,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Programmatic SEO: Category Pages
-  const categoryRoutes: MetadataRoute.Sitemap = SEO_CATEGORIES.map(cat => ({
+  const categoryRoutes: MetadataRoute.Sitemap = SEO_CATEGORIES.map((cat) => ({
     url: `${SITE_URL}/autos-usados/tipo/${cat}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
@@ -111,11 +120,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [
-    ...staticRoutes,
-    ...cityRoutes,
-    ...categoryRoutes,
-    ...blogRoutes,
-    ...inventoryRoutes,
-  ];
+  return [...staticRoutes, ...cityRoutes, ...categoryRoutes, ...blogRoutes, ...inventoryRoutes];
 }

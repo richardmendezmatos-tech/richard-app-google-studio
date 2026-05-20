@@ -4,7 +4,7 @@ import { gemini15Flash } from '../../../services/aiManager';
 
 export const generateCarDescriptionFlow = async (
   input: { carModel: string; features?: string[] },
-  onChunk?: (chunk: string) => void
+  onChunk?: (chunk: string) => void,
 ) => {
   const { carModel, features } = input;
   const cacheKey = `car_desc_${carModel.toLowerCase().replace(/\s+/g, '_')}_${features?.join('_').toLowerCase().replace(/\s+/g, '_')}`;

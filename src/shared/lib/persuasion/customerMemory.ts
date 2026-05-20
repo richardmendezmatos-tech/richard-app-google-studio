@@ -20,44 +20,56 @@ export const useCustomerMemory = create<CustomerMemoryState>()(
     (set, get) => ({
       profile: 'neutral',
       interactionHistory: [],
-      
+
       setProfile: (profile) => set({ profile }),
-      
+
       recordInteraction: (interaction) => {
         const history = [...get().interactionHistory, interaction].slice(-10);
         set({ interactionHistory: history });
         // Auto-inferencia después de cada interacción relevante
         get().inferProfile();
       },
-      
+
       inferProfile: () => {
         const history = get().interactionHistory;
-        
+
         // Conteo de señales heurísticas
         const signals = {
-          analytical: history.filter(i => i.includes('spec') || i.includes('tech') || i.includes('roi')).length,
-          impulsive: history.filter(i => i.includes('now') || i.includes('offer') || i.includes('status')).length,
-          conservative: history.filter(i => i.includes('safe') || i.includes('warranty') || i.includes('family')).length,
+          analytical: history.filter(
+            (i) => i.includes('spec') || i.includes('tech') || i.includes('roi'),
+          ).length,
+          impulsive: history.filter(
+            (i) => i.includes('now') || i.includes('offer') || i.includes('status'),
+          ).length,
+          conservative: history.filter(
+            (i) => i.includes('safe') || i.includes('warranty') || i.includes('family'),
+          ).length,
         };
-        
+
         let newProfile: CognitiveProfile = 'neutral';
-        
+
         if (signals.analytical > signals.impulsive && signals.analytical > signals.conservative) {
           newProfile = 'analytical';
-        } else if (signals.impulsive > signals.analytical && signals.impulsive > signals.conservative) {
+        } else if (
+          signals.impulsive > signals.analytical &&
+          signals.impulsive > signals.conservative
+        ) {
           newProfile = 'impulsive';
-        } else if (signals.conservative > signals.analytical && signals.conservative > signals.impulsive) {
+        } else if (
+          signals.conservative > signals.analytical &&
+          signals.conservative > signals.impulsive
+        ) {
           newProfile = 'conservative';
         }
-        
+
         if (newProfile !== 'neutral' && newProfile !== get().profile) {
           set({ profile: newProfile });
           console.log(`[Neuro-Sentinel] Perfil inferido: ${newProfile.toUpperCase()}`);
         }
-      }
+      },
     }),
     {
       name: 'ra-customer-memory', // Persistencia local (Zero-Gravity persistence)
-    }
-  )
+    },
+  ),
 );

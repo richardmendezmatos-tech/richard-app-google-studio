@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
@@ -61,7 +61,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   useEffect(() => {
     workerRef.current = new Worker(
-      new URL('../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url)
+      new URL('../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url),
     );
     return () => {
       workerRef.current?.terminate();
@@ -197,7 +197,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
-          
+
           const storageRepo = DI.getStorageRepository();
 
           // Parallel Upload of ALL versions using Supabase via DI
@@ -209,21 +209,33 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           // 1. JPEG Task
           uploadTasks.push({
             type: 'jpeg',
-            task: storageRepo.uploadImage(optimized.jpeg, `${storagePath}/${baseFileName}.jpg`, 'image/jpeg'),
+            task: storageRepo.uploadImage(
+              optimized.jpeg,
+              `${storagePath}/${baseFileName}.jpg`,
+              'image/jpeg',
+            ),
           });
 
           // 2. WebP Task (if available)
           if (optimized.webp) {
             uploadTasks.push({
               type: 'webp',
-              task: storageRepo.uploadImage(optimized.webp, `${storagePath}/${baseFileName}.webp`, 'image/webp'),
+              task: storageRepo.uploadImage(
+                optimized.webp,
+                `${storagePath}/${baseFileName}.webp`,
+                'image/webp',
+              ),
             });
           }
 
           // 3. Thumbnail Task
           uploadTasks.push({
             type: 'thumb',
-            task: storageRepo.uploadImage(optimized.thumbnail, `${storagePath}/${baseFileName}_thumb.jpg`, 'image/jpeg'),
+            task: storageRepo.uploadImage(
+              optimized.thumbnail,
+              `${storagePath}/${baseFileName}_thumb.jpg`,
+              'image/jpeg',
+            ),
           });
 
           // Wait for all uploads of THIS image

@@ -34,7 +34,7 @@ export class Vehicle {
 
   public static create(vinStr: string, props: VehicleProps): Vehicle {
     const vin = VIN.create(vinStr);
-    
+
     if (props.price < 0) {
       throw new Error(`Dominio: El precio no puede ser negativo (${vinStr})`);
     }
@@ -53,7 +53,7 @@ export class Vehicle {
   get props(): Readonly<VehicleProps> {
     return Object.freeze({ ...this._props });
   }
-  
+
   get price(): number {
     return this._props.price;
   }
@@ -74,7 +74,7 @@ export class Vehicle {
   public updateMetadata(metadata: Record<string, any>): void {
     this._props.metadata = {
       ...(this._props.metadata || {}),
-      ...metadata
+      ...metadata,
     };
   }
 }

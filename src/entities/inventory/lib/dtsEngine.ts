@@ -26,23 +26,33 @@ const BRAND_TIER: Record<string, number> = {
   Nissan: 1.05,
 };
 
-export const calculatePredictiveDTS = (car: PredictiveCar, leadsCount: number = 0): PredictionResult => {
+export const calculatePredictiveDTS = (
+  car: PredictiveCar,
+  leadsCount: number = 0,
+): PredictionResult => {
   let baseDays = 45; // Promedio de la industria para autos usados en PR
   let score = 50;
 
   // 1. Efecto del Precio
   const price = car.price || 0;
   if (price > 0) {
-    if (price < 15000) { baseDays -= 15; score += 10; }
-    else if (price < 25000) { baseDays -= 10; score += 5; }
-    else if (price > 75000) { baseDays += 25; score -= 15; }
+    if (price < 15000) {
+      baseDays -= 15;
+      score += 10;
+    } else if (price < 25000) {
+      baseDays -= 10;
+      score += 5;
+    } else if (price > 75000) {
+      baseDays += 25;
+      score -= 15;
+    }
   }
 
   // 2. Efecto del Año (Demanda Subjetiva)
   const currentYear = new Date().getFullYear();
   const year = car.year || currentYear;
   const age = currentYear - year;
-  
+
   if (age <= 3) {
     baseDays -= 10; // Semi-nuevos tienen alta rotación o alto precio
     score += 10;
@@ -64,9 +74,18 @@ export const calculatePredictiveDTS = (car: PredictiveCar, leadsCount: number = 
   }
 
   // 5. Momentum de Leads (Tracción en Tiempo Real)
-  if (leadsCount > 3) { baseDays -= 8; score += 15; }
-  if (leadsCount > 8) { baseDays -= 15; score += 20; }
-  if (leadsCount > 15) { baseDays -= 25; score += 25; }
+  if (leadsCount > 3) {
+    baseDays -= 8;
+    score += 15;
+  }
+  if (leadsCount > 8) {
+    baseDays -= 15;
+    score += 20;
+  }
+  if (leadsCount > 15) {
+    baseDays -= 25;
+    score += 25;
+  }
 
   // 6. Calidad de Presentación
   if (!car.img) {
@@ -75,11 +94,12 @@ export const calculatePredictiveDTS = (car: PredictiveCar, leadsCount: number = 
   }
 
   // Lógica final del Advantage Score
-  const advantage = Math.min(100, Math.max(0, score + (leadsCount * 3) - (price / 8000)));
+  const advantage = Math.min(100, Math.max(0, score + leadsCount * 3 - price / 8000));
 
   // Recomendación Estratégica
   let recommendation = 'Mantener precio actual y monitorear.';
-  if (advantage > 85) recommendation = '🔥 Alta Demanda: Considerar aumento ligero o protección (GAP).';
+  if (advantage > 85)
+    recommendation = '🔥 Alta Demanda: Considerar aumento ligero o protección (GAP).';
   if (advantage > 70 && advantage <= 85) recommendation = '🚀 Tracción Activa: Listo para cierre.';
   if (advantage < 40) recommendation = '⚠️ Baja Tracción: Reducción de precio o campaña agresiva.';
 

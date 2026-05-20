@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { Star, ShieldCheck, Quote, BadgeCheck, Zap } from 'lucide-react';
@@ -98,22 +98,26 @@ const TestimonialsSection: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-black uppercase tracking-widest text-white leading-none mb-1.5">{t.name}</h4>
+                  <h4 className="text-sm font-black uppercase tracking-widest text-white leading-none mb-1.5">
+                    {t.name}
+                  </h4>
                   <p className="font-tech text-[9px] font-black uppercase tracking-widest text-cyan-500">
                     {t.role}
                   </p>
                 </div>
               </div>
-              
+
               <div className="absolute bottom-10 right-10 flex items-center gap-2 opacity-0 -translate-x-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
                 <Zap size={10} className="text-cyan-400 animate-pulse" />
-                <span className="font-tech text-[8px] font-black tracking-widest text-slate-600">{t.location}</span>
+                <span className="font-tech text-[8px] font-black tracking-widest text-slate-600">
+                  {t.location}
+                </span>
               </div>
             </div>
           ))}
         </div>
       </div>
-      
+
       <style>{`
         .mesh-bg-elite {
           background: linear-gradient(-45deg, #00e5ff11, #7000ff11, #ff007005, #00ffaa05);

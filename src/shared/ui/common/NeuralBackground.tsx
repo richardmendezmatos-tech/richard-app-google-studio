@@ -1,4 +1,4 @@
-"use client";
+'use client';
 /* eslint-disable react-hooks/purity */
 
 import React, { useMemo } from 'react';
@@ -9,9 +9,9 @@ interface NeuralBackgroundProps {
   count?: number;
 }
 
-export const NeuralBackground: React.FC<NeuralBackgroundProps> = ({ 
-  className = "", 
-  count = 20 
+export const NeuralBackground: React.FC<NeuralBackgroundProps> = ({
+  className = '',
+  count = 20,
 }) => {
   const { scrollY } = useScroll();
   const yParallax = useTransform(scrollY, [0, 1000], [0, -200]);
@@ -30,7 +30,9 @@ export const NeuralBackground: React.FC<NeuralBackgroundProps> = ({
   }, [count]);
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none ${className}`}>
+    <div
+      className={`absolute inset-0 overflow-hidden pointer-events-none select-none ${className}`}
+    >
       <motion.div style={{ y: yParallax }} className="absolute inset-0">
         <svg className="w-full h-full opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
           {/* Subtle connecting lines */}
@@ -52,8 +54,8 @@ export const NeuralBackground: React.FC<NeuralBackgroundProps> = ({
                 transition={{
                   duration: 5,
                   repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.5
+                  ease: 'easeInOut',
+                  delay: i * 0.5,
                 }}
               />
             );
@@ -77,14 +79,14 @@ export const NeuralBackground: React.FC<NeuralBackgroundProps> = ({
               transition={{
                 duration: node.duration,
                 repeat: Infinity,
-                ease: "linear",
-                delay: node.delay
+                ease: 'linear',
+                delay: node.delay,
               }}
             />
           ))}
         </svg>
       </motion.div>
-      
+
       {/* Cinematic Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(2,6,23,0.8)_100%)]" />
     </div>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
@@ -40,7 +40,8 @@ const BetaOnboard = () => {
           type: 'luxury' as CarType,
           badge: 'Exclusivo Elite',
           img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
-          image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
           featured: true,
           status: 'available',
           vin: 'ELITE2026-001',
@@ -56,7 +57,8 @@ const BetaOnboard = () => {
           type: 'suv' as CarType,
           badge: 'Hyper-Limited',
           img: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
-          image: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
           featured: true,
           status: 'available',
           vin: 'ELITE2026-SUV',

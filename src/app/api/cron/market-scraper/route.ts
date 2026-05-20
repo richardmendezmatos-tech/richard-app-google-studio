@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     await runMarketIntelScraper();
     return NextResponse.json({ success: true, message: 'Market Intel Scraper finished' });
   } catch (error: any) {
-    console.error("Error in market scraper:", error);
+    console.error('Error in market scraper:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

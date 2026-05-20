@@ -12,16 +12,16 @@ interface Step2ConditionMileageProps {
   labelClasses: string;
 }
 
-export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({ 
-  formData, 
-  setFormData, 
-  onNext, 
+export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
+  formData,
+  setFormData,
+  onNext,
   onPrev,
   inputClasses,
-  labelClasses
+  labelClasses,
 }) => {
   return (
-    <motion.div 
+    <motion.div
       key="step2"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -32,9 +32,9 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
         <div>
           <label className={labelClasses}>Millaje Actual</label>
           <div className="relative">
-            <input 
-              type="number" 
-              placeholder="Ej: 45000" 
+            <input
+              type="number"
+              placeholder="Ej: 45000"
               className={inputClasses}
               value={formData.mileage}
               onChange={(e) => setFormData({ mileage: e.target.value })}
@@ -44,7 +44,7 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
         </div>
         <div>
           <label className={labelClasses}>Estado General</label>
-          <select 
+          <select
             className={inputClasses}
             value={formData.condition}
             onChange={(e) => setFormData({ condition: e.target.value as any })}
@@ -57,25 +57,28 @@ export const Step2ConditionMileage: React.FC<Step2ConditionMileageProps> = ({
           </select>
         </div>
       </div>
-      
+
       <div className="p-6 bg-primary/5 rounded-4xl border border-primary/20 flex gap-4 items-start">
-         <Camera className="text-primary mt-1" size={24} />
-         <div>
-            <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1">Análisis de Condición</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed uppercase">
-              Nuestra IA analizará tu unidad para validar el estado clínico y darte el mejor valor de retoma de Puerto Rico.
-            </p>
-         </div>
+        <Camera className="text-primary mt-1" size={24} />
+        <div>
+          <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1">
+            Análisis de Condición
+          </h4>
+          <p className="text-[10px] text-slate-400 leading-relaxed uppercase">
+            Nuestra IA analizará tu unidad para validar el estado clínico y darte el mejor valor de
+            retoma de Puerto Rico.
+          </p>
+        </div>
       </div>
 
       <div className="flex gap-4">
-        <button 
+        <button
           onClick={onPrev}
           className="flex-[0.3] py-5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all"
         >
           Atrás
         </button>
-        <button 
+        <button
           onClick={onNext}
           className="flex-1 py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-3"
         >

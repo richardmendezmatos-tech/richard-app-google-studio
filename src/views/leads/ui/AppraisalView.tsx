@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 'lucide-react';
@@ -231,113 +231,120 @@ const PhotoStep = React.memo(({ photos, onUpload, progress, count, onNext }: any
   </motion.div>
 ));
 
-const ScanStep = React.memo(({ stage, offerReady, scanning, activePhaseIndex, onStart, onNext }: any) => {
-  const phases = [
-    { label: 'Escaneando exterior frontal (carrocería y golpes)...' },
-    { label: 'Inspeccionando pintura y consistencia trasera...' },
-    { label: 'Evaluando tapicería e integridad de cabina...' },
-    { label: 'Verificando odómetro y luces en panel digital...' }
-  ];
+const ScanStep = React.memo(
+  ({ stage, offerReady, scanning, activePhaseIndex, onStart, onNext }: any) => {
+    const phases = [
+      { label: 'Escaneando exterior frontal (carrocería y golpes)...' },
+      { label: 'Inspeccionando pintura y consistencia trasera...' },
+      { label: 'Evaluando tapicería e integridad de cabina...' },
+      { label: 'Verificando odómetro y luces en panel digital...' },
+    ];
 
-  return (
-    <motion.div
-      key="scan"
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="flex flex-col items-center justify-center py-6 space-y-8 max-w-md mx-auto"
-    >
-      <div className="relative w-48 h-48">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-          className="absolute inset-0 border-4 border-dashed border-[#C5A880]/30 rounded-full"
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          className="absolute inset-3 border-4 border-dashed border-primary/50 rounded-full"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <BrainCircuit className="text-primary w-16 h-16 opacity-80 animate-pulse" />
-        </div>
-
-        {/* Use standardized scan line from CSS with champagne gold styling */}
-        <motion.div
-          animate={{ top: ['0%', '100%', '0%'] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="scan-line"
-          style={{ backgroundColor: '#C5A880', boxShadow: '0 0 12px #C5A880' }}
-        />
-      </div>
-
-      <div className="text-center space-y-2">
-        <h3 className="text-xl font-black uppercase text-slate-800 dark:text-white">
-          {offerReady ? 'Análisis Completado' : stage || 'Iniciando Escáner...'}
-        </h3>
-        <p className="text-xs text-slate-400 uppercase tracking-widest">
-          {offerReady
-            ? 'Análisis exitoso. Listo para revelar.'
-            : 'Sentinel Vision está analizando tus 4 fotos'}
-        </p>
-      </div>
-
-      {/* Checklist Animado */}
-      {scanning && (
-        <div className="w-full bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50 space-y-3.5 shadow-lg text-left">
-          <div className="text-[10px] font-black uppercase text-[#C5A880] tracking-widest mb-1">
-            Progreso del Escaneo Visual
+    return (
+      <motion.div
+        key="scan"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="flex flex-col items-center justify-center py-6 space-y-8 max-w-md mx-auto"
+      >
+        <div className="relative w-48 h-48">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-0 border-4 border-dashed border-[#C5A880]/30 rounded-full"
+          />
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-3 border-4 border-dashed border-primary/50 rounded-full"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <BrainCircuit className="text-primary w-16 h-16 opacity-80 animate-pulse" />
           </div>
-          {phases.map((phase, idx) => {
-            const isCompleted = idx < activePhaseIndex;
-            const isActive = idx === activePhaseIndex;
 
-            return (
-              <div key={idx} className="flex items-center gap-3 text-xs transition-opacity duration-300">
-                {isCompleted ? (
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                    <CheckCircle size={12} className="stroke-[3]" />
-                  </div>
-                ) : isActive ? (
-                  <div className="w-5 h-5 rounded-full bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/40 flex items-center justify-center shrink-0">
-                    <div className="w-2 h-2 rounded-full bg-[#C5A880] animate-ping" />
-                  </div>
-                ) : (
-                  <div className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-450 dark:text-slate-500 flex items-center justify-center shrink-0">
-                    <span className="text-[9px] font-black">{idx + 1}</span>
-                  </div>
-                )}
-                <span className={`font-medium ${isCompleted ? 'text-slate-400 dark:text-slate-500 line-through' : isActive ? 'text-slate-800 dark:text-white font-bold animate-pulse' : 'text-slate-400 dark:text-slate-650'}`}>
-                  {phase.label}
-                </span>
-              </div>
-            );
-          })}
+          {/* Use standardized scan line from CSS with champagne gold styling */}
+          <motion.div
+            animate={{ top: ['0%', '100%', '0%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="scan-line"
+            style={{ backgroundColor: '#C5A880', boxShadow: '0 0 12px #C5A880' }}
+          />
         </div>
-      )}
 
-      {!scanning && !offerReady && (
-        <button
-          onClick={onStart}
-          className="w-full py-4 bg-[#0d2232] text-white rounded-xl font-bold uppercase tracking-widest text-xs active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-cyan-900/10"
-        >
-          Iniciar Escaneo IA
-        </button>
-      )}
+        <div className="text-center space-y-2">
+          <h3 className="text-xl font-black uppercase text-slate-800 dark:text-white">
+            {offerReady ? 'Análisis Completado' : stage || 'Iniciando Escáner...'}
+          </h3>
+          <p className="text-xs text-slate-400 uppercase tracking-widest">
+            {offerReady
+              ? 'Análisis exitoso. Listo para revelar.'
+              : 'Sentinel Vision está analizando tus 4 fotos'}
+          </p>
+        </div>
 
-      {offerReady && (
-        <motion.button
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          onClick={onNext}
-          className="w-full py-4 bg-emerald-600 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-600/30 hover:scale-105 active:scale-95 transition-all"
-        >
-          Desbloquear Oferta Revelada
-        </motion.button>
-      )}
-    </motion.div>
-  );
-});
+        {/* Checklist Animado */}
+        {scanning && (
+          <div className="w-full bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50 space-y-3.5 shadow-lg text-left">
+            <div className="text-[10px] font-black uppercase text-[#C5A880] tracking-widest mb-1">
+              Progreso del Escaneo Visual
+            </div>
+            {phases.map((phase, idx) => {
+              const isCompleted = idx < activePhaseIndex;
+              const isActive = idx === activePhaseIndex;
+
+              return (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 text-xs transition-opacity duration-300"
+                >
+                  {isCompleted ? (
+                    <div className="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                      <CheckCircle size={12} className="stroke-[3]" />
+                    </div>
+                  ) : isActive ? (
+                    <div className="w-5 h-5 rounded-full bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/40 flex items-center justify-center shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-[#C5A880] animate-ping" />
+                    </div>
+                  ) : (
+                    <div className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-450 dark:text-slate-500 flex items-center justify-center shrink-0">
+                      <span className="text-[9px] font-black">{idx + 1}</span>
+                    </div>
+                  )}
+                  <span
+                    className={`font-medium ${isCompleted ? 'text-slate-400 dark:text-slate-500 line-through' : isActive ? 'text-slate-800 dark:text-white font-bold animate-pulse' : 'text-slate-400 dark:text-slate-650'}`}
+                  >
+                    {phase.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {!scanning && !offerReady && (
+          <button
+            onClick={onStart}
+            className="w-full py-4 bg-[#0d2232] text-white rounded-xl font-bold uppercase tracking-widest text-xs active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-cyan-900/10"
+          >
+            Iniciar Escaneo IA
+          </button>
+        )}
+
+        {offerReady && (
+          <motion.button
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            onClick={onNext}
+            className="w-full py-4 bg-emerald-600 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-600/30 hover:scale-105 active:scale-95 transition-all"
+          >
+            Desbloquear Oferta Revelada
+          </motion.button>
+        )}
+      </motion.div>
+    );
+  },
+);
 
 const OfferStep = React.memo(({ amount, analysis, vehicle, onAccept, onCancel }: any) => (
   <motion.div
@@ -522,22 +529,45 @@ const AppraisalView: React.FC = () => {
 
       setScanStage('Escaneando exterior frontal...');
       const uploadTask = uploadAllPhotos();
-      
+
       const baseValue = getAppraisalBaseValue(Number(vehicleInfo.year), vehicleInfo.make);
       const aiTask = appraisalVisionService.appraiseVehicle(
         cleanBase64,
         baseValue,
         Number(vehicleInfo.year),
         vehicleInfo.make,
-        Number(vehicleInfo.mileage)
+        Number(vehicleInfo.mileage),
       );
 
       // Delayed phase progressers to trigger sequential scanning HUD checklist
       const phaseInterval = 1000;
-      const phase1 = new Promise((resolve) => setTimeout(() => { setActivePhaseIndex(1); setScanStage('Inspeccionando parte trasera...'); resolve(null); }, phaseInterval));
-      const phase2 = new Promise((resolve) => setTimeout(() => { setActivePhaseIndex(2); setScanStage('Evaluando tapicería...'); resolve(null); }, phaseInterval * 2));
-      const phase3 = new Promise((resolve) => setTimeout(() => { setActivePhaseIndex(3); setScanStage('Verificando odómetro y panel...'); resolve(null); }, phaseInterval * 3));
-      const phase4 = new Promise((resolve) => setTimeout(() => { setActivePhaseIndex(4); resolve(null); }, phaseInterval * 4));
+      const phase1 = new Promise((resolve) =>
+        setTimeout(() => {
+          setActivePhaseIndex(1);
+          setScanStage('Inspeccionando parte trasera...');
+          resolve(null);
+        }, phaseInterval),
+      );
+      const phase2 = new Promise((resolve) =>
+        setTimeout(() => {
+          setActivePhaseIndex(2);
+          setScanStage('Evaluando tapicería...');
+          resolve(null);
+        }, phaseInterval * 2),
+      );
+      const phase3 = new Promise((resolve) =>
+        setTimeout(() => {
+          setActivePhaseIndex(3);
+          setScanStage('Verificando odómetro y panel...');
+          resolve(null);
+        }, phaseInterval * 3),
+      );
+      const phase4 = new Promise((resolve) =>
+        setTimeout(() => {
+          setActivePhaseIndex(4);
+          resolve(null);
+        }, phaseInterval * 4),
+      );
 
       const [urls, analysis] = await Promise.all([
         uploadTask,
@@ -545,7 +575,7 @@ const AppraisalView: React.FC = () => {
         phase1,
         phase2,
         phase3,
-        phase4
+        phase4,
       ]);
 
       setUploadedUrls(urls);
@@ -566,20 +596,23 @@ const AppraisalView: React.FC = () => {
 
   const handleAcceptOffer = async () => {
     try {
-      await DI.getApplicationRepository().submitApplication({
-        firstName: contactInfo.name.split(' ')[0],
-        lastName: contactInfo.name.split(' ').slice(1).join(' ') || 'N/A',
-        phone: contactInfo.phone,
-        type: 'trade-in',
-        customer: { name: contactInfo.name, phone: contactInfo.phone },
-        vehicle: { ...vehicleInfo },
-        offerAmount,
-        tradeInPhotos: uploadedUrls,
-        status: 'new',
-        aiSummary: aiAnalysis
-          ? `IA Condition: ${aiAnalysis.condition}. Reasoning: ${aiAnalysis.reasoning}`
-          : 'No AI Analysis',
-      }, 'richard-automotive');
+      await DI.getApplicationRepository().submitApplication(
+        {
+          firstName: contactInfo.name.split(' ')[0],
+          lastName: contactInfo.name.split(' ').slice(1).join(' ') || 'N/A',
+          phone: contactInfo.phone,
+          type: 'trade-in',
+          customer: { name: contactInfo.name, phone: contactInfo.phone },
+          vehicle: { ...vehicleInfo },
+          offerAmount,
+          tradeInPhotos: uploadedUrls,
+          status: 'new',
+          aiSummary: aiAnalysis
+            ? `IA Condition: ${aiAnalysis.condition}. Reasoning: ${aiAnalysis.reasoning}`
+            : 'No AI Analysis',
+        },
+        'richard-automotive',
+      );
       navigate('/garage');
     } catch (e) {
       console.error(e);

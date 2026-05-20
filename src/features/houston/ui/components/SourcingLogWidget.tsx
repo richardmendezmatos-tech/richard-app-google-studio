@@ -1,15 +1,15 @@
 'use client';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShoppingBag, 
-  TrendingUp, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  ShieldCheck, 
+import {
+  ShoppingBag,
+  TrendingUp,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ShieldCheck,
   ChevronRight,
-  Info
+  Info,
 } from 'lucide-react';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 import { updatePurchaseOrderStatus } from '@/shared/api/supabase/supabaseClient';
@@ -37,8 +37,12 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
         <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center mb-4 border border-white/5">
           <ShoppingBag className="text-slate-600" size={24} />
         </div>
-        <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Sin Órdenes de Abasto Pendientes</p>
-        <p className="text-[10px] text-slate-600 mt-2 uppercase tracking-widest font-bold">Houston está analizando los gaps del mercado...</p>
+        <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">
+          Sin Órdenes de Abasto Pendientes
+        </p>
+        <p className="text-[10px] text-slate-600 mt-2 uppercase tracking-widest font-bold">
+          Houston está analizando los gaps del mercado...
+        </p>
       </div>
     );
   }
@@ -54,9 +58,13 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-500 rounded-full animate-ping opacity-40" />
           </div>
           <div>
-            <h4 className="text-xs font-black text-cyan-400 uppercase tracking-[0.4em] mb-1">Sourcing Intelligence</h4>
+            <h4 className="text-xs font-black text-cyan-400 uppercase tracking-[0.4em] mb-1">
+              Sourcing Intelligence
+            </h4>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Neural Loop v2.4</span>
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">
+                Neural Loop v2.4
+              </span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
           </div>
@@ -73,27 +81,35 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               className={`p-5 rounded-4xl border transition-all relative overflow-hidden group/card ${
-                order.status === 'confirmed' 
-                  ? 'bg-emerald-950/20 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
+                order.status === 'confirmed'
+                  ? 'bg-emerald-950/20 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)]'
                   : 'bg-slate-900/40 border-white/[0.03] hover:border-cyan-500/30 hover:bg-slate-900/60'
               }`}
             >
               {/* ROI Badge */}
               <div className="absolute top-0 right-0 p-4">
                 <div className="flex flex-col items-end">
-                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Est. ROI</span>
-                  <span className="text-lg font-black text-emerald-400 italic tracking-tighter">+{order.estimated_roi}%</span>
+                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
+                    Est. ROI
+                  </span>
+                  <span className="text-lg font-black text-emerald-400 italic tracking-tighter">
+                    +{order.estimated_roi}%
+                  </span>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
                 <div className="flex-grow pt-1">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
-                      order.priority === 'critical' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                      order.priority === 'high' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 
-                      'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                    }`}>
+                    <span
+                      className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
+                        order.priority === 'critical'
+                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          : order.priority === 'high'
+                            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                            : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                      }`}
+                    >
                       {order.priority}
                     </span>
                   </div>
@@ -101,23 +117,33 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
                   <h5 className="text-sm font-black text-white italic tracking-tight uppercase mb-2 group-hover/card:text-cyan-300 transition-colors">
                     Target: {order.query}
                   </h5>
-                  
+
                   {/* N24 Metrics Breakdown */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                     <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Precio Compra Est.</p>
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
+                        Precio Compra Est.
+                      </p>
                       <p className="text-xs font-black text-white tracking-tighter">
-                        {order.estimated_purchase_price ? `$${order.estimated_purchase_price.toLocaleString()}` : 'Analizando...'}
+                        {order.estimated_purchase_price
+                          ? `$${order.estimated_purchase_price.toLocaleString()}`
+                          : 'Analizando...'}
                       </p>
                     </div>
                     <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Precio Venta Est.</p>
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
+                        Precio Venta Est.
+                      </p>
                       <p className="text-xs font-black text-emerald-400 tracking-tighter">
-                        {order.estimated_resale_price ? `$${order.estimated_resale_price.toLocaleString()}` : 'Analizando...'}
+                        {order.estimated_resale_price
+                          ? `$${order.estimated_resale_price.toLocaleString()}`
+                          : 'Analizando...'}
                       </p>
                     </div>
                     <div className="hidden sm:block p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fuente Sugerida</p>
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
+                        Fuente Sugerida
+                      </p>
                       <p className="text-xs font-black text-cyan-400 tracking-tighter truncate uppercase">
                         {order.target_source || 'Subasta Local'}
                       </p>
@@ -126,8 +152,10 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
 
                   <div className="p-3 bg-black/20 rounded-xl border border-white/[0.02] mb-4">
                     <div className="flex items-center gap-2 mb-2">
-                       <Info size={10} className="text-cyan-400" />
-                       <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">Análisis de Mercado N24</span>
+                      <Info size={10} className="text-cyan-400" />
+                      <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">
+                        Análisis de Mercado N24
+                      </span>
                     </div>
                     <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
                       {order.recommendation}
@@ -165,16 +193,22 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
               </div>
 
               <div className="mt-4 pt-4 border-t border-white/[0.03] flex items-center justify-between">
-                 <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-slate-600" />
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                       {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(order.created_at).toLocaleDateString()}
-                    </span>
-                 </div>
-                 <div className="flex items-center gap-1.5 opacity-60">
-                    <TrendingUp size={12} className="text-cyan-400" />
-                    <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">Neural Projected</span>
-                 </div>
+                <div className="flex items-center gap-2">
+                  <Clock size={12} className="text-slate-600" />
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                    {new Date(order.created_at).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}{' '}
+                    • {new Date(order.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 opacity-60">
+                  <TrendingUp size={12} className="text-cyan-400" />
+                  <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">
+                    Neural Projected
+                  </span>
+                </div>
               </div>
             </motion.div>
           ))}

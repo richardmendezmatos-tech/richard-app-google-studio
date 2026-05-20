@@ -27,7 +27,6 @@ export function useStorefrontState(
   const [visualContext, setVisualContext] = useState<string | null>(null);
   const [semanticResultIds, setSemanticResultIds] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Car[]>([]);
-  
 
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -82,10 +81,11 @@ export function useStorefrontState(
   // Nivel 13: Neuro-Adaptive Intelligence
   const trajectoryEvents = useTrajectoryStore((s) => s.events);
   const dwellTimes = useTrajectoryStore((s) => s.dwellTimes);
-  
-  const preferredCategory = useMemo(() => 
-    TrajectoryAnalyzer.getPreferredCategory(trajectoryEvents), 
-  [trajectoryEvents]);
+
+  const preferredCategory = useMemo(
+    () => TrajectoryAnalyzer.getPreferredCategory(trajectoryEvents),
+    [trajectoryEvents],
+  );
 
   const filteredAndSorted = useMemo(() => {
     const normalizedSearch = searchTerm.toLowerCase().trim();
@@ -112,10 +112,12 @@ export function useStorefrontState(
           ? name.includes(normalizedSearch) ||
             (visualContext || '').toLowerCase().includes(type) ||
             type.includes(visualContext.split(' ')[0] || '')
-          : name.includes(normalizedSearch) || type.includes(normalizedSearch) || make.includes(normalizedSearch);
+          : name.includes(normalizedSearch) ||
+            type.includes(normalizedSearch) ||
+            make.includes(normalizedSearch);
 
         let matchesType = filter === 'all' || type === filter;
-        
+
         // Multi-brand & Industrial Logic (N14)
         if (filter === 'ford' || filter === 'hyundai') {
           matchesType = make === filter;
@@ -126,7 +128,8 @@ export function useStorefrontState(
         const yearValue = c.year || (c.name ? parseInt(c.name.split(' ')[0]) : 0);
         const matchesYear = yearFilter === 'all' || yearValue === yearFilter;
 
-        const matchesMileage = mileageFilter === 'all' || 
+        const matchesMileage =
+          mileageFilter === 'all' ||
           (mileageFilter === 10000 && (c.mileage || 0) <= 10000) ||
           (mileageFilter === 50000 && (c.mileage || 0) <= 50000) ||
           (mileageFilter === 100000 && (c.mileage || 0) <= 100000);
@@ -146,7 +149,17 @@ export function useStorefrontState(
         if (sortOrder === 'desc') return b.price - a.price;
         return 0;
       });
-  }, [searchTerm, visualContext, semanticResultIds, filter, sortOrder, inventory, preferredCategory, yearFilter, mileageFilter]);
+  }, [
+    searchTerm,
+    visualContext,
+    semanticResultIds,
+    filter,
+    sortOrder,
+    inventory,
+    preferredCategory,
+    yearFilter,
+    mileageFilter,
+  ]);
 
   const displayCars = isSearching || preferredCategory ? filteredAndSorted : serverCars;
 
@@ -163,7 +176,7 @@ export function useStorefrontState(
   }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const marketPulse = useMemo(() => {
-    const source = (displayCars || []).length > 0 ? displayCars : (inventory || []);
+    const source = (displayCars || []).length > 0 ? displayCars : inventory || [];
     if (!source.length) {
       return { avgPrice: 0, premiumUnits: 0, compactUnits: 0 };
     }

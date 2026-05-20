@@ -150,17 +150,20 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
 
       {/* Nivel 22: Living Background Parallax Layer */}
       <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-        <div 
+        <div
           className="absolute inset-[-20%] opacity-40 blur-[140px] transition-transform duration-1000 ease-out animate-spin-slow"
           style={{
             background: `
               radial-gradient(circle at 20% 30%, hsla(var(--cyber-cyan), 0.2), transparent 45%),
               radial-gradient(circle at 80% 70%, hsla(var(--plasma-purple), 0.2), transparent 45%),
               radial-gradient(circle at 50% 50%, hsla(var(--sentinel-amber), 0.08), transparent 65%)
-            `
+            `,
           }}
         />
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay scale-125" style={{ backgroundImage: 'var(--texture-grain)' }} />
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay scale-125"
+          style={{ backgroundImage: 'var(--texture-grain)' }}
+        />
       </div>
 
       {/* Main Sidebar Component */}

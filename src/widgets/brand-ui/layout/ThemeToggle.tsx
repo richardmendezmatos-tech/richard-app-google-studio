@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useContext } from 'react';
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
@@ -13,9 +13,7 @@ const ThemeToggle: React.FC = () => {
   }, []);
 
   if (!hasMounted) {
-    return (
-      <div className="rounded-full border border-cyan-300/20 bg-white/5 p-2 w-9 h-9" />
-    );
+    return <div className="rounded-full border border-cyan-300/20 bg-white/5 p-2 w-9 h-9" />;
   }
 
   return (

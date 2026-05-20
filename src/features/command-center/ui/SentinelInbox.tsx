@@ -24,7 +24,7 @@ export const SentinelInbox: React.FC = () => {
         .select('*')
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
-      
+
       setRequests(data || []);
       setLoading(false);
     };
@@ -34,9 +34,13 @@ export const SentinelInbox: React.FC = () => {
     // Real-time subscription
     const subscription = supabase
       .channel('agent_approvals_changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'agent_approvals' }, (payload) => {
-        setRequests(prev => [payload.new as ApprovalRequest, ...prev]);
-      })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'agent_approvals' },
+        (payload) => {
+          setRequests((prev) => [payload.new as ApprovalRequest, ...prev]);
+        },
+      )
       .subscribe();
 
     return () => {
@@ -48,13 +52,10 @@ export const SentinelInbox: React.FC = () => {
     const supabase = createClient();
     if (!supabase) return;
 
-    const { error } = await supabase
-      .from('agent_approvals')
-      .update({ status })
-      .eq('id', id);
+    const { error } = await supabase.from('agent_approvals').update({ status }).eq('id', id);
 
     if (!error) {
-      setRequests(prev => prev.filter(r => r.id !== id));
+      setRequests((prev) => prev.filter((r) => r.id !== id));
     }
   };
 
@@ -69,7 +70,9 @@ export const SentinelInbox: React.FC = () => {
               <Bell size={18} className="text-primary animate-pulse" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full" />
             </div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-white">Sentinel Inbox</h3>
+            <h3 className="text-xs font-black uppercase tracking-widest text-white">
+              Sentinel Inbox
+            </h3>
           </div>
           <span className="text-[10px] font-black text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">
             {requests.length} PENDIENTES
@@ -78,7 +81,10 @@ export const SentinelInbox: React.FC = () => {
 
         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
           {requests.map((req) => (
-            <div key={req.id} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group">
+            <div
+              key={req.id}
+              className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group"
+            >
               <div className="flex items-start gap-3 mb-3">
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                   <MessageSquare size={14} className="text-primary" />
@@ -89,7 +95,9 @@ export const SentinelInbox: React.FC = () => {
                   </p>
                   <div className="flex items-center gap-1 mt-1 opacity-50">
                     <Zap size={10} className="text-purple-400" />
-                    <span className="text-[8px] font-black uppercase tracking-widest">IA Proposal</span>
+                    <span className="text-[8px] font-black uppercase tracking-widest">
+                      IA Proposal
+                    </span>
                   </div>
                 </div>
               </div>

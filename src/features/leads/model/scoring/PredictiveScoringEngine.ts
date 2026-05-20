@@ -4,7 +4,12 @@ import { ScoringEngine } from '@/features/shared';
 export class PredictiveScoringEngine implements ScoringEngine {
   async compute(lead: Lead): Promise<PredictiveInsight> {
     const metrics = lead.behavioralMetrics || {};
-    const fingerprint = lead.behavioralFingerprint || { scrollVelocity: 0, imageDwellTime: {}, featureInteractions: [], interactionIntensity: 0 };
+    const fingerprint = lead.behavioralFingerprint || {
+      scrollVelocity: 0,
+      imageDwellTime: {},
+      featureInteractions: [],
+      interactionIntensity: 0,
+    };
     const aiScore = lead.aiScore || 50;
 
     // Algoritmo de Nivel 14: Ponderación de trayectoria y micro-interacciones
@@ -25,7 +30,8 @@ export class PredictiveScoringEngine implements ScoringEngine {
 
     // 3. Nivel 14 Micro-Interactions: Dwell Time on Photos
     const totalDwellTime = Object.values(fingerprint.imageDwellTime).reduce((a, b) => a + b, 0);
-    if (totalDwellTime > 30000) { // 30s en fotos
+    if (totalDwellTime > 30000) {
+      // 30s en fotos
       predictiveScore += 15;
       factors.push('Exámen visual detallado (Dwell Time High)');
     }
@@ -59,7 +65,8 @@ export class PredictiveScoringEngine implements ScoringEngine {
       score: Math.round(predictiveScore),
       confidence: 0.92, // Increased confidence with Nivel 14 data
       factors,
-      predictedAction: predictiveScore > 85 ? 'Immediate Outreach - High Conversion' : 'Nudge Scheduled',
+      predictedAction:
+        predictiveScore > 85 ? 'Immediate Outreach - High Conversion' : 'Nudge Scheduled',
       timestamp: now,
     };
   }

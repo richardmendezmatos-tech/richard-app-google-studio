@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useRef } from 'react';
 import { ShieldCheck, Zap, Globe, BadgeCheck, Sparkles, Activity } from 'lucide-react';
@@ -14,7 +14,7 @@ const TrustBar: React.FC = () => {
       </div>
 
       <div className="container relative mx-auto px-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -35,11 +35,8 @@ const TrustBar: React.FC = () => {
               <span className="text-slate-500 italic">Garantía Richard Automotive.</span>
             </p>
           </div>
-          
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex group"
-          >
+
+          <motion.div whileHover={{ scale: 1.05 }} className="flex group">
             <div className="relative overflow-hidden rounded-full border border-emerald-500/30 bg-emerald-500/5 px-6 py-3 backdrop-blur-3xl transition-all hover:bg-emerald-500/10 hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]">
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <span className="relative flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400">
@@ -49,7 +46,7 @@ const TrustBar: React.FC = () => {
             </div>
           </motion.div>
         </motion.div>
-        
+
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <TrustItem
             icon={<ShieldCheck size={32} />}
@@ -125,28 +122,33 @@ const TrustItem: React.FC<TrustItemProps> = ({ icon, title, desc, color, delay }
         style={{
           background: useTransform(
             [mouseX, mouseY],
-            ([x, y]) => `radial-gradient(400px circle at ${x}px ${y}px, ${glowStyles[color]}, transparent 70%)`
+            ([x, y]) =>
+              `radial-gradient(400px circle at ${x}px ${y}px, ${glowStyles[color]}, transparent 70%)`,
           ),
         }}
       />
 
       <div className="relative z-10">
-        <div className={`mb-8 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 ${colors[color]}`}>
+        <div
+          className={`mb-8 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 ${colors[color]}`}
+        >
           {icon}
         </div>
-        
+
         <h4 className="mb-4 font-tech text-base font-black uppercase tracking-[0.3em] text-white flex items-center gap-2">
           {title}
           <div className="h-1 w-1 bg-cyan-500 rounded-full animate-pulse" />
         </h4>
-        
+
         <p className="text-sm font-medium leading-relaxed text-slate-500 group-hover:text-slate-300 transition-colors">
           {desc}
         </p>
 
         <div className="mt-8 flex items-center gap-2 opacity-0 -translate-x-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
           <Activity size={10} className="text-cyan-400" />
-          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-cyan-400">Verificado Richard</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-cyan-400">
+            Verificado Richard
+          </span>
         </div>
       </div>
     </motion.div>

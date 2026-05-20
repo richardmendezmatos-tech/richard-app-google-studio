@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useRef } from 'react';
 import { X, Wand2, Loader2, ShieldAlert, Sparkles } from 'lucide-react';
@@ -75,7 +75,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
       // vision upgrade: use shared gemini service directly
       const { generateVisionDescription } = await import('@/shared/api/ai/geminiService');
-      
+
       let base64Image: string | undefined;
       if (uploadResults.length > 0) {
         try {
@@ -93,7 +93,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       const response = await generateVisionDescription(
         prompt,
         base64Image,
-        'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.'
+        'Eres un vendedor experto de autos nuevos y usados de lujo en Puerto Rico. Escribe en español latino de forma entusiasta pero profesional. Si recibes una imagen, úsala para personalizar la descripción.',
       );
 
       setDescription(response);
@@ -171,7 +171,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         dealerId: (currentDealer as any)?.id || 'richard-automotive',
         mileage: 0,
         fuel: 'Gasoline',
-        transmission: 'Automatic'
+        transmission: 'Automatic',
       });
       logDebug('✅ SUCCESS: Document saved successfully.');
       onClose(); // Close only after success

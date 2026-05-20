@@ -52,14 +52,18 @@ describe('RewardPicker Component', () => {
     expect(screen.getByText('15% de Descuento en Accesorios Originales')).toBeInTheDocument();
 
     // El temporizador de urgencia no debe estar activo al inicio (se activa tras el giro de ruleta)
-    expect(screen.queryByText('Reserva Prioritaria de Tasa y Manifiesto Activos')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Reserva Prioritaria de Tasa y Manifiesto Activos'),
+    ).not.toBeInTheDocument();
   });
 
   it('debe permitir la selección de regalos respetando el máximo de 2 elementos', () => {
     render(<RewardPicker onComplete={mockOnComplete} />);
 
     const gasolinaCard = screen.getByText('Gasolina Gratis (Tanque Lleno)').closest('div');
-    const asistenciaCard = screen.getByText('Asistencia en Carretera 24/7 (1er Año)').closest('div');
+    const asistenciaCard = screen
+      .getByText('Asistencia en Carretera 24/7 (1er Año)')
+      .closest('div');
     const lavadoCard = screen.getByText('Lavado de Autos Full Detail Premium').closest('div');
 
     expect(gasolinaCard).toBeInTheDocument();
@@ -101,7 +105,9 @@ describe('RewardPicker Component', () => {
 
     render(<RewardPicker onComplete={mockOnComplete} />);
 
-    expect(screen.getByText('Reserva Prioritaria de Tasa y Manifiesto Activos')).toBeInTheDocument();
+    expect(
+      screen.getByText('Reserva Prioritaria de Tasa y Manifiesto Activos'),
+    ).toBeInTheDocument();
     expect(screen.getByText('15:00')).toBeInTheDocument();
 
     // Avanzar 5 segundos en el tiempo ficticio

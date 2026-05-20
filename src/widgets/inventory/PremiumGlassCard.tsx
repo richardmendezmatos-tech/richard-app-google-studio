@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useRef } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
@@ -10,7 +10,11 @@ import Script from 'next/script';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-import { calculateMonthlyPayment, calculateSuggestedPronto, generateWhatsAppQuoteUrl } from '@/shared/lib/utils/financing';
+import {
+  calculateMonthlyPayment,
+  calculateSuggestedPronto,
+  generateWhatsAppQuoteUrl,
+} from '@/shared/lib/utils/financing';
 
 interface PremiumGlassCardProps {
   car: Car;
@@ -42,7 +46,6 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
   // Check if this specific car is in comparison (removed to fix compilation error)
 
-
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isComparing) {
@@ -64,13 +67,20 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   // F&I Logic (Expert Decision: real amortization > simple division)
   const suggestedPronto = calculateSuggestedPronto(car.price || 0);
   const estimatedMonthly = calculateMonthlyPayment(car.price || 0, suggestedPronto);
-  const whatsappUrl = generateWhatsAppQuoteUrl(car.name || 'Vehículo', car.price || 0, estimatedMonthly, suggestedPronto);
+  const whatsappUrl = generateWhatsAppQuoteUrl(
+    car.name || 'Vehículo',
+    car.price || 0,
+    estimatedMonthly,
+    suggestedPronto,
+  );
 
   return (
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      onClick={() => (onSelect ? onSelect() : navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`))}
+      onClick={() =>
+        onSelect ? onSelect() : navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)
+      }
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           if (onSelect) onSelect();
@@ -80,9 +90,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
       className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300"
     >
       {/* Image Section */}
-      <div 
-        className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5 h-card-image hud-brackets"
-      >
+      <div className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5 h-card-image hud-brackets">
         <div className="scanline-overlay opacity-10" />
         {/* Dynamic Shine Overlay */}
         <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -121,7 +129,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           <span className="font-tech flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)] backdrop-blur-xl">
             🎁 BONO DE $300 WEB
           </span>
-          
+
           {/* Nivel 13: Neuro-Badge Predictive Social Proof */}
           {isHighInterest && (
             <div className="animate-in fade-in slide-in-from-left-2 duration-700">
@@ -137,14 +145,14 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
         <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 scale-90 origin-top-right">
           <button
             onClick={onToggleSave}
-            aria-label={isSaved ? "Quitar de favoritos" : "Añadir a favoritos"}
+            aria-label={isSaved ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isSaved ? 'border-rose-500 bg-rose-500 text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-rose-400'}`}
           >
             <Heart size={18} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
           <button
             onClick={handleCompareToggle}
-            aria-label={isComparing ? "Quitar de comparación" : "Añadir a comparación"}
+            aria-label={isComparing ? 'Quitar de comparación' : 'Añadir a comparación'}
             className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isComparing ? 'border-primary bg-primary text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-primary'}`}
           >
             <GitCompare size={18} />
@@ -169,24 +177,24 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": car.name,
-            "image": car.images ? car.images[0] : (car.image || car.img),
-            "description": `Compra este ${car.name} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
-            "brand": {
-              "@type": "Brand",
-              "name": car.make
+            '@context': 'https://schema.org/',
+            '@type': 'Product',
+            name: car.name,
+            image: car.images ? car.images[0] : car.image || car.img,
+            description: `Compra este ${car.name} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
+            brand: {
+              '@type': 'Brand',
+              name: car.make,
             },
-            "offers": {
-              "@type": "Offer",
-              "url": `https://www.richard-automotive.com/inventario/${car.id}`,
-              "priceCurrency": "USD",
-              "price": car.price,
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/UsedCondition"
-            }
-          })
+            offers: {
+              '@type': 'Offer',
+              url: `https://www.richard-automotive.com/inventario/${car.id}`,
+              priceCurrency: 'USD',
+              price: car.price,
+              availability: 'https://schema.org/InStock',
+              itemCondition: 'https://schema.org/UsedCondition',
+            },
+          }),
         }}
       />
 
@@ -232,7 +240,8 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
               </p>
               <div className="mt-1">
                 <p className="font-tech flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
-                  Desde <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
+                  Desde{' '}
+                  <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
                   /mes *
                 </p>
                 <p className="font-tech text-[8px] uppercase tracking-[0.1em] text-slate-500 mt-0.5">
@@ -246,7 +255,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
               onClick={(e) => e.stopPropagation()}
               className="flex h-9 items-center justify-center rounded-full bg-[#25D366] px-4 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_0_15px_rgba(37,211,102,0.4)] transition-all hover:scale-105 hover:bg-[#20ba59] active:scale-95"
             >
-               Cotizar
+              Cotizar
             </a>
           </div>
 

@@ -1,4 +1,3 @@
-
 export const requestNotificationPermission = async () => {
   if (typeof window === 'undefined') return null;
 
@@ -19,4 +18,3 @@ export const onForegroundMessage = async (callback: (payload: any) => void) => {
   // FCM is being decommissioned.
   console.log('Foreground messaging disabled (Firebase purge).');
 };
-

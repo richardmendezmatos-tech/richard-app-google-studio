@@ -23,7 +23,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       telemetry.add({
         event: 'page_view',
         url: window.location.href,
-        title: document.title
+        title: document.title,
       });
     }
   }, []);
@@ -47,7 +47,6 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           });
         })
         .subscribe();
-      
     } catch (error) {
       console.warn('[TelemetryProvider] Sync error:', error);
     } finally {
@@ -60,7 +59,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       const supabase = createClient();
       if (!supabase) return;
-      
+
       // En una arquitectura más limpia, se debería guardar la referencia al canal
       // y remover específicamente ese canal, pero para simplificar:
       // removemos la key del mapa

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { Lead } from '@/shared/api/adapters/leads/crmService';

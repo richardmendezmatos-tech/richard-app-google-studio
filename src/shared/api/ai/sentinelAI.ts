@@ -32,7 +32,7 @@ export const sentinelAI = {
     schema: T,
     prompt: string,
     system?: string,
-    model: string = 'gemini-2.0-flash'
+    model: string = 'gemini-2.0-flash',
   ): Promise<z.infer<T>> {
     try {
       const { object } = await generateObject({
@@ -55,7 +55,7 @@ export const sentinelAI = {
   async generateVisionDescription(
     prompt: string,
     imageSource: string, // base64 or URL
-    system: string = 'Eres un vendedor experto de autos. Escribe en español.'
+    system: string = 'Eres un vendedor experto de autos. Escribe en español.',
   ): Promise<string> {
     try {
       const isUrl = imageSource.startsWith('http');
@@ -67,7 +67,7 @@ export const sentinelAI = {
             role: 'user',
             content: [
               { type: 'text', text: prompt },
-              isUrl 
+              isUrl
                 ? { type: 'image', image: new URL(imageSource) }
                 : { type: 'image', image: imageSource.replace(/^data:image\/\w+;base64,/, '') },
             ],
@@ -102,13 +102,17 @@ export const sentinelAI = {
         model: google('gemini-2.0-flash'),
         schema,
         output: 'object',
-        system: 'Eres un analista técnico de inventario automotriz experto en reconocimiento visual.',
+        system:
+          'Eres un analista técnico de inventario automotriz experto en reconocimiento visual.',
         messages: [
           {
             role: 'user',
             content: [
-              { type: 'text', text: 'Analiza esta imagen y extrae los detalles técnicos del vehículo.' },
-              isUrl 
+              {
+                type: 'text',
+                text: 'Analiza esta imagen y extrae los detalles técnicos del vehículo.',
+              },
+              isUrl
                 ? { type: 'image', image: new URL(imageSource) }
                 : { type: 'image', image: imageSource.replace(/^data:image\/\w+;base64,/, '') },
             ],
@@ -127,15 +131,38 @@ export const sentinelAI = {
    */
   async generateVehicleDeepAnalysis(car: any): Promise<any> {
     const schema = z.object({
-      technicalProfile: z.string().describe('Un resumen técnico de alto nivel del vehículo en tono sofisticado.'),
-      keyFeatures: z.array(z.object({
-        label: z.string().describe('Ej: "Rendimiento", "Seguridad", "Tecnología", "Suspensión".'),
-        value: z.string().describe('Ej: "Hasta 32 MPG estimados", "Frenado Autónomo", "Pantalla de 12.3 pulgadas".'),
-        icon: z.string().optional().describe('Obligatorio de la siguiente lista exacta de iconos de lucide: "ShieldCheck", "Zap", "Wind", "Gauge", "Compass", "Cpu", "Coins", "Flame", "Crown", "Activity", "Key".')
-      })).max(6),
-      marketPosition: z.string().describe('Cómo se posiciona estratégicamente esta unidad frente al mercado de autos usados en PR.'),
-      psychologicalHook: z.string().describe('Un gancho de ventas de alto impacto emocional y exclusividad.'),
-      advantageScore: z.number().min(0).max(100)
+      technicalProfile: z
+        .string()
+        .describe('Un resumen técnico de alto nivel del vehículo en tono sofisticado.'),
+      keyFeatures: z
+        .array(
+          z.object({
+            label: z
+              .string()
+              .describe('Ej: "Rendimiento", "Seguridad", "Tecnología", "Suspensión".'),
+            value: z
+              .string()
+              .describe(
+                'Ej: "Hasta 32 MPG estimados", "Frenado Autónomo", "Pantalla de 12.3 pulgadas".',
+              ),
+            icon: z
+              .string()
+              .optional()
+              .describe(
+                'Obligatorio de la siguiente lista exacta de iconos de lucide: "ShieldCheck", "Zap", "Wind", "Gauge", "Compass", "Cpu", "Coins", "Flame", "Crown", "Activity", "Key".',
+              ),
+          }),
+        )
+        .max(6),
+      marketPosition: z
+        .string()
+        .describe(
+          'Cómo se posiciona estratégicamente esta unidad frente al mercado de autos usados en PR.',
+        ),
+      psychologicalHook: z
+        .string()
+        .describe('Un gancho de ventas de alto impacto emocional y exclusividad.'),
+      advantageScore: z.number().min(0).max(100),
     });
 
     try {
@@ -160,20 +187,23 @@ export const sentinelAI = {
         - Specs actuales: ${JSON.stringify(car.specs || [])}
         - Features actuales: ${JSON.stringify(car.features || [])}
         
-        Genera un informe estratégico de alto valor de conversión.`
+        Genera un informe estratégico de alto valor de conversión.`,
       });
       return object;
     } catch (error: any) {
       this.logError('VehicleDeepAnalysis', error);
       return {
-        technicalProfile: car.description || 'Unidad de prestigio seleccionada rigurosamente por Richard Automotive.',
+        technicalProfile:
+          car.description ||
+          'Unidad de prestigio seleccionada rigurosamente por Richard Automotive.',
         keyFeatures: [
           { label: 'Condición', value: 'Excelente estado de conservación', icon: 'ShieldCheck' },
-          { label: 'Tracción', value: 'Lista para las carreteras de PR', icon: 'Compass' }
+          { label: 'Tracción', value: 'Lista para las carreteras de PR', icon: 'Compass' },
         ],
-        marketPosition: 'Posicionamiento privilegiado con excelente retención de valor en Puerto Rico.',
+        marketPosition:
+          'Posicionamiento privilegiado con excelente retención de valor en Puerto Rico.',
         psychologicalHook: 'La sofisticación que mereces con la confianza del respaldo de Richard.',
-        advantageScore: 88
+        advantageScore: 88,
       };
     }
   },
@@ -197,7 +227,9 @@ export const sentinelAI = {
   /**
    * Generates structured intelligence for vehicle inventory.
    */
-  async generateInventoryIntelligence(content: string): Promise<{ salesPitch: string; idealBuyer: string }> {
+  async generateInventoryIntelligence(
+    content: string,
+  ): Promise<{ salesPitch: string; idealBuyer: string }> {
     try {
       const schema = z.object({
         sales_pitch: z.string(),
@@ -248,18 +280,26 @@ export const sentinelAI = {
    */
   async extractSearchIntent(query: string) {
     const schema = z.object({
-      budget: z.object({
-        maxPrice: z.number().optional(),
-        maxMonthlyPayment: z.number().optional(),
-      }).optional(),
-      vehicleConstraints: z.object({
-        minSeats: z.number().optional(),
-        type: z.string().optional(),
-        features: z.array(z.string()).optional(),
-      }).optional(),
+      budget: z
+        .object({
+          maxPrice: z.number().optional(),
+          maxMonthlyPayment: z.number().optional(),
+        })
+        .optional(),
+      vehicleConstraints: z
+        .object({
+          minSeats: z.number().optional(),
+          type: z.string().optional(),
+          features: z.array(z.string()).optional(),
+        })
+        .optional(),
       lifestyle: z.array(z.string()),
       refinedQuery: z.string(),
-      justification_template: z.string().describe('Un template breve de por qué este tipo de auto encaja. Ej: "Ideal para tus aventuras en la montaña"'),
+      justification_template: z
+        .string()
+        .describe(
+          'Un template breve de por qué este tipo de auto encaja. Ej: "Ideal para tus aventuras en la montaña"',
+        ),
     });
 
     try {
@@ -270,14 +310,14 @@ export const sentinelAI = {
         Extrae los parámetros estructurados. Si el cliente menciona "guagua", asume tipo "SUV" o "Truck".
         Si menciona un presupuesto mensual, ponlo en maxMonthlyPayment.
         Lifestyle tags sugeridos: family, adventure, luxury, budget, performance, work, eco.`,
-        'Eres un analista de intención experto en el mercado automotriz de Puerto Rico.'
+        'Eres un analista de intención experto en el mercado automotriz de Puerto Rico.',
       );
     } catch (error) {
       this.logError('ExtractIntent', error);
       return {
         lifestyle: ['standard'],
         refinedQuery: query,
-        justification_template: 'Basado en tu búsqueda general.'
+        justification_template: 'Basado en tu búsqueda general.',
       };
     }
   },
@@ -287,11 +327,15 @@ export const sentinelAI = {
    */
   logError(operation: string, error: any) {
     console.error(`❌ [Sentinel AI] ${operation} Failed:`, error);
-    getAuditRepository().then(repo => repo.log(
-      'error',
-      `AI Failure: ${operation}`,
-      { error: error.message, stack: error.stack },
-      'SentinelAI'
-    )).catch(() => {});
-  }
+    getAuditRepository()
+      .then((repo) =>
+        repo.log(
+          'error',
+          `AI Failure: ${operation}`,
+          { error: error.message, stack: error.stack },
+          'SentinelAI',
+        ),
+      )
+      .catch(() => {});
+  },
 };

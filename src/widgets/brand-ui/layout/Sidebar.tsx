@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -97,7 +97,9 @@ const Sidebar: React.FC<SidebarProps> = ({
               <p className="font-cinematic text-5xl leading-[0.82] text-white transition-all group-hover:text-primary group-hover:drop-shadow-[0_0_15px_rgba(0,229,255,0.4)] glitch-hover">
                 RICHARD
               </p>
-              <p className="font-cinematic text-3xl tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors uppercase">AUTOMOTIVE</p>
+              <p className="font-cinematic text-3xl tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors uppercase">
+                AUTOMOTIVE
+              </p>
               <div className="mt-2 flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#00e5ff]" />
                 <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500">
@@ -107,7 +109,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           ) : (
             <div className="relative group/logo">
-              <p className="font-cinematic text-5xl text-primary drop-shadow-[0_0_10px_rgba(0,229,255,0.3)] group-hover/logo:scale-110 transition-transform">R</p>
+              <p className="font-cinematic text-5xl text-primary drop-shadow-[0_0_10px_rgba(0,229,255,0.3)] group-hover/logo:scale-110 transition-transform">
+                R
+              </p>
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary animate-ping" />
             </div>
           )}
@@ -242,9 +246,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/pipeline');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() =>
-                import('@/features/command-center/ui/CRMBoard').catch(() => {})
-              }
+              onMouseEnter={() => import('@/features/command-center/ui/CRMBoard').catch(() => {})}
               icon={<Activity size={19} />}
               label="CRM Leads"
               isCollapsed={isCollapsed}
@@ -511,9 +513,17 @@ const NavButton: React.FC<NavButtonProps> = ({
       title={isCollapsed ? label : undefined}
       suppressHydrationWarning
     >
-      <span className={`relative z-10 shrink-0 transition-transform duration-500 ${active ? 'scale-110 glow-active-cyan' : 'group-hover:scale-110'}`}>{icon}</span>
+      <span
+        className={`relative z-10 shrink-0 transition-transform duration-500 ${active ? 'scale-110 glow-active-cyan' : 'group-hover:scale-110'}`}
+      >
+        {icon}
+      </span>
       {!isCollapsed && hasMounted && (
-        <span className={`relative z-10 text-xs font-bold tracking-widest uppercase truncate transition-all duration-500 ${active ? 'text-white translate-x-1' : 'text-slate-400 group-hover:text-white'}`}>{label}</span>
+        <span
+          className={`relative z-10 text-xs font-bold tracking-widest uppercase truncate transition-all duration-500 ${active ? 'text-white translate-x-1' : 'text-slate-400 group-hover:text-white'}`}
+        >
+          {label}
+        </span>
       )}
       {active && (
         <motion.span

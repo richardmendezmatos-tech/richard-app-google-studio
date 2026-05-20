@@ -35,9 +35,12 @@ export class CustomerMemoryService {
    */
   async analyzeCognitiveProfile(interaction: string): Promise<PersuasionProfile> {
     const text = interaction.toLowerCase();
-    if (text.includes('precio') || text.includes('ahorro') || text.includes('comparar')) return 'Analytical';
-    if (text.includes('entrega') || text.includes('estatus') || text.includes('ya')) return 'Impulsive';
-    if (text.includes('seguro') || text.includes('familia') || text.includes('garantia')) return 'Conservative';
+    if (text.includes('precio') || text.includes('ahorro') || text.includes('comparar'))
+      return 'Analytical';
+    if (text.includes('entrega') || text.includes('estatus') || text.includes('ya'))
+      return 'Impulsive';
+    if (text.includes('seguro') || text.includes('familia') || text.includes('garantia'))
+      return 'Conservative';
     return 'Unknown';
   }
 
@@ -56,15 +59,15 @@ export class CustomerMemoryService {
       .eq('lead_id', leadId)
       .single();
 
-    const currentMemory: CustomerMemory = existingMemory 
+    const currentMemory: CustomerMemory = existingMemory
       ? {
           leadId: existingMemory.lead_id,
           preferences: {
             ...existingMemory.preferences,
-            lastSeen: new Date(existingMemory.preferences.lastSeen)
+            lastSeen: new Date(existingMemory.preferences.lastSeen),
           },
           history: existingMemory.history || [],
-          notes: existingMemory.notes || []
+          notes: existingMemory.notes || [],
         }
       : this.getDefaultMemory(leadId);
 
@@ -97,7 +100,7 @@ export class CustomerMemoryService {
         if (currentMemory.preferences.intentMatrix) {
           const velocity = intentAnalysisService.calculateVelocity(
             currentMemory.preferences.intentMatrix,
-            newMatrix
+            newMatrix,
           );
           updates.preferences.sentimentVelocity = velocity;
         }
@@ -118,9 +121,7 @@ export class CustomerMemoryService {
       }
     }
 
-    const { error: upsertError } = await supabase
-      .from(this.tableName)
-      .upsert(updates);
+    const { error: upsertError } = await supabase.from(this.tableName).upsert(updates);
 
     if (upsertError) {
       console.error('[CustomerMemoryService] Error upserting memory:', upsertError);
@@ -178,4 +179,3 @@ export class CustomerMemoryService {
 }
 
 export const customerMemoryService = new CustomerMemoryService();
-

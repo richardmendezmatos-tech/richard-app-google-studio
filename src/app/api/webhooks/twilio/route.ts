@@ -15,7 +15,10 @@ export async function POST(req: Request) {
     const { toParams } = data as SmsLeadPayload;
 
     if (!toParams || !toParams.phone || !toParams.clientName) {
-      return NextResponse.json({ error: 'Faltan parámetros requeridos (phone, clientName).' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Faltan parámetros requeridos (phone, clientName).' },
+        { status: 400 },
+      );
     }
 
     let formattedPhone = toParams.phone.replace(/[^0-9+]/g, '');
@@ -27,7 +30,7 @@ export async function POST(req: Request) {
     const vehicleStr = toParams.vehicleDesc || 'un vehículo de nuestro inventario';
     const body = `¡Lead Caliente! Richard Automotive: ${toParams.clientName} pre-aprobado para el ${vehicleStr}. Llama ahora: ${formattedPhone}`;
 
-    const TO = process.env.ADMIN_PHONE_NUMBER || '+17875550000'; 
+    const TO = process.env.ADMIN_PHONE_NUMBER || '+17875550000';
 
     const success = await twilioBackendService.sendSMS(TO, body);
 

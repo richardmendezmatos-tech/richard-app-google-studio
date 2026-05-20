@@ -4,7 +4,6 @@ import { SupabaseUserRepository } from '@/entities/user/api/repositories/Supabas
 
 const getUserRepo = () => new SupabaseUserRepository();
 
-
 // --- Types & Constants ---
 const AUDIT_LOGS_COLLECTION = 'audit_logs';
 const RATE_LIMITS_COLLECTION = 'login_attempts';
@@ -67,8 +66,14 @@ const mapSupabaseUser = (sbUser: any): User => {
 const createUserProfile = async (user: User, role: UserRole = 'user') => {
   const userRepo = getUserRepo();
   const existing = await userRepo.getUserProfile(user.uid);
-  const currentDealerId = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_id') || 'richard-automotive' : 'richard-automotive';
-  const currentDealerName = typeof window !== 'undefined' ? localStorage.getItem('current_dealer_name') || 'Richard Automotive' : 'Richard Automotive';
+  const currentDealerId =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('current_dealer_id') || 'richard-automotive'
+      : 'richard-automotive';
+  const currentDealerName =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('current_dealer_name') || 'Richard Automotive'
+      : 'Richard Automotive';
 
   if (!existing) {
     await userRepo.saveUserProfile(user.uid, {
@@ -120,17 +125,16 @@ export const logAuthActivity = async (
 
   // Firebase Analytics removed for $0 cost migration
   if (success) {
-      console.log(`[Auth] Activity logged: ${method} for ${email}`);
+    console.log(`[Auth] Activity logged: ${method} for ${email}`);
   }
 };
-
 
 // --- User Management Functions ---
 
 export async function signUpWithEmail(email: string, password: string) {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signUp({ email, password });
-  
+
   if (error || !data.user) {
     const errorMsg = error ? error.message : 'Unknown error';
     await logAuthActivity(email, false, 'signup_email', errorMsg);
@@ -147,7 +151,7 @@ export async function signUpWithEmail(email: string, password: string) {
 export async function signInWithEmail(email: string, password: string) {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
+
   if (error || !data.user) {
     const errorMsg = error ? error.message : 'Unknown error';
     await logAuthActivity(email, false, 'login_email', errorMsg);
@@ -161,15 +165,16 @@ export async function signInWithEmail(email: string, password: string) {
 
 export async function signInWithGoogle(useRedirect: boolean = false) {
   const supabase = createClient();
-  
+
   // Supabase handles the OAuth flow via redirects mostly
   // It provides signInWithOAuth
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.richard-automotive-command-center.vercel.app';
+  const origin =
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : 'https://www.richard-automotive-command-center.vercel.app';
   const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
-  
-  const redirectUrl = isLocal 
-    ? 'http://localhost:3000/auth/callback' 
-    : `${origin}/auth/callback`;
+
+  const redirectUrl = isLocal ? 'http://localhost:3000/auth/callback' : `${origin}/auth/callback`;
 
   console.log('🚀 [AuthService] Initiating Google Sign-In with redirect:', redirectUrl);
 
@@ -180,15 +185,15 @@ export async function signInWithGoogle(useRedirect: boolean = false) {
       queryParams: {
         prompt: 'select_account',
         access_type: 'offline',
-      }
-    }
+      },
+    },
   });
 
   if (error) {
     console.error('Error signing in with Google:', error.message);
     throw error;
   }
-  
+
   // Note: OAuth redirects immediately, so the code below won't execute if successful
   // We'll have to handle profile creation in a callback route or via a trigger
   return data;
@@ -217,23 +222,26 @@ export async function signInWithFacebook(useRedirect: boolean = false) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'facebook',
     options: {
-      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
-    }
+      redirectTo:
+        typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+    },
   });
 
   if (error) {
     console.error('Error signing in with Facebook:', error.message);
     throw error;
   }
-  
+
   return data;
 }
 
 export async function signOutUser() {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const email = session?.user?.email;
-  
+
   try {
     await supabase.auth.signOut();
     if (email) await logAuthActivity(email, true, 'signout');
@@ -250,12 +258,15 @@ export async function sendMagicLink(email: string) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/admin-login-callback` : undefined,
-      }
+        emailRedirectTo:
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/admin-login-callback`
+            : undefined,
+      },
     });
-    
+
     if (error) throw error;
-    
+
     if (typeof window !== 'undefined') window.localStorage.setItem('emailForSignIn', email);
     await logAuthActivity(email, true, 'magic_link_sent');
   } catch (error: unknown) {
@@ -290,12 +301,12 @@ export const updateUserProfile = async (
     const { error } = await supabase.auth.updateUser({
       data: {
         full_name: data.displayName,
-        avatar_url: data.photoURL
-      }
+        avatar_url: data.photoURL,
+      },
     });
-    
+
     if (error) throw error;
-    
+
     await getUserRepo().saveUserProfile(user.uid, data);
     await logAuthActivity(user.email || 'unknown', true, 'profile_update');
   } catch (error: unknown) {
@@ -310,11 +321,11 @@ export const updateUserPassword = async (user: User, newPassword: string) => {
   const supabase = createClient();
   try {
     const { error } = await supabase.auth.updateUser({
-      password: newPassword
+      password: newPassword,
     });
-    
+
     if (error) throw error;
-    
+
     await logAuthActivity(user.email || 'unknown', true, 'password_change');
   } catch (error: unknown) {
     const errorMessage = (error as { message?: string }).message;
@@ -335,9 +346,11 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
+
   if (error || !data.user) {
-    logAuthActivity(email, false, 'admin_login_failed', error ? error.message : 'Unknown').catch(() => {});
+    logAuthActivity(email, false, 'admin_login_failed', error ? error.message : 'Unknown').catch(
+      () => {},
+    );
     throw error || new Error('Login failed');
   }
 
@@ -369,10 +382,12 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
 
 export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {
   const supabase = createClient();
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
     callback(session?.user ? mapSupabaseUser(session.user) : null);
   });
-  
+
   return () => {
     subscription.unsubscribe();
   };

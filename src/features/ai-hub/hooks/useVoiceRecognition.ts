@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useCallback } from 'react';
 import { Capacitor } from '@capacitor/core';
@@ -84,4 +84,3 @@ export function useVoiceRecognition({
 
   return { isListening, toggleListening, stopListening, isLoading };
 }
-

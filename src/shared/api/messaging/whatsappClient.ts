@@ -1,9 +1,9 @@
 /**
  * WhatsApp Business API Client (Meta Cloud API)
- * 
+ *
  * Abstraction layer over the WhatsApp Cloud API.
  * Uses the Meta Business Platform for message delivery.
- * 
+ *
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api
  */
 
@@ -42,9 +42,11 @@ export interface TextMessage {
  * Sends a WhatsApp template message (pre-approved by Meta).
  * Templates are required for first-contact messaging.
  */
-export async function sendTemplateMessage(msg: TemplateMessage): Promise<{ success: boolean; messageId?: string }> {
+export async function sendTemplateMessage(
+  msg: TemplateMessage,
+): Promise<{ success: boolean; messageId?: string }> {
   const config = getConfig();
-  
+
   if (!config.phoneNumberId || !config.accessToken) {
     console.warn('[WhatsApp] Missing credentials. Message simulated:', msg.to);
     return { success: true, messageId: `sim_${Date.now()}` };
@@ -52,15 +54,15 @@ export async function sendTemplateMessage(msg: TemplateMessage): Promise<{ succe
 
   try {
     const payload = {
-        messaging_product: 'whatsapp',
-        recipient_type: 'individual',
-        to: formatPhoneForWhatsApp(msg.to),
-        type: 'template',
-        template: {
-          name: msg.templateName,
-          language: { code: msg.languageCode || 'es' },
-          components: msg.components || [],
-        },
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to: formatPhoneForWhatsApp(msg.to),
+      type: 'template',
+      template: {
+        name: msg.templateName,
+        language: { code: msg.languageCode || 'es' },
+        components: msg.components || [],
+      },
     };
 
     const res = await fetch(`${WHATSAPP_API_URL}/${config.phoneNumberId}/messages`, {
@@ -86,7 +88,9 @@ export async function sendTemplateMessage(msg: TemplateMessage): Promise<{ succe
 /**
  * Sends a freeform text message (only within 24h conversation window).
  */
-export async function sendTextMessage(msg: TextMessage): Promise<{ success: boolean; messageId?: string }> {
+export async function sendTextMessage(
+  msg: TextMessage,
+): Promise<{ success: boolean; messageId?: string }> {
   const config = getConfig();
 
   if (!config.phoneNumberId || !config.accessToken) {
@@ -132,11 +136,11 @@ export function getWhatsAppDeepLink(params: {
 }): string {
   const base = 'https://wa.me';
   const targetPhone = formatPhoneForWhatsApp(params.phone);
-  
+
   // Enriquecer mensaje con metadatos invisibles para el CRM (parsing posterior)
   const metadata = `\n\n[SENTINEL_TRACE: ${params.source || 'Direct'}]${params.campaign ? ` [CAMPAIGN: ${params.campaign}]` : ''}`;
   const fullText = `${params.text}${metadata}`;
-  
+
   return `${base}/${targetPhone}?text=${encodeURIComponent(fullText)}`;
 }
 

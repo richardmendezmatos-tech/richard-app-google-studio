@@ -32,10 +32,7 @@ export class CustomerMemoryService {
    */
   private sanitizeSnippet(text: string): string {
     // Mask PR Phones: (787/939) XXX-XXXX or XXX-XXXX
-    let sanitized = text.replace(
-      /(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/g,
-      '[PHONE_MASKED]',
-    );
+    let sanitized = text.replace(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/g, '[PHONE_MASKED]');
     // Mask generic 9-digit patterns (SSN potential)
     sanitized = sanitized.replace(/\d{3}-\d{2}-\d{4}/g, '[ID_MASKED]');
     return sanitized;
@@ -57,9 +54,7 @@ export class CustomerMemoryService {
       .eq('lead_id', leadId)
       .single();
 
-    const currentMemory: any = existing 
-      ? existing.memory_data 
-      : this.getDefaultMemory(leadId);
+    const currentMemory: any = existing ? existing.memory_data : this.getDefaultMemory(leadId);
 
     if (vehicleId && !currentMemory.history.includes(vehicleId)) {
       currentMemory.history.push(vehicleId);
@@ -79,7 +74,7 @@ export class CustomerMemoryService {
     const { error: upsertError } = await supabase.from(this.tableName).upsert({
       lead_id: leadId,
       memory_data: currentMemory,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     });
 
     if (upsertError) throw upsertError;
@@ -117,4 +112,3 @@ export class CustomerMemoryService {
 }
 
 export const customerMemoryService = new CustomerMemoryService();
-

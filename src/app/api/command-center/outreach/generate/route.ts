@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
-
-
 /**
  * POST /api/command-center/outreach/generate
- * 
+ *
  * Genera un mensaje de cierre de venta optimizado para Richard Automotive.
  */
 export async function POST(req: Request) {

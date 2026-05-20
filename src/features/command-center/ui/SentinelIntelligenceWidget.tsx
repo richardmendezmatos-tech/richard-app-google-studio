@@ -1,18 +1,17 @@
-
 'use client';
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BrainCircuit, 
-  TrendingUp, 
-  AlertTriangle, 
-  Zap, 
-  Target, 
-  Search, 
-  PhoneCall, 
+import {
+  BrainCircuit,
+  TrendingUp,
+  AlertTriangle,
+  Zap,
+  Target,
+  Search,
+  PhoneCall,
   ArrowUpRight,
-  Flame
+  Flame,
 } from 'lucide-react';
 
 export interface IntelligenceSignal {
@@ -32,12 +31,18 @@ interface SentinelIntelligenceWidgetProps {
   loading?: boolean;
 }
 
-export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProps> = ({ signals, loading }) => {
+export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProps> = ({
+  signals,
+  loading,
+}) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-20 bg-slate-900/50 rounded-2xl animate-pulse border border-white/5" />
+          <div
+            key={i}
+            className="h-20 bg-slate-900/50 rounded-2xl animate-pulse border border-white/5"
+          />
         ))}
       </div>
     );
@@ -57,32 +62,32 @@ export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProp
   const getSignalMeta = (signal: IntelligenceSignal) => {
     switch (signal.type) {
       case 'HOT_INVENTORY':
-        return { 
-          icon: Flame, 
-          color: 'text-orange-400', 
+        return {
+          icon: Flame,
+          color: 'text-orange-400',
           bg: 'bg-orange-500/10',
-          border: 'border-orange-500/20'
+          border: 'border-orange-500/20',
         };
       case 'INVENTORY_GAP':
-        return { 
-          icon: Search, 
-          color: 'text-cyan-400', 
+        return {
+          icon: Search,
+          color: 'text-cyan-400',
           bg: 'bg-cyan-500/10',
-          border: 'border-cyan-500/20'
+          border: 'border-cyan-500/20',
         };
       case 'VIP_LEAD_READY':
-        return { 
-          icon: Target, 
-          color: 'text-rose-400', 
+        return {
+          icon: Target,
+          color: 'text-rose-400',
           bg: 'bg-rose-500/10',
-          border: 'border-rose-500/20'
+          border: 'border-rose-500/20',
         };
       default:
-        return { 
-          icon: BrainCircuit, 
-          color: 'text-slate-400', 
+        return {
+          icon: BrainCircuit,
+          color: 'text-slate-400',
           bg: 'bg-slate-500/10',
-          border: 'border-white/5'
+          border: 'border-white/5',
         };
     }
   };
@@ -115,7 +120,9 @@ export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProp
                     {signal.type.replace('_', ' ')}
                   </span>
                   {signal.score && (
-                    <span className="text-[10px] text-slate-500 font-mono">Score: {signal.score}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      Score: {signal.score}
+                    </span>
                   )}
                 </div>
               </div>
@@ -128,7 +135,9 @@ export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProp
                 <span className="text-[9px] text-slate-500 uppercase font-black tracking-widest group-hover:text-white transition-colors">
                   {signal.action}
                 </span>
-                <button className={`p-1.5 rounded-lg bg-white/5 hover:bg-white/10 ${meta.color} transition-all`}>
+                <button
+                  className={`p-1.5 rounded-lg bg-white/5 hover:bg-white/10 ${meta.color} transition-all`}
+                >
                   <ArrowUpRight size={14} />
                 </button>
               </div>

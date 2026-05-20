@@ -14,11 +14,7 @@ export class SupabaseUserRepository {
   }
 
   async getUserProfile(uid: string): Promise<UserProfile | null> {
-    const { data, error } = await this.client
-      .from('profiles')
-      .select('*')
-      .eq('id', uid)
-      .single();
+    const { data, error } = await this.client.from('profiles').select('*').eq('id', uid).single();
 
     if (error) {
       console.error(`[SupabaseUserRepository] Error fetching profile ${uid}:`, error);
@@ -29,9 +25,7 @@ export class SupabaseUserRepository {
   }
 
   async saveUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
-    const { error } = await this.client
-      .from('profiles')
-      .upsert({ id: uid, ...data });
+    const { error } = await this.client.from('profiles').upsert({ id: uid, ...data });
 
     if (error) {
       console.error(`[SupabaseUserRepository] Error saving profile ${uid}:`, error);
@@ -46,13 +40,14 @@ export class SupabaseUserRepository {
 
   async logActivity(activity: any): Promise<void> {
     try {
-      const { error } = await this.client
-        .from('audit_logs')
-        .insert([activity]);
+      const { error } = await this.client.from('audit_logs').insert([activity]);
 
       if (error) {
         // Silently log to console, don't break the app if table is missing
-        console.warn('[SupabaseUserRepository] Audit log skipped (Table might be missing):', error.message);
+        console.warn(
+          '[SupabaseUserRepository] Audit log skipped (Table might be missing):',
+          error.message,
+        );
       }
     } catch (e) {
       console.warn('[SupabaseUserRepository] Critical fail in audit log (Non-blocking):', e);

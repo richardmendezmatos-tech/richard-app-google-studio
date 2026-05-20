@@ -177,12 +177,12 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
 export const generateNeuralMatch = async (query: string, inventory: Car[]): Promise<string[]> => {
   const inventoryContext = inventory
     .slice(0, 60) // Safe volume slice
-    .map(c => {
-      const specsSummary = (c.specs || []).map(s => `${s.label}: ${s.value}`).join(', ');
+    .map((c) => {
+      const specsSummary = (c.specs || []).map((s) => `${s.label}: ${s.value}`).join(', ');
       return `${c.id} | ${c.year} ${c.make} ${c.model} | $${c.price} | Condición: ${c.condition || 'used'} | Tipo: ${c.type} | Millaje: ${c.mileage || 0} mi | Color: ${c.color} | Specs: [${specsSummary}]`;
     })
     .join('\n');
-    
+
   const prompt = `
     Eres el motor neural de búsqueda de Richard Automotive. Tu objetivo es emparejar las búsquedas conversacionales y coloquiales de los clientes en Puerto Rico con las mejores unidades de nuestro inventario.
     
@@ -205,7 +205,7 @@ export const generateNeuralMatch = async (query: string, inventory: Car[]): Prom
     2. Retorna únicamente un array JSON con los IDs exactos de los carros seleccionados, sin texto explicativo adicional.
     Ejemplo: ["car-id-1", "car-id-2"]
   `;
-  
+
   try {
     const text = await callAiApi([prompt], 'gemini-2.0-flash');
     const jsonMatch = text.match(/\[[\s\S]*\]/);

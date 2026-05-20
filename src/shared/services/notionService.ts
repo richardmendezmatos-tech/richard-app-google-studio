@@ -20,7 +20,9 @@ export async function createFiProgressInNotion(data: FiProgressData) {
     const databaseId = process.env.NOTION_DATABASE_ID;
 
     if (!databaseId) {
-      console.warn('NOTION_DATABASE_ID no está configurado. La persistencia bidireccional se interrumpió.');
+      console.warn(
+        'NOTION_DATABASE_ID no está configurado. La persistencia bidireccional se interrumpió.',
+      );
       return { success: false, message: 'Database ID not configured' };
     }
 

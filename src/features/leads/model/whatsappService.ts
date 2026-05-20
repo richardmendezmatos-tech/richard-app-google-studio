@@ -39,31 +39,36 @@ export const MESSAGE_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: 'welcome',
     name: 'Bienvenida',
-    content: '¡Hola {{customerName}}! 👋 Soy Richard IA, tu asistente virtual de Richard Automotive. ¿En qué puedo ayudarte hoy?',
+    content:
+      '¡Hola {{customerName}}! 👋 Soy Richard IA, tu asistente virtual de Richard Automotive. ¿En qué puedo ayudarte hoy?',
     variables: ['customerName'],
   },
   {
     id: 'car_details',
     name: 'Detalles de Auto',
-    content: '🚗 *{{carName}}*\n\n💰 Precio: ${{price}}\n📅 Año: {{year}}\n\n{{description}}\n\n¿Te gustaría agendar una prueba de manejo?',
+    content:
+      '🚗 *{{carName}}*\n\n💰 Precio: ${{price}}\n📅 Año: {{year}}\n\n{{description}}\n\n¿Te gustaría agendar una prueba de manejo?',
     variables: ['carName', 'price', 'year', 'description'],
   },
   {
     id: 'financing_info',
     name: 'Información de Financiamiento',
-    content: '💳 *Opciones de Financiamiento*\n\nTrabajamos con todos los bancos locales:\n• Banco Popular\n• Oriental Bank\n• FirstBank\n\nPagos desde ${{monthlyPayment}}/mes\n\n¿Quieres pre-cualificar ahora?',
+    content:
+      '💳 *Opciones de Financiamiento*\n\nTrabajamos con todos los bancos locales:\n• Banco Popular\n• Oriental Bank\n• FirstBank\n\nPagos desde ${{monthlyPayment}}/mes\n\n¿Quieres pre-cualificar ahora?',
     variables: ['monthlyPayment'],
   },
   {
     id: 'appointment',
     name: 'Agendar Cita',
-    content: '📅 *Agendar Cita*\n\nPerfecto! Estamos disponibles:\n• Lunes a Viernes: 9am - 6pm\n• Sábados: 10am - 4pm\n\n¿Qué día y hora te viene mejor?',
+    content:
+      '📅 *Agendar Cita*\n\nPerfecto! Estamos disponibles:\n• Lunes a Viernes: 9am - 6pm\n• Sábados: 10am - 4pm\n\n¿Qué día y hora te viene mejor?',
     variables: [],
   },
   {
     id: 'sentinel_nudge',
     name: 'Sentinel Nudge (Rescate)',
-    content: 'Hola {{customerName}}! 👋 Vimos que tenías interés en una unidad con nosotros 🚗.\n\nTuvimos un pequeño inconveniente técnico procesando tu solicitud, pero tu espacio de pre-aprobación está reservado.\n\n¿Te gustaría que te ayude a completarla por aquí? 💳✨',
+    content:
+      'Hola {{customerName}}! 👋 Vimos que tenías interés en una unidad con nosotros 🚗.\n\nTuvimos un pequeño inconveniente técnico procesando tu solicitud, pero tu espacio de pre-aprobación está reservado.\n\n¿Te gustaría que te ayude a completarla por aquí? 💳✨',
     variables: ['customerName'],
   },
 ];
@@ -165,7 +170,11 @@ export const generateAutoResponse = async (context: MessageContext): Promise<str
 
   try {
     const rawResponse = await getAIResponse(message, inventory, history, systemPrompt);
-    const validation = await validationAgentService.validateResponse(message, rawResponse, inventory);
+    const validation = await validationAgentService.validateResponse(
+      message,
+      rawResponse,
+      inventory,
+    );
     return validation.sanitizedResponse;
   } catch (error) {
     console.error('Auto-response error:', error);
@@ -232,16 +241,18 @@ export const getConversationHistory = async (
 
     if (error) throw error;
 
-    return (data || []).map((msg: any) => ({
-      id: msg.id,
-      from: msg.from,
-      to: msg.to,
-      message: msg.message,
-      timestamp: new Date(msg.timestamp),
-      direction: msg.direction,
-      status: msg.status,
-      leadId: msg.lead_id,
-    })).reverse();
+    return (data || [])
+      .map((msg: any) => ({
+        id: msg.id,
+        from: msg.from,
+        to: msg.to,
+        message: msg.message,
+        timestamp: new Date(msg.timestamp),
+        direction: msg.direction,
+        status: msg.status,
+        leadId: msg.lead_id,
+      }))
+      .reverse();
   } catch (error) {
     console.error('Get conversation error:', error);
     return [];
@@ -296,10 +307,13 @@ export const processMenuSelection = async (
 
   switch (selection.trim()) {
     case '1': {
-      const categories = inventory.reduce((acc, car) => {
-        acc[car.type] = (acc[car.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const categories = inventory.reduce(
+        (acc, car) => {
+          acc[car.type] = (acc[car.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       let inventoryMsg = '🚗 *Inventario Disponible*\n\n';
       Object.entries(categories).forEach(([type, count]) => {
@@ -345,4 +359,3 @@ export const getFallbackLink = (phone: string, message: string): string => {
   const cleanPhone = phone.replace(/\D/g, '');
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 };
-

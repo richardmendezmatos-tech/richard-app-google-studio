@@ -28,8 +28,8 @@ export const uploadInitialInventory = async (data: any[]) => {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    const payload = data.map(car => ({
+
+    const payload = data.map((car) => ({
       vin: car.vin,
       make: car.make,
       model: car.model,
@@ -37,15 +37,15 @@ export const uploadInitialInventory = async (data: any[]) => {
       name: car.name || `${car.year} ${car.make} ${car.model}`,
       price: car.price,
       mileage: car.mileage || 0,
-      images: car.image ? [car.image] : (car.images || []),
+      images: car.image ? [car.image] : car.images || [],
       status: (car.status || 'AVAILABLE').toUpperCase(),
       condition: (car.condition || 'USED').toUpperCase(),
-      last_scraped_at: new Date().toISOString()
+      last_scraped_at: new Date().toISOString(),
     }));
 
     const { error } = await supabase.from('inventory').upsert(payload, { onConflict: 'vin' });
     if (error) throw error;
-    
+
     console.log('[inventoryService] Database Initialized Successfully.');
   } catch (error) {
     console.error('[inventoryService] Error initializing database:', error);

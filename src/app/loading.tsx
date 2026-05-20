@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 
@@ -23,11 +23,13 @@ export default function Loading() {
           <div
             key={i}
             className="w-1.5 bg-linear-to-t from-cyan-600 to-cyan-400 rounded-full"
-            style={{
-              height: 'var(--h, 20px)',
-              animation: `wave 1.2s infinite ease-in-out ${i * 0.1}s`,
-              '--h': `${20 + i * 8}px`
-            } as any}
+            style={
+              {
+                height: 'var(--h, 20px)',
+                animation: `wave 1.2s infinite ease-in-out ${i * 0.1}s`,
+                '--h': `${20 + i * 8}px`,
+              } as any
+            }
           />
         ))}
       </div>
@@ -38,8 +40,13 @@ export default function Loading() {
 
       <style jsx global>{`
         @keyframes wave {
-          0%, 100% { transform: scaleY(1); }
-          50% { transform: scaleY(1.8); }
+          0%,
+          100% {
+            transform: scaleY(1);
+          }
+          50% {
+            transform: scaleY(1.8);
+          }
         }
       `}</style>
     </div>

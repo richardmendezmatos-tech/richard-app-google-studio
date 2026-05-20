@@ -2,7 +2,27 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Car } from '@/entities/inventory';
-import { Sparkles, Sliders, Flame, Heart, X, RotateCcw, DollarSign, Activity, ChevronRight, Timer, CheckCircle2, User, Mail, Phone, Gift, Send, Brain, Search, Loader2 } from 'lucide-react';
+import {
+  Sparkles,
+  Sliders,
+  Flame,
+  Heart,
+  X,
+  RotateCcw,
+  DollarSign,
+  Activity,
+  ChevronRight,
+  Timer,
+  CheckCircle2,
+  User,
+  Mail,
+  Phone,
+  Gift,
+  Send,
+  Brain,
+  Search,
+  Loader2,
+} from 'lucide-react';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
@@ -27,7 +47,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
     setIsNeuralMatching(true);
     try {
       const matchIds = await generateNeuralMatch(neuralQuery, inventory);
-      const matches = inventory.filter(c => matchIds.includes(c.id));
+      const matches = inventory.filter((c) => matchIds.includes(c.id));
       setNeuralResults(matches);
     } catch (error) {
       console.error('Neural match error:', error);
@@ -58,7 +78,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
         name: expressForm.name,
         phone: expressForm.phone,
         email: expressForm.email,
-        notes: `[BONO_300_ACTIVO] - Reclamo Express de Exención de Gastos (Tablilla/Marbete/Registro) desde Sentinel Discovery Suite.`
+        notes: `[BONO_300_ACTIVO] - Reclamo Express de Exención de Gastos (Tablilla/Marbete/Registro) desde Sentinel Discovery Suite.`,
       });
       // Generar voucher único
       const randomSeg = Math.floor(1000 + Math.random() * 9000);
@@ -80,7 +100,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -92,7 +112,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
     return {
       hours: String(h).padStart(2, '0'),
       minutes: String(m).padStart(2, '0'),
-      seconds: String(s).padStart(2, '0')
+      seconds: String(s).padStart(2, '0'),
     };
   };
 
@@ -104,7 +124,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
   // Estimación simplificada de poder adquisitivo para gamificación visual
   const estimatedPurchasingPower = useMemo(() => {
-    return (monthlyBudget * 65) + downPayment;
+    return monthlyBudget * 65 + downPayment;
   }, [monthlyBudget, downPayment]);
 
   // Filtrado de vehículos accesibles
@@ -112,7 +132,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
     if (!inventory || inventory.length === 0) return [];
     // Ordenar de precio menor a mayor para sugerir las mejores opciones bajo presupuesto
     const sorted = [...inventory].sort((a, b) => (a.price || 0) - (b.price || 0));
-    const filtered = sorted.filter(car => (car.price || 0) <= estimatedPurchasingPower + 3000);
+    const filtered = sorted.filter((car) => (car.price || 0) <= estimatedPurchasingPower + 3000);
     // Si la lista está vacía, retornar las 3 unidades más económicas
     return filtered.length > 0 ? filtered.slice(0, 4) : sorted.slice(0, 4);
   }, [inventory, estimatedPurchasingPower]);
@@ -132,11 +152,13 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
     setSwipeAnimation(direction);
 
     if (direction === 'right') {
-      setLikedList(prev => prev.some(c => c.id === currentSwipeCar.id) ? prev : [...prev, currentSwipeCar]);
+      setLikedList((prev) =>
+        prev.some((c) => c.id === currentSwipeCar.id) ? prev : [...prev, currentSwipeCar],
+      );
     }
 
     setTimeout(() => {
-      setSwipeIndex(prev => prev + 1);
+      setSwipeIndex((prev) => prev + 1);
       setSwipeAnimation('idle');
     }, 300);
   };
@@ -164,7 +186,10 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             <span className="text-[10px] text-slate-500 font-tech">| INTELIGENCIA INTERACTIVA</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-            Descubre tu <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 font-cinematic">Unidad Compatible</span>
+            Descubre tu{' '}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 font-cinematic">
+              Unidad Compatible
+            </span>
           </h2>
         </div>
 
@@ -178,7 +203,8 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Sliders size={14} /> <span className="hidden sm:inline">Presupuesto</span><span className="sm:hidden">$$</span>
+            <Sliders size={14} /> <span className="hidden sm:inline">Presupuesto</span>
+            <span className="sm:hidden">$$</span>
           </button>
           <button
             onClick={() => setActiveTab('swipe')}
@@ -188,7 +214,8 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Flame size={14} /> <span className="hidden sm:inline">Swipe Rápido</span><span className="sm:hidden">Swipe</span>
+            <Flame size={14} /> <span className="hidden sm:inline">Swipe Rápido</span>
+            <span className="sm:hidden">Swipe</span>
           </button>
           <button
             onClick={() => setActiveTab('neural')}
@@ -198,13 +225,14 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Brain size={14} /> <span className="hidden sm:inline">Neural Match</span><span className="sm:hidden">AI</span>
+            <Brain size={14} /> <span className="hidden sm:inline">Neural Match</span>
+            <span className="sm:hidden">AI</span>
           </button>
         </div>
       </div>
 
       {/* Cintillo de Oferta de 24 Horas (Bono de Acción Rápida) */}
-      <div 
+      <div
         onClick={() => setIsExpressModalOpen(true)}
         className="group relative z-10 mb-8 rounded-2xl border-2 border-amber-500/40 bg-linear-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 p-4 md:p-5 backdrop-blur-xl shadow-[0_0_30px_rgba(245,158,11,0.15)] overflow-hidden cursor-pointer transition-all duration-300 hover:border-amber-400 hover:scale-[1.01]"
       >
@@ -222,7 +250,12 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 <span className="text-[10px] text-slate-400 font-tech">| OFERTA ESPECIAL</span>
               </div>
               <p className="text-sm font-bold text-white mt-0.5">
-                Regístrate y compra en <span className="text-amber-400 font-black">24 Horas</span> y te cubrimos <span className="underline decoration-amber-500 decoration-2">Tablilla, Marbete y Registro</span>.
+                Regístrate y compra en <span className="text-amber-400 font-black">24 Horas</span> y
+                te cubrimos{' '}
+                <span className="underline decoration-amber-500 decoration-2">
+                  Tablilla, Marbete y Registro
+                </span>
+                .
               </p>
             </div>
           </div>
@@ -234,12 +267,16 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 <span className="font-cinematic text-base font-black text-white">{hours}</span>
                 <span className="block text-[7px] font-tech text-slate-500 uppercase">Horas</span>
               </div>
-              <span className="font-cinematic text-base font-black text-amber-500 animate-pulse">:</span>
+              <span className="font-cinematic text-base font-black text-amber-500 animate-pulse">
+                :
+              </span>
               <div className="text-center">
                 <span className="font-cinematic text-base font-black text-white">{minutes}</span>
                 <span className="block text-[7px] font-tech text-slate-500 uppercase">Mins</span>
               </div>
-              <span className="font-cinematic text-base font-black text-amber-500 animate-pulse">:</span>
+              <span className="font-cinematic text-base font-black text-amber-500 animate-pulse">
+                :
+              </span>
               <div className="text-center">
                 <span className="font-cinematic text-base font-black text-rose-400">{seconds}</span>
                 <span className="block text-[7px] font-tech text-slate-500 uppercase">Segs</span>
@@ -248,7 +285,11 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
             {/* CTA Secundario Embebido */}
             <span className="flex items-center gap-1 bg-linear-to-r from-amber-500 to-rose-500 text-slate-950 font-black text-xs px-3 py-2 rounded-xl uppercase tracking-wider group-hover:shadow-lg group-hover:shadow-amber-500/25 transition-all">
-              Reclamar <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              Reclamar{' '}
+              <ChevronRight
+                size={14}
+                className="group-hover:translate-x-0.5 transition-transform"
+              />
             </span>
           </div>
         </div>
@@ -261,8 +302,12 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
           <div className="lg:col-span-5 space-y-6 bg-slate-950/40 p-6 rounded-3xl border border-white/5">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-tech text-slate-400 uppercase tracking-wider">Pago Mensual Ideal</label>
-                <span className="text-lg font-black text-cyan-400 font-tech">${monthlyBudget} <span className="text-[10px] text-slate-500">/mes</span></span>
+                <label className="text-xs font-tech text-slate-400 uppercase tracking-wider">
+                  Pago Mensual Ideal
+                </label>
+                <span className="text-lg font-black text-cyan-400 font-tech">
+                  ${monthlyBudget} <span className="text-[10px] text-slate-500">/mes</span>
+                </span>
               </div>
               <input
                 type="range"
@@ -282,8 +327,12 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-tech text-slate-400 uppercase tracking-wider">Pronto Disponible</label>
-                <span className="text-lg font-black text-blue-400 font-tech">${downPayment.toLocaleString()}</span>
+                <label className="text-xs font-tech text-slate-400 uppercase tracking-wider">
+                  Pronto Disponible
+                </label>
+                <span className="text-lg font-black text-blue-400 font-tech">
+                  ${downPayment.toLocaleString()}
+                </span>
               </div>
               <input
                 type="range"
@@ -305,13 +354,17 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             <div className="border-t border-white/10 pt-4 mt-6">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign size={14} className="text-emerald-400" />
-                <span className="text-[10px] font-tech text-slate-400 uppercase tracking-widest">Poder Adquisitivo Sugerido</span>
+                <span className="text-[10px] font-tech text-slate-400 uppercase tracking-widest">
+                  Poder Adquisitivo Sugerido
+                </span>
               </div>
               <p className="text-3xl font-black text-white font-cinematic">
-                ${estimatedPurchasingPower.toLocaleString()} <span className="text-xs text-slate-500 font-sans font-normal">aprox.</span>
+                ${estimatedPurchasingPower.toLocaleString()}{' '}
+                <span className="text-xs text-slate-500 font-sans font-normal">aprox.</span>
               </p>
               <p className="text-[10px] text-slate-500 mt-2 leading-relaxed">
-                Basado en estimación actuarial estándar. Ajustamos los términos directos con nuestros bancos para garantizar tu aprobación.
+                Basado en estimación actuarial estándar. Ajustamos los términos directos con
+                nuestros bancos para garantizar tu aprobación.
               </p>
             </div>
           </div>
@@ -320,13 +373,16 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-tech text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Activity size={12} className="text-cyan-400 animate-pulse" /> Unidades Compatibles al Instante ({accessibleCars.length})
+                <Activity size={12} className="text-cyan-400 animate-pulse" /> Unidades Compatibles
+                al Instante ({accessibleCars.length})
               </span>
-              <span className="text-[10px] text-cyan-500 font-tech animate-pulse">ACTUALIZACIÓN EN VIVO</span>
+              <span className="text-[10px] text-cyan-500 font-tech animate-pulse">
+                ACTUALIZACIÓN EN VIVO
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {accessibleCars.map(car => (
+              {accessibleCars.map((car) => (
                 <div
                   key={car.id}
                   onClick={() => navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)}
@@ -344,7 +400,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                   </div>
                   <div className="p-3 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-[8px] font-tech text-primary uppercase">{car.make}</span>
+                      <span className="text-[8px] font-tech text-primary uppercase">
+                        {car.make}
+                      </span>
                       <h4 className="text-xs font-bold text-white line-clamp-1 group-hover:text-cyan-400 transition-colors">
                         {car.name}
                       </h4>
@@ -397,7 +455,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
               />
               {/* Overlay de Sombra Estilizada */}
               <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
-              
+
               {/* Metadatos sobre la imagen */}
               <div className="absolute bottom-4 left-4 right-4 text-left">
                 <span className="px-2 py-0.5 rounded-full bg-primary/80 backdrop-blur-md text-[8px] font-tech uppercase text-white tracking-widest">
@@ -414,12 +472,16 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
               {/* Indicadores Visuales Flotantes (Sellos de Swipe) */}
               {swipeAnimation === 'left' && (
                 <div className="absolute top-6 right-6 border-2 border-rose-500 bg-rose-500/20 px-4 py-1 rounded-xl backdrop-blur-md rotate-[12deg]">
-                  <span className="text-xs font-black text-rose-500 tracking-widest uppercase font-tech">PASO</span>
+                  <span className="text-xs font-black text-rose-500 tracking-widest uppercase font-tech">
+                    PASO
+                  </span>
                 </div>
               )}
               {swipeAnimation === 'right' && (
                 <div className="absolute top-6 left-6 border-2 border-emerald-500 bg-emerald-500/20 px-4 py-1 rounded-xl backdrop-blur-md rotate-[-12deg]">
-                  <span className="text-xs font-black text-emerald-400 tracking-widest uppercase font-tech">ME ENCANTA</span>
+                  <span className="text-xs font-black text-emerald-400 tracking-widest uppercase font-tech">
+                    ME ENCANTA
+                  </span>
                 </div>
               )}
             </div>
@@ -443,9 +505,13 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             >
               <X size={24} strokeWidth={3} />
             </button>
-            
+
             <button
-              onClick={() => navigate(`/inventario/${generateVehicleSlug(currentSwipeCar)}/${currentSwipeCar.id}`)}
+              onClick={() =>
+                navigate(
+                  `/inventario/${generateVehicleSlug(currentSwipeCar)}/${currentSwipeCar.id}`,
+                )
+              }
               className="px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 text-xs font-bold font-tech transition-all"
             >
               Inspeccionar
@@ -470,7 +536,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 {likedList.map((likedCar, idx) => (
                   <div
                     key={`${likedCar.id}-${idx}`}
-                    onClick={() => navigate(`/inventario/${generateVehicleSlug(likedCar)}/${likedCar.id}`)}
+                    onClick={() =>
+                      navigate(`/inventario/${generateVehicleSlug(likedCar)}/${likedCar.id}`)
+                    }
                     className="h-10 w-10 rounded-full border border-rose-500/40 overflow-hidden shrink-0 cursor-pointer hover:scale-110 transition-transform relative group"
                     title={likedCar.name}
                   >
@@ -495,10 +563,15 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
               BÚSQUEDA SEMÁNTICA NIVEL 18
             </span>
             <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-              Dinos qué <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-500 font-cinematic">Vibra</span> Buscas
+              Dinos qué{' '}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-500 font-cinematic">
+                Vibra
+              </span>{' '}
+              Buscas
             </h3>
             <p className="text-slate-500 text-xs mt-2 max-w-lg mx-auto leading-relaxed">
-              Nuestro motor neural analiza el inventario en tiempo real para encontrar unidades que no solo encajen con tu bolsillo, sino con tu estilo de vida en la isla.
+              Nuestro motor neural analiza el inventario en tiempo real para encontrar unidades que
+              no solo encajen con tu bolsillo, sino con tu estilo de vida en la isla.
             </p>
           </div>
 
@@ -531,13 +604,27 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
           {/* Chips de Intención Rápida */}
           <div className="space-y-3">
-            <p className="text-[10px] font-tech text-slate-500 uppercase tracking-widest text-left">Sugerencias Inteligentes:</p>
+            <p className="text-[10px] font-tech text-slate-500 uppercase tracking-widest text-left">
+              Sugerencias Inteligentes:
+            </p>
             <div className="flex flex-wrap gap-2 justify-start">
               {[
-                { label: "Guagua familiar < $450/mes", query: "Guagua familiar espaciosa de menos de $450 al mes" },
-                { label: "Pickup para trabajo", query: "Pickup robusta para trabajo con poco millaje" },
-                { label: "Deportivo con poco pronto", query: "Unidad deportiva premium con poco pronto y gran desempeño" },
-                { label: "Unidad diaria económica", query: "Unidad confiable económica en gasolina para uso diario" }
+                {
+                  label: 'Guagua familiar < $450/mes',
+                  query: 'Guagua familiar espaciosa de menos de $450 al mes',
+                },
+                {
+                  label: 'Pickup para trabajo',
+                  query: 'Pickup robusta para trabajo con poco millaje',
+                },
+                {
+                  label: 'Deportivo con poco pronto',
+                  query: 'Unidad deportiva premium con poco pronto y gran desempeño',
+                },
+                {
+                  label: 'Unidad diaria económica',
+                  query: 'Unidad confiable económica en gasolina para uso diario',
+                },
               ].map((chip, idx) => (
                 <button
                   key={idx}
@@ -546,7 +633,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                     setIsNeuralMatching(true);
                     try {
                       const matchIds = await generateNeuralMatch(chip.query, inventory);
-                      const matches = inventory.filter(c => matchIds.includes(c.id));
+                      const matches = inventory.filter((c) => matchIds.includes(c.id));
                       setNeuralResults(matches);
                     } catch (err) {
                       console.error('Neural match error:', err);
@@ -571,7 +658,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 <span className="text-[10px] font-tech text-indigo-400 uppercase tracking-widest flex items-center gap-2">
                   <Sparkles size={12} /> COINCIDENCIAS NEURALES ENCONTRADAS
                 </span>
-                <button 
+                <button
                   onClick={() => setNeuralResults([])}
                   className="text-[9px] text-slate-500 hover:text-white transition-colors uppercase tracking-widest font-black"
                 >
@@ -579,7 +666,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {neuralResults.map(car => {
+                {neuralResults.map((car) => {
                   const score = car.aiScore || Math.floor(Math.random() * 8) + 90;
                   return (
                     <div
@@ -596,7 +683,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                       </div>
                       <div className="flex flex-col justify-center flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-[8px] font-tech text-indigo-400 uppercase tracking-widest">{car.year} • {car.type}</span>
+                          <span className="text-[8px] font-tech text-indigo-400 uppercase tracking-widest">
+                            {car.year} • {car.type}
+                          </span>
                           <span className="text-[8px] font-tech bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded">
                             {score}% Match
                           </span>
@@ -604,7 +693,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                         <h4 className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors truncate">
                           {car.name}
                         </h4>
-                        <p className="text-xs font-black text-white/70 mt-1">${(car.price || 0).toLocaleString()}</p>
+                        <p className="text-xs font-black text-white/70 mt-1">
+                          ${(car.price || 0).toLocaleString()}
+                        </p>
                         {car.mileage && (
                           <p className="text-[9px] text-slate-500 mt-0.5 font-medium">
                             {car.mileage.toLocaleString()} millas
@@ -612,7 +703,10 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                         )}
                       </div>
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ChevronRight size={14} className="text-indigo-400 animate-bounce-horizontal" />
+                        <ChevronRight
+                          size={14}
+                          className="text-indigo-400 animate-bounce-horizontal"
+                        />
                       </div>
                     </div>
                   );
@@ -629,7 +723,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
           <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/90 p-6 md:p-8 shadow-[0_0_50px_rgba(245,158,11,0.15)] text-left overflow-hidden">
             {/* Esquinas resplandecientes */}
             <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-amber-500 via-rose-500 to-amber-500 animate-pulse" />
-            
+
             <button
               onClick={() => {
                 setIsExpressModalOpen(false);
@@ -654,7 +748,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed mb-6 font-light">
-              Congela de inmediato la cobertura gratuita de <span className="text-amber-400 font-bold">Tablilla, Marbete y Registro</span> ingresando tu información a continuación. Sin fricción, sin compromiso.
+              Congela de inmediato la cobertura gratuita de{' '}
+              <span className="text-amber-400 font-bold">Tablilla, Marbete y Registro</span>{' '}
+              ingresando tu información a continuación. Sin fricción, sin compromiso.
             </p>
 
             {generatedVoucher ? (
@@ -671,13 +767,18 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed mb-6">
-                  ¡Código enlazado exitosamente a tu expediente! Preséntalo o compártelo por WhatsApp para que nuestros asesores apliquen los $300 de descuento directo en tus trámites.
+                  ¡Código enlazado exitosamente a tu expediente! Preséntalo o compártelo por
+                  WhatsApp para que nuestros asesores apliquen los $300 de descuento directo en tus
+                  trámites.
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
                       const m = `¡Hola! Acabo de activar mi Pre-cualificación Express con el cupón ${generatedVoucher} para el Ahorro de $300 en Tablilla y Marbete.`;
-                      window.open(`https://wa.me/17875550000?text=${encodeURIComponent(m)}`, '_blank');
+                      window.open(
+                        `https://wa.me/17875550000?text=${encodeURIComponent(m)}`,
+                        '_blank',
+                      );
                     }}
                     className="flex-1 py-3 bg-[#25D366] hover:bg-[#1ebd5a] text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-lg shadow-[#25D366]/20"
                   >
@@ -701,7 +802,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                     {expressError}
                   </div>
                 )}
-                
+
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-tech font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
                     <User size={12} className="text-amber-400" /> Nombre Completo
@@ -732,7 +833,8 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-tech font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                    <Mail size={12} className="text-slate-500" /> Correo Electrónico <span className="text-slate-600 font-normal">(Opcional)</span>
+                    <Mail size={12} className="text-slate-500" /> Correo Electrónico{' '}
+                    <span className="text-slate-600 font-normal">(Opcional)</span>
                   </label>
                   <input
                     type="email"
@@ -751,7 +853,9 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                   {isSubmittingExpress ? (
                     <span className="animate-pulse">Asegurando Cupón...</span>
                   ) : (
-                    <>Activar Cupón de $300 <ChevronRight size={16} /></>
+                    <>
+                      Activar Cupón de $300 <ChevronRight size={16} />
+                    </>
                   )}
                 </button>
 

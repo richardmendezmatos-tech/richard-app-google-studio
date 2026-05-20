@@ -12,15 +12,12 @@ export const NeuroUIAdapter: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Reaccionar a señales de alta intención
-  useHoustonResponder<ScoreInsight>(
-    HoustonEventType.PREDICTIVE_HIGH_INTENT,
-    (insight) => {
-      setActiveInsight(insight);
-      setIsVisible(true);
-      // Auto-ocultar después de 10 segundos
-      setTimeout(() => setIsVisible(false), 10000);
-    }
-  );
+  useHoustonResponder<ScoreInsight>(HoustonEventType.PREDICTIVE_HIGH_INTENT, (insight) => {
+    setActiveInsight(insight);
+    setIsVisible(true);
+    // Auto-ocultar después de 10 segundos
+    setTimeout(() => setIsVisible(false), 10000);
+  });
 
   if (!activeInsight) return null;
 
@@ -36,7 +33,7 @@ export const NeuroUIAdapter: React.FC = () => {
           <div className="glass-premium border border-cyan-500/30 p-5 rounded-2xl shadow-2xl overflow-hidden relative group">
             {/* Background Glow */}
             <div className="absolute -inset-1 bg-linear-to-r from-cyan-500/20 to-blue-500/20 blur opacity-75 group-hover:opacity-100 transition duration-1000" />
-            
+
             <div className="relative">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -47,7 +44,7 @@ export const NeuroUIAdapter: React.FC = () => {
                     Oportunidad VIP Detectada
                   </span>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsVisible(false)}
                   className="text-slate-500 hover:text-white transition-colors"
                   title="Cerrar notificación"
@@ -59,13 +56,14 @@ export const NeuroUIAdapter: React.FC = () => {
               <h4 className="text-white font-outfit font-bold text-lg leading-tight mb-2">
                 ¿Listo para el siguiente paso?
               </h4>
-              
+
               <p className="text-slate-400 text-sm mb-4 leading-relaxed">
-                Notamos tu interés en <span className="text-cyan-200">{activeInsight.factors[0]}</span>. 
-                Richard puede darte una oferta personalizada ahora mismo.
+                Notamos tu interés en{' '}
+                <span className="text-cyan-200">{activeInsight.factors[0]}</span>. Richard puede
+                darte una oferta personalizada ahora mismo.
               </p>
 
-              <button 
+              <button
                 onClick={() => window.open('https://wa.me/17873682880', '_blank')}
                 className="w-full py-3 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-900/40"
               >

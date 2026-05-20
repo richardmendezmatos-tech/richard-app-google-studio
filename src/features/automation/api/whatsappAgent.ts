@@ -21,7 +21,7 @@ interface SequenceStep {
 
 /**
  * WhatsApp Agent v2 — Neural Orchestrator
- * 
+ *
  * Uses the Neural Match Engine to personalize follow-ups based on lead interest.
  */
 export class WhatsAppAgent {
@@ -51,9 +51,9 @@ export class WhatsAppAgent {
       delayMs: 24 * 60 * 60 * 1000,
       execute: async (agent, lead) => {
         const recommendation = await agent.findPersonalizedRecommendation(lead);
-        
+
         let message = `¡Hola ${lead.firstName}! Soy Richard. Estoy pendiente de ayudarte con tu búsqueda.`;
-        
+
         if (recommendation) {
           message += ` Acabo de ver esta unidad que te puede interesar: *${recommendation.name}*. ${recommendation.pitch} ¿Te gustaría pasar a verla? 🚗`;
         } else {
@@ -125,13 +125,29 @@ export class WhatsAppAgent {
       for (let i = 1; i < this.sequence.length; i++) {
         const futureStep = this.sequence[i];
         const scheduledAt = new Date(Date.now() + futureStep.delayMs).toISOString();
-        await this.logInteraction(lead.id, lead.firstName, lead.phone, futureStep.label, 'scheduled', scheduledAt);
+        await this.logInteraction(
+          lead.id,
+          lead.firstName,
+          lead.phone,
+          futureStep.label,
+          'scheduled',
+          scheduledAt,
+        );
       }
     } catch (err) {
       console.error('[WhatsApp Agent] Error in sequence:', err);
-      await this.logInteraction(lead.id, lead.firstName, lead.phone, 'welcome_validation', 'failed');
+      await this.logInteraction(
+        lead.id,
+        lead.firstName,
+        lead.phone,
+        'welcome_validation',
+        'failed',
+      );
       const audit = await getAuditRepository();
-      await audit.log('error', `WhatsApp Welcome failed for ${lead.firstName}`, { leadId: lead.id, error: err });
+      await audit.log('error', `WhatsApp Welcome failed for ${lead.firstName}`, {
+        leadId: lead.id,
+        error: err,
+      });
     }
   }
 
@@ -170,7 +186,10 @@ export class WhatsAppAgent {
         console.error(`[WhatsApp Agent] Step ${msg.step_label} failed:`, err);
         await supabase.from('message_queue').update({ status: 'failed' }).eq('id', msg.id);
         const audit = await getAuditRepository();
-        await audit.log('error', `WhatsApp Step ${msg.step_label} failed for ${msg.lead_name}`, { msgId: msg.id, error: err });
+        await audit.log('error', `WhatsApp Step ${msg.step_label} failed for ${msg.lead_name}`, {
+          msgId: msg.id,
+          error: err,
+        });
         failed++;
       }
     }
@@ -199,13 +218,15 @@ export class WhatsAppAgent {
     } catch (err) {
       console.error('[WhatsApp Agent] Failed to log interaction:', err);
     }
-    
+
     // Centralized Audit Log
     try {
       const audit = await getAuditRepository();
-      await audit.log(status === 'failed' ? 'error' : 'info', 
-        `WhatsApp ${status}: ${stepLabel} for ${leadName}`, 
-        { leadId, stepLabel, status, scheduledAt });
+      await audit.log(
+        status === 'failed' ? 'error' : 'info',
+        `WhatsApp ${status}: ${stepLabel} for ${leadName}`,
+        { leadId, stepLabel, status, scheduledAt },
+      );
     } catch (auditErr) {
       console.error('[WhatsApp Agent] Audit logging failed:', auditErr);
     }

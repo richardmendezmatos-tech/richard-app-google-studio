@@ -14,12 +14,12 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#0d2232] text-white overflow-x-hidden">
-      <SEO 
-        title="Houston Mission Control | Richard Automotive" 
+      <SEO
+        title="Houston Mission Control | Richard Automotive"
         description="Panel de comando inteligente para la gestión de leads e inventario."
         noIndex={true}
       />
-      
+
       {/* Mini Header / Houston Switcher */}
       <header className="p-4 border-b border-white/5 flex items-center justify-between backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-4">
@@ -28,25 +28,29 @@ export default function AdminPage() {
             Houston <span className="text-cyan-400">Mission Control</span>
           </h1>
         </div>
-        
+
         <nav className="flex bg-slate-900/50 rounded-full p-1 border border-white/5 items-center gap-1">
-          <button 
+          <button
             onClick={() => setActiveView('crm')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-              activeView === 'crm' ? 'bg-cyan-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'
+              activeView === 'crm'
+                ? 'bg-cyan-500 text-slate-950 shadow-lg'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             CRM Board
           </button>
-          <button 
+          <button
             onClick={() => setActiveView('houston')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-              activeView === 'houston' ? 'bg-cyan-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'
+              activeView === 'houston'
+                ? 'bg-cyan-500 text-slate-950 shadow-lg'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             Telemetría
           </button>
-          <a 
+          <a
             href="/admin/houston"
             className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
           >
@@ -56,11 +60,13 @@ export default function AdminPage() {
       </header>
 
       <main className="p-6">
-        <React.Suspense fallback={
-          <div className="flex h-[60vh] items-center justify-center">
-            <div className="animate-spin w-12 h-12 border-4 border-cyan-500 rounded-full border-t-transparent" />
-          </div>
-        }>
+        <React.Suspense
+          fallback={
+            <div className="flex h-[60vh] items-center justify-center">
+              <div className="animate-spin w-12 h-12 border-4 border-cyan-500 rounded-full border-t-transparent" />
+            </div>
+          }
+        >
           {activeView === 'crm' ? <CRMBoard /> : <HoustonDashboard />}
         </React.Suspense>
       </main>

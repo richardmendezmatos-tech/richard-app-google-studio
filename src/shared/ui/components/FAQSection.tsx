@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { HelpCircle, ChevronDown, Cpu, Activity, ShieldCheck, Zap } from 'lucide-react';
@@ -67,7 +67,7 @@ const FAQSection: React.FC = () => {
             </div>
             <div className="h-px w-8 bg-cyan-500/50" />
           </div>
-          
+
           <h2 className="font-cinematic text-5xl md:text-7xl text-white tracking-widest leading-none">
             CENTRO DE <span className="text-cyan-400">INTELIGENCIA</span>
           </h2>

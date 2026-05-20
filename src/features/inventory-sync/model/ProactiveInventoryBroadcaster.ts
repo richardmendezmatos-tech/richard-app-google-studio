@@ -34,16 +34,24 @@ export class ProactiveInventoryBroadcaster {
       for (const vehicle of totalVehicles) {
         const isUpdate = updates.includes(vehicle);
         const { make, model, year } = vehicle.props;
-        const priceFormatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(vehicle.price);
+        const priceFormatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          maximumFractionDigits: 0,
+        }).format(vehicle.price);
         const vehicleTitle = `${year} ${make} ${model}`.trim();
 
         // Encontrar leads interesados en esta marca, modelo, o con alta intención
-        const matchingLeads = leads.filter(lead => {
+        const matchingLeads = leads.filter((lead) => {
           if (!lead.phone) return false;
 
-          const interestStr = `${lead.vehicleOfInterest || ''} ${lead.aiAnalysis?.unidad_interes || ''} ${lead.notes || ''}`.toLowerCase();
-          const matchesMakeOrModel = interestStr.includes(make.toLowerCase()) || interestStr.includes(model.toLowerCase());
-          const isHighIntent = (lead.closureProbability && lead.closureProbability >= 70) || lead.status === 'negotiation';
+          const interestStr =
+            `${lead.vehicleOfInterest || ''} ${lead.aiAnalysis?.unidad_interes || ''} ${lead.notes || ''}`.toLowerCase();
+          const matchesMakeOrModel =
+            interestStr.includes(make.toLowerCase()) || interestStr.includes(model.toLowerCase());
+          const isHighIntent =
+            (lead.closureProbability && lead.closureProbability >= 70) ||
+            lead.status === 'negotiation';
 
           return matchesMakeOrModel || isHighIntent;
         });
@@ -55,7 +63,7 @@ export class ProactiveInventoryBroadcaster {
           if (!lead.phone) continue;
 
           const clientName = lead.firstName || lead.name?.split(' ')[0] || 'amigo';
-          
+
           let message = '';
           if (isUpdate) {
             message = `🚨 ¡Hola ${clientName}! Richard por aquí. Te tengo excelentes noticias: la unidad *${vehicleTitle}* que tenemos en inventario acaba de recibir un ajuste especial a ${priceFormatted}. ¿Te gustaría aprovechar y agendar una prueba de manejo antes de que se reserve? 🚗💨`;
@@ -65,13 +73,14 @@ export class ProactiveInventoryBroadcaster {
 
           // Disparo asíncrono robusto
           await sendWhatsAppMessage(lead.phone, message, {
-            template: isUpdate ? 'price_drop_broadcast' : 'new_arrival_broadcast'
+            template: isUpdate ? 'price_drop_broadcast' : 'new_arrival_broadcast',
           });
 
-          console.log(`[ProactiveBroadcaster] Mensaje proactivo enviado a ${lead.phone} para la unidad ${vehicleTitle}`);
+          console.log(
+            `[ProactiveBroadcaster] Mensaje proactivo enviado a ${lead.phone} para la unidad ${vehicleTitle}`,
+          );
         }
       }
-
     } catch (err) {
       console.error('[ProactiveBroadcaster] Excepción en la difusión proactiva:', err);
     }

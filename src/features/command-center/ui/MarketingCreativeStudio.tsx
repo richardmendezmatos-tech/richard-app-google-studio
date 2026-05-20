@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Car } from '@/entities/inventory';

@@ -72,7 +72,8 @@ export const calculateOTD = (
     CONSTANTES_PR.TITLE_TRANSFER_FEE;
 
   // 4. Backend Products
-  const totalBackendProducts = gapInsurance + extendedWarranty + paintProtection + creditLife + powerPack;
+  const totalBackendProducts =
+    gapInsurance + extendedWarranty + paintProtection + creditLife + powerPack;
 
   // 5. Out The Door (OTD) Computation
   // OTD = Auto + Taxes + Fees + Products - NetTradeIn

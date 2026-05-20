@@ -28,10 +28,12 @@ export class SupabaseBlogRepository {
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<BlogPost> {
     const { data, error } = await this.client
       .from(this.tableName)
-      .insert([{
-        ...post,
-        created_at: new Date().toISOString()
-      }])
+      .insert([
+        {
+          ...post,
+          created_at: new Date().toISOString(),
+        },
+      ])
       .select('*')
       .single();
 
@@ -44,10 +46,7 @@ export class SupabaseBlogRepository {
   }
 
   async deleteBlogPost(id: string): Promise<void> {
-    const { error } = await this.client
-      .from(this.tableName)
-      .delete()
-      .eq('id', id);
+    const { error } = await this.client.from(this.tableName).delete().eq('id', id);
 
     if (error) {
       console.error(`[SupabaseBlogRepository] Error deleting post ${id}:`, error);

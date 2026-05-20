@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
@@ -77,7 +77,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       console.error('[ImgUp] Failed to initialize worker, will use main-thread fallback:', err);
       workerRef.current = null;
     }
-    
+
     return () => {
       workerRef.current?.terminate();
     };
@@ -164,12 +164,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             const complete = await optimizeImageComplete(uploadFile.file, {
               quality: 0.85,
               maxWidth: 1600,
-              generateWebP: false
+              generateWebP: false,
             });
             optimizedResult = {
               jpeg: complete.jpeg,
               width: complete.dimensions.width,
-              height: complete.dimensions.height
+              height: complete.dimensions.height,
             };
           }
 
@@ -207,7 +207,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
-          
+
           const { supabase } = await import('@/shared/api/supabase/supabaseClient');
           const bucket = 'inventory';
 
@@ -217,35 +217,37 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               type: 'jpeg',
               path: `${storagePath}/${baseFileName}.jpg`,
               file: optimized.jpeg,
-              contentType: 'image/jpeg'
+              contentType: 'image/jpeg',
             },
             {
               type: 'thumb',
               path: `${storagePath}/${baseFileName}_thumb.jpg`,
               file: optimized.thumbnail,
-              contentType: 'image/jpeg'
-            }
+              contentType: 'image/jpeg',
+            },
           ];
 
-          const results = await Promise.all(uploadTasks.map(async (task) => {
-            const { data, error } = await supabase.storage
-              .from(bucket)
-              .upload(task.path, task.file, {
-                contentType: task.contentType,
-                upsert: true
-              });
-            
-            if (error) throw error;
-            
-            const { data: { publicUrl } } = supabase.storage
-              .from(bucket)
-              .getPublicUrl(task.path);
-            
-            return { type: task.type, url: publicUrl };
-          }));
+          const results = await Promise.all(
+            uploadTasks.map(async (task) => {
+              const { data, error } = await supabase.storage
+                .from(bucket)
+                .upload(task.path, task.file, {
+                  contentType: task.contentType,
+                  upsert: true,
+                });
 
-          const jpegUrl = results.find(r => r.type === 'jpeg')?.url || '';
-          const thumbUrl = results.find(r => r.type === 'thumb')?.url || '';
+              if (error) throw error;
+
+              const {
+                data: { publicUrl },
+              } = supabase.storage.from(bucket).getPublicUrl(task.path);
+
+              return { type: task.type, url: publicUrl };
+            }),
+          );
+
+          const jpegUrl = results.find((r) => r.type === 'jpeg')?.url || '';
+          const thumbUrl = results.find((r) => r.type === 'thumb')?.url || '';
           const webpUrl = ''; // WebP generation skipped for now as per legacy worker logic
 
           const result: UploadResult = {

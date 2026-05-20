@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 export * from './hooks/useCopilotAgent';
 export * from './hooks/useVoiceRecognition';

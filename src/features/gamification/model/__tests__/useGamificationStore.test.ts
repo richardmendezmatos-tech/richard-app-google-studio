@@ -68,7 +68,7 @@ describe('useGamificationStore - Gamificación VIP RACC', () => {
 
   it('debe descontar el temporizador de cuenta regresiva al hacer tick', () => {
     const store = useGamificationStore.getState();
-    
+
     // No debe descontar si el temporizador no está activo
     store.tickTimer();
     expect(useGamificationStore.getState().countdownSeconds).toBe(900);
@@ -89,11 +89,11 @@ describe('useGamificationStore - Gamificación VIP RACC', () => {
     const store = useGamificationStore.getState();
     store.selectReward('gasolina');
     store.spinKey();
-    
+
     // Reiniciar
     store.resetGamification();
     const state = useGamificationStore.getState();
-    
+
     expect(state.selectedRewards).toEqual([]);
     expect(state.prontoBonus).toBeNull();
     expect(state.countdownSeconds).toBe(900);

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Send, Save, RotateCcw, Trash2, Mic, MicOff, Camera, UserCircle2 } from 'lucide-react';
@@ -350,7 +350,7 @@ const DigitalTwinDashboard: React.FC = () => {
                   .toLowerCase()
                   .includes(queryText),
               )
-            : (cars || []);
+            : cars || [];
 
           setMessages((prev) => [
             ...prev,
@@ -426,7 +426,9 @@ const DigitalTwinDashboard: React.FC = () => {
           )}
           <div>
             <h1 className="text-lg font-black uppercase tracking-wider">RA Digital</h1>
-            <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Powered by Strategy Lab</p>
+            <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
+              Powered by Strategy Lab
+            </p>
             <p className="text-xs text-slate-400">Usando tu cara en foto o webcam</p>
           </div>
         </div>

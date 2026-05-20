@@ -24,7 +24,7 @@ export class CircuitBreaker {
 
   constructor(
     private config: CircuitBreakerConfig = { failureThreshold: 5, resetTimeout: 30000 },
-    name: string = 'Anonymous'
+    name: string = 'Anonymous',
   ) {
     this.name = name;
   }
@@ -45,7 +45,9 @@ export class CircuitBreaker {
         this.updateState(CircuitState.HALF_OPEN);
       } else {
         if (fallback) return fallback(this.lastError || new Error('Circuit is OPEN'));
-        throw new Error(`Circuit is OPEN (${this.name}). Next attempt in ${Math.ceil((this.nextAttempt - Date.now()) / 1000)}s`);
+        throw new Error(
+          `Circuit is OPEN (${this.name}). Next attempt in ${Math.ceil((this.nextAttempt - Date.now()) / 1000)}s`,
+        );
       }
     }
 
@@ -77,13 +79,18 @@ export class CircuitBreaker {
     this.failureCount++;
     this.lastError = error;
 
-    if (this.state === CircuitState.HALF_OPEN || this.failureCount >= this.config.failureThreshold) {
+    if (
+      this.state === CircuitState.HALF_OPEN ||
+      this.failureCount >= this.config.failureThreshold
+    ) {
       this.open();
     }
   }
 
   private open(): void {
-    console.warn(`[Sentinel:Resilience:${this.name}] Circuit OPENED after ${this.failureCount} failures.`);
+    console.warn(
+      `[Sentinel:Resilience:${this.name}] Circuit OPENED after ${this.failureCount} failures.`,
+    );
     this.updateState(CircuitState.OPEN);
     this.nextAttempt = Date.now() + this.config.resetTimeout;
   }

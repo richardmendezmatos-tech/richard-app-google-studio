@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -335,7 +335,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                       Ideal Buyer Profile
                     </span>
                     <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10">
-                      {data.aiAnalysis.buyerProfile || "Análisis de perfil en progreso..."}
+                      {data.aiAnalysis.buyerProfile || 'Análisis de perfil en progreso...'}
                     </p>
                   </div>
 
@@ -348,7 +348,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                       Strategic Sales Pitch
                     </span>
                     <p className="text-sm text-slate-300 leading-relaxed font-medium relative z-10 italic">
-                      "{data.aiAnalysis.salesPitch || "Generando pitch táctico..."}"
+                      "{data.aiAnalysis.salesPitch || 'Generando pitch táctico...'}"
                     </p>
                   </div>
                 </div>
@@ -357,7 +357,10 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                 <div className="p-6 bg-slate-900/40 rounded-4xl border border-white/5">
                   <div className="flex flex-wrap gap-3">
                     {data.aiAnalysis.insights?.map((insight: string, i: number) => (
-                      <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <span
+                        key={i}
+                        className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"
+                      >
                         <TrendingUp size={12} className="text-cyan-500" />
                         {insight}
                       </span>

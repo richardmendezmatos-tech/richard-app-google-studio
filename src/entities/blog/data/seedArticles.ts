@@ -4,7 +4,7 @@ import { BlogPost } from '@/shared/types/types';
  * Artículos SEO semilla para Richard Automotive.
  * Estos artículos atacan queries informacionales de alto volumen
  * en el mercado automotriz de Puerto Rico.
- * 
+ *
  * Estrategia: Cada artículo responde a una pregunta real que
  * los compradores de autos en PR buscan en Google.
  */
@@ -12,7 +12,8 @@ export const SEED_ARTICLES: Omit<BlogPost, 'id'>[] = [
   {
     title: 'Guía Completa: Cómo Financiar un Auto Usado en Puerto Rico (2025)',
     slug: 'como-financiar-auto-usado-puerto-rico',
-    excerpt: 'Todo lo que necesitas saber sobre financiamiento de autos usados en PR: tasas, requisitos, documentos, y cómo obtener la mejor estructura.',
+    excerpt:
+      'Todo lo que necesitas saber sobre financiamiento de autos usados en PR: tasas, requisitos, documentos, y cómo obtener la mejor estructura.',
     content: `
 # Guía Completa: Cómo Financiar un Auto Usado en Puerto Rico
 
@@ -67,13 +68,15 @@ El secreto del buen financiamiento es la preparación. Trae tus documentos listo
     author: 'Richard Méndez',
     date: '2025-03-15',
     tags: ['financiamiento', 'guía', 'puerto rico', 'crédito'],
-    metaDescription: 'Guía completa para financiar un auto usado en Puerto Rico. Tasas de interés, requisitos, documentos necesarios y tips para obtener la mejor estructura de pago.',
+    metaDescription:
+      'Guía completa para financiar un auto usado en Puerto Rico. Tasas de interés, requisitos, documentos necesarios y tips para obtener la mejor estructura de pago.',
     imageUrl: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=1200&auto=format',
   },
   {
     title: '¿Cuánto Cuesta Mantener un Toyota Camry en Puerto Rico?',
     slug: 'costo-mantenimiento-toyota-camry-puerto-rico',
-    excerpt: 'Desglose completo del costo anual de mantenimiento de un Toyota Camry en PR: aceite, gomas, seguro, marbete y más.',
+    excerpt:
+      'Desglose completo del costo anual de mantenimiento de un Toyota Camry en PR: aceite, gomas, seguro, marbete y más.',
     content: `
 # ¿Cuánto Cuesta Mantener un Toyota Camry en Puerto Rico?
 
@@ -117,13 +120,15 @@ El punto óptimo de compra es entre **2-4 años de uso** con **30,000-60,000 mil
     author: 'Richard Méndez',
     date: '2025-02-28',
     tags: ['toyota', 'camry', 'mantenimiento', 'costos'],
-    metaDescription: 'Desglose completo del costo anual de mantenimiento de un Toyota Camry en Puerto Rico: aceite, gomas, seguro, marbete, gasolina y más.',
+    metaDescription:
+      'Desglose completo del costo anual de mantenimiento de un Toyota Camry en Puerto Rico: aceite, gomas, seguro, marbete, gasolina y más.',
     imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=1200&auto=format',
   },
   {
     title: 'SUV vs Sedán: ¿Cuál Conviene Más en Puerto Rico?',
     slug: 'suv-vs-sedan-cual-conviene-puerto-rico',
-    excerpt: 'Análisis detallado para decidir entre SUV y Sedán considerando las carreteras, clima y estilo de vida en Puerto Rico.',
+    excerpt:
+      'Análisis detallado para decidir entre SUV y Sedán considerando las carreteras, clima y estilo de vida en Puerto Rico.',
     content: `
 # SUV vs Sedán: ¿Cuál Conviene Más en Puerto Rico?
 
@@ -167,13 +172,15 @@ Es la pregunta del millón para todo comprador en la isla. Vamos a desglosarlo c
     author: 'Richard Méndez',
     date: '2025-03-01',
     tags: ['suv', 'sedan', 'comparación', 'guía'],
-    metaDescription: 'SUV vs Sedán en Puerto Rico: comparación detallada de precios, costos de mantenimiento, gasolina, seguro y cuál conviene más según tu estilo de vida.',
+    metaDescription:
+      'SUV vs Sedán en Puerto Rico: comparación detallada de precios, costos de mantenimiento, gasolina, seguro y cuál conviene más según tu estilo de vida.',
     imageUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1200&auto=format',
   },
   {
     title: '5 Errores que Cometen los Compradores de Autos Usados en PR',
     slug: 'errores-compradores-autos-usados-puerto-rico',
-    excerpt: 'Evita estos errores costosos al comprar un auto usado en Puerto Rico. Guía basada en años de experiencia en el mercado local.',
+    excerpt:
+      'Evita estos errores costosos al comprar un auto usado en Puerto Rico. Guía basada en años de experiencia en el mercado local.',
     content: `
 # 5 Errores que Cometen los Compradores de Autos Usados en PR
 
@@ -233,13 +240,15 @@ Trabaja con un dealer transparente. En Richard Automotive mostramos el CARFAX de
     author: 'Richard Méndez',
     date: '2025-03-10',
     tags: ['guía', 'errores', 'consejos', 'compra'],
-    metaDescription: '5 errores costosos al comprar un auto usado en Puerto Rico y cómo evitarlos. Consejos expertos de Richard Automotive para proteger tu inversión.',
+    metaDescription:
+      '5 errores costosos al comprar un auto usado en Puerto Rico y cómo evitarlos. Consejos expertos de Richard Automotive para proteger tu inversión.',
     imageUrl: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&auto=format',
   },
   {
     title: 'Trade-In: Cómo Obtener el Mejor Precio por Tu Auto Actual en PR',
     slug: 'trade-in-mejor-precio-auto-puerto-rico',
-    excerpt: 'Maximiza el valor de trade-in de tu vehículo actual con estos tips probados en el mercado de Puerto Rico.',
+    excerpt:
+      'Maximiza el valor de trade-in de tu vehículo actual con estos tips probados en el mercado de Puerto Rico.',
     content: `
 # Trade-In: Cómo Obtener el Mejor Precio por Tu Auto en PR
 
@@ -291,13 +300,15 @@ Los factores más importantes en orden de impacto:
     author: 'Richard Méndez',
     date: '2025-02-15',
     tags: ['trade-in', 'tasación', 'venta', 'consejos'],
-    metaDescription: 'Maximiza el valor de trade-in de tu auto en Puerto Rico. Tips probados, tabla de depreciación y estrategias de negociación para obtener el mejor precio.',
+    metaDescription:
+      'Maximiza el valor de trade-in de tu auto en Puerto Rico. Tips probados, tabla de depreciación y estrategias de negociación para obtener el mejor precio.',
     imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?w=1200&auto=format',
   },
   {
     title: 'Toyota Tacoma 2024: ¿Sigue siendo la Reina de Puerto Rico?',
     slug: 'toyota-tacoma-2024-reina-puerto-rico',
-    excerpt: 'Analizamos a fondo la nueva generación de la Toyota Tacoma. ¿Vale la pena el cambio al motor i-FORCE? Desglose completo para el mercado local.',
+    excerpt:
+      'Analizamos a fondo la nueva generación de la Toyota Tacoma. ¿Vale la pena el cambio al motor i-FORCE? Desglose completo para el mercado local.',
     content: `
 # Toyota Tacoma 2024: ¿Sigue siendo la Reina de Puerto Rico?
 
@@ -342,13 +353,15 @@ La Toyota Tacoma 2024 no solo mantiene el trono, sino que lo refuerza. Es más i
     author: 'Richard Méndez',
     date: '2025-05-10',
     tags: ['toyota', 'tacoma', '2024', 'review', 'pick-up'],
-    metaDescription: 'Análisis profundo de la Toyota Tacoma 2024 para el mercado de Puerto Rico. Rendimiento, motor i-FORCE, valor de reventa y veredicto experto.',
-    imageUrl: 'https://images.porsche.com/image/fetch/q_auto:eco,f_auto,c_fill,w_1200,h_630/https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1200&auto=format',
+    metaDescription:
+      'Análisis profundo de la Toyota Tacoma 2024 para el mercado de Puerto Rico. Rendimiento, motor i-FORCE, valor de reventa y veredicto experto.',
+    imageUrl:
+      'https://images.porsche.com/image/fetch/q_auto:eco,f_auto,c_fill,w_1200,h_630/https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1200&auto=format',
     specs: [
       { label: 'Eficiencia', value: '18-24 MPG', icon: 'fuel' },
       { label: 'Caballos', value: '278 HP', icon: 'performance' },
       { label: 'Capacidad', value: '6,500 LBS', icon: 'engine' },
-      { label: 'Sentinel Score', value: '9.5', icon: 'performance' }
-    ]
+      { label: 'Sentinel Score', value: '9.5', icon: 'performance' },
+    ],
   },
 ];

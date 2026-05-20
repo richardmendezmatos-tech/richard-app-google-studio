@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
@@ -54,34 +54,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onBrowseInventory,
   onSellCar,
 }) => {
-    const [isMobile, setIsMobile] = useState(true);
-    const [idx, setIdx] = useState(0);
-    const [videoLoaded, setVideoLoaded] = useState(false);
-    const tickerRef = useRef<HTMLDivElement>(null);
-    const animFrameRef = useRef<number>(0);
+  const [isMobile, setIsMobile] = useState(true);
+  const [idx, setIdx] = useState(0);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number>(0);
 
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 1024px)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
 
-    
-    useEffect(() => {
-      const mql = window.matchMedia('(max-width: 1024px)');
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsMobile(mql.matches);
-      const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-      mql.addEventListener('change', handler);
-      
-      const iv = setInterval(() => {
-        setIdx((p) => (p + 1) % HEADLINES.length);
-      }, 8000);
-    
+    const iv = setInterval(() => {
+      setIdx((p) => (p + 1) % HEADLINES.length);
+    }, 8000);
+
     // Delay video loading to prioritize LCP
     const timer = setTimeout(() => setVideoLoaded(true), 2000);
-    
-      return () => {
-        clearInterval(iv);
-        clearTimeout(timer);
-        mql.removeEventListener('change', handler);
-      };
-    }, []);
+
+    return () => {
+      clearInterval(iv);
+      clearTimeout(timer);
+      mql.removeEventListener('change', handler);
+    };
+  }, []);
 
   useEffect(() => {
     let pos = 0;
@@ -106,16 +104,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       {/* ── Cinematic Engine (Nivel 18) ── */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-slate-950 z-[1]" />
-        
+
         {/* Static Background for LCP Optimization */}
         <div className="absolute inset-0 z-0">
-           <OptimizedImage
-              src="/hero.avif"
-              alt="Richard Automotive Hero"
-              priority
-              className="h-full w-full object-cover opacity-30"
-              fill
-           />
+          <OptimizedImage
+            src="/hero.avif"
+            alt="Richard Automotive Hero"
+            priority
+            className="h-full w-full object-cover opacity-30"
+            fill
+          />
         </div>
 
         {/* Living Video Layer - Only Desktop & only after initial LCP */}
@@ -127,30 +125,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             playsInline
             className="h-full w-full object-cover opacity-30 scale-105 transition-opacity duration-1000"
           >
-            <source src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4" type="video/mp4" />
+            <source
+              src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4"
+              type="video/mp4"
+            />
           </video>
         )}
 
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
         <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
-        
+
         {/* Ambient Holographic Layer */}
         <div className="absolute inset-0 mesh-bg-elite z-[3]" />
-        
+
         {/* Neural Depth Layer */}
         <NeuralBackground className="z-[4]" count={isMobile ? 10 : 30} />
       </div>
 
       {/* ── Tactical Content Grid ── */}
-      <motion.div 
+      <motion.div
         initial="initial"
         animate="animate"
         variants={{
-          animate: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+          animate: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
         }}
         className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0"
       >
-        
         {/* Left: Intelligence & Branding */}
         <div className="flex-1 space-y-10 text-left">
           <div className="flex items-center gap-6">
@@ -190,7 +190,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </AnimatePresence>
           </div>
 
-          <motion.p 
+          <motion.p
             key={`sub-${idx}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -201,11 +201,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
           <div className="flex flex-wrap gap-4 pt-4">
             {[
-              { icon: <Shield size={14} />, label: "Certified" },
-              { icon: <Clock size={14} />, label: "Express Approval" },
-              { icon: <Zap size={14} />, label: "Same Day" }
+              { icon: <Shield size={14} />, label: 'Certified' },
+              { icon: <Clock size={14} />, label: 'Express Approval' },
+              { icon: <Zap size={14} />, label: 'Same Day' },
             ].map((p, i) => (
-              <span key={i} className="flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:border-cyan-500/20 hover:text-slate-300">
+              <span
+                key={i}
+                className="flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:border-cyan-500/20 hover:text-slate-300"
+              >
                 {p.icon} {p.label}
               </span>
             ))}
@@ -213,14 +216,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Right: Command Panel CTAs */}
-        <motion.div 
+        <motion.div
           variants={{
             initial: { opacity: 0, x: 20 },
-            animate: { opacity: 1, x: 0 }
+            animate: { opacity: 1, x: 0 },
           }}
           className="w-full lg:w-[460px]"
         >
-          <GlassContainer 
+          <GlassContainer
             intensity="high"
             opacity={0.07}
             withBrackets
@@ -229,7 +232,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Holographic scanner effect */}
             <div className="absolute inset-0 bg-linear-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
             <div className="scanline-overlay opacity-20" />
-            
+
             <div className="space-y-3 relative">
               <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">
                 COMMAND HUB / <span className="text-primary animate-pulse">DIRECT ACTION</span>
@@ -238,25 +241,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             <div className="space-y-4 relative">
-              <PremiumCTA 
-                label="EXPLORAR INVENTARIO" 
-                tag="UNIT DATABASE" 
-                icon={<ArrowRight size={22} />} 
-                variant="primary" 
+              <PremiumCTA
+                label="EXPLORAR INVENTARIO"
+                tag="UNIT DATABASE"
+                icon={<ArrowRight size={22} />}
+                variant="primary"
                 onClick={onBrowseInventory}
               />
-              <PremiumCTA 
-                label="NEURAL MATCH" 
-                tag="AI DISCOVERY" 
-                icon={<BrainCircuit size={22} />} 
-                variant="secondary" 
+              <PremiumCTA
+                label="NEURAL MATCH"
+                tag="AI DISCOVERY"
+                icon={<BrainCircuit size={22} />}
+                variant="secondary"
                 onClick={onNeuralMatch}
               />
-              <PremiumCTA 
-                label="COTIZAR MI AUTO" 
-                tag="TRADE-IN EVAL" 
-                icon={<DollarSign size={22} />} 
-                variant="tertiary" 
+              <PremiumCTA
+                label="COTIZAR MI AUTO"
+                tag="TRADE-IN EVAL"
+                icon={<DollarSign size={22} />}
+                variant="tertiary"
                 onClick={onSellCar}
               />
             </div>
@@ -264,18 +267,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Micro Dashboard */}
             <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 relative">
               {[
-                { val: "500+", lbl: "FAMILIES" },
-                { val: "4.9%", lbl: "MIN APR" },
-                { val: "24/7", lbl: "LIVE OPS" }
+                { val: '500+', lbl: 'FAMILIES' },
+                { val: '4.9%', lbl: 'MIN APR' },
+                { val: '24/7', lbl: 'LIVE OPS' },
               ].map((s, i) => (
                 <div key={i} className="text-center group/stat">
-                  <div className="font-tech text-xl font-black text-white group-hover/stat:text-primary transition-colors">{s.val}</div>
-                  <div className="font-tech text-[8px] uppercase tracking-[0.3em] text-slate-500 font-bold">{s.lbl}</div>
+                  <div className="font-tech text-xl font-black text-white group-hover/stat:text-primary transition-colors">
+                    {s.val}
+                  </div>
+                  <div className="font-tech text-[8px] uppercase tracking-[0.3em] text-slate-500 font-bold">
+                    {s.lbl}
+                  </div>
                 </div>
               ))}
             </div>
-            
-            <Sparkles className="absolute bottom-6 right-6 text-primary/10 group-hover:text-primary/30 transition-colors animate-spin-slow" size={60} />
+
+            <Sparkles
+              className="absolute bottom-6 right-6 text-primary/10 group-hover:text-primary/30 transition-colors animate-spin-slow"
+              size={60}
+            />
           </GlassContainer>
         </motion.div>
       </motion.div>
@@ -284,7 +294,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4 mt-auto">
         <div className="flex overflow-hidden whitespace-nowrap" ref={tickerRef}>
           {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-            <span key={i} className="mx-8 font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 hover:text-cyan-400 transition-colors cursor-default">
+            <span
+              key={i}
+              className="mx-8 font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 hover:text-cyan-400 transition-colors cursor-default"
+            >
               {item}
             </span>
           ))}

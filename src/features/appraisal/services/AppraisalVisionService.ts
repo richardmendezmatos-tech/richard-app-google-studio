@@ -17,7 +17,7 @@ export class AppraisalVisionService {
     marketBaseline: number,
     year?: number,
     make?: string,
-    mileage?: number
+    mileage?: number,
   ): Promise<AppraisalResult> {
     const analysis = await analyzeTradeInImages(images);
 
@@ -30,18 +30,18 @@ export class AppraisalVisionService {
 
     // 1. Aplicamos el ajuste de la IA (estado físico)
     const iaAdjustment = result.estimatedValueAdjustment || 1.0;
-    
+
     // 2. Aplicamos depreciación estimada por millaje (promedio anual de 12k millas en PR, año de referencia 2026)
     let mileageAdjustment = 1.0;
     if (year && mileage) {
       const currentYear = 2026;
       let age = currentYear - year;
       if (age <= 0) age = 1;
-      
+
       const expectedMileage = age * 12000;
       if (mileage > expectedMileage) {
         const overage = mileage - expectedMileage;
-        const penalty = Math.min((overage / 5000) * 0.005, 0.20); // 0.5% por cada 5k millas extra, tope 20%
+        const penalty = Math.min((overage / 5000) * 0.005, 0.2); // 0.5% por cada 5k millas extra, tope 20%
         mileageAdjustment = 1.0 - penalty;
       } else if (mileage < expectedMileage) {
         const underage = expectedMileage - mileage;
@@ -72,7 +72,7 @@ export class AppraisalVisionService {
     }
 
     const suggestedAppraisal = Math.round(
-      marketBaseline * iaAdjustment * mileageAdjustment * brandBonus * pickupBonus
+      marketBaseline * iaAdjustment * mileageAdjustment * brandBonus * pickupBonus,
     );
 
     return {

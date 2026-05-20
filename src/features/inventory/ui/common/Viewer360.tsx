@@ -142,13 +142,18 @@ const Viewer360: React.FC<Props> = ({
     if (images.length <= 1) return;
 
     // Phase 1: Cardinal Angles (0, 90, 180, 270 degrees approx)
-    const cardinalIndices = [0, Math.floor(images.length / 4), Math.floor(images.length / 2), Math.floor((3 * images.length) / 4)];
-    
-    cardinalIndices.forEach(idx => {
+    const cardinalIndices = [
+      0,
+      Math.floor(images.length / 4),
+      Math.floor(images.length / 2),
+      Math.floor((3 * images.length) / 4),
+    ];
+
+    cardinalIndices.forEach((idx) => {
       if (!loadedIndices.has(idx)) {
         const img = new Image();
         img.src = images[idx];
-        img.onload = () => setLoadedIndices(prev => new Set(prev).add(idx));
+        img.onload = () => setLoadedIndices((prev) => new Set(prev).add(idx));
       }
     });
 
@@ -158,7 +163,7 @@ const Viewer360: React.FC<Props> = ({
         if (!cardinalIndices.includes(idx)) {
           const img = new Image();
           img.src = src;
-          img.onload = () => setLoadedIndices(prev => new Set(prev).add(idx));
+          img.onload = () => setLoadedIndices((prev) => new Set(prev).add(idx));
         }
       });
     }, 2000); // Wait 2s for critical UI thread to breathe
@@ -242,7 +247,6 @@ const Viewer360: React.FC<Props> = ({
           </div>
         </div>
 
-
         <div className="absolute top-[40%] right-[10%] animate-in zoom-in slide-in-from-top-4 duration-700 delay-300">
           <div className="bg-slate-900/90 backdrop-blur border border-amber-500/30 p-3 rounded-2xl shadow-xl flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
@@ -276,13 +280,13 @@ const Viewer360: React.FC<Props> = ({
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         <img
           src={(images || [])[currentFrame] || ''}
           alt={alt}
           className={`max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           draggable={false}
-          onLoad={() => setLoadedIndices(prev => new Set(prev).add(currentFrame))}
+          onLoad={() => setLoadedIndices((prev) => new Set(prev).add(currentFrame))}
           onError={(e) => {
             if (!(e.target as HTMLImageElement).src.includes('placeholder-car.webp')) {
               (e.target as HTMLImageElement).src = '/placeholder-car.webp';

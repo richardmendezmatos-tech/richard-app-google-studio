@@ -20,13 +20,16 @@ export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
     '[NETWORK] Sentinel AP-01 online.',
     '[SECURITY] Level 14 protocols active.',
   ];
-  
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Derive current logs from props + boot logs
   const allLogs = [
     ...bootLogs,
-    ...(events || []).map(e => `[${new Date(e.timestamp).toLocaleTimeString()}] [${e.type.toUpperCase()}] ${e.message}`)
+    ...(events || []).map(
+      (e) =>
+        `[${new Date(e.timestamp).toLocaleTimeString()}] [${e.type.toUpperCase()}] ${e.message}`,
+    ),
   ].slice(-20);
 
   useEffect(() => {
@@ -51,10 +54,11 @@ export const HoustonTerminalLog: React.FC<Props> = ({ events }) => {
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1 no-scrollbar scroll-smooth">
         {allLogs.map((log, i) => (
           <div key={i} className="flex gap-2">
-            <ChevronRight size={10} className="text-primary flex-shrink-0 mt-0.5 shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]" />
-            <span className={getLogColor(log)}>
-              {log}
-            </span>
+            <ChevronRight
+              size={10}
+              className="text-primary flex-shrink-0 mt-0.5 shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]"
+            />
+            <span className={getLogColor(log)}>{log}</span>
           </div>
         ))}
         <div className="animate-pulse text-primary font-black">_</div>

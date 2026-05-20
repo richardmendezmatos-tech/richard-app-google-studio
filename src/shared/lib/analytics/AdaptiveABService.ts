@@ -36,15 +36,15 @@ export class AdaptiveABService {
 
     // Asignación determinista o aleatoria
     const variant = this.assignNewVariant(config);
-    
+
     if (typeof window !== 'undefined') {
       localStorage.setItem(storageKey, variant);
-      
+
       // Notificar a Sentinel sobre la asignación para telemetría
       raSentinel.reportActivity({
         type: 'ai_persuasion_generated', // Usamos este tipo para indicar influencia de la IA
         data: { experimentId, variant },
-        operationalScore: 100
+        operationalScore: 100,
       });
     }
 
@@ -63,12 +63,13 @@ export class AdaptiveABService {
    * Reporta el éxito (conversión) de una variante.
    */
   trackConversion(experimentId: string, value: number) {
-    const variant = typeof window !== 'undefined' ? localStorage.getItem(`ra_ab_${experimentId}`) : 'unknown';
-    
+    const variant =
+      typeof window !== 'undefined' ? localStorage.getItem(`ra_ab_${experimentId}`) : 'unknown';
+
     raSentinel.reportActivity({
       type: 'sale_attempt',
       data: { experimentId, variant, value, success: true },
-      operationalScore: 100
+      operationalScore: 100,
     });
   }
 }

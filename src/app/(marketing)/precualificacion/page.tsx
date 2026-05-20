@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
  */
 export default function PreQualifyRoute() {
   const router = useRouter();
-  
+
   return (
     <div className="min-h-screen bg-slate-950 pt-20">
       <PreQualifyView onExit={() => router.push('/')} />

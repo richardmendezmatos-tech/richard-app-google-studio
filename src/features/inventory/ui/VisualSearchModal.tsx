@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
 import { X, UploadCloud, Camera, AlertCircle, ScanLine, Sparkles, Binary } from 'lucide-react';
@@ -79,7 +79,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
             className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl"
             onClick={onClose}
           />
-          
+
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -89,45 +89,48 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
           >
             {/* Ambient Holographic Underlay */}
             <div className="absolute inset-0 opacity-20 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-full bg-grid-dots opacity-10" />
-                <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px]" />
-                <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
+              <div className="absolute top-0 left-0 w-full h-full bg-grid-dots opacity-10" />
+              <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px]" />
+              <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
             </div>
 
             {/* Header */}
             <div className="relative z-10 p-10 pb-6">
-          <button
-            onClick={onClose}
-            aria-label="Cerrar Búsqueda Visual"
-            title="Cerrar Búsqueda Visual"
-            className="absolute top-8 right-8 flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-white/5 text-slate-400 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
-          >
+              <button
+                onClick={onClose}
+                aria-label="Cerrar Búsqueda Visual"
+                title="Cerrar Búsqueda Visual"
+                className="absolute top-8 right-8 flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-white/5 text-slate-400 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
+              >
                 <X size={20} />
               </button>
-              
+
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
                   <Camera className="text-cyan-400" size={24} />
                 </div>
                 <div>
-                    <h2 className="font-tech text-2xl font-black uppercase tracking-[0.1em] text-white">
+                  <h2 className="font-tech text-2xl font-black uppercase tracking-[0.1em] text-white">
                     Neural Match <span className="text-cyan-400">v2.1</span>
-                    </h2>
-                    <div className="flex items-center gap-2">
-                        <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-                        <span className="text-[8px] font-black text-cyan-500 uppercase tracking-widest">Active AI Protocol</span>
-                    </div>
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                    <span className="text-[8px] font-black text-cyan-500 uppercase tracking-widest">
+                      Active AI Protocol
+                    </span>
+                  </div>
                 </div>
               </div>
               <p className="text-sm font-medium text-slate-400 max-w-md">
-                Motor de reconocimiento Richard. Sube una foto de referencia y encontraremos las unidades más cercanas en nuestro inventario.
+                Motor de reconocimiento Richard. Sube una foto de referencia y encontraremos las
+                unidades más cercanas en nuestro inventario.
               </p>
             </div>
 
             {/* Content */}
             <div className="relative z-10 p-10 pt-0">
               {error && (
-                <motion.div 
+                <motion.div
                   initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   className="mb-6 flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs font-bold uppercase tracking-wider text-rose-400"
@@ -153,20 +156,20 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                 {isAnalyzing ? (
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/85 backdrop-blur-xl">
                     <motion.div
-                      animate={{ 
-                        opacity: [0.1, 0.3, 0.1]
+                      animate={{
+                        opacity: [0.1, 0.3, 0.1],
                       }}
                       transition={{ duration: 3, repeat: Infinity }}
                       className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,229,255,0.1),transparent)]"
                     />
-                    
+
                     {/* The Enhanced Scanner Beam */}
                     <motion.div
                       animate={{ y: [-20, 320] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
                       className="absolute left-0 right-0 top-0 h-4 bg-linear-to-b from-cyan-400/0 via-cyan-400/60 to-cyan-400/0 shadow-[0_0_40px_rgba(34,211,238,0.5)] z-30"
                     >
-                        <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white opacity-80" />
+                      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white opacity-80" />
                     </motion.div>
 
                     <div className="relative mb-8">
@@ -180,7 +183,7 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                       <div className="flex items-center gap-2">
                         <Binary size={12} className="text-cyan-500 animate-spin-slow" />
                         <p className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400">
-                            Analyzing Vector Space
+                          Analyzing Vector Space
                         </p>
                       </div>
                       <div className="h-1.5 w-48 overflow-hidden rounded-full bg-white/5 border border-white/10">
@@ -246,12 +249,18 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                   </div>
                   <div className="flex flex-wrap justify-center gap-4">
                     {[
-                      { label: "Exterior", icon: "📸" },
-                      { label: "Screenshot", icon: "📱" },
-                      { label: "Inventory", icon: "🏎️" }
+                      { label: 'Exterior', icon: '📸' },
+                      { label: 'Screenshot', icon: '📱' },
+                      { label: 'Inventory', icon: '🏎️' },
                     ].map((tip, i) => (
-                      <span key={i} className="flex items-center gap-2 rounded-2xl border border-white/5 bg-white/5 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-slate-400 transition-all hover:bg-white/10 hover:border-cyan-500/20 active:scale-95 cursor-default">
-                        <span className="text-xs transition-transform group-hover:scale-125">{tip.icon}</span> {tip.label}
+                      <span
+                        key={i}
+                        className="flex items-center gap-2 rounded-2xl border border-white/5 bg-white/5 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest text-slate-400 transition-all hover:bg-white/10 hover:border-cyan-500/20 active:scale-95 cursor-default"
+                      >
+                        <span className="text-xs transition-transform group-hover:scale-125">
+                          {tip.icon}
+                        </span>{' '}
+                        {tip.label}
                       </span>
                     ))}
                   </div>

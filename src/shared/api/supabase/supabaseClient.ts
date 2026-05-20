@@ -58,9 +58,9 @@ export const captureHotLead = async (leadData: {
       term: leadData.term,
       credit_tier: leadData.creditTier,
       source: leadData.source,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    
+
     if (error) {
       console.error('[Supabase] Error capturing hot lead:', error);
     } else {
@@ -98,12 +98,12 @@ export const createPurchaseOrderDraft = async (orderData: {
       market_scarcity: orderData.marketScarcity,
       target_source: orderData.targetSource,
       status: 'draft',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
 
     if (error) {
-       console.error('[Supabase] Error creating PO draft:', error);
-       return { success: false, error };
+      console.error('[Supabase] Error creating PO draft:', error);
+      return { success: false, error };
     }
 
     console.log('[Supabase] PO Draft created successfully.');
@@ -142,10 +142,7 @@ export const getPurchaseOrders = async () => {
  */
 export const updatePurchaseOrderStatus = async (id: string, status: 'confirmed' | 'archived') => {
   try {
-    const { error } = await supabase
-      .from('purchase_orders')
-      .update({ status })
-      .eq('id', id);
+    const { error } = await supabase.from('purchase_orders').update({ status }).eq('id', id);
 
     if (error) {
       console.error('[Supabase] Error updating PO status:', error);
@@ -164,7 +161,7 @@ export const recordPredictionOutcome = async (outcome: any) => {
       ...outcome,
       model_version: 'dts-v3-heuristic-advanced',
       target: 'richard-automotive-command-center',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     if (error) console.error('[Supabase] Error recording prediction outcome:', error);
   } catch (err) {

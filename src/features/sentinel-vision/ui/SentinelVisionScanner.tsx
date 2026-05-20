@@ -4,7 +4,19 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GlitchText } from './GlitchText';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scan, Upload, ShieldCheck, Zap, Activity, Info, Share2, Download, Sparkles, AlertTriangle, Copy } from 'lucide-react';
+import {
+  Scan,
+  Upload,
+  ShieldCheck,
+  Zap,
+  Activity,
+  Info,
+  Share2,
+  Download,
+  Sparkles,
+  AlertTriangle,
+  Copy,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { inventoryIngestionService } from '@/features/inventory/services/inventoryIngestionService';
 import { Car } from '@/entities/inventory';
@@ -28,7 +40,9 @@ interface SentinelVisionScannerProps {
   onLaunchMarketing?: (car: Partial<Car>) => void;
 }
 
-export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ onLaunchMarketing }) => {
+export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({
+  onLaunchMarketing,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -57,7 +71,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
       });
 
       const data = await inventoryIngestionService.processInventoryImage(fileBase64);
-      
+
       if (data.vin) setVin(data.vin);
 
       setExtractedData(data);
@@ -74,12 +88,12 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
           acceleration: '3.5s 0-60',
         },
       });
-      
+
       confetti({
         particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#00e5ff', '#ffd700', '#ffffff']
+        colors: ['#00e5ff', '#ffd700', '#ffffff'],
       });
     } catch (err) {
       console.error('Scan error:', err);
@@ -103,13 +117,15 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
     try {
       // 1. Upload the image to Supabase Storage first
       let publicImageUrl = '';
-      
+
       if (file) {
         try {
           publicImageUrl = await storageService.uploadImage(file, 'inventory');
         } catch (uploadErr: any) {
           console.error('Image upload failed:', uploadErr);
-          setError(`FALLO DE CARGA: El bucket "inventory" podría no estar configurado. (${uploadErr.message})`);
+          setError(
+            `FALLO DE CARGA: El bucket "inventory" podría no estar configurado. (${uploadErr.message})`,
+          );
           setIsIngesting(false);
           return; // Stop here if photo fails, we don't want units without photos
         }
@@ -125,19 +141,19 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...extractedData, image: publicImageUrl }),
       });
-      
+
       const responseData = await response.json();
 
       if (!response.ok) {
         throw new Error(responseData.error || 'Ingestion failed');
       }
-      
+
       setIsIngested(true);
       confetti({
         particleCount: 200,
         spread: 100,
         origin: { y: 0.5 },
-        colors: ['#00ff00', '#ffffff']
+        colors: ['#00ff00', '#ffffff'],
       });
     } catch (err: any) {
       console.error('Ingestion error:', err);
@@ -166,7 +182,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
           }`}
         >
           <input {...getInputProps()} />
-          
+
           <AnimatePresence mode="wait">
             {!preview ? (
               <motion.div
@@ -191,20 +207,16 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                 animate={{ opacity: 1 }}
                 className="relative w-full h-full overflow-hidden rounded-2xl"
               >
-                <img
-                  src={preview}
-                  alt="Vehicle Preview"
-                  className="w-full h-full object-cover"
-                />
-                
+                <img src={preview} alt="Vehicle Preview" className="w-full h-full object-cover" />
+
                 {/* Scanline Overlay */}
                 {isScanning && (
                   <>
                     <div className="scanline-overlay" />
-                    <motion.div 
+                    <motion.div
                       className="scan-laser-line"
                       animate={{ top: ['0%', '100%', '0%'] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                     >
                       <div className="active-scan-laser-glow left-0" />
                       <div className="active-scan-laser-glow right-0" />
@@ -217,32 +229,38 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                 {isScanning && (
                   <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
                     <div className="flex justify-between items-start">
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="bg-black/60 backdrop-blur-md p-3 border-l-2 border-ra-primary"
                       >
-                        <p className="text-[10px] text-ra-primary font-mono uppercase">Neural Stream</p>
+                        <p className="text-[10px] text-ra-primary font-mono uppercase">
+                          Neural Stream
+                        </p>
                         <p className="text-xs font-mono text-white">0x44F_DECODING...</p>
                       </motion.div>
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="bg-black/60 backdrop-blur-md p-3 border-r-2 border-ra-accent"
                       >
-                        <p className="text-[10px] text-ra-accent font-mono uppercase">Security Layer</p>
+                        <p className="text-[10px] text-ra-accent font-mono uppercase">
+                          Security Layer
+                        </p>
                         <p className="text-xs font-mono text-white">VERIFIED_SECURE</p>
                       </motion.div>
                     </div>
-                    
+
                     <div className="flex justify-center mb-10">
-                      <motion.div 
+                      <motion.div
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 0.5, repeat: Infinity }}
                         className="flex items-center space-x-2 bg-ra-primary/20 backdrop-blur-xl px-6 py-2 rounded-full border border-ra-primary/50"
                       >
                         <Activity className="w-4 h-4 text-ra-primary" />
-                        <span className="text-xs font-bold text-white tracking-widest uppercase">Analyzing Vehicle DNA</span>
+                        <span className="text-xs font-bold text-white tracking-widest uppercase">
+                          Analyzing Vehicle DNA
+                        </span>
                       </motion.div>
                     </div>
                   </div>
@@ -255,7 +273,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
         {/* Error State UI */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -265,7 +283,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                 <AlertTriangle className="w-5 h-5 text-rose-500" />
                 <p className="text-sm font-mono text-rose-200">{error}</p>
               </div>
-              <button 
+              <button
                 onClick={() => {
                   setError(null);
                   setPreview(null);
@@ -296,7 +314,9 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <p className="text-ra-primary font-mono text-sm tracking-tighter-caps">Vehicle Identified</p>
+                    <p className="text-ra-primary font-mono text-sm tracking-tighter-caps">
+                      Vehicle Identified
+                    </p>
                     <h3 className="text-4xl font-cinematic text-white">
                       {result.brand} {result.model}
                     </h3>
@@ -310,15 +330,19 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                 {vin && (
                   <div className="flex items-center gap-4 bg-black/40 p-4 rounded-xl border border-white/5">
                     <div className="flex-1">
-                      <p className="text-[10px] text-ra-primary font-mono uppercase tracking-[0.2em] mb-1">Decoded VIN</p>
+                      <p className="text-[10px] text-ra-primary font-mono uppercase tracking-[0.2em] mb-1">
+                        Decoded VIN
+                      </p>
                       <p className="text-lg font-mono text-white tracking-widest">{vin}</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => {
                         navigator.clipboard.writeText(vin);
                         const btn = document.getElementById('copy-vin-btn');
                         if (btn) btn.innerText = 'COPIED';
-                        setTimeout(() => { if (btn) btn.innerText = 'COPY'; }, 2000);
+                        setTimeout(() => {
+                          if (btn) btn.innerText = 'COPY';
+                        }, 2000);
                       }}
                       className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border border-white/10"
                     >
@@ -329,15 +353,21 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
 
                 <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Year</p>
+                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">
+                      Year
+                    </p>
                     <p className="text-xl font-tech text-white">{result.year}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Market Value</p>
+                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">
+                      Market Value
+                    </p>
                     <p className="text-xl font-tech text-ra-primary">{result.marketValue}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">Condition</p>
+                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest">
+                      Condition
+                    </p>
                     <p className="text-xl font-tech text-white">{result.condition}</p>
                   </div>
                 </div>
@@ -357,7 +387,10 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                     { label: 'Torque', value: result.specs.torque, icon: Info },
                     { label: '0-60 Time', value: result.specs.acceleration, icon: Zap },
                   ].map((spec, i) => (
-                    <div key={i} className="flex justify-between items-center bg-black/20 p-3 rounded-lg border border-white/5">
+                    <div
+                      key={i}
+                      className="flex justify-between items-center bg-black/20 p-3 rounded-lg border border-white/5"
+                    >
                       <div className="flex items-center space-x-2">
                         <spec.icon className="w-3 h-3 text-text-muted" />
                         <span className="text-xs text-text-muted uppercase">{spec.label}</span>
@@ -367,15 +400,15 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                   ))}
                 </div>
               </div>
-              
+
               <div className="space-y-3">
-                <button 
+                <button
                   onClick={() => {
                     confetti({
                       particleCount: 150,
                       spread: 70,
                       origin: { y: 0.6 },
-                      colors: ['#00e5ff', '#ffd700', '#ffffff']
+                      colors: ['#00e5ff', '#ffd700', '#ffffff'],
                     });
                   }}
                   className="btn-premium w-full group"
@@ -383,13 +416,13 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                   <Share2 className="w-4 h-4 mr-2 inline" />
                   <span className="relative z-10">SHARE REPORT</span>
                 </button>
-                <button 
+                <button
                   onClick={handleIngest}
                   disabled={isIngesting || isIngested}
                   className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 ${
-                    isIngested 
-                    ? 'bg-green-500/20 text-green-500 border border-green-500/50 cursor-default' 
-                    : 'bg-ra-primary hover:bg-ra-primary/80 text-black border border-white/20 animate-kinetic-pulse'
+                    isIngested
+                      ? 'bg-green-500/20 text-green-500 border border-green-500/50 cursor-default'
+                      : 'bg-ra-primary hover:bg-ra-primary/80 text-black border border-white/20 animate-kinetic-pulse'
                   }`}
                 >
                   {isIngesting ? (
@@ -411,17 +444,21 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({ on
                 </button>
 
                 {onLaunchMarketing && (
-                  <button 
-                    onClick={() => onLaunchMarketing({
-                      name: `${result.year} ${result.brand} ${result.model}`,
-                      make: result.brand,
-                      model: result.model,
-                      year: result.year,
-                      price: parseInt(result.marketValue.replace(/[^0-9]/g, '')),
-                      img: preview || '',
-                      features: [result.specs.hp, result.specs.torque, result.specs.acceleration],
-                      description: extractedData?.description || `Unidad identificada vía Sentinel Vision con un score de ${result.score}/100.`
-                    })}
+                  <button
+                    onClick={() =>
+                      onLaunchMarketing({
+                        name: `${result.year} ${result.brand} ${result.model}`,
+                        make: result.brand,
+                        model: result.model,
+                        year: result.year,
+                        price: parseInt(result.marketValue.replace(/[^0-9]/g, '')),
+                        img: preview || '',
+                        features: [result.specs.hp, result.specs.torque, result.specs.acceleration],
+                        description:
+                          extractedData?.description ||
+                          `Unidad identificada vía Sentinel Vision con un score de ${result.score}/100.`,
+                      })
+                    }
                     className="w-full py-4 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
                   >
                     <Sparkles className="w-4 h-4" />

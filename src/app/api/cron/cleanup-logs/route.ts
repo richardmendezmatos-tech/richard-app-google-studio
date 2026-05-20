@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  console.info("Running Log Cleanup...");
+  console.info('Running Log Cleanup...');
   try {
     const logRepository = new SupabaseLogRepository();
     const useCase = new CleanAuditLogs(logRepository);
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     console.info(`Log Cleanup complete. Deleted ${deletedCount} logs.`);
     return NextResponse.json({ success: true, deleted: deletedCount });
   } catch (error: any) {
-    console.error("Error in cleanupOldLogs", error);
+    console.error('Error in cleanupOldLogs', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

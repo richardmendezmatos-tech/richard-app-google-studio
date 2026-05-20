@@ -15,15 +15,15 @@ export class ReconciliationEngine {
   public calculateDiff(dbState: Vehicle[], webState: Vehicle[]): ReconciliationResult {
     // 1. Indexar para O(1) Lookups
     const dbMap = new Map<string, Vehicle>();
-    dbState.forEach(v => dbMap.set(v.vin, v));
+    dbState.forEach((v) => dbMap.set(v.vin, v));
 
     const webMap = new Map<string, Vehicle>();
-    webState.forEach(v => webMap.set(v.vin, v));
+    webState.forEach((v) => webMap.set(v.vin, v));
 
     const result: ReconciliationResult = {
       inserts: [],
       updates: [],
-      markAsSoldVins: []
+      markAsSoldVins: [],
     };
 
     // 2. Encontrar Nuevos & Cambios
@@ -37,10 +37,10 @@ export class ReconciliationEngine {
         // Existe en ambos -> Revisamos si cambió de precio u estado crítico
         const priceChanged = dbVehicle.price !== webVehicle.price;
         // const specsChanged = ... (se puede añadir hashing o deep equal si se requiere)
-        
+
         if (priceChanged) {
-          // Si mutamos estado, usamos métodos de dominio 
-          // Importante: Aquí podríamos instanciar un nuevo Vehicle con priceUpdated para no mutar 
+          // Si mutamos estado, usamos métodos de dominio
+          // Importante: Aquí podríamos instanciar un nuevo Vehicle con priceUpdated para no mutar
           // dependiendo la adherencia estricta a inmutabilidad, o sencillamente invocar `updatePrice`.
           dbVehicle.updatePrice(webVehicle.price);
           result.updates.push(dbVehicle);
@@ -67,7 +67,7 @@ export class ReconciliationEngine {
     const velocityMap = new Map<string, number>();
 
     // 1. Agregar pesos de métricas por VIN
-    metrics.forEach(m => {
+    metrics.forEach((m) => {
       const vin = m.data?.vin;
       const weight = m.operational_score || 1;
       if (vin) {
@@ -76,18 +76,18 @@ export class ReconciliationEngine {
     });
 
     // 2. Inyectar score en los objetos Vehicle
-    return vehicles.map(v => {
+    return vehicles.map((v) => {
       const score = velocityMap.get(v.vin) || 0;
-      
+
       // Si el vehículo tiene tracción significativa, marcamos como "HOT"
       if (score >= 5) {
         v.updateMetadata({
           sentinel_status: 'HOT_INVENTORY',
           velocity_weight: score,
-          hot_score: score
+          hot_score: score,
         });
       }
-      
+
       return v;
     });
   }

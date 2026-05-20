@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { frameworkService, FrameworkState } from '@/shared/api/core/frameworkService';
@@ -29,10 +29,10 @@ const FrameworkDashboard: React.FC = () => {
       // Add to logs with timestamp
       const time = new Date().toLocaleTimeString();
       setLogs((prev) =>
-        [`[${time}] ${(newState.source || 'SYS').toUpperCase()}: ${newState.lastAction || 'Processing'}`, ...prev].slice(
-          0,
-          50,
-        ),
+        [
+          `[${time}] ${(newState.source || 'SYS').toUpperCase()}: ${newState.lastAction || 'Processing'}`,
+          ...prev,
+        ].slice(0, 50),
       );
     });
     return () => sub.unsubscribe();

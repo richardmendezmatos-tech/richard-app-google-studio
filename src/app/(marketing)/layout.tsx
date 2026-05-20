@@ -8,11 +8,7 @@ import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
  * Now includes the CinemaLayout to maintain the "Command Center" aesthetic
  * and provide global navigation (Sidebar, AI Chat).
  */
-export default function MarketingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppProviders>
       <CinemaLayout inventory={[]}>

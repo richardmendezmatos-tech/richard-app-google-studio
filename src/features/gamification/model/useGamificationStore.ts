@@ -23,7 +23,7 @@ export const PREMIUM_DELIVERY_GIFTS = [
   { id: 'gasolina', label: 'Gasolina Gratis (Tanque Lleno)', value: 100 },
   { id: 'asistencia', label: 'Asistencia en Carretera 24/7 (1er Año)', value: 150 },
   { id: 'lavado', label: 'Lavado de Autos Full Detail Premium', value: 80 },
-  { id: 'accesorios', label: '15% de Descuento en Accesorios Originales', value: 200 }
+  { id: 'accesorios', label: '15% de Descuento en Accesorios Originales', value: 200 },
 ];
 
 // Probabilidades ponderadas para el bono de pronto
@@ -32,7 +32,7 @@ const PRONTO_BONUS_POOL = [
   { value: 200, weight: 15 },
   { value: 450, weight: 70 },
   { value: 600, weight: 10 },
-  { value: 800, weight: 5 }
+  { value: 800, weight: 5 },
 ];
 
 const selectWeightedBonus = (): number => {
@@ -61,15 +61,17 @@ export const useGamificationStore = create<GamificationState>()(
       rewardToken: null,
       timerActive: false,
 
-      selectReward: (rewardId) => set((state) => {
-        if (state.selectedRewards.includes(rewardId)) return state;
-        if (state.selectedRewards.length >= 2) return state; // Máximo 2 regalos
-        return { selectedRewards: [...state.selectedRewards, rewardId] };
-      }),
+      selectReward: (rewardId) =>
+        set((state) => {
+          if (state.selectedRewards.includes(rewardId)) return state;
+          if (state.selectedRewards.length >= 2) return state; // Máximo 2 regalos
+          return { selectedRewards: [...state.selectedRewards, rewardId] };
+        }),
 
-      deselectReward: (rewardId) => set((state) => ({
-        selectedRewards: state.selectedRewards.filter((id) => id !== rewardId)
-      })),
+      deselectReward: (rewardId) =>
+        set((state) => ({
+          selectedRewards: state.selectedRewards.filter((id) => id !== rewardId),
+        })),
 
       spinKey: () => {
         const { isKeySpun } = get();
@@ -82,7 +84,7 @@ export const useGamificationStore = create<GamificationState>()(
           prontoBonus: bonus,
           isKeySpun: true,
           rewardToken: secureToken,
-          timerActive: true
+          timerActive: true,
         });
 
         return bonus;
@@ -90,30 +92,32 @@ export const useGamificationStore = create<GamificationState>()(
 
       startTimer: () => set({ timerActive: true }),
 
-      tickTimer: () => set((state) => {
-        if (!state.timerActive) return state;
-        const nextSeconds = state.countdownSeconds - 1;
-        if (nextSeconds <= 0) {
-          return {
-            countdownSeconds: 0,
-            timerActive: false
-          };
-        }
-        return { countdownSeconds: nextSeconds };
-      }),
+      tickTimer: () =>
+        set((state) => {
+          if (!state.timerActive) return state;
+          const nextSeconds = state.countdownSeconds - 1;
+          if (nextSeconds <= 0) {
+            return {
+              countdownSeconds: 0,
+              timerActive: false,
+            };
+          }
+          return { countdownSeconds: nextSeconds };
+        }),
 
-      resetGamification: () => set({
-        selectedRewards: [],
-        prontoBonus: null,
-        countdownSeconds: 900,
-        isKeySpun: false,
-        rewardToken: null,
-        timerActive: false
-      })
+      resetGamification: () =>
+        set({
+          selectedRewards: [],
+          prontoBonus: null,
+          countdownSeconds: 900,
+          isKeySpun: false,
+          rewardToken: null,
+          timerActive: false,
+        }),
     }),
     {
       name: 'richard_gamification_vault',
-      storage: createJSONStorage(() => sessionStorage)
-    }
-  )
+      storage: createJSONStorage(() => sessionStorage),
+    },
+  ),
 );

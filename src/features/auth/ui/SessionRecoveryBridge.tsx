@@ -10,16 +10,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export const SessionRecoveryBridge = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   useEffect(() => {
     const code = searchParams.get('code');
     const error = searchParams.get('error');
-    
+
     if (code) {
-      console.log('🛰️ [Sentinel:Bridge] Session code detected on root. Bridging to auth callback...');
+      console.log(
+        '🛰️ [Sentinel:Bridge] Session code detected on root. Bridging to auth callback...',
+      );
       router.replace(`/auth/callback?code=${code}`);
     }
-    
+
     if (error) {
       console.error('❌ [Sentinel:Bridge] Auth error detected on root:', error);
       router.replace('/login?error=' + error);

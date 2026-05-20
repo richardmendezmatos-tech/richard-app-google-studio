@@ -19,14 +19,16 @@ export const getPrivacySettings = async (): Promise<PrivacySettings> => {
   // 1. Try Supabase if user is logged in
   if (supabase) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const { data, error } = await supabase
           .from('profiles')
           .select('metadata')
           .eq('id', user.id)
           .single();
-          
+
         if (!error && data?.metadata?.privacySettings) {
           return data.metadata.privacySettings as PrivacySettings;
         }
@@ -58,7 +60,9 @@ export const savePrivacySettings = async (settings: PrivacySettings): Promise<vo
   // 2. Save to Supabase if user is logged in
   if (supabase) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         await supabase
           .from('profiles')
@@ -69,7 +73,6 @@ export const savePrivacySettings = async (settings: PrivacySettings): Promise<vo
       console.error('Error saving privacy settings to Supabase:', error);
     }
   }
-
 
   // 3. Dispatch event for other services to react
   window.dispatchEvent(new CustomEvent('privacySettingsChanged', { detail: updatedSettings }));

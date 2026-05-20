@@ -16,9 +16,11 @@ export async function generateStaticParams() {
   try {
     // Fetch first 50 cars for build-time static generation
     const { cars } = await getPaginatedCars(50, 0, 'all');
-    
+
     if (!cars || cars.length === 0) {
-      console.warn('[Build] Empty inventory from Supabase. Using fallback to satisfy Next.js 16/17 build rules.');
+      console.warn(
+        '[Build] Empty inventory from Supabase. Using fallback to satisfy Next.js 16/17 build rules.',
+      );
       return [
         {
           id: 'placeholder',
@@ -54,7 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `Vehículo ${slug.replace(/-/g, ' ')} | Richard Automotive`;
 
   const description = car
-    ? car.description || `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Vega Alta.`
+    ? car.description ||
+      `${car.year} ${car.make} ${car.model} disponible en Richard Automotive, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR. Visítanos en Vega Alta.`
     : `Encuentra los mejores vehículos nuevos y usados en Richard Automotive, Puerto Rico. Financiamiento disponible.`;
 
   return {
@@ -65,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${car?.make} ${car?.year}`,
       'Richard Automotive',
       'dealer autos usados vega alta',
-      'autos reposeidos puerto rico'
+      'autos reposeidos puerto rico',
     ],
     openGraph: {
       title,
@@ -110,18 +113,18 @@ function VehicleJsonLd({ car }: { car?: Car }) {
       : undefined,
     fuelType: car.fuel || car.fuelType,
     vehicleTransmission: car.transmission,
-    vehicleEngine: car.engine
-      ? { '@type': 'EngineSpecification', name: car.engine }
-      : undefined,
+    vehicleEngine: car.engine ? { '@type': 'EngineSpecification', name: car.engine } : undefined,
     image: car.img || car.image,
-    itemCondition: car.condition === 'new' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    itemCondition:
+      car.condition === 'new'
+        ? 'https://schema.org/NewCondition'
+        : 'https://schema.org/UsedCondition',
     offers: {
       '@type': 'Offer',
       price: car.price,
       priceCurrency: 'USD',
-      availability: car.status === 'available'
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+      availability:
+        car.status === 'available' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'AutoDealer',
         name: 'Richard Automotive',
@@ -171,11 +174,11 @@ function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
 
 export default async function VehicleDetailPage({ params }: Props) {
   const { id } = await params;
-  
+
   // Parallel fetch for current car and initial inventory (for related/sidebar)
   const [currentCar, { cars: inventory }] = await Promise.all([
     getCarById(id),
-    getPaginatedCars(12, 0, 'all')
+    getPaginatedCars(12, 0, 'all'),
   ]);
 
   // Generate default FAQs if not provided by the entity
@@ -191,11 +194,13 @@ export default async function VehicleDetailPage({ params }: Props) {
         },
         {
           question: '¿Ofrecen financiamiento para este vehículo?',
-          answer: 'Sí, trabajamos con múltiples instituciones financieras para ofrecer las mejores tasas del mercado. Estructuras desde 4.9% APR, incluso con historial crediticio limitado.',
+          answer:
+            'Sí, trabajamos con múltiples instituciones financieras para ofrecer las mejores tasas del mercado. Estructuras desde 4.9% APR, incluso con historial crediticio limitado.',
         },
         {
           question: '¿Entregan vehículos a toda la isla?',
-          answer: 'Richard Automotive ofrece entrega rápida y segura en todo Puerto Rico. Si estás en San Juan, Bayamón, Caguas o Ponce, podemos llevarte tu auto directamente a tu hogar o trabajo.',
+          answer:
+            'Richard Automotive ofrece entrega rápida y segura en todo Puerto Rico. Si estás en San Juan, Bayamón, Caguas o Ponce, podemos llevarte tu auto directamente a tu hogar o trabajo.',
         },
       ]
     : [];
@@ -206,10 +211,7 @@ export default async function VehicleDetailPage({ params }: Props) {
     <>
       <VehicleJsonLd car={currentCar || undefined} />
       <FAQJsonLd faqs={faqs} />
-      <VehicleDetail 
-        car={currentCar || undefined} 
-        inventory={inventory} 
-      />
+      <VehicleDetail car={currentCar || undefined} inventory={inventory} />
     </>
   );
 }

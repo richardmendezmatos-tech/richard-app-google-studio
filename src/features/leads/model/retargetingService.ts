@@ -16,7 +16,10 @@ export const logBehavioralEvent = async (event: InteractionEvent) => {
       car_id: event.carId,
       action: event.action,
       metadata: event.metadata || {},
-      session_id: typeof window !== 'undefined' ? sessionStorage.getItem('richard_session_id') || 'anonymous' : 'server',
+      session_id:
+        typeof window !== 'undefined'
+          ? sessionStorage.getItem('richard_session_id') || 'anonymous'
+          : 'server',
       timestamp: new Date().toISOString(),
     });
 
@@ -43,4 +46,3 @@ const checkImmediateNudge = (event: InteractionEvent) => {
     }
   }
 };
-

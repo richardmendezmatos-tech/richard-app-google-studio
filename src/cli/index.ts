@@ -28,14 +28,16 @@ const program = new Command();
 
 // Sentinel N24 Branding
 const showBanner = () => {
-  console.log(chalk.cyan(`
+  console.log(
+    chalk.cyan(`
    _____ ______ _   _ _______ _____ _   _ ______ _      
   / ____|  ____| \\ | |__   __|_   _| \\ | |  ____| |     
  | (___ | |__  |  \\| |  | |    | | |  \\| | |__  | |     
   \\___ \\|  __| | . \` |  | |    | | | . \` |  __| | |     
   ____) | |____| |\\  |  | |   _| |_| |\\  | |____| |____ 
  |_____/|______|_| \\_|  |_|  |_____|_| \\_|______|______|
-  `));
+  `),
+  );
   console.log(chalk.gray(`  SENTINEL COMMAND CENTER • v${version} • Richard Automotive\n`));
 };
 

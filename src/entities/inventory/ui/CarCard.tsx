@@ -25,14 +25,14 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     };
 
     // DTS Engine Integration (Expert Decision: Real Business Logic > Placeholders)
-    const predictiveStats = calculatePredictiveDTS(car); 
+    const predictiveStats = calculatePredictiveDTS(car);
     const isScarce = predictiveStats.advantageScore > 70;
     // F&I Logic (Expert Decision: real amortization > simple division)
     const suggestedPronto = calculateSuggestedPronto(car.price);
     const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
     // CRO Heuristics
     const idHash = car.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const peopleViewing = (idHash % 5) + 2; 
+    const peopleViewing = (idHash % 5) + 2;
 
     return (
       <div

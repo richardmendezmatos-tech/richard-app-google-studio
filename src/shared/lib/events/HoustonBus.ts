@@ -50,7 +50,7 @@ export class HoustonBus {
   on<T>(type: HoustonEventType): Observable<T> {
     return this.bus$.asObservable().pipe(
       filter((event) => event.type === type),
-      map((event) => event.payload as T)
+      map((event) => event.payload as T),
     );
   }
 

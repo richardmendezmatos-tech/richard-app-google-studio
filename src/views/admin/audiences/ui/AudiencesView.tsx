@@ -24,7 +24,6 @@ const AudiencesView: React.FC = () => {
     fetchSubs();
   }, []);
 
-
   const handleBroadcast = () => {
     setIsBroadcasting(true);
     setTimeout(() => {

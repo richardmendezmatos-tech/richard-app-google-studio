@@ -8,7 +8,7 @@ import { houstonBus, HoustonEventType } from './HoustonBus';
  */
 export const useHoustonResponder = <T = any>(
   eventType: HoustonEventType,
-  handler: (payload: T) => void
+  handler: (payload: T) => void,
 ): void => {
   useEffect(() => {
     const subscription = houstonBus.on<T>(eventType).subscribe({
@@ -18,11 +18,11 @@ export const useHoustonResponder = <T = any>(
       },
       error: (err) => {
         console.error(`[Houston:Responder] Error in subscription for ${eventType}:`, err);
-      }
+      },
     });
 
     return () => {
-        subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [eventType, handler]);
 };

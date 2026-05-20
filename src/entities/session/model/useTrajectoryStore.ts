@@ -19,7 +19,7 @@ interface TrajectoryState {
     formFocus: boolean;
     dwellTime: number;
   };
-  
+
   // Actions
   addEvent: (event: Omit<TrajectoryEvent, 'timestamp'>) => void;
   updateDwellTime: (path: string, duration: number) => void;
@@ -42,40 +42,44 @@ export const useTrajectoryStore = create<TrajectoryState>()(
         dwellTime: 0,
       },
 
-      addEvent: (event) => set((state) => {
-        const newEvent = { ...event, timestamp: Date.now() };
-        // Limit history to last 50 events to prevent storage bloat
-        const newEvents = [...state.events.slice(-49), newEvent];
-        return { 
-          events: newEvents, 
-          lastInteraction: Date.now() 
-        };
-      }),
+      addEvent: (event) =>
+        set((state) => {
+          const newEvent = { ...event, timestamp: Date.now() };
+          // Limit history to last 50 events to prevent storage bloat
+          const newEvents = [...state.events.slice(-49), newEvent];
+          return {
+            events: newEvents,
+            lastInteraction: Date.now(),
+          };
+        }),
 
-      updateDwellTime: (path, duration) => set((state) => {
-        const currentDwell = state.dwellTimes[path] || 0;
-        return {
-          dwellTimes: { ...state.dwellTimes, [path]: currentDwell + duration }
-        };
-      }),
+      updateDwellTime: (path, duration) =>
+        set((state) => {
+          const currentDwell = state.dwellTimes[path] || 0;
+          return {
+            dwellTimes: { ...state.dwellTimes, [path]: currentDwell + duration },
+          };
+        }),
 
       setScore: (currentScore) => set({ currentScore }),
 
-      setFactors: (newFactors) => set((state) => ({ 
-        factors: { ...state.factors, ...newFactors } 
-      })),
+      setFactors: (newFactors) =>
+        set((state) => ({
+          factors: { ...state.factors, ...newFactors },
+        })),
 
-      reset: () => set({ 
-        events: [], 
-        dwellTimes: {}, 
-        currentScore: 0, 
-        lastInteraction: Date.now(),
-        factors: { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 }
-      }),
+      reset: () =>
+        set({
+          events: [],
+          dwellTimes: {},
+          currentScore: 0,
+          lastInteraction: Date.now(),
+          factors: { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 },
+        }),
     }),
     {
       name: 'sentinel_trajectory_vault',
       storage: createJSONStorage(() => sessionStorage), // Only for current session
-    }
-  )
+    },
+  ),
 );

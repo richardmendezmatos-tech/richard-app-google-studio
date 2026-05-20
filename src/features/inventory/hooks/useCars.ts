@@ -9,12 +9,7 @@ export const useCars = (
   return useInfiniteQuery({
     queryKey: ['cars', filterType, sortOrder],
     queryFn: async ({ pageParam }) => {
-      const result = await getPaginatedCars(
-        pageSize,
-        pageParam as number,
-        filterType,
-        sortOrder,
-      );
+      const result = await getPaginatedCars(pageSize, pageParam as number, filterType, sortOrder);
       return result;
     },
     initialPageParam: 0 as number,

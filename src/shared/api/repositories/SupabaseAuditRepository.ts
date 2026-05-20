@@ -12,7 +12,7 @@ export interface AuditLog {
 
 export const getAuditLogs = async (limit: number = 50): Promise<AuditLog[]> => {
   if (!supabase) return [];
-  
+
   const { data, error } = await supabase
     .from('audit_logs')
     .select('*')
@@ -24,8 +24,8 @@ export const getAuditLogs = async (limit: number = 50): Promise<AuditLog[]> => {
     return [];
   }
 
-  return data.map(log => ({
+  return data.map((log) => ({
     ...log,
-    timestamp: log.timestamp ? { toDate: () => new Date(log.timestamp) } : null
+    timestamp: log.timestamp ? { toDate: () => new Date(log.timestamp) } : null,
   })) as AuditLog[];
 };

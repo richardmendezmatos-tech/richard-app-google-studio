@@ -53,7 +53,7 @@ export const inventoryIngestionService = {
         type: 'vision_intake_attempt',
         data: { vin: data.vin, make: data.make, model: data.model },
         operationalScore: data.vin ? 100 : 40,
-        metadata: { profile: data.suggestedCognitiveProfile }
+        metadata: { profile: data.suggestedCognitiveProfile },
       });
 
       // Sanitización de tipos y alineación con la interfaz Car
@@ -80,7 +80,7 @@ export const inventoryIngestionService = {
         console.log(`Retrying inventory ingestion... (${retries} attempts left)`);
         return inventoryIngestionService.processInventoryImage(imageSource, retries - 1);
       }
-      
+
       console.error('Inventory Ingestion Error after retries:', error);
       raSentinel.reportFriction('vision_ingestion', 'AI Analysis Failed', { error: String(error) });
       throw new Error('Análisis de Visión fallido. Por favor carga una imagen más clara.', {

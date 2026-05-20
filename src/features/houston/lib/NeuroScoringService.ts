@@ -33,7 +33,7 @@ export class NeuroScoringService {
     }
 
     const calibrated = baseScore * multiplier;
-    
+
     // Cap at 100%
     return Math.min(100, parseFloat(calibrated.toFixed(2)));
   }

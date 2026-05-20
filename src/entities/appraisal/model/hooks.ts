@@ -24,7 +24,8 @@ export const useSaveAppraisal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (appraisal: Appraisal) => Promise.resolve(appraisalService.saveAppraisal(appraisal)),
+    mutationFn: (appraisal: Appraisal) =>
+      Promise.resolve(appraisalService.saveAppraisal(appraisal)),
     onSuccess: (data) => {
       // Direct update to cache for instant UI feedback
       queryClient.setQueryData(APPRAISAL_KEYS.all, data);

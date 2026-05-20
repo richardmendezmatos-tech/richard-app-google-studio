@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -9,9 +9,9 @@ import { useDealer } from '@/entities/dealer';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 
 interface HealthMetrics {
-  leadVelocity: number;       // leads per hour (from SQL)
-  avgAiScore: number;         // 0-100 from closureProbability avg
-  conversionRate: number;     // % closes based on SQL data
+  leadVelocity: number; // leads per hour (from SQL)
+  avgAiScore: number; // 0-100 from closureProbability avg
+  conversionRate: number; // % closes based on SQL data
   isLoading: boolean;
 }
 
@@ -28,16 +28,17 @@ export const BusinessHealthWidget: React.FC = () => {
     const fetchMetrics = async () => {
       try {
         const dealerId = currentDealer?.id || 'richard-automotive';
-        const [leads] = await Promise.all([
-          leadService.fetchLeads(dealerId),
-        ]);
+        const [leads] = await Promise.all([leadService.fetchLeads(dealerId)]);
 
         const total = leads?.length || 0;
 
         // Calculate avg AI score from closureProbability
-        const avgScore = total > 0
-          ? Math.round(leads.reduce((sum: number, l: any) => sum + (l.closureProbability || 0), 0) / total)
-          : 0;
+        const avgScore =
+          total > 0
+            ? Math.round(
+                leads.reduce((sum: number, l: any) => sum + (l.closureProbability || 0), 0) / total,
+              )
+            : 0;
 
         // Conversion rate: leads with status closed or dealClosed true
         const closed = leads?.filter((l: any) => l.dealClosed || l.status === 'closed').length || 0;
@@ -45,10 +46,13 @@ export const BusinessHealthWidget: React.FC = () => {
 
         // Lead velocity: leads in last 24h
         const now = Date.now();
-        const recentLeads = leads?.filter((l: any) => {
-          const ts = l.timestamp?.toMillis ? l.timestamp.toMillis() : new Date(l.timestamp || 0).getTime();
-          return now - ts <= 24 * 60 * 60 * 1000;
-        }).length || 0;
+        const recentLeads =
+          leads?.filter((l: any) => {
+            const ts = l.timestamp?.toMillis
+              ? l.timestamp.toMillis()
+              : new Date(l.timestamp || 0).getTime();
+            return now - ts <= 24 * 60 * 60 * 1000;
+          }).length || 0;
 
         setMetrics({
           leadVelocity: recentLeads,
@@ -58,7 +62,7 @@ export const BusinessHealthWidget: React.FC = () => {
         });
       } catch (err) {
         console.error('[BusinessHealthWidget] Failed to load metrics:', err);
-        setMetrics(prev => ({ ...prev, isLoading: false }));
+        setMetrics((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -160,7 +164,7 @@ export const BusinessHealthWidget: React.FC = () => {
           </div>
         </div>
         <button
-          onClick={() => window.location.href = '/admin'}
+          onClick={() => (window.location.href = '/admin')}
           className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em] hover:text-white transition-colors"
         >
           Deep Analysis →

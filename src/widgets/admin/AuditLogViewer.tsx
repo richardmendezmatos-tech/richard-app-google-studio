@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { AuditRepository, AuditEvent } from '@/shared/api/houston/AuditRepository';
@@ -36,9 +36,9 @@ export const AuditLogViewer: React.FC = () => {
   const formatDate = (timestamp: string) => {
     if (!timestamp) return 'N/A';
     try {
-        return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: es });
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: es });
     } catch (e) {
-        return 'N/A';
+      return 'N/A';
     }
   };
 
@@ -112,9 +112,7 @@ export const AuditLogViewer: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-slate-600 dark:text-slate-400">
-                    {log.message}
-                  </span>
+                  <span className="text-slate-600 dark:text-slate-400">{log.message}</span>
                 </td>
                 <td className="px-6 py-4 text-right font-mono text-slate-500">
                   {formatDate(log.timestamp)}
@@ -137,4 +135,3 @@ export const AuditLogViewer: React.FC = () => {
     </div>
   );
 };
-

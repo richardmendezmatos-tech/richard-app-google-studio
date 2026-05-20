@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { calculateSimplePayment, CreditTier, getCreditTierLabel } from '@/entities/finance';
-import { DollarSign, TrendingUp, CheckCircle, ShieldCheck, Zap, Sparkles, UserCheck } from 'lucide-react';
+import {
+  DollarSign,
+  TrendingUp,
+  CheckCircle,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  UserCheck,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { generarPersuasionVenta } from '@/features/sales/application/GenerarPersuasionVenta';
 
@@ -37,12 +45,17 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
     if (onPaymentChange) onPaymentChange(payment);
   }, [payment, onPaymentChange]);
 
-
   const purchasePowerScore = Math.min(
     100,
     Math.round(
       (downPayment / vehiclePrice) * 60 + // Up to 60 pts for DP
-        (creditTier === 'excellent' ? 40 : creditTier === 'good' ? 30 : creditTier === 'fair' ? 15 : 5),
+        (creditTier === 'excellent'
+          ? 40
+          : creditTier === 'good'
+            ? 30
+            : creditTier === 'fair'
+              ? 15
+              : 5),
     ),
   );
 
@@ -57,8 +70,15 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
   const handlePreQualify = async () => {
     // Zero-Friction WhatsApp Flow + Supabase Telemetry (Sentinel N15 Option B)
-    const apr = creditTier === 'excellent' ? 5.95 : creditTier === 'good' ? 8.95 : creditTier === 'fair' ? 12.95 : 18.95;
-    
+    const apr =
+      creditTier === 'excellent'
+        ? 5.95
+        : creditTier === 'good'
+          ? 8.95
+          : creditTier === 'fair'
+            ? 12.95
+            : 18.95;
+
     // 1. Silent Lead Capture in Supabase
     import('@/shared/api/supabase/supabaseClient').then(({ captureHotLead }) => {
       captureHotLead({
@@ -82,7 +102,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
     <div className="bg-slate-900 border border-white/5 rounded-5xl p-8 lg:p-12 shadow-2xl relative overflow-hidden group">
       {/* Glow Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-linear-to-r from-transparent via-primary to-transparent opacity-20" />
-      
+
       <div className="relative z-10 space-y-10">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -90,13 +110,19 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
               <ShieldCheck size={24} />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Simulador de Aprobación</h3>
-              <p className="text-slate-500 text-[9px] font-black uppercase tracking-[0.3em]">Richard Automotive F&I Division</p>
+              <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+                Simulador de Aprobación
+              </h3>
+              <p className="text-slate-500 text-[9px] font-black uppercase tracking-[0.3em]">
+                Richard Automotive F&I Division
+              </p>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">En Vivo</span>
+            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">
+              En Vivo
+            </span>
           </div>
         </header>
 
@@ -115,7 +141,17 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
           <div className="inline-flex items-center gap-2 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
             <TrendingUp size={14} className="text-primary" />
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Tasa: <span className="text-white">{creditTier === 'excellent' ? '5.95%' : creditTier === 'good' ? '8.95%' : creditTier === 'fair' ? '12.95%' : '18.95%'} APR</span>
+              Tasa:{' '}
+              <span className="text-white">
+                {creditTier === 'excellent'
+                  ? '5.95%'
+                  : creditTier === 'good'
+                    ? '8.95%'
+                    : creditTier === 'fair'
+                      ? '12.95%'
+                      : '18.95%'}{' '}
+                APR
+              </span>
             </span>
           </div>
         </div>
@@ -129,7 +165,9 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                   <DollarSign size={14} className="text-primary" /> Pronto (Down Payment)
                 </label>
-                <span className="text-2xl font-black text-white font-mono">${downPayment.toLocaleString()}</span>
+                <span className="text-2xl font-black text-white font-mono">
+                  ${downPayment.toLocaleString()}
+                </span>
               </div>
               <input
                 type="range"
@@ -157,9 +195,11 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
                     key={tier}
                     onClick={() => setCreditTier(tier)}
                     className={`p-4 rounded-[20px] text-[10px] font-black uppercase tracking-widest border transition-all
-                      ${creditTier === tier 
-                        ? 'bg-primary border-primary text-slate-950 shadow-xl shadow-primary/20 scale-[1.02]' 
-                        : 'bg-white/5 border-white/5 text-slate-500 hover:border-white/10 hover:text-slate-300'}`}
+                      ${
+                        creditTier === tier
+                          ? 'bg-primary border-primary text-slate-950 shadow-xl shadow-primary/20 scale-[1.02]'
+                          : 'bg-white/5 border-white/5 text-slate-500 hover:border-white/10 hover:text-slate-300'
+                      }`}
                   >
                     {getCreditTierLabel(tier).split(' (')[0]}
                   </button>
@@ -190,8 +230,12 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
             {/* Approval Progress */}
             <div className="bg-white/5 rounded-4xl p-6 border border-white/5">
               <div className="flex justify-between items-center mb-4">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Probabilidad de Aprobación</span>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${power.color}`}>{power.text}</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Probabilidad de Aprobación
+                </span>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${power.color}`}>
+                  {power.text}
+                </span>
               </div>
               <div className="h-2 bg-white/5 rounded-full overflow-hidden mb-6">
                 <motion.div
@@ -200,30 +244,36 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
                   animate={{ width: `${purchasePowerScore}%` }}
                 />
               </div>
-              
+
               {/* Sentinel Strategy */}
               <div className="space-y-4">
                 <h4 className="text-[9px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
                   <Sparkles size={12} /> Sentinel AI Advice
                 </h4>
                 <div className="space-y-3">
-                  {generarPersuasionVenta.execute({
-                    cotizacion: {
-                      precioUnidadDestino: vehiclePrice,
-                      prontoCash: downPayment,
-                      montoAFinanciar: vehiclePrice - downPayment,
-                      terminoMeses: term,
-                      valorTradeIn: 0,
-                      pagoDeudaTradeIn: 0,
-                      pagoMensualEstimado: payment,
-                      apr: creditTier === 'excellent' ? 5.95 : 8.95
-                    },
-                    nombreCliente: 'Cliente'
-                  }).points.slice(0, 1).map((point, idx) => (
-                    <p key={idx} className="text-[11px] leading-relaxed text-slate-400 font-bold italic border-l-2 border-primary/20 pl-4">
-                      "{point}"
-                    </p>
-                  ))}
+                  {generarPersuasionVenta
+                    .execute({
+                      cotizacion: {
+                        precioUnidadDestino: vehiclePrice,
+                        prontoCash: downPayment,
+                        montoAFinanciar: vehiclePrice - downPayment,
+                        terminoMeses: term,
+                        valorTradeIn: 0,
+                        pagoDeudaTradeIn: 0,
+                        pagoMensualEstimado: payment,
+                        apr: creditTier === 'excellent' ? 5.95 : 8.95,
+                      },
+                      nombreCliente: 'Cliente',
+                    })
+                    .points.slice(0, 1)
+                    .map((point, idx) => (
+                      <p
+                        key={idx}
+                        className="text-[11px] leading-relaxed text-slate-400 font-bold italic border-l-2 border-primary/20 pl-4"
+                      >
+                        "{point}"
+                      </p>
+                    ))}
                 </div>
               </div>
             </div>

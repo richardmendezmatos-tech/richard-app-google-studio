@@ -11,7 +11,9 @@ export async function POST(req: Request) {
 
     const openAiKey = process.env.OPENAI_API_KEY;
     if (!openAiKey) {
-      console.warn('Embeddings API: Missing OPENAI_API_KEY. Falling back to Google Gemini embeddings...');
+      console.warn(
+        'Embeddings API: Missing OPENAI_API_KEY. Falling back to Google Gemini embeddings...',
+      );
       try {
         const embedding = await sentinelAI.generateEmbedding(text);
         return NextResponse.json({ embedding });

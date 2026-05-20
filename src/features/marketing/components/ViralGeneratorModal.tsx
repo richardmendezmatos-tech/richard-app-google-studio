@@ -22,13 +22,17 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      const { generateCarMarketingContent } = await import('@/features/leads/model/marketingService');
+      const { generateCarMarketingContent } =
+        await import('@/features/leads/model/marketingService');
       const content = await generateCarMarketingContent(car);
-      
+
       // Parsear el script de TikTok para extraer Hook y CTA si es posible, o usar el bloque completo
       setScript({
         hook: `¡🚨 LANZAMIENTO EXCLUSIVO PR! 🚨`,
-        body: content.tiktokScript.split('\n').filter(l => !l.includes('[')).join('\n'),
+        body: content.tiktokScript
+          .split('\n')
+          .filter((l) => !l.includes('['))
+          .join('\n'),
         cta: `📲 Richard te la monta. Llama ahora.`,
       });
     } catch (error) {

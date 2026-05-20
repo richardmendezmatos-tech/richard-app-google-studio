@@ -91,17 +91,19 @@ const StorefrontModals: React.FC<StorefrontModalsProps> = ({
       <AnimatePresence mode="wait">
         {selectedCar && (
           <Portal>
-            <Suspense fallback={
+            <Suspense
+              fallback={
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
-                        <span className="font-tech text-[10px] uppercase tracking-widest text-cyan-400">
-                            Cargando Unidad...
-                        </span>
-                    </div>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+                    <span className="font-tech text-[10px] uppercase tracking-widest text-cyan-400">
+                      Cargando Unidad...
+                    </span>
+                  </div>
                 </div>
-            }>
-                <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
+              }
+            >
+              <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
             </Suspense>
           </Portal>
         )}

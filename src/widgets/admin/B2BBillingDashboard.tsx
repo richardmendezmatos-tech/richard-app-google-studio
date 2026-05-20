@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { getUsageLogs, UsageLog } from '@/entities/sales/api/billingService';
@@ -46,7 +46,6 @@ const B2BBillingDashboard = () => {
       if (intervalId) clearInterval(intervalId);
     };
   }, []);
-
 
   return (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">

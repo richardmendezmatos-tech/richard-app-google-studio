@@ -9,7 +9,9 @@ import { HoustonTelemetry } from '../model/types';
  * Consume /api/command-center/telemetry para enriquecer el estado técnico.
  */
 export const useBusinessTelemetry = () => {
-  const [businessData, setBusinessData] = useState<HoustonTelemetry['businessMetrics'] | null>(null);
+  const [businessData, setBusinessData] = useState<HoustonTelemetry['businessMetrics'] | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,20 +20,20 @@ export const useBusinessTelemetry = () => {
       // Usamos el token interno para la comunicación entre servicios
       const res = await fetch('/api/command-center/telemetry', {
         headers: {
-          'x-antigravity-token': 'client-internal'
-        }
+          'x-antigravity-token': 'client-internal',
+        },
       });
 
       if (!res.ok) throw new Error('Sentinel Sync Error');
 
       const data = await res.json();
-      
+
       setBusinessData({
         hotLeads: data.hotLeads,
         searchGaps: data.neuralSearch.recent_gaps,
         whatsappStats: data.whatsapp,
         summary: data.summary,
-        purchaseOrders: data.purchaseOrders || []
+        purchaseOrders: data.purchaseOrders || [],
       });
       setError(null);
     } catch (err: any) {
@@ -50,7 +52,10 @@ export const useBusinessTelemetry = () => {
       if (typeof document !== 'undefined' && document.hidden) {
         return;
       }
-      if (typeof window !== 'undefined' && window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true') {
+      if (
+        typeof window !== 'undefined' &&
+        window.sessionStorage.getItem('RA_KILL_SWITCH') === 'true'
+      ) {
         return;
       }
       fetchTelemetry();

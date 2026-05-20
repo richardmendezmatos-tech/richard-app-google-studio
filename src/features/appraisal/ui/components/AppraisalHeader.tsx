@@ -13,21 +13,25 @@ export const AppraisalHeader: React.FC<AppraisalHeaderProps> = ({ step }) => {
           <ShieldCheck className="text-primary" size={24} />
         </div>
         <div>
-          <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">Richard Certified Appraisal</h3>
+          <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
+            Richard Certified Appraisal
+          </h3>
           <h2 className="text-3xl font-black text-white tracking-tighter uppercase font-cinematic">
             Tasa tu Auto <span className="text-primary/70">VIP</span>
           </h2>
         </div>
       </div>
-      
+
       {step < 5 && (
         <div className="flex gap-2">
-          {[1, 2, 3, 4].map(i => (
-            <div 
-              key={i} 
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
               className={`h-1.5 w-8 rounded-full transition-all duration-500 ${
-                step >= i ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]' : 'bg-slate-800'
-              }`} 
+                step >= i
+                  ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]'
+                  : 'bg-slate-800'
+              }`}
             />
           ))}
         </div>

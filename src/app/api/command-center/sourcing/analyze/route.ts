@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
-
-
 /**
  * POST /api/command-center/sourcing/analyze
- * 
+ *
  * Recibe un query de búsqueda y utiliza IA (Gemini) para generar una
  * recomendación táctica de abasto (Purchase Order Draft).
  */

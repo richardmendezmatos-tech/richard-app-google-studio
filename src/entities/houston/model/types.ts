@@ -35,7 +35,7 @@ export interface HoustonTelemetry {
     tokenUsage: HoustonMetric;
     autonomyRate: HoustonMetric;
     apiStability: HoustonMetric;
-    
+
     structuralHealth: HoustonMetric;
     dbLatency: HoustonMetric;
     activeBreakers: HoustonMetric;

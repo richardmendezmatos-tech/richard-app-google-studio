@@ -25,7 +25,7 @@ export const logIntentSignal = async (signal: IntentSignal) => {
       value: signal.value,
       session_id: signal.sessionId,
       lead_id: leadId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Optimization: Atomic update of the Lead's intent score if session is linked
@@ -34,7 +34,7 @@ export const logIntentSignal = async (signal: IntentSignal) => {
       // For now, let's just log the signal. Scoring can be done via database triggers or separate process.
       // But to maintain parity:
       const weight = getSignalWeight(signal.eventType);
-      
+
       // In a real scenario, we'd use a postgres function to increment safely.
       // For this migration, we'll just fire and forget an update if possible.
       // NOTE: Supabase doesn't have a direct 'increment' like Firestore in client SDK easily without RPC.
@@ -59,4 +59,3 @@ const getSignalWeight = (type: string): number => {
       return 1;
   }
 };
-

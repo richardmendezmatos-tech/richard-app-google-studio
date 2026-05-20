@@ -12,16 +12,16 @@ interface Step4ContactProps {
   onPrev: () => void;
 }
 
-export const Step4Contact: React.FC<Step4ContactProps> = ({ 
-  contactData, 
-  setContactData, 
+export const Step4Contact: React.FC<Step4ContactProps> = ({
+  contactData,
+  setContactData,
   errors,
-  onSimulate, 
+  onSimulate,
   loading,
-  onPrev
+  onPrev,
 }) => {
   return (
-    <motion.div 
+    <motion.div
       key="step4"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -30,7 +30,7 @@ export const Step4Contact: React.FC<Step4ContactProps> = ({
     >
       <div className="text-center space-y-3 mb-8">
         <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
-           <Sparkles className="text-emerald-500" size={32} />
+          <Sparkles className="text-emerald-500" size={32} />
         </div>
         <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest font-cinematic">
           Análisis <span className="text-primary text-glow-sm">Completado</span>
@@ -43,21 +43,25 @@ export const Step4Contact: React.FC<Step4ContactProps> = ({
       <div className="space-y-6">
         <div>
           <label className="ra-label-base">Nombre Completo</label>
-          <input 
-            type="text" 
-            placeholder="Ej: Roberto Sánchez" 
+          <input
+            type="text"
+            placeholder="Ej: Roberto Sánchez"
             className={`ra-input-base font-tech uppercase tracking-widest text-sm ${errors?.name ? 'border-red-500/50 focus:border-red-500' : ''}`}
             value={contactData.name}
             onChange={(e) => setContactData({ name: e.target.value })}
           />
-          {errors?.name && <p className="text-red-400 text-[10px] uppercase font-bold mt-2 ml-2 flex items-center gap-1"><AlertCircle size={10} /> {errors.name}</p>}
+          {errors?.name && (
+            <p className="text-red-400 text-[10px] uppercase font-bold mt-2 ml-2 flex items-center gap-1">
+              <AlertCircle size={10} /> {errors.name}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="ra-label-base">WhatsApp / Celular</label>
-          <input 
-            type="tel" 
-            placeholder="(787) 555-0000" 
+          <input
+            type="tel"
+            placeholder="(787) 555-0000"
             className={`ra-input-base font-mono tracking-widest text-sm ${errors?.phone ? 'border-red-500/50 focus:border-red-500' : ''}`}
             value={contactData.phone}
             onChange={(e) => {
@@ -66,7 +70,11 @@ export const Step4Contact: React.FC<Step4ContactProps> = ({
               setContactData({ phone: val });
             }}
           />
-          {errors?.phone && <p className="text-red-400 text-[10px] uppercase font-bold mt-2 ml-2 flex items-center gap-1"><AlertCircle size={10} /> {errors.phone}</p>}
+          {errors?.phone && (
+            <p className="text-red-400 text-[10px] uppercase font-bold mt-2 ml-2 flex items-center gap-1">
+              <AlertCircle size={10} /> {errors.phone}
+            </p>
+          )}
         </div>
       </div>
 
@@ -76,24 +84,27 @@ export const Step4Contact: React.FC<Step4ContactProps> = ({
       </div>
 
       <div className="flex gap-4">
-        <button 
+        <button
           onClick={onPrev}
           disabled={loading}
           className="flex-[0.3] py-5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all disabled:opacity-50"
         >
           Atrás
         </button>
-        <button 
+        <button
           onClick={onSimulate}
           disabled={loading}
           className="flex-1 py-5 bg-linear-to-r from-primary to-cyan-400 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_-10px_rgba(var(--primary-rgb),0.4)] disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {loading ? (
             <span className="flex items-center gap-2">
-               <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Procesando...
+              <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />{' '}
+              Procesando...
             </span>
           ) : (
-            <>Desbloquear Oferta <ChevronRight size={18} /></>
+            <>
+              Desbloquear Oferta <ChevronRight size={18} />
+            </>
           )}
         </button>
       </div>

@@ -9,12 +9,11 @@ export class NudgeService {
    * Evalúa si se debe disparar un nudge autónomo.
    */
   static async evaluateAndDispatch(
-    leadId: string, 
-    phone: string, 
-    name: string, 
-    insight: ScoreInsight
+    leadId: string,
+    phone: string,
+    name: string,
+    insight: ScoreInsight,
   ): Promise<{ dispatched: boolean; messageId?: string }> {
-    
     if (insight.score < this.NUDGE_THRESHOLD) {
       return { dispatched: false };
     }
@@ -24,7 +23,9 @@ export class NudgeService {
       return { dispatched: false };
     }
 
-    console.log(`[Sentinel:Automation] Disparando Nudge Autónomo para ${name} (Score: ${insight.score})`);
+    console.log(
+      `[Sentinel:Automation] Disparando Nudge Autónomo para ${name} (Score: ${insight.score})`,
+    );
 
     try {
       // Generación de mensaje hiper-personalizado con Gemini
@@ -44,18 +45,20 @@ export class NudgeService {
 
       const aiResponse = await antigravityFetch<{ text: string }>('/ai/generate', {
         method: 'POST',
-        body: JSON.stringify({ prompt, system_instruction: 'Eres Richard, experto automotriz.' })
+        body: JSON.stringify({ prompt, system_instruction: 'Eres Richard, experto automotriz.' }),
       });
 
-      const messageContent = aiResponse.text || `¡Hola ${name}! Richard por aquí. Noté tu interés en nuestra sección de ${insight.factors[0] || 'inventario'}. ¿Te gustaría que te ayude con una consulta rápida personalizada? 🚗`;
+      const messageContent =
+        aiResponse.text ||
+        `¡Hola ${name}! Richard por aquí. Noté tu interés en nuestra sección de ${insight.factors[0] || 'inventario'}. ¿Te gustaría que te ayude con una consulta rápida personalizada? 🚗`;
 
       const result = await sendWhatsAppMessage(phone, messageContent);
-      
+
       if (result.success) {
         sessionStorage.setItem(`nudge_sent_${leadId}`, 'true');
         return { dispatched: true, messageId: result.messageId };
       }
-      
+
       return { dispatched: false };
     } catch (error) {
       console.error('[Sentinel:Automation] Error dispatching predictive nudge:', error);

@@ -8,38 +8,37 @@ export async function updateSession(request: NextRequest) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   // Prefer ANON_KEY as it's the standard for Supabase Auth in middleware
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    console.warn('⚠️ [Supabase Middleware] Missing environment variables. Skipping session update.');
+    console.warn(
+      '⚠️ [Supabase Middleware] Missing environment variables. Skipping session update.',
+    );
     return supabaseResponse;
   }
 
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
-            supabaseResponse.cookies.set(name, value, options);
-          });
-          // Update the response with the modified request
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          // Re-apply cookies to the new response
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          supabaseResponse.cookies.set(name, value, options);
+        });
+        // Update the response with the modified request
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        // Re-apply cookies to the new response
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options),
+        );
+      },
+    },
+  });
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -52,16 +51,18 @@ export async function updateSession(request: NextRequest) {
   const privateRoutes = ['/admin', '/garage', '/profile', '/command-center'];
   const adminRoutes = ['/admin', '/command-center'];
   const currentPath = request.nextUrl.pathname;
-  
-  const isPrivateRoute = privateRoutes.some(route => currentPath.startsWith(route));
-  const isAdminRoute = adminRoutes.some(route => currentPath.startsWith(route));
+
+  const isPrivateRoute = privateRoutes.some((route) => currentPath.startsWith(route));
+  const isAdminRoute = adminRoutes.some((route) => currentPath.startsWith(route));
 
   // DEBUG LOG
   console.log(`[Middleware] 📍 Path: ${currentPath} | 👤 User: ${user?.email || 'None'}`);
 
   // Local development bypass (strictly gated to NODE_ENV === 'development')
   const bypassCookie = request.cookies.get('e2e_bypass')?.value;
-  const isDevBypass = process.env.NODE_ENV === 'development' && (bypassCookie === 'true' || request.nextUrl.searchParams.get('bypass') === 'true');
+  const isDevBypass =
+    process.env.NODE_ENV === 'development' &&
+    (bypassCookie === 'true' || request.nextUrl.searchParams.get('bypass') === 'true');
 
   if (isDevBypass) {
     console.log(`[Middleware] ⚡ Development bypass active for: ${currentPath}`);
@@ -72,7 +73,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 1. Protection for any private route (must be logged in)
-  if (!user && isPrivateRoute && !currentPath.startsWith('/login') && !currentPath.startsWith('/auth')) {
+  if (
+    !user &&
+    isPrivateRoute &&
+    !currentPath.startsWith('/login') &&
+    !currentPath.startsWith('/auth')
+  ) {
     console.log(`[Middleware] 🔒 Redirecting to login: No user session found for ${currentPath}`);
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -83,14 +89,16 @@ export async function updateSession(request: NextRequest) {
   // 2. Strict Protection for Admin routes (must be an admin email)
   if (user && isAdminRoute) {
     const email = user.email?.toLowerCase().trim() || '';
-    const isAdmin = 
-      email === 'richardmendezmatos@gmail.com' || 
+    const isAdmin =
+      email === 'richardmendezmatos@gmail.com' ||
       email.includes('richardmendezmatos') ||
       email.endsWith('@richard-automotive.com') ||
       email.includes('admin');
 
     if (!isAdmin) {
-      console.log(`[Middleware] 🚫 Access Denied: User ${email} is not in the admin list. Redirecting to /garage`);
+      console.log(
+        `[Middleware] 🚫 Access Denied: User ${email} is not in the admin list. Redirecting to /garage`,
+      );
       const url = request.nextUrl.clone();
       url.pathname = '/garage';
       return NextResponse.redirect(url);

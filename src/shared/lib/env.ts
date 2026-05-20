@@ -37,6 +37,6 @@ export const getEnv = (key: string, defaultValue: string = ''): string => {
 export const getAntigravityEnv = (baseKey: string, defaultValue: string = ''): string => {
   const viteKey = `VITE_ANTIGRAVITY_${baseKey}`;
   const nextKey = `NEXT_PUBLIC_ANTIGRAVITY_${baseKey}`;
-  
+
   return getEnv(nextKey) || getEnv(viteKey) || defaultValue;
 };

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +21,13 @@ import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore'
 
 export const HoustonTelemetryTab: React.FC = () => {
   const [logs, setLogs] = useState<
-    { id: string; time: string; msg: string; type: string; status: 'info' | 'warn' | 'error' | 'success' }[]
+    {
+      id: string;
+      time: string;
+      msg: string;
+      type: string;
+      status: 'info' | 'warn' | 'error' | 'success';
+    }[]
   >([]);
   const { currentScore, factors } = useTrajectoryStore();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,7 +85,7 @@ export const HoustonTelemetryTab: React.FC = () => {
         <HUDCard
           icon={<Database size={20} className="text-purple-400" />}
           label="Resilience Layer"
-          value={logs.filter(l => l.status === 'success').length > 0 ? 'Rescued' : 'Standby'}
+          value={logs.filter((l) => l.status === 'success').length > 0 ? 'Rescued' : 'Standby'}
           trend="Auto-Healing"
         />
         <HUDCard
@@ -139,8 +145,10 @@ export const HoustonTelemetryTab: React.FC = () => {
                   [WAITING FOR NEXT TELEMETRY BEACON...]
                 </div>
                 <div className="text-[9px] text-emerald-500/30 font-mono">
-                  &gt; SENTINEL_HEARTBEAT: NOMINAL<br/>
-                  &gt; UPLINK_STABILITY: 99.98%<br/>
+                  &gt; SENTINEL_HEARTBEAT: NOMINAL
+                  <br />
+                  &gt; UPLINK_STABILITY: 99.98%
+                  <br />
                   &gt; MISSION_CONTROL: READY
                 </div>
               </div>
@@ -156,25 +164,25 @@ export const HoustonTelemetryTab: React.FC = () => {
             </h4>
 
             <div className="space-y-4">
-              <InfrastructureItem 
-                label="Interacción" 
-                percent={factors.interaction * 10} 
-                color="bg-cyan-500" 
+              <InfrastructureItem
+                label="Interacción"
+                percent={factors.interaction * 10}
+                color="bg-cyan-500"
               />
-              <InfrastructureItem 
-                label="Visitas" 
-                percent={factors.velocity * 10} 
-                color="bg-indigo-500" 
+              <InfrastructureItem
+                label="Visitas"
+                percent={factors.velocity * 10}
+                color="bg-indigo-500"
               />
-              <InfrastructureItem 
-                label="Búsqueda" 
-                percent={factors.formFocus ? 100 : 20} 
-                color="bg-purple-500" 
+              <InfrastructureItem
+                label="Búsqueda"
+                percent={factors.formFocus ? 100 : 20}
+                color="bg-purple-500"
               />
-              <InfrastructureItem 
-                label="Calidad" 
-                percent={factors.dwellTime * 10} 
-                color="bg-blue-500" 
+              <InfrastructureItem
+                label="Calidad"
+                percent={factors.dwellTime * 10}
+                color="bg-blue-500"
               />
             </div>
           </div>
@@ -208,20 +216,26 @@ const HUDCard: React.FC<{ icon: React.ReactNode; label: string; value: string; t
   trend,
 }) => (
   <div className="glass-premium p-5 rounded-2xl border border-white/10 group hover:border-cyan-500/50 transition-all relative overflow-hidden">
-    <motion.div 
+    <motion.div
       animate={{ opacity: [0.05, 0.15, 0.05] }}
       transition={{ duration: 4, repeat: Infinity }}
-      className="absolute inset-0 bg-cyan-500 pointer-events-none" 
+      className="absolute inset-0 bg-cyan-500 pointer-events-none"
     />
     <div className="flex items-start justify-between relative z-10">
       <div className="p-2.5 bg-white/5 rounded-xl group-hover:bg-cyan-500/10 transition-colors">
         {icon}
       </div>
       <div className="flex flex-col items-end">
-        <span className={`text-[8px] font-black uppercase tracking-tighter px-2 py-0.5 rounded flex items-center gap-1 ${
-          trend === 'High' || trend === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-cyan-500/10 text-cyan-400'
-        }`}>
-          {trend === 'High' && <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" />}
+        <span
+          className={`text-[8px] font-black uppercase tracking-tighter px-2 py-0.5 rounded flex items-center gap-1 ${
+            trend === 'High' || trend === 'Active'
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'bg-cyan-500/10 text-cyan-400'
+          }`}
+        >
+          {trend === 'High' && (
+            <span className="w-1 h-1 rounded-full bg-emerald-400 animate-ping" />
+          )}
           {trend}
         </span>
       </div>

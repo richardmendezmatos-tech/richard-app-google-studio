@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useVehicleTelemetry, useVehicleHealth } from '@/shared/api/metrics/telemetryService';

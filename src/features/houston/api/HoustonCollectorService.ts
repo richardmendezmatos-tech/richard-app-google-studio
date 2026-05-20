@@ -22,9 +22,11 @@ export class HoustonCollectorService {
     try {
       const leadRepo = await DI.getLeadRepository();
       const { supabase } = await import('@/shared/api/supabase/supabaseClient');
-      const { SupabaseInventoryRepository } = await import('@/entities/inventory/api/SupabaseInventoryRepository');
+      const { SupabaseInventoryRepository } =
+        await import('@/entities/inventory/api/SupabaseInventoryRepository');
       const inventoryRepo = new SupabaseInventoryRepository(supabase);
-      const { SupabaseHoustonRepository } = await import('@/entities/houston/api/SupabaseHoustonRepository');
+      const { SupabaseHoustonRepository } =
+        await import('@/entities/houston/api/SupabaseHoustonRepository');
       const houstonRepo = new SupabaseHoustonRepository();
       const { NeuroScoringService } = await import('../lib/NeuroScoringService');
 
@@ -43,29 +45,31 @@ export class HoustonCollectorService {
       const update: Partial<HoustonTelemetry> = {
         systemHealth: 'online',
         metrics: {
-          leadVelocity: { 
-            label: 'Lead Velocity', 
-            value: velocity, 
-            unit: 'LPH', 
-            status: velocity > 5 ? 'healthy' : 'warning' 
+          leadVelocity: {
+            label: 'Lead Velocity',
+            value: velocity,
+            unit: 'LPH',
+            status: velocity > 5 ? 'healthy' : 'warning',
           },
-          inventoryTurnover: { 
-            label: 'Inventory Turnover', 
-            value: turnover, 
-            unit: '%', 
-            status: turnover > 20 ? 'healthy' : 'warning' 
+          inventoryTurnover: {
+            label: 'Inventory Turnover',
+            value: turnover,
+            unit: '%',
+            status: turnover > 20 ? 'healthy' : 'warning',
           },
-          closureProbability: { 
-            label: 'Closure Prob', 
-            value: closureProb, 
-            unit: '%', 
-            status: NeuroScoringService.getStatus(closureProb) 
+          closureProbability: {
+            label: 'Closure Prob',
+            value: closureProb,
+            unit: '%',
+            status: NeuroScoringService.getStatus(closureProb),
           },
-        } as any
+        } as any,
       };
 
       await houstonRepo.pushTelemetry(update);
-      console.log(`[Houston:Telemetry] Live Neuro-Sync Push for ${dealerId} | Velocity: ${velocity} | Turnover: ${turnover}% | Closure: ${closureProb}%`);
+      console.log(
+        `[Houston:Telemetry] Live Neuro-Sync Push for ${dealerId} | Velocity: ${velocity} | Turnover: ${turnover}% | Closure: ${closureProb}%`,
+      );
     } catch (error) {
       console.error('[Houston:Collector] Failed to collect metrics:', error);
     }

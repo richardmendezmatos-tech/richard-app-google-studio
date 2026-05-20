@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import {
@@ -69,26 +69,26 @@ const IntakeView: React.FC = () => {
 
   const handleMagicFill = async (results: UploadResult[]) => {
     if (results.length === 0) return;
-    
+
     setIsAnalysing(true);
     addNotification('info', 'IA Sentinel analizando documento... No cierres esta ventana.');
-    
+
     try {
       // Usamos la URL optimizada para el análisis (o el base64 si el servicio lo requiere)
       // Nota: El servicio actual espera base64, pero ImageUploader ya subió a Firebase.
-      // Para velocidad, utilizaremos el proxy de Gemini que acepte URL si es posible, 
+      // Para velocidad, utilizaremos el proxy de Gemini que acepte URL si es posible,
       // o convertiremos la URL de nuevo a base64 (menos óptimo) o usaremos la imagen local si estuviera disponible.
-      
-      // OPTIMIZACIÓN: ImageUploader sube a Firebase, pero para el análisis Vision necesitamos el base64 original 
+
+      // OPTIMIZACIÓN: ImageUploader sube a Firebase, pero para el análisis Vision necesitamos el base64 original
       // o la URL de Firebase. El servicio 'inventoryIngestionService' usa Gemini 1.5-flash.
       // Modificaremos el servicio para aceptar URL opcionalmente.
-      
+
       const data = await inventoryIngestionService.processInventoryImage(results[0].url);
-      
+
       // Mapeo seguro con casting para evitar fricción de tipos en Sentinel 3.2
       const carData = data as any;
-      
-      setFormData(prev => ({
+
+      setFormData((prev) => ({
         ...prev,
         vin: carData.vin || prev.vin,
         marca: carData.make || prev.marca,
@@ -96,10 +96,13 @@ const IntakeView: React.FC = () => {
         anio: carData.year || prev.anio,
         millaje: carData.mileage || prev.millaje,
         color: carData.color || prev.color,
-        images: results.map(r => r.url),
+        images: results.map((r) => r.url),
       }));
-      
-      addNotification('success', '¡Datos extraídos con éxito! Revisa los campos antes de continuar.');
+
+      addNotification(
+        'success',
+        '¡Datos extraídos con éxito! Revisa los campos antes de continuar.',
+      );
     } catch (err) {
       addNotification('error', 'Fallo en análisis IA. Por favor, ingresa los datos manualmente.');
     } finally {
@@ -160,9 +163,9 @@ const IntakeView: React.FC = () => {
                   </h3>
                 </div>
                 <div className={isAnalysing ? 'pointer-events-none' : ''}>
-                  <ImageUploader 
-                    maxFiles={5} 
-                    onUploadComplete={handleMagicFill} 
+                  <ImageUploader
+                    maxFiles={5}
+                    onUploadComplete={handleMagicFill}
                     storagePath="temp-intake"
                     onLog={(msg) => console.log(`[MagicIntake] ${msg}`)}
                   />
@@ -172,14 +175,21 @@ const IntakeView: React.FC = () => {
                 {formData.images && formData.images.length > 0 && (
                   <div className="flex gap-4 mt-6 animate-in fade-in slide-in-from-left-4 duration-500">
                     {formData.images.map((img, idx) => (
-                      <div key={idx} className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary/20 relative group">
-                        <img src={img} alt="Vehicle intake" className="w-full h-full object-cover" />
+                      <div
+                        key={idx}
+                        className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary/20 relative group"
+                      >
+                        <img
+                          src={img}
+                          alt="Vehicle intake"
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     ))}
                     <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-slate-500 text-[8px] font-black uppercase tracking-widest">
-                       <CheckCircle2 size={16} className="text-primary mb-1" />
-                       Sentinel Ingested
+                      <CheckCircle2 size={16} className="text-primary mb-1" />
+                      Sentinel Ingested
                     </div>
                   </div>
                 )}

@@ -22,12 +22,12 @@ export class AuditRepository {
    */
   private sanitize(text: string): string {
     if (!text) return text;
-    
+
     // Pattern for phone numbers (PR/US)
     const phonePattern = /(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g;
     // Pattern for emails
     const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-    
+
     return text
       .replace(phonePattern, (match, p1, p2, p3, p4) => `${p1 || ''}(${p2}) ***-****`)
       .replace(emailPattern, (match) => {
@@ -43,7 +43,7 @@ export class AuditRepository {
     if (event.type !== 'critical' && event.type !== 'error') return;
 
     try {
-      // In a production environment, this would call an Edge Function or 
+      // In a production environment, this would call an Edge Function or
       // an external service like Resend/Twilio.
       // For now, we simulate the hook for Richard Automotive Command Center.
       const payload = {
@@ -51,13 +51,13 @@ export class AuditRepository {
         message: event.message,
         source: event.source,
         timestamp: event.timestamp,
-        metadata: event.metadata
+        metadata: event.metadata,
       };
 
       if (typeof window === 'undefined') {
         // Server-side: Trigger internal alert sequence
         console.warn('⚡ [Sentinel Watchdog] Critical event detected. Alerting admin...');
-        
+
         // Example: Call the WhatsApp notification API if available
         // await fetch(`${process.env.SITE_URL}/api/notifications/critical`, {
         //   method: 'POST',
@@ -69,7 +69,12 @@ export class AuditRepository {
     }
   }
 
-  async log(type: AuditEvent['type'], message: string, metadata?: Record<string, any>, source: string = 'SYSTEM'): Promise<void> {
+  async log(
+    type: AuditEvent['type'],
+    message: string,
+    metadata?: Record<string, any>,
+    source: string = 'SYSTEM',
+  ): Promise<void> {
     try {
       const client = this.getClient();
       if (!client) return;
@@ -78,16 +83,20 @@ export class AuditRepository {
       const timestamp = new Date().toISOString();
 
       // Sentinel N25: Operationalizing telemetry insertion with PII protection
-      const { data: logEntry, error } = await client.from(this.tableName).insert({
-        level: type,
-        message: sanitizedMessage,
-        category: source,
-        metadata: metadata || {},
-        timestamp,
-      }).select().single();
+      const { data: logEntry, error } = await client
+        .from(this.tableName)
+        .insert({
+          level: type,
+          message: sanitizedMessage,
+          category: source,
+          metadata: metadata || {},
+          timestamp,
+        })
+        .select()
+        .single();
 
       if (error) throw error;
-      
+
       console.log(`[Audit] ${type.toUpperCase()}: ${sanitizedMessage} (${source})`);
 
       // Trigger proactive alerts if needed
@@ -97,7 +106,7 @@ export class AuditRepository {
           await ObservabilityService.triggerCriticalAlert(
             `System Log: ${type.toUpperCase()}`,
             sanitizedMessage,
-            source
+            source,
           );
         }
       }
@@ -115,19 +124,19 @@ export class AuditRepository {
       .select('*')
       .order('timestamp', { ascending: false })
       .limit(max);
-    
+
     if (error) {
       console.error('❌ [AuditRepository] Failed to fetch logs:', error);
       return [];
     }
 
-    return data.map(log => ({
+    return data.map((log) => ({
       id: log.id,
       type: log.level as AuditEvent['type'],
       message: log.message,
       source: log.category || log.source || 'SYS',
       timestamp: log.timestamp,
-      metadata: log.metadata
+      metadata: log.metadata,
     }));
   }
 }

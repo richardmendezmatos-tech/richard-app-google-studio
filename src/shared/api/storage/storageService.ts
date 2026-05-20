@@ -8,18 +8,16 @@ export const uploadImage = async (file: File, bucket: string = 'images'): Promis
   const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
   const filePath = `uploads/${fileName}`;
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(filePath, file);
+  const { data, error } = await supabase.storage.from(bucket).upload(filePath, file);
 
   if (error) {
     console.error(`[StorageService] Upload failed for bucket ${bucket}:`, error);
     throw error;
   }
 
-  const { data: { publicUrl } } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(filePath);
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
   return publicUrl;
 };
@@ -33,18 +31,19 @@ export const uploadVehicleImages = async (files: File[], vin: string): Promise<s
     const fileName = `${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi, '_')}`;
     const filePath = `${vin}/${fileName}`;
 
-    const { data, error } = await supabase.storage
-      .from('inventory')
-      .upload(filePath, file);
+    const { data, error } = await supabase.storage.from('inventory').upload(filePath, file);
 
     if (error) {
-      console.error(`[StorageService] Vehicle image upload failed for VIN ${vin} in bucket 'inventory':`, error);
+      console.error(
+        `[StorageService] Vehicle image upload failed for VIN ${vin} in bucket 'inventory':`,
+        error,
+      );
       throw error;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('inventory')
-      .getPublicUrl(filePath);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('inventory').getPublicUrl(filePath);
 
     return publicUrl;
   });

@@ -73,4 +73,3 @@ export class WorkspaceManager {
 }
 
 export const workspaceManager = new WorkspaceManager();
-

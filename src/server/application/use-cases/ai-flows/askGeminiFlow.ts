@@ -10,7 +10,7 @@ export const askGeminiFlow = async (input: {
 }) => {
   // Convert contents array to prompt string for Vercel AI SDK
   const promptText = Array.isArray(input.contents)
-    ? input.contents.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n')
+    ? input.contents.map((c) => (typeof c === 'string' ? c : JSON.stringify(c))).join('\n')
     : String(input.contents);
 
   const { text } = await generateText({

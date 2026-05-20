@@ -5,16 +5,16 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Brain, 
-  Send, 
-  Sparkles, 
-  ChevronDown, 
-  TrendingUp, 
-  Zap, 
+import {
+  Brain,
+  Send,
+  Sparkles,
+  ChevronDown,
+  TrendingUp,
+  Zap,
   ShieldCheck,
   MessageSquare,
-  Bot
+  Bot,
 } from 'lucide-react';
 
 interface RichardAIAdvisorProps {
@@ -24,19 +24,27 @@ interface RichardAIAdvisorProps {
 export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessContext }) => {
   const [isOpen, setIsOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  
+
   const [inputValue, setInputValue] = useState('');
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/command-center/ai-advisor',
     }),
-    messages: [{
-      id: 'welcome',
-      role: 'assistant',
-      content: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
-      parts: [{ type: 'text', text: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?' }]
-    }] as any,
+    messages: [
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content:
+          'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
+        parts: [
+          {
+            type: 'text',
+            text: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
+          },
+        ],
+      },
+    ] as any,
   } as any);
 
   const isLoading = status === 'streaming' || status === 'submitted';
@@ -64,14 +72,17 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <Brain className="w-20 h-20 text-cyan-400" />
         </div>
-        
+
         <div className="flex items-center gap-4 mb-2">
           <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center relative">
             <Bot className="w-6 h-6 text-cyan-400" />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 animate-pulse" />
           </div>
           <div>
-            <h2 className="font-black uppercase tracking-widest text-sm" style={{ fontFamily: 'var(--font-cinematic)' }}>
+            <h2
+              className="font-black uppercase tracking-widest text-sm"
+              style={{ fontFamily: 'var(--font-cinematic)' }}
+            >
               Richard <span className="text-cyan-400">AI Advisor</span>
             </h2>
             <p className="text-[10px] text-slate-500 tracking-tighter uppercase font-bold">
@@ -79,9 +90,10 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
             </p>
           </div>
         </div>
-        
+
         <p className="text-xs text-slate-400 mb-4 max-w-md">
-          Haz clic para solicitar recomendaciones estratégicas sobre tu inventario, leads y salud financiera.
+          Haz clic para solicitar recomendaciones estratégicas sobre tu inventario, leads y salud
+          financiera.
         </p>
 
         <div className="flex items-center gap-3">
@@ -107,27 +119,37 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
             <div className="p-4 border-b border-white/5 bg-slate-950/40 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Canal de Inteligencia Directo</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  Canal de Inteligencia Directo
+                </span>
               </div>
-              <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-white/5 rounded-lg transition-colors">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 hover:bg-white/5 rounded-lg transition-colors"
+              >
                 <ChevronDown className="w-4 h-4 text-slate-500" />
               </button>
             </div>
 
             {/* Messages */}
-            <div 
-              ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
-            >
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
               {messages.map((m) => {
-                const text = ((m.parts as any[])?.find((p) => p.type === 'text') as any)?.text ?? (m as any).content ?? '';
+                const text =
+                  ((m.parts as any[])?.find((p) => p.type === 'text') as any)?.text ??
+                  (m as any).content ??
+                  '';
                 return (
-                  <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed ${
-                      m.role === 'user' 
-                        ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-50' 
-                        : 'bg-slate-800/40 border border-white/5 text-slate-300'
-                    }`}>
+                  <div
+                    key={m.id}
+                    className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed ${
+                        m.role === 'user'
+                          ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-50'
+                          : 'bg-slate-800/40 border border-white/5 text-slate-300'
+                      }`}
+                    >
                       {text}
                     </div>
                   </div>
@@ -155,7 +177,7 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
                   placeholder="Pregúntame sobre la estrategia de hoy..."
                   className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-hidden focus:border-cyan-500/50 transition-all pr-12"
                 />
-                <button 
+                <button
                   type="submit"
                   disabled={isLoading || !inputValue.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-cyan-500 text-slate-950 rounded-lg hover:bg-cyan-400 disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20"

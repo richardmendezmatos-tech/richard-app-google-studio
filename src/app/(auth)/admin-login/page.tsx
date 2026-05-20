@@ -7,8 +7,8 @@ import SEO from '@/shared/ui/seo/SEO';
 export default function AdminLoginPage() {
   return (
     <>
-      <SEO 
-        title="Houston Access | Richard Automotive" 
+      <SEO
+        title="Houston Access | Richard Automotive"
         description="Panel de Control de Sistemas Richard Automotive."
         noIndex={true}
       />

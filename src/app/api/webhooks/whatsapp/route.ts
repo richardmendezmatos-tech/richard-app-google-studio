@@ -40,15 +40,17 @@ export async function POST(req: Request) {
         return new Response('Firma no válida', { status: 401 });
       }
     } else if (!APP_SECRET) {
-      console.warn('[WhatsApp Webhook] WHATSAPP_APP_SECRET no está configurado. Omitiendo validación de firma en modo desarrollo.');
+      console.warn(
+        '[WhatsApp Webhook] WHATSAPP_APP_SECRET no está configurado. Omitiendo validación de firma en modo desarrollo.',
+      );
     }
 
     const body = JSON.parse(rawBody);
 
     // Registramos la traza en auditoría de alto rendimiento
-    await audit.log('info', 'Carga de Webhook de WhatsApp Recibida', { 
+    await audit.log('info', 'Carga de Webhook de WhatsApp Recibida', {
       object: body.object,
-      entriesCount: body.entry?.length 
+      entriesCount: body.entry?.length,
     });
 
     // 2. Desacoplamiento y Procesamiento Estructurado del Payload
@@ -67,7 +69,7 @@ export async function POST(req: Request) {
                 messageId: status.id,
                 recipientId: status.recipient_id,
                 phoneNumberId,
-                timestamp: status.timestamp
+                timestamp: status.timestamp,
               });
               // Aquí enlazaremos con la actualización de base de datos de leads en el futuro
             }
@@ -79,13 +81,15 @@ export async function POST(req: Request) {
               const sender = message.from;
               const textContent = message.text?.body || '[Contenido Multimedia/Interactivo]';
 
-              console.log(`[WhatsApp Webhook] Nuevo mensaje de ${sender} (Cuenta ID: ${phoneNumberId}): ${textContent}`);
-              
+              console.log(
+                `[WhatsApp Webhook] Nuevo mensaje de ${sender} (Cuenta ID: ${phoneNumberId}): ${textContent}`,
+              );
+
               await audit.log('info', `Mensaje Entrante WhatsApp de ${sender}`, {
                 messageId: message.id,
                 type: message.type,
                 text: textContent,
-                phoneNumberId
+                phoneNumberId,
               });
             }
           }

@@ -15,7 +15,9 @@ Este proyecto es el motor de inteligencia artificial para la marca personal de *
 La versión **N24** representa la madurez técnica absoluta del ecosistema, eliminando dependencias fragmentadas (Firebase/GCP) y consolidando todo en un núcleo resiliente basado en **npm** y **Supabase**.
 
 ### ⚡️ Estabilidad Industrial (Powered by npm)
+
 Para asegurar despliegues predecibles y una gestión de dependencias robusta en entornos de alta producción (Vercel), el proyecto utiliza **npm** como gestor principal:
+
 - **Lockfile Determinístico**: Eliminación de inconsistencias entre entornos de desarrollo y producción.
 - **Producción Vercel-Ready**: Optimización del pipeline de build para despliegues rápidos y seguros.
 
@@ -28,12 +30,13 @@ Para asegurar despliegues predecibles y una gestión de dependencias robusta en 
 - **Infraestructura:** Desplegado en **Vercel** con integración profunda de Supabase CLI.
 
 ### 🧠 Capacidades de Vanguardia
+
 - **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs).
 - **Sistema de Resiliencia de Imágenes (N24-R):** Motor inteligente en `OptimizedImage` que maneja fallos de carga mediante re-intentos automáticos y fallbacks a placeholders optimizados, garantizando una UI impecable incluso ante inconsistencias de red o datos.
 - **Protocolo de Normalización de Inventario:** Auditoría automatizada que consolida campos legados (`img`) al nuevo estándar `image` y sincroniza galerías multimedia.
 - **Houston Command Center:** Panel de control táctico con telemetría en tiempo real:
-    - **Sourcing Management:** Aprobación inmediata de inventario estratégico.
-    - **Performance Sentinel:** Optimización dinámica de LCP y TBT para garantizar una experiencia fluida de 60 FPS en dispositivos móviles.
+  - **Sourcing Management:** Aprobación inmediata de inventario estratégico.
+  - **Performance Sentinel:** Optimización dinámica de LCP y TBT para garantizar una experiencia fluida de 60 FPS en dispositivos móviles.
 - **Approval Simulator:** Widget premium para la pre-cualificación financiera dinámica.
 
 ## 🏗️ Arquitectura del Proyecto (FSD Strict)
@@ -54,4 +57,4 @@ El proyecto sigue rigurosamente la metodología **Feature-Sliced Design (FSD)**:
 ---
 
 © 2026 Richard Automotive | Richard O. Méndez Matos | Central Ford, Vega Alta
-*Gerente de F&I, Seguros y Financiamiento Automotriz.*
+_Gerente de F&I, Seguros y Financiamiento Automotriz._

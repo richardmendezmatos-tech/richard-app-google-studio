@@ -20,7 +20,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'coop',
     baseRate: 4.89,
     description: 'Opción secundaria para socios existentes (Proceso lento).',
-    tier: 3
+    tier: 3,
   },
   {
     id: 'coop-zeno-gandia',
@@ -28,7 +28,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'coop',
     baseRate: 4.95,
     description: 'Opción externa (Último recurso).',
-    tier: 3
+    tier: 3,
   },
   {
     id: 'coop-cipeg',
@@ -36,7 +36,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'coop',
     baseRate: 5.25,
     description: 'Alternativa sólida para financiamiento de autos.',
-    tier: 2
+    tier: 2,
   },
   {
     id: 'banco-popular',
@@ -44,7 +44,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'bank',
     baseRate: 6.95,
     description: 'Socio prioritario (Floorplan). Aprobación inmediata y control total.',
-    tier: 1
+    tier: 1,
   },
   {
     id: 'oriental-bank',
@@ -52,7 +52,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'bank',
     baseRate: 7.25,
     description: 'Especialistas en financiamiento de autos y seguros.',
-    tier: 2
+    tier: 2,
   },
   {
     id: 'first-bank',
@@ -60,7 +60,7 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'bank',
     baseRate: 7.15,
     description: 'Socio prioritario. Excelente servicio y rapidez en cierre.',
-    tier: 1
+    tier: 1,
   },
   {
     id: 'penfed',
@@ -68,12 +68,12 @@ export const FINANCIAL_ENTITIES_PR: FinancialEntity[] = [
     type: 'bank',
     baseRate: 5.49,
     description: 'Alternativa rápida para militares.',
-    tier: 2
-  }
+    tier: 2,
+  },
 ];
 
 export const getPreferredEntity = (type: 'coop' | 'bank' = 'coop') => {
-  return FINANCIAL_ENTITIES_PR
-    .filter(e => e.type === type)
-    .sort((a, b) => a.baseRate - b.baseRate)[0];
+  return FINANCIAL_ENTITIES_PR.filter((e) => e.type === type).sort(
+    (a, b) => a.baseRate - b.baseRate,
+  )[0];
 };

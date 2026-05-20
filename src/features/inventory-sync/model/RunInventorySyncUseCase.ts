@@ -8,7 +8,7 @@ export class RunInventorySyncUseCase {
   constructor(
     private readonly repository: InventoryRepository,
     private readonly extractor: WebExtractorPort,
-    private readonly engine: ReconciliationEngine
+    private readonly engine: ReconciliationEngine,
   ) {}
 
   public async execute(config: ExtractorConfig): Promise<{
@@ -27,7 +27,9 @@ export class RunInventorySyncUseCase {
       const webInventory = await this.extractor.extractFullInventory(config);
 
       if (!webInventory || webInventory.length === 0) {
-        throw new Error('Extracción vacía. Abortando sincronización por seguridad (Anti-Wipeout Protection).');
+        throw new Error(
+          'Extracción vacía. Abortando sincronización por seguridad (Anti-Wipeout Protection).',
+        );
       }
 
       // 3. Reconciliación Pura (Memoria O(N))
@@ -35,9 +37,10 @@ export class RunInventorySyncUseCase {
 
       // 3.5. Enriquecimiento de Inteligencia (Telemetry Data)
       // Recuperamos métricas de los últimos 7 días para priorizar unidades "Hot"
-      const { getRecentVelocityMetrics } = await import('@/entities/inventory/api/adapters/inventoryService');
+      const { getRecentVelocityMetrics } =
+        await import('@/entities/inventory/api/adapters/inventoryService');
       const metrics = await getRecentVelocityMetrics(7);
-      
+
       diff.inserts = this.engine.enrichWithVelocity(diff.inserts, metrics);
       diff.updates = this.engine.enrichWithVelocity(diff.updates, metrics);
 
@@ -52,7 +55,7 @@ export class RunInventorySyncUseCase {
       // 5. Difusión Proactiva Automatizada (WhatsApp a Leads afines)
       // Disparo asíncrono para no demorar la culminación de la sincronización
       const broadcaster = new ProactiveInventoryBroadcaster();
-      broadcaster.broadcast(diff.inserts, diff.updates).catch(err => {
+      broadcaster.broadcast(diff.inserts, diff.updates).catch((err) => {
         console.error('[RunInventorySyncUseCase] Fallo en la difusión proactiva:', err);
       });
 
@@ -62,7 +65,6 @@ export class RunInventorySyncUseCase {
         updated: diff.updates.length,
         sold: diff.markAsSoldVins.length,
       };
-
     } catch (error: any) {
       console.error('[RunInventorySyncUseCase] Error Crítico:', error);
       return {

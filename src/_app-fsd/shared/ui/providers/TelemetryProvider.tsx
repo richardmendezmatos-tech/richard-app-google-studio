@@ -27,7 +27,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       telemetryAnalytics.add({
         event: 'page_view',
         url: window.location.href,
-        title: document.title
+        title: document.title,
       });
     }
   }, []);
@@ -36,7 +36,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (activeSubscriptions.current[vehicleId] || !supabase.current) return;
 
     const channel = supabase.current.channel(`${TELEMETRY_CHANNEL}-${vehicleId}`);
-    
+
     channel
       .on('broadcast', { event: `update-${vehicleId}` }, ({ payload }) => {
         const health = analyzeVehicleHealth(payload);
@@ -52,7 +52,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (channel && supabase.current) {
       supabase.current.removeChannel(channel);
       delete activeSubscriptions.current[vehicleId];
-      
+
       setTelemetryMap((prev) => {
         const next = { ...prev };
         delete next[vehicleId];
@@ -67,7 +67,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const currentSubscriptions = activeSubscriptions.current;
     return () => {
       if (currentSupabase) {
-        Object.values(currentSubscriptions).forEach(channel => {
+        Object.values(currentSubscriptions).forEach((channel) => {
           currentSupabase.removeChannel(channel);
         });
       }

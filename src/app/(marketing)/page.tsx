@@ -8,14 +8,24 @@ import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge'
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos y Usados en Vega Alta',
-  description: 'Tu concesionario de confianza para autos nuevos y usados de lujo en Central Ford, Vega Alta. Financiamiento expreso y el inventario más exclusivo de Puerto Rico.',
-  keywords: ['autos nuevos puerto rico', 'autos usados puerto rico', 'dealer vega alta', 'central ford vega alta', 'richard automotive', 'guaguas nuevas', 'pickups nuevas'],
+  description:
+    'Tu concesionario de confianza para autos nuevos y usados de lujo en Central Ford, Vega Alta. Financiamiento expreso y el inventario más exclusivo de Puerto Rico.',
+  keywords: [
+    'autos nuevos puerto rico',
+    'autos usados puerto rico',
+    'dealer vega alta',
+    'central ford vega alta',
+    'richard automotive',
+    'guaguas nuevas',
+    'pickups nuevas',
+  ],
   alternates: {
     canonical: 'https://richard-automotive.com/',
   },
   openGraph: {
     title: 'Richard Automotive | Dealer de Autos Nuevos y Usados Certificados',
-    description: 'Ubicados en Central Ford, Vega Alta. Concesionario oficial de autos nuevos y selección premium de usados.',
+    description:
+      'Ubicados en Central Ford, Vega Alta. Concesionario oficial de autos nuevos y selección premium de usados.',
     url: 'https://richard-automotive.com/',
     siteName: 'Richard Automotive',
     images: [
@@ -40,7 +50,8 @@ function HomeJsonLd() {
     url: 'https://richard-automotive.com',
     logo: 'https://richard-automotive.com/logo.png',
     image: 'https://richard-automotive.com/dealership-front.jpg',
-    description: 'Dealer de autos usados certificados, especializado en pickups y guaguas de lujo. Ubicado en las facilidades de Central Ford.',
+    description:
+      'Dealer de autos usados certificados, especializado en pickups y guaguas de lujo. Ubicado en las facilidades de Central Ford.',
     telephone: BUSINESS_CONTACT.phone,
     address: {
       '@type': 'PostalAddress',
@@ -69,10 +80,7 @@ function HomeJsonLd() {
         closes: '17:00',
       },
     ],
-    sameAs: [
-      BUSINESS_CONTACT.social.facebook,
-      BUSINESS_CONTACT.social.instagram,
-    ],
+    sameAs: [BUSINESS_CONTACT.social.facebook, BUSINESS_CONTACT.social.instagram],
     priceRange: '$$$',
     areaServed: {
       '@type': 'Country',
@@ -88,14 +96,13 @@ function HomeJsonLd() {
   );
 }
 
-
 /**
  * Next.js App Router Home Page
  * Optimized for Local SEO and Strategic Conversion.
  */
 export default async function HomePage() {
   let inventory: any[] = [];
-  
+
   try {
     const result = await getPaginatedCars(12, null, 'all');
     inventory = result.cars;
@@ -106,7 +113,7 @@ export default async function HomePage() {
   return (
     <>
       <HomeJsonLd />
-      
+
       <main className="relative">
         <SessionRecoveryBridge />
         <Suspense fallback={null}>
@@ -119,39 +126,47 @@ export default async function HomePage() {
             {/* Info */}
             <div className="space-y-8">
               <div className="space-y-4">
-                <span className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">Visítanos Hoy</span>
+                <span className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">
+                  Visítanos Hoy
+                </span>
                 <h2 className="text-4xl font-black text-white leading-tight">
-                  Tu Concesionario de <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">Autos Nuevos</span> en Vega Alta
+                  Tu Concesionario de{' '}
+                  <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">
+                    Autos Nuevos
+                  </span>{' '}
+                  en Vega Alta
                 </h2>
                 <p className="text-slate-400 text-lg leading-relaxed">
-                  Ubicados estratégicamente en las facilidades de **Central Ford**. Somos especialistas en autos nuevos con una selección exclusiva de usados certificados. Ven y experimenta el mejor servicio de Puerto Rico con atención personalizada.
+                  Ubicados estratégicamente en las facilidades de **Central Ford**. Somos
+                  especialistas en autos nuevos con una selección exclusiva de usados certificados.
+                  Ven y experimenta el mejor servicio de Puerto Rico con atención personalizada.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ContactInfoItem 
-                  icon={<MapPin className="text-cyan-400" />} 
-                  label="Ubicación" 
-                  value={BUSINESS_CONTACT.address.full} 
+                <ContactInfoItem
+                  icon={<MapPin className="text-cyan-400" />}
+                  label="Ubicación"
+                  value={BUSINESS_CONTACT.address.full}
                 />
-                <ContactInfoItem 
-                  icon={<Phone className="text-cyan-400" />} 
-                  label="Teléfono" 
-                  value={BUSINESS_CONTACT.phone} 
+                <ContactInfoItem
+                  icon={<Phone className="text-cyan-400" />}
+                  label="Teléfono"
+                  value={BUSINESS_CONTACT.phone}
                 />
-                <ContactInfoItem 
-                  icon={<Clock className="text-cyan-400" />} 
-                  label="Horario" 
-                  value={`${BUSINESS_CONTACT.hours.weekdays} (Sáb: ${BUSINESS_CONTACT.hours.saturday})`} 
+                <ContactInfoItem
+                  icon={<Clock className="text-cyan-400" />}
+                  label="Horario"
+                  value={`${BUSINESS_CONTACT.hours.weekdays} (Sáb: ${BUSINESS_CONTACT.hours.saturday})`}
                 />
-                <ContactInfoItem 
-                  icon={<ShieldCheck className="text-cyan-400" />} 
-                  label="Garantía" 
-                  value="Unidades Inspeccionadas y Certificadas" 
+                <ContactInfoItem
+                  icon={<ShieldCheck className="text-cyan-400" />}
+                  label="Garantía"
+                  value="Unidades Inspeccionadas y Certificadas"
                 />
               </div>
 
-              <a 
+              <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${BUSINESS_CONTACT.geo.latitude},${BUSINESS_CONTACT.geo.longitude}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -183,14 +198,24 @@ export default async function HomePage() {
   );
 }
 
-function ContactInfoItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function ContactInfoItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
       <div className="shrink-0 w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
         {icon}
       </div>
       <div>
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">{label}</p>
+        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">
+          {label}
+        </p>
         <p className="text-white text-sm font-medium">{value}</p>
       </div>
     </div>

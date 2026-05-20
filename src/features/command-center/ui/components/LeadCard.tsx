@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, memo, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';

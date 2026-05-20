@@ -11,12 +11,25 @@ import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-const TrustBar = dynamic(() => import('@/features/inventory/ui/storefront/TrustBar'), { ssr: false });
-const TestimonialsSection = dynamic(() => import('@/features/inventory/ui/storefront/TestimonialsSection'), { ssr: false });
+const TrustBar = dynamic(() => import('@/features/inventory/ui/storefront/TrustBar'), {
+  ssr: false,
+});
+const TestimonialsSection = dynamic(
+  () => import('@/features/inventory/ui/storefront/TestimonialsSection'),
+  { ssr: false },
+);
 const FAQSection = dynamic(() => import('@/shared/ui/components/FAQSection'), { ssr: false });
-const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), { ssr: false });
-const AuthoritySection = dynamic(() => import('@/features/marketing').then(mod => ({ default: mod.AuthoritySection })), { ssr: false });
-const StorefrontMarketPulse = dynamic(() => import('@/features/inventory/ui/StorefrontMarketPulse'), { ssr: false });
+const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), {
+  ssr: false,
+});
+const AuthoritySection = dynamic(
+  () => import('@/features/marketing').then((mod) => ({ default: mod.AuthoritySection })),
+  { ssr: false },
+);
+const StorefrontMarketPulse = dynamic(
+  () => import('@/features/inventory/ui/StorefrontMarketPulse'),
+  { ssr: false },
+);
 
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 
@@ -41,7 +54,13 @@ interface Props {
   customDescription?: string;
 }
 
-const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, customTitle, customDescription }) => {
+const Storefront: React.FC<Props> = ({
+  inventory,
+  onMagicFix,
+  onOpenGarage,
+  customTitle,
+  customDescription,
+}) => {
   const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix);
   const router = useRouter();
 
@@ -49,8 +68,11 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
     <>
       <div className="h-full w-full bg-transparent">
         <SEO
-          title={customTitle || "Autos Nuevos y Usados de Lujo en Puerto Rico | Richard Automotive"}
-          description={customDescription || "Tu concesionario oficial de autos nuevos en Bayamón y Vega Alta, Puerto Rico. El inventario más exclusivo de SUVs, Sedanes y Pickups con financiamiento expreso en 24h. Trade-in justo y entrega inmediata."}
+          title={customTitle || 'Autos Nuevos y Usados de Lujo en Puerto Rico | Richard Automotive'}
+          description={
+            customDescription ||
+            'Tu concesionario oficial de autos nuevos en Bayamón y Vega Alta, Puerto Rico. El inventario más exclusivo de SUVs, Sedanes y Pickups con financiamiento expreso en 24h. Trade-in justo y entrega inmediata.'
+          }
           url="/"
           type="website"
           schema={{
@@ -132,7 +154,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
                 '@type': 'ItemList',
                 '@id': `${SITE_CONFIG.url}/#inventory`,
                 name: 'Inventario de Autos Nuevos y Usados Richard Automotive',
-                description: 'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
+                description:
+                  'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
                 numberOfItems: (inventory || []).length,
                 itemListElement: (inventory || []).slice(0, 10).map((car, index) => ({
                   '@type': 'ListItem',
@@ -159,7 +182,8 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
 
         {/* Visually hidden H1 for search engine crawlers — matches SEO keyword strategy */}
         <h1 className="sr-only">
-          Dealer de Autos Nuevos Ford y Usados Certificados en Puerto Rico — Richard Automotive Bayamón
+          Dealer de Autos Nuevos Ford y Usados Certificados en Puerto Rico — Richard Automotive
+          Bayamón
         </h1>
 
         {/* Hero Section */}
@@ -175,11 +199,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             <AuthoritySection />
           </section>
 
-          <GlassContainer 
-            intensity="medium"
-            opacity={0.03}
-            className="p-8 lg:p-12 reveal-up"
-          >
+          <GlassContainer intensity="medium" opacity={0.03} className="p-8 lg:p-12 reveal-up">
             <StorefrontMarketPulse
               avgPrice={state.marketPulse?.avgPrice || 0}
               premiumUnits={state.marketPulse?.premiumUnits || 0}
@@ -192,12 +212,27 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
               <div>
                 <h2 className="text-3xl font-bold text-white">Unidades Destacadas</h2>
-                <p className="text-slate-400 mt-2">Nuestra selección premium de vehículos recién llegados.</p>
+                <p className="text-slate-400 mt-2">
+                  Nuestra selección premium de vehículos recién llegados.
+                </p>
               </div>
-              <a href="/inventario" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500 text-black font-bold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all whitespace-nowrap group">
+              <a
+                href="/inventario"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500 text-black font-bold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all whitespace-nowrap group"
+              >
                 Ver Inventario Completo
-                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
                 </svg>
               </a>
             </div>
@@ -226,10 +261,7 @@ const Storefront: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage, cust
             />
           </section>
 
-          <section
-            aria-label="Nuestra Confianza"
-            className="reveal-up"
-          >
+          <section aria-label="Nuestra Confianza" className="reveal-up">
             <GlassContainer intensity="high" opacity={0.05} className="p-10 lg:p-16">
               <TrustBar />
             </GlassContainer>

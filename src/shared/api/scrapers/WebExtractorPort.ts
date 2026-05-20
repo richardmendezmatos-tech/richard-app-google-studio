@@ -8,7 +8,7 @@ export interface ExtractorConfig {
 }
 
 export interface WebExtractorPort {
-  /** 
+  /**
    * Accede a la fuente origen, captura todas las unidades como un Snapshot
    * las higieniza (parsing) y las traduce al modelo del Core Domain puro (`Vehicle`).
    */

@@ -1,5 +1,9 @@
 import React from 'react';
-import { FinancingStructure, PREMIER_WARRANTY, calculateProductAmortization } from '@/entities/finance';
+import {
+  FinancingStructure,
+  PREMIER_WARRANTY,
+  calculateProductAmortization,
+} from '@/entities/finance';
 
 interface BillOfSaleProps {
   structure: FinancingStructure;
@@ -24,12 +28,28 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
   const down = structure.downPayment || 0;
 
   // Calculo de amortización en cuotas para el PDF orientado a ventas
-  const gapAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.GAP, structure.termMonths, structure.creditTier);
-  const warrantyAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO, structure.termMonths, structure.creditTier);
-  const ceramicAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.CERAMICA, structure.termMonths, structure.creditTier);
-  const powerPackAmortized = calculateProductAmortization(PREMIER_WARRANTY.PRECIOS.POWER_PACK, structure.termMonths, structure.creditTier);
+  const gapAmortized = calculateProductAmortization(
+    PREMIER_WARRANTY.PRECIOS.GAP,
+    structure.termMonths,
+    structure.creditTier,
+  );
+  const warrantyAmortized = calculateProductAmortization(
+    PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO,
+    structure.termMonths,
+    structure.creditTier,
+  );
+  const ceramicAmortized = calculateProductAmortization(
+    PREMIER_WARRANTY.PRECIOS.CERAMICA,
+    structure.termMonths,
+    structure.creditTier,
+  );
+  const powerPackAmortized = calculateProductAmortization(
+    PREMIER_WARRANTY.PRECIOS.POWER_PACK,
+    structure.termMonths,
+    structure.creditTier,
+  );
 
-  const totalFiCuota = 
+  const totalFiCuota =
     (wty > 0 ? warrantyAmortized : 0) +
     (gap > 0 ? gapAmortized : 0) +
     (ceramic > 0 ? ceramicAmortized : 0) +
@@ -115,71 +135,97 @@ export const BillOfSaleTemplate: React.FC<BillOfSaleProps> = ({
         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
           <div className="grid grid-cols-1 gap-3.5">
             {/* Contrato de Servicio */}
-            <div className={`flex items-center justify-between p-3 rounded-xl border ${
-              wty > 0 
-                ? 'bg-amber-50/40 border-amber-300 text-amber-900' 
-                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
-            }`}>
+            <div
+              className={`flex items-center justify-between p-3 rounded-xl border ${
+                wty > 0
+                  ? 'bg-amber-50/40 border-amber-300 text-amber-900'
+                  : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+              }`}
+            >
               <div className="flex flex-col">
                 <span className="font-extrabold text-sm flex items-center gap-1.5 text-slate-900">
-                  👑 Contrato de Servicio Premier <span className="text-[9px] font-black uppercase bg-amber-600 text-white px-2 py-0.5 rounded tracking-wider">BENEFICIO VITAL</span>
+                  👑 Contrato de Servicio Premier{' '}
+                  <span className="text-[9px] font-black uppercase bg-amber-600 text-white px-2 py-0.5 rounded tracking-wider">
+                    BENEFICIO VITAL
+                  </span>
                 </span>
                 <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
-                  Protección VIP contra averías mecánicas y eléctricas de transmisión, motor y aire acondicionado.
+                  Protección VIP contra averías mecánicas y eléctricas de transmisión, motor y aire
+                  acondicionado.
                 </span>
               </div>
-              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${wty > 0 ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+              <span
+                className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${wty > 0 ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-400'}`}
+              >
                 {wty > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
               </span>
             </div>
 
             {/* Seguro GAP */}
-            <div className={`flex items-center justify-between p-3 rounded-xl border ${
-              gap > 0 
-                ? 'bg-slate-900 text-white border-slate-800' 
-                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
-            }`}>
+            <div
+              className={`flex items-center justify-between p-3 rounded-xl border ${
+                gap > 0
+                  ? 'bg-slate-900 text-white border-slate-800'
+                  : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+              }`}
+            >
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-slate-900">🛡️ Cobertura GAP Total (Pérdida Total)</span>
+                <span className="font-bold text-sm text-slate-900">
+                  🛡️ Cobertura GAP Total (Pérdida Total)
+                </span>
                 <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
                   Protección de saldo contra pérdida o robo total de la unidad.
                 </span>
               </div>
-              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${gap > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+              <span
+                className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${gap > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}
+              >
                 {gap > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
               </span>
             </div>
 
             {/* Tratamiento Cerámica */}
-            <div className={`flex items-center justify-between p-3 rounded-xl border ${
-              ceramic > 0 
-                ? 'bg-slate-900 text-white border-slate-800' 
-                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
-            }`}>
+            <div
+              className={`flex items-center justify-between p-3 rounded-xl border ${
+                ceramic > 0
+                  ? 'bg-slate-900 text-white border-slate-800'
+                  : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+              }`}
+            >
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-slate-900">✨ Tratamiento de Cerámica Profesional</span>
+                <span className="font-bold text-sm text-slate-900">
+                  ✨ Tratamiento de Cerámica Profesional
+                </span>
                 <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
                   Sellador protector nanotecnológico para preservación del brillo exterior.
                 </span>
               </div>
-              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${ceramic > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+              <span
+                className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${ceramic > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}
+              >
                 {ceramic > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
               </span>
             </div>
 
             {/* Power Pack */}
-            <div className={`flex items-center justify-between p-3 rounded-xl border ${
-              power > 0 
-                ? 'bg-slate-900 text-white border-slate-800' 
-                : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
-            }`}>
+            <div
+              className={`flex items-center justify-between p-3 rounded-xl border ${
+                power > 0
+                  ? 'bg-slate-900 text-white border-slate-800'
+                  : 'bg-slate-100 border-slate-200 text-slate-400 opacity-60'
+              }`}
+            >
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-slate-900">⚡ Power Pack VIP (Kit de Entrega)</span>
+                <span className="font-bold text-sm text-slate-900">
+                  ⚡ Power Pack VIP (Kit de Entrega)
+                </span>
                 <span className="text-[10px] font-semibold text-slate-500 mt-0.5">
                   Cuidado estético integral y kit de bienvenida oficial.
                 </span>
               </div>
-              <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${power > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
+              <span
+                className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${power > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'}`}
+              >
                 {power > 0 ? '✓ INCLUIDO Y ACTIVO' : 'EXCLUIDO'}
               </span>
             </div>

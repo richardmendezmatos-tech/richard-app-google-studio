@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import { useQuery } from '@tanstack/react-query';
 import { DI } from '@/app/(dashboard)/di/registry';
@@ -27,12 +27,13 @@ export const useCommandCenterData = (dealerId: string) => {
       return data.map((s: any) => ({
         id: s.id || '',
         email: s.email,
-        timestamp: s.created_at ? { seconds: Math.floor(new Date(s.created_at).getTime() / 1000), nanoseconds: 0 } : undefined
+        timestamp: s.created_at
+          ? { seconds: Math.floor(new Date(s.created_at).getTime() / 1000), nanoseconds: 0 }
+          : undefined,
       })) as Subscriber[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour cache
   });
-
 
   return {
     leads: leadsQuery.data || [],

@@ -20,29 +20,34 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
 
     // Support both { firstName, lastName } and { name } call patterns
     let firstName = (lead as any).firstName || '';
-    let lastName  = (lead as any).lastName  || '';
+    let lastName = (lead as any).lastName || '';
     if (!firstName && (lead as any).name) {
       const parts = ((lead as any).name as string).trim().split(' ');
       firstName = parts[0] || '';
-      lastName  = parts.slice(1).join(' ') || '';
+      lastName = parts.slice(1).join(' ') || '';
     }
 
     // Determine category from notes or explicit field
     const notes = (lead as any).notes || '';
     const category = (lead as any).category || null;
 
-    const { data, error } = await supabase.from(LEADS_TABLE).insert({
-      first_name: firstName,
-      last_name: lastName,
-      phone: lead.phone || '',
-      email: lead.email || '',
-      vehicle_id: (lead as any).vehicleId || null,
-      vehicle_of_interest: (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || null,
-      category,
-      status: 'new',
-      behavioral_metrics: { source: (lead as any).type || 'web', notes },
-      created_at: new Date().toISOString(),
-    }).select('id').single();
+    const { data, error } = await supabase
+      .from(LEADS_TABLE)
+      .insert({
+        first_name: firstName,
+        last_name: lastName,
+        phone: lead.phone || '',
+        email: lead.email || '',
+        vehicle_id: (lead as any).vehicleId || null,
+        vehicle_of_interest:
+          (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || null,
+        category,
+        status: 'new',
+        behavioral_metrics: { source: (lead as any).type || 'web', notes },
+        created_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
 
     if (error) throw error;
     console.log('[CRM] ✅ Lead guardado en Supabase:', data.id);
@@ -61,14 +66,17 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
     sendWhatsAppRetargeting(newLead).catch((e) => console.error('WhatsApp dispatch failed', e));
 
     // Sentinel Lead Intelligence Enrichment (Asynchronous)
-    leadIntelligenceService.enrichLead(
-      data.id, 
-      (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest,
-      notes
-    ).catch((e: any) => console.error('[CRM] Intelligence Enrichment failed', e));
+    leadIntelligenceService
+      .enrichLead(
+        data.id,
+        (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest,
+        notes,
+      )
+      .catch((e: any) => console.error('[CRM] Intelligence Enrichment failed', e));
 
     // Real-time Email Notification to Richard
-    const richardEmail = process.env.VITE_RICHARD_NOTIFICATION_EMAIL || 'richardmendezmatos@gmail.com';
+    const richardEmail =
+      process.env.VITE_RICHARD_NOTIFICATION_EMAIL || 'richardmendezmatos@gmail.com';
     sendTransactionalEmail({
       to: richardEmail,
       subject: `🚨 ¡NUEVO LEAD ENTRANDO! - ${firstName} ${lastName}`,
@@ -85,16 +93,20 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
             <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Nombre:</strong> ${firstName} ${lastName}</p>
             <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Teléfono:</strong> <a href="tel:${lead.phone}" style="color: #38bdf8; text-decoration: none;">${lead.phone}</a></p>
             <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Correo:</strong> <a href="mailto:${lead.email}" style="color: #38bdf8; text-decoration: none;">${lead.email}</a></p>
-            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Unidad de Interés:</strong> ${ (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || 'Ninguna seleccionada' }</p>
+            <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Unidad de Interés:</strong> ${(lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || 'Ninguna seleccionada'}</p>
             <p style="margin: 8px 0; font-size: 14px; color: #fff;"><strong style="color: #00aed9; font-weight: 900;">Categoría:</strong> ${category || 'WARM'}</p>
           </div>
           
-          ${notes ? `
+          ${
+            notes
+              ? `
           <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
             <p style="margin: 0; font-size: 13px; color: #f59e0b; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">Notas / Contexto:</p>
             <p style="margin: 0; font-size: 13px; color: #f59e0b; font-style: italic; line-height: 1.5;">${notes}</p>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
           
           <div style="text-align: center; margin-top: 30px;">
             <a href="https://richard-automotive-command-center.vercel.app/admin" style="background-color: #00aed9; color: #000; padding: 15px 35px; border-radius: 12px; font-weight: bold; text-decoration: none; display: inline-block; text-transform: uppercase; font-size: 12px; letter-spacing: 0.1em; box-shadow: 0 4px 15px rgba(0, 174, 217, 0.3);">
@@ -106,8 +118,8 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
             Enviado de forma segura por el Núcleo de Inteligencia Artificial Sentinel de Richard Automotive.
           </p>
         </div>
-      `
-    }).catch(e => console.error('[CRM] Failed to send email alert to Richard:', e));
+      `,
+    }).catch((e) => console.error('[CRM] Failed to send email alert to Richard:', e));
 
     return data.id;
   } catch (error) {
@@ -122,7 +134,7 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
 export const updateLead = async (leadId: string, updates: Partial<Lead>) => {
   try {
     if (!supabase) return;
-    
+
     // Map CamelCase to SnakeCase for DB
     const dbUpdates: any = {};
     if (updates.status) dbUpdates.status = updates.status;
@@ -154,15 +166,22 @@ export const updateLeadStatus = async (leadId: string, newStatus: Lead['status']
  */
 export const updateLeadL1Memory = async (leadId: string, l1Data: any) => {
   if (!supabase) return;
-  const { data: lead } = await supabase.from(LEADS_TABLE).select('customer_memory').eq('id', leadId).single();
+  const { data: lead } = await supabase
+    .from(LEADS_TABLE)
+    .select('customer_memory')
+    .eq('id', leadId)
+    .single();
   const currentMemory = lead?.customer_memory || {};
 
-  await supabase.from(LEADS_TABLE).update({
-    customer_memory: {
-      ...currentMemory,
-      l1_reactive: { ...(currentMemory.l1_reactive || {}), ...l1Data, activeContext: true }
-    }
-  }).eq('id', leadId);
+  await supabase
+    .from(LEADS_TABLE)
+    .update({
+      customer_memory: {
+        ...currentMemory,
+        l1_reactive: { ...(currentMemory.l1_reactive || {}), ...l1Data, activeContext: true },
+      },
+    })
+    .eq('id', leadId);
 };
 
 export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
@@ -171,39 +190,58 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
   const channel = supabase
     .channel('leads-changes')
     .on('postgres_changes', { event: '*', schema: 'public', table: LEADS_TABLE }, async () => {
-      const { data } = await supabase.from(LEADS_TABLE).select('*').order('created_at', { ascending: false }).limit(50);
+      const { data } = await supabase
+        .from(LEADS_TABLE)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
       if (data) {
-        callback(data.map(d => ({
-          id: d.id,
-          firstName: d.first_name,
-          lastName: d.last_name,
-          email: d.email,
-          phone: d.phone,
-          status: d.status,
-          createdAt: d.created_at,
-          customerMemory: d.customer_memory,
-          aiAnalysis: d.ai_analysis
-        } as any)));
+        callback(
+          data.map(
+            (d) =>
+              ({
+                id: d.id,
+                firstName: d.first_name,
+                lastName: d.last_name,
+                email: d.email,
+                phone: d.phone,
+                status: d.status,
+                createdAt: d.created_at,
+                customerMemory: d.customer_memory,
+                aiAnalysis: d.ai_analysis,
+              }) as any,
+          ),
+        );
       }
     })
     .subscribe();
 
   // Initial fetch
-  supabase.from(LEADS_TABLE).select('*').order('created_at', { ascending: false }).limit(50).then(({ data }) => {
-    if (data) {
-      callback(data.map(d => ({
-        id: d.id,
-        firstName: d.first_name,
-        lastName: d.last_name,
-        email: d.email,
-        phone: d.phone,
-        status: d.status,
-        createdAt: d.created_at,
-        customerMemory: d.customer_memory,
-        aiAnalysis: d.ai_analysis
-      } as any)));
-    }
-  });
+  supabase
+    .from(LEADS_TABLE)
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50)
+    .then(({ data }) => {
+      if (data) {
+        callback(
+          data.map(
+            (d) =>
+              ({
+                id: d.id,
+                firstName: d.first_name,
+                lastName: d.last_name,
+                email: d.email,
+                phone: d.phone,
+                status: d.status,
+                createdAt: d.created_at,
+                customerMemory: d.customer_memory,
+                aiAnalysis: d.ai_analysis,
+              }) as any,
+          ),
+        );
+      }
+    });
 
   return () => {
     supabase.removeChannel(channel);
@@ -216,4 +254,3 @@ export const getSecureLeadData = async (leadId: string) => {
   if (error) throw error;
   return data;
 };
-

@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const leadRepository = new SupabaseLeadRepository();
     const emailRepository = new SendGridEmailRepository();
     const useCase = new AutomateEmailSequences(leadRepository, emailRepository);
-    
+
     await useCase.execute();
     console.info('✅ Email automation executed successfully via Use Case');
     return NextResponse.json({ success: true, message: 'Email automation executed' });

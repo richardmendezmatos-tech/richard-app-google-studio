@@ -6,14 +6,20 @@ import { Car } from '@/entities/inventory';
  * Reusable helper to securely sanitize strings for valid XML outputs.
  */
 const escapeXml = (str: string = ''): string => {
-  return str.replace(/[<>&'"]/g, c => {
+  return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
-      default: return c;
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      case '"':
+        return '&quot;';
+      default:
+        return c;
     }
   });
 };
@@ -46,7 +52,7 @@ export async function GET() {
   <description>Inventario actualizado de Richard Automotive - Vega Alta, PR</description>
   `;
 
-  cars.forEach(car => {
+  cars.forEach((car) => {
     // Generate clean, canonical SEO slug matching our storefront layout: /inventario/[slug]/[id]
     const slug = `${car.make}-${car.model}-${car.year}`
       .toLowerCase()
@@ -55,12 +61,15 @@ export async function GET() {
     const vehicleUrl = `${siteUrl}/inventario/${slug}/${car.id}`;
 
     // Clean features and descriptions
-    const cleanTitle = escapeXml(`${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''}`);
+    const cleanTitle = escapeXml(
+      `${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''}`,
+    );
     const cleanMake = escapeXml(car.make);
     const cleanModel = escapeXml(car.model);
     const cleanColor = escapeXml(car.color || 'Unspecified');
     const cleanDescription = escapeXml(
-      car.description || `Excelente ${car.make} ${car.model} ${car.year} disponible para entrega inmediata en Richard Automotive. Financiamiento disponible y tomamos trade-in.`
+      car.description ||
+        `Excelente ${car.make} ${car.model} ${car.year} disponible para entrega inmediata en Richard Automotive. Financiamiento disponible y tomamos trade-in.`,
     );
     const cleanVin = escapeXml(car.vin || `MOCKVIN${car.id.slice(0, 10).toUpperCase()}`);
     const cleanBodyStyle = escapeXml(car.type || 'SUV');

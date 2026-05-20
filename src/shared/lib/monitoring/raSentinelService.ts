@@ -1,12 +1,12 @@
 import { supabase } from '@/shared/api/supabase/supabaseClient';
 
 export interface SentinelMetric {
-  type: 
-    | 'trade_in_calculation' 
-    | 'sale_attempt' 
-    | 'inventory_in_take' 
-    | 'ai_persuasion_generated' 
-    | 'conversion_friction' 
+  type:
+    | 'trade_in_calculation'
+    | 'sale_attempt'
+    | 'inventory_in_take'
+    | 'ai_persuasion_generated'
+    | 'conversion_friction'
     | 'neuro_persuasion_attempt'
     | 'performance_vitals'
     | 'vision_intake_attempt';
@@ -28,15 +28,17 @@ export class RaSentinelService {
     try {
       if (!supabase) return;
 
-      await supabase.from(this.tableName).insert([{
-        type: metric.type,
-        data: metric.data,
-        operational_score: metric.operationalScore,
-        friction_point: metric.frictionPoint,
-        persuasion_profile: metric.persuasionProfile,
-        metadata: metric.metadata,
-        timestamp: new Date().toISOString(),
-      }]);
+      await supabase.from(this.tableName).insert([
+        {
+          type: metric.type,
+          data: metric.data,
+          operational_score: metric.operationalScore,
+          friction_point: metric.frictionPoint,
+          persuasion_profile: metric.persuasionProfile,
+          metadata: metric.metadata,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
 
       console.log(
         `[Sentinel] Actividad registrada: ${metric.type} | Score: ${metric.operationalScore}`,
@@ -45,7 +47,6 @@ export class RaSentinelService {
       console.error('[Sentinel] Error al persistir reporte:', error);
     }
   }
-
 
   /**
    * Registra puntos de fricción para el auto-evolución (Nivel 14).
@@ -56,10 +57,10 @@ export class RaSentinelService {
       frictionPoint: step,
       data: { reason, ...data },
       operationalScore: 0, // La fricción reduce la salud operativa
-      metadata: { 
+      metadata: {
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
-        url: typeof window !== 'undefined' ? window.location.href : 'unknown'
-      }
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      },
     });
   }
 
@@ -71,7 +72,7 @@ export class RaSentinelService {
       type: 'performance_vitals',
       data: { [metric.toLowerCase()]: value },
       operationalScore: score,
-      metadata: { metric, unit: metric === 'CLS' ? 'score' : 'ms' }
+      metadata: { metric, unit: metric === 'CLS' ? 'score' : 'ms' },
     });
   }
 
@@ -84,7 +85,7 @@ export class RaSentinelService {
       persuasionProfile: profile,
       data: { component, ...data },
       operationalScore: 100, // Se considera positivo el intento de personalización
-      metadata: { source: 'PersuasionWrapper' }
+      metadata: { source: 'PersuasionWrapper' },
     });
   }
 

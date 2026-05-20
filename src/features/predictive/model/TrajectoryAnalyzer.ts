@@ -31,12 +31,12 @@ export class TrajectoryAnalyzer {
     let score = 0;
     const factorLabels: string[] = [];
     const signals = { interaction: 0, velocity: 0, formFocus: false, dwellTime: 0 };
-    
+
     if (!events || events.length === 0) {
       return { score: 0, category: 'discovery', factors: [], signals, events: [] };
     }
 
-    const uniqueVisits = new Set(events.filter(e => e.type === 'page_view').map(e => e.path));
+    const uniqueVisits = new Set(events.filter((e) => e.type === 'page_view').map((e) => e.path));
 
     // 1. Scoring por volumen de exploración (Velocity Signal)
     signals.velocity = Math.min(10, uniqueVisits.size);
@@ -46,7 +46,7 @@ export class TrajectoryAnalyzer {
     }
 
     // 2. Scoring por interacciones (Interaction Signal)
-    const calculationEvents = events.filter(e => e.type === 'calculation_run');
+    const calculationEvents = events.filter((e) => e.type === 'calculation_run');
     signals.interaction = Math.min(10, calculationEvents.length * 2);
     if (calculationEvents.length > 0) {
       score += this.WEIGHTS.CALCULATION_RUN;
@@ -69,7 +69,7 @@ export class TrajectoryAnalyzer {
     signals.dwellTime = Math.min(10, totalDwell / 60000); // 1 pt por minuto
 
     // 4. Form Focus Signal (Búsqueda de financiamiento)
-    signals.formFocus = events.some(e => e.path.includes('credit') || e.path.includes('apply'));
+    signals.formFocus = events.some((e) => e.path.includes('credit') || e.path.includes('apply'));
 
     // 5. Categorización
     let category: IntentCategory = 'discovery';
@@ -81,7 +81,7 @@ export class TrajectoryAnalyzer {
       category,
       factors: factorLabels,
       signals,
-      events
+      events,
     };
   }
 
@@ -92,7 +92,7 @@ export class TrajectoryAnalyzer {
   static scoreCar(car: any, preferences: any): number {
     if (!car || !preferences) return 0;
     let score = 0;
-    
+
     // Match por categoría / tipo
     const preferredType = this.getPreferredCategory(preferences.events || []);
     if (preferredType && car.type?.toLowerCase() === preferredType.toLowerCase()) {
@@ -101,10 +101,13 @@ export class TrajectoryAnalyzer {
 
     // Match por nombre / marca mencionado en la trayectoria
     const carName = (car.name || '').toLowerCase();
-    const uniquePaths = new Set<string>((preferences.events || []).map((e: any) => (e.path || '').toLowerCase()));
-    
+    const uniquePaths = new Set<string>(
+      (preferences.events || []).map((e: any) => (e.path || '').toLowerCase()),
+    );
+
     uniquePaths.forEach((path) => {
-      if (carName && path.includes(carName.split(' ')[0])) { // Match simple por marca
+      if (carName && path.includes(carName.split(' ')[0])) {
+        // Match simple por marca
         score += 0.2;
       }
     });
@@ -123,8 +126,8 @@ export class TrajectoryAnalyzer {
    */
   static getPreferredCategory(events: TrajectoryEvent[]): string | null {
     const categories: Record<string, number> = {};
-    
-    events.forEach(event => {
+
+    events.forEach((event) => {
       if (event.type === 'page_view' || event.type === 'image_view') {
         const path = event.path.toLowerCase();
         if (path.includes('suv')) categories['suv'] = (categories['suv'] || 0) + 1;

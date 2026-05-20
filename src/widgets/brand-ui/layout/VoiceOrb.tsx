@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';

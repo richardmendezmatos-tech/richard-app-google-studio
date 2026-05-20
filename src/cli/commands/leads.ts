@@ -41,19 +41,22 @@ export const leadsCommand = new Command('leads')
     if (options.stats) {
       const spinner = ora('Calculando métricas del pipeline...').start();
       try {
-        const { data: all } = await supabase.from('leads').select('category, status, deal_closed, created_at');
+        const { data: all } = await supabase
+          .from('leads')
+          .select('category, status, deal_closed, created_at');
         spinner.stop();
 
         const total = all?.length || 0;
-        const hot   = all?.filter(l => l.category === 'HOT').length || 0;
-        const warm  = all?.filter(l => l.category === 'WARM').length || 0;
-        const cold  = all?.filter(l => l.category === 'COLD').length || 0;
-        const closed = all?.filter(l => l.deal_closed).length || 0;
-        const today = all?.filter(l => {
-          const d = new Date(l.created_at);
-          const now = new Date();
-          return d.toDateString() === now.toDateString();
-        }).length || 0;
+        const hot = all?.filter((l) => l.category === 'HOT').length || 0;
+        const warm = all?.filter((l) => l.category === 'WARM').length || 0;
+        const cold = all?.filter((l) => l.category === 'COLD').length || 0;
+        const closed = all?.filter((l) => l.deal_closed).length || 0;
+        const today =
+          all?.filter((l) => {
+            const d = new Date(l.created_at);
+            const now = new Date();
+            return d.toDateString() === now.toDateString();
+          }).length || 0;
 
         console.log(chalk.cyan('\n📊 SENTINEL LEADS DASHBOARD\n'));
         console.log(`  Total Pipeline:     ${chalk.white.bold(total)} leads`);
@@ -76,12 +79,14 @@ export const leadsCommand = new Command('leads')
     try {
       let query = supabase
         .from('leads')
-        .select('id, first_name, last_name, phone, email, category, status, vehicle_of_interest, deal_closed, created_at')
+        .select(
+          'id, first_name, last_name, phone, email, category, status, vehicle_of_interest, deal_closed, created_at',
+        )
         .order('created_at', { ascending: false })
         .limit(parseInt(options.limit));
 
       if (options.category) query = query.eq('category', options.category.toUpperCase());
-      if (options.status)   query = query.eq('status', options.status.toLowerCase());
+      if (options.status) query = query.eq('status', options.status.toLowerCase());
 
       const { data: leads, error } = await query;
       spinner.stop();
@@ -96,19 +101,27 @@ export const leadsCommand = new Command('leads')
       console.log(chalk.gray('  ' + '─'.repeat(80)));
 
       for (const lead of leads) {
-        const name   = `${lead.first_name} ${lead.last_name}`.padEnd(22);
-        const phone  = (lead.phone || 'N/A').padEnd(16);
-        const car    = (lead.vehicle_of_interest || 'Sin especificar').substring(0, 24).padEnd(26);
-        const date   = new Date(lead.created_at).toLocaleDateString('es-PR', { month: 'short', day: 'numeric' });
-        const badge  = categoryBadge(lead.category);
+        const name = `${lead.first_name} ${lead.last_name}`.padEnd(22);
+        const phone = (lead.phone || 'N/A').padEnd(16);
+        const car = (lead.vehicle_of_interest || 'Sin especificar').substring(0, 24).padEnd(26);
+        const date = new Date(lead.created_at).toLocaleDateString('es-PR', {
+          month: 'short',
+          day: 'numeric',
+        });
+        const badge = categoryBadge(lead.category);
         const status = statusColor(lead.status);
 
-        console.log(`  ${badge} ${chalk.white.bold(name)} ${chalk.gray(phone)} ${chalk.blue(car)} ${status} ${chalk.gray(date)}`);
+        console.log(
+          `  ${badge} ${chalk.white.bold(name)} ${chalk.gray(phone)} ${chalk.blue(car)} ${status} ${chalk.gray(date)}`,
+        );
       }
 
       console.log(chalk.gray('  ' + '─'.repeat(80)));
-      console.log(chalk.gray(`\n  Tip: usa --stats para ver métricas del pipeline | --category HOT para filtrar\n`));
-
+      console.log(
+        chalk.gray(
+          `\n  Tip: usa --stats para ver métricas del pipeline | --category HOT para filtrar\n`,
+        ),
+      );
     } catch (e: any) {
       spinner.fail(chalk.red('Error: ' + e.message));
     }

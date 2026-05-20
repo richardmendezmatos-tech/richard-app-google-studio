@@ -24,7 +24,8 @@ export const useSaveApplication = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (app: FinancialApplication) => Promise.resolve(garageService.saveFinancialApplication(app)),
+    mutationFn: (app: FinancialApplication) =>
+      Promise.resolve(garageService.saveFinancialApplication(app)),
     onSuccess: (data) => {
       queryClient.setQueryData(APPLICATION_KEYS.all, data);
       queryClient.invalidateQueries({ queryKey: APPLICATION_KEYS.all });

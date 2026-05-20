@@ -32,32 +32,33 @@ export async function POST(req: Request) {
 
     // 5. Generate Personalized Justifications for top 3
     const topMatches = filteredMatches.slice(0, 3);
-    
-    const results = await Promise.all(topMatches.map(async (m) => {
-      const justification = await sentinelAI.quickGen(
-        `Dada esta unidad: "${m.content}" y esta intención del cliente: "${query}", 
+
+    const results = await Promise.all(
+      topMatches.map(async (m) => {
+        const justification = await sentinelAI.quickGen(
+          `Dada esta unidad: "${m.content}" y esta intención del cliente: "${query}", 
         genera una breve frase (máximo 15 palabras) de por qué este auto es el "match" perfecto.
         Usa un tono persuasivo de Richard Automotive.`,
-        'Eres un cerrador de ventas experto.'
-      );
+          'Eres un cerrador de ventas experto.',
+        );
 
-      return {
-        carId: m.car_id,
-        carName: m.car_name,
-        score: Math.round(m.similarity * 100),
-        reason: justification || intent.justification_template,
-        intent: intent // Include for UI feedback
-      };
-    }));
+        return {
+          carId: m.car_id,
+          carName: m.car_name,
+          score: Math.round(m.similarity * 100),
+          reason: justification || intent.justification_template,
+          intent: intent, // Include for UI feedback
+        };
+      }),
+    );
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       results,
       intent: {
         detected_lifestyle: intent.lifestyle,
-        parameters: intent.vehicleConstraints
-      }
+        parameters: intent.vehicleConstraints,
+      },
     });
-
   } catch (error: any) {
     console.error('Neural Match API Error:', error);
     return NextResponse.json({ error: 'AI Processing Failed' }, { status: 500 });

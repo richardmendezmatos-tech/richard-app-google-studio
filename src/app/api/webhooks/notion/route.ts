@@ -17,11 +17,14 @@ export async function POST(req: Request) {
       console.error(`Error reportado por notionService: ${notionResult.message}`);
       return NextResponse.json(
         { error: 'No se pudo sincronizar pre-cualificación en CRM', details: notionResult.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
     console.error('Error crítico en saveFiProgress:', error);
-    return NextResponse.json({ error: 'Fallo general sincronizando el progreso F&I' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Fallo general sincronizando el progreso F&I' },
+      { status: 500 },
+    );
   }
 }

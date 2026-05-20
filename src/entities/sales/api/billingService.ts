@@ -42,13 +42,13 @@ export const getUsageLogs = async (
 
     if (error) throw error;
 
-    return (data || []).map(log => ({
+    return (data || []).map((log) => ({
       dealerId: log.dealer_id,
       eventType: log.event_type,
       count: log.count,
       metadata: log.metadata,
       costEstimate: log.cost_estimate,
-      timestamp: log.timestamp
+      timestamp: log.timestamp,
     }));
   } catch (err) {
     console.error('Fetch Usage Logs Error:', err);
@@ -61,4 +61,3 @@ export const calculateAICost = (tokens: number): number => {
   // Aprox $0.002 per 1k tokens for Gemini Pro (simplified)
   return (tokens / 1000) * 0.002;
 };
-

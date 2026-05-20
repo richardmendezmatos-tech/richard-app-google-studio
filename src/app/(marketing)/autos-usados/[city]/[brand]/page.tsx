@@ -9,15 +9,23 @@ import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 // ── Tactical Data for Brand + City Market Domination ──
 const CITIES: Record<string, { name: string; slug: string; region: string; zipCodes: string[] }> = {
   'vega-alta': { name: 'Vega Alta', slug: 'vega-alta', region: 'Norte', zipCodes: ['00692'] },
-  'bayamon': { name: 'Bayamón', slug: 'bayamon', region: 'Zona Metro', zipCodes: ['00956'] },
+  bayamon: { name: 'Bayamón', slug: 'bayamon', region: 'Zona Metro', zipCodes: ['00956'] },
   'san-juan': { name: 'San Juan', slug: 'san-juan', region: 'Capital', zipCodes: ['00901'] },
 };
 
 const BRANDS: Record<string, { name: string; slug: string; keywords: string[] }> = {
-  'ford': { name: 'Ford', slug: 'ford', keywords: ['F-150', 'Explorer', 'Mustang', 'Ranger'] },
-  'hyundai': { name: 'Hyundai', slug: 'hyundai', keywords: ['Tucson', 'Elantra', 'Santa Fe', 'Palisade'] },
-  'freightliner': { name: 'Freightliner', slug: 'freightliner', keywords: ['M2 106', 'Cascadia', 'Business Class'] },
-  'toyota': { name: 'Toyota', slug: 'toyota', keywords: ['Tacoma', 'Corolla', 'RAV4', 'Highlander'] },
+  ford: { name: 'Ford', slug: 'ford', keywords: ['F-150', 'Explorer', 'Mustang', 'Ranger'] },
+  hyundai: {
+    name: 'Hyundai',
+    slug: 'hyundai',
+    keywords: ['Tucson', 'Elantra', 'Santa Fe', 'Palisade'],
+  },
+  freightliner: {
+    name: 'Freightliner',
+    slug: 'freightliner',
+    keywords: ['M2 106', 'Cascadia', 'Business Class'],
+  },
+  toyota: { name: 'Toyota', slug: 'toyota', keywords: ['Tacoma', 'Corolla', 'RAV4', 'Highlander'] },
 };
 
 interface Props {
@@ -38,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug, brand: brandSlug } = await params;
   const city = CITIES[citySlug];
   const brand = BRANDS[brandSlug];
-  
+
   if (!city || !brand) return {};
 
   const title = `Venta de ${brand.name} en ${city.name}, PR | Richard Automotive`;
@@ -69,10 +77,10 @@ export default async function CityBrandPage({ params }: Props) {
   } catch (error) {
     console.error('Error fetching inventory for city+brand page:', error);
   }
-  
+
   // High-performance filter
-  const filteredInventory = inventory.filter((car: Car) => 
-    car.name.toLowerCase().includes(brand.slug.toLowerCase())
+  const filteredInventory = inventory.filter((car: Car) =>
+    car.name.toLowerCase().includes(brand.slug.toLowerCase()),
   );
 
   const jsonLd = {

@@ -24,7 +24,7 @@ export const leadIntelligenceService = {
 
       // 2. Generate Intelligence via Sentinel AI
       const intelligence = await sentinelAI.generateInventoryIntelligence(context);
-      
+
       // 3. Extract Intent (Bonus)
       const intent = customerNotes ? await sentinelAI.extractSearchIntent(customerNotes) : null;
 
@@ -34,7 +34,7 @@ export const leadIntelligenceService = {
         sales_pitch: intelligence.salesPitch,
         intent_data: intent,
         enriched_at: new Date().toISOString(),
-        version: 'Sentinel-N24-LEI'
+        version: 'Sentinel-N24-LEI',
       };
 
       const { error } = await supabase
@@ -43,10 +43,10 @@ export const leadIntelligenceService = {
         .eq('id', leadId);
 
       if (error) throw error;
-      
+
       console.log(`[Sentinel-LEI] ✅ Lead ${leadId} enriquecido con éxito.`);
     } catch (error) {
       console.error(`[Sentinel-LEI] ❌ Error enriqueciendo lead ${leadId}:`, error);
     }
-  }
+  },
 };

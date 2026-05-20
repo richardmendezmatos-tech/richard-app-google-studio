@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useRef, useEffect } from 'react';
 import { Mic, MicOff, Bot, Activity, Wifi, Cpu, Gauge, Radio } from 'lucide-react';

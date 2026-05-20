@@ -20,7 +20,7 @@ export class RehydrationService {
    */
   async synchronize(): Promise<void> {
     if (this.isRehydrating) return;
-    
+
     const pendingData = localStorage.getItem(RehydrationService.STORAGE_KEY);
     if (!pendingData) return;
 
@@ -36,11 +36,14 @@ export class RehydrationService {
       try {
         // Limpiamos metadata de emergencia antes de re-intentar
         const { _emergencyTimestamp, _metadata, id, ...cleanLead } = lead as any;
-        
+
         await this.repository.saveLead(cleanLead);
         console.log(`[Sentinel:Rehydration] Lead ${id} sincronizado con éxito.`);
       } catch (error) {
-        console.warn(`[Sentinel:Rehydration] Fallo al sincronizar lead ${lead.id}. Se mantendrá en cola.`, error);
+        console.warn(
+          `[Sentinel:Rehydration] Fallo al sincronizar lead ${lead.id}. Se mantendrá en cola.`,
+          error,
+        );
         remainingLeads.push(lead);
       }
     }

@@ -5,117 +5,7 @@ import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventorySer
 import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
-
-// ── Tactical City Data for PR Market Domination ──
-const CITIES: Record<string, {
-  name: string;
-  slug: string;
-  meta: string;
-  region: string;
-  zipCodes: string[];
-  landmarks: string[];
-  population: string;
-}> = {
-  'bayamon': {
-    name: 'Bayamón',
-    slug: 'bayamon',
-    meta: 'el Dealer #1 de Bayamón',
-    region: 'Zona Metro',
-    zipCodes: ['00956', '00957', '00959', '00960', '00961'],
-    landmarks: ['Rexville', 'Santa Rosa Mall', 'Lomas Verdes'],
-    population: '185,996',
-  },
-  'san-juan': {
-    name: 'San Juan',
-    slug: 'san-juan',
-    meta: 'exclusividad en la Capital',
-    region: 'Capital',
-    zipCodes: ['00901', '00907', '00909', '00911', '00913', '00917', '00918', '00920', '00921', '00923', '00924', '00925', '00926', '00927', '00934', '00936'],
-    landmarks: ['Condado', 'Hato Rey', 'Isla Verde', 'Santurce', 'Miramar'],
-    population: '342,259',
-  },
-  'guaynabo': {
-    name: 'Guaynabo',
-    slug: 'guaynabo',
-    meta: 'unidades de lujo en Guaynabo City',
-    region: 'Zona Metro',
-    zipCodes: ['00965', '00966', '00968', '00969', '00970', '00971'],
-    landmarks: ['Garden Hills', 'Caparra', 'Downtown Center'],
-    population: '89,780',
-  },
-  'ponce': {
-    name: 'Ponce',
-    slug: 'ponce',
-    meta: 'la Perla del Sur con Richard Automotive',
-    region: 'Sur',
-    zipCodes: ['00716', '00717', '00728', '00730', '00731', '00732', '00733', '00734'],
-    landmarks: ['Plaza Las Américas Ponce', 'Museo de Arte', 'La Guancha'],
-    population: '132,502',
-  },
-  'caguas': {
-    name: 'Caguas',
-    slug: 'caguas',
-    meta: 'financiamiento expreso en el Turabo',
-    region: 'Centro-Este',
-    zipCodes: ['00725', '00726', '00727'],
-    landmarks: ['Las Catalinas Mall', 'Jardín Botánico', 'Centro Criollo'],
-    population: '127,244',
-  },
-  'carolina': {
-    name: 'Carolina',
-    slug: 'carolina',
-    meta: 'la Ciudad de los Campeones confía en Richard',
-    region: 'Zona Metro',
-    zipCodes: ['00979', '00982', '00983', '00984', '00985', '00987'],
-    landmarks: ['Plaza Carolina', 'Isla Verde', 'Roberto Clemente Coliseum'],
-    population: '147,372',
-  },
-  'mayaguez': {
-    name: 'Mayagüez',
-    slug: 'mayaguez',
-    meta: 'el mejor inventario del Oeste',
-    region: 'Oeste',
-    zipCodes: ['00680', '00681', '00682'],
-    landmarks: ['Plaza del Caribe', 'RUM', 'Zoológico de Mayagüez'],
-    population: '71,083',
-  },
-  'arecibo': {
-    name: 'Arecibo',
-    slug: 'arecibo',
-    meta: 'financiamiento garantizado en La Villa del Capitán Correa',
-    region: 'Norte',
-    zipCodes: ['00612', '00613', '00614'],
-    landmarks: ['Cueva del Indio', 'Faro de Arecibo', 'Plaza del Atlántico'],
-    population: '87,242',
-  },
-  'toa-baja': {
-    name: 'Toa Baja',
-    slug: 'toa-baja',
-    meta: 'tu dealer de confianza en Levittown',
-    region: 'Zona Metro',
-    zipCodes: ['00949', '00950', '00951', '00952'],
-    landmarks: ['Levittown', 'Punta Salinas'],
-    population: '75,204',
-  },
-  'humacao': {
-    name: 'Humacao',
-    slug: 'humacao',
-    meta: 'autos certificados para el Este de PR',
-    region: 'Este',
-    zipCodes: ['00791', '00792'],
-    landmarks: ['Palmas del Mar', 'Plaza Humacao'],
-    population: '44,328',
-  },
-  'vega-alta': {
-    name: 'Vega Alta',
-    slug: 'vega-alta',
-    meta: 'financiamiento directo desde Central Ford',
-    region: 'Norte',
-    zipCodes: ['00692'],
-    landmarks: ['Central Ford', 'Cerro Gordo Beach'],
-    population: '39,951',
-  },
-};
+import { CITIES_PR as CITIES } from '@/shared/config/cities';
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -156,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function CityJsonLd({ city }: { city: typeof CITIES[string] }) {
+function CityJsonLd({ city }: { city: (typeof CITIES)[string] }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
@@ -205,7 +95,7 @@ function CityJsonLd({ city }: { city: typeof CITIES[string] }) {
   );
 }
 
-function CityFAQJsonLd({ city }: { city: typeof CITIES[string] }) {
+function CityFAQJsonLd({ city }: { city: (typeof CITIES)[string] }) {
   const faqs = [
     {
       question: `¿Dónde puedo comprar autos usados en ${city.name}, Puerto Rico?`,

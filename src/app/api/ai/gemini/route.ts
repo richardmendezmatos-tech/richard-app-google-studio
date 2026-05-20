@@ -16,10 +16,10 @@ export async function POST(req: Request) {
       if (typeof part === 'string') return { type: 'text', text: part };
       if (part.text) return { type: 'text', text: part.text };
       if (part.inlineData) {
-        return { 
-          type: 'image', 
+        return {
+          type: 'image',
           image: part.inlineData.data,
-          mimeType: part.inlineData.mimeType 
+          mimeType: part.inlineData.mimeType,
         };
       }
       return { type: 'text', text: '' };

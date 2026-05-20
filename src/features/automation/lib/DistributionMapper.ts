@@ -24,7 +24,7 @@ export interface FacebookMarketplaceSchema {
 
 /**
  * DistributionMapper
- * 
+ *
  * Centralizes the transformation logic for different automotive marketplaces.
  */
 export class DistributionMapper {
@@ -37,14 +37,18 @@ export class DistributionMapper {
       pueblo: SITE_CONFIG.contact.address.split(',')[0].trim() || 'Vega Alta',
       telefono: SITE_CONFIG.contact.phone,
       condicion: car.condition === 'new' ? 'Nuevo' : 'Usado',
-      transmision: (car.transmission || 'Automatic').toLowerCase().includes('man') ? 'Manual' : 'Automatica',
+      transmision: (car.transmission || 'Automatic').toLowerCase().includes('man')
+        ? 'Manual'
+        : 'Automatica',
     };
   }
 
   static toFacebook(car: Car): FacebookMarketplaceSchema {
     return {
       title: `${car.year} ${car.make} ${car.model}`,
-      description: car.description || `Excelente ${car.make} ${car.model} ${car.year}. Financiamiento disponible.`,
+      description:
+        car.description ||
+        `Excelente ${car.make} ${car.model} ${car.year}. Financiamiento disponible.`,
       price: car.price || 0,
       condition: car.condition === 'new' ? 'new' : 'used',
       category: 'vehicles',

@@ -1,13 +1,16 @@
 import { Car } from '@/entities/inventory';
 import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
-import { distributionAgent as legacyAgent, Platform } from '@/shared/api/distribution/DistributionAgent';
+import {
+  distributionAgent as legacyAgent,
+  Platform,
+} from '@/shared/api/distribution/DistributionAgent';
 import { DistributionMapper } from '../lib/DistributionMapper';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
 /**
  * Sentinel Autonomous Distribution Agent v3.0
- * 
+ *
  * Orchestrates the full lifecycle of inventory syndication:
  * 1. Inventory Scanning
  * 2. AI Copy Generation (Neural Pitch)
@@ -20,7 +23,7 @@ export class AutonomousDistributionAgent {
    */
   async runCycle(): Promise<{ processed: number; errors: number }> {
     console.log('[Sentinel Distribution] Starting autonomous cycle...');
-    
+
     // 1. Fetch inventory from Supabase
     const { data: cars, error } = await supabase
       .from('inventory')
@@ -33,7 +36,7 @@ export class AutonomousDistributionAgent {
         'error',
         `Failed to fetch inventory for distribution: ${error?.message || 'Empty response'}`,
         {},
-        'SentinelDistribution'
+        'SentinelDistribution',
       );
       console.error('[Sentinel Distribution] Failed to fetch inventory:', error);
       return { processed: 0, errors: 1 };
@@ -44,7 +47,7 @@ export class AutonomousDistributionAgent {
       'info',
       `Starting distribution cycle for ${cars.length} units`,
       {},
-      'SentinelDistribution'
+      'SentinelDistribution',
     );
 
     let processed = 0;
@@ -53,7 +56,8 @@ export class AutonomousDistributionAgent {
     for (const car of cars) {
       try {
         const result = await this.processUnit(car as unknown as Car);
-        if (result) processed++; else errors++;
+        if (result) processed++;
+        else errors++;
       } catch (err) {
         console.error(`[Sentinel Distribution] Error processing unit ${car.id}:`, err);
         errors++;
@@ -64,7 +68,7 @@ export class AutonomousDistributionAgent {
       'info',
       `Cycle complete. Processed: ${processed}, Errors: ${errors}`,
       { processed, errors },
-      'SentinelDistribution'
+      'SentinelDistribution',
     );
 
     return { processed, errors };
@@ -86,8 +90,8 @@ export class AutonomousDistributionAgent {
     const platformsToSync: Platform[] = ['facebook_marketplace', 'clasificados_online'];
 
     for (const platform of platformsToSync) {
-      const platformStatus = status.find(s => s.platform === platform);
-      
+      const platformStatus = status.find((s) => s.platform === platform);
+
       // If active and synced less than 24h ago, skip
       if (platformStatus?.status === 'active' && platformStatus.lastSync) {
         const lastSyncDate = new Date(platformStatus.lastSync).getTime();
@@ -106,10 +110,11 @@ export class AutonomousDistributionAgent {
 
       // 4. Trigger Sync with Mapped Data
       console.log(`[Sentinel Distribution] Mapping unit ${car.id} for ${platform}...`);
-      const mappedData = platform === 'clasificados_online' 
-        ? DistributionMapper.toClasificadosOnline(car)
-        : DistributionMapper.toFacebook(car);
-      
+      const mappedData =
+        platform === 'clasificados_online'
+          ? DistributionMapper.toClasificadosOnline(car)
+          : DistributionMapper.toFacebook(car);
+
       console.log(`[Sentinel Distribution] Payload ready for ${platform}:`, mappedData);
 
       const success = await legacyAgent.triggerSync(car, platform);
@@ -118,7 +123,7 @@ export class AutonomousDistributionAgent {
         success ? 'info' : 'error',
         `${success ? 'Synced' : 'Failed to sync'} unit ${car.id} to ${platform}`,
         { carId: car.id, platform, success },
-        'SentinelDistribution'
+        'SentinelDistribution',
       );
       if (!success) return false;
     }
@@ -148,11 +153,15 @@ export class AutonomousDistributionAgent {
          - Hashatgs relevantes (#RichardAutomotive #VentaDeAutosPR).
     `;
 
-    const instruction = 'Eres el Director de Ventas de Richard Automotive. Tu objetivo es que el cliente sienta que pierde una oportunidad única si no llama ahora mismo.';
-    
+    const instruction =
+      'Eres el Director de Ventas de Richard Automotive. Tu objetivo es que el cliente sienta que pierde una oportunidad única si no llama ahora mismo.';
+
     try {
       const result = await sentinelAI.quickGen(prompt, instruction);
-      return result || `🔥 ¡NUEVA ENTRADA! ${car.make} ${car.model} ${car.year} disponible hoy en Richard Automotive. Llama ahora.`;
+      return (
+        result ||
+        `🔥 ¡NUEVA ENTRADA! ${car.make} ${car.model} ${car.year} disponible hoy en Richard Automotive. Llama ahora.`
+      );
     } catch (err) {
       return `${car.make} ${car.model} ${car.year} - Unidad certificada disponible en Richard Automotive. Contáctanos para detalles.`;
     }

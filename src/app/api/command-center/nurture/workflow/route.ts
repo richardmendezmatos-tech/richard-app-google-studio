@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const { leadId, phone, name, unitOfInterest, context } = await req.json();
 
   // 1. Logic of the sales follow-up engine
-  
+
   // Step 1: Initial AI Ingestion & Response Generation
   const firstContact = await (async () => {
     const { text } = await generateText({
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
         step_id: 'nudge_incentive',
         message: `Propuesta de incentivo para ${name}: "${nudge}"`,
         metadata: { leadId, nudge, phone },
-        status: 'pending'
+        status: 'pending',
       });
     })();
   }

@@ -27,7 +27,7 @@ export class NeuralSourcingService {
 
       // 2. Agrupar por query para detectar tendencias
       const frequencyMap: Record<string, number> = {};
-      gaps.forEach(g => {
+      gaps.forEach((g) => {
         const q = g.query.toLowerCase().trim();
         frequencyMap[q] = (frequencyMap[q] || 0) + 1;
       });
@@ -35,9 +35,10 @@ export class NeuralSourcingService {
       // 3. Generar PO Drafts para los top gaps
       const results = [];
       for (const [query, count] of Object.entries(frequencyMap)) {
-        if (count >= 1) { // Umbral bajo para demostración
+        if (count >= 1) {
+          // Umbral bajo para demostración
           const recommendation = this.generateRecommendation(query);
-          
+
           const { error: poError } = await supabase.from('purchase_orders').insert({
             query: query.toUpperCase(),
             recommendation,
@@ -45,7 +46,7 @@ export class NeuralSourcingService {
             priority: count > 2 ? 'critical' : 'high',
             reason: `Detectado ${count} veces en búsquedas fallidas recientemente.`,
             status: 'draft',
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
           });
 
           if (!poError) {
@@ -62,9 +63,12 @@ export class NeuralSourcingService {
   }
 
   private static generateRecommendation(query: string): string {
-    if (query.includes('toyota')) return 'Adquirir unidades Corolla o RAV4 (2021-2023). Alta liquidez en mercado secundario.';
-    if (query.includes('tesla') || query.includes('electric')) return 'Expandir inventario EV. Carga rápida disponible en zona norte aumenta demanda.';
-    if (query.includes('pickup') || query.includes('truck')) return 'Unidades 4x4 diesel tienen el mayor turnaround actual. Buscar subastas de flota.';
+    if (query.includes('toyota'))
+      return 'Adquirir unidades Corolla o RAV4 (2021-2023). Alta liquidez en mercado secundario.';
+    if (query.includes('tesla') || query.includes('electric'))
+      return 'Expandir inventario EV. Carga rápida disponible en zona norte aumenta demanda.';
+    if (query.includes('pickup') || query.includes('truck'))
+      return 'Unidades 4x4 diesel tienen el mayor turnaround actual. Buscar subastas de flota.';
     return `Análisis Sentinel sugiere que el segmento de "${query}" tiene un déficit de oferta del 24% en Vega Alta.`;
   }
 }

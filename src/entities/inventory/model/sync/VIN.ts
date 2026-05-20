@@ -17,17 +17,21 @@ export class VIN {
     }
 
     // Soft normalization for OCR errors (Nivel 16 Resilience)
-    const normalizedVin = vin.trim().toUpperCase()
+    const normalizedVin = vin
+      .trim()
+      .toUpperCase()
       .replace(/I/g, '1')
       .replace(/O/g, '0')
       .replace(/Q/g, '0');
-    
+
     // Regla de Negocio: Todo VIN moderno tiene exactamente 17 caracteres alfanuméricos
     // Y no puede contener las letras I, O, o Q (corregidas arriba).
     const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
 
     if (!vinRegex.test(normalizedVin)) {
-      throw new Error(`Dominio: VIN Inválido (${normalizedVin}). Debe tener 17 caracteres y sin letras I, O, Q.`);
+      throw new Error(
+        `Dominio: VIN Inválido (${normalizedVin}). Debe tener 17 caracteres y sin letras I, O, Q.`,
+      );
     }
 
     return new VIN(normalizedVin);

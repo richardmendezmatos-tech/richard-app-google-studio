@@ -33,7 +33,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   placeholder = 'empty',
   fill = false,
   fallbackSrc = '/placeholder-car.webp',
-  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
 }) => {
   const [error, setError] = React.useState(false);
 

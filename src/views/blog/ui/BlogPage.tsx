@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { PostConversionWidget } from '@/features/blog/ui/components/PostConversionWidget';
@@ -56,15 +56,14 @@ const BlogPage: React.FC = () => {
     setIsSubscribing(true);
     try {
       const repo = await DI.getSubscriberRepository();
-      await repo.subscribe({ 
+      await repo.subscribe({
         email: subscriberEmail,
         source: 'blog_page',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       } as any);
       addNotification('success', '¡Suscripción exitosa! Bienvenido al Newsroom.');
       setSubscriberEmail('');
     } catch (error) {
-
       console.error(error);
       addNotification('error', 'Error al suscribirse. Intenta de nuevo.');
     } finally {
@@ -107,22 +106,24 @@ const BlogPage: React.FC = () => {
       <header className="relative py-20 overflow-hidden rounded-[4rem] bg-slate-900/50 border border-white/5 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative z-10 px-12 space-y-6 text-center max-w-4xl mx-auto"
         >
           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
-             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Sentinel Intelligence Newsroom</span>
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">
+              Sentinel Intelligence Newsroom
+            </span>
           </div>
-          
+
           <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter italic leading-none">
             The <span className="text-ra-primary">Automotive</span> <br />
             <span className="text-white/20">Digital Intel</span>
           </h1>
-          
+
           <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-2xl mx-auto uppercase tracking-wide">
             Estrategia, mercado y tecnología financiera para el consumidor moderno de Puerto Rico.
           </p>
@@ -131,17 +132,21 @@ const BlogPage: React.FC = () => {
 
       {/* Editorial Ticker */}
       <div className="bg-white/[0.02] border-y border-white/5 py-4 overflow-hidden whitespace-nowrap">
-        <motion.div 
-          animate={{ x: [0, -1000] }} 
+        <motion.div
+          animate={{ x: [0, -1000] }}
           transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
           className="flex gap-20 items-center"
         >
-          {[1,2,3,4,5].map(i => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex items-center gap-4">
               <Sparkles className="text-primary" size={14} />
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">N24 Market Update: Demanda de Ford F-150 sube 12% en el área norte</span>
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">
+                N24 Market Update: Demanda de Ford F-150 sube 12% en el área norte
+              </span>
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">Sentinel Sourcing: 4 Gaps detectados en SUVs Compactas</span>
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">
+                Sentinel Sourcing: 4 Gaps detectados en SUVs Compactas
+              </span>
             </div>
           ))}
         </motion.div>
@@ -187,14 +192,14 @@ const BlogPage: React.FC = () => {
                           {post.tags?.[0] || 'ANALYSIS'}
                         </span>
                         <div className="flex items-center gap-2 text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                           <Calendar size={12} /> {post.date}
+                          <Calendar size={12} /> {post.date}
                         </div>
                       </div>
-                      
+
                       <h3 className="text-4xl font-black text-white leading-[1.05] tracking-tighter italic group-hover:text-primary transition-colors">
                         {post.title}
                       </h3>
-                      
+
                       <p className="text-slate-400 line-clamp-3 text-lg font-medium leading-relaxed">
                         {post.excerpt}
                       </p>
@@ -202,10 +207,12 @@ const BlogPage: React.FC = () => {
 
                     <div className="mt-10 pt-6 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                         <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
-                            <User size={16} className="text-slate-500" />
-                         </div>
-                         <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{post.author}</span>
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
+                          <User size={16} className="text-slate-500" />
+                        </div>
+                        <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">
+                          {post.author}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-4 transition-all">
                         Leer Intel <ArrowRight size={14} />
@@ -223,18 +230,19 @@ const BlogPage: React.FC = () => {
           {/* Enhanced Subscription Box */}
           <div className="bg-linear-to-br from-slate-900 to-black p-10 rounded-[3rem] border border-white/5 relative overflow-hidden shadow-[0_48px_96px_-24px_rgba(0,0,0,0.8)]">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-[80px] rounded-full" />
-            
+
             <div className="relative z-10 space-y-8">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
                 <Sparkles className="text-primary" size={24} />
               </div>
-              
+
               <div>
                 <h4 className="font-black text-3xl text-white tracking-tighter uppercase leading-tight italic">
                   Neural <br /> Newsroom
                 </h4>
                 <p className="text-sm text-slate-400 font-medium leading-relaxed mt-4">
-                  Recibe análisis de mercado y oportunidades de abasto exclusivas de Richard Automotive.
+                  Recibe análisis de mercado y oportunidades de abasto exclusivas de Richard
+                  Automotive.
                 </p>
               </div>
 
@@ -260,14 +268,16 @@ const BlogPage: React.FC = () => {
           {/* N24 Trade-In Mini-Widget */}
           <div className="bg-white/5 border border-white/10 rounded-[3rem] p-8 space-y-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
-               <TrendingUpIcon />
+              <TrendingUpIcon />
             </div>
-            <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">¿Qué vale tu auto?</h4>
+            <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">
+              ¿Qué vale tu auto?
+            </h4>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
               Obtén una tasación Sentinel en 30 segundos.
             </p>
             <button className="w-full py-4 bg-white/10 hover:bg-primary hover:text-black border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
-               Tasar mi Unidad
+              Tasar mi Unidad
             </button>
           </div>
 
@@ -322,7 +332,9 @@ const BlogPage: React.FC = () => {
                     <div className="w-2 h-2 rounded-full bg-amber-500" />
                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
                   </div>
-                  <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] hidden sm:block">Sentinel Reader v2.4</span>
+                  <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] hidden sm:block">
+                    Sentinel Reader v2.4
+                  </span>
                 </div>
                 <div className="flex items-center gap-4">
                   <button
@@ -372,11 +384,13 @@ const BlogPage: React.FC = () => {
                             <p className="text-xs font-black text-white uppercase tracking-widest">
                               Por {selectedPost.author}
                             </p>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1 font-bold">Sentinel AI Editorial Staff</p>
+                            <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1 font-bold">
+                              Sentinel AI Editorial Staff
+                            </p>
                           </div>
                         </div>
                         <div className="ml-auto flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-                           <Calendar size={14} /> {selectedPost.date}
+                          <Calendar size={14} /> {selectedPost.date}
                         </div>
                       </div>
                     </div>
@@ -406,8 +420,8 @@ const BlogPage: React.FC = () => {
 
                         <BlogRelatedInventory tag={selectedPost.tags?.[0] || 'Car'} />
 
-                        <PostConversionWidget 
-                          tag={selectedPost.tags?.[0]} 
+                        <PostConversionWidget
+                          tag={selectedPost.tags?.[0]}
                           postTitle={selectedPost.title}
                           specs={selectedPost.specs}
                         />

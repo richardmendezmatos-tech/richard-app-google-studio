@@ -44,11 +44,12 @@ export class ProcessWhatsAppMessage {
       isWhatsApp: true,
     });
 
-    const { intent, sentiment, buyerStage, negotiationStrategy, extractedData } = aiResult.metadata || {};
+    const { intent, sentiment, buyerStage, negotiationStrategy, extractedData } =
+      aiResult.metadata || {};
 
     // 4. Extract and Save Lead Intelligence
     const isHotIntent = ['purchase_ready', 'financing', 'test_drive', 'trade_in'].includes(intent);
-    
+
     // Clean standard E.164 phone by removing 'whatsapp:' prefix if present from Twilio
     const cleanPhone = input.from.replace('whatsapp:', '');
 
@@ -56,7 +57,7 @@ export class ProcessWhatsAppMessage {
       const updatedLead = {
         ...lead,
         phone: lead.phone || cleanPhone,
-        status: isHotIntent ? 'Qualified' : (lead.status || 'new'),
+        status: isHotIntent ? 'Qualified' : lead.status || 'new',
         workStatus: extractedData?.workStatus || lead.workStatus,
         hasPronto: extractedData?.downPayment ? true : lead.hasPronto,
         downPaymentAmount: extractedData?.downPayment || (lead as any).downPaymentAmount,
@@ -68,13 +69,15 @@ export class ProcessWhatsAppMessage {
           sentiment,
           buyerStage,
           negotiationStrategy,
-        }
+        },
       } as any;
       await this.leadRepo.updateLead(chatId, updatedLead);
-      
+
       // Always sync to HubSpot so non-hot leads can enter re-engagement campaigns
       import('../../../services/hubspotService').then(({ hubspotService }) => {
-        hubspotService.syncLeadToHubSpot(updatedLead).catch((e: any) => console.error('HubSpot Sync error', e));
+        hubspotService
+          .syncLeadToHubSpot(updatedLead)
+          .catch((e: any) => console.error('HubSpot Sync error', e));
       });
     } else {
       // If no lead exists we always sync it dynamically to HubSpot
@@ -94,11 +97,13 @@ export class ProcessWhatsAppMessage {
           sentiment,
           buyerStage,
           negotiationStrategy,
-        } 
+        },
       };
       // We trigger the sync without awaiting so it doesn't block the WhatsApp reply
       import('../../../services/hubspotService').then(({ hubspotService }) => {
-        hubspotService.syncLeadToHubSpot(newLead).catch((e: any) => console.error('HubSpot Sync error', e));
+        hubspotService
+          .syncLeadToHubSpot(newLead)
+          .catch((e: any) => console.error('HubSpot Sync error', e));
       });
     }
 

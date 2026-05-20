@@ -112,7 +112,7 @@ export const getMarketInsight = async (
       .single();
 
     if (error || !data) return null;
-    
+
     return {
       make: data.make,
       model: data.model,
@@ -123,11 +123,7 @@ export const getMarketInsight = async (
       timestamp: new Date(data.timestamp),
     };
   } catch (error) {
-    console.error(
-      `Error retrieving market insight for ${make} ${model}:`,
-      error,
-    );
+    console.error(`Error retrieving market insight for ${make} ${model}:`, error);
     return null;
   }
 };
-

@@ -12,20 +12,32 @@ interface Step1VehicleInfoProps {
 }
 
 const COMMON_MAKES = [
-  "Toyota", "Honda", "Kia", "Hyundai", "Ford", "Nissan", 
-  "Jeep", "Mitsubishi", "Chevrolet", "Lexus", "BMW", 
-  "Mercedes-Benz", "Porsche", "Audi", "Acura"
+  'Toyota',
+  'Honda',
+  'Kia',
+  'Hyundai',
+  'Ford',
+  'Nissan',
+  'Jeep',
+  'Mitsubishi',
+  'Chevrolet',
+  'Lexus',
+  'BMW',
+  'Mercedes-Benz',
+  'Porsche',
+  'Audi',
+  'Acura',
 ];
 
-export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({ 
-  formData, 
-  setFormData, 
+export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
+  formData,
+  setFormData,
   onNext,
   inputClasses,
-  labelClasses
+  labelClasses,
 }) => {
   return (
-    <motion.div 
+    <motion.div
       key="step1"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -35,9 +47,9 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className={labelClasses}>Año del Vehículo</label>
-          <input 
-            type="number" 
-            placeholder="2022" 
+          <input
+            type="number"
+            placeholder="2022"
             className={inputClasses}
             value={formData.year}
             onChange={(e) => setFormData({ year: e.target.value })}
@@ -45,23 +57,27 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
         </div>
         <div>
           <label className={labelClasses}>Marca</label>
-          <select 
+          <select
             className={inputClasses}
             value={formData.make}
             onChange={(e) => setFormData({ make: e.target.value })}
           >
-            <option value="" disabled>Selecciona la Marca</option>
-            {COMMON_MAKES.map(make => (
-              <option key={make} value={make}>{make}</option>
+            <option value="" disabled>
+              Selecciona la Marca
+            </option>
+            {COMMON_MAKES.map((make) => (
+              <option key={make} value={make}>
+                {make}
+              </option>
             ))}
             <option value="Otra">Otra</option>
           </select>
         </div>
         <div className="md:col-span-2">
           <label className={labelClasses}>Modelo (Ej: Tacoma TRD Sport)</label>
-          <input 
-            type="text" 
-            placeholder="Tacoma TRD Sport" 
+          <input
+            type="text"
+            placeholder="Tacoma TRD Sport"
             className={inputClasses}
             value={formData.model}
             onChange={(e) => setFormData({ model: e.target.value })}
@@ -70,19 +86,22 @@ export const Step1VehicleInfo: React.FC<Step1VehicleInfoProps> = ({
         <div className="md:col-span-2">
           <label className={labelClasses}>VIN (Opcional - Mayor Precisión)</label>
           <div className="relative">
-            <input 
-              type="text" 
-              placeholder="WPOZZZ..." 
+            <input
+              type="text"
+              placeholder="WPOZZZ..."
               className={`${inputClasses} font-mono`}
               value={formData.vin}
               onChange={(e) => setFormData({ vin: e.target.value })}
             />
-            <Zap size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-primary animate-pulse" />
+            <Zap
+              size={14}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-primary animate-pulse"
+            />
           </div>
         </div>
       </div>
-      
-      <button 
+
+      <button
         onClick={onNext}
         className="w-full py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_40px_-10px_rgba(var(--primary-rgb),0.3)] flex items-center justify-center gap-3"
       >

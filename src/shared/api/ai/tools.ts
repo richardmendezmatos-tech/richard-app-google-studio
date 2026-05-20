@@ -10,7 +10,8 @@ import { sentinelAI } from '@/shared/api/ai/sentinelAI';
  */
 export const aiTools = {
   calculateLoanPayment: tool({
-    description: 'Calcula el pago mensual exacto para un préstamo de auto basado en el precio, pronto y términos.',
+    description:
+      'Calcula el pago mensual exacto para un préstamo de auto basado en el precio, pronto y términos.',
     parameters: z.object({
       price: z.number().describe('Precio total de la unidad incluyendo gastos de dealer ($495).'),
       downPayment: z.number().optional().describe('Cantidad de pronto o trade-in aportada.'),
@@ -39,30 +40,35 @@ export const aiTools = {
     execute: (async ({ query, maxPrice }: any) => {
       try {
         console.log(`[AI Tool: searchInventory] Starting hybrid search for query: "${query}"`);
-        
+
         // 1. Try semantic search first
         let matchingCars: any[] = [];
         try {
           const queryEmbedding = await sentinelAI.generateEmbedding(query);
           const semanticMatches = await searchSemanticInventory(queryEmbedding, 0.35, 5);
-          
+
           if (semanticMatches && semanticMatches.length > 0) {
-            console.log(`[AI Tool: searchInventory] Found ${semanticMatches.length} semantic matches.`);
-            const carIds = semanticMatches.map(m => m.car_id);
+            console.log(
+              `[AI Tool: searchInventory] Found ${semanticMatches.length} semantic matches.`,
+            );
+            const carIds = semanticMatches.map((m) => m.car_id);
             const { data: dbCars, error: dbError } = await supabase
               .from('inventory')
               .select('*')
               .in('id', carIds);
-              
+
             if (!dbError && dbCars) {
               // Maintain semantic relevance order
               matchingCars = semanticMatches
-                .map(match => dbCars.find(c => c.id === match.car_id))
+                .map((match) => dbCars.find((c) => c.id === match.car_id))
                 .filter(Boolean);
             }
           }
         } catch (semanticError) {
-          console.warn('[AI Tool: searchInventory] Semantic search failed, falling back to text-match:', semanticError);
+          console.warn(
+            '[AI Tool: searchInventory] Semantic search failed, falling back to text-match:',
+            semanticError,
+          );
         }
 
         // 2. Text fallback if no semantic matches were found
@@ -93,7 +99,7 @@ export const aiTools = {
           price: c.price,
           status: c.status || 'Disponible',
           description: c.description || '',
-          imageUrl: c.image_url || c.imageUrl || ''
+          imageUrl: c.image_url || c.imageUrl || '',
         }));
       } catch (err: any) {
         console.error('[AI Tool: searchInventory] Unexpected error:', err);
@@ -119,7 +125,7 @@ export const aiTools = {
         vehicle_of_interest: leadData.vehicleOfInterest,
         notes: leadData.notes,
         source: 'AI Tool Capture',
-        status: 'new'
+        status: 'new',
       });
 
       if (error) return { success: false, error: 'Error al guardar los datos.' };

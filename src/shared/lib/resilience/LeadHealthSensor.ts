@@ -15,7 +15,7 @@ export class LeadHealthSensor {
   static check(lead: Lead, insight: PredictiveInsight): HealthStatus {
     const now = Date.now();
     const leadScore = insight.score;
-    
+
     // 1. Detección de anomalías de alta intención
     const needsHealing = leadScore >= this.HEALING_THRESHOLD && lead.status === 'new';
 
@@ -24,7 +24,7 @@ export class LeadHealthSensor {
       needsHealing,
       score: leadScore,
       reason: needsHealing ? 'Alta intención detectada con riesgo de abandono' : 'Estado óptimo',
-      lastUpdate: now
+      lastUpdate: now,
     };
   }
 
@@ -39,7 +39,7 @@ export class LeadHealthSensor {
       pendingLeads.push({
         ...lead,
         _emergencyTimestamp: Date.now(),
-        _metadata: { source: 'auto-healing-sensor', version: '3.2' }
+        _metadata: { source: 'auto-healing-sensor', version: '3.2' },
       });
       localStorage.setItem('sentinel_pending_leads', JSON.stringify(pendingLeads));
       console.log('✅ Sentinel: Lead resguardado en LocalStorage.');

@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function ArticleJsonLd({ article }: { article: typeof SEED_ARTICLES[0] }) {
+function ArticleJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -75,14 +75,24 @@ function ArticleJsonLd({ article }: { article: typeof SEED_ARTICLES[0] }) {
   );
 }
 
-function BreadcrumbJsonLd({ article }: { article: typeof SEED_ARTICLES[0] }) {
+function BreadcrumbJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://richard-automotive.com/blog' },
-      { '@type': 'ListItem', position: 3, name: article.title, item: `https://richard-automotive.com/blog/${article.slug}` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://richard-automotive.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: `https://richard-automotive.com/blog/${article.slug}`,
+      },
     ],
   };
 
@@ -110,7 +120,10 @@ function renderMarkdown(content: string) {
             <thead>
               <tr className="border-b border-white/10">
                 {tableHeaders.map((h, i) => (
-                  <th key={i} className="text-left py-3 px-4 text-cyan-400 font-semibold text-xs uppercase tracking-wider">
+                  <th
+                    key={i}
+                    className="text-left py-3 px-4 text-cyan-400 font-semibold text-xs uppercase tracking-wider"
+                  >
                     {h.trim()}
                   </th>
                 ))}
@@ -120,13 +133,15 @@ function renderMarkdown(content: string) {
               {tableRows.map((row, ri) => (
                 <tr key={ri} className="border-b border-white/5 hover:bg-white/[0.02]">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="py-3 px-4 text-slate-300">{cell.trim()}</td>
+                    <td key={ci} className="py-3 px-4 text-slate-300">
+                      {cell.trim()}
+                    </td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </div>,
       );
     }
     tableHeaders = [];
@@ -155,11 +170,27 @@ function renderMarkdown(content: string) {
 
     // Headers
     if (line.startsWith('# ')) {
-      elements.push(<h1 key={i} className="text-3xl md:text-4xl font-black mt-10 mb-4" style={{ fontFamily: 'var(--font-cinematic)' }}>{line.slice(2)}</h1>);
+      elements.push(
+        <h1
+          key={i}
+          className="text-3xl md:text-4xl font-black mt-10 mb-4"
+          style={{ fontFamily: 'var(--font-cinematic)' }}
+        >
+          {line.slice(2)}
+        </h1>,
+      );
     } else if (line.startsWith('## ')) {
-      elements.push(<h2 key={i} className="text-2xl font-bold mt-10 mb-3 text-cyan-400">{line.slice(3)}</h2>);
+      elements.push(
+        <h2 key={i} className="text-2xl font-bold mt-10 mb-3 text-cyan-400">
+          {line.slice(3)}
+        </h2>,
+      );
     } else if (line.startsWith('### ')) {
-      elements.push(<h3 key={i} className="text-lg font-bold mt-6 mb-2 text-white/90">{line.slice(4)}</h3>);
+      elements.push(
+        <h3 key={i} className="text-lg font-bold mt-6 mb-2 text-white/90">
+          {line.slice(4)}
+        </h3>,
+      );
     }
     // List items
     else if (line.trim().startsWith('- **')) {
@@ -168,8 +199,11 @@ function renderMarkdown(content: string) {
         elements.push(
           <li key={i} className="flex gap-2 mb-2 text-slate-300">
             <span className="text-cyan-400 mt-1 shrink-0">•</span>
-            <span><strong className="text-white">{match[1]}</strong>{match[2] ? ` — ${match[2]}` : ''}</span>
-          </li>
+            <span>
+              <strong className="text-white">{match[1]}</strong>
+              {match[2] ? ` — ${match[2]}` : ''}
+            </span>
+          </li>,
         );
       }
     } else if (line.trim().startsWith('- ')) {
@@ -177,7 +211,7 @@ function renderMarkdown(content: string) {
         <li key={i} className="flex gap-2 mb-2 text-slate-300">
           <span className="text-cyan-400 mt-1 shrink-0">•</span>
           <span>{line.trim().slice(2)}</span>
-        </li>
+        </li>,
       );
     }
     // Numbered list
@@ -187,24 +221,37 @@ function renderMarkdown(content: string) {
         elements.push(
           <li key={i} className="flex gap-3 mb-2 text-slate-300">
             <span className="text-cyan-400 font-bold shrink-0">{num[1]}.</span>
-            <span dangerouslySetInnerHTML={{ __html: num[2].replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>') }} />
-          </li>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: num[2].replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>'),
+              }}
+            />
+          </li>,
         );
       }
     }
     // Bold text paragraphs
     else if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
       elements.push(
-        <p key={i} className="text-white font-semibold my-4">{line.trim().replace(/\*\*/g, '')}</p>
+        <p key={i} className="text-white font-semibold my-4">
+          {line.trim().replace(/\*\*/g, '')}
+        </p>,
       );
     }
     // Links in text
     else if (line.trim() && !line.trim().startsWith('#')) {
       const html = line
         .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
-        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan-400 underline hover:text-cyan-300">$1</a>');
+        .replace(
+          /\[(.+?)\]\((.+?)\)/g,
+          '<a href="$2" class="text-cyan-400 underline hover:text-cyan-300">$1</a>',
+        );
       elements.push(
-        <p key={i} className="text-slate-300 leading-relaxed mb-4" dangerouslySetInnerHTML={{ __html: html }} />
+        <p
+          key={i}
+          className="text-slate-300 leading-relaxed mb-4"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />,
       );
     }
   }
@@ -243,30 +290,46 @@ export default async function BlogArticlePage({ params }: Props) {
           <div className="absolute bottom-0 inset-x-0 p-8 md:p-16 max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-              <Link href="/" className="hover:text-white transition">Inicio</Link>
+              <Link href="/" className="hover:text-white transition">
+                Inicio
+              </Link>
               <span>/</span>
-              <Link href="/blog" className="hover:text-white transition">Blog</Link>
+              <Link href="/blog" className="hover:text-white transition">
+                Blog
+              </Link>
               <span>/</span>
               <span className="text-slate-400 truncate max-w-[200px]">{article.title}</span>
             </nav>
 
             <div className="flex gap-2 mb-4">
               {article.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="text-[10px] px-2.5 py-1 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold">
+                <span
+                  key={tag}
+                  className="text-[10px] px-2.5 py-1 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold"
+                >
                   {tag}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-black leading-tight mb-4" style={{ fontFamily: 'var(--font-cinematic)' }}>
+            <h1
+              className="text-3xl md:text-5xl font-black leading-tight mb-4"
+              style={{ fontFamily: 'var(--font-cinematic)' }}
+            >
               {article.title}
             </h1>
 
             <div className="flex items-center gap-4 text-sm text-slate-400">
-              <span>Por <strong className="text-white">{article.author}</strong></span>
+              <span>
+                Por <strong className="text-white">{article.author}</strong>
+              </span>
               <span>•</span>
               <time dateTime={article.date}>
-                {new Date(article.date).toLocaleDateString('es-PR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {new Date(article.date).toLocaleDateString('es-PR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
               </time>
             </div>
           </div>
@@ -274,9 +337,7 @@ export default async function BlogArticlePage({ params }: Props) {
 
         {/* Article Body */}
         <article className="max-w-4xl mx-auto px-6 md:px-16 py-12">
-          <div className="prose-custom">
-            {renderMarkdown(article.content)}
-          </div>
+          <div className="prose-custom">{renderMarkdown(article.content)}</div>
         </article>
 
         {/* Related Articles */}
@@ -292,7 +353,11 @@ export default async function BlogArticlePage({ params }: Props) {
                 >
                   {rel.imageUrl && (
                     <div className="h-32 overflow-hidden">
-                      <img src={rel.imageUrl} alt={rel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img
+                        src={rel.imageUrl}
+                        alt={rel.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
                   )}
                   <div className="p-4">

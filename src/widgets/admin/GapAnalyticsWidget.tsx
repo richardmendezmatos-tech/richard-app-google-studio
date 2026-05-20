@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { TrendingDown, AlertCircle, RefreshCw, Zap, ShoppingCart, Loader2 } from 'lucide-react';
@@ -15,39 +15,43 @@ export const GapAnalyticsWidget: React.FC = () => {
   const [gaps, setGaps] = useState<Gap[]>([]);
   const [loading, setLoading] = useState(true);
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
-  
+
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseAnonKey =
+    process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const fetchGaps = useCallback(async (signal?: AbortSignal) => {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const endpoint = `${supabaseUrl}/rest/v1/search_gaps?select=id,query,detected_intent,created_at&order=created_at.desc&limit=10`;
-      const res = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          apikey: supabaseAnonKey,
-          Authorization: `Bearer ${supabaseAnonKey}`,
-          Accept: 'application/json',
-        },
-        signal,
-      });
-      if (!res.ok) throw new Error(`Gap fetch failed: ${res.status}`);
-      const data = (await res.json()) as Gap[];
-      setGaps(Array.isArray(data) ? data : []);
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
-        console.error('Gap fetch error:', error);
+  const fetchGaps = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        setLoading(false);
+        return;
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [supabaseUrl, supabaseAnonKey]);
+
+      setLoading(true);
+      try {
+        const endpoint = `${supabaseUrl}/rest/v1/search_gaps?select=id,query,detected_intent,created_at&order=created_at.desc&limit=10`;
+        const res = await fetch(endpoint, {
+          method: 'GET',
+          headers: {
+            apikey: supabaseAnonKey,
+            Authorization: `Bearer ${supabaseAnonKey}`,
+            Accept: 'application/json',
+          },
+          signal,
+        });
+        if (!res.ok) throw new Error(`Gap fetch failed: ${res.status}`);
+        const data = (await res.json()) as Gap[];
+        setGaps(Array.isArray(data) ? data : []);
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Gap fetch error:', error);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabaseUrl, supabaseAnonKey],
+  );
 
   const handleHoustonAnalyze = async (gap: Gap) => {
     setAnalyzingId(gap.id);
@@ -56,9 +60,9 @@ export const GapAnalyticsWidget: React.FC = () => {
       const res = await fetch('/api/command-center/sourcing/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: gap.query, count: 1 })
+        body: JSON.stringify({ query: gap.query, count: 1 }),
       });
-      
+
       if (!res.ok) throw new Error('Failed to analyze');
       const analysis = await res.json();
 
@@ -68,7 +72,7 @@ export const GapAnalyticsWidget: React.FC = () => {
         recommendation: analysis.recommendation,
         roi: analysis.roi,
         priority: analysis.priority,
-        reason: analysis.reason
+        reason: analysis.reason,
       });
 
       if (result.success) {
@@ -98,7 +102,9 @@ export const GapAnalyticsWidget: React.FC = () => {
             </div>
             Search Gaps
           </h3>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Inteligencia de Abasto Proactiva</p>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+            Inteligencia de Abasto Proactiva
+          </p>
         </div>
         <button
           onClick={() => fetchGaps()}
@@ -115,7 +121,9 @@ export const GapAnalyticsWidget: React.FC = () => {
               <AlertCircle className="opacity-20" size={32} />
             </div>
             <p className="text-xs font-black uppercase tracking-[0.2em]">Mercado Satisfecho</p>
-            <p className="text-[9px] mt-2 opacity-50 uppercase tracking-widest">No hay gaps detectados hoy</p>
+            <p className="text-[9px] mt-2 opacity-50 uppercase tracking-widest">
+              No hay gaps detectados hoy
+            </p>
           </div>
         ) : (
           gaps.map((gap) => (
@@ -125,17 +133,23 @@ export const GapAnalyticsWidget: React.FC = () => {
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest block mb-1">Gap Detectado</span>
+                  <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest block mb-1">
+                    Gap Detectado
+                  </span>
                   <span className="text-sm font-black text-slate-700 dark:text-slate-200 italic tracking-tight">
                     "{gap.query}"
                   </span>
                 </div>
-                <button 
+                <button
                   onClick={() => handleHoustonAnalyze(gap)}
                   disabled={analyzingId === gap.id}
                   className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-400 text-[9px] font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all shadow-lg shadow-cyan-500/10 disabled:opacity-50"
                 >
-                  {analyzingId === gap.id ? <Loader2 size={10} className="animate-spin" /> : <Zap size={10} />}
+                  {analyzingId === gap.id ? (
+                    <Loader2 size={10} className="animate-spin" />
+                  ) : (
+                    <Zap size={10} />
+                  )}
                   Houston AI
                 </button>
               </div>
@@ -154,7 +168,8 @@ export const GapAnalyticsWidget: React.FC = () => {
       <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-center gap-3">
         <ShoppingCart className="text-emerald-500" size={16} />
         <p className="text-[9px] text-emerald-500/80 font-bold uppercase tracking-widest leading-relaxed">
-          Usa <span className="text-emerald-400 font-black">Houston AI</span> para convertir estos gaps en órdenes de compra estratégicas.
+          Usa <span className="text-emerald-400 font-black">Houston AI</span> para convertir estos
+          gaps en órdenes de compra estratégicas.
         </p>
       </div>
     </div>

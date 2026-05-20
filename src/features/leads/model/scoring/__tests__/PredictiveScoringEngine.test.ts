@@ -16,24 +16,24 @@ describe('PredictiveScoringEngine - Nivel 14', () => {
       },
       behavioralFingerprint: {
         scrollVelocity: 150, // Optimal focus
-        imageDwellTime: { 'img1': 15000, 'img2': 20000 }, // 35s total
+        imageDwellTime: { img1: 15000, img2: 20000 }, // 35s total
         featureInteractions: ['specs', 'compare'],
         lastMicroInteraction: Date.now(),
         interactionIntensity: 8,
-      }
+      },
     };
 
     const result = await engine.compute(mockLead as Lead);
 
-    // Initial 50 
-    // +10 (timeOnSite) 
-    // +15 (inventoryViews) 
+    // Initial 50
+    // +10 (timeOnSite)
+    // +15 (inventoryViews)
     // +15 (dwellTime > 30s)
     // +10 (scroll velocity optimal)
     // +15 (intensity > 7)
     // = 115 -> Cap 100
     // * 1.1 (improving trajectory) -> 100
-    
+
     expect(result.score).toBeGreaterThanOrEqual(90);
     expect(result.factors).toContain('Exámen visual detallado (Dwell Time High)');
     expect(result.factors).toContain('Patrón de lectura enfocado (Scroll Velocity Optimal)');
@@ -51,15 +51,15 @@ describe('PredictiveScoringEngine - Nivel 14', () => {
       },
       behavioralFingerprint: {
         scrollVelocity: 1200, // Rapid scanning, no focus
-        imageDwellTime: { 'img1': 1000 },
+        imageDwellTime: { img1: 1000 },
         featureInteractions: [],
         lastMicroInteraction: Date.now(),
         interactionIntensity: 2,
-      }
+      },
     };
 
     const result = await engine.compute(mockLead as Lead);
-    
+
     expect(result.score).toBeLessThan(60);
     expect(result.predictedAction).toBe('Nudge Scheduled');
   });

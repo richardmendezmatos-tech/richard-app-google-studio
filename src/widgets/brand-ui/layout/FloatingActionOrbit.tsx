@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -168,7 +168,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
           onClick={handleMainClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          aria-label={isOpen || activeWidget ? "Cerrar menú de acciones" : "Abrir centro de mando"}
+          aria-label={isOpen || activeWidget ? 'Cerrar menú de acciones' : 'Abrir centro de mando'}
           className={`relative z-50 w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 group/main ${
             isOpen || activeWidget
               ? 'bg-cyan-500 shadow-[0_0_40px_rgba(0,229,255,0.6)]'

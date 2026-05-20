@@ -1,25 +1,46 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ChevronLeft, ChevronRight, Share2, Sparkles, Loader2, ShieldCheck, Zap, ArrowRight, MessageCircle, TrendingUp, Wind, Gauge, Compass, Cpu, Coins, Flame, Crown, Activity, Key } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Share2,
+  Sparkles,
+  Loader2,
+  ShieldCheck,
+  Zap,
+  ArrowRight,
+  MessageCircle,
+  TrendingUp,
+  Wind,
+  Gauge,
+  Compass,
+  Cpu,
+  Coins,
+  Flame,
+  Crown,
+  Activity,
+  Key,
+} from 'lucide-react';
 import { generateCarPitch, sentinelAI } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
-
 const ApprovalSimulatorWidget = React.lazy(() =>
-  import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => ({ default: m.ApprovalSimulatorWidget })),
+  import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => ({
+    default: m.ApprovalSimulatorWidget,
+  })),
 );
 const Viewer360 = React.lazy(() =>
   import('@/features/inventory').then((m) => ({ default: m.Viewer360 })),
 );
 const PreQualifyView = React.lazy(() =>
-  import('@/views/leads/ui/PreQualifyView').then((m) => ({ default: m.default }))
+  import('@/views/leads/ui/PreQualifyView').then((m) => ({ default: m.default })),
 );
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -43,7 +64,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const [isPreQualifyOpen, setIsPreQualifyOpen] = useState(false);
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
-  
+
   // Mocked dynamic urgency (for CRO)
   const [viewersCount, setViewersCount] = React.useState(5);
   React.useEffect(() => {
@@ -147,7 +168,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   };
 
   const whatsappUrl = `https://wa.me/${BUSINESS_CONTACT.phone.replace(/-/g, '')}?text=${encodeURIComponent(
-    `Hola Richard, vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. Quisiera más información para comprarlo.`
+    `Hola Richard, vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. Quisiera más información para comprarlo.`,
   )}`;
 
   return (
@@ -215,7 +236,11 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </React.Suspense>
           </div>
 
-          <GlassContainer intensity="medium" opacity={0.06} className="p-8 group relative overflow-hidden border-[#C5A880]/15 hover:border-[#C5A880]/40 transition-all duration-500">
+          <GlassContainer
+            intensity="medium"
+            opacity={0.06}
+            className="p-8 group relative overflow-hidden border-[#C5A880]/15 hover:border-[#C5A880]/40 transition-all duration-500"
+          >
             {/* Gold Laser Scanner (CRO / Nivel 18 Precision) */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-[#C5A880] shadow-[0_0_20px_#C5A880] opacity-0 group-hover:opacity-100 animate-scan transition-opacity" />
             <div className="flex items-center justify-between mb-6 relative z-10">
@@ -229,7 +254,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 S-AI v2.4 Active
               </span>
             </div>
-            
+
             {loadingAnalysis ? (
               <div className="h-48 flex flex-col items-center justify-center gap-4 text-[#C5A880] relative z-10">
                 <Loader2 className="w-8 h-8 animate-spin" />
@@ -238,9 +263,15 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 </span>
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 relative z-10">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8 relative z-10"
+              >
                 <div className="space-y-3">
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Technical Profile</p>
+                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                    Technical Profile
+                  </p>
                   <p className="text-sm font-medium text-slate-200 leading-relaxed italic border-l-2 border-[#C5A880]/40 pl-4 py-1">
                     "{deepAnalysis?.technicalProfile}"
                   </p>
@@ -250,28 +281,45 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                   {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => {
                     const iconName = feature.icon || 'Sparkles';
                     return (
-                      <div key={i} className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 hover:border-[#C5A880]/30 transition-all flex items-start gap-3">
+                      <div
+                        key={i}
+                        className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 hover:border-[#C5A880]/30 transition-all flex items-start gap-3"
+                      >
                         <div className="h-8 w-8 shrink-0 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
                           {(() => {
-                            const iconClass = "text-[#C5A880] shrink-0";
+                            const iconClass = 'text-[#C5A880] shrink-0';
                             switch (iconName) {
-                              case 'ShieldCheck': return <ShieldCheck className={iconClass} size={16} />;
-                              case 'Zap': return <Zap className={iconClass} size={16} />;
-                              case 'Wind': return <Wind className={iconClass} size={16} />;
-                              case 'Gauge': return <Gauge className={iconClass} size={16} />;
-                              case 'Compass': return <Compass className={iconClass} size={16} />;
-                              case 'Cpu': return <Cpu className={iconClass} size={16} />;
-                              case 'Coins': return <Coins className={iconClass} size={16} />;
-                              case 'Flame': return <Flame className={iconClass} size={16} />;
-                              case 'Crown': return <Crown className={iconClass} size={16} />;
-                              case 'Activity': return <Activity className={iconClass} size={16} />;
-                              case 'Key': return <Key className={iconClass} size={16} />;
-                              default: return <Sparkles className={iconClass} size={16} />;
+                              case 'ShieldCheck':
+                                return <ShieldCheck className={iconClass} size={16} />;
+                              case 'Zap':
+                                return <Zap className={iconClass} size={16} />;
+                              case 'Wind':
+                                return <Wind className={iconClass} size={16} />;
+                              case 'Gauge':
+                                return <Gauge className={iconClass} size={16} />;
+                              case 'Compass':
+                                return <Compass className={iconClass} size={16} />;
+                              case 'Cpu':
+                                return <Cpu className={iconClass} size={16} />;
+                              case 'Coins':
+                                return <Coins className={iconClass} size={16} />;
+                              case 'Flame':
+                                return <Flame className={iconClass} size={16} />;
+                              case 'Crown':
+                                return <Crown className={iconClass} size={16} />;
+                              case 'Activity':
+                                return <Activity className={iconClass} size={16} />;
+                              case 'Key':
+                                return <Key className={iconClass} size={16} />;
+                              default:
+                                return <Sparkles className={iconClass} size={16} />;
                             }
                           })()}
                         </div>
                         <div>
-                          <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-0.5">{feature.label}</p>
+                          <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-0.5">
+                            {feature.label}
+                          </p>
                           <p className="text-xs font-bold text-white">{feature.value}</p>
                         </div>
                       </div>
@@ -297,18 +345,31 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
         <div className="space-y-12">
           {/* Breadcrumbs (Nivel 18 Precision) */}
           <nav className="hidden lg:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-            <a href="/" className="hover:text-white transition-colors">INICIO</a>
+            <a href="/" className="hover:text-white transition-colors">
+              INICIO
+            </a>
             <ChevronRight size={10} className="text-slate-700" />
-            <a href="/inventario" className="hover:text-white transition-colors">INVENTARIO</a>
+            <a href="/inventario" className="hover:text-white transition-colors">
+              INVENTARIO
+            </a>
             <ChevronRight size={10} className="text-slate-700" />
-            <a href={`/autos-usados/tipo/${car.type?.toLowerCase() || 'sedan'}`} className="hover:text-white transition-colors">{car.type || 'AUTO'}</a>
+            <a
+              href={`/autos-usados/tipo/${car.type?.toLowerCase() || 'sedan'}`}
+              className="hover:text-white transition-colors"
+            >
+              {car.type || 'AUTO'}
+            </a>
             <ChevronRight size={10} className="text-primary/40" />
             <span className="text-primary">{car.name}</span>
           </nav>
 
           {/* Header (Nivel 18 Precision) */}
           <div className="space-y-4">
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3"
+            >
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px]">
                 {car.type} • {year} • DATABASE-RECOGNIZED
@@ -329,7 +390,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <button
                   onClick={() => setIsPreQualifyOpen(true)}
@@ -338,20 +399,23 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                   <Zap size={18} className="animate-pulse" />
                   Pre-cualifícate Express
                 </button>
-                
+
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 px-8 py-4 bg-white/5 border border-white/20 hover:bg-white/10 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3 group"
                 >
-                  <MessageCircle size={18} className="text-emerald-400 group-hover:scale-125 transition-transform" />
+                  <MessageCircle
+                    size={18}
+                    className="text-emerald-400 group-hover:scale-125 transition-transform"
+                  />
                   Hagamos Negocio
                 </a>
               </div>
 
               {/* Urgency Badge */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/5 border border-cyan-500/10 mt-2"
@@ -369,16 +433,26 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
 
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { icon: <ShieldCheck size={16} className="text-emerald-500" />, label: "SENTINEL WARRANTY" },
-              { icon: <Zap size={16} className="text-amber-500" />, label: "EXPRESS DELIVERY" }
+              {
+                icon: <ShieldCheck size={16} className="text-emerald-500" />,
+                label: 'SENTINEL WARRANTY',
+              },
+              { icon: <Zap size={16} className="text-amber-500" />, label: 'EXPRESS DELIVERY' },
             ].map((b, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap">
+              <div
+                key={i}
+                className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap"
+              >
                 {b.icon} {b.label}
               </div>
             ))}
           </div>
 
-          <GlassContainer intensity="high" opacity={0.04} className="p-8 group shadow-2xl relative overflow-hidden">
+          <GlassContainer
+            intensity="high"
+            opacity={0.04}
+            className="p-8 group shadow-2xl relative overflow-hidden"
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="h-1 w-8 bg-primary rounded-full group-hover:w-12 transition-all" />
               <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
@@ -386,46 +460,53 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               </h3>
             </div>
             <div className="grid grid-cols-2 gap-8 mb-8">
-              <ProgressRing 
-                label="SENTINEL SCORE" 
-                value={deepAnalysis?.advantageScore || 85} 
-                max={100} 
-                size={140} 
-                strokeWidth={12} 
+              <ProgressRing
+                label="SENTINEL SCORE"
+                value={deepAnalysis?.advantageScore || 85}
+                max={100}
+                size={140}
+                strokeWidth={12}
               />
-              <ProgressRing 
-                label="TECH RANK" 
-                value={car.type === 'luxury' ? 98 : 92} 
-                max={100} 
-                size={140} 
-                strokeWidth={12} 
-                color="#f59e0b" 
+              <ProgressRing
+                label="TECH RANK"
+                value={car.type === 'luxury' ? 98 : 92}
+                max={100}
+                size={140}
+                strokeWidth={12}
+                color="#f59e0b"
               />
             </div>
 
             <div className="p-6 rounded-3xl bg-indigo-500/5 border border-indigo-500/10 relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp size={16} className="text-indigo-400" />
-                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Market Position</span>
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">
+                  Market Position
+                </span>
               </div>
               <p className="text-xs font-bold text-slate-300 leading-relaxed">
-                {deepAnalysis?.marketPosition || "Unidad con alta demanda proyectada en el mercado local."}
+                {deepAnalysis?.marketPosition ||
+                  'Unidad con alta demanda proyectada en el mercado local.'}
               </p>
             </div>
-            
+
             <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-primary/5 blur-3xl pointer-events-none" />
           </GlassContainer>
 
           <div className="h-px bg-white/5" />
 
           <div id="deal-builder-section" className="scroll-mt-32">
-            <React.Suspense fallback={<div className="w-full h-[600px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />}>
+            <React.Suspense
+              fallback={
+                <div className="w-full h-[600px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />
+              }
+            >
               <GlassContainer intensity="medium" opacity={0.02} className="p-1">
-                <ApprovalSimulatorWidget 
-                  vehicleId={car.id} 
-                  basePrice={car.price} 
-                  vehicleName={car.name} 
-                  dealerId={currentDealer?.id || 'richard-automotive'} 
+                <ApprovalSimulatorWidget
+                  vehicleId={car.id}
+                  basePrice={car.price}
+                  vehicleName={car.name}
+                  dealerId={currentDealer?.id || 'richard-automotive'}
                 />
               </GlassContainer>
             </React.Suspense>
@@ -436,38 +517,51 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
       <section className="max-w-[1400px] mx-auto px-6 lg:px-12 mt-32">
         <div className="flex items-center justify-between mb-12">
           <div className="space-y-2">
-            <h2 className="font-cinematic text-3xl lg:text-5xl text-white tracking-tighter uppercase">Unidades Similares</h2>
-            <p className="font-tech text-[10px] text-primary font-black uppercase tracking-[0.4em]">Sugerencias de la Red Sentinel</p>
+            <h2 className="font-cinematic text-3xl lg:text-5xl text-white tracking-tighter uppercase">
+              Unidades Similares
+            </h2>
+            <p className="font-tech text-[10px] text-primary font-black uppercase tracking-[0.4em]">
+              Sugerencias de la Red Sentinel
+            </p>
           </div>
-          <a href="/inventario" className="hidden lg:flex items-center gap-3 text-white/50 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest">
+          <a
+            href="/inventario"
+            className="hidden lg:flex items-center gap-3 text-white/50 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest"
+          >
             VER TODO EL INVENTARIO <ArrowRight size={14} />
           </a>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {inventory
-            .filter(i => i.id !== car.id && (i.type === car.type || i.make === car.make))
+            .filter((i) => i.id !== car.id && (i.type === car.type || i.make === car.make))
             .slice(0, 3)
-            .map(item => (
-              <a 
+            .map((item) => (
+              <a
                 key={item.id}
                 href={`/inventario/${generateVehicleSlug(item, false)}/${item.id}`}
                 className="group relative bg-white/5 border border-white/10 rounded-4xl overflow-hidden hover:border-primary/40 transition-all"
               >
                 <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-slate-900/20">
-                  <img 
-                    src={item.image || item.img || item.images?.[0]} 
-                    alt={item.name} 
+                  <img
+                    src={item.image || item.img || item.images?.[0]}
+                    alt={item.name}
                     className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-[#020617] via-transparent to-transparent opacity-80" />
                 </div>
                 <div className="p-6 space-y-3">
                   <div className="flex justify-between items-start">
-                    <p className="font-tech text-[9px] text-primary font-black uppercase tracking-widest">{item.year} • {item.type}</p>
-                    <p className="font-tech text-lg font-black text-white">${item.price.toLocaleString()}</p>
+                    <p className="font-tech text-[9px] text-primary font-black uppercase tracking-widest">
+                      {item.year} • {item.type}
+                    </p>
+                    <p className="font-tech text-lg font-black text-white">
+                      ${item.price.toLocaleString()}
+                    </p>
                   </div>
-                  <h3 className="font-cinematic text-xl text-white uppercase tracking-tight group-hover:text-primary transition-colors">{item.name}</h3>
+                  <h3 className="font-cinematic text-xl text-white uppercase tracking-tight group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h3>
                 </div>
               </a>
             ))}
@@ -479,23 +573,34 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
         <GlassContainer intensity="low" opacity={0.03} className="p-10 border-white/5">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="space-y-4">
-              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Explorar Categoría</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Descubre más unidades similares en nuestra colección curada.</p>
-              <a 
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                Explorar Categoría
+              </h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                Descubre más unidades similares en nuestra colección curada.
+              </p>
+              <a
                 href={`/autos-usados/tipo/${car.type?.toLowerCase() || 'sedan'}`}
                 className="inline-flex items-center gap-2 text-white font-bold hover:text-primary transition-all group"
               >
                 Ver todos los {car.type || 'Autos'}
-                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </a>
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Inventario Local</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Encuentra los mejores autos usados certificados cerca de ti.</p>
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                Inventario Local
+              </h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                Encuentra los mejores autos usados certificados cerca de ti.
+              </p>
               <div className="flex flex-wrap gap-3">
-                {['Vega Alta', 'Bayamón', 'San Juan'].map(city => (
-                  <a 
+                {['Vega Alta', 'Bayamón', 'San Juan'].map((city) => (
+                  <a
                     key={city}
                     href={`/autos-usados/${city.toLowerCase().replace(' ', '-')}`}
                     className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors"
@@ -507,9 +612,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">Richard Automotive</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Especialistas en pickups y guaguas de lujo en Puerto Rico.</p>
-              <a 
+              <h4 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                Richard Automotive
+              </h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                Especialistas en pickups y guaguas de lujo en Puerto Rico.
+              </p>
+              <a
                 href="/"
                 className="text-xs font-black text-white hover:text-primary transition-all underline underline-offset-8 decoration-primary/30"
               >
@@ -530,22 +639,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             ${car.price.toLocaleString()}
           </p>
         </div>
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-emerald-500 hover:bg-emerald-400 text-white p-4 rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] transition-all active:scale-90"
-          >
-            <MessageCircle size={20} />
-          </a>
-          <button
-            onClick={() => {
-              document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex-1 bg-primary hover:bg-primary/90 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
-          >
-            ME INTERESA
-          </button>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-emerald-500 hover:bg-emerald-400 text-white p-4 rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] transition-all active:scale-90"
+        >
+          <MessageCircle size={20} />
+        </a>
+        <button
+          onClick={() => {
+            document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="flex-1 bg-primary hover:bg-primary/90 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
+        >
+          ME INTERESA
+        </button>
       </div>
       {/* Pre-Qualification Modal */}
       <AnimatePresence>
@@ -569,17 +678,23 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 ✕
               </button>
               <div className="max-h-[85vh] overflow-y-auto p-6">
-                <React.Suspense fallback={<div className="h-[600px] flex items-center justify-center text-primary animate-pulse font-tech text-xs tracking-widest">CARGANDO MÓDULO DE CRÉDITO...</div>}>
-                  <PreQualifyView 
+                <React.Suspense
+                  fallback={
+                    <div className="h-[600px] flex items-center justify-center text-primary animate-pulse font-tech text-xs tracking-widest">
+                      CARGANDO MÓDULO DE CRÉDITO...
+                    </div>
+                  }
+                >
+                  <PreQualifyView
                     dealContext={{
                       vehicle: car,
                       quote: {
                         monthlyPayment: Math.round((car.price - 2000) * (1.049 / 60)),
                         downPayment: 2000,
                         term: 60,
-                        apr: 4.9
-                      }
-                    }} 
+                        apr: 4.9,
+                      },
+                    }}
                   />
                 </React.Suspense>
               </div>

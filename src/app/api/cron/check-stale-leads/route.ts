@@ -16,10 +16,10 @@ export async function GET(request: Request) {
     const leadRepository = new SupabaseLeadRepository();
     const emailRepository = new SendGridEmailRepository();
     const useCase = new NudgeStaleLeads(leadRepository, emailRepository);
-    
+
     const nudgeCount = await useCase.execute();
     console.info(`Nudge campaign completed. Emailed ${nudgeCount} leads.`);
-    
+
     return NextResponse.json({ success: true, nudged: nudgeCount });
   } catch (error: any) {
     console.error('Error in checkStaleLeads', error);

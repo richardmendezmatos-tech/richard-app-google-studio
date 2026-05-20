@@ -148,11 +148,7 @@ export const generateCarMarketingContent = async (
   try {
     const { generateStructuredJSON } = await import('@/shared/api/ai/geminiService');
 
-    const response = await generateStructuredJSON(
-      prompt,
-      undefined,
-      'gemini-2.0-flash'
-    );
+    const response = await generateStructuredJSON(prompt, undefined, 'gemini-2.0-flash');
 
     return response;
   } catch (error) {

@@ -80,7 +80,8 @@ const financeTools = {
     },
     {
       name: 'captureCustomerLead',
-      description: 'Registra los datos de contacto de un cliente interesado en la base de datos de Richard Automotive.',
+      description:
+        'Registra los datos de contacto de un cliente interesado en la base de datos de Richard Automotive.',
       parameters: {
         type: SchemaType.OBJECT,
         properties: {
@@ -88,28 +89,35 @@ const financeTools = {
           phone: { type: SchemaType.STRING, description: 'Teléfono o WhatsApp del cliente.' },
           email: { type: SchemaType.STRING, description: 'Correo electrónico (opcional).' },
           vehicleOfInterest: { type: SchemaType.STRING, description: 'Auto que le interesa.' },
-          notes: { type: SchemaType.STRING, description: 'Notas adicionales (ej. "Quiere cita hoy").' },
+          notes: {
+            type: SchemaType.STRING,
+            description: 'Notas adicionales (ej. "Quiere cita hoy").',
+          },
         },
         required: ['firstName', 'phone'],
       },
     },
     {
       name: 'generatePreQualEstimate',
-      description: 'Genera un análisis financiero preliminar basado en el ingreso y crédito auto-reportado del cliente.',
+      description:
+        'Genera un análisis financiero preliminar basado en el ingreso y crédito auto-reportado del cliente.',
       parameters: {
         type: SchemaType.OBJECT,
         properties: {
-          creditTier: { 
-            type: SchemaType.STRING, 
+          creditTier: {
+            type: SchemaType.STRING,
             enum: ['Excellent', 'Good', 'Fair', 'Poor'],
-            description: 'Rango de crédito del cliente (800+, 700+, 600+, <600).' 
+            description: 'Rango de crédito del cliente (800+, 700+, 600+, <600).',
           },
           monthlyIncome: { type: SchemaType.NUMBER, description: 'Ingreso bruto mensual ($).' },
-          monthlyDebt: { type: SchemaType.NUMBER, description: 'Pagos mensuales de vivienda (renta/hipoteca).' },
+          monthlyDebt: {
+            type: SchemaType.NUMBER,
+            description: 'Pagos mensuales de vivienda (renta/hipoteca).',
+          },
         },
         required: ['creditTier', 'monthlyIncome'],
       },
-    }
+    },
   ],
 } as any;
 
@@ -126,15 +134,15 @@ const interceptPrompt = (prompt: string): string => {
     /cuáles son tus reglas/gi,
     /dime tus instrucciones/gi,
     /delete all previous/gi,
-    /forget everything/gi
+    /forget everything/gi,
   ];
 
   const lowerPrompt = prompt.toLowerCase();
-  const isMalicious = forbiddenPatterns.some(pattern => pattern.test(lowerPrompt));
+  const isMalicious = forbiddenPatterns.some((pattern) => pattern.test(lowerPrompt));
 
   if (isMalicious) {
     console.warn('🛡️ [Prompt Armor] Blocked potential injection attempt:', prompt);
-    return "Lo siento, como asistente certificado de Richard Automotive, solo puedo ayudarte con temas relacionados a vehículos, inventario y financiamiento. ¿En qué más puedo asesorarte hoy?";
+    return 'Lo siento, como asistente certificado de Richard Automotive, solo puedo ayudarte con temas relacionados a vehículos, inventario y financiamiento. ¿En qué más puedo asesorarte hoy?';
   }
 
   return prompt;
@@ -146,7 +154,7 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
     const isCommercial = price > 100000;
     const defaultAPR = isCommercial ? 8.95 : 6.95;
     const effectiveAPR = apr || defaultAPR;
-    
+
     const balance = price - downPayment;
     const monthlyRate = effectiveAPR / 100 / 12;
     const payment = (balance * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
@@ -155,8 +163,8 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
       totalInterest: Math.round(payment * term - balance),
       balanceToFinance: balance,
       type: isCommercial ? 'Comercial/Pro' : 'Personal',
-      disclaimer: isCommercial 
-        ? 'Basado en financiamiento comercial (Freightliner Pro). Sujeto a flujo de caja del negocio.' 
+      disclaimer: isCommercial
+        ? 'Basado en financiamiento comercial (Freightliner Pro). Sujeto a flujo de caja del negocio.'
         : 'Estimado basado en crédito excelente. Sujeto a aprobación bancaria.',
     };
   },
@@ -171,7 +179,7 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
       )
       .slice(0, 5);
 
-      return matches.map((c) => ({
+    return matches.map((c) => ({
       name: c.name,
       price: c.price,
       badge: c.badge,
@@ -180,42 +188,42 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
   },
   captureCustomerLead: ({ firstName, phone, email, vehicleOfInterest, notes }) => {
     console.log('📝 [Lead Interceptor] Captured:', { firstName, phone, email, vehicleOfInterest });
-    
+
     // Emit custom event for UI feedback
     const event = new CustomEvent('ra_lead_captured', {
-      detail: { firstName, vehicleOfInterest, timestamp: new Date().toISOString() }
+      detail: { firstName, vehicleOfInterest, timestamp: new Date().toISOString() },
     });
     window.dispatchEvent(event);
 
     return {
       status: 'success',
       message: `Lead de ${firstName} guardado en RA Cloud.`,
-      followUp: 'Richard será notificado de inmediato.'
+      followUp: 'Richard será notificado de inmediato.',
     };
   },
   generatePreQualEstimate: ({ creditTier, monthlyIncome, monthlyDebt = 0 }) => {
     console.log('📊 [Finance Analyst] Analyzing:', { creditTier, monthlyIncome, monthlyDebt });
-    
+
     // APR Mapping based on PR Local Banks (Primary Floorplan)
-    const bestBank = FINANCIAL_ENTITIES_PR.find(e => e.id === 'banco-popular' && e.tier === 1);
+    const bestBank = FINANCIAL_ENTITIES_PR.find((e) => e.id === 'banco-popular' && e.tier === 1);
     const aprMap: Record<string, number> = {
       Excellent: bestBank?.baseRate || 6.95,
       Good: 7.95,
       Fair: 11.95,
-      Poor: 17.95
+      Poor: 17.95,
     };
-    
+
     const apr = aprMap[creditTier] || 12.95;
-    
+
     // DTI/PTI Logic (Simple heuristic)
     // Richard's Rule: Max 15% of gross income for car payment
     const maxPayment = Math.round(monthlyIncome * 0.15);
-    
+
     // Estimate total loan amount (approx 72 months term)
     const term = 72;
     const monthlyRate = apr / 100 / 12;
     const estimatedLoan = Math.round(
-      (maxPayment * (1 - Math.pow(1 + monthlyRate, -term))) / monthlyRate
+      (maxPayment * (1 - Math.pow(1 + monthlyRate, -term))) / monthlyRate,
     );
 
     return {
@@ -224,7 +232,7 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
       buyingPower: estimatedLoan,
       creditTier,
       recommendation: `Basado en un ingreso de $${monthlyIncome}, calificas para una unidad de hasta $${estimatedLoan.toLocaleString()}.`,
-      disclaimer: 'Análisis actuarial preliminar. Sujeto a validación de SSN en bóveda segura.'
+      disclaimer: 'Análisis actuarial preliminar. Sujeto a validación de SSN en bóveda segura.',
     };
   },
 };
@@ -238,7 +246,8 @@ const callGeminiProxy = async (
 ): Promise<string> => {
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
+    if (!apiKey)
+      throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const modelOptions: any = {
@@ -287,26 +296,30 @@ const callGeminiProxy = async (
     }
 
     const duration = Date.now() - startTime;
-    
+
     // Nivel 14 AI Traceability
-    getAuditRepository().then(repo => repo.log(
-      'info',
-      `IA Inferencia completada (${modelName})`,
-      { latency: duration, model: modelName },
-      'GeminiService'
-    ));
+    getAuditRepository().then((repo) =>
+      repo.log(
+        'info',
+        `IA Inferencia completada (${modelName})`,
+        { latency: duration, model: modelName },
+        'GeminiService',
+      ),
+    );
 
     return response.text();
   } catch (error: any) {
     console.error('AI Proxy Error:', error);
-    
-    getAuditRepository().then(repo => repo.log(
-      'error',
-      `Fallo en IA Inferencia: ${error.message}`,
-      { model: modelName },
-      'GeminiService'
-    ));
-    
+
+    getAuditRepository().then((repo) =>
+      repo.log(
+        'error',
+        `Fallo en IA Inferencia: ${error.message}`,
+        { model: modelName },
+        'GeminiService',
+      ),
+    );
+
     throw error;
   }
 };
@@ -317,14 +330,13 @@ const callGeminiProxy = async (
 export const generateVisionDescription = async (
   prompt: string,
   imageSource?: string, // base64
-  systemInstruction: string = 'Eres un vendedor experto de autos. Escribe en español.'
+  systemInstruction: string = 'Eres un vendedor experto de autos. Escribe en español.',
 ): Promise<string> => {
   if (!imageSource) {
     return await sentinelAI.quickGen(prompt, systemInstruction);
   }
   return await sentinelAI.generateVisionDescription(prompt, imageSource, systemInstruction);
 };
-
 
 // Local Fallback Database
 const FALLBACK_RESPONSES: Record<string, string> = {
@@ -391,12 +403,14 @@ export const getAIResponse = async (
 
         ESTRATEGIA FINANCIERA PUERTO RICO:
         - Prioriza bancos locales: Banco Popular de PR y FirstBank PR. Son los socios principales para cierres rápidos.
-        - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter(e => e.tier === 1).map(e => `${e.name} (${e.baseRate}% APR)`).join(', ')}.
+        - Entidades recomendadas: ${FINANCIAL_ENTITIES_PR.filter((e) => e.tier === 1)
+          .map((e) => `${e.name} (${e.baseRate}% APR)`)
+          .join(', ')}.
         - Las cooperativas son la última opción y solo se mencionan si el cliente las solicita específicamente.
         
         INTELIGENCIA DE MERCADO LOCAL (PR):
         - Contexto regional: ${MARKET_INTELLIGENCE_PR.regionalInsights.metro}
-        - Marcas dominantes: ${MARKET_INTELLIGENCE_PR.powerBrands.map(b => b.name).join(', ')}
+        - Marcas dominantes: ${MARKET_INTELLIGENCE_PR.powerBrands.map((b) => b.name).join(', ')}
         - Tono Richard: Usa terminología local (guagua, pronto, marbete) de forma profesional y estratégica.
       `;
 
@@ -876,7 +890,8 @@ export const generateBlogPost = async (
 export const generateEmbedding = async (text: string): Promise<number[]> => {
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
+    if (!apiKey)
+      throw new Error('GEMINI_API_KEY not configured. Set it in Vercel environment variables.');
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });

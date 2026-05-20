@@ -1,12 +1,16 @@
-"use client";
+'use client';
 
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
 import { getAuditLogs, AuditLog } from '@/shared/api/repositories/SupabaseAuditRepository';
 
-type TimestampLike = { seconds: number; nanoseconds: number } | { toDate: () => Date } | string | Date;
+type TimestampLike =
+  | { seconds: number; nanoseconds: number }
+  | { toDate: () => Date }
+  | string
+  | Date;
 
 const hasToDate = (value: TimestampLike): value is { toDate: () => Date } =>
   typeof (value as { toDate?: unknown }).toDate === 'function';

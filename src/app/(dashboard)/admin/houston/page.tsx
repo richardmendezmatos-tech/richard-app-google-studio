@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,9 +46,23 @@ interface RadarPoint {
 const TacticalRadar: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<RadarPoint[]>([
-    { id: '1', x: 45, y: -30, label: 'Vega Alta: Tacoma 2022 Scan', type: 'appraisal', intensity: 0.9 },
+    {
+      id: '1',
+      x: 45,
+      y: -30,
+      label: 'Vega Alta: Tacoma 2022 Scan',
+      type: 'appraisal',
+      intensity: 0.9,
+    },
     { id: '2', x: -60, y: 50, label: 'Bayamón: Ford Bronco Query', type: 'lead', intensity: 0.7 },
-    { id: '3', x: 20, y: 75, label: 'San Juan: F-150 Appraisal', type: 'appraisal', intensity: 0.95 },
+    {
+      id: '3',
+      x: 20,
+      y: 75,
+      label: 'San Juan: F-150 Appraisal',
+      type: 'appraisal',
+      intensity: 0.95,
+    },
     { id: '4', x: -80, y: -40, label: 'Ponce: Corolla Deal Closed', type: 'sale', intensity: 0.8 },
     { id: '5', x: -10, y: -20, label: 'Caguas: Explorer Lead Hot', type: 'lead', intensity: 0.65 },
   ]);
@@ -74,7 +88,7 @@ const TacticalRadar: React.FC = () => {
       // Draw outer circle rings
       ctx.strokeStyle = 'rgba(0, 242, 255, 0.15)';
       ctx.lineWidth = 1;
-      
+
       // Multi-layer grids
       for (let i = 1; i <= 4; i++) {
         ctx.beginPath();
@@ -100,7 +114,7 @@ const TacticalRadar: React.FC = () => {
       const sweepGrad = ctx.createLinearGradient(centerX, centerY, sweepX, sweepY);
       sweepGrad.addColorStop(0, 'rgba(0, 242, 255, 0)');
       sweepGrad.addColorStop(1, 'rgba(0, 242, 255, 0.6)');
-      
+
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(sweepX, sweepY);
@@ -125,15 +139,20 @@ const TacticalRadar: React.FC = () => {
         const ptAngle = Math.atan2(pt.y, pt.x);
         const normalizedSweepAngle = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
         const normalizedPtAngle = ((ptAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-        
+
         let diff = Math.abs(normalizedSweepAngle - normalizedPtAngle);
         if (diff > Math.PI) diff = Math.PI * 2 - diff;
 
         // Peak shine when sweep hits it
         const brightness = Math.max(0.15, 1 - diff / 1.2);
-        
+
         // Point color styling
-        const color = pt.type === 'appraisal' ? 'rgba(245, 158, 11,' : pt.type === 'sale' ? 'rgba(16, 185, 129,' : 'rgba(0, 242, 255,';
+        const color =
+          pt.type === 'appraisal'
+            ? 'rgba(245, 158, 11,'
+            : pt.type === 'sale'
+              ? 'rgba(16, 185, 129,'
+              : 'rgba(0, 242, 255,';
 
         // Outer pulse circle
         ctx.beginPath();
@@ -168,8 +187,25 @@ const TacticalRadar: React.FC = () => {
 
   // Handle click scan stimulation
   const stimulateScan = () => {
-    const locations = ['Vega Alta', 'Vega Baja', 'San Juan', 'Bayamón', 'Guaynabo', 'Dorado', 'Ponce', 'Caguas'];
-    const models = ['Tacoma', 'Bronco', 'F-150', 'Tesla Model Y', 'Explorer', 'Civic Type-R', 'Mustang GT'];
+    const locations = [
+      'Vega Alta',
+      'Vega Baja',
+      'San Juan',
+      'Bayamón',
+      'Guaynabo',
+      'Dorado',
+      'Ponce',
+      'Caguas',
+    ];
+    const models = [
+      'Tacoma',
+      'Bronco',
+      'F-150',
+      'Tesla Model Y',
+      'Explorer',
+      'Civic Type-R',
+      'Mustang GT',
+    ];
     const types: ('appraisal' | 'lead' | 'sale')[] = ['appraisal', 'lead', 'sale'];
 
     const newPt: RadarPoint = {
@@ -187,15 +223,21 @@ const TacticalRadar: React.FC = () => {
   return (
     <div className="relative glass-premium p-6 border border-cyan-500/20 bg-slate-950/45 overflow-hidden flex flex-col items-center">
       {/* HUD Brackets */}
-      <div className="absolute top-2 left-2 text-[8px] font-mono text-cyan-400/40 select-none">GRID // RADAR_04</div>
-      <div className="absolute top-2 right-2 text-[8px] font-mono text-cyan-400/40 select-none">AZIMUTH: AUTO</div>
-      
+      <div className="absolute top-2 left-2 text-[8px] font-mono text-cyan-400/40 select-none">
+        GRID // RADAR_04
+      </div>
+      <div className="absolute top-2 right-2 text-[8px] font-mono text-cyan-400/40 select-none">
+        AZIMUTH: AUTO
+      </div>
+
       <div className="flex justify-between items-center w-full mb-4">
         <div>
           <h3 className="text-xs font-black text-white uppercase tracking-[0.3em] flex items-center gap-2">
             <Atom className="text-cyan-400 animate-spin-slow" size={14} /> Tactical Scanning Radar
           </h3>
-          <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">SENTINEL LIVE GEOLOCATION ENGINE</p>
+          <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">
+            SENTINEL LIVE GEOLOCATION ENGINE
+          </p>
         </div>
         <button
           onClick={stimulateScan}
@@ -217,9 +259,14 @@ const TacticalRadar: React.FC = () => {
         </div>
         <div className="space-y-1.5 max-h-[85px] overflow-y-auto custom-scrollbar">
           {points.map((pt) => (
-            <div key={pt.id} className="flex justify-between items-center text-[9px] font-mono leading-none">
+            <div
+              key={pt.id}
+              className="flex justify-between items-center text-[9px] font-mono leading-none"
+            >
               <span className="flex items-center gap-1.5 text-slate-300">
-                <span className={`w-1 h-1 rounded-full ${pt.type === 'appraisal' ? 'bg-amber-400 animate-pulse' : pt.type === 'sale' ? 'bg-emerald-400' : 'bg-cyan-400 animate-ping'}`} />
+                <span
+                  className={`w-1 h-1 rounded-full ${pt.type === 'appraisal' ? 'bg-amber-400 animate-pulse' : pt.type === 'sale' ? 'bg-emerald-400' : 'bg-cyan-400 animate-ping'}`}
+                />
                 {pt.label}
               </span>
               <span className="text-slate-500">[{Math.round(pt.intensity * 100)}%]</span>
@@ -243,33 +290,73 @@ interface SourcingGap {
 
 const SourcingGapsWidget: React.FC = () => {
   const gaps: SourcingGap[] = [
-    { model: 'Toyota Tacoma Double Cab', yearRange: '2020 - 2023', demandIndex: 94, physicalStock: 1, gap: 8, priority: 'CRITICAL' },
-    { model: 'Ford Bronco Wildtrak', yearRange: '2021 - 2024', demandIndex: 88, physicalStock: 0, gap: 5, priority: 'CRITICAL' },
-    { model: 'Tesla Model Y Long Range', yearRange: '2021 - 2023', demandIndex: 78, physicalStock: 2, gap: 3, priority: 'HIGH' },
-    { model: 'Jeep Wrangler Unlimited 4x4', yearRange: '2019 - 2022', demandIndex: 82, physicalStock: 1, gap: 4, priority: 'HIGH' },
-    { model: 'Toyota Corolla SE', yearRange: '2020 - 2023', demandIndex: 72, physicalStock: 3, gap: 2, priority: 'STABLE' },
+    {
+      model: 'Toyota Tacoma Double Cab',
+      yearRange: '2020 - 2023',
+      demandIndex: 94,
+      physicalStock: 1,
+      gap: 8,
+      priority: 'CRITICAL',
+    },
+    {
+      model: 'Ford Bronco Wildtrak',
+      yearRange: '2021 - 2024',
+      demandIndex: 88,
+      physicalStock: 0,
+      gap: 5,
+      priority: 'CRITICAL',
+    },
+    {
+      model: 'Tesla Model Y Long Range',
+      yearRange: '2021 - 2023',
+      demandIndex: 78,
+      physicalStock: 2,
+      gap: 3,
+      priority: 'HIGH',
+    },
+    {
+      model: 'Jeep Wrangler Unlimited 4x4',
+      yearRange: '2019 - 2022',
+      demandIndex: 82,
+      physicalStock: 1,
+      gap: 4,
+      priority: 'HIGH',
+    },
+    {
+      model: 'Toyota Corolla SE',
+      yearRange: '2020 - 2023',
+      demandIndex: 72,
+      physicalStock: 3,
+      gap: 2,
+      priority: 'STABLE',
+    },
   ];
 
   return (
     <div className="glass-premium border border-white/5 p-6 relative flex flex-col justify-start overflow-hidden group">
       {/* Sweep laser bar overlay */}
       <div className="scanline-overlay" />
-      
+
       <div className="flex justify-between items-center mb-6 relative z-10">
         <div>
           <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-            <div className="w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_12px_#ef4444] animate-pulse" /> Sourcing Gap Matrix
+            <div className="w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_12px_#ef4444] animate-pulse" />{' '}
+            Sourcing Gap Matrix
           </h3>
-          <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">VEHICLE DEMAND MULTIPLIERS VS INVENTORY LEVELS</p>
+          <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">
+            VEHICLE DEMAND MULTIPLIERS VS INVENTORY LEVELS
+          </p>
         </div>
-        
+
         <div className="flex items-center gap-3 px-3 py-1 border border-red-500/20 rounded-full bg-red-500/5">
           <div className="flex gap-1 h-3 items-end">
             <div className="w-1 h-2 bg-red-500/70 animate-pulse" />
             <div className="w-1 h-3 bg-red-500/70 animate-pulse" />
             <div className="w-1 h-1.5 bg-red-500/70 animate-pulse animate-delay-100" />
           </div>
-          <span className="text-[8px] text-red-400 font-black uppercase tracking-widest">GAPS DETECTED</span>
+          <span className="text-[8px] text-red-400 font-black uppercase tracking-widest">
+            GAPS DETECTED
+          </span>
         </div>
       </div>
 
@@ -286,9 +373,12 @@ const SourcingGapsWidget: React.FC = () => {
           </thead>
           <tbody className="divide-y divide-white/5 text-[10px]">
             {gaps.map((item, index) => {
-              const badgeColor = item.priority === 'CRITICAL' ? 'border-red-500/20 text-red-400 bg-red-500/5'
-                : item.priority === 'HIGH' ? 'border-amber-500/20 text-amber-400 bg-amber-500/5'
-                : 'border-cyan-500/20 text-cyan-400 bg-cyan-500/5';
+              const badgeColor =
+                item.priority === 'CRITICAL'
+                  ? 'border-red-500/20 text-red-400 bg-red-500/5'
+                  : item.priority === 'HIGH'
+                    ? 'border-amber-500/20 text-amber-400 bg-amber-500/5'
+                    : 'border-cyan-500/20 text-cyan-400 bg-cyan-500/5';
               return (
                 <tr key={index} className="hover:bg-slate-900/30 transition-all">
                   <td className="py-3 flex flex-col">
@@ -296,10 +386,14 @@ const SourcingGapsWidget: React.FC = () => {
                     <span className="text-[8px] text-slate-500 font-normal">{item.yearRange}</span>
                   </td>
                   <td className="py-3 text-center text-cyan-400 font-black">{item.demandIndex}%</td>
-                  <td className="py-3 text-center text-slate-300 font-bold">{item.physicalStock} u</td>
+                  <td className="py-3 text-center text-slate-300 font-bold">
+                    {item.physicalStock} u
+                  </td>
                   <td className="py-3 text-center text-amber-400 font-black">+{item.gap}</td>
                   <td className="py-3 text-right">
-                    <span className={`text-[8px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${badgeColor}`}>
+                    <span
+                      className={`text-[8px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${badgeColor}`}
+                    >
                       {item.priority}
                     </span>
                   </td>
@@ -313,8 +407,14 @@ const SourcingGapsWidget: React.FC = () => {
       <div className="mt-6 p-4 rounded-xl bg-slate-900/40 border border-white/5 text-[9px] leading-relaxed flex items-start gap-3">
         <Sparkles size={14} className="text-cyan-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-bold text-white uppercase tracking-wider block mb-1">AI Procurement Recommendation:</span>
-          Richard, prioritize acquisition of <span className="text-cyan-400 font-bold">Toyota Tacoma (2020-2023)</span> and <span className="text-cyan-400 font-bold">Ford Bronco</span>. Deep intent logs capture +32 local Puerto Rico buyers query searches using natural language in the last 48 hours without matched stock.
+          <span className="font-bold text-white uppercase tracking-wider block mb-1">
+            AI Procurement Recommendation:
+          </span>
+          Richard, prioritize acquisition of{' '}
+          <span className="text-cyan-400 font-bold">Toyota Tacoma (2020-2023)</span> and{' '}
+          <span className="text-cyan-400 font-bold">Ford Bronco</span>. Deep intent logs capture +32
+          local Puerto Rico buyers query searches using natural language in the last 48 hours
+          without matched stock.
         </div>
       </div>
     </div>
@@ -338,15 +438,20 @@ const SentinelVisionPanel: React.FC = () => {
   return (
     <div className="glass-premium border border-emerald-500/10 p-6 relative flex flex-col justify-between h-full bg-slate-950/45">
       {/* Brackets */}
-      <div className="absolute top-2 left-2 text-[8px] font-mono text-emerald-400/40">SENTINEL_VISION // LIVE</div>
+      <div className="absolute top-2 left-2 text-[8px] font-mono text-emerald-400/40">
+        SENTINEL_VISION // LIVE
+      </div>
 
       <div>
         <div className="flex justify-between items-center mb-6">
           <div>
             <h3 className="text-xs font-black text-white uppercase tracking-[0.3em] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Sentinel Vision Live
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Sentinel Vision
+              Live
             </h3>
-            <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">REAL-TIME ACTUARIAL DEPRECIATION PROCESSOR</p>
+            <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">
+              REAL-TIME ACTUARIAL DEPRECIATION PROCESSOR
+            </p>
           </div>
           <span className="text-[9px] font-mono bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">
             ACTIVE SESSION: {activeSession.id}
@@ -355,12 +460,20 @@ const SentinelVisionPanel: React.FC = () => {
 
         <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-4 mb-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">VEHICLE FOCUS</span>
-            <span className="text-[10px] font-black text-white font-mono">{activeSession.vehicle}</span>
+            <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">
+              VEHICLE FOCUS
+            </span>
+            <span className="text-[10px] font-black text-white font-mono">
+              {activeSession.vehicle}
+            </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">MILEAGE INPUT</span>
-            <span className="text-[10px] font-black text-emerald-400 font-mono">{activeSession.mileage}</span>
+            <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">
+              MILEAGE INPUT
+            </span>
+            <span className="text-[10px] font-black text-emerald-400 font-mono">
+              {activeSession.mileage}
+            </span>
           </div>
         </div>
 
@@ -374,13 +487,17 @@ const SentinelVisionPanel: React.FC = () => {
             <span className="text-slate-400 flex items-center gap-1.5">
               <TrendingDown size={11} className="text-red-400" /> Mileage Adjustment
             </span>
-            <span className="text-red-400">-${Math.abs(activeSession.depreciation).toLocaleString()}</span>
+            <span className="text-red-400">
+              -${Math.abs(activeSession.depreciation).toLocaleString()}
+            </span>
           </div>
           <div className="flex justify-between items-center text-[10px] font-mono">
             <span className="text-slate-400 flex items-center gap-1.5">
               <TrendingUp size={11} className="text-emerald-400" /> Puerto Rico Multiplier (+8%)
             </span>
-            <span className="text-emerald-400">+${activeSession.prBrandMultiplier.toLocaleString()}</span>
+            <span className="text-emerald-400">
+              +${activeSession.prBrandMultiplier.toLocaleString()}
+            </span>
           </div>
           <div className="flex justify-between items-center text-[10px] font-mono">
             <span className="text-slate-400 flex items-center gap-1.5">
@@ -390,7 +507,9 @@ const SentinelVisionPanel: React.FC = () => {
           </div>
           <div className="border-t border-white/5 pt-2 flex justify-between items-center text-[11px] font-black font-mono">
             <span className="text-slate-300 uppercase tracking-wider">Actuarial Assessment</span>
-            <span className="text-emerald-400 text-lg text-glow">${activeSession.estimatedTradeIn.toLocaleString()}</span>
+            <span className="text-emerald-400 text-lg text-glow">
+              ${activeSession.estimatedTradeIn.toLocaleString()}
+            </span>
           </div>
         </div>
       </div>
@@ -410,8 +529,13 @@ const SentinelVisionPanel: React.FC = () => {
             const isChecked = activeSession.checkedSteps.includes(step.key);
             return (
               <div key={step.key} className="flex items-center gap-2">
-                <CheckCircle2 size={12} className={isChecked ? 'text-emerald-400' : 'text-slate-600'} />
-                <span className={isChecked ? 'text-slate-300' : 'text-slate-600'}>{step.label}</span>
+                <CheckCircle2
+                  size={12}
+                  className={isChecked ? 'text-emerald-400' : 'text-slate-600'}
+                />
+                <span className={isChecked ? 'text-slate-300' : 'text-slate-600'}>
+                  {step.label}
+                </span>
               </div>
             );
           })}
@@ -461,7 +585,10 @@ const SovereignTerminal: React.FC = () => {
 
       <div className="flex-1 space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-2 text-slate-300">
         {logs.map((log, index) => (
-          <div key={index} className="leading-relaxed select-text hover:bg-white/5 p-0.5 rounded transition-all">
+          <div
+            key={index}
+            className="leading-relaxed select-text hover:bg-white/5 p-0.5 rounded transition-all"
+          >
             <span className="text-cyan-500">{'>'}</span> {log}
           </div>
         ))}
@@ -490,15 +617,15 @@ export default function HoustonMissionControlPage() {
 
   return (
     <div className="min-h-screen bg-[#02060a] text-white relative overflow-hidden font-manrope">
-      <SEO 
-        title="Sovereign Cockpit Terminal | Richard Automotive" 
+      <SEO
+        title="Sovereign Cockpit Terminal | Richard Automotive"
         description="Premium executive cyberpunk command dashboard for Sentinel AI."
         noIndex={true}
       />
-      
+
       {/* Scanning Laser Line Overlay */}
       <div className="scanline-overlay" />
-      
+
       {/* Mesh Background */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
         <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full bg-cyan-500/10 blur-[120px] animate-pulse" />
@@ -506,7 +633,6 @@ export default function HoustonMissionControlPage() {
       </div>
 
       <div className="relative z-10 max-w-[1600px] mx-auto p-6 space-y-6">
-        
         {/* Elite Terminal Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-white/5 relative">
           <div>
@@ -527,14 +653,16 @@ export default function HoustonMissionControlPage() {
           <div className="flex items-center gap-4">
             <div className="hidden lg:flex items-center gap-4 bg-slate-900/50 border border-white/5 p-3 rounded-2xl">
               <div className="text-right">
-                <span className="text-[8px] text-slate-500 font-black block uppercase tracking-widest">SYSTEM UPLINK</span>
+                <span className="text-[8px] text-slate-500 font-black block uppercase tracking-widest">
+                  SYSTEM UPLINK
+                </span>
                 <span className="text-xs text-white font-mono font-bold">100% RESPONSIVE</span>
               </div>
               <Wifi className="text-cyan-400" size={20} />
             </div>
 
-            <button 
-              onClick={() => window.location.href = '/admin'}
+            <button
+              onClick={() => (window.location.href = '/admin')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 hover:border-cyan-500/40 text-[10px] font-black uppercase tracking-widest transition-all bg-slate-900/40 text-slate-300 hover:text-white"
             >
               Exit Cockpit <ChevronRight size={12} />
@@ -551,31 +679,34 @@ export default function HoustonMissionControlPage() {
                 value: telemetry.metrics.inferenceLatency.value,
                 unit: telemetry.metrics.inferenceLatency.unit,
                 icon: <Zap size={16} className="text-cyan-400 animate-pulse" />,
-                isUrgent: false
+                isUrgent: false,
               },
               {
                 label: 'System Autonomy',
                 value: telemetry.metrics.autonomyRate.value,
                 unit: telemetry.metrics.autonomyRate.unit,
                 icon: <Shield size={16} className="text-cyan-400" />,
-                isUrgent: false
+                isUrgent: false,
               },
               {
                 label: 'API Stability Rate',
                 value: telemetry.metrics.apiStability.value,
                 unit: telemetry.metrics.apiStability.unit,
                 icon: <Server size={16} className="text-cyan-400" />,
-                isUrgent: false
+                isUrgent: false,
               },
               {
                 label: 'Sentinel token speed',
                 value: telemetry.metrics.tokenUsage.value,
                 unit: telemetry.metrics.tokenUsage.unit,
                 icon: <Cpu size={16} className="text-cyan-400" />,
-                isUrgent: false
-              }
+                isUrgent: false,
+              },
             ].map((stat, i) => (
-              <div key={i} className="glass-premium p-4 border border-white/5 relative flex items-center justify-between group cursor-default">
+              <div
+                key={i}
+                className="glass-premium p-4 border border-white/5 relative flex items-center justify-between group cursor-default"
+              >
                 <div>
                   <span className="text-[8px] text-slate-500 font-black block uppercase tracking-widest mb-1">
                     {stat.label}
@@ -605,7 +736,7 @@ export default function HoustonMissionControlPage() {
               <TacticalRadar />
               <SentinelVisionPanel />
             </div>
-            
+
             {/* Bottom logs console */}
             <SovereignTerminal />
           </div>

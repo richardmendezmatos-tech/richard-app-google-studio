@@ -34,22 +34,22 @@ export interface Car {
   condition?: 'new' | 'used';
   inventoryId?: string;
   createdAt?: any;
-  
+
   // Storefront & Marketing
   badge?: string;
   webpSrc?: string;
   blurPlaceholder?: string;
   featured?: boolean;
   mileage?: number;
-  
+
   // Analytics
   views?: number;
   leadsCount?: number;
   dealerId?: string;
-  
+
   // SEO
   seoFaqs?: { question: string; answer: string }[];
-  
+
   // AI Sentinel
   aiScore?: number;
   aiAnalysis?: {

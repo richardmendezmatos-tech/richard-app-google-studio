@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { Car } from '@/entities/inventory';
@@ -24,28 +24,28 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.08,
-      delayChildren: 0.1
+      delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants: any = {
   hidden: { opacity: 0, y: 30, scale: 0.95 },
-  show: { 
-    opacity: 1, 
-    y: 0, 
+  show: {
+    opacity: 1,
+    y: 0,
     scale: 1,
-    transition: { 
-      type: 'spring', 
-      damping: 20, 
-      stiffness: 100 
-    } 
+    transition: {
+      type: 'spring',
+      damping: 20,
+      stiffness: 100,
+    },
   },
-  exit: { 
-    opacity: 0, 
-    scale: 0.9, 
-    transition: { duration: 0.2 } 
-  }
+  exit: {
+    opacity: 0,
+    scale: 0.9,
+    transition: { duration: 0.2 },
+  },
 };
 
 const VirtualInventory: React.FC<VirtualInventoryProps> = ({
@@ -66,7 +66,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
   const preferences = useMemo(() => TrajectoryAnalyzer.analyze(trajectory), [trajectory]);
 
   // Grid configuration
-  const itemHeight = 540; 
+  const itemHeight = 540;
   const [columns, setColumns] = useState(1);
 
   useLayoutEffect(() => {
@@ -96,10 +96,10 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
 
       const gridRect = containerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      
+
       // Calculate how much of the grid is above the viewport
       const scrolled = Math.max(0, -gridRect.top);
-      
+
       const startRow = Math.floor(scrolled / itemHeight);
       const visibleRows = Math.ceil(viewportHeight / itemHeight) + 1;
       const endRow = Math.min(rowCount, startRow + visibleRows + 2);
@@ -111,7 +111,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     };
 
     window.addEventListener('scroll', updateVisibleRange, { passive: true });
-    updateVisibleRange(); 
+    updateVisibleRange();
 
     return () => window.removeEventListener('scroll', updateVisibleRange);
   }, [cars, columns, rowCount]);
@@ -128,19 +128,19 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
     // Priority 2: Traditional memory
     if (!customerMemory?.preferences) return false;
     const { models, colors, features } = customerMemory.preferences;
-    if (models?.some((m: string) => (car.name || '').toLowerCase().includes(m.toLowerCase()))) return true;
-    if (colors?.some((c: string) => (car.name || '').toLowerCase().includes(c.toLowerCase()))) return true;
-    if (features?.some((f: string) => (car.name || '').toLowerCase().includes(f.toLowerCase()))) return true;
+    if (models?.some((m: string) => (car.name || '').toLowerCase().includes(m.toLowerCase())))
+      return true;
+    if (colors?.some((c: string) => (car.name || '').toLowerCase().includes(c.toLowerCase())))
+      return true;
+    if (features?.some((f: string) => (car.name || '').toLowerCase().includes(f.toLowerCase())))
+      return true;
     return false;
   };
 
   const translateY = Math.floor(visibleRange.start / columns) * itemHeight;
 
   return (
-    <div 
-      ref={containerRef} 
-      className="relative w-full"
-    >
+    <div ref={containerRef} className="relative w-full">
       <motion.div
         ref={gridRef}
         variants={containerVariants}
@@ -153,7 +153,7 @@ const VirtualInventory: React.FC<VirtualInventoryProps> = ({
           {visibleCars.map((car, index) => {
             const intentScore = TrajectoryAnalyzer.scoreCar(car, preferences);
             const isHighInterest = intentScore > 0.75;
-            
+
             return (
               <motion.article
                 key={car.id}

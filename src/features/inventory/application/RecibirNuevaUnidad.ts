@@ -69,7 +69,7 @@ export class RecibirNuevaUnidad {
         status: 'AVAILABLE',
         condition: 'USED',
         exterior_color: nuevaUnidad.color,
-        last_scraped_at: new Date().toISOString()
+        last_scraped_at: new Date().toISOString(),
       });
 
       if (error) {

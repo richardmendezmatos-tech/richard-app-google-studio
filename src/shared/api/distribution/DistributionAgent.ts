@@ -24,11 +24,12 @@ export class DistributionAgent {
     const missing: string[] = [];
     if (!car.price || car.price <= 0) missing.push('Precio');
     if (!car.image) missing.push('Imagen Principal');
-    if ((car.mileage === undefined || car.mileage === null) && car.condition !== 'new') missing.push('Millaje');
-    
+    if ((car.mileage === undefined || car.mileage === null) && car.condition !== 'new')
+      missing.push('Millaje');
+
     return {
       valid: missing.length === 0,
-      missing
+      missing,
     };
   }
 
@@ -52,13 +53,13 @@ export class DistributionAgent {
       ];
     }
 
-    return data.map(log => ({
+    return data.map((log) => ({
       unitId: log.car_id,
       platform: log.platform as Platform,
       status: log.status,
       lastSync: log.last_sync,
       externalUrl: log.external_url,
-      errorMsg: log.error_msg
+      errorMsg: log.error_msg,
     }));
   }
 
@@ -68,7 +69,10 @@ export class DistributionAgent {
   async triggerSync(car: Car, platform: Platform): Promise<boolean> {
     const validation = this.validateUnit(car);
     if (!validation.valid) {
-      console.error(`[Distribution] Unidad ${car.id} no válida para ${platform}:`, validation.missing);
+      console.error(
+        `[Distribution] Unidad ${car.id} no válida para ${platform}:`,
+        validation.missing,
+      );
       return false;
     }
 
@@ -79,40 +83,52 @@ export class DistributionAgent {
 
     // 1. Registrar inicio de sincronización
     const carId = car.id || car.vin;
-    await supabase.from('distribution_logs').upsert({
-      car_id: carId,
-      platform,
-      status: 'pending',
-      last_sync: new Date().toISOString()
-    }, { onConflict: 'car_id,platform' });
+    await supabase.from('distribution_logs').upsert(
+      {
+        car_id: carId,
+        platform,
+        status: 'pending',
+        last_sync: new Date().toISOString(),
+      },
+      { onConflict: 'car_id,platform' },
+    );
 
     // 2. Ejecutar lógica de plataforma
     try {
       if (platform === 'facebook_marketplace') {
         // En Meta, el feed es pasivo, pero marcamos como activo si pasó validación
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        await supabase.from('distribution_logs').update({
-          status: 'active',
-          last_sync: new Date().toISOString()
-        }).match({ car_id: carId, platform });
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        await supabase
+          .from('distribution_logs')
+          .update({
+            status: 'active',
+            last_sync: new Date().toISOString(),
+          })
+          .match({ car_id: carId, platform });
+
         return true;
-      } 
-      
+      }
+
       if (platform === 'clasificados_online') {
         const { DistributionMapper } = await import('@/features/automation/lib/DistributionMapper');
-        const { clasificadosOnlineAdapter } = await import('@/features/automation/lib/ClasificadosOnlineAdapter');
-        
+        const { clasificadosOnlineAdapter } =
+          await import('@/features/automation/lib/ClasificadosOnlineAdapter');
+
         const mappedData = DistributionMapper.toClasificadosOnline(car);
         const result = await clasificadosOnlineAdapter.postListing(mappedData);
 
         if (result.success) {
-          await supabase.from('distribution_logs').update({
-            status: 'active',
-            external_url: result.externalId ? `https://www.clasificadosonline.com/UDAutoDetail.asp?AutoId=${result.externalId}` : undefined,
-            last_sync: new Date().toISOString()
-          }).match({ car_id: carId, platform });
+          await supabase
+            .from('distribution_logs')
+            .update({
+              status: 'active',
+              external_url: result.externalId
+                ? `https://www.clasificadosonline.com/UDAutoDetail.asp?AutoId=${result.externalId}`
+                : undefined,
+              last_sync: new Date().toISOString(),
+            })
+            .match({ car_id: carId, platform });
           return true;
         } else {
           throw new Error(result.error || 'Error desconocido en ClasificadosOnline');
@@ -122,11 +138,14 @@ export class DistributionAgent {
       return false;
     } catch (err: any) {
       console.error(`[DistributionAgent] Fallo en ${platform}:`, err.message);
-      await supabase.from('distribution_logs').update({
-        status: 'error',
-        error_msg: err.message,
-        last_sync: new Date().toISOString()
-      }).match({ car_id: carId, platform });
+      await supabase
+        .from('distribution_logs')
+        .update({
+          status: 'error',
+          error_msg: err.message,
+          last_sync: new Date().toISOString(),
+        })
+        .match({ car_id: carId, platform });
       return false;
     }
   }

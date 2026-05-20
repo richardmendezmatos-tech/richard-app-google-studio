@@ -11,7 +11,7 @@ export const updateVehicleTelemetry = async (telemetry: VehicleTelemetry) => {
     if (!supabase) return;
 
     const channel = supabase.channel(TELEMETRY_CHANNEL);
-    
+
     // In a real scenario, you'd subscribe first or keep a singleton channel,
     // but for simple pushes you can do this, though keeping a singleton is better.
     await channel.send({
@@ -63,7 +63,7 @@ export const useVehicleTelemetry = (vehicleId: string) => {
     };
 
     let activeChannel: any;
-    setupTelemetry().then(channel => {
+    setupTelemetry().then((channel) => {
       activeChannel = channel;
     });
 

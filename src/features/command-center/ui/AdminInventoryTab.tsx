@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { Car, calculatePredictiveDTS } from '@/entities/inventory';
@@ -67,7 +67,9 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
       const response = await fetch('/api/cron/sync-inventory?manual=true');
       const data = await response.json();
       if (response.ok) {
-        alert(`Sincronización exitosa: ${data.telemetry.inserted} nuevos, ${data.telemetry.updated} actualizados.`);
+        alert(
+          `Sincronización exitosa: ${data.telemetry.inserted} nuevos, ${data.telemetry.updated} actualizados.`,
+        );
         window.location.reload(); // Recargar para ver cambios
       } else {
         alert(`Error: ${data.error}`);

@@ -4,7 +4,7 @@ import { Car } from '@/entities/inventory';
 
 /**
  * useDistributionAgent
- * 
+ *
  * Interface for the UI to interact with the Sentinel Distribution Agent.
  */
 export function useDistributionAgent() {
@@ -48,6 +48,6 @@ export function useDistributionAgent() {
     runFullCycle,
     distributeUnit,
     isProcessing,
-    lastResult
+    lastResult,
   };
 }

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/entities/inventory';
@@ -18,7 +18,7 @@ import {
   Sparkles,
   ScanFace,
   Lock,
-  Zap
+  Zap,
 } from 'lucide-react';
 import CarCard from '@/entities/inventory/ui/CarCard';
 import { PhotoAppraisal } from '@/features/garage';
@@ -109,20 +109,20 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
   const { data: savedAppraisals = [], isLoading: isLoadingAppraisals } = useAppraisals();
   const { data: savedApplications = [], isLoading: isLoadingApplications } = useApplications();
 
-  const applications = savedApplications.map(app => ({
+  const applications = savedApplications.map((app) => ({
     id: app.id,
     date: app.date,
     status: app.status,
     bank: 'Richard Financial',
-    details: app.vehicle ? `Interés en ${app.vehicle.name}` : 'General Pre-Qual'
+    details: app.vehicle ? `Interés en ${app.vehicle.name}` : 'General Pre-Qual',
   }));
 
-  const tradeIns = savedAppraisals.map(a => ({
+  const tradeIns = savedAppraisals.map((a) => ({
     id: a.id,
     date: a.date,
     vehicle: `${a.vehicle.year} ${a.vehicle.make} ${a.vehicle.model}`,
     estimatedValue: `$${a.value.estimated.toLocaleString()}`,
-    status: a.status
+    status: a.status,
   }));
 
   const renderTabs = () => (
@@ -235,7 +235,7 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
       case 'applications':
         if (applications.length === 0) {
           return (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-20 opacity-50 bg-slate-800/20 rounded-4xl border border-dashed border-white/10"
@@ -257,22 +257,32 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
               >
                 <div>
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-black text-white text-lg uppercase tracking-tight">{app.details}</h3>
+                    <h3 className="font-black text-white text-lg uppercase tracking-tight">
+                      {app.details}
+                    </h3>
                     <StatusBadge status={app.status as any} />
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       navigator.clipboard.writeText(app.id);
                       addNotification('success', `ID ${app.id} copiado al portapapeles`);
                     }}
                     className="text-slate-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:text-primary transition-colors"
                   >
-                    CASO: {app.id} <span className="opacity-0 group-hover:opacity-100 transition-opacity">(Click para copiar)</span> • {app.date}
+                    CASO: {app.id}{' '}
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      (Click para copiar)
+                    </span>{' '}
+                    • {app.date}
                   </button>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-black text-primary uppercase tracking-tighter">{app.bank}</div>
-                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest text-right">Procesador</div>
+                  <div className="text-lg font-black text-primary uppercase tracking-tighter">
+                    {app.bank}
+                  </div>
+                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest text-right">
+                    Procesador
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -301,9 +311,13 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                     <div>
                       <div className="flex items-center gap-3 mb-1">
                         <h4 className="font-bold text-white uppercase">{t.vehicle}</h4>
-                        <div className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded uppercase">Certificada</div>
+                        <div className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded uppercase">
+                          Certificada
+                        </div>
                       </div>
-                      <p className="text-slate-500 text-[10px] font-mono tracking-widest">ID: {t.id} • {t.date}</p>
+                      <p className="text-slate-500 text-[10px] font-mono tracking-widest">
+                        ID: {t.id} • {t.date}
+                      </p>
                     </div>
                     <div className="text-right">
                       <div className="text-xl font-black text-emerald-400">${t.estimatedValue}</div>
@@ -340,30 +354,35 @@ const DigitalGaragePage: React.FC<Props> = ({ inventory, onExit }) => {
                 </label>
                 <div className="text-white font-medium">+1 (787) 555-0199</div>
               </div>
-              
+
               {/* Digital Twin Intelligence Section */}
               <div className="p-6 bg-primary/5 border border-primary/20 rounded-2xl relative overflow-hidden group">
-                 <div className="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition-all text-primary rotate-12">
-                    <Sparkles size={80} />
-                 </div>
-                 <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                    <Zap size={14} /> RA Digital Status
-                 </h4>
-                 <div className="space-y-4 relative z-10">
-                    <div className="flex justify-between items-center text-sm">
-                       <span className="text-slate-400 font-bold uppercase text-[10px]">Unidades Tasadas</span>
-                       <span className="text-white font-black">{savedAppraisals.length}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                       <span className="text-slate-400 font-bold uppercase text-[10px]">Integrity Score (RA)</span>
-                       <span className="text-emerald-400 font-black">94/100</span>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-white/5">
-                       <p className="text-[9px] text-slate-500 uppercase leading-relaxed">
-                          Tu perfil está certificado nivel **Titanium**. Incrementa tu score completando inspecciones físicas en nuestro Performance Center.
-                       </p>
-                    </div>
-                 </div>
+                <div className="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition-all text-primary rotate-12">
+                  <Sparkles size={80} />
+                </div>
+                <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <Zap size={14} /> RA Digital Status
+                </h4>
+                <div className="space-y-4 relative z-10">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-400 font-bold uppercase text-[10px]">
+                      Unidades Tasadas
+                    </span>
+                    <span className="text-white font-black">{savedAppraisals.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-400 font-bold uppercase text-[10px]">
+                      Integrity Score (RA)
+                    </span>
+                    <span className="text-emerald-400 font-black">94/100</span>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-white/5">
+                    <p className="text-[9px] text-slate-500 uppercase leading-relaxed">
+                      Tu perfil está certificado nivel **Titanium**. Incrementa tu score completando
+                      inspecciones físicas en nuestro Performance Center.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="mt-8 p-4 bg-slate-900/50 rounded-xl flex items-center justify-between">

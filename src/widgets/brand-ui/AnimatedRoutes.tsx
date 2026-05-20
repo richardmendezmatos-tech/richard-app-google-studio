@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from '@/shared/lib/next-route-adapter';

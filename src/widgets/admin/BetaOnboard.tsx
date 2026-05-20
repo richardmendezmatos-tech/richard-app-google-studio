@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
@@ -37,7 +37,8 @@ const BetaOnboard = () => {
           price: 85000,
           type: 'luxury' as CarType,
           status: 'available' as const,
-          image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
           img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
           badge: 'Exclusivo Elite',
           featured: true,
@@ -53,7 +54,8 @@ const BetaOnboard = () => {
           price: 120000,
           type: 'suv' as CarType,
           status: 'available' as const,
-          image: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
           img: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
           badge: 'Hyper-Limited',
           featured: true,
