@@ -145,7 +145,28 @@ export async function signUpWithEmail(email: string, password: string) {
   const user = mapSupabaseUser(data.user);
   await createUserProfile(user, role);
   await logAuthActivity(email, true, 'signup_email');
-  return normalizeUser(user, role);
+
+  const requiresEmailConfirmation = !data.session;
+
+  return {
+    user: normalizeUser(user, role),
+    requiresEmailConfirmation,
+  };
+}
+
+export async function resendVerificationEmail(email: string) {
+  const supabase = createClient();
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  });
+
+  if (error) {
+    await logAuthActivity(email, false, 'resend_verification', error.message);
+    throw error;
+  }
+
+  await logAuthActivity(email, true, 'resend_verification');
 }
 
 export async function signInWithEmail(email: string, password: string) {
@@ -378,6 +399,23 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
   logAuthActivity(email, true, 'admin_login_success').catch(() => {});
 
   return user;
+};
+
+export const sendPasswordResetEmail = async (email: string) => {
+  const supabase = createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo:
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/admin-login?reset=true`
+        : undefined,
+  });
+
+  if (error) {
+    await logAuthActivity(email, false, 'password_reset_failed', error.message);
+    throw error;
+  }
+
+  await logAuthActivity(email, true, 'password_reset_sent');
 };
 
 export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {

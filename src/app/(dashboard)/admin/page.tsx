@@ -3,6 +3,7 @@
 import React from 'react';
 import CRMBoard from '@/features/command-center/ui/CRMBoard';
 import HoustonDashboard from '@/widgets/houston/HoustonDashboard';
+import UsersTab from '@/widgets/admin/UsersTab';
 import SEO from '@/shared/ui/seo/SEO';
 
 /**
@@ -10,7 +11,7 @@ import SEO from '@/shared/ui/seo/SEO';
  * Punto de entrada oficial de Richard Automotive.
  */
 export default function AdminPage() {
-  const [activeView, setActiveView] = React.useState<'crm' | 'houston'>('crm');
+  const [activeView, setActiveView] = React.useState<'crm' | 'houston' | 'users'>('crm');
 
   return (
     <div className="min-h-screen bg-[#0d2232] text-white overflow-x-hidden">
@@ -50,6 +51,16 @@ export default function AdminPage() {
           >
             Telemetría
           </button>
+          <button
+            onClick={() => setActiveView('users')}
+            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+              activeView === 'users'
+                ? 'bg-cyan-500 text-slate-950 shadow-lg'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Users
+          </button>
           <a
             href="/admin/houston"
             className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
@@ -67,7 +78,7 @@ export default function AdminPage() {
             </div>
           }
         >
-          {activeView === 'crm' ? <CRMBoard /> : <HoustonDashboard />}
+          {activeView === 'crm' ? <CRMBoard /> : activeView === 'houston' ? <HoustonDashboard /> : <UsersTab />}
         </React.Suspense>
       </main>
     </div>

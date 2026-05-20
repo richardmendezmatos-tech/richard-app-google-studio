@@ -7,35 +7,14 @@ import {
   signInWithEmail,
   signInWithGoogle,
   signInWithFacebook,
-  signInWithGoogleCredential,
   normalizeUser,
 } from '@/features/auth';
-import { ArrowRight, Zap, Apple, Chrome, Globe, Mail, Lock } from 'lucide-react';
+import { ArrowRight, Zap, Chrome, Globe, Mail, Lock } from 'lucide-react';
 import { useNavigate, Link, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
 import SEO from '@/shared/ui/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface GoogleCredentialResponse {
-  credential: string;
-}
-
-interface GoogleAccountsID {
-  initialize: (options: {
-    client_id: string;
-    callback: (response: GoogleCredentialResponse) => Promise<void> | void;
-    auto_select?: boolean;
-    cancel_on_tap_outside?: boolean;
-    use_fedcm_for_prompt?: boolean;
-  }) => void;
-  prompt: () => void;
-}
-
-interface GoogleGlobal {
-  accounts: {
-    id: GoogleAccountsID;
-  };
-}
+import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
 
 interface AuthLikeError {
   code?: string;
@@ -64,13 +43,17 @@ const UserLogin: React.FC = () => {
 
       setStoreLoading(true);
       try {
-        let appUser;
         if (type === 'register') {
-          appUser = await signUpWithEmail(emailVal, passwordVal);
+          const result = await signUpWithEmail(emailVal, passwordVal);
+          if (result.requiresEmailConfirmation) {
+            setStoreLoading(false);
+            return { error: null, success: true, requiresConfirmation: true };
+          }
+          setUser(result.user);
         } else {
-          appUser = await signInWithEmail(emailVal, passwordVal);
+          const appUser = await signInWithEmail(emailVal, passwordVal);
+          setUser(appUser);
         }
-        setUser(appUser);
         setStoreLoading(false);
         return { error: null, success: true };
       } catch (err: any) {
@@ -85,54 +68,14 @@ const UserLogin: React.FC = () => {
 
   // Handle success navigation
   React.useEffect(() => {
-    if (formState.success) {
+    if (formState.success && !(formState as any).requiresConfirmation) {
       navigate(from, { replace: true });
     }
   }, [formState.success, navigate, from]);
 
-  // --- Google One Tap Integration ---
-  React.useEffect(() => {
-    if (loading || isRegistering) return;
-
-    const initializeOneTap = () => {
-      const google = (window as any).google;
-      if (!google) return;
-
-      const clientId =
-        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
-
-      if (!clientId) {
-        console.warn('[AUTH] Missing GOOGLE_CLIENT_ID (check NEXT_PUBLIC_ or VITE_ prefix)');
-      }
-
-      google.accounts.id.initialize({
-        client_id: clientId || '',
-        callback: async (response: GoogleCredentialResponse) => {
-          setLoading(true);
-          setStoreLoading(true);
-          try {
-            const appUser = await signInWithGoogleCredential(response.credential);
-            setUser(appUser);
-            navigate(from, { replace: true });
-          } catch (err: unknown) {
-            const msg = getErrorMsg(err);
-            setLocalError(msg); // Changed setError to setLocalError
-            setError(msg);
-          } finally {
-            setLoading(false);
-            setStoreLoading(false);
-          }
-        },
-        cancel_on_tap_outside: false,
-        use_fedcm_for_prompt: true,
-      });
-
-      google.accounts.id.prompt();
-    };
-
-    const timer = setTimeout(initializeOneTap, 1500);
-    return () => clearTimeout(timer);
-  }, [from, isRegistering, loading, navigate, setStoreLoading, setUser, setError]);
+  const handleOneTapSuccess = React.useCallback(() => {
+    navigate(from, { replace: true });
+  }, [navigate, from]);
 
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setLoading(true);
@@ -192,6 +135,11 @@ const UserLogin: React.FC = () => {
         description="Portal de acceso premium de Richard Automotive."
         url="/login"
         noIndex
+      />
+
+      <GoogleOneTap
+        redirectPath={from || '/'}
+        onSuccess={handleOneTapSuccess}
       />
 
       {/* Animated Background */}
@@ -333,6 +281,30 @@ const UserLogin: React.FC = () => {
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                 {error || formState.error}
+              </motion.div>
+            )}
+            {(formState as any).requiresConfirmation && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 rounded-2xl text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 space-y-3"
+              >
+                <p>📧 Revisa tu correo. Te enviamos un enlace de confirmación.</p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { resendVerificationEmail } = await import('@/features/auth');
+                    try {
+                      await resendVerificationEmail(email);
+                      setLocalError(null);
+                    } catch {
+                      setLocalError('Error al reenviar. Intenta de nuevo.');
+                    }
+                  }}
+                  className="text-[10px] font-black uppercase tracking-wider text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
+                >
+                  Reenviar correo
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

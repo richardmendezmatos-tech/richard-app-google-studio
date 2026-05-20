@@ -19,9 +19,10 @@ import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAuthStore } from '@/entities/session';
-import { AppUser, UserRole } from '@/entities/user/model/types';
-import { normalizeUser } from '@/features/auth';
+import { UserRole } from '@/entities/user/model/types';
 import SEO from '@/shared/ui/seo/SEO';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 // Using global User type
 
@@ -29,7 +30,10 @@ const SystemAccessLogin: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const [error, setLocalError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLocalLoading, setIsLocalLoading] = useState(false);
   const navigate = useNavigate();
   const { setLoading, setUser, setError } = useAuthStore();
@@ -40,6 +44,8 @@ const SystemAccessLogin: FC = () => {
       const emailVal = formData.get('email') as string;
       const passwordVal = formData.get('password') as string;
 
+      setLocalError(null);
+      setSuccessMessage(null);
       setLoading(true);
       try {
         const profile = await loginAdmin(emailVal, passwordVal);
@@ -51,6 +57,7 @@ const SystemAccessLogin: FC = () => {
         return { error: null, success: true };
       } catch (err: any) {
         const msg = err.message || 'Error de autenticación';
+        setLocalError(msg);
         setError(msg);
         setLoading(false);
         return { error: msg, success: false };
@@ -69,7 +76,8 @@ const SystemAccessLogin: FC = () => {
   const handleGhostLogin = useCallback(
     async (key: string) => {
       setIsLocalLoading(true);
-      setLocalError('Activando Protocolo Ghost de CTO...');
+      setLocalError(null);
+      setSuccessMessage('Activando Protocolo Ghost de CTO...');
       try {
         const { validateGhostKey } = await import('@/features/auth');
         const user = await validateGhostKey(key);
@@ -95,18 +103,20 @@ const SystemAccessLogin: FC = () => {
     const params = new URLSearchParams(window.location.search);
     const key = params.get('richard_key');
     // Ghost Protocol: Auto-access via richard_key (DEV only)
-    if (key && process.env.DEV) {
+    if (key && isDev) {
       handleGhostLogin(key);
     }
   }, [handleGhostLogin]);
 
   const handleMagicLink = async () => {
     if (!email) return setLocalError('Ingresa tu email primero');
+    setLocalError(null);
+    setSuccessMessage(null);
     setIsLocalLoading(true);
     try {
       const { sendMagicLink } = await import('@/features/auth');
       await sendMagicLink(email);
-      setLocalError('✨ Enlace enviado a tu correo. Revisa tu bandeja.');
+      setSuccessMessage('✨ Enlace enviado a tu correo. Revisa tu bandeja.');
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
       setLocalError('Error: ' + errorMsg);
@@ -124,10 +134,10 @@ const SystemAccessLogin: FC = () => {
 
       if (result) {
         // MOAT: Secure Device Correlation Success
-        if (process.env.DEV) {
+        if (isDev) {
           console.log('Passkey verified (DEV override):', result.credential);
-          const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
-          const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
+          const devEmail = process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL || 'richardmendezmatos@gmail.com';
+          const devPass = process.env.NEXT_PUBLIC_DEV_ADMIN_PASS || '123456';
           const profile = await loginAdmin(devEmail, devPass);
           setUser({
             ...profile,
@@ -159,8 +169,26 @@ const SystemAccessLogin: FC = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!resetEmail) return setLocalError('Ingresa tu email primero');
+    setLocalError(null);
+    setSuccessMessage(null);
+    setIsLocalLoading(true);
+    try {
+      const { sendPasswordResetEmail } = await import('@/features/auth');
+      await sendPasswordResetEmail(resetEmail);
+      setSuccessMessage('📧 Enlace de recuperación enviado. Revisa tu bandeja.');
+      setShowForgotPassword(false);
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      setLocalError('Error: ' + errorMsg);
+    } finally {
+      setIsLocalLoading(false);
+    }
+  };
+
   const handleDevQuickAccess = async () => {
-    if (!process.env.DEV) {
+    if (!isDev) {
       setLocalError('⛔️ Acceso rápido deshabilitado en Producción.');
       return;
     }
@@ -168,8 +196,8 @@ const SystemAccessLogin: FC = () => {
     setLocalError(null);
     setLoading(true);
     try {
-      const devEmail = process.env.VITE_DEV_ADMIN_EMAIL || 'admin@richard.com';
-      const devPass = process.env.VITE_DEV_ADMIN_PASS || '123456';
+      const devEmail = process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL || 'admin@richard.com';
+      const devPass = process.env.NEXT_PUBLIC_DEV_ADMIN_PASS || '123456';
 
       const profile = await loginAdmin(devEmail, devPass);
       setUser({
@@ -195,13 +223,13 @@ const SystemAccessLogin: FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#050b14] relative overflow-hidden font-sans selection:bg-primary/30">
       <SEO
-        title="Acceso Administrativo"
-        description="Portal administrativo de Richard Automotive."
+        title="Houston Access | Richard Automotive"
+        description="Panel de Control de Sistemas Richard Automotive."
         url="/admin-login"
         noIndex
         noFollow
       />
-      <GoogleOneTap onSuccess={() => navigate('/admin')} />
+      <GoogleOneTap redirectPath="/admin" />
 
       {/* Dynamic Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -294,9 +322,60 @@ const SystemAccessLogin: FC = () => {
                     </button>
                   </div>
                 </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(!showForgotPassword);
+                      setLocalError(null);
+                      setSuccessMessage(null);
+                    }}
+                    className="text-[10px] font-medium text-slate-500 hover:text-primary transition-colors"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
               </div>
 
-              {/* Status Message */}
+              {/* Forgot Password Inline Form */}
+              <AnimatePresence>
+                {showForgotPassword && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10 space-y-3">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Reset Password
+                      </p>
+                      <input
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="tu@email.com"
+                        className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-sm font-medium text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        disabled={isLocalLoading}
+                        className="w-full py-3 bg-primary/20 hover:bg-primary/30 text-primary rounded-xl font-bold uppercase tracking-widest text-xs transition-all border border-primary/30 disabled:opacity-50"
+                      >
+                        {isLocalLoading ? (
+                          <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+                        ) : (
+                          'Send Reset Link'
+                        )}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Status Messages */}
               <div className="min-h-[24px]">
                 <AnimatePresence mode="wait">
                   {(error || formState.error) && (
@@ -308,6 +387,16 @@ const SystemAccessLogin: FC = () => {
                     >
                       <ShieldAlert size={14} />
                       <span className="text-xs font-bold">{error || formState.error}</span>
+                    </motion.div>
+                  )}
+                  {successMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-2 text-emerald-400 justify-center bg-emerald-500/10 py-2 rounded-lg border border-emerald-500/20"
+                    >
+                      <span className="text-xs font-bold">{successMessage}</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -366,17 +455,20 @@ const SystemAccessLogin: FC = () => {
             </form>
 
             <div className="mt-8 text-center">
-              <button className="text-[10px] font-medium text-slate-500 hover:text-primary transition-colors">
+              <a
+                href="mailto:richardmendezmatos@gmail.com?subject=Locked%20Out%20-%20Admin%20Access"
+                className="text-[10px] font-medium text-slate-500 hover:text-primary transition-colors"
+              >
                 Locked Out?{' '}
                 <span className="underline decoration-slate-700 underline-offset-4 hover:decoration-primary">
                   Contact System Admin
                 </span>
-              </button>
+              </a>
             </div>
           </div>
 
           {/* Dev Mode Strip */}
-          {process.env.DEV && (
+          {isDev && (
             <div className="border-t border-white/5 bg-amber-500/5 p-2 flex justify-center">
               <button
                 onClick={handleDevQuickAccess}
