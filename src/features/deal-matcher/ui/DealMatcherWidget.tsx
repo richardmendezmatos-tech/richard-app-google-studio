@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   SlidersHorizontal,
@@ -86,21 +87,84 @@ export const DealMatcherWidget: React.FC = () => {
     }
   };
 
-  const triggerSwipeRight = () => {
+  const triggerSwipeRight = useCallback(() => {
     if (!activeCar) return;
     swipeRight(activeCar);
-  };
+  }, [activeCar, swipeRight]);
 
-  const triggerSwipeLeft = () => {
+  const triggerSwipeLeft = useCallback(() => {
     if (!activeCar) return;
     swipeLeft(activeCar);
-  };
+  }, [activeCar, swipeLeft]);
 
-  const triggerSuperMatch = () => {
+  const triggerSuperMatch = useCallback(() => {
     if (!activeCar) return;
     superMatch(activeCar);
     setQualifyCar(activeCar);
+  }, [activeCar, superMatch]);
+
+  // Format phone numbers dynamically for Puerto Rico standard (787) 555-1234
+  const formatPuertoRicoPhone = (value: string): string => {
+    const digits = value.replace(/\D/g, '');
+    const truncated = digits.slice(0, 10);
+    
+    if (truncated.length === 0) return '';
+    if (truncated.length <= 3) return `(${truncated}`;
+    if (truncated.length <= 6) return `(${truncated.slice(0, 3)}) ${truncated.slice(3)}`;
+    return `(${truncated.slice(0, 3)}) ${truncated.slice(3, 6)}-${truncated.slice(6)}`;
   };
+
+  // Keyboard shortcuts for swiping and resetting
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Disable shortcuts when interactive fields in modal are active
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
+
+      if (!activeCar) {
+        if (e.key === ' ' || e.key.toLowerCase() === 'r') {
+          e.preventDefault();
+          restartDeck();
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          e.preventDefault();
+          triggerSwipeLeft();
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          e.preventDefault();
+          triggerSwipeRight();
+          break;
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          e.preventDefault();
+          triggerSuperMatch();
+          break;
+        case 'r':
+        case 'R':
+          e.preventDefault();
+          restartDeck();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeCar, triggerSwipeLeft, triggerSwipeRight, triggerSuperMatch, restartDeck]);
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -413,25 +477,36 @@ export const DealMatcherWidget: React.FC = () => {
 
                   {/* Top Stats HUD Overlay inside Card */}
                   <div className="relative rounded-4xl overflow-hidden aspect-video group/img">
-                    <img
-                      src={activeCar.image || activeCar.img}
+                    <Image
+                      src={activeCar.image || activeCar.img || ''}
                       alt={activeCar.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
-                      draggable="false"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 420px"
+                      priority
+                      className="object-cover transition-transform duration-700 group-hover/img:scale-105"
+                      draggable={false}
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/10 to-transparent z-10" />
                     
                     {/* Badge Overlay */}
                     {activeCar.badge && (
-                      <span className="absolute top-4 left-4 px-3 py-1 bg-black/60 border border-white/10 rounded-lg text-[9px] font-black text-white uppercase tracking-widest">
+                      <span className="absolute top-4 left-4 px-3 py-1 bg-black/60 border border-white/10 rounded-lg text-[9px] font-black text-white uppercase tracking-widest z-20">
                         {activeCar.badge}
                       </span>
                     )}
 
-                    {/* Match Score Indicator (Neural Circle) */}
-                    <div className="absolute top-4 right-4 flex items-center justify-center w-14 h-14 bg-black/70 border border-white/15 rounded-full shadow-lg backdrop-blur-md">
+                    {/* Match Score Indicator (Neural Circle) with dynamic premium neon glow pulse animations */}
+                    <div className={`absolute top-4 right-4 flex items-center justify-center w-14 h-14 bg-black/80 rounded-full shadow-lg backdrop-blur-md transition-all duration-500 z-20 border ${
+                      activeCar.matchScore >= 90
+                        ? 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse'
+                        : activeCar.matchScore >= 75
+                        ? 'border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.3)]'
+                        : 'border-white/15'
+                    }`}>
                       <div className="text-center">
-                        <span className="text-[16px] font-black text-cyan-300 leading-none italic">
+                        <span className={`text-[16px] font-black leading-none italic ${
+                          activeCar.matchScore >= 90 ? 'text-cyan-300' : activeCar.matchScore >= 75 ? 'text-emerald-300' : 'text-white'
+                        }`}>
                           {activeCar.matchScore}%
                         </span>
                         <span className="text-[7px] text-white/50 block font-black uppercase tracking-wider mt-0.5">
@@ -441,7 +516,7 @@ export const DealMatcherWidget: React.FC = () => {
                     </div>
 
                     {/* Vehicle Basic Specs Overlay */}
-                    <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
+                    <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end z-20">
                       <div>
                         <span className="px-2 py-0.5 bg-cyan-400/20 text-cyan-300 text-[8px] font-black uppercase tracking-widest rounded">
                           {activeCar.type}
@@ -625,11 +700,15 @@ export const DealMatcherWidget: React.FC = () => {
                     </div>
 
                     <div className="p-4 bg-white/[0.02] border border-white/5 rounded-3xl flex gap-4 items-center">
-                      <img
-                        src={qualifyCar.image || qualifyCar.img}
-                        alt={qualifyCar.name}
-                        className="w-16 h-12 object-cover rounded-xl"
-                      />
+                      <div className="relative w-16 h-12 rounded-xl overflow-hidden flex-shrink-0">
+                        <Image
+                          src={qualifyCar.image || qualifyCar.img || ''}
+                          alt={qualifyCar.name}
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                        />
+                      </div>
                       <div>
                         <span className="text-[8px] px-1.5 py-0.5 bg-cyan-500/20 text-cyan-300 font-black uppercase tracking-wider rounded">
                           {qualifyCar.type}
@@ -663,9 +742,9 @@ export const DealMatcherWidget: React.FC = () => {
                         <input
                           required
                           type="tel"
-                          placeholder="+1 (787) 000-0000"
+                          placeholder="(787) 000-0000"
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          onChange={(e) => setPhone(formatPuertoRicoPhone(e.target.value))}
                           className="w-full h-14 bg-white/[0.03] border border-white/5 focus:border-cyan-400/50 rounded-2xl px-6 text-xs font-black text-white outline-none transition-all placeholder:text-white/5"
                         />
                       </div>
