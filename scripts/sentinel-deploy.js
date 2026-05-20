@@ -7,6 +7,7 @@ import path from 'path';
 const log = console.log;
 
 async function sentinelDeploy() {
+  const startTime = Date.now();
   log(chalk.cyan.bold('\n🌌 SENTINEL COMMAND PROTOCOL: PRODUCTION LAUNCH SEQUENCE\n'));
   
   const spinner = ora({
