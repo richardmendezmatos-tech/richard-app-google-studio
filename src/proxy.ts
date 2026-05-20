@@ -90,15 +90,21 @@ export async function proxy(request: NextRequest) {
   const isPrivate = privateRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
-  // SENTINEL BYPASS: Allow local development bypass if a specific dev cookie is set
-  const isDevBypass = request.cookies.get('sentinel_dev_bypass')?.value === 'active';
+  // SENTINEL BYPASS: Allow local development bypass for e2e testing
+  const bypassCookie = request.cookies.get('e2e_bypass')?.value;
+  const isDevBypass =
+    process.env.NODE_ENV === 'development' &&
+    (bypassCookie === 'true' || request.nextUrl.searchParams.get('bypass') === 'true');
 
-  if (isDevBypass && process.env.NODE_ENV === 'development') {
+  if (isDevBypass) {
+    if (request.nextUrl.searchParams.get('bypass') === 'true' && bypassCookie !== 'true') {
+      supabaseResponse.cookies.set('e2e_bypass', 'true', { path: '/' });
+    }
     return supabaseResponse;
   }
 
   // 1. Redirigir a login si no hay sesión y trata de acceder a rutas protegidas
-  if (!user && isPrivate && !pathname.includes('telemetry') && !pathname.includes('/login')) {
+  if (!user && isPrivate && !pathname.includes('telemetry') && !pathname.includes('/login') && !pathname.startsWith('/admin-login')) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('from', pathname);

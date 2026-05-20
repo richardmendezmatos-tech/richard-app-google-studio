@@ -1,25 +1,36 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "context": {
-    "project": "Richard Automotive Command Center",
-    "stack": "Next.js 16 App Router + TypeScript 6 + Supabase + Tailwind CSS 4 + Framer Motion + Google Gemini AI",
-    "architecture": "Feature-Sliced Design (FSD)",
-    "importAlias": "@/ → src/",
-    "commands": {
-      "dev": "npm run dev",
-      "build": "npm run build",
-      "test": "npm run test",
-      "lint": "npm run lint",
-      "deploy": "npm run deploy:vercel",
-      "lg": "lazygit"
+  "model": "google/gemini-2.5-flash",
+  "instructions": ["AGENTS.md"],
+  "command": {
+    "dev": {
+      "template": "npm run dev",
+      "description": "Start development server"
     },
-    "rules": [
-      "Prefer Edit tool over Write for existing files",
-      "Read file first before editing",
-      "Run lint + test after completing tasks",
-      "Use 'use client' directive for interactive components",
-      "Zustand for global state, server actions for mutations",
-      "i18next for ES/EN texts"
-    ]
-  }
+    "build": {
+      "template": "npm run build",
+      "description": "Build for production"
+    },
+    "test": {
+      "template": "npm run test",
+      "description": "Run unit tests"
+    },
+    "lint": {
+      "template": "npm run lint",
+      "description": "Run linter"
+    },
+    "deploy": {
+      "template": "npm run deploy:vercel",
+      "description": "Deploy to Vercel"
+    },
+    "lg": {
+      "template": "lazygit",
+      "description": "Launch lazygit"
+    },
+    "test:e2e": {
+      "template": "npx playwright test",
+      "description": "Run Playwright e2e tests"
+    }
+  },
+  "disabled_providers": ["opencode"]
 }

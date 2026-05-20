@@ -76,6 +76,7 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     isPrivateRoute &&
+    !currentPath.startsWith('/admin-login') &&
     !currentPath.startsWith('/login') &&
     !currentPath.startsWith('/auth')
   ) {
