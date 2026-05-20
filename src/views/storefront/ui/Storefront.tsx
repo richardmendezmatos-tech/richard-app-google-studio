@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Car } from '@/shared/types/types';
-import { SocialProofWidget } from '@/widgets/brand-ui/layout/conversion/SocialProofWidget';
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
@@ -31,13 +30,26 @@ const StorefrontMarketPulse = dynamic(
   { ssr: false },
 );
 
-import { GlassContainer } from '@/shared/ui/common/GlassContainer';
-
-// Extracted UI Components
-import { StorefrontToolbar } from '@/features/inventory';
-import StorefrontResultsGrid from '@/widgets/inventory/StorefrontResultsGrid';
-import StorefrontComparisonBar from '@/widgets/comparison/StorefrontComparisonBar';
-import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
+const GlassContainer = dynamic(
+  () => import('@/shared/ui/common/GlassContainer').then((mod) => ({ default: mod.GlassContainer })),
+  { ssr: false },
+);
+const StorefrontResultsGrid = dynamic(
+  () => import('@/widgets/inventory/StorefrontResultsGrid'),
+  { ssr: false },
+);
+const StorefrontComparisonBar = dynamic(
+  () => import('@/widgets/comparison/StorefrontComparisonBar'),
+  { ssr: false },
+);
+const StorefrontModals = dynamic(
+  () => import('@/features/inventory/ui/StorefrontModals'),
+  { ssr: false },
+);
+const SocialProofWidget = dynamic(
+  () => import('@/widgets/brand-ui/layout/conversion/SocialProofWidget').then((mod) => ({ default: mod.SocialProofWidget })),
+  { ssr: false },
+);
 
 // Custom Hook
 import { useStorefrontState } from '@/features/inventory';
