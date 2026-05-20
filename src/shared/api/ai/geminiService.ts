@@ -466,7 +466,7 @@ export const analyzeGarageSelection = async (cars: Car[]): Promise<string> => {
   const carList = cars.map((c) => `${c.name} ($${c.price})`).join(', ');
   const prompt = `Analiza este garaje: ${carList}. TASK: 1. Identify user spending power/lifestyle. 2. Suggest 1 trade-in. OUTPUT: HTML simple (<p>, <ul>).`;
   try {
-    return await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash');
+    return await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash');
   } catch {
     return '<p>Error de conexión con el asesor IA.</p>';
   }
@@ -499,7 +499,7 @@ export const calculateNeuralMatch = async (
   `;
 
   try {
-    const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+    const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
       responseMimeType: 'application/json',
     });
     return JSON.parse(text);
@@ -510,7 +510,7 @@ export const calculateNeuralMatch = async (
 
 export const compareCars = async (car1: Car, car2: Car): Promise<Record<string, unknown>> => {
   const prompt = `Compare ${car1.name} vs ${car2.name}. Return JSON: { "winnerId": "...", "reasoning": "...", "categories": [...] }`;
-  const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+  const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
     responseMimeType: 'application/json',
   });
   return JSON.parse(text);
@@ -523,7 +523,7 @@ export const generateText = async (prompt: string, instruction?: string): Promis
 export const generateStructuredJSON = async (
   prompt: string,
   instruction?: string,
-  modelName: string = 'gemini-1.5-flash',
+  modelName: string = 'gemini-2.0-flash',
 ): Promise<any> => {
   // Use a generic schema for unstructured JSON requests
   const schema = z.record(z.string(), z.any());
@@ -531,7 +531,7 @@ export const generateStructuredJSON = async (
 };
 
 export const generateCode = async (prompt: string, instruction?: string): Promise<string> => {
-  return await callGeminiProxy(prompt, instruction, 'gemini-1.5-flash');
+  return await callGeminiProxy(prompt, instruction, 'gemini-2.0-flash');
 };
 
 export const analyzeImageWithPrompt = async (
@@ -559,7 +559,7 @@ export const analyzeImageWithPrompt = async (
 
   const prompt = [{ text: promptText }, imagePart];
 
-  const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+  const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
     responseMimeType: 'application/json',
   });
   return JSON.parse(text);
@@ -601,7 +601,7 @@ export const generateCarPitch = async (car: Car): Promise<string> => {
   `;
 
   try {
-    const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+    const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
       responseMimeType: 'application/json',
     });
     return JSON.parse(text).pitch;
@@ -766,7 +766,7 @@ export const analyzeTradeInImages = async (images: string[]): Promise<Record<str
   ];
 
   try {
-    const text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+    const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
       responseMimeType: 'application/json',
     });
     return JSON.parse(text);
@@ -838,7 +838,7 @@ export const generateBlogPost = async (
     );
 
     const apiCall = async () => {
-      let text = await callGeminiProxy(prompt, undefined, 'gemini-1.5-flash', {
+      let text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
         responseMimeType: 'application/json',
       });
       // Sanitize

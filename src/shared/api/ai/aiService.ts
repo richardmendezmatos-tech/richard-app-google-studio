@@ -42,7 +42,7 @@ const fileToGenerativePart = async (file: File) => {
 /**
  * Helper to call our internal Gemini API
  */
-const callAiApi = async (contents: any[], model: string = 'gemini-1.5-flash'): Promise<string> => {
+const callAiApi = async (contents: any[], model: string = 'gemini-2.0-flash'): Promise<string> => {
   const response = await fetch('/api/ai/gemini', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -76,7 +76,7 @@ export const analyzeCarVisuals = async (file: File): Promise<VisualSearchResult>
 
   try {
     const imagePart = await fileToGenerativePart(file);
-    const text = await callAiApi([prompt, imagePart], 'gemini-1.5-flash');
+    const text = await callAiApi([prompt, imagePart], 'gemini-2.0-flash');
 
     // Extract JSON from potential markdown code blocks
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -162,7 +162,7 @@ export const parseVoiceIntent = async (text: string): Promise<CommandIntent | nu
   `;
 
   try {
-    const responseText = await callAiApi([prompt], 'gemini-1.5-flash');
+    const responseText = await callAiApi([prompt], 'gemini-2.0-flash');
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return null;
@@ -207,7 +207,7 @@ export const generateNeuralMatch = async (query: string, inventory: Car[]): Prom
   `;
   
   try {
-    const text = await callAiApi([prompt], 'gemini-1.5-flash');
+    const text = await callAiApi([prompt], 'gemini-2.0-flash');
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     return jsonMatch ? JSON.parse(jsonMatch[0]) : [];
   } catch (error) {

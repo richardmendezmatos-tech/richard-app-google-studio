@@ -31,7 +31,7 @@ export class IntentAnalysisService {
     `;
 
     try {
-      const matrix = await generateStructuredJSON(prompt, "Eres un experto en F&I y psicología de ventas automotrices.", "gemini-1.5-flash");
+      const matrix = await generateStructuredJSON(prompt, "Eres un experto en F&I y psicología de ventas automotrices.", "gemini-2.0-flash");
       return {
         urgency: matrix.urgency || 0.5,
         priceSensitivity: matrix.priceSensitivity || 0.5,

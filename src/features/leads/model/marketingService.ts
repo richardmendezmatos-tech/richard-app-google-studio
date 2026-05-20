@@ -151,7 +151,7 @@ export const generateCarMarketingContent = async (
     const response = await generateStructuredJSON(
       prompt,
       undefined,
-      'gemini-1.5-flash'
+      'gemini-2.0-flash'
     );
 
     return response;

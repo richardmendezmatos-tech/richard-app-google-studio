@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   // Step 1: Initial AI Ingestion & Response Generation
   const firstContact = await (async () => {
     const { text } = await generateText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-2.0-flash'),
       system: `Eres Sentinel N25, el estratega de ventas de Richard Automotive. 
                Tu misión es convertir a ${name} en un cliente feliz. 
                Le interesa: ${unitOfInterest}. Contexto: ${context}.
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   if (!engagement.clicked) {
     const nudge = await (async () => {
       const { text } = await generateText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.0-flash'),
         system: `El cliente no ha hecho clic en el catálogo. 
                  Richard te autoriza a proponer un 'Special Sentinel Nudge' con un 5% de descuento 
                  o una garantía extendida de 12 meses.
