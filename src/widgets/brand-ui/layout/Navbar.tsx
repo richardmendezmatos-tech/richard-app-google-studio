@@ -69,6 +69,15 @@ const Navbar: React.FC = () => {
               Financiamiento
             </Link>
             <Link
+              to="/deal-matcher"
+              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200 flex items-center gap-1.5"
+            >
+              <span>Deal Matcher</span>
+              <span className="px-1.5 py-0.5 bg-cyan-500/20 text-[7px] font-black text-cyan-300 border border-cyan-500/30 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                NEW!
+              </span>
+            </Link>
+            <Link
               to="/contacto"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
@@ -156,6 +165,15 @@ const Navbar: React.FC = () => {
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             Financiamiento
+          </Link>
+          <Link
+            to="/deal-matcher"
+            className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
+          >
+            <span>Deal Matcher</span>
+            <span className="rounded-full bg-cyan-500/25 px-2 py-0.5 text-[9px] font-black text-cyan-300 animate-pulse border border-cyan-500/30">
+              MATCH! AI
+            </span>
           </Link>
           <Link
             to="/contacto"

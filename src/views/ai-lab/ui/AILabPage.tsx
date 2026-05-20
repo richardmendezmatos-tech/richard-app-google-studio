@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bot, Mic, Image as ImageIcon, Video, Code2, ArrowLeft } from 'lucide-react';
+import { Bot, Mic, Image as ImageIcon, Video, Code2, ArrowLeft, Flame } from 'lucide-react';
 import SEO from '@/shared/ui/seo/SEO';
+import { DealMatcherWidget } from '@/features/deal-matcher/ui/DealMatcherWidget';
 
 // Lazy load the underlying views for performance
 const ChatView = React.lazy(() => import('./views/ChatView'));
@@ -11,10 +12,11 @@ const ImageView = React.lazy(() => import('./views/ImageView'));
 const VideoView = React.lazy(() => import('./views/VideoView'));
 const SandboxView = React.lazy(() => import('./views/SandboxView'));
 
-type AILabTab = 'chat' | 'voice' | 'vision' | 'video' | 'sandbox';
+type AILabTab = 'chat' | 'voice' | 'vision' | 'video' | 'sandbox' | 'matcher';
 
 const tabs: { id: AILabTab; label: string; icon: React.FC<any>; color: string }[] = [
   { id: 'chat', label: 'Consultor AI', icon: Bot, color: 'text-cyan-400' },
+  { id: 'matcher', label: 'Deal Matcher', icon: Flame, color: 'text-orange-400' },
   { id: 'voice', label: 'Asistente de Voz', icon: Mic, color: 'text-emerald-400' },
   { id: 'vision', label: 'Visión Computacional', icon: ImageIcon, color: 'text-purple-400' },
   { id: 'video', label: 'Generación Dinámica', icon: Video, color: 'text-rose-400' },
@@ -28,6 +30,12 @@ export const AILabPage: React.FC = () => {
     switch (activeTab) {
       case 'chat':
         return <ChatView />;
+      case 'matcher':
+        return (
+          <div className="py-8 max-w-7xl mx-auto px-4">
+            <DealMatcherWidget />
+          </div>
+        );
       case 'voice':
         return <VoiceAssistantView />;
       case 'vision':
