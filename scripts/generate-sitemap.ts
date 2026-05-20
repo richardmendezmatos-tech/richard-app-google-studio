@@ -132,9 +132,21 @@ const buildXml = (urls: any[]) => {
 const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
   const locations = Object.values(CITIES_PR);
   const categories = ['suv', 'sedan', 'coupe', 'hatchback', 'performance', 'luxury'];
+  const brands = ['ford', 'hyundai', 'freightliner', 'toyota'];
 
   const entries: SitemapEntry[] = [];
 
+  // 1. Base category pages (generated once)
+  for (const cat of categories) {
+    entries.push({
+      loc: `${baseUrl}/autos-usados/tipo/${cat}`,
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: today
+    });
+  }
+
+  // 2. City-specific and City+Brand specific combinations
   for (const city of locations) {
     const locSlug = city.slug;
 
@@ -146,10 +158,10 @@ const loadClusterEntries = async (): Promise<SitemapEntry[]> => {
       lastmod: today
     });
 
-    // Category specific location URLs
-    for (const cat of categories) {
+    // City + Brand URLs (e.g. /autos-usados/bayamon/toyota)
+    for (const brand of brands) {
       entries.push({
-        loc: `${baseUrl}/autos-usados/tipo/${cat}`,
+        loc: `${baseUrl}/autos-usados/${locSlug}/${brand}`,
         changefreq: 'weekly',
         priority: 0.7,
         lastmod: today

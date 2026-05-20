@@ -6,12 +6,7 @@ import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
-// ── Tactical Data for Brand + City Market Domination ──
-const CITIES: Record<string, { name: string; slug: string; region: string; zipCodes: string[] }> = {
-  'vega-alta': { name: 'Vega Alta', slug: 'vega-alta', region: 'Norte', zipCodes: ['00692'] },
-  bayamon: { name: 'Bayamón', slug: 'bayamon', region: 'Zona Metro', zipCodes: ['00956'] },
-  'san-juan': { name: 'San Juan', slug: 'san-juan', region: 'Capital', zipCodes: ['00901'] },
-};
+import { CITIES_PR as CITIES } from '@/shared/config/cities';
 
 const BRANDS: Record<string, { name: string; slug: string; keywords: string[] }> = {
   ford: { name: 'Ford', slug: 'ford', keywords: ['F-150', 'Explorer', 'Mustang', 'Ranger'] },
