@@ -1,7 +1,8 @@
 import { tool } from 'ai';
 import { z } from 'zod';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase, searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
+import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 
 /**
  * Shared AI Tools for Richard Automotive
@@ -36,23 +37,68 @@ export const aiTools = {
       maxPrice: z.number().optional().describe('Presupuesto máximo.'),
     }),
     execute: (async ({ query, maxPrice }: any) => {
-      const { data, error } = await supabase
-        .from('inventory')
-        .select('*')
-        .or(`make.ilike.%${query}%,model.ilike.%${query}%,condition.ilike.%${query}%`)
-        .limit(5);
+      try {
+        console.log(`[AI Tool: searchInventory] Starting hybrid search for query: "${query}"`);
+        
+        // 1. Try semantic search first
+        let matchingCars: any[] = [];
+        try {
+          const queryEmbedding = await sentinelAI.generateEmbedding(query);
+          const semanticMatches = await searchSemanticInventory(queryEmbedding, 0.35, 5);
+          
+          if (semanticMatches && semanticMatches.length > 0) {
+            console.log(`[AI Tool: searchInventory] Found ${semanticMatches.length} semantic matches.`);
+            const carIds = semanticMatches.map(m => m.car_id);
+            const { data: dbCars, error: dbError } = await supabase
+              .from('inventory')
+              .select('*')
+              .in('id', carIds);
+              
+            if (!dbError && dbCars) {
+              // Maintain semantic relevance order
+              matchingCars = semanticMatches
+                .map(match => dbCars.find(c => c.id === match.car_id))
+                .filter(Boolean);
+            }
+          }
+        } catch (semanticError) {
+          console.warn('[AI Tool: searchInventory] Semantic search failed, falling back to text-match:', semanticError);
+        }
 
-      if (error) return { error: 'No se pudo consultar el inventario.' };
+        // 2. Text fallback if no semantic matches were found
+        if (matchingCars.length === 0) {
+          console.log('[AI Tool: searchInventory] Executing fallback text-based match...');
+          const { data, error } = await supabase
+            .from('inventory')
+            .select('*')
+            .or(`make.ilike.%${query}%,model.ilike.%${query}%,condition.ilike.%${query}%`)
+            .limit(5);
 
-      let filtered = data || [];
-      if (maxPrice) filtered = filtered.filter((c: any) => c.price <= maxPrice);
+          if (error) {
+            console.error('[AI Tool: searchInventory] Fallback search error:', error);
+            return { error: 'No se pudo consultar el inventario.' };
+          }
+          matchingCars = data || [];
+        }
 
-      return filtered.map((c: any) => ({
-        id: c.id,
-        name: `${c.year} ${c.make} ${c.model}`,
-        price: c.price,
-        status: c.status || 'Disponible',
-      }));
+        // 3. Apply additional filters
+        let filtered = matchingCars;
+        if (maxPrice) {
+          filtered = filtered.filter((c: any) => c.price <= maxPrice);
+        }
+
+        return filtered.map((c: any) => ({
+          id: c.id,
+          name: c.name || `${c.year} ${c.make} ${c.model}`,
+          price: c.price,
+          status: c.status || 'Disponible',
+          description: c.description || '',
+          imageUrl: c.image_url || c.imageUrl || ''
+        }));
+      } catch (err: any) {
+        console.error('[AI Tool: searchInventory] Unexpected error:', err);
+        return { error: 'Error inesperado durante la búsqueda de inventario.' };
+      }
     }) as any,
   } as any),
 

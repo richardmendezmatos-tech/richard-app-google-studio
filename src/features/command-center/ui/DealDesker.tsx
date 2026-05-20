@@ -476,7 +476,10 @@ const DealDesker: React.FC = () => {
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty > 0 && gapInsurance > 0 && paintProtection > 0 && powerPack > 0
                     ? 'bg-gradient-to-br from-slate-900 to-emerald-950/70 border-emerald-500 shadow-lg shadow-emerald-950/50 scale-[1.03]'
-                    : 'bg-slate-950/40 border-slate-800 hover:border-slate-700/60 hover:bg-slate-                <div className="absolute top-3 right-3">
+                    : 'bg-slate-950/40 border-slate-800 hover:border-slate-700/60 hover:bg-slate-900/40'
+                }`}
+              >
+                <div className="absolute top-3 right-3">
                   <span className="text-[9px] font-black uppercase bg-emerald-600/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
                     VIP / Recomendado
                   </span>
