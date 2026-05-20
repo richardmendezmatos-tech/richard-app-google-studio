@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import '@/index.css';
 import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
-import { CinemaLayout } from '@/widgets/brand-ui/layout/CinemaLayout';
 import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });

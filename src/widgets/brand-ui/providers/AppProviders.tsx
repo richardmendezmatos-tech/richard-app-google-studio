@@ -6,10 +6,11 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/shared/lib/react-query';
 import { NotificationProvider } from '@/shared/ui/providers/NotificationProvider';
 import { TelemetryProvider } from '@/shared/ui/providers/TelemetryProvider';
-import { initGA } from '@/shared/api/metrics/analytics';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
-import { LazyMotion, domAnimation } from 'framer-motion';
+import { LazyMotion } from 'framer-motion';
+
+const loadAnimationFeatures = () => import('framer-motion').then((mod) => mod.domAnimation);
 
 import { RehydrationService } from '@/shared/lib/resilience/RehydrationService';
 import { useAuthListener } from '@/features/auth';
@@ -22,9 +23,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   useAuthListener();
 
   useEffect(() => {
-    // Initialize Google Analytics 4
+    // Initialize Google Analytics 4 (dynamic import — not in critical path)
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
-    initGA(gaId);
+    import('@/shared/api/metrics/analytics').then(({ initGA }) => initGA(gaId));
 
     // [Nivel 13] Initialize Resilience Layer (Auto-healing)
     // Dynamic import to avoid circular dependencies with DI registry at startup
@@ -43,7 +44,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         <NotificationProvider>
           <TelemetryProvider>
             <I18nextProvider i18n={i18n}>
-              <LazyMotion features={domAnimation}>{children}</LazyMotion>
+              <LazyMotion features={loadAnimationFeatures}>{children}</LazyMotion>
             </I18nextProvider>
           </TelemetryProvider>
         </NotificationProvider>
