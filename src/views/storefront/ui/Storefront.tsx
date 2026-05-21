@@ -10,14 +10,6 @@ import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-const TrustBar = dynamic(() => import('@/features/inventory/ui/storefront/TrustBar'), {
-  ssr: false,
-});
-const TestimonialsSection = dynamic(
-  () => import('@/features/inventory/ui/storefront/TestimonialsSection'),
-  { ssr: false },
-);
-const FAQSection = dynamic(() => import('@/shared/ui/components/FAQSection'), { ssr: false });
 const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), {
   ssr: false,
 });
@@ -273,20 +265,7 @@ const Storefront: React.FC<Props> = ({
             />
           </section>
 
-          <section aria-label="Nuestra Confianza" className="reveal-up">
-            <GlassContainer intensity="high" opacity={0.05} className="p-10 lg:p-16">
-              <TrustBar />
-            </GlassContainer>
-          </section>
         </main>
-
-        <section aria-label="Preguntas Frecuentes" className="reveal-up content-auto">
-          <FAQSection />
-        </section>
-
-        <section aria-label="Testimonios" className="reveal-up content-auto">
-          <TestimonialsSection />
-        </section>
 
         <footer aria-label="Pie de página social" className="reveal-up content-auto">
           <SocialFooter />

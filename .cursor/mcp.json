@@ -35,6 +35,10 @@
     "sentinel-bi": {
       "command": "npx",
       "args": ["tsx", "./scripts/sentinel-mcp-server.js"]
+    },
+    "browser-agent": {
+      "command": "npx",
+      "args": ["tsx", "./scripts/browser-agent-mcp-server.ts"]
     }
   }
 }

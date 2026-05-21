@@ -108,6 +108,22 @@ export const aiTools = {
     }) as any,
   } as any),
 
+  browseWeb: tool({
+    description:
+      'Navega sitios web para buscar información sobre vehículos, precios, comparativas de mercado, y especificaciones técnicas.',
+    parameters: z.object({
+      instruction: z
+        .string()
+        .describe('Instrucción clara de lo que se debe buscar o hacer en la web.'),
+      url: z.string().optional().describe('URL opcional para comenzar la navegación.'),
+    }),
+    execute: (async ({ instruction, url }: { instruction: string; url?: string }) => {
+      const { browserAgentService } = await import('@/features/browser-agent');
+      const result = await browserAgentService.execute({ instruction, url });
+      return result;
+    }) as any,
+  } as any),
+
   captureCustomerLead: tool({
     description: 'Registra los datos de contacto de un cliente interesado.',
     parameters: z.object({

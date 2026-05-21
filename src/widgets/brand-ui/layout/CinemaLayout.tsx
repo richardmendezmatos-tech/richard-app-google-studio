@@ -132,7 +132,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            title="Ver Inventario"
+            aria-label="Ver Inventario"
             className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
           >
             <CarIcon className="text-cyan-400" size={20} />

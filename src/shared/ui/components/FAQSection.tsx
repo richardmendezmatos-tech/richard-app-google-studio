@@ -1,9 +1,5 @@
-'use client';
-
 import React from 'react';
-import { HelpCircle, ChevronDown, Cpu, Activity, ShieldCheck, Zap } from 'lucide-react';
-import Script from 'next/script';
-import { motion } from 'framer-motion';
+import { ChevronDown, Cpu, Activity, ShieldCheck } from 'lucide-react';
 
 const faqData = [
   {
@@ -49,13 +45,12 @@ const FAQSection: React.FC = () => {
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <Script
-          id="faq-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-        />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
 
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20 space-y-6">
           <div className="flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-cyan-500/50" />
@@ -71,19 +66,15 @@ const FAQSection: React.FC = () => {
           <h2 className="font-cinematic text-5xl md:text-7xl text-white tracking-widest leading-none">
             CENTRO DE <span className="text-cyan-400">INTELIGENCIA</span>
           </h2>
-          <p className="mx-auto max-w-xl font-tech text-xs uppercase tracking-widest text-slate-500">
+          <p className="mx-auto max-w-xl font-tech text-xs uppercase tracking-widest text-slate-400">
             Protocolos de soporte Richard Automotive. Transparencia total.
           </p>
         </div>
 
         <div className="space-y-4">
           {faqData.map((item, index) => (
-            <motion.details
+            <details
               key={index}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
               className="group overflow-hidden rounded-4xl border border-white/5 bg-slate-900/30 backdrop-blur-3xl transition-all duration-500 hover:border-cyan-500/20 hover:bg-slate-900/50 open:border-cyan-500/40 open:bg-slate-900/60"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between p-8 text-base md:text-lg font-bold text-white transition-colors select-none">
@@ -106,7 +97,7 @@ const FAQSection: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.details>
+            </details>
           ))}
         </div>
       </div>

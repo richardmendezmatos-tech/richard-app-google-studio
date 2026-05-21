@@ -1,20 +1,24 @@
 {
-  "name": "Richard Automotive Command Center",
+  "name": "Richard Automotive | Autos Nuevos y Usados en Puerto Rico",
   "short_name": "RichardAuto",
-  "description": "Richard Automotive Command Center - Sentinel 4.5 Performance Engine",
-  "start_url": "/command-center",
+  "description": "Concesionario oficial de autos nuevos Ford y usados certificados en Vega Alta, PR. Financiamiento inteligente, trade-in y selección curada con IA.",
+  "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#020617",
   "theme_color": "#020617",
-  "orientation": "portrait",
-  "categories": ["business", "finance", "productivity"],
+  "orientation": "any",
+  "categories": ["business", "shopping", "autos"],
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
   "screenshots": [
     {
       "src": "/houston_terminal.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Houston Command Center Terminal"
+      "label": "Richard Automotive Inventory"
     }
   ],
   "icons": [
@@ -27,18 +31,27 @@
     {
       "src": "/app-icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
-      "name": "Houston Terminal",
-      "url": "/houston",
+      "name": "Ver Inventario",
+      "short_name": "Inventario",
+      "url": "/inventario",
       "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
     },
     {
-      "name": "Inventory Sourcing",
-      "url": "/houston?tab=SOURCING",
+      "name": "Financiamiento",
+      "short_name": "Financiar",
+      "url": "/financiamiento",
+      "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Trade-in",
+      "short_name": "Trade-in",
+      "url": "/trade-in",
       "icons": [{ "src": "/app-icon.png", "sizes": "192x192" }]
     }
   ]

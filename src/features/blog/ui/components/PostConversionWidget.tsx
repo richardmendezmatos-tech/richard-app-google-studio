@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Calculator, ArrowRight, Zap, ShieldCheck, Loader2 } from 'lucide-react';
 import { triggerSentinelNurture } from '@/shared/api/communications/whatsappService';
 

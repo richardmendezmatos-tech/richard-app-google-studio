@@ -28,7 +28,8 @@ export const MobileBottomBar: React.FC = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="relative flex flex-col items-center justify-center p-2 transition-all duration-300 group"
+                aria-label={item.label}
+                className="relative flex flex-col items-center justify-center p-2 transition-all duration-300 group min-w-[56px] min-h-[48px]"
               >
                 <div
                   className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-500 ${

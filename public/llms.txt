@@ -1,31 +1,31 @@
-# Richard Automotive Command Center - LLM Context File
+# Richard Automotive — Concesionario de Autos Nuevos y Usados en Puerto Rico
 
-Welcome, AI Agent or LLM. This file provides the essential context, operational rules, and brand guidelines for interacting with the Richard Automotive Command Center ecosystem.
+## Acerca de
+Concesionario oficial de autos nuevos Ford y usados certificados en Vega Alta, Puerto Rico. Especialistas en financiamiento inteligente, trade-in y selección curada con IA.
 
-## Project Summary
-*   **Name:** Richard Automotive Command Center
-*   **Purpose:** Centralized platform for automotive sales, trade-ins, Lead management, and AI-driven vehicle appraisal (Visual Cortex).
-*   **Architecture:** Frontend built with React/Vite (deployed on Vercel), backend powered by Vercel Serverless Functions and Google Cloud Run. Twilio is used for WhatsApp integration, with Gemini AI powering the chatbot.
-*   **Stack:** Next.js / Vite, TailwindCSS, Firebase, Vercel Serverless, Twilio.
+## Contacto
+- Dirección: Carr. #2 KM 28.5, Bo. Espinosa, Vega Alta, PR 00692
+- Teléfono: +1 (787) 368-2880
+- WhatsApp: +1 (787) 368-2880
+- Email: richard@richard-automotive.com
+- Website: https://www.richard-automotive.com
 
-## AI Agent Operational Rules
-When generating text, code, or analyzing data for this project, you MUST strictly adhere to the following directives to guarantee the "Richard Automotive Excellency" and the brand's identity as a leader in high-end vehicle solutions in Puerto Rico.
+## Horario
+- Lunes a Viernes: 9:00 AM - 6:00 PM
+- Sábado: 9:00 AM - 5:00 PM
 
-### 1. Data Processing & Technical Generation
-*   Maintain an analytical, precise, and expert tone when dealing with vehicle appraisal, trade-ins, and F&I (Finance & Insurance).
-*   Prioritize risk mitigation and Maximize Deal Value for the dealership and the client.
-*   Focus on proactivity: transition from reactive sales to predictive inventory planning.
-*   Every solution must be presented as part of an intelligent control center ("Enfoque de Houston") that monitors performance 24/7.
+## Productos
+- Autos nuevos Ford (Explorer, F-150, Mustang, Bronco, Escape, Edge)
+- Autos usados certificados (Protocolo 150+ puntos de inspección)
+- SUVs, Sedanes, Pickups, Luxury
+- Financiamiento con aprobación expresa
+- Trade-in con tasación neural en 90 segundos
+- Garantía limitada con 72 horas de prueba
 
-### 2. Language & Tone (User-Facing)
-*   The tone must be sophisticated, expert, and highly professional.
-*   Eliminate any generic "car salesperson" clichés; transform data into "equity and performance" benefits.
-*   Use keywords such as: exclusividad, potencia, valor patrimonial, and ingeniería.
-*   **STRICT BRAND BAN:** NEVER mention Happy Senior, Vitalos, silver community, or any terms related to healthcare or aging. This is a 100% automotive environment.
-
-### 3. Workspace Persistence Protocol
-*   **Golden Rule:** "Dato que no está en el Workspace, no existe."
-*   Save all drafts and technical reports as structured JSON or technical Markdown with UUID tracking.
-*   **REGLA DE ORO DE MARCA:** Este proyecto es EXCLUSIVAMENTE para Richard Automotive.
-
-By following these rules, you ensure the technical optimization required by Richard Automotive's elite standards.
+## Enlaces principales
+- [Inventario completo](https://www.richard-automotive.com/inventario): Explora nuestra selección de autos nuevos y usados certificados
+- [Financiamiento inteligente](https://www.richard-automotive.com/financiamiento): Aprobación expresa con AI Sentinel
+- [Trade-in y tasación](https://www.richard-automotive.com/trade-in): Tasación neural en 90 segundos
+- [Precualificación expresa](https://www.richard-automotive.com/precualificacion): Soft pull sin afectar tu crédito
+- [Blog automotriz](https://www.richard-automotive.com/blog): Guías y consejos automotrices para Puerto Rico
+- [Bono $300 de bienvenida](https://www.richard-automotive.com/bono-300): Aplica tu bono al comprar tu próximo auto

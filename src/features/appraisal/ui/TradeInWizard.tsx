@@ -133,7 +133,7 @@ export const TradeInWizard: React.FC = () => {
   const labelClasses = 'ra-label-base';
 
   return (
-    <div className="glass-premium p-8 md:p-12 max-w-4xl mx-auto rounded-5xl border border-white/5 relative overflow-hidden">
+    <div className="glass-premium p-8 md:p-12 max-w-4xl mx-auto rounded-5xl border border-white/5 relative overflow-hidden" data-mcp-role="lead-capture" data-mcp-purpose="trade-in" data-mcp-fields="year,make,model,mileage,condition,name,phone">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-12 -mt-32" />
 

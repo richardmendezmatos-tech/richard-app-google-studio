@@ -2,6 +2,19 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "richard-automotive.com"
+        }
+      ],
+      "destination": "https://www.richard-automotive.com/:path*",
+      "permanent": true
+    }
+  ],
   "routes": [
     {
       "src": "/admin/(.*)",

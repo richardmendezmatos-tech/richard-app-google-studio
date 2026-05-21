@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div
         className={`relative border-b border-white/5 px-7 py-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}
       >
-        <button className="group text-left overflow-hidden relative" onClick={() => navigate('/')}>
+        <button className="group text-left overflow-hidden relative" onClick={() => navigate('/')} aria-label="Ir al inicio">
           <div className="scanline-overlay opacity-10" />
           {!isCollapsed ? (
             <div className="relative">
@@ -121,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button
             onClick={onToggleCollapse}
             className={`absolute -right-3.5 top-12 hidden lg:flex h-7 w-7 items-center justify-center rounded-xl border border-white/20 bg-[#0a1929] text-primary shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all hover:scale-110 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(0,229,255,0.2)] active:scale-95 ${isCollapsed ? 'rotate-180' : ''}`}
-            title={isCollapsed ? 'Expandir' : 'Colapsar'}
+            aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
           >
             <Cpu size={14} className="animate-pulse" />
           </button>
@@ -429,7 +429,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   onClick={handleLogout}
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20"
-                  title={t('auth.logout')}
+                  aria-label={t('auth.logout')}
                 >
                   <LogOut size={14} />
                 </button>
@@ -437,7 +437,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     onClick={() => navigate('/admin')}
                     className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20"
-                    title={t('common.admin')}
+                    aria-label={t('common.admin')}
                   >
                     <ShieldAlert size={14} />
                   </button>
@@ -466,6 +466,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
           className="flex items-center gap-2 rounded-xl border border-cyan-300/15 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300 transition-colors hover:bg-white/10"
+          aria-label="Cambiar idioma"
         >
           <Languages size={14} />
           {!hasMounted ? 'EN' : i18n.language === 'es' ? 'EN' : 'ES'}
@@ -508,7 +509,6 @@ const NavButton: React.FC<NavButtonProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       className={`${base} ${stateClass}`}
-      aria-current={active ? 'page' : undefined}
       aria-label={label}
       title={isCollapsed ? label : undefined}
       suppressHydrationWarning

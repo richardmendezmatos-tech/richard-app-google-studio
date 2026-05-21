@@ -19,7 +19,7 @@ function ContactInfoItem({
         {icon}
       </div>
       <div>
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">
+        <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-0.5">
           {label}
         </p>
         <p className="text-white text-sm font-medium">{value}</p>

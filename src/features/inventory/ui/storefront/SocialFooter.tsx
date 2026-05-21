@@ -2,15 +2,11 @@
 
 import React from 'react';
 import {
-  Globe,
   Instagram,
   Facebook,
   Twitter,
   Youtube,
   ShieldCheck,
-  Cpu,
-  Zap,
-  Activity,
 } from 'lucide-react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { motion } from 'framer-motion';
@@ -34,7 +30,7 @@ const SocialFooter: React.FC = () => {
           >
             Richard<span className="text-cyan-400">Automotive</span>
           </motion.h2>
-          <p className="text-sm font-medium leading-relaxed text-slate-500 max-w-xs">
+          <p className="text-sm font-medium leading-relaxed text-slate-400 max-w-xs">
             Redefiniendo la soberanía automotriz en Puerto Rico a través de Inteligencia Artificial
             y transparencia de Command Center.
           </p>
@@ -126,10 +122,10 @@ const SocialFooter: React.FC = () => {
               <span className="font-tech text-[10px] text-slate-600">QUERIES / DAY</span>
             </div>
             <div className="flex gap-3">
-              <SocialIcon icon={<Instagram size={16} />} href={SITE_CONFIG.social.instagram} />
-              <SocialIcon icon={<Facebook size={16} />} href={SITE_CONFIG.social.facebook} />
-              <SocialIcon icon={<Youtube size={16} />} href={SITE_CONFIG.social.youtube} />
-              <SocialIcon icon={<Twitter size={16} />} href={SITE_CONFIG.social.twitter} />
+              {SITE_CONFIG.social.instagram && <SocialIcon icon={<Instagram size={16} />} href={SITE_CONFIG.social.instagram} label="Instagram" />}
+              {SITE_CONFIG.social.facebook && <SocialIcon icon={<Facebook size={16} />} href={SITE_CONFIG.social.facebook} label="Facebook" />}
+              {SITE_CONFIG.social.youtube && <SocialIcon icon={<Youtube size={16} />} href={SITE_CONFIG.social.youtube} label="YouTube" />}
+              {SITE_CONFIG.social.twitter && <SocialIcon icon={<Twitter size={16} />} href={SITE_CONFIG.social.twitter} label="Twitter" />}
             </div>
           </div>
         </div>
@@ -138,13 +134,13 @@ const SocialFooter: React.FC = () => {
       <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-10 font-tech text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 md:flex-row">
         <p>&copy; 2026 Richard Automotive. Strategic Dominance Protocol.</p>
         <div className="flex gap-8">
-          <a href="#" className="hover:text-cyan-400 transition-colors">
+          <a href="/privacidad" className="hover:text-cyan-400 transition-colors">
             Privacy
           </a>
-          <a href="#" className="hover:text-cyan-400 transition-colors">
+          <a href="/terminos" className="hover:text-cyan-400 transition-colors">
             Terms
           </a>
-          <a href="#" className="hover:text-cyan-400 transition-colors">
+          <a href="/sitemap.xml" className="hover:text-cyan-400 transition-colors">
             Sitemap
           </a>
         </div>
@@ -171,10 +167,12 @@ const FooterLink = ({ label, href = '#' }: { label: string; href?: string }) => 
   </a>
 );
 
-const SocialIcon = ({ icon, href }: { icon: any; href?: string }) => (
+const SocialIcon = ({ icon, href, label }: { icon: any; href: string; label?: string }) => (
   <a
     href={href}
     target="_blank"
+    rel="noopener noreferrer"
+    aria-label={label || 'Red social'}
     className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:bg-cyan-500 hover:text-slate-950 hover:border-cyan-500 transition-all active:scale-90"
   >
     {icon}

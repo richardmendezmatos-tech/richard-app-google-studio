@@ -10,8 +10,6 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Forzar reinicio del servidor para aplicar cambios en componentes
-  cacheComponents: true,
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -25,12 +23,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'apicdn.inventario360.com' },
     ],
   },
-  transpilePackages: [
-    'lucide-react',
-    'motion',
-    'framer-motion',
-    'canvas-confetti'
-  ],
+  transpilePackages: [],
   allowedDevOrigins: ['127.0.0.1'],
   experimental: {
     optimizePackageImports: [

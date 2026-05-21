@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { ArrowRight, BrainCircuit, DollarSign, Zap, Shield, Clock, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import React, { useEffect, useState, useRef, lazy } from 'react';
+import { ArrowRight, BrainCircuit, DollarSign, Sparkles, Shield, Clock, Zap } from 'lucide-react';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
-import { NeuralBackground } from '@/shared/ui/common/NeuralBackground';
 import { PremiumCTA } from '@/shared/ui/common/PremiumCTA';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
+
+const NeuralBackground = lazy(() =>
+  import('@/shared/ui/common/NeuralBackground').then((m) => ({ default: m.NeuralBackground })),
+);
 
 interface HeroSectionProps {
   onNeuralMatch: () => void;
@@ -58,7 +59,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const [idx, setIdx] = useState(0);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const tickerRef = useRef<HTMLDivElement>(null);
-  const animFrameRef = useRef<number>(0);
 
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 1024px)');
@@ -81,21 +81,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    let pos = 0;
-    const speed = 0.5;
-    const step = () => {
-      if (tickerRef.current) {
-        const w = tickerRef.current.scrollWidth / 2;
-        pos -= speed;
-        if (pos <= -w) pos = 0;
-        tickerRef.current.style.transform = `translateX(${pos}px)`;
-      }
-      animFrameRef.current = requestAnimationFrame(step);
-    };
-    animFrameRef.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animFrameRef.current);
-  }, []);
+  // Ticker animation handled via CSS, not JS, to avoid forced reflow
 
   const h = HEADLINES[idx];
 
@@ -105,33 +91,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-slate-950 z-[1]" />
 
-        {/* Static Background for LCP Optimization */}
-        <div className="absolute inset-0 z-0">
-          <OptimizedImage
-            src="/hero.avif"
-            alt="Richard Automotive Hero"
-            priority
-            className="h-full w-full object-cover opacity-30"
-            fill
-          />
-        </div>
-
-        {/* Living Video Layer - Only Desktop & only after initial LCP */}
-        {videoLoaded && !isMobile && (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-cover opacity-30 scale-105 transition-opacity duration-1000"
-          >
-            <source
-              src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4"
-              type="video/mp4"
-            />
-          </video>
-        )}
-
+        {/* Gradient overlays for depth */}
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-950/80 to-slate-950 z-[2]" />
         <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/20 to-transparent z-[2]" />
 
@@ -140,16 +100,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* Neural Depth Layer */}
         <NeuralBackground className="z-[4]" count={isMobile ? 10 : 30} />
+
+        {/* Living Video Layer - Only Desktop & only after initial LCP */}
+        {videoLoaded && !isMobile && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover opacity-20 scale-105 transition-opacity duration-1000"
+          >
+            <source
+              src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4"
+              type="video/mp4"
+            />
+          </video>
+        )}
       </div>
 
       {/* ── Tactical Content Grid ── */}
-      <motion.div
-        initial="initial"
-        animate="animate"
-        variants={{
-          animate: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
-        }}
-        className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0"
+      <div
+        className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0 hero-fade-in"
       >
         {/* Left: Intelligence & Branding */}
         <div className="flex-1 space-y-10 text-left">
@@ -166,14 +137,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           <div className="min-h-[300px] lg:min-h-[400px]">
-            <AnimatePresence mode="wait">
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col gap-0"
+                className="flex flex-col gap-0 hero-fade-slide"
               >
                 <h2 className="flex flex-col">
                   <span className="font-cinematic text-6xl md:text-8xl lg:text-[11rem] text-white leading-[0.8] tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
@@ -186,18 +152,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     {h.accent}
                   </span>
                 </h2>
-              </motion.div>
-            </AnimatePresence>
+              </div>
           </div>
 
-          <motion.p
+          <p
             key={`sub-${idx}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-sm md:text-lg text-slate-400 max-w-xl leading-relaxed font-medium transition-all"
+            className="text-sm md:text-lg text-slate-400 max-w-xl leading-relaxed font-medium transition-all hero-fade-in"
           >
             {h.sub}
-          </motion.p>
+          </p>
 
           <div className="flex flex-wrap gap-4 pt-4">
             {[
@@ -216,12 +179,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Right: Command Panel CTAs */}
-        <motion.div
-          variants={{
-            initial: { opacity: 0, x: 20 },
-            animate: { opacity: 1, x: 0 },
-          }}
-          className="w-full lg:w-[460px]"
+        <div
+          className="w-full lg:w-[460px] hero-fade-right"
         >
           <GlassContainer
             intensity="high"
@@ -287,12 +246,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               size={60}
             />
           </GlassContainer>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      {/* ── Global Ticker Protocol ── */}
-      <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4 mt-auto">
-        <div className="flex overflow-hidden whitespace-nowrap" ref={tickerRef}>
+      {/* ── Global Ticker Protocol (CSS animation, no forced reflow) ── */}
+      <div className="relative z-20 border-t border-white/5 bg-slate-950/80 backdrop-blur-lg py-4 mt-auto overflow-hidden">
+        <div className="flex whitespace-nowrap ticker-scroll" ref={tickerRef}>
           {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
             <span
               key={i}
@@ -305,6 +264,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       <style>{`
+        .ticker-scroll {
+          animation: tickerLoop 40s linear infinite;
+        }
+        @keyframes tickerLoop {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
         .mesh-bg-elite {
           background: linear-gradient(-45deg, #00e5ff22, #7000ff22, #ff007011, #00ffaa11);
           background-size: 400% 400%;
@@ -316,6 +282,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
+        }
+        .hero-fade-in {
+          animation: heroFadeIn 0.6s ease-out both;
+        }
+        .hero-fade-slide {
+          animation: heroSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .hero-fade-right {
+          animation: heroFadeRight 0.6s ease-out 0.2s both;
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes heroSlideIn {
+          from { opacity: 0; transform: translateX(-20px); filter: blur(10px); }
+          to { opacity: 1; transform: translateX(0); filter: blur(0px); }
+        }
+        @keyframes heroFadeRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </section>

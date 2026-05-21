@@ -55,8 +55,8 @@ export const viewport = {
   themeColor: '#020617',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScaleable: false,
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: 'cover',
 };
 
@@ -97,6 +97,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     ],
   };
 
+  const webmcpJsonLd = {
+    '@context': 'https://schema.webmcp.dev',
+    '@type': 'WebApplication',
+    name: 'Richard Automotive',
+    'mcp:tools': [
+      {
+        '@type': 'mcp:FormTool',
+        name: 'pre-qualify',
+        description: 'Pre-calificar cliente para financiamiento automotriz',
+        url: '/precualificacion',
+        'mcp:fields': ['name', 'phone', 'email', 'income'],
+      },
+      {
+        '@type': 'mcp:FormTool',
+        name: 'bono-300',
+        description: 'Reclamar bono de $300 para gastos de cierre',
+        url: '/bono-300',
+        'mcp:fields': ['name', 'phone', 'email'],
+      },
+      {
+        '@type': 'mcp:FormTool',
+        name: 'trade-in',
+        description: 'Tasación de vehículo para trade-in',
+        url: '/trade-in',
+        'mcp:fields': ['year', 'make', 'model', 'mileage', 'condition'],
+      },
+    ],
+  };
+
   return (
     <html
       lang="es"
@@ -104,14 +133,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="icon" href="/app-icon.png" sizes="any" />
+        <meta name="mcp:tool" content="pre-qualify" />
+        <meta name="mcp:tool" content="bono-300" />
+        <meta name="mcp:tool" content="trade-in" />
+        <meta name="mcp:tool" content="contact" />
       </head>
       <body className="bg-slate-950 text-white min-h-screen">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-6 focus:py-3 focus:bg-cyan-500 focus:text-black focus:font-bold focus:rounded-xl focus:shadow-2xl focus:outline-none"
+        >
+          Saltar al contenido principal
+        </a>
         <PerformanceInitializer />
         <Script
           id="person-jsonld"
           type="application/ld+json"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <Script
+          id="webmcp-jsonld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webmcpJsonLd) }}
         />
         {process.env.NODE_ENV === 'development' && (
           <Script

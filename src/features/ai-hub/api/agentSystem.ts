@@ -1,5 +1,5 @@
 // Agent Definitions
-export type AgentPersona = 'ricardo' | 'sofia' | 'system' | 'jordan' | 'mateo';
+export type AgentPersona = 'ricardo' | 'sofia' | 'system' | 'jordan' | 'mateo' | 'navigator';
 
 interface AgentProfile {
   id: AgentPersona;
@@ -63,6 +63,14 @@ RESILIENCIA: Si necesitas más tiempo para procesar o buscar información, usa f
             6. RESILIENCIA: Evita el silencio incómodo o errores. Usa frases puente ("Revisando esto para cerrarlo ya, dame un segundo...").
         `,
   },
+  navigator: {
+    id: 'navigator',
+    name: 'Navigator',
+    role: 'Agente de Navegación Web',
+    avatar: '🌐',
+    style: 'Analítico, preciso y rápido. Usa emojis de búsqueda 🔍.',
+    systemPrompt: `Eres Navigator, el agente de navegación web de Richard Automotive. Tu objetivo es buscar información en internet para ayudar al cliente y al equipo de ventas. Puedes investigar precios de competencia, especificaciones técnicas, comparativas de mercado y cualquier dato automotriz. Usa frases como "Déjame investigar eso en la web..." y "Encontré esta información para ti.".`,
+  },
   mateo: {
     id: 'mateo',
     name: 'Mateo',
@@ -103,6 +111,15 @@ export const detectIntent = (message: string): AgentPersona => {
     )
   ) {
     return 'mateo';
+  }
+
+  // Navigate/Web Search Keywords
+  if (
+    lower.match(
+      /(buscar|investigar|compara|encuentra|navegar|web|internet|google|busca|precio.*competencia|que tal.*marca|mejor.*precio|encuentrame)/,
+    )
+  ) {
+    return 'navigator';
   }
 
   // Default to Ricardo for general car chat, or keep current context

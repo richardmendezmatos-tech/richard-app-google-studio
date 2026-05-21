@@ -286,7 +286,7 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({
                   <span className={styles.statusLabel}>EN LÍNEA AHORA</span>
                 </div>
               </div>
-              <button className={styles.closeButton} onClick={handleToggle} title="Cerrar chat">
+              <button className={styles.closeButton} onClick={handleToggle} aria-label="Cerrar chat">
                 <X size={16} />
               </button>
             </div>

@@ -272,7 +272,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleExpressSubmit} className="space-y-4">
+            <form onSubmit={handleExpressSubmit} data-mcp-role="lead-capture" data-mcp-purpose="bono-300" data-mcp-fields="name,phone,email" className="space-y-4">
               <div className="text-center mb-4">
                 <h2 className="text-lg font-black text-white">Congela tu Bono Inmediatamente</h2>
                 <p className="text-xs text-slate-400 mt-0.5">

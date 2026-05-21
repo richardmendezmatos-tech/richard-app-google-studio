@@ -87,6 +87,45 @@ class OrchestrationService {
   }
 
   /**
+   * Orchestrates a web browsing task for market research or vehicle comparison.
+   */
+  async orchestrateBrowseTask(
+    query: string,
+    context?: { vehicleMake?: string; vehicleModel?: string; targetUrl?: string },
+  ): Promise<OrchestrationAction> {
+    const agentId: AgentPersona = 'navigator';
+    const agent = AGENTS[agentId];
+
+    const message = `🔍 *Navigator*: Investigando "${query}" en la web`;
+    let suggestedAction = `Buscar en web: ${query}`;
+
+    if (context?.targetUrl) {
+      suggestedAction += ` | URL: ${context.targetUrl}`;
+    }
+
+    if (context?.vehicleMake) {
+      suggestedAction += ` | Vehículo: ${context.vehicleMake} ${context.vehicleModel || ''}`;
+    }
+
+    const actionData: OrchestrationAction = {
+      agentId,
+      message,
+      priority: 'medium',
+      reasoning: `Tarea de investigación web solicitada: "${query}"`,
+      suggestedAction,
+    };
+
+    const sessionId = workspaceManager.startSession();
+    await workspaceManager.checkpointOperation(sessionId, 'BROWSE_ORCHESTRATION', {
+      query,
+      context,
+      actionData,
+    });
+
+    return actionData;
+  }
+
+  /**
    * AI Orchestration 2.0: Preference Extraction
    * Simple heuristic-based extraction of user preferences from message context.
    * In a real system, this would use a dedicated LLM call (Gemini).

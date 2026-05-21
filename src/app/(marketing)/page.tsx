@@ -1,15 +1,26 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
-import Storefront from '@/pages/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
+import HeroBackground from '@/features/inventory/ui/storefront/HeroBackground';
+import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
+import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
+import FAQSection from '@/shared/ui/components/FAQSection';
+import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontContent';
 
-const ContactInfoSection = dynamic(
-  () => import('@/pages/storefront/ui/ContactInfoSection'),
-  { ssr: false },
-);
+async function InventorySection() {
+  let inventory: any[] = [];
+
+  try {
+    const result = await getPaginatedCars(12, null, 'all');
+    inventory = result.cars;
+  } catch (error) {
+    console.error('Error fetching inventory for SSR:', error);
+  }
+
+  return <LazyStorefrontContent inventory={inventory} />;
+}
 
 export const metadata: Metadata = {
   title: 'Richard Automotive | Dealer de Autos Nuevos y Usados en Vega Alta',
@@ -101,84 +112,24 @@ function HomeJsonLd() {
   );
 }
 
-/**
- * Next.js App Router Home Page
- * Optimized for Local SEO and Strategic Conversion.
- */
 export const revalidate = 60;
 
-export default async function HomePage() {
-  let inventory: any[] = [];
-
-  try {
-    const result = await getPaginatedCars(12, null, 'all');
-    inventory = result.cars;
-  } catch (error) {
-    console.error('Error fetching inventory for SSR:', error);
-  }
-
+export default function HomePage() {
   return (
     <>
       <HomeJsonLd />
 
       <main className="relative">
         <SessionRecoveryBridge />
-        <div
-          className="absolute inset-0 min-h-screen pointer-events-none"
-          style={{ zIndex: 0 }}
-        >
-          <div className="absolute inset-0 bg-slate-950" style={{ zIndex: 1 }} />
-          <img
-            src="/hero.avif"
-            alt="Richard Automotive"
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
-            style={{ zIndex: 0 }}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-          <div
-            className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent"
-            style={{ zIndex: 2 }}
-          />
-          <div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(34,211,238,0.15)_0%,_transparent_70%)]"
-            style={{ zIndex: 3 }}
-          />
-          <div
-            className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-24"
-            style={{ zIndex: 10 }}
-          >
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-2">
-                <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em] font-tech">
-                  Richard Automotive
-                </p>
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] text-white font-cinematic">
-                  Estrena Hoy
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">
-                    Tu SUV
-                  </span>
-                  <br />
-                  <span className="text-2xl md:text-3xl lg:text-4xl text-slate-400 font-manrope font-normal not-uppercase tracking-normal block mt-2">
-                    Ideal para tu Familia
-                  </span>
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
+        <HeroBackground />
         <Suspense fallback={null}>
-          <Storefront inventory={inventory} />
-        </Suspense>
-
-        <Suspense fallback={null}>
-          <ContactInfoSection />
+          <InventorySection />
         </Suspense>
       </main>
+
+      <TrustBar />
+      <FAQSection />
+      <TestimonialsSection />
     </>
   );
 }
-
-

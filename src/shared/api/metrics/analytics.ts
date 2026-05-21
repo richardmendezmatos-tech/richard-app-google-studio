@@ -11,7 +11,7 @@ const getGA = () => (ReactGA as any).default || ReactGA;
 const createAnalyticsService = () => {
   let isInitialized = false;
 
-  const init = (measurementId: string = 'G-XXXXXXXXXX') => {
+  const init = (measurementId: string) => {
     if (!isInitialized && typeof window !== 'undefined') {
       try {
         getGA().initialize(measurementId);

@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Newspaper, Sparkles, Send, Loader2, Edit3, Trash2, CheckCircle } from 'lucide-react';
 import { useBlogPosts, useCreateBlogPost, useDeleteBlogPost } from '@/features/blog/hooks/useBlog';
 

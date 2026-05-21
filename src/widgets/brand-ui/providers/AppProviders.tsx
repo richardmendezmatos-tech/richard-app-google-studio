@@ -23,19 +23,10 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   useAuthListener();
 
   useEffect(() => {
-    // Initialize Google Analytics 4 (dynamic import — not in critical path)
-    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
-    import('@/shared/api/metrics/analytics').then(({ initGA }) => initGA(gaId));
-
-    // [Nivel 13] Initialize Resilience Layer (Auto-healing)
-    // Dynamic import to avoid circular dependencies with DI registry at startup
-    import('@/app/(dashboard)/di/registry').then(async ({ DI }) => {
-      console.log('🛡️ [AppProviders] DI Registry loaded dynamically.');
-      const leadRepo = await DI.getLeadRepository();
-      const rehydration = new RehydrationService(leadRepo as any);
-      rehydration.start(30000); // Check every 30s
-      console.log('🛡️ [Sentinel:Resilience] Rehydration Service initialized.');
-    });
+    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    if (gaId && gaId !== 'G-XXXXXXXXXX') {
+      import('@/shared/api/metrics/analytics').then(({ initGA }) => initGA(gaId));
+    }
   }, []);
 
   return (

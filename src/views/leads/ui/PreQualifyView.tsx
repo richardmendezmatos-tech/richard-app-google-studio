@@ -344,7 +344,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
 
         {/* Form Area */}
         <div className="w-full md:w-2/3 p-4 md:p-12 flex items-center justify-center">
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-2xl" data-mcp-role="lead-capture" data-mcp-purpose="pre-qualify" data-mcp-fields="firstName,phone,lastName,email,downPayment,term,income">
             {/* Progress */}
             <div className="flex gap-2 mb-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
