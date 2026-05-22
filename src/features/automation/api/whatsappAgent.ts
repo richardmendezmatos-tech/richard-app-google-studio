@@ -1,5 +1,5 @@
 import { sendTemplateMessage, sendTextMessage } from '@/shared/api/messaging/whatsappClient';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepository';
 
@@ -85,17 +85,20 @@ export class WhatsAppAgent {
   /**
    * Finds the best match for a lead in the current inventory using the Neural Engine.
    */
-  async findPersonalizedRecommendation(lead: LeadContext) {
+  async findPersonalizedRecommendation(lead: LeadContext, unifiedScore?: number) {
     if (!lead.vehicleInterest) return null;
 
     try {
-      // 1. Generate embedding for the interest
       const queryEmbedding = await sentinelAI.generateEmbedding(lead.vehicleInterest);
 
-      // 2. Query Supabase RPC
+      // Dynamic threshold: hot leads get a more permissive match
+      const threshold = unifiedScore
+        ? Math.max(0.1, 0.5 - unifiedScore / 200)
+        : 0.4;
+
       const { data, error } = await supabase.rpc('match_inventory', {
         query_embedding: queryEmbedding,
-        match_threshold: 0.4,
+        match_threshold: threshold,
         match_count: 1,
       });
 

@@ -175,7 +175,8 @@ const AdminGuard = ({ children }: { children?: React.ReactNode }) => {
     }
 
     let unsubscribe: { data: { subscription: any } } | null = null;
-    import('@/shared/api/supabase/supabaseClient').then(({ supabase }) => {
+    import('@/shared/api/supabase/client').then(({ createClient: createSupabaseClient }) => {
+      const supabase = createSupabaseClient();
       const { data } = supabase.auth.onAuthStateChange(() => {
         setCheckingAuth(false);
       });

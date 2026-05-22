@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 /**

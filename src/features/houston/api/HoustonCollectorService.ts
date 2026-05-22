@@ -21,7 +21,8 @@ export class HoustonCollectorService {
   async collectAndPush(dealerId: string): Promise<void> {
     try {
       const leadRepo = await DI.getLeadRepository();
-      const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+      const { createClient: createSupabaseClient } = await import('@/shared/api/supabase/client');
+      const supabase = createSupabaseClient();
       const { SupabaseInventoryRepository } =
         await import('@/entities/inventory/api/SupabaseInventoryRepository');
       const inventoryRepo = new SupabaseInventoryRepository(supabase);

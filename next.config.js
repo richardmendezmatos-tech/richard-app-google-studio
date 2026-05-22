@@ -21,6 +21,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'api-java-gcp.richard-automotive.com' },
       { protocol: 'https', hostname: 'randomuser.me' },
       { protocol: 'https', hostname: 'apicdn.inventario360.com' },
+      { protocol: 'https', hostname: '*.supabase.co' },
     ],
   },
   transpilePackages: [],

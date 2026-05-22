@@ -29,7 +29,9 @@ export const useAuthListener = () => {
 
     setLoading(true);
 
-    const unsubscribe = subscribeToAuthChanges(async (user) => {
+    let unsubscribe: (() => void) | null = null;
+
+    subscribeToAuthChanges(async (user) => {
       console.log(
         '🔄 [useAuthListener] Auth State Change Detected:',
         user ? `User: ${user.email}` : 'User: None',
@@ -50,10 +52,12 @@ export const useAuthListener = () => {
         logout();
       }
       setLoading(false);
+    }).then((unsub) => {
+      unsubscribe = unsub;
     });
 
     return () => {
-      unsubscribe();
+      unsubscribe?.();
     };
   }, [setUser, setRole, setLoading, logout]);
 };

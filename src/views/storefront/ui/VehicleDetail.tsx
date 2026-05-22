@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
@@ -498,7 +499,20 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           <div id="deal-builder-section" className="scroll-mt-32">
             <React.Suspense
               fallback={
-                <div className="w-full h-[600px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />
+                <div className="w-full h-[600px] rounded-5xl border border-white/10 overflow-hidden p-8 space-y-6">
+                  <div className="h-8 w-48 animate-pulse bg-white/5 rounded-lg" />
+                  <div className="h-4 w-64 animate-pulse bg-white/5 rounded-lg" />
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
+                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
+                  </div>
+                  <div className="h-24 animate-pulse bg-white/5 rounded-2xl" />
+                  <div className="h-16 animate-pulse bg-white/5 rounded-2xl" />
+                  <div className="flex gap-4">
+                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
+                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
+                  </div>
+                </div>
               }
             >
               <GlassContainer intensity="medium" opacity={0.02} className="p-1">
@@ -543,10 +557,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 className="group relative bg-white/5 border border-white/10 rounded-4xl overflow-hidden hover:border-primary/40 transition-all"
               >
                 <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-slate-900/20">
-                  <img
-                    src={item.image || item.img || item.images?.[0]}
+                  <Image
+                    src={item.image || item.img || item.images?.[0] || '/images/placeholders/car.webp'}
                     alt={item.name}
-                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    className="object-contain transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-[#020617] via-transparent to-transparent opacity-80" />
                 </div>
@@ -680,8 +697,21 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               <div className="max-h-[85vh] overflow-y-auto p-6">
                 <React.Suspense
                   fallback={
-                    <div className="h-[600px] flex items-center justify-center text-primary animate-pulse font-tech text-xs tracking-widest">
-                      CARGANDO MÓDULO DE CRÉDITO...
+                    <div className="h-[600px] p-8 space-y-6">
+                      <div className="flex items-center gap-4 mb-8">
+                        <div className="h-12 w-12 animate-pulse bg-white/5 rounded-2xl" />
+                        <div className="space-y-2 flex-1">
+                          <div className="h-4 w-48 animate-pulse bg-white/5 rounded-lg" />
+                          <div className="h-3 w-32 animate-pulse bg-white/5 rounded-lg" />
+                        </div>
+                      </div>
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="space-y-3">
+                          <div className="h-3 w-24 animate-pulse bg-white/5 rounded-lg" />
+                          <div className="h-12 animate-pulse bg-white/5 rounded-2xl" />
+                        </div>
+                      ))}
+                      <div className="h-14 animate-pulse bg-white/5 rounded-2xl mt-8" />
                     </div>
                   }
                 >

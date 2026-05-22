@@ -8,7 +8,7 @@ import { useInventoryAnalytics } from './useInventoryAnalytics';
 import { useAuthStore } from '@/entities/session';
 import { useTrajectoryStore } from '@/entities/session/model/useTrajectoryStore';
 import { TrajectoryAnalyzer } from '@/features/predictive/model/TrajectoryAnalyzer';
-import { logSearchGap } from '@/shared/api/supabase/supabaseClient';
+
 
 export function useStorefrontState(
   inventory: Car[],
@@ -18,6 +18,7 @@ export function useStorefrontState(
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<CarType | 'all'>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+  const [sortBy, setSortBy] = useState<'price' | 'year' | 'mileage' | 'created_at'>('price');
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
   const [mileageFilter, setMileageFilter] = useState<number | 'all'>('all');
@@ -73,10 +74,13 @@ export function useStorefrontState(
     9,
     filter,
     sortOrder,
+    searchTerm || undefined,
+    sortBy,
   );
 
   const serverCars = data?.pages.flatMap((page) => page.cars) || [];
-  const isSearching = !!searchTerm || !!visualContext;
+  const hasClientFilters = yearFilter !== 'all' || mileageFilter !== 'all' || !!visualContext;
+  const isSearching = hasClientFilters;
 
   // Nivel 13: Neuro-Adaptive Intelligence
   const trajectoryEvents = useTrajectoryStore((s) => s.events);
@@ -88,56 +92,32 @@ export function useStorefrontState(
   );
 
   const filteredAndSorted = useMemo(() => {
-    const normalizedSearch = searchTerm.toLowerCase().trim();
-    const isGuagua = normalizedSearch === 'guagua';
-    const isPickup = normalizedSearch === 'pickup' || normalizedSearch === 'pick-up';
+    const source = hasClientFilters ? serverCars : inventory;
 
-    return [...(inventory || [])] // Copy to avoid mutation
+    return [...(source || [])]
       .filter((c) => {
         if (semanticResultIds.length > 0) {
           if (semanticResultIds.includes('NO_MATCHES')) return false;
           return semanticResultIds.includes(c.id);
         }
 
-        const type = (c.type || '').toLowerCase();
-        const name = (c.name || '').toLowerCase();
-
-        // Local Semantic Logic
-        if (isGuagua) return type === 'suv' || type === 'truck';
-        if (isPickup) return type === 'truck';
-
-        const make = (c.make || '').toLowerCase();
-
-        const matchesSearch = visualContext
-          ? name.includes(normalizedSearch) ||
-            (visualContext || '').toLowerCase().includes(type) ||
-            type.includes(visualContext.split(' ')[0] || '')
-          : name.includes(normalizedSearch) ||
-            type.includes(normalizedSearch) ||
-            make.includes(normalizedSearch);
-
-        let matchesType = filter === 'all' || type === filter;
-
-        // Multi-brand & Industrial Logic (N14)
-        if (filter === 'ford' || filter === 'hyundai') {
-          matchesType = make === filter;
-        } else if (filter === 'truck') {
-          matchesType = type === 'truck' || make === 'freightliner';
+        if (visualContext) {
+          const type = (c.type || '').toLowerCase();
+          const ctx = visualContext.toLowerCase();
+          if (!type.includes(ctx.split(' ')[0] || '')) return false;
         }
 
         const yearValue = c.year || (c.name ? parseInt(c.name.split(' ')[0]) : 0);
-        const matchesYear = yearFilter === 'all' || yearValue === yearFilter;
+        if (yearFilter !== 'all' && yearValue !== yearFilter) return false;
 
-        const matchesMileage =
-          mileageFilter === 'all' ||
-          (mileageFilter === 10000 && (c.mileage || 0) <= 10000) ||
-          (mileageFilter === 50000 && (c.mileage || 0) <= 50000) ||
-          (mileageFilter === 100000 && (c.mileage || 0) <= 100000);
+        if (mileageFilter !== 'all') {
+          const threshold = mileageFilter as number;
+          if ((c.mileage || 0) > threshold) return false;
+        }
 
-        return matchesSearch && matchesType && matchesYear && matchesMileage;
+        return true;
       })
       .sort((a, b) => {
-        // Nivel 13 Adaptive Boost
         if (preferredCategory) {
           const aMatch = a.type?.toLowerCase() === preferredCategory;
           const bMatch = b.type?.toLowerCase() === preferredCategory;
@@ -150,25 +130,26 @@ export function useStorefrontState(
         return 0;
       });
   }, [
-    searchTerm,
     visualContext,
     semanticResultIds,
-    filter,
     sortOrder,
+    serverCars,
     inventory,
     preferredCategory,
     yearFilter,
     mileageFilter,
+    hasClientFilters,
   ]);
 
-  const displayCars = isSearching || preferredCategory ? filteredAndSorted : serverCars;
+  const displayCars = hasClientFilters || preferredCategory ? filteredAndSorted : serverCars;
 
   // Sentinel N24: Search Gap Intelligence
-  // Captura automáticamente búsquedas que no arrojan resultados para el análisis de Houston.
+  // Captura automáticamente búsquedas visuales que no arrojan resultados para el análisis de Houston.
   useEffect(() => {
-    if (isSearching && displayCars.length === 0 && searchTerm.length > 3) {
+    if (hasClientFilters && displayCars.length === 0 && visualContext) {
       const timer = setTimeout(async () => {
-        await logSearchGap(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
+        const { logSearchGap: lg } = await import('@/shared/api/supabase/supabaseClient');
+        await lg(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
         console.log(`[Sentinel] Search Gap logged: ${searchTerm}`);
       }, 5000); // Debounce extendido para precisión
       return () => clearTimeout(timer);
@@ -176,7 +157,7 @@ export function useStorefrontState(
   }, [isSearching, displayCars.length, searchTerm, filter]);
 
   const marketPulse = useMemo(() => {
-    const source = (displayCars || []).length > 0 ? displayCars : inventory || [];
+    const source = (displayCars || []).length > 0 ? displayCars : serverCars || [];
     if (!source.length) {
       return { avgPrice: 0, premiumUnits: 0, compactUnits: 0 };
     }
@@ -189,7 +170,7 @@ export function useStorefrontState(
     };
   }, [displayCars, inventory]);
 
-  const isLoadingInitial = !isSearching && status === 'pending';
+  const isLoadingInitial = !hasClientFilters && status === 'pending';
 
   const handleToggleCompare = (e: React.MouseEvent, car: Car) => {
     e.stopPropagation();
@@ -252,6 +233,8 @@ export function useStorefrontState(
       setFilter,
       sortOrder,
       setSortOrder,
+      sortBy,
+      setSortBy,
       selectedCar,
       setSelectedCar,
       isVisualSearchOpen,

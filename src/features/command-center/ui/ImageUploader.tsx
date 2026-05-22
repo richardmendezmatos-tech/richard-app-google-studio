@@ -208,7 +208,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
 
-          const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+          const { createClient: createSupabaseClient } = await import('@/shared/api/supabase/client');
+          const supabase = createSupabaseClient();
           const bucket = 'inventory';
 
           // Parallel Upload of ALL versions to Supabase

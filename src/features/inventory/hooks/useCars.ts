@@ -5,11 +5,20 @@ export const useCars = (
   pageSize: number = 9,
   filterType: string = 'all',
   sortOrder: 'asc' | 'desc' | null = null,
+  searchTerm?: string,
+  sortBy: 'price' | 'year' | 'mileage' | 'created_at' = 'price',
 ) => {
   return useInfiniteQuery({
-    queryKey: ['cars', filterType, sortOrder],
+    queryKey: ['cars', filterType, sortOrder, searchTerm, sortBy],
     queryFn: async ({ pageParam }) => {
-      const result = await getPaginatedCars(pageSize, pageParam as number, filterType, sortOrder);
+      const result = await getPaginatedCars(
+        pageSize,
+        pageParam as number,
+        filterType,
+        sortOrder,
+        searchTerm,
+        sortBy,
+      );
       return result;
     },
     initialPageParam: 0 as number,

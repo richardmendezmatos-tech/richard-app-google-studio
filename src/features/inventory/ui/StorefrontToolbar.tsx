@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Search, BrainCircuit, Camera, ArrowUpDown, Sparkles, Heart } from 'lucide-react';
 import { CarType } from '@/entities/inventory';
 
@@ -8,6 +8,26 @@ interface Props {
 }
 
 export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    state.setSearchTerm(val);
+    if (state.visualContext) {
+      state.setVisualContext(null);
+      state.setSemanticResultIds([]);
+    }
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {}, 300);
+  };
+
+  const sortOptions: { key: typeof state.sortBy; label: string }[] = [
+    { key: 'price', label: 'Precio' },
+    { key: 'year', label: 'Año' },
+    { key: 'mileage', label: 'Millaje' },
+    { key: 'created_at', label: 'Nuevos Primero' },
+  ];
+
   return (
     <>
       <div className="sticky top-2 z-30 glass-premium px-4 py-4 md:top-4 md:px-6">
@@ -35,11 +55,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
               }
               className="w-full rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-2xl py-4 pl-14 pr-28 text-base font-semibold text-white outline-none placeholder:text-slate-500 transition-all duration-300 focus:border-primary/50 focus:ring-4 focus:ring-primary/20"
               value={state.searchTerm}
-              onChange={(e) => {
-                state.setSearchTerm(e.target.value);
-                state.setVisualContext(null);
-                state.setSemanticResultIds([]);
-              }}
+              onChange={handleSearchChange}
             />
 
             <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 gap-2">
@@ -85,30 +101,41 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
               ))}
             </div>
 
-            {/* Price Sorting */}
+            {/* Multi-field Sorting */}
             <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1.5 backdrop-blur-xl">
+              <select
+                value={state.sortBy}
+                onChange={(e) => state.setSortBy(e.target.value)}
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.key} value={opt.key} className="bg-slate-900 text-slate-300">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <div className="w-px h-6 bg-white/10" />
               <button
                 onClick={() => state.setSortOrder((prev: any) => (prev === 'asc' ? null : 'asc'))}
-                className={`flex items-center gap-2 rounded-full px-4 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
+                className={`rounded-full px-3 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
                   state.sortOrder === 'asc'
                     ? 'bg-primary text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="Menor Precio"
+                title="Ascendente"
               >
-                <ArrowUpDown size={14} className="rotate-180" />{' '}
-                <span className="hidden sm:inline">$-$$$</span>
+                <ArrowUpDown size={14} className="rotate-180" />
               </button>
               <button
                 onClick={() => state.setSortOrder((prev: any) => (prev === 'desc' ? null : 'desc'))}
-                className={`flex items-center gap-2 rounded-full px-4 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
+                className={`rounded-full px-3 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
                   state.sortOrder === 'desc'
                     ? 'bg-primary text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="Mayor Precio"
+                title="Descendente"
               >
-                <ArrowUpDown size={14} /> <span className="hidden sm:inline">$$$-$</span>
+                <ArrowUpDown size={14} />
               </button>
             </div>
 
@@ -156,11 +183,20 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                 <option value="all" className="bg-slate-900 text-slate-300">
                   Millaje: Todos
                 </option>
+                <option value="5000" className="bg-slate-900 text-slate-300">
+                  &lt; 5k Millas
+                </option>
                 <option value="10000" className="bg-slate-900 text-slate-300">
                   &lt; 10k Millas
                 </option>
+                <option value="30000" className="bg-slate-900 text-slate-300">
+                  &lt; 30k Millas
+                </option>
                 <option value="50000" className="bg-slate-900 text-slate-300">
                   &lt; 50k Millas
+                </option>
+                <option value="75000" className="bg-slate-900 text-slate-300">
+                  &lt; 75k Millas
                 </option>
                 <option value="100000" className="bg-slate-900 text-slate-300">
                   &lt; 100k Millas

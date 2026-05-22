@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { Lead } from '@/shared/types/types';
 import { hubspotService } from '@/shared/api/hubspot/HubSpotClient';
 import { extractMarketingData } from './marketingCaptureService';

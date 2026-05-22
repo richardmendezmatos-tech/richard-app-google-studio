@@ -19,7 +19,7 @@ export class VideoGeneratorService {
       const { data: car, error: carError } = await supabase
         .from('inventory')
         .select('*')
-        .eq('id', carId)
+        .eq('vin', carId)
         .single();
 
       if (carError || !car) {

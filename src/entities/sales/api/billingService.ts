@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 
 export type MonetizableEvent = 'ai_call' | 'lead_capture' | 'doc_processed' | 'onboarding';
 

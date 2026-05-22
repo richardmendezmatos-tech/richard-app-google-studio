@@ -12,6 +12,8 @@ interface Props {
 
 // Sentinel N23.4: Hardened Dynamic Routing
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   try {
     // Fetch first 50 cars for build-time static generation
@@ -74,7 +76,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: 'website',
-      images: car?.img ? [{ url: car.img, width: 1200, height: 630, alt: title }] : [],
+      images: car?.image || car?.img || car?.images?.[0]
+        ? [{ url: car.image || car.img || car.images[0], width: 1200, height: 630, alt: title }]
+        : [],
       siteName: 'Richard Automotive',
       locale: 'es_PR',
     },
@@ -82,7 +86,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: car?.img ? [car.img] : [],
+      images: car?.image || car?.img || car?.images?.[0]
+        ? [car.image || car.img || car.images[0]]
+        : [],
     },
     alternates: {
       canonical: `${SITE_CONFIG.url}/inventario/${slug}/${id}`,

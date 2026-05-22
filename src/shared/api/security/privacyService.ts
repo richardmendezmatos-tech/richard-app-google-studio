@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { PrivacySettings } from '@/shared/types/types';
 
 const PRIVACY_STORAGE_KEY = 'ra_privacy_settings';

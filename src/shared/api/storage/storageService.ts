@@ -1,7 +1,14 @@
-import { createClient } from '@/shared/api/supabase/client';
+let _supabaseInstance: any = null;
+async function getSupabase() {
+  if (!_supabaseInstance) {
+    const { createClient } = await import('@/shared/api/supabase/client');
+    _supabaseInstance = createClient();
+  }
+  return _supabaseInstance;
+}
 
 export const uploadImage = async (file: File, bucket: string = 'images'): Promise<string> => {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   if (!supabase) throw new Error('Supabase client not initialized');
 
   const fileExt = file.name.split('.').pop();
@@ -24,7 +31,7 @@ export const uploadImage = async (file: File, bucket: string = 'images'): Promis
 
 export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
   const uploadPromises = files.map(async (file) => {
-    const supabase = createClient();
+    const supabase = await getSupabase();
     if (!supabase) throw new Error('Supabase client not initialized');
 
     const fileExt = file.name.split('.').pop();

@@ -12,8 +12,9 @@ export interface Car {
   vin: string;
   color: string;
   price: number;
-  image: string; // Lead image
-  img?: string; // Legacy field support
+  image: string;
+  /** @deprecated Usa `image` o `images[0]` */
+  img?: string;
   type: CarType;
   transmission?: string;
   fuel?: string;
@@ -28,8 +29,7 @@ export interface Car {
     label: string;
     value: string;
   }[];
-  gallery?: string[];
-  images?: string[]; // Multiple source support
+  images?: string[];
   status: 'available' | 'reserved' | 'sold';
   condition?: 'new' | 'used';
   inventoryId?: string;

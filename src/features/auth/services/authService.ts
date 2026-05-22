@@ -1,6 +1,14 @@
 import { UserRole, AppUser } from '@/entities/user';
-import { createClient } from '@/shared/api/supabase/client';
 import { SupabaseUserRepository } from '@/entities/user/api/repositories/SupabaseUserRepository';
+
+let _supabaseClient: any = null;
+async function getSupabase() {
+  if (!_supabaseClient) {
+    const { createClient } = await import('@/shared/api/supabase/client');
+    _supabaseClient = createClient();
+  }
+  return _supabaseClient;
+}
 
 const getUserRepo = () => new SupabaseUserRepository();
 
@@ -132,7 +140,7 @@ export const logAuthActivity = async (
 // --- User Management Functions ---
 
 export async function signUpWithEmail(email: string, password: string) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error || !data.user) {
@@ -155,7 +163,7 @@ export async function signUpWithEmail(email: string, password: string) {
 }
 
 export async function resendVerificationEmail(email: string) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -170,7 +178,7 @@ export async function resendVerificationEmail(email: string) {
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
@@ -185,7 +193,7 @@ export async function signInWithEmail(email: string, password: string) {
 }
 
 export async function signInWithGoogle(useRedirect: boolean = false) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
 
   // Supabase handles the OAuth flow via redirects mostly
   // It provides signInWithOAuth
@@ -221,7 +229,7 @@ export async function signInWithGoogle(useRedirect: boolean = false) {
 }
 
 export async function signInWithGoogleCredential(credentialString: string) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithIdToken({
     provider: 'google',
     token: credentialString,
@@ -239,7 +247,7 @@ export async function signInWithGoogleCredential(credentialString: string) {
 }
 
 export async function signInWithFacebook(useRedirect: boolean = false) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'facebook',
     options: {
@@ -257,7 +265,7 @@ export async function signInWithFacebook(useRedirect: boolean = false) {
 }
 
 export async function signOutUser() {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -274,7 +282,7 @@ export async function signOutUser() {
 }
 
 export async function sendMagicLink(email: string) {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -317,7 +325,7 @@ export const updateUserProfile = async (
   user: User,
   data: { displayName?: string; photoURL?: string },
 ) => {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   try {
     const { error } = await supabase.auth.updateUser({
       data: {
@@ -339,7 +347,7 @@ export const updateUserProfile = async (
 };
 
 export const updateUserPassword = async (user: User, newPassword: string) => {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   try {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
@@ -365,7 +373,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
     // Ignore IP fetch failure
   }
 
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
@@ -402,7 +410,7 @@ export const loginAdmin = async (email: string, password: string, twoFactorCode?
 };
 
 export const sendPasswordResetEmail = async (email: string) => {
-  const supabase = createClient();
+  const supabase = await getSupabase();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo:
       typeof window !== 'undefined'
@@ -418,8 +426,8 @@ export const sendPasswordResetEmail = async (email: string) => {
   await logAuthActivity(email, true, 'password_reset_sent');
 };
 
-export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {
-  const supabase = createClient();
+export const subscribeToAuthChanges = async (callback: (user: User | null) => void) => {
+  const supabase = await getSupabase();
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((event, session) => {

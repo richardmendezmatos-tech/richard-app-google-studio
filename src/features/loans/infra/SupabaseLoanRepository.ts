@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 
 export class SupabaseLoanRepository {
   async save(data: any): Promise<void> {

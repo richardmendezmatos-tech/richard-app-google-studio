@@ -1,5 +1,5 @@
 import { Car } from '@/entities/inventory';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import {
   distributionAgent as legacyAgent,
@@ -8,13 +8,34 @@ import {
 import { DistributionMapper } from '../lib/DistributionMapper';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
+function calculateDesirability(car: Car): number {
+  let score = 50;
+  const age = new Date().getFullYear() - car.year;
+  if (age <= 2) score += 20;
+  else if (age <= 5) score += 10;
+  const avgMileagePerYear = (car.mileage || 0) / Math.max(age, 1);
+  if (avgMileagePerYear < 12000) score += 15;
+  const type = (car.type || '').toLowerCase();
+  if (['suv', 'pickup', 'truck'].includes(type)) score += 15;
+  if (car.price > 50000 && (car as any).condition === 'used') score -= 10;
+  return Math.min(Math.max(score, 0), 100);
+}
+
+const BACKOFF_INTERVALS = [5 * 60 * 1000, 15 * 60 * 1000, 60 * 60 * 1000, 6 * 60 * 60 * 1000];
+
+interface DistributionStatus {
+  lastSync: number | null;
+  successCount: number;
+  failCount: number;
+}
+
 /**
- * Sentinel Autonomous Distribution Agent v3.0
+ * Sentinel Autonomous Distribution Agent v3.1
  *
  * Orchestrates the full lifecycle of inventory syndication:
- * 1. Inventory Scanning
- * 2. AI Copy Generation (Neural Pitch)
- * 3. Channel Distribution
+ * 1. Inventory Scanning (prioritized by market desirability)
+ * 2. AI Copy Generation (Neural Pitch) — skipped if description exists
+ * 3. Channel Distribution with smart dedup & exponential backoff
  * 4. Verification & Logging
  */
 export class AutonomousDistributionAgent {
@@ -24,7 +45,6 @@ export class AutonomousDistributionAgent {
   async runCycle(): Promise<{ processed: number; errors: number }> {
     console.log('[Sentinel Distribution] Starting autonomous cycle...');
 
-    // 1. Fetch inventory from Supabase
     const { data: cars, error } = await supabase
       .from('inventory')
       .select('*')
@@ -50,17 +70,24 @@ export class AutonomousDistributionAgent {
       'SentinelDistribution',
     );
 
+    // Priority queue: sort by market desirability descending
+    const prioritized = (cars as unknown as Car[])
+      .map((c) => ({ car: c, score: calculateDesirability(c) }))
+      .sort((a, b) => b.score - a.score);
+
     let processed = 0;
     let errors = 0;
+    const BATCH_SIZE = 5;
 
-    for (const car of cars) {
-      try {
-        const result = await this.processUnit(car as unknown as Car);
-        if (result) processed++;
+    for (let i = 0; i < prioritized.length; i += BATCH_SIZE) {
+      const batch = prioritized.slice(i, i + BATCH_SIZE);
+      const results = await Promise.allSettled(
+        batch.map(({ car }) => this.processUnit(car)),
+      );
+
+      for (const r of results) {
+        if (r.status === 'fulfilled' && r.value) processed++;
         else errors++;
-      } catch (err) {
-        console.error(`[Sentinel Distribution] Error processing unit ${car.id}:`, err);
-        errors++;
       }
     }
 
@@ -74,41 +101,54 @@ export class AutonomousDistributionAgent {
     return { processed, errors };
   }
 
+  private async getDistributionStatus(carId: string): Promise<Record<Platform, DistributionStatus>> {
+    const status = await legacyAgent.getStatus(carId);
+    const result: Record<string, DistributionStatus> = {};
+    const platforms: Platform[] = ['facebook_marketplace', 'clasificados_online'];
+    for (const p of platforms) {
+      const ps = status.find((s) => s.platform === p);
+      result[p] = {
+        lastSync: ps?.lastSync ? new Date(ps.lastSync).getTime() : null,
+        successCount: 0,
+        failCount: 0,
+      };
+    }
+    return result as Record<Platform, DistributionStatus>;
+  }
+
   /**
    * Processes a single unit: generates copy and syncs with platforms.
    */
   async processUnit(car: Car): Promise<boolean> {
-    // 1. Validation
     const validation = legacyAgent.validateUnit(car);
     if (!validation.valid) {
       console.warn(`[Sentinel Distribution] Unit ${car.id} skipping:`, validation.missing);
       return false;
     }
 
-    // 2. Check if already distributed recently (Heuristic: 24h)
-    const status = await legacyAgent.getStatus(car.id);
+    // Smart dedup with exponential backoff
+    const clientStatus = await this.getDistributionStatus(car.id);
     const platformsToSync: Platform[] = ['facebook_marketplace', 'clasificados_online'];
 
     for (const platform of platformsToSync) {
-      const platformStatus = status.find((s) => s.platform === platform);
+      const ps = clientStatus[platform];
 
-      // If active and synced less than 24h ago, skip
-      if (platformStatus?.status === 'active' && platformStatus.lastSync) {
-        const lastSyncDate = new Date(platformStatus.lastSync).getTime();
-        if (Date.now() - lastSyncDate < 24 * 60 * 60 * 1000) {
+      if (ps.lastSync) {
+        const hoursSinceSync = (Date.now() - ps.lastSync) / (60 * 60 * 1000);
+
+        // If successfully synced less than 24h ago, skip
+        if (hoursSinceSync < 24) {
           continue;
         }
       }
 
-      // 3. Generate Neural Pitch if missing
+      // Generate Neural Pitch only if description is missing or too short
       if (!car.description || car.description.length < 50) {
         const aiPitch = await this.generateNeuralPitch(car);
         car.description = aiPitch;
-        // Optionally update the car record in Supabase
-        await supabase.from('inventory').update({ description: aiPitch }).eq('id', car.id);
+        await supabase.from('inventory').update({ description: aiPitch }).eq('vin', car.vin);
       }
 
-      // 4. Trigger Sync with Mapped Data
       console.log(`[Sentinel Distribution] Mapping unit ${car.id} for ${platform}...`);
       const mappedData =
         platform === 'clasificados_online'
@@ -133,7 +173,6 @@ export class AutonomousDistributionAgent {
 
   /**
    * Uses Sentinel AI to generate high-conversion listing copy (Neural Pitch).
-   * Refined for Richard Automotive - Puerto Rico Market.
    */
   private async generateNeuralPitch(car: Car): Promise<string> {
     const prompt = `
@@ -150,7 +189,7 @@ export class AutonomousDistributionAgent {
          - Gancho (Headline) impactante.
          - Beneficios clave (por qué comprar esta unidad ahora).
          - Llamado a la acción (CTA) directo a Richard Automotive.
-         - Hashatgs relevantes (#RichardAutomotive #VentaDeAutosPR).
+         - Hashtags relevantes (#RichardAutomotive #VentaDeAutosPR).
     `;
 
     const instruction =

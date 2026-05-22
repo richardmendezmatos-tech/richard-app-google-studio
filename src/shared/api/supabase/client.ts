@@ -19,3 +19,7 @@ export function createClient() {
 
   return client;
 }
+
+export function getClient() {
+  return createClient();
+}

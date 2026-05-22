@@ -1,6 +1,14 @@
 import { uploadVehicleImages as uploadToSupabase } from '@/shared/api/storage/storageService';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
 import { Car } from '@/entities/inventory/model/types';
+
+let _supabase: any = null;
+async function getSupabase() {
+  if (!_supabase) {
+    const m = await import('@/shared/api/supabase/supabaseClient');
+    _supabase = await m.getSupabase();
+  }
+  return _supabase;
+}
 
 // Legacy alias for backwards compatibility
 export type Vehicle = Car;
@@ -20,9 +28,8 @@ const mapRowToVehicle = (item: any): Vehicle => {
     year,
     price: item.price || 0,
     mileage: item.mileage || 0,
-    image: item.images?.[0] || item.image_url || '/images/placeholders/car.webp',
+    image: item.images?.[0] || item.image_url || item.img || '/images/placeholders/car.webp',
     images: item.images || (item.image_url ? [item.image_url] : []),
-    gallery: item.images || (item.image_url ? [item.image_url] : []),
     status: (item.status || 'available').toLowerCase() as any,
     condition: condition as any,
     type: (item.body_style || item.type || 'suv').toLowerCase(),
@@ -35,12 +42,10 @@ const mapRowToVehicle = (item: any): Vehicle => {
 };
 
 export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
-  if (!supabase) {
-    console.error('[InventoryService] Supabase client not available');
-    return [];
-  }
+  const sb = await getSupabase();
+  if (!sb) return [];
 
-  const { data, error } = await supabase.from('inventory').select('*').eq('dealer_id', dealerId);
+  const { data, error } = await sb.from('inventory').select('*').eq('dealer_id', dealerId);
 
   if (error) {
     console.error('[InventoryService] Error fetching inventory:', error);
@@ -51,11 +56,10 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
 };
 
 export const logInventoryVelocityEvent = (vin: string, action: string, weight: number = 1) => {
-  if (!supabase) return;
-
   // Fire-and-Forget pattern: No esperamos la respuesta para no bloquear la UI
-  supabase
-    .from('sentinel_metrics')
+  getSupabase().then((sb) => {
+    if (!sb) return;
+    sb.from('sentinel_metrics')
     .insert([
       {
         type: 'inventory_velocity',
@@ -68,15 +72,17 @@ export const logInventoryVelocityEvent = (vin: string, action: string, weight: n
       if (error) console.warn('[InventoryService] Velocity Log Error:', error);
     })
     .catch((err) => console.warn('[InventoryService] Velocity Log Exception:', err));
+  });
 };
 
 export const getRecentVelocityMetrics = async (days: number = 7) => {
-  if (!supabase) return [];
+  const sb = await getSupabase();
+  if (!sb) return [];
 
   const dateLimit = new Date();
   dateLimit.setDate(dateLimit.getDate() - days);
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('sentinel_metrics')
     .select('*')
     .eq('type', 'inventory_velocity')
@@ -91,11 +97,11 @@ export const getRecentVelocityMetrics = async (days: number = 7) => {
 };
 
 export const incrementCarView = async (carId: string) => {
-  // Migration Note: Firebase Analytics replaced by native event logging or simple DB increment
-  if (!supabase) return;
+  const sb = await getSupabase();
+  if (!sb) return;
 
   try {
-    const { error } = await supabase.rpc('increment_vehicle_view', { vehicle_id: carId });
+    const { error } = await sb.rpc('increment_vehicle_view', { vehicle_id: carId });
     if (error) {
       console.warn('[InventoryService] Could not increment car view in DB:', error);
     }
@@ -105,13 +111,14 @@ export const incrementCarView = async (carId: string) => {
 };
 
 export const getCarById = async (id: string): Promise<Vehicle | null> => {
-  if (!supabase) return null;
+  const sb = await getSupabase();
+  if (!sb) return null;
 
   // Support querying by either primary ID or VIN
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('inventory')
     .select('*')
-    .or(`id.eq.${id},vin.eq.${id}`)
+    .eq('vin', id)
     .limit(1)
     .single();
 
@@ -137,10 +144,20 @@ export const getPaginatedCars = async (
   offset: number | null,
   filterType: string,
   sortOrder: 'asc' | 'desc' | null = null,
+  searchTerm?: string,
+  sortBy: 'price' | 'year' | 'mileage' | 'created_at' = 'price',
 ) => {
-  if (!supabase) return { cars: [], nextOffset: null };
+  const sb = await getSupabase();
+  if (!sb) return { cars: [], nextOffset: null };
 
-  let query = supabase.from('inventory').select('*', { count: 'exact' });
+  let query = sb.from('inventory').select('*', { count: 'estimated' });
+
+  if (searchTerm) {
+    const term = searchTerm.trim().toLowerCase();
+    query = query.or(
+      `make.ilike.%${term}%,model.ilike.%${term}%,name.ilike.%${term}%`,
+    );
+  }
 
   if (filterType !== 'all') {
     if (filterType === 'nuevos') {
@@ -153,7 +170,7 @@ export const getPaginatedCars = async (
   }
 
   if (sortOrder) {
-    query = query.order('price', { ascending: sortOrder === 'asc' });
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
   }
 
   const start = offset || 0;
@@ -171,19 +188,21 @@ export const getPaginatedCars = async (
 };
 
 export const addVehicle = async (car: Record<string, any>) => {
-  if (!supabase) return null;
-  const { data, error } = await supabase.from('inventory').insert([car]).select().single();
+  const sb = await getSupabase();
+  if (!sb) return null;
+  const { data, error } = await sb.from('inventory').insert([car]).select().single();
 
   if (error) throw error;
   return data;
 };
 
 export const updateVehicle = async (id: string, updates: Record<string, any>) => {
-  if (!supabase) return null;
-  const { data, error } = await supabase
+  const sb = await getSupabase();
+  if (!sb) return null;
+  const { data, error } = await sb
     .from('inventory')
     .update(updates)
-    .eq('id', id)
+    .eq('vin', id)
     .select()
     .single();
 
@@ -192,8 +211,9 @@ export const updateVehicle = async (id: string, updates: Record<string, any>) =>
 };
 
 export const deleteVehicle = async (id: string) => {
-  if (!supabase) return null;
-  const { error } = await supabase.from('inventory').delete().eq('id', id);
+  const sb = await getSupabase();
+  if (!sb) return null;
+  const { error } = await sb.from('inventory').delete().eq('vin', id);
 
   if (error) throw error;
   return true;

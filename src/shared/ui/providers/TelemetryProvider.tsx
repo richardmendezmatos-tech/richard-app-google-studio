@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { createClient } from '@/shared/api/supabase/client';
 import { VehicleHealthStatus, VehicleTelemetry } from '@/shared/types/types';
 import telemetry from '@/shared/api/metrics/analytics';
+
+let _supabaseClient: any = null;
+async function getSupabase() {
+  if (!_supabaseClient) {
+    const { createClient } = await import('@/shared/api/supabase/client');
+    _supabaseClient = createClient();
+  }
+  return _supabaseClient;
+}
 
 interface TelemetryContextType {
   telemetryMap: Record<string, VehicleHealthStatus>;
@@ -33,7 +41,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     activeSubscriptions.current.add(vehicleId);
 
     try {
-      const supabase = createClient();
+      const supabase = await getSupabase();
       if (!supabase) return;
 
       const channel = supabase.channel('vehicle-telemetry');
@@ -57,7 +65,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const unsubscribeFromVehicle = useCallback(async (vehicleId: string) => {
     activeSubscriptions.current.delete(vehicleId);
     try {
-      const supabase = createClient();
+      const supabase = await getSupabase();
       if (!supabase) return;
 
       // En una arquitectura más limpia, se debería guardar la referencia al canal

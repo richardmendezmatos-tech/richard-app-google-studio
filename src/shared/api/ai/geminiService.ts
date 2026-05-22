@@ -243,6 +243,7 @@ const callGeminiProxy = async (
   modelName: string = 'gemini-2.0-flash',
   config: GenerationConfig = { temperature: 0.1 },
   inventory?: Car[],
+  skipTools?: boolean,
 ): Promise<string> => {
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
@@ -256,7 +257,7 @@ const callGeminiProxy = async (
       generationConfig: config,
     };
 
-    if (modelName.includes('flash') || modelName === 'gemini-2.0-flash') {
+    if (!skipTools && (modelName.includes('flash') || modelName === 'gemini-2.0-flash')) {
       modelOptions.tools = [financeTools];
     }
 
@@ -586,46 +587,66 @@ export const analyzeCarImage = async (base64Image: string): Promise<Record<strin
   );
 };
 
+const pitchCache = new Map<string, { pitch: string; timestamp: number }>();
+const PITCH_CACHE_TTL = 60 * 60 * 1000;
+
+const PitchSchema = z.object({
+  pitch: z.string(),
+});
+
+const PITCH_SYSTEM = `Eres Richard IA Pro, el estratega de ventas número 1 de Richard Automotive.
+Debes responder SIEMPRE en español de Puerto Rico (usa boricuismos: pronto, unidad, marbete, guagua).
+Genera reportes persuasivos y técnicos en HTML divididos en 3 secciones:
+1. ANÁLISIS DE UNIDAD — Por qué el auto destaca técnicamente.
+2. PERSPECTIVA DE MERCADO (PR) — Comparativa en Puerto Rico (valor de reventa, popularidad, costo de marbete/gasolina).
+3. VERDICTO RICHARD — Cierre contundente.
+Usa <strong class="text-cyan-400"> para resaltar puntos clave.`;
+
+const buildFallbackPitch = (car: Car): string => {
+  const features = car.features?.slice(0, 3).join(', ');
+  return `<p><strong>REPORTE SENTINEL:</strong> Este ${car.name} es una unidad excepcional en el mercado local.
+Con un precio competitivo de $${car.price.toLocaleString()}, ofrece un balance ideal entre performance y valor de reventa en la isla.
+${features ? `<br/>Destaca por: ${features}.` : ''}
+Contáctame para validar tu oferta financiera hoy.</p>`;
+};
+
 export const generateCarPitch = async (car: Car): Promise<string> => {
+  const cached = pitchCache.get(car.id);
+  if (cached && Date.now() - cached.timestamp < PITCH_CACHE_TTL) {
+    return cached.pitch;
+  }
+
   const marketContext = JSON.stringify(MARKET_INTELLIGENCE_PR);
-  const prompt = `
-    Eres Richard IA Pro, el estratega de ventas número 1 de Richard Automotive.
-    Tu misión es realizar un "Mission Analysis" de la unidad: ${car.name}.
-    
-    UNIDAD DATA:
-    - Marca: ${car.make}
-    - Modelo: ${car.model}
-    - Año: ${car.year}
-    - Precio: $${car.price.toLocaleString()}
-    - Características: ${car.features?.join(', ') || 'Standard Sentinel Package'}
+  const prompt = `Realiza un "Mission Analysis" de la unidad: ${car.name}.
 
-    CONTEXTO DE MERCADO PR:
-    ${marketContext}
+UNIDAD DATA:
+- Marca: ${car.make}
+- Modelo: ${car.model}
+- Año: ${car.year}
+- Precio: $${car.price.toLocaleString()}
+- Características: ${car.features?.join(', ') || 'Standard Sentinel Package'}
 
-    REGLAS DE SALIDA:
-    1. Debes generar un reporte altamente persuasivo y técnico en HTML.
-    2. Divide el reporte en 3 secciones claras:
-       - **ANÁLISIS DE UNIDAD**: Por qué este auto destaca técnicamente.
-       - **PERSPECTIVA DE MERCADO (PR)**: Cómo se compara en Puerto Rico (valor de reventa, popularidad, costo de marbete/gasolina).
-       - **VERDICTO RICHARD**: Un cierre contundente estilo "Cierra el trato ahora".
-    3. Usa "Boricuismos Profesionales": Pronto, Unidad, Marbete, Guagua (si aplica).
-    4. Usa negritas (<strong class="text-cyan-400">) para resaltar puntos clave.
-    
-    Genera el reporte en formato JSON: { "pitch": "HTML_STRING" }
-  `;
+CONTEXTO DE MERCADO PR:
+${marketContext}`;
+
+  const safePrompt = interceptPrompt(prompt);
+  if (safePrompt !== prompt) {
+    return buildFallbackPitch(car);
+  }
 
   try {
-    const text = await callGeminiProxy(prompt, undefined, 'gemini-2.0-flash', {
-      responseMimeType: 'application/json',
-    });
-    return JSON.parse(text).pitch;
+    const result = await sentinelAI.generateStructuredObject(
+      PitchSchema,
+      safePrompt,
+      PITCH_SYSTEM,
+      'gemini-2.0-flash',
+    );
+
+    pitchCache.set(car.id, { pitch: result.pitch, timestamp: Date.now() });
+    return result.pitch;
   } catch (error) {
     console.error('Richard IA Pro Error:', error);
-    return `
-      <p><strong>REPORTE SENTINEL:</strong> Este ${car.name} es una unidad excepcional en el mercado local. 
-      Con un precio competitivo de $${car.price.toLocaleString()}, ofrece un balance ideal entre performance y valor de reventa en la isla. 
-      Contáctame para validar tu oferta financiera hoy.</p>
-    `;
+    return buildFallbackPitch(car);
   }
 };
 

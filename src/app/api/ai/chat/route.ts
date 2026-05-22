@@ -5,7 +5,7 @@ import { aiTools } from '@/shared/api/ai/tools';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
 import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
-import { supabase, searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
+import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -37,7 +37,9 @@ export async function POST(req: Request) {
               `[AI Chat RAG] Se encontraron ${matches.length} coincidencias en inventario.`,
             );
             const carIds = matches.map((m) => m.car_id);
-            const { data: dbCars } = await supabase.from('inventory').select('*').in('id', carIds);
+            const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
+            const sb = await gs();
+            const { data: dbCars } = await sb.from('inventory').select('*').in('vin', carIds);
 
             if (dbCars && dbCars.length > 0) {
               semanticContext = `

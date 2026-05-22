@@ -1,7 +1,7 @@
 import { getAIResponse } from '@/shared/api/ai';
 import { validationAgentService } from '@/features/ai-hub';
 import { Car } from '@/shared/types/types';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 
 export interface WhatsAppMessage {
   id: string;

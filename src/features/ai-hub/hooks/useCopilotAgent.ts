@@ -109,11 +109,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     if (e) e.preventDefault();
     if (!input.trim()) return;
 
-    if ((chatProps as any).append) {
-      (chatProps as any).append({ role: 'user', content: input } as any);
-    } else if ((chatProps as any).sendMessage) {
-      (chatProps as any).sendMessage(input);
-    }
+    (chatProps as any).sendMessage?.({ text: input });
 
     setInput('');
   };
@@ -132,6 +128,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
     ...chatProps,
     messages,
     input,
+    append: (msg: any) => (chatProps as any).sendMessage?.(msg),
     handleInputChange,
     handleSubmit,
     isReady: true,

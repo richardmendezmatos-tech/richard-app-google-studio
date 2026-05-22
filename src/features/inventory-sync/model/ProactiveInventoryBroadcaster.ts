@@ -1,7 +1,7 @@
 // src/features/inventory-sync/model/ProactiveInventoryBroadcaster.ts
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 import { sendWhatsAppMessage } from '@/features/leads/model/whatsappService';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { Lead } from '@/shared/types/lead';
 
 export class ProactiveInventoryBroadcaster {

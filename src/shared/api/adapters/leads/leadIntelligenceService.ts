@@ -1,5 +1,5 @@
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import { Lead } from '@/shared/types/types';
 
 /**

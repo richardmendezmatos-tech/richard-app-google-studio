@@ -1,21 +1,30 @@
+import { z } from 'zod';
 import { Car } from '@/shared/types/types';
 import { Lead } from '@/shared/types/lead';
+import { sentinelAI } from './sentinelAI';
 
-export interface MatchIntelligence {
-  score: number;
-  reasoning: string;
-  whatsappDraft: string;
-  confidence: number;
-}
+export const MatchIntelligenceSchema = z.object({
+  score: z.number().min(0).max(100),
+  reasoning: z.string(),
+  whatsappDraft: z.string(),
+  confidence: z.number().min(0).max(1),
+});
+
+export type MatchIntelligence = z.infer<typeof MatchIntelligenceSchema>;
+
+const MATCH_SYSTEM = `Eres el "Neural Match v3" Engine para Richard Automotive Command Center.
+Encuentra conexiones profundas entre un vehículo y un cliente potencial.
+Evalúa: compatibilidad de presupuesto, alineación técnica (tipo vs preferencias),
+y alineación psicológica (Analítico → especificaciones/durabilidad, Relacional → seguridad/espacio).
+Proporciona reasoning en español (Nivel 16 - Premium, data-driven).
+whatsappDraft en español de Puerto Rico, cálido pero profesional.`;
 
 /**
  * MatchReasoningService: High-level AI matching logic for Neural Match v3.
  * Cross-references car technical specs with lead psychological and financial profiles.
+ * Uses structured object generation via Sentinel AI for type-safe output.
  */
 export class MatchReasoningService {
-  /**
-   * Analyzes why a specific car matches a lead using LLM intelligence.
-   */
   static async analyzeMatchIntelligence(car: Car, lead: Lead): Promise<MatchIntelligence> {
     const leadContext = {
       name: `${lead.firstName} ${lead.lastName}`,
@@ -40,51 +49,35 @@ export class MatchReasoningService {
     };
 
     const prompt = `
-            You are the "Neural Match v3" Engine for Richard Automotive Command Center.
-            Your mission is to find the deep psychological and technical connection between a vehicle and a potential client.
+CLIENT DATA:
+- Name: ${leadContext.name}
+- Preferences: ${JSON.stringify(leadContext.preferences)}
+- Cognitive Profile: ${leadContext.cognitiveProfile}
+- Budget/Income: ${leadContext.budget}
+- Notes: ${leadContext.notes}
 
-            CLIENT DATA:
-            - Name: ${leadContext.name}
-            - Preferences: ${JSON.stringify(leadContext.preferences)}
-            - Cognitive Profile: ${leadContext.cognitiveProfile}
-            - Budget/Income: ${leadContext.budget}
-            - Notes: ${leadContext.notes}
+VEHICLE DATA:
+- Model: ${carContext.name}
+- Type: ${carContext.type}
+- Price: $${carContext.price}
+- Features: ${carContext.features}
+- Specs: ${JSON.stringify(carContext.specs)}
 
-            VEHICLE DATA:
-            - Model: ${carContext.name}
-            - Type: ${carContext.type}
-            - Price: $${carContext.price}
-            - Features: ${carContext.features}
-            - Specs: ${JSON.stringify(carContext.specs)}
-
-            INSTRUCTIONS:
-            1. Calculate a MATCH SCORE (0-100) based on:
-               - Budget compatibility (is it realistic?)
-               - Technical alignment (type of car vs preferences)
-               - Psychological alignment (e.g., an 'Analytical' person wants specs/durability, a 'Relational' person wants safety/space).
-            2. Provide REASONING in Spanish (Nivel 16 - Premium, convincing, data-driven).
-            3. Write a WHATSAPP DRAFT (Spanish, Puerto Rico style - warm, professional, mentions specific features that match the client's needs). Use emojis sparingly.
-
-            OUTPUT STRICTLY VALID JSON:
-            {
-                "score": number,
-                "reasoning": "string",
-                "whatsappDraft": "string",
-                "confidence": number
-            }
-        `;
+Return a JSON object with:
+- score (0-100): match score based on budget compatibility, technical alignment, psychological alignment
+- reasoning (string): explanation in Spanish
+- whatsappDraft (string): personalized message in Spanish PR style
+- confidence (0-1): how confident you are in this match
+    `;
 
     try {
-      // Calling our internal Gemini API via server-side fetch (since we are in the server layer)
-      // Note: In Next.js server-side, we might need an absolute URL or call the service directly.
-      // For now, assuming a helper that uses the Gemini API Key directly is safer for background tasks.
-      const { generateText } = await import('./geminiService');
-      const responseText = await generateText(prompt);
-
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Invalid AI Response format');
-
-      return JSON.parse(jsonMatch[0]) as MatchIntelligence;
+      const result = await sentinelAI.generateStructuredObject(
+        MatchIntelligenceSchema,
+        prompt,
+        MATCH_SYSTEM,
+        'gemini-2.0-flash',
+      );
+      return result;
     } catch (error) {
       console.error('[MatchReasoningService] Error:', error);
       return {

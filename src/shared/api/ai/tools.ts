@@ -1,6 +1,6 @@
 import { tool } from 'ai';
 import { z } from 'zod';
-import { supabase, searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
+import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 
@@ -41,6 +41,9 @@ export const aiTools = {
       try {
         console.log(`[AI Tool: searchInventory] Starting hybrid search for query: "${query}"`);
 
+        const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
+        const sb = await gs();
+
         // 1. Try semantic search first
         let matchingCars: any[] = [];
         try {
@@ -52,10 +55,10 @@ export const aiTools = {
               `[AI Tool: searchInventory] Found ${semanticMatches.length} semantic matches.`,
             );
             const carIds = semanticMatches.map((m) => m.car_id);
-            const { data: dbCars, error: dbError } = await supabase
+            const { data: dbCars, error: dbError } = await sb
               .from('inventory')
               .select('*')
-              .in('id', carIds);
+              .in('vin', carIds);
 
             if (!dbError && dbCars) {
               // Maintain semantic relevance order
@@ -74,7 +77,7 @@ export const aiTools = {
         // 2. Text fallback if no semantic matches were found
         if (matchingCars.length === 0) {
           console.log('[AI Tool: searchInventory] Executing fallback text-based match...');
-          const { data, error } = await supabase
+          const { data, error } = await sb
             .from('inventory')
             .select('*')
             .or(`make.ilike.%${query}%,model.ilike.%${query}%,condition.ilike.%${query}%`)
@@ -134,7 +137,9 @@ export const aiTools = {
       notes: z.string().optional().describe('Notas adicionales.'),
     }),
     execute: (async (leadData: any) => {
-      const { error } = await supabase.from('leads').insert({
+      const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
+      const sb = await gs();
+      const { error } = await sb.from('leads').insert({
         first_name: leadData.firstName,
         phone: leadData.phone,
         email: leadData.email,

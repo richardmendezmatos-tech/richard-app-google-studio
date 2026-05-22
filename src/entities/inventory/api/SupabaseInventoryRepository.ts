@@ -59,7 +59,6 @@ export class SupabaseInventoryRepository implements InventoryRepository {
       mileage: row.mileage || 0,
       image: row.images?.[0] || '/images/placeholders/car.webp',
       images: row.images || [],
-      gallery: row.images || [],
       status: (row.status?.toLowerCase() as any) || 'available',
       condition: (row.condition?.toLowerCase() as any) || 'used',
       type: 'suv', // placeholder

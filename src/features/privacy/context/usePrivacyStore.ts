@@ -52,7 +52,8 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
 
     if (user) {
       try {
-        const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+        const { createClient: createSupabaseClient } = await import('@/shared/api/supabase/client');
+        const supabase = createSupabaseClient();
         const { data, error } = await supabase
           .from('users')
           .select('privacy_settings')
@@ -91,7 +92,8 @@ export const usePrivacyStore = create<PrivacyState>((set, get) => ({
 
     if (user) {
       try {
-        const { supabase } = await import('@/shared/api/supabase/supabaseClient');
+        const { createClient: createSupabaseClient } = await import('@/shared/api/supabase/client');
+        const supabase = createSupabaseClient();
         await supabase.from('users').update({ privacy_settings: updated }).eq('id', user.uid);
       } catch (error) {
         console.error('Error updating privacy settings in Supabase:', error);

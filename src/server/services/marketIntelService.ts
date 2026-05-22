@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabaseClient';
+import { supabase } from '@/shared/api/supabase/supabase';
 import * as cheerio from 'cheerio';
 
 export interface MarketSnapshot {
