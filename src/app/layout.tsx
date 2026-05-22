@@ -135,7 +135,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="icon" href="/app-icon.png" sizes="any" />
+        <link rel="icon" href="/favicon.png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/app-icon.webp" />
         <meta name="mcp:tool" content="pre-qualify" />
         <meta name="mcp:tool" content="bono-300" />
         <meta name="mcp:tool" content="trade-in" />
