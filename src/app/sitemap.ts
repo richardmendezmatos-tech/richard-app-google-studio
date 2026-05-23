@@ -9,18 +9,23 @@ export const revalidate = 86400; // Revalidate sitemap every 24 hours
 
 // ── All PR cities with programmatic pages ──
 const SEO_CITIES = [
-  'bayamon',
-  'san-juan',
-  'guaynabo',
-  'ponce',
-  'caguas',
-  'carolina',
-  'mayaguez',
-  'arecibo',
-  'toa-baja',
-  'humacao',
-  'vega-alta',
+  'bayamon', 'san-juan', 'guaynabo', 'ponce', 'caguas',
+  'carolina', 'mayaguez', 'arecibo', 'toa-baja', 'humacao',
+  'vega-alta', 'dorado', 'vega-baja', 'manati', 'hatillo',
+  'isabela', 'cabo-rojo', 'aguadilla', 'fajardo', 'trujillo-alto',
+  'guayama',
 ];
+
+// ── Top SEO brands with city pages ──
+const SEO_BRANDS = ['ford', 'hyundai', 'toyota', 'honda'];
+
+// ── Top SEO models for programmatic local pages ──
+const SEO_MODELS_BY_BRAND: Record<string, string[]> = {
+  ford: ['f-150', 'explorer', 'mustang', 'ranger', 'escape', 'edge', 'bronco', 'maverick'],
+  hyundai: ['tucson', 'elantra', 'santa-fe', 'palisade'],
+  toyota: ['tacoma', 'corolla', 'rav4', 'highlander'],
+  honda: ['cr-v', 'civic', 'accord'],
+};
 
 // ── Vehicle category pages ──
 const SEO_CATEGORIES = ['suv', 'sedan', 'pickup', 'luxury', 'economico', 'electrico'];
@@ -67,6 +72,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.3,
     },
+    {
+      url: `${SITE_URL}/inventario`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
   ];
 
   // Programmatic SEO: City Pages
@@ -104,6 +115,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('🚨 Sitemap: Inventory fetch failed:', error);
   }
 
+  // Programmatic SEO: Brand + City Pages
+  const brandCityRoutes: MetadataRoute.Sitemap = SEO_CITIES.flatMap((city) =>
+    SEO_BRANDS.map((brand) => ({
+      url: `${SITE_URL}/autos-usados/${city}/${brand}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
+  );
+
+  // Programmatic SEO: Model + City Pages
+  const modelCityRoutes: MetadataRoute.Sitemap = SEO_CITIES.flatMap((city) =>
+    SEO_BRANDS.flatMap((brand) =>
+      (SEO_MODELS_BY_BRAND[brand] || []).map((model) => ({
+        url: `${SITE_URL}/autos-usados/${city}/${brand}/${model}`,
+        lastModified: new Date(),
+        changeFrequency: 'daily' as const,
+        priority: 0.85,
+      })),
+    ),
+  );
+
   // Blog: Index + individual articles
   const blogRoutes: MetadataRoute.Sitemap = [
     {
@@ -120,5 +153,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticRoutes, ...cityRoutes, ...categoryRoutes, ...blogRoutes, ...inventoryRoutes];
+  return [...staticRoutes, ...cityRoutes, ...categoryRoutes, ...brandCityRoutes, ...modelCityRoutes, ...blogRoutes, ...inventoryRoutes];
 }

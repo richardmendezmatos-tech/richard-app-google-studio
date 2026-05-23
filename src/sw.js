@@ -61,3 +61,37 @@ registerRoute(
     ],
   }),
 );
+
+// ── Push Notification Event Handler ──
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const options = {
+      body: data.body || 'Nueva actualización de Richard Automotive',
+      icon: data.icon || '/pwa-192x192.png',
+      badge: '/pwa-192x192.png',
+      vibrate: [200, 100, 200],
+      data: { url: data.url || '/' },
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(
+        data.title || 'Richard Automotive',
+        options,
+      ),
+    );
+  } catch {
+    const text = event.data.text();
+    event.waitUntil(
+      self.registration.showNotification('Richard Automotive', { body: text }),
+    );
+  }
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(clients.openWindow(url));
+});
