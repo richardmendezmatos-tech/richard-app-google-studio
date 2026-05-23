@@ -108,7 +108,7 @@ export default async function CityBrandModelPage({ params }: Props) {
   }
 
   const filteredInventory = inventory.filter((car: Car) =>
-    car.name.toLowerCase().includes(model.name.toLowerCase()),
+    (car.name || '').toLowerCase().includes(model.name.toLowerCase()),
   );
 
   const faqs = [

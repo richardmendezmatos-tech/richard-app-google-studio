@@ -116,14 +116,20 @@ export async function proxy(request: NextRequest) {
     const email = user.email?.toLowerCase().trim() || '';
     const isAdmin =
       email === 'richardmendezmatos@gmail.com' ||
-      email.includes('richardmendezmatos') ||
-      email.endsWith('@richard-automotive.com') ||
-      email.includes('admin');
+      email.endsWith('@richard-automotive.com');
 
     if (!isAdmin) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/garage';
-      return NextResponse.redirect(url);
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/garage';
+        return NextResponse.redirect(url);
+      }
     }
   }
 

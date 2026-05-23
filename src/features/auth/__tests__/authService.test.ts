@@ -230,8 +230,8 @@ describe('authService', () => {
       expect(isAdminEmail('user@richard-automotive.com')).toBe(true);
     });
 
-    it('should identify admin_vip emails as admin', () => {
-      expect(isAdminEmail('admin_vip@test.com')).toBe(true);
+    it('should not identify random admin_vip emails as admin (security hardening)', () => {
+      expect(isAdminEmail('admin_vip@test.com')).toBe(false);
     });
 
     it('should reject regular emails', () => {

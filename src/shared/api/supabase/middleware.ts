@@ -87,22 +87,29 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 2. Strict Protection for Admin routes (must be an admin email)
+  // 2. Strict Protection for Admin routes (must have admin role in profiles table)
   if (user && isAdminRoute) {
     const email = user.email?.toLowerCase().trim() || '';
     const isAdmin =
       email === 'richardmendezmatos@gmail.com' ||
-      email.includes('richardmendezmatos') ||
-      email.endsWith('@richard-automotive.com') ||
-      email.includes('admin');
+      email.endsWith('@richard-automotive.com');
 
     if (!isAdmin) {
-      console.log(
-        `[Middleware] 🚫 Access Denied: User ${email} is not in the admin list. Redirecting to /garage`,
-      );
-      const url = request.nextUrl.clone();
-      url.pathname = '/garage';
-      return NextResponse.redirect(url);
+      // Fallback: check profiles table for admin role
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        console.log(
+          `[Middleware] 🚫 Access Denied: User ${email} is not an admin. Redirecting to /garage`,
+        );
+        const url = request.nextUrl.clone();
+        url.pathname = '/garage';
+        return NextResponse.redirect(url);
+      }
     }
   }
 

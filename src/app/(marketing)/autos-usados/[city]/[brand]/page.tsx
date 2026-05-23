@@ -75,7 +75,7 @@ export default async function CityBrandPage({ params }: Props) {
 
   // High-performance filter
   const filteredInventory = inventory.filter((car: Car) =>
-    car.name.toLowerCase().includes(brand.slug.toLowerCase()),
+    (car.name || '').toLowerCase().includes(brand.slug.toLowerCase()),
   );
 
   const jsonLd = {

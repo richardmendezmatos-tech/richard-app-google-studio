@@ -17,7 +17,7 @@ export class SupabaseLeadRepository implements LeadRepository {
   async getLeads(dealerId: string, limitCount: number = 100): Promise<Lead[]> {
     const { data, error } = await this.client
       .from('leads')
-      .select('*')
+      .select('id, first_name, last_name, email, phone, status, location, category, vehicle_id, vehicle_of_interest, behavioral_metrics, ai_analysis, ai_score, created_at, updated_at')
       .eq('location', dealerId)
       .limit(limitCount)
       .order('created_at', { ascending: false });
@@ -31,7 +31,7 @@ export class SupabaseLeadRepository implements LeadRepository {
   }
 
   async getLeadById(id: string, dealerId: string): Promise<Lead | null> {
-    const { data, error } = await this.client.from('leads').select('*').eq('id', id).single();
+    const { data, error } = await this.client.from('leads').select('id, first_name, last_name, email, phone, status, location, category, vehicle_id, vehicle_of_interest, behavioral_metrics, ai_analysis, ai_score, ssn_encrypted, created_at, updated_at').eq('id', id).single();
 
     if (error) {
       console.error(`[SupabaseLeadRepository] Error fetching lead ${id}:`, error);
@@ -175,7 +175,7 @@ export class SupabaseLeadRepository implements LeadRepository {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
     const { count, error } = await this.client
       .from('leads')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'estimated', head: true })
       .eq('location', dealerId)
       .gte('created_at', since);
 

@@ -14,7 +14,7 @@ ALTER TABLE public.customer_memory ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admin can view customer memory" ON public.customer_memory
     FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "System can upsert customer memory" ON public.customer_memory
-    FOR ALL USING (auth.role() = 'authenticated' OR true);
+    FOR ALL USING (auth.role() = 'service_role');
 
 -- Realtime for live updates
 alter publication supabase_realtime add table public.customer_memory;

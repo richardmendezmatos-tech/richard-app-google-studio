@@ -41,11 +41,10 @@ const getClientIP = async (): Promise<string> => {
 
 export const isAdminEmail = (email: string | null): boolean => {
   if (!email) return false;
-  const adminEmails = ['richardmendezmatos@gmail.com', 'admin@richard.com'];
+  const adminEmails = ['richardmendezmatos@gmail.com'];
   const lowerEmail = email.toLowerCase();
   return (
     adminEmails.includes(lowerEmail) ||
-    lowerEmail.includes('admin_vip') ||
     lowerEmail.endsWith('@richard-automotive.com')
   );
 };
@@ -149,7 +148,7 @@ export async function signUpWithEmail(email: string, password: string) {
     throw error || new Error('Signup failed');
   }
 
-  const role: UserRole = email.includes('admin') || email.includes('richard') ? 'admin' : 'user';
+  const role: UserRole = isAdminEmail(email) ? 'admin' : 'user';
   const user = mapSupabaseUser(data.user);
   await createUserProfile(user, role);
   await logAuthActivity(email, true, 'signup_email');

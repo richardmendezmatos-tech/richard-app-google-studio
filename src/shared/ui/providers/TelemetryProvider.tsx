@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { VehicleHealthStatus, VehicleTelemetry } from '@/shared/types/types';
 import telemetry from '@/shared/api/metrics/analytics';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 let _supabaseClient: any = null;
 async function getSupabase() {
@@ -24,6 +25,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [telemetryMap, setTelemetryMap] = useState<Record<string, VehicleHealthStatus>>({});
   const [loading, setLoading] = useState(true);
   const activeSubscriptions = useRef<Set<string>>(new Set());
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   // Page View Tracking
   useEffect(() => {
@@ -34,6 +36,14 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         title: document.title,
       });
     }
+
+    return () => {
+      if (channelRef.current) {
+        channelRef.current.unsubscribe();
+        channelRef.current = null;
+      }
+      activeSubscriptions.current.clear();
+    };
   }, []);
 
   const subscribeToVehicle = useCallback(async (vehicleId: string) => {
@@ -44,17 +54,22 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const supabase = await getSupabase();
       if (!supabase) return;
 
-      const channel = supabase.channel('vehicle-telemetry');
+      if (!channelRef.current) {
+        channelRef.current = supabase.channel('vehicle-telemetry');
+      }
 
-      channel
-        .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
-          const data = payload.payload as VehicleTelemetry;
-          import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
-            const health = analyzeVehicleHealth(data);
-            setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
-          });
-        })
-        .subscribe();
+      const channel = channelRef.current;
+      if (channel.state !== 'closed') {
+        channel
+          .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
+            const data = payload.payload as VehicleTelemetry;
+            import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
+              const health = analyzeVehicleHealth(data);
+              setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
+            });
+          })
+          .subscribe();
+      }
     } catch (error) {
       console.warn('[TelemetryProvider] Sync error:', error);
     } finally {
@@ -64,21 +79,11 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const unsubscribeFromVehicle = useCallback(async (vehicleId: string) => {
     activeSubscriptions.current.delete(vehicleId);
-    try {
-      const supabase = await getSupabase();
-      if (!supabase) return;
-
-      // En una arquitectura más limpia, se debería guardar la referencia al canal
-      // y remover específicamente ese canal, pero para simplificar:
-      // removemos la key del mapa
-      setTelemetryMap((prev) => {
-        const next = { ...prev };
-        delete next[vehicleId];
-        return next;
-      });
-    } catch (error) {
-      console.warn('[TelemetryProvider] Unsubscribe error:', error);
-    }
+    setTelemetryMap((prev) => {
+      const next = { ...prev };
+      delete next[vehicleId];
+      return next;
+    });
   }, []);
 
   return (

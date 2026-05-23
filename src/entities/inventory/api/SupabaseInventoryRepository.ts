@@ -13,8 +13,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
   ): Promise<import('@/entities/inventory').Car[]> {
     const { data, error } = await this.supabase
       .from('inventory')
-      .select('*')
-      // Note: If you enforce dealer mapping strictly, add .eq('dealer_id', dealerId)
+      .select('vin, make, model, year, price, mileage, images, status, condition')
       .limit(limitCount);
 
     if (error) {
@@ -28,7 +27,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
   async getCarById(id: string): Promise<import('@/entities/inventory').Car | null> {
     const { data, error } = await this.supabase
       .from('inventory')
-      .select('*')
+      .select('vin, make, model, year, price, mileage, images, status, condition')
       .eq('vin', id)
       .single();
 
@@ -38,7 +37,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
 
   async getInventoryTurnover(dealerId: string): Promise<number> {
     // Turnover = (Sold / Total Portfolio) * 100
-    const { data, error } = await this.supabase.from('inventory').select('status');
+    const { data, error } = await this.supabase.from('inventory').select('status', { count: 'estimated', head: false });
 
     if (error || !data) return 0;
     const total = data.length;
@@ -70,12 +69,11 @@ export class SupabaseInventoryRepository implements InventoryRepository {
   async getActiveInventory(): Promise<Vehicle[]> {
     const { data, error } = await this.supabase
       .from('inventory')
-      .select('*')
+      .select('vin, make, model, year, price, mileage, images, status, condition, last_scraped_at')
       .in('status', ['AVAILABLE', 'PENDING']);
 
     if (error) throw new Error(`Error en DB: ${error.message}`);
 
-    // Aquí implementamos el Mapper para no contaminar el dominio con detalles de la BD
     return (data || []).map((row) =>
       Vehicle.create(row.vin, {
         make: row.make,
@@ -129,32 +127,29 @@ export class SupabaseInventoryRepository implements InventoryRepository {
     console.log(
       `[SupabaseInventoryRepository] Actualizando ${vehicles.length} unidades existentes...`,
     );
-    const promises = vehicles.map((v) =>
-      this.supabase
-        .from('inventory')
-        .update({
-          vin: v.vin,
-          price: v.price,
-          status: v.status,
-          mileage: v.props.mileage,
-          images: v.props.images,
-          trim: v.props.trim,
-          body_style: v.props.bodyStyle,
-          transmission: v.props.transmission,
-          engine: v.props.engine,
-          drive_train: v.props.driveTrain,
-          exterior_color: v.props.exteriorColor,
-          interior_color: v.props.interiorColor,
-          last_scraped_at: new Date().toISOString(),
-        })
-        .eq('vin', v.vin),
-    );
 
-    const results = await Promise.all(promises);
-    const errors = results.filter((r) => r.error).map((r) => r.error?.message);
-    if (errors.length) {
-      console.error(`[SupabaseInventoryRepository] Errores en updateBatch:`, errors);
-      throw new Error(`Update Falló: ${errors[0]}`);
+    const now = new Date().toISOString();
+    const cases = vehicles.map((v) => ({
+      vin: v.vin,
+      price: v.price,
+      status: v.status,
+      mileage: v.props.mileage,
+      images: v.props.images,
+      trim: v.props.trim,
+      body_style: v.props.bodyStyle,
+      transmission: v.props.transmission,
+      engine: v.props.engine,
+      drive_train: v.props.driveTrain,
+      exterior_color: v.props.exteriorColor,
+      interior_color: v.props.interiorColor,
+      last_scraped_at: now,
+    }));
+
+    const { error } = await this.supabase.rpc('batch_upsert_inventory', { vehicles_data: cases });
+
+    if (error) {
+      console.error(`[SupabaseInventoryRepository] Error en updateBatch: ${error.message}`);
+      throw new Error(`Update Falló: ${error.message}`);
     }
   }
 

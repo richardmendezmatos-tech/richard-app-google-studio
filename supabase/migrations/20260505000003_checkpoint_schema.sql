@@ -19,4 +19,4 @@ ALTER TABLE public.checkpoints ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admin can view checkpoints" ON public.checkpoints
     FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "System can upsert checkpoints" ON public.checkpoints
-    FOR ALL USING (auth.role() = 'authenticated' OR true); -- Allowing service role bypass
+    FOR ALL USING (auth.role() = 'service_role');
