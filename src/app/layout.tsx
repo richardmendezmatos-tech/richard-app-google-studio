@@ -61,6 +61,8 @@ export const viewport = {
 };
 
 import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceInitializer';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -172,6 +174,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
         <AppProviders>{children}</AppProviders>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

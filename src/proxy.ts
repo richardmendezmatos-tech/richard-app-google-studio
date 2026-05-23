@@ -138,6 +138,21 @@ export async function proxy(request: NextRequest) {
   supabaseResponse.headers.set('X-Sentinel-Version', 'N24-PRO');
   supabaseResponse.headers.set('X-Vibecoding-Layer', 'Nivel-15');
 
+  // 4. Geo-headers for localization
+  const country = request.headers.get('x-vercel-ip-country') || 'PR';
+  const region = request.headers.get('x-vercel-ip-country-region') || '';
+  const city = request.headers.get('x-vercel-ip-city') || '';
+  supabaseResponse.headers.set('X-Geo-Country', country);
+  supabaseResponse.headers.set('X-Geo-Region', region);
+  supabaseResponse.headers.set('X-Geo-City', city);
+
+  // Pass geo to response for client-side use
+  if (country === 'PR' || country === 'US') {
+    supabaseResponse.headers.set('X-Market', 'PR');
+  } else {
+    supabaseResponse.headers.set('X-Market', 'international');
+  }
+
   return supabaseResponse;
 }
 

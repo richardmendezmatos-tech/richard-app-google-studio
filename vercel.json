@@ -2,6 +2,15 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
+  "github": {
+    "silent": true,
+    "autoJobCancelation": true,
+    "deployments": {
+      "enabled": true,
+      "productionDeployOnMerge": true,
+      "previewDeployOnPullRequest": true
+    }
+  },
   "redirects": [
     {
       "source": "/:path*",
