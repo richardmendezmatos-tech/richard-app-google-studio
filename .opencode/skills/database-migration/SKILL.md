@@ -71,7 +71,7 @@ curl -X POST "https://api.supabase.com/v1/projects/dizzjfijsmxdlnfqydfk/sql" \
 
 ## Reglas importantes
 
-- NO usar service role key (bloqueada). Solo PAT `sbp_9c5a...`
+- NO usar service role key (bloqueada). Solo PAT via `${SUPABASE_PAT}`
 - NO usar conexión directa PostgreSQL (IPv6 bloqueada)
 - SSN/phone encryption: solo cipher `aes` con `pgsodium`
 - Índices: siempre verificar columnas existen antes de crear
