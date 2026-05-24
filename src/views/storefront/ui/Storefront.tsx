@@ -5,6 +5,7 @@ import { Car } from '@/shared/types/types';
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
+import { getAutoDealerSchema, getWebsiteSchema } from '@/shared/config/seoSchemas';
 
 import dynamic from 'next/dynamic';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
@@ -81,106 +82,60 @@ const Storefront: React.FC<Props> = ({
           type="website"
           schema={{
             '@context': 'https://schema.org',
-            '@graph': [
-              {
-                '@type': 'AutoDealer',
-                name: BUSINESS_CONTACT.name,
-                image: SITE_CONFIG.seo.ogImage,
-                '@id': `${SITE_CONFIG.url}/#dealer`,
-                url: SITE_CONFIG.url,
-                telephone: BUSINESS_CONTACT.phone,
-                address: {
-                  '@type': 'PostalAddress',
-                  streetAddress: BUSINESS_CONTACT.address.street,
-                  addressLocality: BUSINESS_CONTACT.address.city,
-                  addressRegion: 'PR',
-                  postalCode: BUSINESS_CONTACT.address.zip,
-                  addressCountry: 'US',
-                },
-                geo: {
-                  '@type': 'GeoCoordinates',
-                  latitude: BUSINESS_CONTACT.geo.latitude,
-                  longitude: BUSINESS_CONTACT.geo.longitude,
-                },
-                openingHoursSpecification: [
-                  {
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                    opens: '09:00',
-                    closes: '18:00',
+            '@graph': (() => {
+              const dealer = getAutoDealerSchema();
+              const { '@context': _dc, ...dealerSchema } = dealer;
+              const site = getWebsiteSchema();
+              const { '@context': _sc, ...siteSchema } = site;
+              return [
+                { ...dealerSchema, '@id': `${SITE_CONFIG.url}/#dealer` },
+                {
+                  '@type': 'Organization',
+                  '@id': `${SITE_CONFIG.url}/#organization`,
+                  name: BUSINESS_CONTACT.name,
+                  url: SITE_CONFIG.url,
+                  logo: `${SITE_CONFIG.url}/app-icon.webp`,
+                  sameAs: [
+                    'https://www.facebook.com/richardautomotive',
+                    'https://www.instagram.com/richardautomotive',
+                  ],
+                  contactPoint: {
+                    '@type': 'ContactPoint',
+                    telephone: BUSINESS_CONTACT.phone,
+                    contactType: 'Sales',
+                    areaServed: 'PR',
+                    availableLanguage: ['Spanish', 'English'],
                   },
-                  {
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: 'Saturday',
-                    opens: '09:00',
-                    closes: '17:00',
-                  },
-                ],
-                priceRange: '$$$',
-                aggregateRating: {
-                  '@type': 'AggregateRating',
-                  ratingValue: '5.0',
-                  reviewCount: '124',
                 },
-              },
-              {
-                '@type': 'Organization',
-                '@id': `${SITE_CONFIG.url}/#organization`,
-                name: BUSINESS_CONTACT.name,
-                url: SITE_CONFIG.url,
-                logo: `${SITE_CONFIG.url}/logo.png`,
-                sameAs: [
-                  'https://www.facebook.com/richardautomotivepr',
-                  'https://www.instagram.com/richardautomotive',
-                ],
-                contactPoint: {
-                  '@type': 'ContactPoint',
-                  telephone: BUSINESS_CONTACT.phone,
-                  contactType: 'Sales',
-                  areaServed: 'PR',
-                  availableLanguage: ['Spanish', 'English'],
-                },
-              },
-              {
-                '@type': 'WebSite',
-                '@id': `${SITE_CONFIG.url}/#website`,
-                url: SITE_CONFIG.url,
-                name: 'Richard Automotive',
-                description: SITE_CONFIG.description,
-                publisher: { '@id': `${SITE_CONFIG.url}/#organization` },
-                potentialAction: {
-                  '@type': 'SearchAction',
-                  target: `${SITE_CONFIG.url}/inventario?search={search_term_string}`,
-                  'query-input': 'required name=search_term_string',
-                },
-              },
-              {
-                '@type': 'ItemList',
-                '@id': `${SITE_CONFIG.url}/#inventory`,
-                name: 'Inventario de Autos Nuevos y Usados Richard Automotive',
-                description:
-                  'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
-                numberOfItems: (inventory || []).length,
-                itemListElement: (inventory || []).slice(0, 10).map((car, index) => ({
-                  '@type': 'ListItem',
-                  position: index + 1,
-                  item: {
-                    '@type': 'Product',
-                    name: car.name || 'Vehículo Richard Automotive',
-                    image: car.img || car.image,
-                    description: `${car.type || 'Auto'} nuevo o certificado por Richard Automotive.`,
-                    brand: { '@type': 'Brand', name: (car.name || 'Auto').split(' ')[0] },
-                    offers: {
-                      '@type': 'Offer',
-                      price: car.price || 0,
-                      priceCurrency: 'USD',
-                      availability: 'https://schema.org/InStock',
-                      url: `${SITE_CONFIG.url}/inventario/${generateVehicleSlug(car)}/${car.id}`,
+                { ...siteSchema, '@id': `${SITE_CONFIG.url}/#website` },
+                {
+                  '@type': 'ItemList',
+                  '@id': `${SITE_CONFIG.url}/#inventory`,
+                  name: 'Inventario de Autos Nuevos y Usados Richard Automotive',
+                  description:
+                    'Selección exclusiva de vehículos nuevos y usados certificados con garantía de 24h.',
+                  numberOfItems: (inventory || []).length,
+                  itemListElement: (inventory || []).slice(0, 10).map((car, index) => ({
+                    '@type': 'ListItem',
+                    position: index + 1,
+                    item: {
+                      '@type': 'Product',
+                      name: car.name || 'Vehículo Richard Automotive',
+                      image: car.img || car.image,
+                      description: `${car.type || 'Auto'} nuevo o certificado por Richard Automotive.`,
+                      brand: { '@type': 'Brand', name: (car.name || 'Auto').split(' ')[0] },
+                      offers: {
+                        '@type': 'Offer',
+                        price: car.price || 0,
+                        priceCurrency: 'USD',
+                        availability: 'https://schema.org/InStock',
+                        url: `${SITE_CONFIG.url}/inventario/${generateVehicleSlug(car)}/${car.id}`,
+                      },
                     },
-                  },
-                })),
-              },
-            ],
+                  })),
+                },
+              ];
+            })(),
           }}
         />
 

@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   },
 };
 
+const CONTACT_POINT = {
+  '@type': 'ContactPoint',
+  telephone: '+1-787-368-2880',
+  contactType: 'sales',
+  email: 'ventas@richard-automotive.com',
+  areaServed: 'PR',
+  availableLanguage: ['Spanish', 'English'],
+};
+
 function ContactoJsonLd() {
   const breadcrumb = [
     { name: 'Inicio', url: '/' },
@@ -48,6 +57,7 @@ function ContactoJsonLd() {
   const schemas = [
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
     faq,
+    { '@context': 'https://schema.org', ...CONTACT_POINT },
   ];
 
   return schemas.map((schema, i) => (

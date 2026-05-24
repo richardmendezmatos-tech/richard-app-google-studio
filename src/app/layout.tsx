@@ -70,40 +70,10 @@ import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceIniti
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react';
+import { getAutoDealerSchema } from '@/shared/config/seoSchemas';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Richard Automotive',
-    image: 'https://richard-automotive.com/logo.png',
-    '@id': 'https://richard-automotive.com',
-    url: 'https://richard-automotive.com',
-    telephone: '+17873682880',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
-      addressLocality: 'Vega Alta',
-      addressRegion: 'PR',
-      postalCode: '00692',
-      addressCountry: 'US',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 18.4069,
-      longitude: -66.3533,
-    },
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '09:00',
-      closes: '18:00',
-    },
-    sameAs: [
-      'https://www.facebook.com/richardautomotive1',
-      'https://www.instagram.com/richardoneal_/',
-    ],
-  };
+  const jsonLd = getAutoDealerSchema();
 
   const webmcpJsonLd = {
     '@context': 'https://schema.webmcp.dev',
@@ -145,6 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/app-icon.webp" />
+        <meta name="google-site-verification" content="-Gsbiu2xa3UZQ9sCSRb-P2Zk2boNjtO6o2849bdY1Dw" />
         <meta name="mcp:tool" content="pre-qualify" />
         <meta name="mcp:tool" content="bono-300" />
         <meta name="mcp:tool" content="trade-in" />

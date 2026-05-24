@@ -1,7 +1,10 @@
-import { SITE_CONFIG, type SiteConfig } from './siteConfig';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
+import { SITE_CONFIG } from './siteConfig';
+
+const C = BUSINESS_CONTACT;
 
 export const getAutoDealerSchema = (city?: string) => {
-  const cityName = city || 'Vega Alta';
+  const cityName = city || C.address.city;
   return {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
@@ -9,43 +12,50 @@ export const getAutoDealerSchema = (city?: string) => {
     alternateName: 'Richard Automotive PR',
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/app-icon.png`,
+    logo: `${SITE_CONFIG.url}/app-icon.webp`,
     image: `${SITE_CONFIG.url}/og-image.png`,
-    telephone: SITE_CONFIG.contact.phone,
-    email: SITE_CONFIG.contact.email,
+    telephone: C.phone,
+    email: C.email,
     address: {
       '@type': 'PostalAddress',
+      streetAddress: cityName === C.address.city ? C.address.street : 'Puerto Rico',
       addressLocality: cityName,
-      addressRegion: 'PR',
-      addressCountry: 'US',
-      streetAddress:
-        cityName === 'Vega Alta'
-          ? 'Carr. #2 KM 28.5, Bo. Espinosa'
-          : cityName === 'Bayamón'
-            ? 'Bayamón'
-            : 'Puerto Rico',
+      addressRegion: C.address.state,
+      postalCode: cityName === C.address.city ? C.address.zip : undefined,
+      addressCountry: C.address.country,
     },
-    geo:
-      cityName === 'Vega Alta' || cityName === 'Bayamón'
-        ? {
-            '@type': 'GeoCoordinates',
-            latitude: cityName === 'Vega Alta' ? 18.4069 : 18.397,
-            longitude: cityName === 'Vega Alta' ? -66.3533 : -66.1558,
-          }
-        : undefined,
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: cityName === C.address.city ? C.geo.latitude : cityName === 'Bayamón' ? 18.397 : C.geo.latitude,
+      longitude: cityName === C.address.city ? C.geo.longitude : cityName === 'Bayamón' ? -66.1558 : C.geo.longitude,
+    },
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         opens: '09:00',
         closes: '18:00',
       },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Saturday',
+        opens: '09:00',
+        closes: '17:00',
+      },
     ],
-    sameAs: [SITE_CONFIG.social.facebook, SITE_CONFIG.social.instagram].filter(Boolean) as string[],
+    sameAs: [
+      'https://www.facebook.com/richardautomotive',
+      'https://www.instagram.com/richardautomotive',
+    ],
     priceRange: '$$$',
     areaServed: {
       '@type': 'State',
       name: 'Puerto Rico',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5.0',
+      reviewCount: '124',
     },
   };
 };

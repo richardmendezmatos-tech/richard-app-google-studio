@@ -1,50 +1,14 @@
 import React from 'react';
 import SEO from '@/shared/ui/seo/SEO';
 import { Phone, MapPin, Clock, MessageCircle, Mail, ChevronRight } from 'lucide-react';
+import { getAutoDealerSchema } from '@/shared/config/seoSchemas';
 
 const WHATSAPP_LINK = 'https://wa.me/17873682880?text=Hola%2C%20me%20gustaría%20más%20información';
 const PHONE_NUMBER = '+1 (787) 368-2880';
-const EMAIL = 'info@richard-automotive.com';
+const EMAIL = 'ventas@richard-automotive.com';
 
 const ContactoPage: React.FC = () => {
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'AutoDealer',
-    name: 'Richard Automotive',
-    description:
-      'Dealer de autos nuevos y usados de lujo en Bayamón, Puerto Rico. Financiamiento expreso, trade-in y entrega inmediata.',
-    telephone: '+1-787-368-2880',
-    email: EMAIL,
-    url: 'https://www.richard-automotive.com',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Bayamón',
-      addressLocality: 'Bayamón',
-      addressRegion: 'PR',
-      postalCode: '00961',
-      addressCountry: 'US',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 18.399,
-      longitude: -66.1573,
-    },
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '09:00',
-      closes: '18:00',
-    },
-    areaServed: {
-      '@type': 'State',
-      name: 'Puerto Rico',
-    },
-    priceRange: '$$',
-    sameAs: [
-      'https://www.facebook.com/richardautomotive1',
-      'https://www.instagram.com/richardoneal_/',
-    ],
-  };
+  const schema = getAutoDealerSchema('Bayamón');
 
   return (
     <>

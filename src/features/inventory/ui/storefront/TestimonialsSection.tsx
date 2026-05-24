@@ -1,6 +1,27 @@
 import React from 'react';
 import { Star, Quote, BadgeCheck, Zap } from 'lucide-react';
 
+function TestimonialsJsonLd() {
+  const reviews = testimonials.map((t, i) => ({
+    '@type': 'Review',
+    reviewRating: { '@type': 'Rating', ratingValue: '5' },
+    author: { '@type': 'Person', name: t.name },
+    reviewBody: t.comment,
+    itemReviewed: { '@type': 'AutoDealer', name: 'Richard Automotive' },
+  }));
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': reviews,
+        }),
+      }}
+    />
+  );
+}
+
 const testimonials = [
   {
     id: 1,
@@ -36,7 +57,9 @@ const testimonials = [
 
 const TestimonialsSection: React.FC = () => {
   return (
-    <section className="relative overflow-hidden rounded-5xl border border-white/5 bg-slate-950 py-24">
+    <>
+      <TestimonialsJsonLd />
+      <section className="relative overflow-hidden rounded-5xl border border-white/5 bg-slate-950 py-24">
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] animate-pulse [animation-delay:3s]" />
@@ -133,6 +156,7 @@ const TestimonialsSection: React.FC = () => {
         }
       `}</style>
     </section>
+    </>
   );
 };
 

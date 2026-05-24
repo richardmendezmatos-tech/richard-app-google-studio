@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import PreQualifyClient from './PreQualifyClient';
-import { getBreadcrumbSchema, getHowToSchema, getFAQSchema } from '@/shared/config/seoSchemas';
+import { getBreadcrumbSchema, getHowToSchema, getFAQSchema, getQAPageSchema } from '@/shared/config/seoSchemas';
 
 export const metadata: Metadata = {
   title: 'Precalificación de Crédito para Auto | Richard Automotive',
@@ -70,10 +70,26 @@ function PreQualifyJsonLd() {
     },
   ]);
 
+  const qaPage = getQAPageSchema([
+    {
+      name: '¿La precalificación afecta mi crédito?',
+      acceptedAnswer: 'No. Usamos soft pull que no afecta tu puntaje crediticio. Solo al proceder con la solicitud formal hacemos hard pull.',
+    },
+    {
+      name: '¿Cuánto tiempo toma la precalificación?',
+      acceptedAnswer: 'El formulario toma menos de 2 minutos. La respuesta es inmediata.',
+    },
+    {
+      name: '¿Qué necesito para precalificarme?',
+      acceptedAnswer: 'Solo tu nombre, teléfono, email y un estimado de ingresos mensuales.',
+    },
+  ]);
+
   const schemas = [
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
     howTo,
     faq,
+    qaPage,
   ];
 
   return schemas.map((schema, i) => (

@@ -65,6 +65,10 @@ function ArticleJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
     dateModified: article.date,
     mainEntityOfPage: `https://richard-automotive.com/blog/${article.slug}`,
     image: article.imageUrl,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['.blog-content', '.blog-summary'],
+    },
   };
 
   return (

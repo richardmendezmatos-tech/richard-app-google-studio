@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import InventoryPage from '@/views/inventory/ui/InventoryPage';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/entities/inventory';
-import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 export const metadata: Metadata = {
   title: 'Inventario de Autos Nuevos y Usados | Richard Automotive',
@@ -21,8 +21,9 @@ export const metadata: Metadata = {
 };
 
 import { unstable_noStore as noStore } from 'next/cache';
+import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-function InventoryJsonLd() {
+function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -32,12 +33,40 @@ function InventoryJsonLd() {
     ],
   };
 
-  return (
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Inventario de Autos Richard Automotive',
+    description: 'Explora nuestra selección de autos nuevos Ford y usados certificados en Puerto Rico.',
+    url: 'https://richard-automotive.com/inventario',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: (inventory || []).slice(0, 12).map((car, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'Car',
+          name: `${car.year || ''} ${car.make || ''} ${car.model || ''}`.trim() || 'Vehículo',
+          url: `${SITE_CONFIG.url}/inventario/${generateVehicleSlug(car)}/${car.id}`,
+          offers: {
+            '@type': 'Offer',
+            price: car.price || 0,
+            priceCurrency: 'USD',
+          },
+        },
+      })),
+    },
+  };
+
+  const schemas = [breadcrumb, collection];
+
+  return schemas.map((schema, i) => (
     <script
+      key={i}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
-  );
+  ));
 }
 
 export default async function InventoryRoute() {
@@ -53,7 +82,7 @@ export default async function InventoryRoute() {
 
   return (
     <>
-      <InventoryJsonLd />
+      <InventoryJsonLd inventory={inventory} />
       <main className="relative min-h-screen pt-24 bg-[#0a0a0a]">
         <Suspense
           fallback={

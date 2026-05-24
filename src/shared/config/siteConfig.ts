@@ -33,10 +33,10 @@ export const SITE_CONFIG: SiteConfig = {
     instagram: 'https://www.instagram.com/richardoneal_/',
   },
   contact: {
-    phone: '+1 (787) 368-2880',
+    phone: '787-368-2880',
     whatsapp: '17873682880',
-    email: 'richard@richard-automotive.com',
-    address: 'Vega Alta, Puerto Rico',
+    email: 'ventas@richard-automotive.com',
+    address: 'Carr. #2 KM 28.5, Bo. Espinosa, Vega Alta, PR 00692',
   },
   seo: {
     keywords: [
