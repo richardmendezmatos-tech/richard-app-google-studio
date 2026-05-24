@@ -29,7 +29,9 @@ const B2BBillingDashboard = React.lazy(() => import('./B2BBillingDashboard'));
 const AILabPage = React.lazy(() => import('@/pages/ai-lab/ui/AILabPage'));
 const CRMBoard = React.lazy(() => import('./CRMBoard'));
 const HoustonDashboard = React.lazy(() => import('@/widgets/houston/HoustonDashboard'));
-const DealDesker = React.lazy(() => import('./DealDesker'));
+const DealDesker = React.lazy(() =>
+  import('./DealDeskerHUD').then((m) => ({ default: m.DealDeskerHUD })),
+);
 const NewsroomPage = React.lazy(() => import('@/pages/admin/newsroom/ui/NewsroomPage'));
 const AudiencesView = React.lazy(() => import('@/pages/admin/audiences/ui/AudiencesView'));
 
