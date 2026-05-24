@@ -1,15 +1,20 @@
-'use client';
-
 import React from 'react';
-import TermsView from '@/widgets/brand-ui/layout/TermsView';
+import type { Metadata } from 'next';
+import TermsClient from './TermsClient';
 
-/**
- * Next.js App Router entry point for /terminos
- */
+export const metadata: Metadata = {
+  title: 'Términos y Condiciones | Richard Automotive',
+  description:
+    'Términos y condiciones de uso del sitio web y servicios de Richard Automotive. Al usar nuestro sitio aceptas estos términos.',
+  alternates: {
+    canonical: 'https://richard-automotive.com/terminos',
+  },
+};
+
 export default function TermsRoute() {
   return (
-    <div className="min-h-screen bg-slate-950 pt-20">
-      <TermsView />
-    </div>
+    <>
+      <TermsClient />
+    </>
   );
 }

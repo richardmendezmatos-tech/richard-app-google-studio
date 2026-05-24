@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from './siteConfig';
+import { SITE_CONFIG, type SiteConfig } from './siteConfig';
 
 export const getAutoDealerSchema = (city?: string) => {
   const cityName = city || 'Vega Alta';
@@ -63,4 +63,51 @@ export const getWebsiteSchema = () => ({
     },
     'query-input': 'required name=search_term_string',
   },
+});
+
+export const getBreadcrumbSchema = (items: { name: string; url: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: item.url.startsWith('http') ? item.url : `${SITE_CONFIG.url}${item.url}`,
+  })),
+});
+
+export const getHowToSchema = (steps: { name: string; text: string }[], name: string, description: string) => ({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name,
+  description,
+  step: steps.map((step, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: step.name,
+    text: step.text,
+  })),
+});
+
+export const getQAPageSchema = (mainEntity: { name: string; acceptedAnswer: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'QAPage',
+  mainEntity: mainEntity.map((q) => ({
+    '@type': 'Question',
+    name: q.name,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: q.acceptedAnswer,
+    },
+  })),
+});
+
+export const getFAQSchema = (faqs: { question: string; answer: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+  })),
 });

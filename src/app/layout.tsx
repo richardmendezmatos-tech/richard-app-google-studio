@@ -49,6 +49,12 @@ export const metadata: Metadata = {
     locale: 'es_PR',
     type: 'website',
   },
+  alternates: {
+    languages: {
+      'es-PR': 'https://richard-automotive.com',
+      en: 'https://richard-automotive.com/en',
+    },
+  },
 };
 
 export const viewport = {

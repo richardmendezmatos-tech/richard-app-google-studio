@@ -20,9 +20,28 @@ export const metadata: Metadata = {
   },
 };
 
+function DealMatcherJsonLd() {
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
+      { '@type': 'ListItem', position: 2, name: 'Deal Matcher', item: 'https://richard-automotive.com/deal-matcher' },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+    />
+  );
+}
+
 export default function DealMatcherPage() {
   return (
     <>
+      <DealMatcherJsonLd />
       <main className="relative min-h-screen bg-[#07111b] text-white pt-16 pb-24 overflow-x-hidden">
         
         {/* Futuristic Grid Overlay */}

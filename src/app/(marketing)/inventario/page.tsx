@@ -22,6 +22,24 @@ export const metadata: Metadata = {
 
 import { unstable_noStore as noStore } from 'next/cache';
 
+function InventoryJsonLd() {
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
+      { '@type': 'ListItem', position: 2, name: 'Inventario', item: 'https://richard-automotive.com/inventario' },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+    />
+  );
+}
+
 export default async function InventoryRoute() {
   noStore();
   let inventory: Car[] = [];
@@ -34,16 +52,19 @@ export default async function InventoryRoute() {
   }
 
   return (
-    <main className="relative min-h-screen pt-24 bg-[#0a0a0a]">
-      <Suspense
-        fallback={
-          <div className="flex h-[50vh] items-center justify-center">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
-          </div>
-        }
-      >
-        <InventoryPage inventory={inventory} />
-      </Suspense>
-    </main>
+    <>
+      <InventoryJsonLd />
+      <main className="relative min-h-screen pt-24 bg-[#0a0a0a]">
+        <Suspense
+          fallback={
+            <div className="flex h-[50vh] items-center justify-center">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+            </div>
+          }
+        >
+          <InventoryPage inventory={inventory} />
+        </Suspense>
+      </main>
+    </>
   );
 }

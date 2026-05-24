@@ -1,15 +1,20 @@
-'use client';
-
 import React from 'react';
-import PrivacyView from '@/pages/privacy/ui/PrivacyView';
+import type { Metadata } from 'next';
+import PrivacyClient from './PrivacyClient';
 
-/**
- * Next.js App Router entry point for /privacidad
- */
+export const metadata: Metadata = {
+  title: 'Política de Privacidad | Richard Automotive',
+  description:
+    'Política de privacidad de Richard Automotive. Conoce cómo protegemos y manejamos tu información personal en cumplimiento con las leyes de Puerto Rico y EE.UU.',
+  alternates: {
+    canonical: 'https://richard-automotive.com/privacidad',
+  },
+};
+
 export default function PrivacyRoute() {
   return (
-    <div className="min-h-screen bg-slate-950 pt-20">
-      <PrivacyView />
-    </div>
+    <>
+      <PrivacyClient />
+    </>
   );
 }
