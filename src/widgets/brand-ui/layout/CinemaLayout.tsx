@@ -43,13 +43,13 @@ function safeLazy<T extends React.ComponentType<any>>(
 
 const AIChatWidget = safeLazy(
   () =>
-    import('@/widgets/ai-chat/AIChatWidget').then((m) => ({ default: (m as any).default || m })),
+    import('@/features/ai-hub/ui/AIChatWidget').then((m) => ({ default: (m as any).default || m })),
   'chat_chunk_reloaded',
 ) as any;
 
 const VoiceWidget = safeLazy(
   () =>
-    import('@/widgets/ai-chat/VoiceWidget').then((mod) => ({
+    import('@/features/ai-hub/ui/VoiceWidget').then((mod) => ({
       default: (mod as any).default || mod.VoiceWidget || mod,
     })),
   'voice_chunk_reloaded',

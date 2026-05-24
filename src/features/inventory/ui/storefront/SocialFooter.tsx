@@ -2,10 +2,10 @@
 
 import React from 'react';
 import {
-  Instagram,
-  Facebook,
-  Twitter,
-  Youtube,
+  Camera,
+  Globe,
+  X,
+  Play,
   ShieldCheck,
 } from 'lucide-react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -122,10 +122,13 @@ const SocialFooter: React.FC = () => {
               <span className="font-tech text-[10px] text-slate-600">QUERIES / DAY</span>
             </div>
             <div className="flex gap-3">
-              {SITE_CONFIG.social.instagram && <SocialIcon icon={<Instagram size={16} />} href={SITE_CONFIG.social.instagram} label="Instagram" />}
-              {SITE_CONFIG.social.facebook && <SocialIcon icon={<Facebook size={16} />} href={SITE_CONFIG.social.facebook} label="Facebook" />}
-              {SITE_CONFIG.social.youtube && <SocialIcon icon={<Youtube size={16} />} href={SITE_CONFIG.social.youtube} label="YouTube" />}
-              {SITE_CONFIG.social.twitter && <SocialIcon icon={<Twitter size={16} />} href={SITE_CONFIG.social.twitter} label="Twitter" />}
+{SITE_CONFIG.social.instagram && <SocialIcon icon={<Camera size={16} />} href={SITE_CONFIG.social.instagram} label="Instagram" />}
+
+              {SITE_CONFIG.social.facebook && <SocialIcon icon={<Globe size={16} />} href={SITE_CONFIG.social.facebook} label="Facebook" />}
+
+              {SITE_CONFIG.social.youtube && <SocialIcon icon={<Play size={16} />} href={SITE_CONFIG.social.youtube} label="YouTube" />}
+
+              {SITE_CONFIG.social.twitter && <SocialIcon icon={<X size={16} />} href={SITE_CONFIG.social.twitter} label="Twitter" />}
             </div>
           </div>
         </div>

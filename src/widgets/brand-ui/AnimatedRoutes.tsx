@@ -39,7 +39,7 @@ interface AIConsultantProps {
   inventory: Car[];
 }
 const AIConsultant = React.lazy(() =>
-  lazyRetry(() => import('@/widgets/ai-chat/AIConsultant')),
+  lazyRetry(() => import('@/features/ai-hub/ui/AIConsultant')),
 ) as unknown as React.ComponentType<AIConsultantProps>;
 const AILabPage = React.lazy(() => lazyRetry(() => import('@/pages/ai-lab/ui/AILabPage')));
 const UserLogin = React.lazy(() => lazyRetry(() => import('@/pages/auth/ui/UserLogin')));

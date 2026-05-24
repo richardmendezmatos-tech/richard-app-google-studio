@@ -1,5 +1,5 @@
 import React from 'react';
-import AIConsultant from '@/widgets/ai-chat/AIConsultant';
+import AIConsultant from '@/features/ai-hub/ui/AIConsultant';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/entities/inventory';
 

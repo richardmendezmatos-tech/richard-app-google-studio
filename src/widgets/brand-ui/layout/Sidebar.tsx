@@ -185,7 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/consultant');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/widgets/ai-chat/AIConsultant').catch(() => {})}
+          onMouseEnter={() => import('@/features/ai-hub/ui/AIConsultant').catch(() => {})}
           icon={<BotMessageSquare size={19} />}
           label={t('sidebar.consultant')}
           isCollapsed={isCollapsed}

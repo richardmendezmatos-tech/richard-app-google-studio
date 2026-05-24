@@ -6,8 +6,8 @@ import { generateCarMarketingContent, MarketingContent } from '@/features/leads'
 import { optimizeImage } from '@/shared/api/media/mediaShared';
 import {
   X,
-  Instagram,
-  Facebook,
+  Camera,
+  Globe,
   Video,
   Copy,
   Check,
@@ -204,7 +204,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center shadow-lg">
-                              <Instagram size={20} className="text-white" />
+                              <Camera size={20} className="text-white" />
                             </div>
                             <div>
                               <h4 className="text-sm font-black text-white uppercase tracking-widest">
@@ -240,7 +240,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
-                              <Facebook size={20} className="text-white" />
+                              <Globe size={20} className="text-white" />
                             </div>
                             <div>
                               <h4 className="text-sm font-black text-white uppercase tracking-widest">

@@ -9,7 +9,7 @@ import {
   signInWithFacebook,
   normalizeUser,
 } from '@/features/auth';
-import { ArrowRight, Zap, Chrome, Globe, Mail, Lock } from 'lucide-react';
+import { ArrowRight, Zap, Globe, Mail, Lock, Monitor } from 'lucide-react';
 import { useNavigate, Link, useLocation } from '@/shared/lib/next-route-adapter';
 import { useAuthStore } from '@/entities/session';
 import SEO from '@/shared/ui/seo/SEO';
@@ -183,9 +183,9 @@ const UserLogin: React.FC = () => {
                   aria-label="Continuar con Google"
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-all group"
                 >
-                  <Chrome
-                    size={20}
-                    className="text-slate-400 group-hover:text-blue-400 transition-colors"
+                  <Monitor
+                    className="w-5 h-5"
+                    aria-hidden="true"
                   />
                   <span>Continuar con Google</span>
                 </button>

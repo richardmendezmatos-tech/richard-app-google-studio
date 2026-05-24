@@ -53,6 +53,8 @@ const InventoryWrapper = () => {
   const ctx = useOutletContext<CommandCenterContextType>();
   return (
     <AdminInventoryTab
+      inventory={ctx.inventory}
+      leads={ctx.leads}
       onDelete={ctx.onDelete}
       onCreateNew={() => {
         ctx.setEditingCar(null);

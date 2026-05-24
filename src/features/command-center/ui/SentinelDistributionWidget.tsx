@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2,
-  Facebook,
   Globe,
-  Instagram,
+  Camera,
   Zap,
   CheckCircle2,
   Clock,
@@ -145,13 +144,16 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded-lg bg-slate-800 border border-white/5">
                 {p.platform === 'Facebook Marketplace' && (
-                  <Facebook size={14} className="text-blue-400" />
+                  <Globe size={14} className="text-blue-400" />
+                )}
+                {p.platform === 'Instagram Shop' && (
+                  <Camera size={14} className="text-pink-400" />
                 )}
                 {p.platform === 'ClasificadosOnline' && (
                   <Globe size={14} className="text-emerald-400" />
                 )}
                 {p.platform === 'Instagram Shop' && (
-                  <Instagram size={14} className="text-pink-400" />
+                  <Camera size={14} className="text-pink-400" />
                 )}
               </div>
               <div>

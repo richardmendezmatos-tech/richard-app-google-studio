@@ -3,7 +3,7 @@
 import React from 'react';
 import CRMBoard from '@/features/command-center/ui/CRMBoard';
 import HoustonDashboard from '@/widgets/houston/HoustonDashboard';
-import UsersTab from '@/widgets/admin/UsersTab';
+import UsersTab from '@/features/command-center/ui/UsersTab';
 import SEO from '@/shared/ui/seo/SEO';
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
 import { User as UserIcon, Server, BarChart3, CarFront, Package, Search } from 'lucide-react';
-import { StatusWidget, CountUp } from './widgets/AdminWidgets';
+import { StatusWidget, CountUp } from './AdminWidgets';
 import { Car as CarType, Lead } from '@/shared/types/types';
 
 interface Props {
