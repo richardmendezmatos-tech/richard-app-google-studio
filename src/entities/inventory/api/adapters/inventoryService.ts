@@ -45,7 +45,7 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
   const sb = await getSupabase();
   if (!sb) return [];
 
-  const { data, error } = await sb.from('inventory').select('*').eq('dealer_id', dealerId);
+  const { data, error } = await sb.from('inventory').select('make, model, year, name, condition, vin, id, price, mileage, images, image_url, img, status, body_style, type, exterior_color, color, category, dealer_id').eq('dealer_id', dealerId).limit(100);
 
   if (error) {
     console.error('[InventoryService] Error fetching inventory:', error);
@@ -84,9 +84,10 @@ export const getRecentVelocityMetrics = async (days: number = 7) => {
 
   const { data, error } = await sb
     .from('sentinel_metrics')
-    .select('*')
+    .select('data, operational_score, type, timestamp')
     .eq('type', 'inventory_velocity')
-    .gte('timestamp', dateLimit.toISOString());
+    .gte('timestamp', dateLimit.toISOString())
+    .limit(100);
 
   if (error) {
     console.error('[InventoryService] Error fetching velocity metrics:', error);

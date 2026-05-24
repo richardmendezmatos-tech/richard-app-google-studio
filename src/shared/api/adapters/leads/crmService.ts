@@ -192,7 +192,7 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
     .on('postgres_changes', { event: '*', schema: 'public', table: LEADS_TABLE }, async () => {
       const { data } = await supabase
         .from(LEADS_TABLE)
-        .select('*')
+        .select('id, first_name, last_name, email, phone, status, created_at, customer_memory, ai_analysis')
         .order('created_at', { ascending: false })
         .limit(50);
       if (data) {
@@ -219,7 +219,7 @@ export const subscribeToLeads = (callback: (leads: Lead[]) => void) => {
   // Initial fetch
   supabase
     .from(LEADS_TABLE)
-    .select('*')
+    .select('id, first_name, last_name, email, phone, status, created_at, customer_memory, ai_analysis')
     .order('created_at', { ascending: false })
     .limit(50)
     .then(({ data }) => {

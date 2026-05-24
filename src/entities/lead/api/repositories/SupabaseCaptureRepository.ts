@@ -26,8 +26,9 @@ export class SupabaseSubscriberRepository implements SubscriberRepository {
   async getSubscribers(): Promise<SubscriberData[]> {
     const { data, error } = await this.client
       .from('subscribers')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('id, email, first_name, phone, source, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (error) {
       console.error('[SupabaseSubscriberRepository] Error fetching subscribers:', error);

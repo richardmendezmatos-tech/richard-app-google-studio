@@ -1,7 +1,8 @@
-import { VehicleTelemetry, VehicleHealthStatus, HealthAlert } from '@/shared/types/types';
+import { VehicleTelemetry } from './vehicleHealth';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { nativeBridgeService } from '@/shared/api/core/nativeBridgeService';
 import { createClient } from '@/shared/api/supabase/client';
+import { analyzeVehicleHealth } from './vehicleHealth';
 
 const TELEMETRY_CHANNEL = 'vehicle-telemetry';
 
@@ -76,92 +77,6 @@ export const useVehicleTelemetry = (vehicleId: string) => {
   }, [vehicleId]);
 
   return { telemetry, loading, error };
-};
-
-export const analyzeVehicleHealth = (telemetry: VehicleTelemetry): VehicleHealthStatus => {
-  const alerts: HealthAlert[] = [];
-  let overallStatus: 'healthy' | 'warning' | 'critical' = 'healthy';
-
-  // 1. Temperature Analysis
-  if (telemetry.temp > 105) {
-    alerts.push({
-      id: `temp-crit-${Date.now()}`,
-      type: 'critical',
-      category: 'engine',
-      message: `Temperatura Crítica: ${telemetry.temp}°C. Detenga el vehículo inmediatamente.`,
-      timestamp: Date.now(),
-    });
-    overallStatus = 'critical';
-  } else if (telemetry.temp > 95) {
-    alerts.push({
-      id: `temp-warn-${Date.now()}`,
-      type: 'warning',
-      category: 'engine',
-      message: `Temperatura Elevada: ${telemetry.temp}°C. Revise el sistema de enfriamiento.`,
-      timestamp: Date.now(),
-    });
-    overallStatus = 'warning';
-  }
-
-  // 2. Battery Analysis
-  if (telemetry.batteryVoltage < 11.5) {
-    alerts.push({
-      id: `batt-crit-${Date.now()}`,
-      type: 'critical',
-      category: 'battery',
-      message: `Voltaje de Batería Crítico: ${telemetry.batteryVoltage}V. Riesgo de fallo de arranque.`,
-      timestamp: Date.now(),
-    });
-    overallStatus = 'critical';
-  } else if (telemetry.batteryVoltage < 12.1) {
-    alerts.push({
-      id: `batt-warn-${Date.now()}`,
-      type: 'warning',
-      category: 'battery',
-      message: `Batería Baja: ${telemetry.batteryVoltage}V. Se recomienda revisión.`,
-      timestamp: Date.now(),
-    });
-    if (overallStatus !== 'critical') overallStatus = 'warning';
-  }
-
-  // 3. Fuel Analysis
-  if (telemetry.fuelLevel < 10) {
-    alerts.push({
-      id: `fuel-crit-${Date.now()}`,
-      type: 'critical',
-      category: 'fuel',
-      message: `Nivel de Combustible Crítico: ${telemetry.fuelLevel}%. Reposte inmediatamente.`,
-      timestamp: Date.now(),
-    });
-    overallStatus = 'critical';
-  } else if (telemetry.fuelLevel < 20) {
-    alerts.push({
-      id: `fuel-warn-${Date.now()}`,
-      type: 'warning',
-      category: 'fuel',
-      message: `Nivel de Combustible Bajo: ${telemetry.fuelLevel}%.`,
-      timestamp: Date.now(),
-    });
-    if (overallStatus !== 'critical') overallStatus = 'warning';
-  }
-
-  // 4. Engine Efficiency / Idle Warning
-  if (telemetry.rpm > 1200 && telemetry.speed === 0) {
-    alerts.push({
-      id: `rpm-warn-${Date.now()}`,
-      type: 'warning',
-      category: 'engine',
-      message: `Ralentí Inestable detectado (${telemetry.rpm} RPM en parado).`,
-      timestamp: Date.now(),
-    });
-    if (overallStatus !== 'critical') overallStatus = 'warning';
-  }
-
-  return {
-    overallStatus,
-    alerts,
-    lastCheck: Date.now(),
-  };
 };
 
 import { useTelemetry } from '@/shared/ui/providers/TelemetryProvider';

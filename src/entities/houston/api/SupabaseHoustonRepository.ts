@@ -202,8 +202,9 @@ export class SupabaseHoustonRepository implements HoustonRepository {
     try {
       const { data, error } = await supabase
         .from('purchase_orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('id, created_at, status, query, estimated_roi, roi')
+        .order('created_at', { ascending: false })
+        .limit(100);
 
       if (error) {
         if (error.code === 'PGRST204' || error.code === '42P01') {

@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { generateObject } from 'ai';
+import { google } from '@ai-sdk/google';
 import { Car } from '@/shared/types/types';
 import { Lead } from '@/shared/types/lead';
-import { sentinelAI } from './sentinelAI';
 
 export const MatchIntelligenceSchema = z.object({
   score: z.number().min(0).max(100),
@@ -71,13 +72,14 @@ Return a JSON object with:
     `;
 
     try {
-      const result = await sentinelAI.generateStructuredObject(
-        MatchIntelligenceSchema,
+      const { object } = await generateObject({
+        model: google('gemini-2.0-flash'),
+        schema: MatchIntelligenceSchema,
+        output: 'object',
+        system: MATCH_SYSTEM,
         prompt,
-        MATCH_SYSTEM,
-        'gemini-2.0-flash',
-      );
-      return result;
+      });
+      return object as MatchIntelligence;
     } catch (error) {
       console.error('[MatchReasoningService] Error:', error);
       return {

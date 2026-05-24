@@ -19,12 +19,13 @@ export async function POST(request: Request) {
     if (targetUserId) {
       const { data, error } = await sb
         .from('push_subscriptions')
-        .select('*')
-        .eq('user_id', targetUserId);
+        .select('endpoint, auth, p256dh, user_id')
+        .eq('user_id', targetUserId)
+        .limit(100);
       if (error) throw error;
       subscriptions = data || [];
     } else {
-      const { data, error } = await sb.from('push_subscriptions').select('*');
+      const { data, error } = await sb.from('push_subscriptions').select('endpoint, auth, p256dh, user_id').limit(100);
       if (error) throw error;
       subscriptions = data || [];
     }

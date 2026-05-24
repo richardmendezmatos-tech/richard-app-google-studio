@@ -128,7 +128,7 @@ const StorefrontResultsGrid: React.FC<StorefrontResultsGridProps> = ({
                         {error instanceof Error ? error.message : String(error)}
                         {String(error).includes('requires an index') && (
                           <p className="mt-2 text-xs">
-                            💡 Tip: Falta un índice en Firebase. Revisa la consola o despliega los
+                            💡 Tip: Falta un índice en la base de datos. Revisa la consola de Supabase o despliega los
                             índices.
                           </p>
                         )}

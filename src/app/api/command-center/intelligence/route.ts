@@ -32,21 +32,22 @@ export async function GET(req: Request) {
       // High velocity events (views, claims)
       supabase
         .from('sentinel_metrics')
-        .select('*')
+        .select('data, operational_score, type, timestamp')
         .eq('type', 'inventory_velocity')
         .gte('timestamp', last7d)
-        .order('operational_score', { ascending: false }),
+        .order('operational_score', { ascending: false })
+        .limit(100),
 
       // Search terms with no results
       supabase
         .from('search_gaps')
-        .select('*')
+        .select('id, query, count, created_at')
         .gte('created_at', last7d)
         .order('count', { ascending: false })
         .limit(10),
 
       // Top scoring leads
-      supabase.from('leads').select('*').order('ai_analysis->score', { ascending: false }).limit(5),
+      supabase.from('leads').select('id, first_name, ai_analysis').order('ai_analysis->score', { ascending: false }).limit(5),
     ]);
 
     // 2. Intelligence Processing (Signal Synthesis)

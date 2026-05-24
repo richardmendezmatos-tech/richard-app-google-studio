@@ -47,8 +47,9 @@ export class AutonomousDistributionAgent {
 
     const { data: cars, error } = await supabase
       .from('inventory')
-      .select('*')
-      .eq('status', 'available');
+      .select('year, mileage, type, price, condition, id, vin, description, make, model, trim, image, status')
+      .eq('status', 'available')
+      .limit(100);
 
     if (error || !cars) {
       const audit = await getAuditRepository();

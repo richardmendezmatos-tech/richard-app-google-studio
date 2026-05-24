@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       // For now, let's use the repository if possible, or direct client for speed.
       const { data: leads, error } = await (repository as any).client
         .from('leads')
-        .select('*')
+        .select('id, email_sequence, responded, status')
         .eq('email', email)
         .limit(1);
 

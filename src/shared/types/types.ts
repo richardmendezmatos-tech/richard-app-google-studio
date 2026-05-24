@@ -1,7 +1,7 @@
-import { Lead } from '@/entities/lead';
-import { Car, CarType } from '@/entities/inventory';
-import { Appraisal } from '@/entities/appraisal';
-import { UserRole, AppUser } from '@/entities/user';
+import type { Lead } from '@/shared/types/lead';
+import type { Car, CarType } from '@/entities/inventory/model/types';
+import type { Appraisal } from '@/entities/appraisal/model/types';
+import type { UserRole, AppUser } from '@/entities/user/model/types';
 
 export type { Lead, Car, CarType, Appraisal, UserRole, AppUser };
 

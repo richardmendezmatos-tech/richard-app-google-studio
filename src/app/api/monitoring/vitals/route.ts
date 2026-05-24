@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/server';
+import { paginateCursor } from '@/shared/api/supabase/cursorPagination';
 
 export async function POST(request: Request) {
   try {
@@ -34,20 +35,25 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const metric = url.searchParams.get('metric');
+  const cursor = url.searchParams.get('cursor');
   const limit = parseInt(url.searchParams.get('limit') || '50', 10);
 
   const sb = await createClient();
-  let query = sb.from('web_vitals').select('*').order('timestamp', { ascending: false }).limit(limit);
+  let query = sb.from('web_vitals');
 
   if (metric) {
-    query = query.eq('metric', metric);
+    query = query.eq('metric', metric) as any;
   }
 
-  const { data, error } = await query;
-
-  if (error) {
+  try {
+    const result = await paginateCursor<any>(query as any, 'web_vitals', {
+      limit,
+      cursor,
+      sortField: 'timestamp',
+      sortDir: 'desc',
+    });
+    return NextResponse.json(result);
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }

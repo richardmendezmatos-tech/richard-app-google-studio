@@ -1,6 +1,6 @@
 import { customerMemoryService } from './customerMemoryService';
 import { appointmentService } from './appointmentService';
-import { WhatsAppAgent } from '../application/use-cases';
+import { WhatsAppAgent } from '../application/use-cases/leads/WhatsAppAgent.usecase';
 
 import { TwilioWhatsAppRepository } from '../infrastructure/messaging/TwilioWhatsAppRepository';
 

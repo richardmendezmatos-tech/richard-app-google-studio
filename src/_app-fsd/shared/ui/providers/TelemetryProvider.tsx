@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { VehicleHealthStatus } from '@/shared/types/types';
 import { createClient } from '@/shared/api/supabase/client';
-import { analyzeVehicleHealth } from '@/shared/api/metrics/telemetryService';
+import { analyzeVehicleHealth } from '@/shared/api/metrics/vehicleHealth';
 import telemetryAnalytics from '@/shared/api/metrics/analytics';
 
 interface TelemetryContextType {

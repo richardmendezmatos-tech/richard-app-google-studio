@@ -151,7 +151,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       const mainImage = finalImageUrls.length > 0 ? finalImageUrls[0] : '';
       logDebug(`Main image identified: ${mainImage.substring(0, 30)}...`);
 
-      logDebug('Persisting document to Firestore...');
+      logDebug('Persisting document...');
       await onSave({
         name: fd.get('name') as string,
         make: (fd.get('name') as string)?.split(' ')[0] || 'Unknown',

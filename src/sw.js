@@ -36,19 +36,6 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url }) => url.origin === 'https://firebasestorage.googleapis.com',
-  new StaleWhileRevalidate({
-    cacheName: 'firebase-storage',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 100,
-        maxAgeSeconds: 60 * 60 * 24 * 7,
-      }),
-    ],
-  }),
-);
-
-registerRoute(
   ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/api/'),
   new NetworkFirst({
     cacheName: 'api-cache',

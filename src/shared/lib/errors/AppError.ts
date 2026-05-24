@@ -2,9 +2,8 @@
  * DevSecOps: Secure Error Handling Module
  *
  * Propósito: Prevenir la fuga de información (Information Leakage).
- * Todos los errores de Firebase (como "permission-denied", rutas, reglas de esquema)
- * son interceptados, registrados de forma segura y mascarados en excepciones genéricas
- * antes de llegar a la interfaz de usuario.
+ * Todos los errores son interceptados, registrados de forma segura y mascarados
+ * en excepciones genéricas antes de llegar a la interfaz de usuario.
  */
 
 export class AppError extends Error {
@@ -18,7 +17,7 @@ export class AppError extends Error {
 }
 
 /**
- * Envoltorio (Wrapper) para enmascarar errores de Firebase o Zod
+ * Envoltorio (Wrapper) para enmascarar errores de Zod o del sistema
  * y devolver un mensaje estéril y cálido al cliente sin revelar infraestructura.
  */
 export async function withSecureErrorHandling<T>(operation: () => Promise<T>): Promise<T> {
@@ -37,7 +36,7 @@ export async function withSecureErrorHandling<T>(operation: () => Promise<T>): P
       );
     }
 
-    // 3. Errores de Firebase (Permisos, límites, esquema)
+    // 3. Errores genéricos del sistema
     // Enmascaramos el error real en un mensaje cálido y genérico.
     throw new AppError(
       'No hemos podido procesar tu solicitud en este momento por seguridad o indisponibilidad técnica. Por favor, intenta de nuevo en unos minutos.',

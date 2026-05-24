@@ -35,8 +35,9 @@ export async function GET() {
 
   const { data: inventory, error } = await supabase
     .from('inventory')
-    .select('*')
-    .eq('status', 'available');
+    .select('id, make, model, year, trim, color, description, vin, type, transmission, mileage, price, condition, image, img, fuel, fuelType, status')
+    .eq('status', 'available')
+    .limit(100);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

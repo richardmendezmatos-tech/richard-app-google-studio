@@ -57,8 +57,9 @@ export const aiTools = {
             const carIds = semanticMatches.map((m) => m.car_id);
             const { data: dbCars, error: dbError } = await sb
               .from('inventory')
-              .select('*')
-              .in('vin', carIds);
+              .select('id, name, year, make, model, price, status, description, image_url, imageUrl, vin')
+              .in('vin', carIds)
+              .limit(50);
 
             if (!dbError && dbCars) {
               // Maintain semantic relevance order
@@ -79,7 +80,7 @@ export const aiTools = {
           console.log('[AI Tool: searchInventory] Executing fallback text-based match...');
           const { data, error } = await sb
             .from('inventory')
-            .select('*')
+            .select('id, name, year, make, model, price, status, description, image_url, imageUrl')
             .or(`make.ilike.%${query}%,model.ilike.%${query}%,condition.ilike.%${query}%`)
             .limit(5);
 

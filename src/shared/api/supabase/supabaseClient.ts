@@ -137,8 +137,9 @@ export const getPurchaseOrders = async () => {
     const sb = await getSupabase();
     const { data, error } = await sb
       .from('purchase_orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('id, created_at, status, query, estimated_roi, priority, recommendation, reason, estimated_purchase_price, estimated_resale_price, market_scarcity, target_source')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (error) {
       console.error('[Supabase] Error fetching POs:', error);

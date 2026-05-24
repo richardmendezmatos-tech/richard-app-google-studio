@@ -8,7 +8,8 @@ const mockQueryBuilder = vi.hoisted(() => ({
   select: vi.fn(() => mockQueryBuilder),
   eq: vi.fn(() => mockQueryBuilder),
   update: vi.fn(() => mockQueryBuilder),
-  order: vi.fn(() => Promise.resolve(orderData)),
+  order: vi.fn(() => mockQueryBuilder),
+  limit: vi.fn(() => Promise.resolve(orderData)),
   single: vi.fn(() => Promise.resolve(singleData)),
   then: (resolve: (v: typeof terminalEqData) => void) =>
     Promise.resolve().then(() => resolve(terminalEqData)),

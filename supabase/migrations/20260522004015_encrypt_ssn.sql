@@ -25,12 +25,12 @@ CREATE OR REPLACE FUNCTION public.encrypt_ssn_trigger()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 BEGIN
     IF NEW.ssn IS NOT NULL AND NEW.ssn != '' THEN
         NEW.ssn_encrypted := pgp_sym_encrypt(NEW.ssn, COALESCE(current_setting('app.settings.encryption_key', true), 'richard-auto-default-key'));
-        NEW.ssn_encrypted_deterministic := encode(encrypt(NEW.ssn::bytea, 'richard-auto-key'::bytea, 'aes-256-cbc'::text), 'base64');
+        NEW.ssn_encrypted_deterministic := encode(encrypt(NEW.ssn::bytea, 'richard-auto-key'::bytea, 'aes'), 'base64');
         NEW.ssn := NULL;
     END IF;
     RETURN NEW;

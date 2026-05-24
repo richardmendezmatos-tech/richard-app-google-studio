@@ -144,7 +144,7 @@ const DealDesker: React.FC = () => {
         },
       });
       alert(
-        `✅ Deal #${sessionId.substring(0, 6)} guardado exitosamente en el Workspace de Firebase.`,
+        `✅ Deal #${sessionId.substring(0, 6)} guardado exitosamente.`,
       );
     } catch (error) {
       console.error(error);

@@ -1,7 +1,8 @@
 // src/features/inventory-sync/infrastructure/database/SupabaseInventoryRepository.ts
-import { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { InventoryRepository } from './InventoryRepository';
 import { Vehicle } from '../model/sync/Vehicle';
+import type { Car } from '../model/types';
 
 export class SupabaseInventoryRepository implements InventoryRepository {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -10,7 +11,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
   async getInventory(
     dealerId: string,
     limitCount: number = 100,
-  ): Promise<import('@/entities/inventory').Car[]> {
+  ): Promise<Car[]> {
     const { data, error } = await this.supabase
       .from('inventory')
       .select('vin, make, model, year, price, mileage, images, status, condition')
@@ -24,7 +25,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
     return (data || []).map((row) => this.mapRowToCar(row));
   }
 
-  async getCarById(id: string): Promise<import('@/entities/inventory').Car | null> {
+  async getCarById(id: string): Promise<Car | null> {
     const { data, error } = await this.supabase
       .from('inventory')
       .select('vin, make, model, year, price, mileage, images, status, condition')
@@ -47,7 +48,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
     return parseFloat(((sold / total) * 100).toFixed(2));
   }
 
-  private mapRowToCar(row: any): import('@/entities/inventory').Car {
+  private mapRowToCar(row: any): Car {
     return {
       id: row.vin,
       vin: row.vin,

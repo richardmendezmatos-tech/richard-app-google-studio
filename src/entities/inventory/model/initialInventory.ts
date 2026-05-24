@@ -1,4 +1,4 @@
-import { Car } from '@/entities/inventory';
+import type { Car } from './types';
 
 export const initialInventoryData: Omit<Car, 'id'>[] = [
   {

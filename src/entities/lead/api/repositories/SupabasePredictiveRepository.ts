@@ -43,8 +43,9 @@ export class SupabasePredictiveRepository implements PredictiveRepository {
     // PostgreSQL syntax: ai_analysis->>'closureProbability'
     const { data, error } = await this.client
       .from('leads')
-      .select('*')
-      .gt('ai_analysis->>closureProbability', threshold);
+      .select('id, first_name, last_name, email, phone, status, created_at, customer_memory, ai_analysis, vehicle_id, vehicle_of_interest, is_hot, responded, email_sequence')
+      .gt('ai_analysis->>closureProbability', threshold)
+      .limit(100);
 
     if (error) {
       console.error('[SupabasePredictiveRepository] Error fetching high probability leads:', error);

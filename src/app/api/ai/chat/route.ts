@@ -39,7 +39,7 @@ export async function POST(req: Request) {
             const carIds = matches.map((m) => m.car_id);
             const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
             const sb = await gs();
-            const { data: dbCars } = await sb.from('inventory').select('*').in('vin', carIds);
+            const { data: dbCars } = await sb.from('inventory').select('vin, year, make, model, condition, id, price, description, status').in('vin', carIds).limit(50);
 
             if (dbCars && dbCars.length > 0) {
               semanticContext = `

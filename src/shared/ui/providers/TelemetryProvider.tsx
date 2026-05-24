@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { VehicleHealthStatus, VehicleTelemetry } from '@/shared/types/types';
+import type { VehicleHealthStatus, VehicleTelemetry } from '@/shared/api/metrics/vehicleHealth';
 import telemetry from '@/shared/api/metrics/analytics';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -63,7 +63,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         channel
           .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
             const data = payload.payload as VehicleTelemetry;
-            import('@/shared/api/metrics/telemetryService').then(({ analyzeVehicleHealth }) => {
+            import('@/shared/api/metrics/vehicleHealth').then(({ analyzeVehicleHealth }) => {
               const health = analyzeVehicleHealth(data);
               setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
             });

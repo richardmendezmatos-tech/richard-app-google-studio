@@ -42,8 +42,9 @@ export class DistributionAgent {
 
     const { data, error } = await supabase
       .from('distribution_logs')
-      .select('*')
-      .eq('car_id', unitId);
+      .select('car_id, platform, status, last_sync, external_url, error_msg')
+      .eq('car_id', unitId)
+      .limit(100);
 
     if (error || !data) {
       console.error(`[DistributionAgent] Error fetching status for ${unitId}:`, error);
