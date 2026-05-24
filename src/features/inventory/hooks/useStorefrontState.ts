@@ -78,7 +78,10 @@ export function useStorefrontState(
     sortBy,
   );
 
-  const serverCars = data?.pages.flatMap((page) => page.cars) || [];
+  const serverCars = useMemo(
+    () => data?.pages.flatMap((page) => page.cars) || [],
+    [data],
+  );
   const hasClientFilters = yearFilter !== 'all' || mileageFilter !== 'all' || !!visualContext;
   const isSearching = hasClientFilters;
 
@@ -154,7 +157,7 @@ export function useStorefrontState(
       }, 5000); // Debounce extendido para precisión
       return () => clearTimeout(timer);
     }
-  }, [isSearching, displayCars.length, searchTerm, filter]);
+  }, [isSearching, displayCars.length, searchTerm, filter, hasClientFilters, visualContext]);
 
   const marketPulse = useMemo(() => {
     const source = (displayCars || []).length > 0 ? displayCars : serverCars || [];
@@ -168,7 +171,7 @@ export function useStorefrontState(
       premiumUnits: source.filter((car) => car.price >= 40000).length,
       compactUnits: source.filter((car) => car.price < 25000).length,
     };
-  }, [displayCars, inventory]);
+  }, [displayCars, serverCars]);
 
   const isLoadingInitial = !hasClientFilters && status === 'pending';
 

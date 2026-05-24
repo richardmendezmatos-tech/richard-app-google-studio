@@ -71,7 +71,7 @@ const UserLogin: React.FC = () => {
     if (formState.success && !(formState as any).requiresConfirmation) {
       navigate(from, { replace: true });
     }
-  }, [formState.success, navigate, from]);
+  }, [formState, navigate, from]);
 
   const handleOneTapSuccess = React.useCallback(() => {
     navigate(from, { replace: true });

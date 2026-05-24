@@ -20,8 +20,9 @@ export const metadata: Metadata = {
   },
 };
 
-import { unstable_noStore as noStore } from 'next/cache';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
+
+export const revalidate = 30;
 
 function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
   const breadcrumb = {
@@ -70,7 +71,6 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
 }
 
 export default async function InventoryRoute() {
-  noStore();
   let inventory: Car[] = [];
 
   try {

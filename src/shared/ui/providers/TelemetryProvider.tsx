@@ -37,12 +37,15 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     }
 
+    const channel = channelRef.current;
+    const subs = activeSubscriptions.current;
+
     return () => {
-      if (channelRef.current) {
-        channelRef.current.unsubscribe();
+      if (channel) {
+        channel.unsubscribe();
         channelRef.current = null;
       }
-      activeSubscriptions.current.clear();
+      subs.clear();
     };
   }, []);
 
