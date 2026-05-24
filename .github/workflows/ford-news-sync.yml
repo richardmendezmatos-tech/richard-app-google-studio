@@ -1,0 +1,15 @@
+name: Ford News Sync
+
+on:
+  schedule:
+    - cron: '0 8,18 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Ford News Cron
+        run: |
+          curl -X GET "https://richard-automotive.com/api/cron/ford-news" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

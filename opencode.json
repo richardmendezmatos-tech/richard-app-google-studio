@@ -61,6 +61,42 @@
         "edit": "allow",
         "bash": { "ANALYZE=true npm run build": "allow", "npm run build": "allow", "*": "ask" }
       }
+    },
+    "arch-agent": {
+      "description": "Experto en arquitectura FSD, DI registry, organización de código, import aliases, prevención de dependencias circulares.",
+      "mode": "subagent",
+      "model": "opencode/big-pickle",
+      "permission": {
+        "edit": "allow",
+        "bash": { "npm run circular": "allow", "npm run build": "allow", "*": "ask" }
+      }
+    },
+    "auth-agent": {
+      "description": "Experto en Supabase Auth, RLS policies, session management, Zustand stores, webhook security, admin access control.",
+      "mode": "subagent",
+      "model": "opencode/big-pickle",
+      "permission": {
+        "edit": "allow",
+        "bash": { "npm run build": "allow", "npm run test": "allow", "*": "ask" }
+      }
+    },
+    "houston-agent": {
+      "description": "Experto en Vercel AI SDK v6, Google Gemini, Houston AI chatbot, WhatsApp, voice recognition, RAG/vector store, AI orchestration.",
+      "mode": "subagent",
+      "model": "opencode/big-pickle",
+      "permission": {
+        "edit": "allow",
+        "bash": { "npm run build": "allow", "npm run test": "allow", "*": "ask" }
+      }
+    },
+    "infra-agent": {
+      "description": "Experto en Vercel deployment, GitHub Actions CI/CD, PWA/serwist, project scripts, build y configuración de infraestructura.",
+      "mode": "subagent",
+      "model": "opencode/big-pickle",
+      "permission": {
+        "edit": "allow",
+        "bash": { "npm run build": "allow", "npm run deploy": "allow", "npm run lint": "allow", "*": "ask" }
+      }
     }
   },
   "command": {

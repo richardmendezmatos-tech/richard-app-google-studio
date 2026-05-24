@@ -83,3 +83,40 @@ src/
 - Modales: cerrar con Escape + click outside + botón X
 - Accesibilidad: roles ARIA, labels, focus management
 - Performance: lazy loading de imágenes, dynamic imports para modales pesados
+
+## Archivos clave del proyecto
+
+### shared/ui (componentes base)
+- `src/shared/ui/common/` — Button, Card, Input, Modal, etc.
+- `src/shared/ui/components/` — Componentes complejos reutilizables
+- `src/shared/ui/containers/` — Layout containers
+- `src/shared/ui/error-boundary/` — Error boundaries
+- `src/shared/ui/hooks/` — Custom hooks compartidos
+- `src/shared/ui/loaders/` — LoadingSpinner, skeletons
+- `src/shared/ui/providers/` — React context providers
+- `src/shared/ui/seo/` — SEO component
+
+### brand-ui (layout shell)
+- `src/shared/brand-ui/layout/` — Header, Footer, Sidebar, DevOpsView
+
+### Views (páginas)
+- `src/views/admin/`, `src/views/auth/`, `src/views/inventory/`, `src/views/storefront/`
+- `src/views/leads/`, `src/views/blog/`, `src/views/financiamiento/`, etc.
+
+### Configuración
+- `src/shared/config/siteConfig.ts` — Config general del sitio
+- `src/shared/config/cities.ts` — Ciudades de Puerto Rico
+- `src/shared/config/seoSchemas.ts` — JSON-LD schemas
+- `src/shared/config/i18n/` — Traducciones
+
+### Convenciones adicionales
+- Usar `@/pages/` alias que apunta a `src/views/`
+- Responsive: mobile-first (sm, md, lg, xl, 2xl)
+- Modales con Framer Motion + portal
+- Tablas con `@tanstack/react-table` + cursor-based pagination
+- Gráficos con recharts
+- Formularios con react-hook-form + zod v4
+- Internacionalización con i18next v26 + react-i18next v17
+- Dark mode via `dark:` class + next-themes
+- Iconos con lucide-react (tree-shakeable, import named)
+- Drag & Drop con @dnd-kit

@@ -80,3 +80,52 @@ it('should create lead', async () => {
 - E2E: siempre limpiar estado entre tests (`page.goto`, cookies cleanup)
 - Para admin auth test: testear `GET /api/admin/users` sin auth (401), con auth admin (200), con auth no-admin (403)
 - Coverage mínimo: 60% en features críticas (auth, inventory, leads)
+
+## Archivos clave para testing
+
+- Admin auth tests: `src/app/api/admin/users/__tests__/admin-auth.e2e.test.ts`
+- Admin users route test: `src/app/api/admin/users/__tests__/route.test.ts`
+- Auth service tests: `src/features/auth/__tests__/authService.test.ts`
+- Lead schema test: `src/entities/lead/__tests__/leadSchema.test.ts`
+- Lead mapper tests: `src/entities/lead/lib/mappers/LeadMapper.test.ts`
+- Billing service tests: `src/entities/sales/api/billingService.test.ts`
+- Automation service tests: `src/features/automation/api/automationService.test.ts`
+- Orchestrator tests: `src/entities/chatbot/model/orchestrator.test.ts`
+- Appraisal vision tests: `src/features/appraisal/services/AppraisalVisionService.test.ts`
+
+## Patrones de mock específicos del proyecto
+
+### Mock de Supabase
+```ts
+vi.mock('@/shared/api/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: {...}, error: null }),
+    })),
+    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
+  })),
+}))
+```
+
+### Mock de AI SDK
+```ts
+vi.mock('ai', () => ({
+  generateText: vi.fn().mockResolvedValue({ text: 'mock response' }),
+  streamText: vi.fn().mockReturnValue({ textStream: new ReadableStream() }),
+}))
+```
+
+### Coverage targets
+- Mínimo 60% en features críticas: auth, inventory, leads
+- v8 coverage via vitest config
+
+## Convenciones adicionales
+
+- Unit tests en `src/**/*.test.ts` o `src/**/*.test.tsx`
+- E2E tests en `e2e/` o archivos `.e2e.test.ts`
+- Tests excluyen: `.agents/**`, `e2e/**`, `richard-qwik-marketplace/**`
+- Comando: `npm run test` (unit), `npx playwright test` (e2e)
+- Build debe pasar antes de correr tests
+- Tests nuevos deben ser paralelizables

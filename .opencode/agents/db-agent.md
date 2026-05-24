@@ -12,7 +12,7 @@ Eres un experto en Supabase PostgreSQL especializado en el proyecto Richard Auto
 ## Stack de base de datos
 
 - Supabase PostgreSQL v15+ con Auth, Storage, Realtime
-- Management API (NO service role key directa): usa PAT `${SUPABASE_PAT}`
+- Management API (NO service role key directa): usa PAT via `${SUPABASE_PAT}`
 - Conexión directa PostgreSQL está BLOQUEADA (IPv6). Siempre usar Management API
 - Project ref: `dizzjfijsmxdlnfqydfk`
 
@@ -85,7 +85,7 @@ curl -X POST "https://api.supabase.com/v1/projects/dizzjfijsmxdlnfqydfk/sql" \
 
 ```bash
 # Listar migraciones
-curl -H "Authorization: Bearer sbp_9c5a..." \
+curl -H "Authorization: Bearer ${SUPABASE_PAT}" \
   "https://api.supabase.com/v1/projects/dizzjfijsmxdlnfqydfk/database/migrations"
 ```
 
@@ -113,3 +113,30 @@ Si se necesitan, hay que crearlas con migración.
 - Admin check: `auth.jwt() ->> 'role' = 'admin'` combinado con email whitelist
 - NO usar `auth.role() = 'authenticated' OR true` (bypass de seguridad)
 - adminGuard compartido en `src/shared/api/supabase/adminGuard.ts`
+
+## Archivos clave del proyecto
+
+- Repositories: `src/entities/*/api/Supabase*Repository.ts`
+- Supabase clients: `src/shared/api/supabase/client.ts`, `server.ts`
+- Admin guard: `src/shared/api/supabase/adminGuard.ts`
+- Cursor pagination: `src/shared/api/supabase/cursorPagination.ts`
+- DI Registry: `src/app/(dashboard)/di/registry.ts`
+- Storage: `src/shared/api/supabase/storage.ts`
+- Types DB: `src/shared/api/supabase/types.ts`
+
+## Patrones de repositorio
+
+- `SupabaseInventoryRepository` → `src/entities/inventory/api/`
+- `SupabaseLeadRepository` → `src/entities/lead/api/repositories/`
+- `SupabaseHoustonRepository` → `src/entities/houston/api/`
+- `SupabaseUserRepository` → `src/entities/user/api/repositories/`
+- `SupabaseSaleRepository` → `src/entities/sales/api/repositories/`
+- `SupabaseBlogRepository` → `src/entities/blog/api/repositories/`
+
+## Convenciones adicionales
+
+- Migraciones en `supabase/migrations/` con timestamp `YYYYMMDDHHMMSS_description.sql`
+- Usar `dotenvx run --` para scripts que requieren env vars
+- Management API vía `curl` con `${SUPABASE_PAT}`
+- Storage bucket: `images` en Supabase Storage
+- Realtime subscriptions habilitadas para telemetry (Houston)
