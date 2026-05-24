@@ -345,7 +345,7 @@ const DigitalTwinDashboard: React.FC = () => {
           const queryText = action.payload.query.toLowerCase().trim();
           const { cars } = await getPaginatedCars(40, null, 'all', null);
           const filtered = queryText
-            ? (cars || []).filter((car) =>
+            ? (cars || []).filter((car: any) =>
                 `${car.name || ''} ${car.type || ''} ${car.badge || ''}`
                   .toLowerCase()
                   .includes(queryText),

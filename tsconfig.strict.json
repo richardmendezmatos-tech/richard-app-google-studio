@@ -5,7 +5,11 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -17,15 +21,15 @@
     "jsx": "react-jsx",
     "strict": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["next", "@types/node"],
+    "types": [
+      "next",
+      "@types/node"
+    ],
     "plugins": [
       {
         "name": "next"
@@ -34,15 +38,43 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["src/*"],
-      "@/pages/*": ["src/views/*"],
-      "@infra/*": ["src/infra/*"],
-      "@/app/*": ["src/app/*"],
-      "@app/*": ["src/app/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "@/pages/*": [
+        "src/views/*"
+      ],
+      "@infra/*": [
+        "src/infra/*"
+      ],
+      "@/app/*": [
+        "src/app/*"
+      ],
+      "@app/*": [
+        "src/app/*"
+      ]
+    },
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true
   },
-  "include": ["src", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".next", "scripts", "scratch", "src/App.tsx", "functions", "richard-qwik-marketplace", "vite.config.ts", "sw.ts"],
+  "include": [
+    "src",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "scripts",
+    "scratch",
+    "src/App.tsx",
+    "functions",
+    "richard-qwik-marketplace",
+    "vite.config.ts",
+    "sw.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

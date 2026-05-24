@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Car, calculatePredictiveDTS } from '@/entities/inventory';
-import { Lead } from '@/entities/lead';
+import { Car as CarType, Lead } from '@/shared/types/types';
 import {
   Plus,
   Package,
@@ -10,33 +9,33 @@ import {
   LayoutGrid,
   List,
   Sparkles,
+  Edit3,
+  Trash2,
   DollarSign,
+  Clock,
   TrendingUp,
   Zap,
-  Filter,
-  CheckCircle2,
-  AlertTriangle,
-  Flame,
-  RefreshCcw,
 } from 'lucide-react';
-import { StatusWidget, CountUp } from './CommandCenterWidgets';
-import { CommandCenterCarCard } from './CommandCenterCarCard';
+import { optimizeImage } from '@/shared/api/media/mediaShared';
+import { calculatePredictiveDTS } from '@/entities/inventory';
+import { AdminCarCard } from './AdminCarCard';
 import HyperInventoryList from './HyperInventoryList';
-import { useCommandCenterData } from '../model/useCommandCenterData';
-import { useDealer } from '@/entities/dealer';
-import { useCars } from '@/features/inventory';
 
 interface AdminInventoryTabProps {
+  inventory: CarType[];
+  leads: Lead[];
   onDelete: (id: string) => void;
   onCreateNew: () => void;
-  onEdit: (car: Car) => void;
-  onPlanContent: (car: Car) => void;
+  onEdit: (car: CarType) => void;
+  onPlanContent: (car: CarType) => void;
   onInitializeDb?: () => Promise<void>;
   handleInitClick: () => void;
   isInitializing: boolean;
 }
 
 const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
+  inventory,
+  leads,
   onDelete,
   onCreateNew,
   onEdit,
@@ -45,79 +44,33 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
   handleInitClick,
   isInitializing,
 }) => {
-  const { currentDealer } = useDealer();
-  const { leads } = useCommandCenterData(currentDealer.id || 'richard-automotive');
-  const { data: carData } = useCars(12);
-
-  const inventory = React.useMemo(() => {
-    return carData?.pages.flatMap((page) => page.cars) || [];
-  }, [carData]);
-
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = React.useState<'todo' | 'premium' | 'oportunidad' | 'baja'>(
-    'todo',
-  );
   const [searchTerm, setSearchTerm] = React.useState('');
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
-  const [isSyncing, setIsSyncing] = React.useState(false);
-
-  const handleManualSync = async () => {
-    setIsSyncing(true);
-    try {
-      const response = await fetch('/api/cron/sync-inventory?manual=true');
-      const data = await response.json();
-      if (response.ok) {
-        alert(
-          `Sincronización exitosa: ${data.telemetry.inserted} nuevos, ${data.telemetry.updated} actualizados.`,
-        );
-        window.location.reload(); // Recargar para ver cambios
-      } else {
-        alert(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      alert('Error de conexión al sincronizar.');
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   React.useEffect(() => {
     searchInputRef.current?.focus();
     const voiceFilter = localStorage.getItem('inventory_filter');
     if (voiceFilter) {
       setSearchTerm(voiceFilter);
-      localStorage.removeItem('inventory_filter');
+      localStorage.removeItem('inventory_filter'); // Clear once used
     }
   }, []);
 
-  const filteredInventory = React.useMemo(() => {
-    let items = (inventory || []).filter((c) =>
-      (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase()),
-    );
-
-    if (activeTab === 'premium') {
-      items = items.filter((c) => (c.price && Number(c.price) > 50000) || c.type === 'luxury');
-    } else if (activeTab === 'oportunidad') {
-      items = items.filter((c) => {
-        const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
-        return calculatePredictiveDTS(c, leadsForCar).advantageScore > 80;
-      });
-    } else if (activeTab === 'baja') {
-      items = items.filter((c) => {
-        const leadsForCar = leads.filter((l: Lead) => l.vehicleId === c.id).length;
-        return calculatePredictiveDTS(c, leadsForCar).advantageScore < 40;
-      });
-    }
-
-    return items;
-  }, [inventory, searchTerm, activeTab, leads]);
+  const filteredInventory = React.useMemo(
+    () =>
+      (inventory || []).filter((c) =>
+        (c.name || '').toLowerCase().includes((searchTerm || '').toLowerCase()),
+      ),
+    [inventory, searchTerm],
+  );
 
   const totalStats = React.useMemo(() => {
     const units = inventory.length;
     const totalValue = inventory.reduce((acc, car) => acc + (Number(car.price) || 0), 0);
     const avgAdvantage =
       inventory.reduce((acc, car) => {
-        const carLeads = leads.filter((l: Lead) => l.vehicleId === car.id).length;
+        const carLeads = leads.filter((l) => l.vehicleId === car.id).length;
         return acc + calculatePredictiveDTS(car, carLeads).advantageScore;
       }, 0) / (units || 1);
     return { units, totalValue, avgAdvantage };
@@ -125,70 +78,60 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
 
   return (
     <div className="flex flex-col gap-8 min-h-[600px]">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatusWidget
-          icon={Package}
-          label="Unidades en Stock"
-          value={<CountUp end={totalStats.units} />}
-          color="bg-linear-to-br from-blue-500/20 to-cyan-400/20 text-cyan-400 border border-cyan-500/30"
-          subValue="CAPACIDAD OPTIMA"
-        />
-        <StatusWidget
-          icon={DollarSign}
-          label="Capital de Inventario"
-          value={`$${(totalStats.totalValue / 1000000).toFixed(1)}M`}
-          color="bg-linear-to-br from-emerald-500/20 to-teal-400/20 text-emerald-400 border border-emerald-500/30"
-          subValue="ASSET VALUATION"
-        />
-        <StatusWidget
-          icon={TrendingUp}
-          label="Advantage Global"
-          value={`${totalStats.avgAdvantage.toFixed(1)}%`}
-          color="bg-linear-to-br from-primary/20 to-indigo-500/20 text-primary border border-primary/30"
-          subValue="VENTA PREDICTIVA"
-        />
-        <StatusWidget
-          icon={Zap}
-          label="Exp. Ventas (Mes)"
-          value="12"
-          color="bg-linear-to-br from-amber-500/20 to-orange-400/20 text-amber-500 border border-amber-500/30"
-          subValue="PROYECCIÓN HOUSTON"
-        />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+        {[
+          { label: 'Unidades', value: totalStats.units, icon: Package, color: 'text-blue-500' },
+          {
+            label: 'Valor Total',
+            value: `$${(totalStats.totalValue / 1000000).toFixed(1)}M`,
+            icon: DollarSign,
+            color: 'text-emerald-500',
+          },
+          {
+            label: 'Advantage Prom.',
+            value: `${totalStats.avgAdvantage.toFixed(1)}%`,
+            icon: TrendingUp,
+            color: 'text-primary',
+          },
+          { label: 'Ventas Proy.', value: '12', icon: Zap, color: 'text-amber-500' },
+        ].map((stat, i) => (
+          <div
+            key={i}
+            className="group relative glass-premium p-6 rounded-4xl overflow-hidden hover-kinetic flex flex-col justify-center gap-3 cursor-default shadow-xl border border-white/5 bg-slate-900/40 backdrop-blur-xl"
+          >
+            <div
+              className={`p-4 rounded-2xl bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${stat.color} z-10 inline-flex self-start`}
+            >
+              <stat.icon size={22} strokeWidth={2.5} />
+            </div>
+            <div className="z-10 mt-1">
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                {stat.label}
+              </div>
+              <div className="text-2xl font-black text-white tracking-tight text-glow">
+                {stat.value}
+              </div>
+            </div>
+            {/* Ambient background glow based on icon color */}
+            <div
+              className={`absolute -right-8 -bottom-8 w-32 h-32 rounded-full blur-[60px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 ${stat.color.replace('text-', 'bg-')}`}
+            />
+          </div>
+        ))}
       </div>
 
-      <div className="flex-1 bg-white/5 backdrop-blur-md rounded-4xl shadow-xl border border-white/10 overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-white/5 flex flex-col lg:flex-row justify-between items-center gap-6 bg-slate-900/60 backdrop-blur-xl">
-          <div className="flex items-center gap-2 bg-slate-950/50 p-1.5 rounded-[1.5rem] border border-white/5 w-full lg:w-auto overflow-x-auto no-scrollbar">
-            {[
-              { id: 'todo', label: 'Todo', icon: Filter },
-              { id: 'premium', label: 'Premium', icon: Flame },
-              { id: 'oportunidad', label: 'Oportunidad', icon: CheckCircle2 },
-              { id: 'baja', label: 'Baja Tracción', icon: AlertTriangle },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
-                }`}
-              >
-                <tab.icon size={12} />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative w-full lg:w-72 group">
+      <div className="flex-1 bg-slate-900/40 backdrop-blur-xl rounded-4xl shadow-2xl border border-white/10 overflow-hidden flex flex-col relative">
+        <div className="p-6 md:px-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-950/40 relative z-10">
+          <div className="relative w-full md:w-[400px] group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors"
-              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors duration-300"
+              size={20}
+              strokeWidth={2.5}
             />
             <input
               type="text"
-              placeholder="Buscar por nombre..."
-              className="w-full pl-12 pr-4 h-[44px] bg-slate-950 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-transparent outline-none transition-all text-[11px] font-bold text-white placeholder:text-slate-600 uppercase tracking-widest"
+              placeholder="Buscar vehículo..."
+              className="w-full pl-14 pr-6 h-[56px] bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl focus:ring-2 focus:ring-primary/40 focus:border-primary/50 outline-none transition-all duration-300 text-sm font-bold text-white placeholder:text-slate-500 shadow-inner group-focus-within:shadow-[0_0_25px_rgba(0,174,217,0.15)] focus:bg-slate-900/80"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               ref={searchInputRef}
@@ -196,44 +139,37 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-950 p-1 rounded-xl border border-white/5">
+            <div className="bg-slate-900/50 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md shadow-inner hidden sm:flex">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-primary text-white shadow-lg' : 'text-slate-600 hover:text-slate-400'}`}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${viewMode === 'grid' ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.4)]' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                 title="Cuadrícula"
               >
-                <LayoutGrid size={18} />
+                <LayoutGrid size={18} strokeWidth={2.5} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary text-white shadow-lg' : 'text-slate-600 hover:text-slate-400'}`}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${viewMode === 'list' ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,174,217,0.4)]' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                 title="Lista"
               >
-                <List size={18} />
+                <List size={18} strokeWidth={2.5} />
               </button>
             </div>
 
             <button
               onClick={onCreateNew}
-              className="px-8 h-[48px] bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
+              className="px-8 h-[56px] bg-linear-to-r from-primary to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(0,174,217,0.3)] hover:shadow-[0_0_30px_rgba(0,174,217,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
             >
-              <Plus size={18} strokeWidth={3} /> Nueva Unidad
-            </button>
-
-            <button
-              onClick={handleManualSync}
-              disabled={isSyncing}
-              className={`px-6 h-[48px] bg-slate-900 hover:bg-slate-800 text-cyan-400 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl border border-cyan-500/30 active:scale-95 transition-all flex items-center justify-center gap-3 ${isSyncing ? 'animate-pulse opacity-70' : ''}`}
-            >
-              <RefreshCcw size={18} className={isSyncing ? 'animate-spin' : ''} />
-              {isSyncing ? 'Sincronizando...' : 'Sincronizar Central Ford'}
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <Plus size={18} strokeWidth={3} className="relative z-10" />
+              <span className="relative z-10">Nueva Unidad</span>
             </button>
 
             {onInitializeDb && (
               <button
                 onClick={handleInitClick}
                 disabled={isInitializing}
-                className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
+                className="px-6 h-[56px] bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.3)] rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isInitializing ? 'Resetting...' : 'Reset DB'}
               </button>
@@ -241,13 +177,16 @@ const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
           </div>
         </div>
 
+        {/* Decorator Light inside the main table/grid container */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-board-column-lg bg-primary/10 rounded-[100%] blur-[100px] pointer-events-none" />
+
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-8 route-fade-in p-6">
             {filteredInventory.map((car) => (
-              <CommandCenterCarCard
+              <AdminCarCard
                 key={car.id}
                 car={car}
-                leadCount={leads.filter((l: Lead) => l.vehicleId === car.id).length}
+                leadCount={leads.filter((l) => l.vehicleId === car.id).length}
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onPlanContent={() => onPlanContent(car)}

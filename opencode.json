@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "google/gemini-2.5-flash",
+  "model": "opencode/big-pickle",
   "instructions": ["AGENTS.md"],
   "skills": {
     "paths": [".opencode/skills"]
@@ -29,7 +29,7 @@
     "db-agent": {
       "description": "Experto en Supabase PostgreSQL, RLS, migraciones, índices, triggers, encryption, Management API, query tuning.",
       "mode": "subagent",
-      "model": "google/gemini-2.5-flash",
+      "model": "opencode/big-pickle",
       "permission": {
         "edit": "allow",
         "bash": { "curl *": "allow", "*": "ask" }
@@ -38,7 +38,7 @@
     "test-agent": {
       "description": "Experto en Vitest + Playwright, mocks, cobertura, debugging de tests, CI integration.",
       "mode": "subagent",
-      "model": "google/gemini-2.5-flash",
+      "model": "opencode/big-pickle",
       "permission": {
         "edit": "allow",
         "bash": { "npm run test": "allow", "npx playwright *": "allow", "*": "ask" }
@@ -47,7 +47,7 @@
     "ui-agent": {
       "description": "Experto en Tailwind CSS 4, Framer Motion, FSD architecture, responsive design, componentes base, i18n.",
       "mode": "subagent",
-      "model": "google/gemini-2.5-flash",
+      "model": "opencode/big-pickle",
       "permission": {
         "edit": "allow",
         "bash": { "npm run dev": "allow", "*": "ask" }
@@ -56,7 +56,7 @@
     "seo-perf-agent": {
       "description": "Experto en Core Web Vitals, SEO local, JSON-LD, structured data, PWA, bundle optimization, ISR, Vercel deployment.",
       "mode": "subagent",
-      "model": "google/gemini-2.5-flash",
+      "model": "opencode/big-pickle",
       "permission": {
         "edit": "allow",
         "bash": { "ANALYZE=true npm run build": "allow", "npm run build": "allow", "*": "ask" }

@@ -1,12 +1,9 @@
 'use client';
 
-'use client';
-
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';
 import { CarType } from '@/shared/types/types';
-import { Car } from '@/entities/inventory';
 import { Rocket, ShieldCheck, Palette, Database } from 'lucide-react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 
@@ -29,40 +26,40 @@ const BetaOnboard = () => {
     try {
       setStatus('Seeding Inventory for Elite...');
       // 2. Generate specialized inventory
-      const eliteCars: Omit<Car, 'id'>[] = [
+      const eliteCars = [
         {
           name: 'Elite Cyber-Sedan 2026',
           make: 'Elite',
           model: 'Cyber-Sedan',
           year: 2026,
-          mileage: 0,
+          vin: 'VIN-ELITE-001',
+          color: 'Phantom Black',
           price: 85000,
           type: 'luxury' as CarType,
-          badge: 'Exclusivo Elite',
-          img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+          status: 'available' as const,
           image:
             'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+          img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+          badge: 'Exclusivo Elite',
           featured: true,
-          status: 'available',
-          vin: 'ELITE2026-001',
-          color: 'Cosmic Black',
+          mileage: 0,
         },
         {
           name: 'Elite SUV-X Phantom',
           make: 'Elite',
           model: 'SUV-X Phantom',
           year: 2026,
-          mileage: 0,
+          vin: 'VIN-ELITE-002',
+          color: 'Satin Grey',
           price: 120000,
           type: 'suv' as CarType,
-          badge: 'Hyper-Limited',
-          img: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
+          status: 'available' as const,
           image:
             'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
+          img: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=1200&auto=format&fit=crop',
+          badge: 'Hyper-Limited',
           featured: true,
-          status: 'available',
-          vin: 'ELITE2026-SUV',
-          color: 'Midnight Purple',
+          mileage: 0,
         },
       ];
 

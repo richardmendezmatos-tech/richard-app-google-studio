@@ -37,7 +37,7 @@ export const SentinelInbox: React.FC = () => {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'agent_approvals' },
-        (payload) => {
+        (payload: any) => {
           setRequests((prev) => [payload.new as ApprovalRequest, ...prev]);
         },
       )

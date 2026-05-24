@@ -173,7 +173,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
         )}
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          <main id="main-content" className="relative z-0 p-4 md:p-6 lg:p-8 max-w-[1920px] mx-auto">
+            {children}
+          </main>
+        </AppProviders>
         <Analytics />
         <SpeedInsights />
       </body>

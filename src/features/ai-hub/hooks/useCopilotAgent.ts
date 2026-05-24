@@ -38,7 +38,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         leadId: sessionId,
       },
     }),
-    onFinish: (event) => {
+    onFinish: (event: any) => {
       if (options.onFinish) {
         const rawMessage = (event as any).message || event;
         const parts = rawMessage.parts || [];
@@ -64,7 +64,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
         options.onFinish(message as Message);
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       if (options.onError) options.onError(error as any);
     },
   } as any);

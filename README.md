@@ -24,6 +24,7 @@ Para asegurar despliegues predecibles y una gestión de dependencias robusta en 
 ### 🛠️ Tecnologías Core (Unified Stack)
 
 - **Framework:** **Next.js (App Router)** - Arquitectura de componentes de servidor para máximo SEO y velocidad.
+- **UI/UX Premium:** **Tailwind CSS 4 + Framer Motion v12+** - Estilo "Premium Command Center" con glassmorphism y microinteracciones cinemáticas.
 - **Base de Datos Unificada:** **Supabase (PostgreSQL)** - Única fuente de verdad. Manejo de inventario, leads y telemetría bajo un mismo esquema SQL.
 - **Inteligencia Vectorial:** **pgvector** en Supabase para "Neural Matching" (búsqueda semántica avanzada).
 - **Motor IA:** **Google Gemini API 1.5** - Visión de inventario y análisis predictivo de sourcing.
@@ -33,6 +34,11 @@ Para asegurar despliegues predecibles y una gestión de dependencias robusta en 
 
 - **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs).
 - **Sistema de Resiliencia de Imágenes (N24-R):** Motor inteligente en `OptimizedImage` que maneja fallos de carga mediante re-intentos automáticos y fallbacks a placeholders optimizados, garantizando una UI impecable incluso ante inconsistencias de red o datos.
+- **Experiencia de Usuario Inmersiva (Nivel 25):**
+  - **Diseño Responsivo Adaptativo:** Interfaz optimizada para todos los dispositivos (móvil, tablet, desktop) con ajustes dinámicos de espaciado y componentes.
+  - **Microinteracciones Cinemáticas:** Animaciones fluidas y feedback visual proactivo para una experiencia de usuario envolvente.
+  - **Accesibilidad (A11y) Integrada:** Navegación mejorada con "skip to main content" y estándares WCAG para garantizar el acceso a todos los usuarios.
+  - **Estética "Command Center" Refinada:** Elementos de UI con efectos de glassmorphism mejorados, acentos luminosos y una paleta de colores de lujo tecnológico.
 - **Protocolo de Normalización de Inventario:** Auditoría automatizada que consolida campos legados (`img`) al nuevo estándar `image` y sincroniza galerías multimedia.
 - **Houston Command Center:** Panel de control táctico con telemetría en tiempo real:
   - **Sourcing Management:** Aprobación inmediata de inventario estratégico.

@@ -38,7 +38,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const channel = supabase.current.channel(`${TELEMETRY_CHANNEL}-${vehicleId}`);
 
     channel
-      .on('broadcast', { event: `update-${vehicleId}` }, ({ payload }) => {
+      .on('broadcast', { event: `update-${vehicleId}` }, ({ payload }: { payload: any }) => {
         const health = analyzeVehicleHealth(payload);
         setTelemetryMap((prev) => ({ ...prev, [vehicleId]: health }));
       })

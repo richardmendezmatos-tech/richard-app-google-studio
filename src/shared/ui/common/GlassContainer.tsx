@@ -38,12 +38,13 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
     high: '32px',
   };
 
-  const dynamicStyle = {
-    '--ra-glass-intensity': intensityMap[intensity],
-    ...(opacity !== undefined ? { background: `rgba(13, 34, 50, ${opacity})` } : {}),
-    ...(opacity !== undefined ? { backdropFilter: `blur(${blurMap[intensity]})` } : {}),
-    ...style,
-  } as React.CSSProperties;
+    const dynamicStyle = {
+      '--ra-glass-intensity': intensityMap[intensity],
+      ...(opacity !== undefined
+        ? { background: `rgba(13, 34, 50, ${opacity})`, backdropFilter: `blur(${blurMap[intensity]})` }
+        : {}),
+      ...style,
+    } as React.CSSProperties;
 
   const hoverClass = hoverable
     ? 'hover:border-primary/40 hover:shadow-cyan-900/20 cursor-pointer active:scale-[0.98]'
@@ -55,7 +56,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className={`glass-premium relative rounded-2xl p-6 ${hoverClass} ${className}`}
+      className={`glass-premium relative rounded-2xl p-6 lg:p-8 ${hoverClass} ${className}`}
       style={dynamicStyle}
       {...motionProps}
     >

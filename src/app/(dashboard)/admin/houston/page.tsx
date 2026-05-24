@@ -904,7 +904,7 @@ export default function HoustonMissionControlPage() {
     let unsubscribeFn: (() => void) | undefined;
 
     const init = async () => {
-      unsubscribeFn = await telemetryUseCase.subscribe((data) => setTelemetry(data));
+      unsubscribeFn = await telemetryUseCase.subscribe((data: any) => setTelemetry(data));
     };
     init();
 

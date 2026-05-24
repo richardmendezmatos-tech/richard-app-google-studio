@@ -1,8 +1,7 @@
 'use client';
 
-'use client';
-
 import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 import { useVehicleTelemetry, useVehicleHealth } from '@/shared/api/metrics/telemetryService';
 import { TelemetrySimulator } from '@/shared/lib/utils/TelemetrySimulator';
 import {
@@ -199,8 +198,8 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
                 health.alerts.map((alert, index) => (
                   <div
                     key={alert.id}
-                    style={{ '--d': `${Math.min(index * 45, 180)}ms` } as React.CSSProperties}
-                    className={`p-4 rounded-2xl border flex gap-4 items-start route-fade-in delay-var ${alert.type === 'critical' ? 'bg-red-500/5 border-red-500/20' : 'bg-amber-500/5 border-amber-500/20'}`}
+                    style={{ animationDelay: `${Math.min(index * 45, 180)}ms` }}
+                    className={`p-4 rounded-2xl border flex gap-4 items-start route-fade-in ${alert.type === 'critical' ? 'bg-red-500/5 border-red-500/20' : 'bg-amber-500/5 border-amber-500/20'}`}
                   >
                     <div
                       className={`p-2 rounded-lg mt-0.5 ${alert.type === 'critical' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'}`}
@@ -257,13 +256,10 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
                 <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#00aed9_1.5px,transparent_1.5px)] bg-[length:30px_30px]" />
                 {/* Moving Crosshair */}
                 <div
-                  style={
-                    {
-                      '--translate-x': `${(((telemetry.location.lng + 69.9312) * 1000000) % 100) - 50}px`,
-                      '--translate-y': `${(((telemetry.location.lat - 18.4861) * 1000000) % 100) - 50}px`,
-                    } as React.CSSProperties
-                  }
-                  className="relative flex items-center justify-center transition-transform duration-500 [transform:translate(var(--translate-x),var(--translate-y))]"
+                  style={{
+                    transform: `translate(${(((telemetry.location.lng + 69.9312) * 1000000) % 100) - 50}px, ${(((telemetry.location.lat - 18.4861) * 1000000) % 100) - 50}px)`,
+                  }}
+                  className="relative flex items-center justify-center transition-transform duration-500"
                 >
                   <div className="absolute w-12 h-12 border border-blue-500/30 rounded-full animate-ping" />
                   <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white dark:border-slate-900 shadow-lg" />
@@ -335,12 +331,8 @@ const StatCard = ({
     </div>
     <div className="w-full h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full mt-4 overflow-hidden">
       <div
-        style={
-          {
-            '--progress-width': `${Math.min(100, Math.max(0, percentage))}%`,
-          } as React.CSSProperties
-        }
-        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] progress-bar-width`}
+        style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
+        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]`}
       />
     </div>
   </div>

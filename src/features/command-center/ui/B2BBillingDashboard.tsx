@@ -1,9 +1,7 @@
 'use client';
 
-'use client';
-
 import React, { useState, useEffect } from 'react';
-import { getUsageLogs, UsageLog } from '@/entities/sales';
+import { getUsageLogs, UsageLog } from '@/entities/sales/api/billingService';
 import {
   CreditCard,
   TrendingUp,
@@ -24,14 +22,10 @@ const B2BBillingDashboard = () => {
   });
 
   useEffect(() => {
-    let suspended = false;
-    const dealerId = localStorage.getItem('current_dealer_id') || 'richard-automotive';
-
-    const loadUsageLogs = async () => {
+    const loadLogs = async () => {
       try {
+        const dealerId = 'richard-automotive'; // Hardcoded for now or fetch from context
         const logs = await getUsageLogs(dealerId, 50);
-        if (suspended) return;
-
         setUsageLogs(logs);
 
         const cost = logs.reduce((sum, log) => sum + (log.costEstimate || 0), 0);
@@ -45,11 +39,10 @@ const B2BBillingDashboard = () => {
       }
     };
 
-    loadUsageLogs();
-    const intervalId = setInterval(loadUsageLogs, 15000);
+    loadLogs();
+    const intervalId = setInterval(loadLogs, 15000);
 
     return () => {
-      suspended = true;
       if (intervalId) clearInterval(intervalId);
     };
   }, []);
@@ -131,12 +124,8 @@ const B2BBillingDashboard = () => {
           <div className="mt-4 flex items-center gap-2">
             <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
               <div
-                style={
-                  {
-                    '--progress-width': `${(1 - stats.totalCost / (stats.mrr || 1)) * 100}%`,
-                  } as React.CSSProperties
-                }
-                className="h-full bg-emerald-500 transition-all duration-500 progress-bar-width"
+                style={{ width: `${(1 - stats.totalCost / (stats.mrr || 1)) * 100}%` }}
+                className="h-full bg-emerald-500 transition-all duration-500"
               />
             </div>
             <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
@@ -184,8 +173,8 @@ const B2BBillingDashboard = () => {
               {usageLogs.map((log, i) => (
                 <tr
                   key={i}
-                  style={{ '--d': `${Math.min(i * 40, 200)}ms` } as React.CSSProperties}
-                  className="hover:bg-primary/5 transition-all group route-fade-in delay-var"
+                  style={{ animationDelay: `${Math.min(i * 40, 200)}ms` }}
+                  className="hover:bg-primary/5 transition-all group route-fade-in"
                 >
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-3">

@@ -429,7 +429,7 @@ export const subscribeToAuthChanges = async (callback: (user: User | null) => vo
   const supabase = await getSupabase();
   const {
     data: { subscription },
-  } = supabase.auth.onAuthStateChange((event, session) => {
+  } = supabase.auth.onAuthStateChange((event: any, session: any) => {
     callback(session?.user ? mapSupabaseUser(session.user) : null);
   });
 

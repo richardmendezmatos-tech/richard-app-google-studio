@@ -47,11 +47,11 @@ export const useVehicleTelemetry = (vehicleId: string) => {
       const channel = supabase.channel(TELEMETRY_CHANNEL);
 
       channel
-        .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {
+        .on('broadcast', { event: `update-${vehicleId}` }, ({ payload }: { payload: any }) => {
           setTelemetry(payload.payload as VehicleTelemetry);
           setLoading(false);
         })
-        .subscribe((status, err) => {
+        .subscribe((status: any, err: any) => {
           if (status === 'SUBSCRIBED') {
             setLoading(false);
           }

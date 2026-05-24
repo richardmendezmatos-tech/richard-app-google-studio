@@ -54,7 +54,7 @@ export class DistributionAgent {
       ];
     }
 
-    return data.map((log) => ({
+    return data.map((log: any) => ({
       unitId: log.car_id,
       platform: log.platform as Platform,
       status: log.status,

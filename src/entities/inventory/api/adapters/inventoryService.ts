@@ -68,10 +68,10 @@ export const logInventoryVelocityEvent = (vin: string, action: string, weight: n
         metadata: { source: 'command_center_conversion' },
       },
     ])
-    .then(({ error }) => {
+    .then(({ error }: { error: any }) => {
       if (error) console.warn('[InventoryService] Velocity Log Error:', error);
     })
-    .catch((err) => console.warn('[InventoryService] Velocity Log Exception:', err));
+    .catch((err: any) => console.warn('[InventoryService] Velocity Log Exception:', err));
   });
 };
 

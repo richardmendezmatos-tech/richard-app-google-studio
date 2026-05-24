@@ -2,14 +2,12 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, CheckCircle, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
+import { DI } from '@/app/(dashboard)/di/registry';
 import {
   validateImageFile,
   generateBlurPlaceholder,
 } from '@/shared/api/media/imageOptimizationService';
-// We use the standard new URL() syntax for workers for Next.js/Turbopack compatibility.
-// We use a relative path for the worker to ensure better resolution in all environments.
-const WORKER_URL = new URL('../../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url);
-import { optimizeImageComplete } from '@/shared/api/media/imageOptimizationService';
+// Web Worker is initialized dynamically in useEffect to comply with Next.js standards
 
 interface WorkerResponse {
   id: string;
@@ -61,6 +59,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workerRef = useRef<Worker | null>(null);
 
+  useEffect(() => {
+    workerRef.current = new Worker(
+      new URL('../../shared/lib/workers/imageOptimizer.worker.ts', import.meta.url),
+    );
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, []);
+
   const log = useCallback(
     (msg: string) => {
       if (onLog) onLog(`[ImgUp] ${msg}`);
@@ -68,20 +75,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     },
     [onLog],
   );
-
-  useEffect(() => {
-    try {
-      workerRef.current = new Worker(WORKER_URL);
-      log('Worker initialized successfully.');
-    } catch (err) {
-      console.error('[ImgUp] Failed to initialize worker, will use main-thread fallback:', err);
-      workerRef.current = null;
-    }
-
-    return () => {
-      workerRef.current?.terminate();
-    };
-  }, [log]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -126,56 +119,53 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             prev.map((f, idx) => (idx === i ? { ...f, status: 'optimizing', progress: 10 } : f)),
           );
 
-          // Process image: Try Worker first, fallback to Main Thread
-          let optimizedResult;
-          const id = Math.random().toString(36).substring(7);
+          // Process image with Worker
+          const workerPromise = new Promise<{
+            jpeg: Blob;
+            width: number;
+            height: number;
+          }>((resolve, reject) => {
+            const id = Math.random().toString(36).substring(7);
 
-          if (workerRef.current) {
-            log(`Optimizing file ${i} via Worker...`);
-            optimizedResult = await new Promise<{
-              jpeg: Blob;
-              width: number;
-              height: number;
-            }>((resolve, reject) => {
-              const handleMessage = (e: MessageEvent<WorkerResponse>) => {
-                if (e.data.id === id) {
-                  workerRef.current?.removeEventListener('message', handleMessage);
-                  if (e.data.success && e.data.data) {
-                    resolve({
-                      jpeg: e.data.data.blob,
-                      width: e.data.data.width,
-                      height: e.data.data.height,
-                    });
-                  } else {
-                    reject(new Error(e.data.error || 'Worker error'));
-                  }
+            const handleMessage = (e: MessageEvent<WorkerResponse>) => {
+              if (e.data.id === id) {
+                workerRef.current?.removeEventListener('message', handleMessage);
+                if (e.data.success && e.data.data) {
+                  resolve({
+                    jpeg: e.data.data.blob,
+                    width: e.data.data.width,
+                    height: e.data.data.height,
+                  });
+                } else {
+                  reject(new Error(e.data.error || 'Worker error'));
                 }
-              };
-
-              workerRef.current?.addEventListener('message', handleMessage);
-              workerRef.current?.postMessage({
-                file: uploadFile.file,
-                id,
-                options: { quality: 0.85, maxWidth: 1600 },
-              });
-            });
-          } else {
-            log(`Optimizing file ${i} via Main Thread (Fallback)...`);
-            const complete = await optimizeImageComplete(uploadFile.file, {
-              quality: 0.85,
-              maxWidth: 1600,
-              generateWebP: false,
-            });
-            optimizedResult = {
-              jpeg: complete.jpeg,
-              width: complete.dimensions.width,
-              height: complete.dimensions.height,
+              }
             };
-          }
 
-          const [blurPlaceholder, thumbnail] = await Promise.all([
+            workerRef.current?.addEventListener('message', handleMessage);
+            workerRef.current?.postMessage({
+              file: uploadFile.file,
+              id,
+              options: {
+                quality: 0.85,
+                maxWidth: 1600,
+              },
+            });
+          });
+
+          const [optimizedData, blurPlaceholder, thumbnail] = await Promise.all([
+            workerPromise,
             generateBlurPlaceholder(uploadFile.file),
+            // Keep thumbnail on main thread for now or move to worker too (simple resize)
             new Promise<Blob>((resolve) => {
+              // Simple creating of thumbnail can be done here or in worker.
+              // For simplicity and to not overcomplicate worker interface yet,
+              // we can re-use worker or just simple canvas here.
+              // Let's use the worker for thumbnail effectively by sending another message or
+              // just downscaling the result.
+              // Actually, sticking to main thread for tiny thumbnail is fine for now to save complexity
+              // but ideally everything should be in worker.
+              // Let's use simple canvas for thumbnail on main thread for now as it's fast.
               const img = new Image();
               img.src = URL.createObjectURL(uploadFile.file);
               img.onload = () => {
@@ -190,13 +180,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           ]);
 
           const optimized = {
-            jpeg: optimizedResult.jpeg,
-            webp: undefined,
+            jpeg: optimizedData.jpeg,
+            webp: undefined, // Worker currently only does JPEG for simplicity in V1
             thumbnail: thumbnail,
             blurPlaceholder,
             savings: {
               percentage:
-                ((uploadFile.file.size - optimizedResult.jpeg.size) / uploadFile.file.size) * 100,
+                ((uploadFile.file.size - optimizedData.jpeg.size) / uploadFile.file.size) * 100,
             },
           };
 
@@ -208,48 +198,55 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           const timestamp = Date.now();
           const baseFileName = `${timestamp}_${uploadFile.file.name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9]/gi, '_')}`;
 
-          const { createClient: createSupabaseClient } = await import('@/shared/api/supabase/client');
-          const supabase = createSupabaseClient();
-          const bucket = 'inventory';
+          const storageRepo = DI.getStorageRepository();
 
-          // Parallel Upload of ALL versions to Supabase
-          const uploadTasks = [
-            {
-              type: 'jpeg',
-              path: `${storagePath}/${baseFileName}.jpg`,
-              file: optimized.jpeg,
-              contentType: 'image/jpeg',
-            },
-            {
-              type: 'thumb',
-              path: `${storagePath}/${baseFileName}_thumb.jpg`,
-              file: optimized.thumbnail,
-              contentType: 'image/jpeg',
-            },
-          ];
+          // Parallel Upload of ALL versions using Supabase via DI
+          const uploadTasks: {
+            type: string;
+            task: Promise<string>;
+          }[] = [];
 
-          const results = await Promise.all(
-            uploadTasks.map(async (task) => {
-              const { data, error } = await supabase.storage
-                .from(bucket)
-                .upload(task.path, task.file, {
-                  contentType: task.contentType,
-                  upsert: true,
-                });
+          // 1. JPEG Task
+          uploadTasks.push({
+            type: 'jpeg',
+            task: storageRepo.uploadImage(
+              optimized.jpeg,
+              `${storagePath}/${baseFileName}.jpg`,
+              'image/jpeg',
+            ),
+          });
 
-              if (error) throw error;
+          // 2. WebP Task (if available)
+          if (optimized.webp) {
+            uploadTasks.push({
+              type: 'webp',
+              task: storageRepo.uploadImage(
+                optimized.webp,
+                `${storagePath}/${baseFileName}.webp`,
+                'image/webp',
+              ),
+            });
+          }
 
-              const {
-                data: { publicUrl },
-              } = supabase.storage.from(bucket).getPublicUrl(task.path);
+          // 3. Thumbnail Task
+          uploadTasks.push({
+            type: 'thumb',
+            task: storageRepo.uploadImage(
+              optimized.thumbnail,
+              `${storagePath}/${baseFileName}_thumb.jpg`,
+              'image/jpeg',
+            ),
+          });
 
-              return { type: task.type, url: publicUrl };
-            }),
-          );
+          // Wait for all uploads of THIS image
+          const uploadResults = await Promise.all(uploadTasks.map((t) => t.task));
 
-          const jpegUrl = results.find((r) => r.type === 'jpeg')?.url || '';
-          const thumbUrl = results.find((r) => r.type === 'thumb')?.url || '';
-          const webpUrl = ''; // WebP generation skipped for now as per legacy worker logic
+          // Map results back to specific fields
+          const jpegUrl = uploadResults[uploadTasks.findIndex((t) => t.type === 'jpeg')];
+          const webpUrl = optimized.webp
+            ? uploadResults[uploadTasks.findIndex((t) => t.type === 'webp')]
+            : '';
+          const thumbUrl = uploadResults[uploadTasks.findIndex((t) => t.type === 'thumb')];
 
           const result: UploadResult = {
             url: jpegUrl,
@@ -338,22 +335,26 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         className={`
-          relative overflow-hidden rounded-2xl border-2 border-dashed transition-all cursor-pointer
+          relative overflow-hidden rounded-2xl border-2 border-dashed transition-all cursor-pointer group
           ${
             isDragging
-              ? 'border-cyan-500 bg-cyan-500/10 scale-[1.02]'
-              : 'border-slate-700 hover:border-slate-600 bg-slate-900/50'
+              ? 'border-primary/50 bg-primary/10 shadow-[0_0_30px_rgba(0,174,217,0.15)] scale-[1.02]'
+              : 'border-white/10 hover:border-primary/30 bg-slate-900/50 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(0,174,217,0.1)]'
           }
         `}
       >
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-linear-to-br from-cyan-900/10 to-purple-900/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-purple-500/5 pointer-events-none group-hover:from-primary/10 group-hover:to-purple-500/10 transition-colors" />
 
         <div className="relative p-12 flex flex-col items-center justify-center text-center space-y-4">
           <div
-            className={`p-6 bg-cyan-500/10 rounded-2xl transition-transform ${isDragging ? 'scale-110 rotate-6' : 'scale-100 rotate-0'}`}
+            className={`p-6 bg-primary/10 border border-primary/20 rounded-2xl transition-all duration-300 ${isDragging ? 'scale-110 rotate-6 shadow-[0_0_20px_rgba(0,174,217,0.2)]' : 'scale-100 rotate-0 group-hover:shadow-[0_0_15px_rgba(0,174,217,0.1)]'}`}
           >
-            <Upload className="text-cyan-500" size={48} strokeWidth={2} />
+            <Upload
+              className="text-primary drop-shadow-[0_0_8px_rgba(0,174,217,0.5)]"
+              size={48}
+              strokeWidth={1.5}
+            />
           </div>
 
           <div>
@@ -395,8 +396,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           {files.map((file, index) => (
             <div
               key={index}
-              className="glass-premium p-4 rounded-xl flex items-center gap-4 delay-var"
-              style={{ '--d': `${Math.min(index * 45, 220)}ms` } as React.CSSProperties}
+              style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
+              className="glass-premium p-4 rounded-xl flex items-center gap-4"
             >
               {/* Preview */}
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 shrink-0">
@@ -419,13 +420,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 {/* Progress Bar */}
                 {(file.status === 'optimizing' || file.status === 'uploading') && (
                   <div className="mt-2">
-                    <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden border border-white/5">
                       <div
-                        style={{ '--progress-width': `${file.progress}%` } as React.CSSProperties}
-                        className="h-full bg-linear-to-r from-cyan-500 to-purple-500 progress-bar-width"
+                        style={{ width: `${file.progress}%` }}
+                        className="h-full bg-linear-to-r from-primary to-purple-500 shadow-[0_0_10px_rgba(0,174,217,0.5)] transition-all duration-300"
                       />
                     </div>
-                    <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">
+                    <p className="text-[10px] text-primary/70 mt-1 uppercase tracking-widest font-bold">
                       {file.status === 'optimizing' ? 'Optimizando...' : 'Subiendo...'}
                     </p>
                   </div>
@@ -433,8 +434,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
                 {/* Error */}
                 {file.status === 'error' && (
-                  <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                    <AlertCircle size={12} />
+                  <p className="text-xs text-rose-400 mt-1 flex items-center gap-1 bg-rose-500/10 py-1 px-2 rounded-md border border-rose-500/20 inline-flex">
+                    <AlertCircle size={12} className="text-rose-500" />
                     {file.error}
                   </p>
                 )}
@@ -460,22 +461,22 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                   </div>
                 )}
                 {(file.status === 'optimizing' || file.status === 'uploading') && (
-                  <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
-                    <Loader2 size={16} className="text-cyan-500 animate-spin" />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_10px_rgba(0,174,217,0.2)]">
+                    <Loader2 size={16} className="text-primary animate-spin" />
                   </div>
                 )}
                 {file.status === 'complete' && (
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                    <CheckCircle size={16} className="text-emerald-500" />
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    <CheckCircle size={16} className="text-emerald-400" />
                   </div>
                 )}
                 {file.status === 'error' && (
                   <button
                     onClick={() => removeFile(index)}
                     aria-label="Eliminar imagen"
-                    className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors"
+                    className="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500/20 hover:shadow-[0_0_15px_rgba(244,63,94,0.3)] transition-all cursor-pointer"
                   >
-                    <X size={16} className="text-red-500" />
+                    <X size={16} className="text-rose-400" />
                   </button>
                 )}
               </div>

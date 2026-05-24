@@ -1,10 +1,8 @@
 'use client';
 
-'use client';
-
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Zap, ShieldCheck, Wifi } from 'lucide-react';
-import { enterpriseService, SystemHealth } from '@/shared/api/enterprise/EnterpriseClient';
+import { enterpriseService, SystemHealth } from '@/features/enterprise';
 
 export const SentinelStatusBar: React.FC = () => {
   const [health, setHealth] = useState<SystemHealth | null>(null);
@@ -60,7 +58,7 @@ export const SentinelStatusBar: React.FC = () => {
         </div>
         <div className="flex items-center gap-2 text-slate-500">
           <ShieldCheck size={10} className="text-primary" />
-          <span>RA-Mission Control v3.0 Protected</span>
+          <span>Sentinel v2.7 Protected</span>
         </div>
       </div>
     </div>

@@ -59,6 +59,7 @@ export const TelemetryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       const channel = channelRef.current;
+      if (!channel) return;
       if (channel.state !== 'closed') {
         channel
           .on('broadcast', { event: `update-${vehicleId}` }, (payload) => {

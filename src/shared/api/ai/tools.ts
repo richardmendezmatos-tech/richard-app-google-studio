@@ -64,7 +64,7 @@ export const aiTools = {
             if (!dbError && dbCars) {
               // Maintain semantic relevance order
               matchingCars = semanticMatches
-                .map((match) => dbCars.find((c) => c.id === match.car_id))
+                .map((match) => dbCars.find((c: any) => c.id === match.car_id))
                 .filter(Boolean);
             }
           }

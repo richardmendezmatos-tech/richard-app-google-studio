@@ -46,7 +46,7 @@ export async function POST(req: Request) {
               UNIDADES RELEVANTES DISPONIBLES EN INVENTARIO (EN TIEMPO REAL):
               ${dbCars
                 .map(
-                  (c) => `
+                  (c: any) => `
                 - Unidad: ${c.year} ${c.make} ${c.model} (${c.condition === 'new' ? 'Nueva' : 'Usada'})
                   ID: ${c.id}
                   Precio de Venta: $${c.price?.toLocaleString()}

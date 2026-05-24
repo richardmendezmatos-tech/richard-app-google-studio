@@ -1,9 +1,5 @@
-'use client';
-
-'use client';
-
 import React from 'react';
-import { Car } from '@/entities/inventory';
+import { Car, Lead } from '@/shared/types/types';
 import { Sparkles, Edit3, Trash2, Clock } from 'lucide-react';
 import { optimizeImage } from '@/shared/api/media/mediaShared';
 import { calculatePredictiveDTS } from '@/entities/inventory';
@@ -21,32 +17,18 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
   ({ car, leadCount, onEdit, onDelete, onPlanContent, style }) => {
     const predictiveStats = calculatePredictiveDTS(car, leadCount);
 
-    const rowRef = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-      if (rowRef.current && style) {
-        rowRef.current.style.setProperty('--translate', (style as any).transform || 'none');
-        rowRef.current.style.setProperty('--transition', (style as any).transition || 'none');
-        rowRef.current.style.setProperty('--drag-opacity', String((style as any).opacity || 1));
-        rowRef.current.style.setProperty('--drag-z-index', String((style as any).zIndex || 0));
-      }
-    }, [style]);
-
     return (
       <div
-        ref={rowRef}
-        className={`flex items-center border-b border-white/5 hover:bg-white/5 transition-colors group px-6 h-board-item ${style ? 'dnd-sortable' : ''}`}
+        style={style}
+        className={`flex items-center border-b border-white/5 hover:bg-primary/5 hover:border-primary/20 hover:shadow-[inset_0_0_30px_rgba(0,174,217,0.03)] transition-all duration-300 group px-6 h-board-item ${style ? 'dnd-sortable' : ''}`}
       >
         {/* Unidad */}
         <div className="flex-1 flex items-center gap-4 min-w-board-column-lg">
           <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:scale-105 transition-transform shrink-0">
             <img
-              src={optimizeImage(car.image || car.img || '', 100)}
+              src={optimizeImage(car.img || car.image || '', 100)}
               alt={car.name}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder-car.webp';
-              }}
             />
           </div>
           <div className="flex flex-col">
@@ -68,48 +50,50 @@ const InventoryRow: React.FC<InventoryRowProps> = React.memo(
         </div>
 
         {/* Precio */}
-        <div className="w-board-column-sm font-black text-white text-glow flex items-center tracking-tighter">
-          ${car.price?.toLocaleString()}
+        <div className="w-board-column-sm font-black text-white text-glow flex items-center text-lg">
+          ${(car.price || 0).toLocaleString()}
         </div>
 
         {/* Advantage */}
         <div className="w-board-column-sm flex items-center">
-          <span className="inline-flex items-center px-2 py-1 rounded-lg text-[9px] font-black bg-primary/5 text-primary uppercase tracking-[0.2em] border border-primary/20">
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm ${predictiveStats.advantageScore > 75 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10' : 'bg-primary/10 text-primary border-primary/20 shadow-primary/10'}`}
+          >
             +{predictiveStats.advantageScore.toFixed(0)}%
           </span>
         </div>
 
         {/* Sales Velocity */}
         <div className="w-board-column-sm flex items-center gap-2">
-          <Clock size={12} className="text-slate-600" />
-          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
-            14 Días
-          </span>
+          <Clock size={14} className="text-amber-500" />
+          <div className="flex flex-col">
+            <span className="text-sm font-black text-white">{predictiveStats.daysToSale}</span>
+            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+              Días
+            </span>
+          </div>
         </div>
 
         {/* Acciones */}
-        <div className="flex-1 flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pr-2">
+        <div className="flex-1 flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={() => onPlanContent(car)}
-            className="p-2.5 hover:bg-primary/10 text-slate-500 hover:text-primary rounded-xl transition-all border border-transparent hover:border-primary/20"
-            title="Strategy Lab"
-            aria-label="Strategy Lab"
+            className="px-3 md:px-4 py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 border border-primary/20 hover:shadow-[0_0_15px_rgba(0,174,217,0.4)]"
+            title="Marketing"
           >
-            <Sparkles size={16} />
+            <Sparkles size={14} /> <span className="hidden xl:inline">Marketing</span>
           </button>
           <button
             onClick={() => onEdit(car)}
-            className="p-2.5 hover:bg-white/5 text-slate-500 hover:text-white rounded-xl transition-all border border-transparent hover:border-white/10"
+            className="w-10 h-10 flex items-center justify-center bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl transition-all border border-white/10 hover:border-white/30"
             title="Editar"
-            aria-label="Editar"
           >
             <Edit3 size={16} />
           </button>
           <button
             onClick={() => onDelete(car.id)}
-            className="p-2.5 hover:bg-rose-500/5 text-slate-500 hover:text-rose-500 rounded-xl transition-all border border-transparent hover:border-rose-500/10"
+            className="w-10 h-10 flex items-center justify-center bg-rose-500/10 text-rose-500/70 hover:text-white hover:bg-rose-500 rounded-xl transition-all border border-rose-500/20 hover:shadow-[0_0_15px_rgba(244,63,94,0.4)]"
             title="Eliminar"
-            aria-label="Eliminar"
           >
             <Trash2 size={16} />
           </button>

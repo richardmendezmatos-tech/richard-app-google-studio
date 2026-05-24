@@ -48,11 +48,11 @@ export async function GET(request: Request) {
   try {
     const result = await paginateCursor<any>(query as any, 'web_vitals', {
       limit,
-      cursor,
+      cursor: cursor ?? '',
       sortField: 'timestamp',
       sortDir: 'desc',
     });
-    return NextResponse.json(result);
+    return NextResponse.json({ data: result.data, nextCursor: result.nextCursor });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

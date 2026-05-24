@@ -17,7 +17,7 @@ export const sendWhatsAppRetargeting = async (lead: Lead): Promise<void> => {
 
   const payload = {
     messaging_product: 'whatsapp',
-    to: formatPhoneNumber(lead.phone),
+          to: formatPhoneNumber(lead.phone ?? ''),
     type: 'template',
     template: {
       name: 'lead_retargeting_prequalify',
@@ -95,7 +95,7 @@ export const triggerSentinelNurture = async (
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
-          to: formatPhoneNumber(lead.phone),
+    to: formatPhoneNumber(lead.phone ?? ''),
           type: 'text',
           text: { body: message },
         }),

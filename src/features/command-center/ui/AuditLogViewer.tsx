@@ -1,66 +1,45 @@
 'use client';
 
-'use client';
-
 import React, { useState, useEffect } from 'react';
+import { AuditRepository, AuditEvent } from '@/shared/api/houston/AuditRepository';
 import { ShieldAlert, ShieldCheck, Monitor, Globe } from 'lucide-react';
-import { getAuditLogs, AuditLog } from '@/shared/api/repositories/SupabaseAuditRepository';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-type TimestampLike =
-  | { seconds: number; nanoseconds: number }
-  | { toDate: () => Date }
-  | string
-  | Date;
-
-const hasToDate = (value: TimestampLike): value is { toDate: () => Date } =>
-  typeof (value as { toDate?: unknown }).toDate === 'function';
+const auditRepo = new AuditRepository();
 
 export const AuditLogViewer: React.FC = () => {
-  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [logs, setLogs] = useState<AuditEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-    const loadLogs = async () => {
-      try {
-        const logsData = await getAuditLogs(50);
-        if (cancelled) return;
-        setLogs(logsData);
-        setLoading(false);
-      } catch (error) {
-        console.error('AuditLog polling error:', error);
-        if (!cancelled) setLoading(false);
-      }
-    };
+  const loadLogs = async () => {
+    try {
+      const logsData = await auditRepo.getRecentLogs(50);
+      setLogs(logsData);
+      setLoading(false);
+    } catch (error) {
+      console.error('AuditLog polling error:', error);
+      setLoading(false);
+    }
+  };
 
-    loadLogs();
+  useEffect(() => {
+    // Defer execution to avoid synchronous setState in effect body
+    Promise.resolve().then(() => loadLogs());
     const intervalId = setInterval(loadLogs, 15000);
 
     return () => {
-      cancelled = true;
       if (intervalId) clearInterval(intervalId);
     };
   }, []);
 
-  const formatDate = (timestamp: TimestampLike) => {
+  const formatDate = (timestamp: string) => {
     if (!timestamp) return 'N/A';
-    let date: Date;
-    if (hasToDate(timestamp as any)) {
-      date = (timestamp as { toDate: () => Date }).toDate();
-    } else if (timestamp instanceof Date) {
-      date = timestamp;
-    } else if (typeof timestamp === 'string') {
-      date = new Date(timestamp);
-    } else {
-      date = new Date((timestamp as { seconds: number }).seconds * 1000);
+    try {
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: es });
+    } catch (e) {
+      return 'N/A';
     }
-    return new Intl.DateTimeFormat('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    }).format(date);
   };
 
   if (loading) {
@@ -95,7 +74,7 @@ export const AuditLogViewer: React.FC = () => {
               <th className="px-6 py-4">Estado</th>
               <th className="px-6 py-4">Usuario</th>
               <th className="px-6 py-4">IP / Dispositivo</th>
-              <th className="px-6 py-4">Método</th>
+              <th className="px-6 py-4">Mensaje</th>
               <th className="px-6 py-4 text-right">Tiempo</th>
             </tr>
           </thead>
@@ -106,42 +85,34 @@ export const AuditLogViewer: React.FC = () => {
                 className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
               >
                 <td className="px-6 py-4">
-                  {log.success ? (
+                  {log.type === 'info' || log.type === 'conversion' ? (
                     <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
-                      <ShieldCheck size={14} /> Permitido
+                      <ShieldCheck size={14} /> OK
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 text-rose-500 font-bold">
-                      <ShieldAlert size={14} /> Bloqueado
+                      <ShieldAlert size={14} /> {log.type.toUpperCase()}
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">
-                  {log.email}
+                  {log.source}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col gap-1">
                     <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-mono text-[10px]">
-                      <Globe size={10} /> {log.ip}
+                      <Globe size={10} /> {log.metadata?.ip || '0.0.0.0'}
                     </span>
                     <span
                       className="flex items-center gap-1.5 text-slate-400 text-[10px] truncate max-w-board-column-md"
-                      title={log.device}
+                      title={log.metadata?.device}
                     >
-                      <Monitor size={10} /> {log.device}
+                      <Monitor size={10} /> {log.metadata?.device || 'Unknown Device'}
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                      log.method === 'passkey'
-                        ? 'bg-purple-500/10 text-purple-500'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    {log.method}
-                  </span>
+                  <span className="text-slate-600 dark:text-slate-400">{log.message}</span>
                 </td>
                 <td className="px-6 py-4 text-right font-mono text-slate-500">
                   {formatDate(log.timestamp)}

@@ -4,6 +4,7 @@ Owner: Richard O. Méndez Matos | Gerente de F&I en Central Ford, Vega Alta — 
 
 ## Stack
 
+- **opencode:** big-pickle (modelo principal + subagents)
 - Next.js 16 (App Router) + TypeScript strict
 - Supabase (PostgreSQL 15+, Auth, Storage, Realtime)
 - Tailwind CSS 4 + Framer Motion v12+

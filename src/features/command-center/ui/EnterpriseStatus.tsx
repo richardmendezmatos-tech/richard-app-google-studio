@@ -1,10 +1,8 @@
 'use client';
 
-'use client';
-
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Database } from 'lucide-react';
-import { enterpriseService, SystemHealth } from '@/shared/api/enterprise/EnterpriseClient';
+import { enterpriseService, SystemHealth } from '@/features/enterprise';
 
 export const EnterpriseStatus = () => {
   const [health, setHealth] = useState<SystemHealth | null>(null);

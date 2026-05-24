@@ -1,12 +1,9 @@
 'use client';
 
-'use client';
-
 import React, { useState } from 'react';
 import { useDealer } from '@/entities/dealer';
 import { addVehicle as addCar } from '@/entities/inventory/api/adapters/inventoryService';
 import { CarType } from '@/shared/types/types';
-import { Car } from '@/entities/inventory';
 import { ShieldCheck, TrendingUp, Handshake } from 'lucide-react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 
@@ -31,29 +28,24 @@ const EarlyAdopterOnboard = () => {
 
     try {
       setStatus('Seeding Premium Inventory...');
-      const cars: Omit<Car, 'id'>[] = [
+      const cars = [
         {
           name: 'BMW M4 Competition 2024',
           make: 'BMW',
           model: 'M4 Competition',
           year: 2024,
-          mileage: 0,
+          vin: 'VIN-PRESTIGE-001',
+          color: 'Alpine White',
           price: 98000,
           type: 'luxury' as CarType,
-          badge: 'Prestige Certified',
-          img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
+          status: 'available' as const,
           image:
             'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
-          status: 'available',
-          vin: 'BMWM4-COMP-2024-PRESTIGE',
-          color: 'Black Sapphire Metallic',
+          img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
+          badge: 'Prestige Certified',
           featured: true,
           description: 'Full carbon package, zero miles.',
-          images: [
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop',
-          ],
-          features: ['Full Carbon Package', 'M Sport Exhaust', 'Laser Lights'],
-          dealerId: 'prestige-auto-001',
+          mileage: 0,
         },
       ];
 

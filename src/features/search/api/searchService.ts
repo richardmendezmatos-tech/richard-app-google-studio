@@ -27,7 +27,7 @@ export const smartVehicleSearch = async (
   const { cars } = await getPaginatedCars(10, null, 'all');
 
   return cars.filter(
-    (car) =>
+    (car: any) =>
       car.name?.toLowerCase().includes(queryText.toLowerCase()) ||
       car.description?.toLowerCase().includes(queryText.toLowerCase()),
   );

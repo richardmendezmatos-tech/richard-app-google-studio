@@ -76,8 +76,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: 'website',
-      images: car?.image || car?.img || car?.images?.[0]
-        ? [{ url: car.image || car.img || car.images[0], width: 1200, height: 630, alt: title }]
+      images: (car?.image || car?.img || car?.images?.[0])
+        ? [{ url: car.image || car.img || car.images?.[0] || '', width: 1200, height: 630, alt: title }]
         : [],
       siteName: 'Richard Automotive',
       locale: 'es_PR',
@@ -86,8 +86,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: car?.image || car?.img || car?.images?.[0]
-        ? [car.image || car.img || car.images[0]]
+      images: (car?.image || car?.img || car?.images?.[0])
+        ? [(car.image || car.img || car.images?.[0] || '')]
         : [],
     },
     alternates: {

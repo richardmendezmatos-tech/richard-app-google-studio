@@ -16,6 +16,7 @@ interface OptimizedImageProps {
   loading?: 'lazy' | 'eager';
   fill?: boolean;
   sizes?: string;
+  blurDataURL?: string;
 }
 
 /**
@@ -34,6 +35,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   fill = false,
   fallbackSrc = '/placeholder-car.webp',
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  blurDataURL,
 }) => {
   const [error, setError] = React.useState(false);
 
@@ -43,6 +45,15 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     // We can still use Antigravity for the initial source, but next/image will optimize it further
     return optimizeWithAntigravity(src, width || 800) || src;
   }, [error, src, fallbackSrc, width]);
+
+  const imageLoading = priority ? 'eager' : 'lazy';
+  const imagePlaceholder = placeholder === 'blur' && blurDataURL ? 'blur' : 'empty';
+
+  if (!fill && (!width || !height)) {
+    console.warn(
+      `OptimizedImage: 'width' and 'height' props should be provided when 'fill' is false for image with src: ${src}. This helps prevent layout shifts.`,
+    );
+  }
 
   if (fill) {
     return (
@@ -56,6 +67,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           onLoad={onLoad}
           onError={() => setError(true)}
           sizes={sizes}
+          loading={imageLoading}
+          placeholder={imagePlaceholder}
+          blurDataURL={blurDataURL}
         />
       </div>
     );
@@ -72,6 +86,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       onLoad={onLoad}
       onError={() => setError(true)}
       sizes={sizes}
+      loading={imageLoading}
+      placeholder={imagePlaceholder}
+      blurDataURL={blurDataURL}
     />
   );
 };

@@ -1,10 +1,7 @@
 'use client';
 
-'use client';
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Car } from '@/entities/inventory';
-import { Lead } from '@/entities/lead';
+import { Car, Lead } from '@/shared/types/types';
 import InventoryRow from './InventoryRow';
 
 interface HyperInventoryListProps {
@@ -25,8 +22,6 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(600);
-  const scrollSpacerRef = useRef<HTMLDivElement>(null);
-  const visibleWindowRef = useRef<HTMLDivElement>(null);
 
   const itemHeight = 80;
   const overscan = 5;
@@ -57,18 +52,6 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
     Math.floor((scrollTop + containerHeight) / itemHeight) + overscan,
   );
 
-  useEffect(() => {
-    if (scrollSpacerRef.current) {
-      scrollSpacerRef.current.style.setProperty('--total-height', `${totalHeight}px`);
-    }
-  }, [totalHeight]);
-
-  useEffect(() => {
-    if (visibleWindowRef.current) {
-      visibleWindowRef.current.style.setProperty('--offset-y', `${startIndex * itemHeight}px`);
-    }
-  }, [startIndex, itemHeight]);
-
   const leadCounts = useMemo(() => {
     const counts = new Map<string, number>();
     (leads || []).forEach((l) => {
@@ -94,30 +77,36 @@ const HyperInventoryList: React.FC<HyperInventoryListProps> = ({
       onScroll={handleScroll}
     >
       {/* HEADER (Sticky) */}
-      <div className="sticky top-0 z-20 flex items-center bg-[#050c14]/90 backdrop-blur-2xl border-b border-white/5 px-8 h-16">
-        <div className="flex-1 text-[9px] font-black uppercase tracking-[0.3em] text-primary min-w-board-column-lg">
-          Asset / Identity
+      <div className="sticky top-0 z-20 flex items-center bg-slate-900/95 backdrop-blur-md border-b border-white/5 px-6 h-board-header">
+        <div className="flex-1 text-[10px] font-black uppercase tracking-widest text-primary min-w-board-column-lg">
+          Unidad
         </div>
-        <div className="w-board-column-md text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
-          Classification
+        <div className="w-board-column-md text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Tipo / Badge
         </div>
-        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
-          Valuation
+        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Precio
         </div>
-        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
           Advantage
         </div>
-        <div className="w-board-column-sm text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
-          Market Velocity
+        <div className="w-board-column-sm text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Sales Velocity
         </div>
-        <div className="flex-1 text-right text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
-          Control
+        <div className="flex-1 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Acciones
         </div>
       </div>
 
       {/* SPACER FOR SCROLL */}
-      <div ref={scrollSpacerRef} className="inventory-scroll-container">
-        <div ref={visibleWindowRef} className="inventory-visible-window">
+      <div
+        className="inventory-scroll-container"
+        style={{ '--total-height': `${totalHeight}px` } as React.CSSProperties}
+      >
+        <div
+          className="inventory-visible-window"
+          style={{ '--offset-y': `${startIndex * itemHeight}px` } as React.CSSProperties}
+        >
           {visibleItems.map(({ car, leadCount }) => (
             <InventoryRow
               key={car.id}

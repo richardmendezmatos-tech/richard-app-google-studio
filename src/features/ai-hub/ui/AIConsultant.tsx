@@ -72,7 +72,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
 
         {/* Chat Body */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8">
-          {messages.map((msg, idx) => (
+          {messages.map((msg: any, idx: any) => (
             <div
               key={idx}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}

@@ -68,7 +68,7 @@ const AIChatWidget: React.FC<Props> = () => {
         const lastUserMsg = messages
           .slice()
           .reverse()
-          .find((m) => m.role === 'user');
+          .find((m: any) => m.role === 'user');
         if (lastUserMsg) {
           // APPLY CLEAN ORCHESTRATION
           const currentLead = ChatbotGatewayAdapter.toImmutableLead({
@@ -232,7 +232,7 @@ const AIChatWidget: React.FC<Props> = () => {
         className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50/50 dark:bg-transparent"
         ref={scrollRef}
       >
-        {messages.map((msg) => (
+        {messages.map((msg: any) => (
           <div key={msg.id} className="space-y-3">
             <div
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}
@@ -256,7 +256,7 @@ const AIChatWidget: React.FC<Props> = () => {
             </div>
 
             {/* --- GENERATIVE UI: TOOL INVOCATIONS --- */}
-            {msg.toolInvocations?.map((toolInvocation) => {
+            {msg.toolInvocations?.map((toolInvocation: any) => {
               const { toolName, toolCallId, state } = toolInvocation;
 
               if (state === 'result') {
