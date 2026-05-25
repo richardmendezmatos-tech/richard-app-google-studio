@@ -61,7 +61,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
             <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 gap-2">
               <button
                 onClick={() => actions.openNeuralMatch('search_bar')}
-                className="btn-glow hidden items-center gap-2 rounded-xl border border-primary/20 bg-slate-800/90 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-cyan-200 transition-all hover:border-primary/40 hover:bg-primary hover:text-white md:flex"
+                className="btn-glow hidden items-center gap-2 rounded-xl border border-primary/20 bg-slate-800/90 px-4 min-h-[44px] text-[11px] font-black uppercase tracking-[0.12em] text-cyan-200 transition-all hover:border-primary/40 hover:bg-primary hover:text-white md:flex"
                 title="Encuentra tu auto ideal por estilo de vida"
               >
                 <BrainCircuit size={16} /> Neural Match
@@ -90,7 +90,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                 <button
                   key={type.id}
                   onClick={() => state.setFilter(type.id as CarType | 'all')}
-                  className={`px-5 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${
+                  className={`px-5 py-3 min-h-[44px] rounded-full font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${
                     state.filter === type.id
                       ? 'bg-primary text-white shadow-lg shadow-primary/20'
                       : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
@@ -106,7 +106,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
               <select
                 value={state.sortBy}
                 onChange={(e) => state.setSortBy(e.target.value)}
-                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 min-h-[44px] cursor-pointer hover:text-white transition-colors"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.key} value={opt.key} className="bg-slate-900 text-slate-300">
@@ -117,7 +117,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
               <div className="w-px h-6 bg-white/10" />
               <button
                 onClick={() => state.setSortOrder((prev: any) => (prev === 'asc' ? null : 'asc'))}
-                className={`rounded-full px-3 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
+                className={`rounded-full px-3 min-h-[44px] text-xs font-bold uppercase tracking-wide transition-all ${
                   state.sortOrder === 'asc'
                     ? 'bg-primary text-white'
                     : 'text-slate-400 hover:text-white'
@@ -128,7 +128,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
               </button>
               <button
                 onClick={() => state.setSortOrder((prev: any) => (prev === 'desc' ? null : 'desc'))}
-                className={`rounded-full px-3 py-3 text-xs font-bold uppercase tracking-wide transition-all ${
+                className={`rounded-full px-3 min-h-[44px] text-xs font-bold uppercase tracking-wide transition-all ${
                   state.sortOrder === 'desc'
                     ? 'bg-primary text-white'
                     : 'text-slate-400 hover:text-white'
@@ -146,7 +146,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                 onChange={(e) =>
                   state.setYearFilter(e.target.value === 'all' ? 'all' : parseInt(e.target.value))
                 }
-                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 min-h-[44px] cursor-pointer hover:text-white transition-colors"
               >
                 <option value="all" className="bg-slate-900 text-slate-300">
                   Año: Todos
@@ -178,7 +178,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                     e.target.value === 'all' ? 'all' : parseInt(e.target.value),
                   )
                 }
-                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 py-2 cursor-pointer hover:text-white transition-colors"
+                className="bg-transparent text-xs font-bold uppercase tracking-wide text-slate-400 outline-none px-4 min-h-[44px] cursor-pointer hover:text-white transition-colors"
               >
                 <option value="all" className="bg-slate-900 text-slate-300">
                   Millaje: Todos

@@ -69,19 +69,19 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             {/* Heart / Save Button */}
             <div
               onClick={onToggleSave}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 border ${isSaved ? 'bg-rose-500 border-rose-500 text-white' : 'bg-white/80 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-400 hover:text-rose-500'}`}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 border ${isSaved ? 'bg-rose-500 border-rose-500 text-white' : 'bg-white/80 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-400 hover:text-rose-500'}`}
               title={isSaved ? 'Quitar de favoritos' : 'Guardar en favoritos'}
             >
-              <Heart size={18} fill={isSaved ? 'currentColor' : 'none'} />
+              <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
             </div>
 
             {/* Compare Button */}
             <div
               onClick={handleCompareToggle}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 border ${isComparing ? 'bg-primary text-white border-primary' : 'bg-white/80 dark:bg-slate-700/80 text-slate-400 border-slate-200 dark:border-slate-600 hover:text-primary'}`}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 border ${isComparing ? 'bg-primary text-white border-primary' : 'bg-white/80 dark:bg-slate-700/80 text-slate-400 border-slate-200 dark:border-slate-600 hover:text-primary'}`}
               title={isComparing ? 'Quitar de comparar' : 'Agregar a comparar'}
             >
-              <GitCompare size={18} />
+              <GitCompare size={20} />
             </div>
           </div>
 

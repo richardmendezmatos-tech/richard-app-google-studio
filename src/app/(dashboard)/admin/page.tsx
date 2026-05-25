@@ -30,7 +30,7 @@ export default function AdminPage() {
           </h1>
         </div>
 
-        <nav className="flex bg-slate-900/50 rounded-full p-1 border border-white/5 items-center gap-1">
+        <nav className="flex bg-slate-900/50 rounded-full p-1 border border-white/5 items-center gap-1 overflow-x-auto flex-nowrap">
           <button
             onClick={() => setActiveView('crm')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${

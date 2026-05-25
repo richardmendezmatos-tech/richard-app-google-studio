@@ -54,7 +54,7 @@ export const FloatingActionOrbit: React.FC<FloatingActionOrbitProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 lg:bottom-8 lg:right-8 z-[999] flex flex-col items-end gap-4 pointer-events-none">
+    <div className="fixed bottom-20 md:bottom-6 lg:bottom-8 right-6 lg:right-8 z-[999] flex flex-col items-end gap-4 pointer-events-none">
       {/* Backdrop for focus when Orbit is open */}
       <AnimatePresence>
         {isOpen && !activeWidget && (
