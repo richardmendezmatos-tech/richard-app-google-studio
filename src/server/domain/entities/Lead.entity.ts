@@ -48,6 +48,7 @@ export interface Lead {
     preferredType?: string;
     budget?: number;
   };
+  customer_memory?: Record<string, unknown>;
   behavioralMetrics?: {
     timeOnSite?: number;
     inventoryViews?: number;
