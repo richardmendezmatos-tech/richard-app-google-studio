@@ -75,17 +75,6 @@ export class SupabaseLeadRepository implements LeadRepository {
     if (error) throw error;
   }
 
-  async create(data: Lead): Promise<string> {
-    const supabase = createServerSupabaseClient();
-    const { data: inserted, error } = await supabase
-      .from(this.tableName)
-      .insert(data)
-      .select('id')
-      .single();
-    if (error) throw error;
-    return inserted.id;
-  }
-
   async getLeadsByEmailSequenceStatus(
     field: string,
     value: any,
