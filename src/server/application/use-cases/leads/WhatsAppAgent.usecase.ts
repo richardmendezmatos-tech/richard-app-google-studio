@@ -90,12 +90,30 @@ export class WhatsAppAgent {
     const sequence = await this.repo.getSequence(input.leadId);
     const history = sequence?.history || [];
 
+    // Fetch active inventory to inject into prompt context
+    let inventorySummary = 'No hay unidades registradas en este momento.';
+    try {
+      const { SupabaseInventoryRepository } = await import('../../../../entities/inventory/api/SupabaseInventoryRepository');
+      const { createClient } = await import('../../../../shared/api/supabase/client');
+      const supabaseClient = createClient();
+      const inventoryRepo = new SupabaseInventoryRepository(supabaseClient);
+      const cars = await inventoryRepo.getInventory('richard-automotive', 15);
+      if (cars && cars.length > 0) {
+        inventorySummary = cars.map(car => 
+          `- ${car.year} ${car.make} ${car.model} | Precio: $${car.price} | Millaje: ${car.mileage}mi | VIN: ${car.vin}`
+        ).join('\n');
+      }
+    } catch (e) {
+      console.error('[WhatsAppAgent] Failed to fetch inventory for context:', e);
+    }
+
     // Simple prompt-based orchestration for now
     const prompt = WHATSAPP_AGENT_PROMPT.replace(
       '{{customerContext}}',
       JSON.stringify(input.customerContext || {}),
     )
       .replace('{{history}}', JSON.stringify(history))
+      .replace('{{inventory}}', inventorySummary)
       .replace('{{message}}', input.message);
 
     const { text } = await generateText({
