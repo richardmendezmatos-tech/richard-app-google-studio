@@ -66,3 +66,4 @@ output/
 # Playwright Test Reports and Results
 playwright-report/
 test-results/
+scratch/
