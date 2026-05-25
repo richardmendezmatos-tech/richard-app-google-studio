@@ -150,22 +150,22 @@ export default function CommandCenterPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={fetchTelemetry}
               disabled={loading}
-              className="px-4 py-2 bg-slate-800/50 rounded-xl border border-white/5 text-xs text-slate-300 hover:text-white transition-all flex items-center gap-2"
+              className="px-2 sm:px-4 py-2 bg-slate-800/50 rounded-xl border border-white/5 text-xs text-slate-300 hover:text-white transition-all flex items-center gap-1 sm:gap-2"
             >
-              <RefreshCcw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              Update
+              <RefreshCcw className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Update</span>
             </button>
             <button
               onClick={triggerBulkSync}
               disabled={syncing}
-              className="px-4 py-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center gap-2"
+              className="px-2 sm:px-4 py-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center gap-1 sm:gap-2"
             >
-              <Database className={`w-3.5 h-3.5 ${syncing ? 'animate-pulse' : ''}`} />
-              {syncing ? 'Intelligent Sync...' : 'Sync IA Ingest'}
+              <Database className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${syncing ? 'animate-pulse' : ''}`} />
+              <span className="hidden sm:inline">{syncing ? 'Intelligent Sync...' : 'Sync IA Ingest'}</span>
             </button>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function CommandCenterPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {/* KPI Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <KPICard
             icon={<Users className="w-5 h-5" />}
             label="Leads (24h)"
@@ -301,7 +301,7 @@ export default function CommandCenterPage() {
           </motion.div>
 
           {/* WhatsApp & Search Health */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <motion.div
               className={CARD_CLASSES}
               initial={{ opacity: 0, x: 20 }}
@@ -340,41 +340,75 @@ export default function CommandCenterPage() {
               <SourcingLogWidget orders={data?.purchaseOrders || []} onUpdate={fetchTelemetry} />
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelDistributionWidget
-                stats={data?.distribution}
-                health={data?.summary.distribution_health}
-              />
-            </motion.div>
+            {/* Mobile: collapsible widgets */}
+            <details className="[&_summary]:cursor-pointer group">
+              <summary className="flex items-center gap-2 p-3 bg-slate-800/40 rounded-xl border border-white/5 text-xs text-slate-300 font-bold uppercase tracking-wider lg:hidden">
+                <Activity className="w-4 h-4 text-cyan-400" />
+                Más widgets
+                <ChevronRight className="w-4 h-4 ml-auto transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="space-y-4 mt-4 lg:!block">
+                <div className="lg:hidden space-y-4">
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <SentinelDistributionWidget
+                      stats={data?.distribution}
+                      health={data?.summary.distribution_health}
+                    />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <NewsroomControlWidget />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <TelemetryFeedWidget />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <MarketPulseWidget make="Toyota" model="Corolla" currentPrice={22900} />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <SentinelLocalSEO inventory={(data?.purchaseOrders as any) || []} />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <SentinelFinancialOptimizer />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                    <BusinessHealthWidget />
+                  </motion.div>
+                </div>
+              </div>
+            </details>
 
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <NewsroomControlWidget />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <TelemetryFeedWidget />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <MarketPulseWidget make="Toyota" model="Corolla" currentPrice={22900} />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelLocalSEO inventory={(data?.purchaseOrders as any) || []} />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <SentinelFinancialOptimizer />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <BusinessHealthWidget />
-            </motion.div>
+            {/* Desktop: always visible */}
+            <div className="hidden lg:block space-y-6">
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <SentinelDistributionWidget
+                  stats={data?.distribution}
+                  health={data?.summary.distribution_health}
+                />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <NewsroomControlWidget />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <TelemetryFeedWidget />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <MarketPulseWidget make="Toyota" model="Corolla" currentPrice={22900} />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <SentinelLocalSEO inventory={(data?.purchaseOrders as any) || []} />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <SentinelFinancialOptimizer />
+              </motion.div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                <BusinessHealthWidget />
+              </motion.div>
+            </div>
           </div>
         </div>
 
         {/* Bottom Banner */}
-        <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl flex items-center justify-center gap-3">
+        <div className="hidden md:flex p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl items-center justify-center gap-3">
           <Shield className="w-4 h-4 text-cyan-400" />
           <p className="text-[10px] text-cyan-300 uppercase tracking-[0.2em] font-bold">
             Protección de Datos Activa • Richard Automotive Command v2.4
@@ -415,9 +449,9 @@ function KPICard({
       animate={{ opacity: 1, scale: 1 }}
     >
       <div className={`mb-3 ${colors.split(' ')[2]}`}>{icon}</div>
-      <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest mb-1 truncate">{label}</p>
       <p
-        className="text-3xl font-black tabular-nums"
+        className="text-2xl sm:text-3xl font-black tabular-nums truncate"
         style={{ fontFamily: 'var(--font-cinematic)' }}
       >
         {value}
