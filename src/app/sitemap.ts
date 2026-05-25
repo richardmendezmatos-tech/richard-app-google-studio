@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { seoService } from '@/entities/inventory/api/adapters/seoService';
+import { blogService } from '@/entities/blog/api/blogService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -126,7 +127,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('🚨 Sitemap: Inventory fetch failed:', error);
   }
 
-  // Blog: Index + individual articles
+  // Blog: Index + individual articles (Seed + Dynamic)
+  let dynamicBlogRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const dynamicPosts = await blogService.getBlogPosts(100);
+    dynamicBlogRoutes = dynamicPosts.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: post.date ? new Date(post.date) : new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }));
+  } catch (err) {
+    console.error('🚨 Sitemap: Dynamic blog fetch failed:', err);
+  }
+
   const blogRoutes: MetadataRoute.Sitemap = [
     {
       url: `${SITE_URL}/blog`,
@@ -140,6 +154,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     })),
+    ...dynamicBlogRoutes,
   ];
 
   return [

@@ -14,7 +14,7 @@ export class SupabaseBlogRepository {
     const { data, error } = await this.client
       .from(this.tableName)
       .select('*')
-      .order('date', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(maxResults);
 
     if (error) {
@@ -22,7 +22,13 @@ export class SupabaseBlogRepository {
       return [];
     }
 
-    return (data || []) as BlogPost[];
+    return (data || []).map((post: any) => ({
+      ...post,
+      date: post.published_at ? post.published_at.split('T')[0] : (post.created_at ? post.created_at.split('T')[0] : new Date().toISOString().split('T')[0]),
+      metaDescription: post.meta_description,
+      estimatedReadingTime: post.estimated_reading_time,
+      imageUrl: post.image_url || post.imageUrl,
+    })) as BlogPost[];
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<BlogPost> {
@@ -30,7 +36,16 @@ export class SupabaseBlogRepository {
       .from(this.tableName)
       .insert([
         {
-          ...post,
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          content: post.content,
+          author: post.author,
+          tags: post.tags,
+          meta_description: post.metaDescription,
+          estimated_reading_time: post.estimatedReadingTime,
+          image_url: post.imageUrl,
+          published_at: new Date().toISOString(),
           created_at: new Date().toISOString(),
         },
       ])

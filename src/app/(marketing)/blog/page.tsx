@@ -2,6 +2,10 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
+import { blogService } from '@/entities/blog/api/blogService';
+import { BlogPost } from '@/shared/types/types';
+
+export const revalidate = 3600; // Revalidate every hour
 
 export const metadata: Metadata = {
   title: 'Blog | Richard Automotive — Guías y Consejos de Autos en PR',
@@ -49,13 +53,20 @@ function BlogJsonLd() {
   );
 }
 
-export default function BlogIndexPage() {
-  const sortedArticles = [...SEED_ARTICLES].sort(
+export default async function BlogIndexPage() {
+  let dynamicPosts: BlogPost[] = [];
+  try {
+    dynamicPosts = await blogService.getBlogPosts(50);
+  } catch (err) {
+    console.error('Failed to fetch dynamic blog posts:', err);
+  }
+
+  const allArticles = [...SEED_ARTICLES, ...dynamicPosts].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
-  const featured = sortedArticles[0];
-  const rest = sortedArticles.slice(1);
+  const featured = allArticles[0];
+  const rest = allArticles.slice(1);
 
   return (
     <>

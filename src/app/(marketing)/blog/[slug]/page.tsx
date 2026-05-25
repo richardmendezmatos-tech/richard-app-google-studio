@@ -2,21 +2,43 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
+import { blogService } from '@/entities/blog/api/blogService';
 import Link from 'next/link';
+import { BlogPost } from '@/shared/types/types';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return SEED_ARTICLES.filter((a) => a.slug).map((article) => ({
+  const seedSlugs = SEED_ARTICLES.filter((a) => a.slug).map((article) => ({
     slug: article.slug!,
   }));
+
+  try {
+    const dynamicPosts = await blogService.getBlogPosts(100);
+    const dynamicSlugs = dynamicPosts.map((p) => ({ slug: p.slug }));
+    return [...seedSlugs, ...dynamicSlugs];
+  } catch (err) {
+    return seedSlugs;
+  }
+}
+
+async function getArticle(slug: string): Promise<BlogPost | null> {
+  const seed = SEED_ARTICLES.find((a) => a.slug === slug);
+  if (seed) return { id: 'seed', ...seed } as BlogPost;
+
+  try {
+    const dynamicPosts = await blogService.getBlogPosts(100);
+    return dynamicPosts.find((p) => p.slug === slug) || null;
+  } catch (err) {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = SEED_ARTICLES.find((a) => a.slug === slug);
+  const article = await getArticle(slug);
   if (!article) return {};
 
   return {
@@ -45,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function ArticleJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
+function ArticleJsonLd({ article }: { article: BlogPost }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -79,7 +101,7 @@ function ArticleJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
   );
 }
 
-function BreadcrumbJsonLd({ article }: { article: (typeof SEED_ARTICLES)[0] }) {
+function BreadcrumbJsonLd({ article }: { article: BlogPost }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -267,13 +289,15 @@ function renderMarkdown(content: string) {
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = SEED_ARTICLES.find((a) => a.slug === slug);
+  const article = await getArticle(slug);
 
   if (!article) {
     notFound();
   }
 
-  const relatedArticles = SEED_ARTICLES.filter((a) => a.slug !== slug).slice(0, 3);
+  const dynamicPosts = await blogService.getBlogPosts(50);
+  const allArticles = [...SEED_ARTICLES, ...dynamicPosts] as BlogPost[];
+  const relatedArticles = allArticles.filter((a) => a.slug !== slug).slice(0, 3);
 
   return (
     <>

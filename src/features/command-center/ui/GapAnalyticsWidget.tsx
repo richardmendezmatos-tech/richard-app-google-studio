@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { TrendingDown, AlertCircle, RefreshCw, Zap, ShoppingCart, Loader2 } from 'lucide-react';
+import { TrendingDown, AlertCircle, RefreshCw, Zap, ShoppingCart, Loader2, Newspaper } from 'lucide-react';
 import { createPurchaseOrderDraft } from '@/shared/api/supabase/supabaseClient';
+import { useCreateBlogPost } from '@/features/blog/hooks/useBlog';
 
 interface Gap {
   id: number;
@@ -15,6 +16,8 @@ export const GapAnalyticsWidget: React.FC = () => {
   const [gaps, setGaps] = useState<Gap[]>([]);
   const [loading, setLoading] = useState(true);
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
+  const [generatingBlogId, setGeneratingBlogId] = useState<number | null>(null);
+  const createBlogPost = useCreateBlogPost();
 
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey =
@@ -86,6 +89,49 @@ export const GapAnalyticsWidget: React.FC = () => {
     }
   };
 
+  const handleGenerateBlog = async (gap: Gap) => {
+    setGeneratingBlogId(gap.id);
+    try {
+      const res = await fetch('/api/command-center/blog/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: gap.query,
+          context: `Este artículo debe responder a la búsqueda de un cliente que no encontró lo que buscaba: "${gap.query}". Enfoque educativo y de ventas.`,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Generation failed');
+      const aiIntel = await res.json();
+
+      const slug = aiIntel.title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+
+      await createBlogPost.mutateAsync({
+        title: aiIntel.title,
+        slug: slug,
+        excerpt: aiIntel.excerpt,
+        content: aiIntel.content,
+        author: 'Sentinel IA',
+        tags: aiIntel.tags || ['IA', 'Mercado'],
+        date: new Date().toISOString().split('T')[0],
+        imageUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1000',
+        metaDescription: aiIntel.excerpt,
+      });
+
+      alert(`✅ Artículo generado y publicado: ${aiIntel.title}`);
+    } catch (err) {
+      console.error('Blog Generation Error:', err);
+      alert('Error al generar el blog con IA.');
+    } finally {
+      setGeneratingBlogId(null);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     fetchGaps(controller.signal);
@@ -140,18 +186,33 @@ export const GapAnalyticsWidget: React.FC = () => {
                     "{gap.query}"
                   </span>
                 </div>
-                <button
-                  onClick={() => handleHoustonAnalyze(gap)}
-                  disabled={analyzingId === gap.id}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-400 text-[9px] font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all shadow-lg shadow-cyan-500/10 disabled:opacity-50"
-                >
-                  {analyzingId === gap.id ? (
-                    <Loader2 size={10} className="animate-spin" />
-                  ) : (
-                    <Zap size={10} />
-                  )}
-                  Houston AI
-                </button>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => handleGenerateBlog(gap)}
+                    disabled={generatingBlogId === gap.id}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-[9px] font-black uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all shadow-lg shadow-purple-500/10 disabled:opacity-50"
+                    title="Generar Artículo de Blog"
+                  >
+                    {generatingBlogId === gap.id ? (
+                      <Loader2 size={10} className="animate-spin" />
+                    ) : (
+                      <Newspaper size={10} />
+                    )}
+                    Blog IA
+                  </button>
+                  <button
+                    onClick={() => handleHoustonAnalyze(gap)}
+                    disabled={analyzingId === gap.id}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-400 text-[9px] font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all shadow-lg shadow-cyan-500/10 disabled:opacity-50"
+                  >
+                    {analyzingId === gap.id ? (
+                      <Loader2 size={10} className="animate-spin" />
+                    ) : (
+                      <Zap size={10} />
+                    )}
+                    Houston AI
+                  </button>
+                </div>
               </div>
               <div className="flex justify-between items-center text-[9px] text-slate-500 font-bold uppercase tracking-widest border-t border-slate-100 dark:border-white/5 pt-3">
                 <span className="flex items-center gap-1.5">
