@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { TextStreamChatTransport } from 'ai';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -28,8 +28,11 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
   const [inputValue, setInputValue] = useState('');
 
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
+    transport: new TextStreamChatTransport({
       api: '/api/command-center/ai-advisor',
+      body: {
+        context: businessContext,
+      },
     }),
     messages: [
       {
@@ -133,6 +136,24 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
 
             {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+              {messages.length === 1 && (
+                <div className="grid grid-cols-1 gap-2 mb-4">
+                  {[
+                    '¿Qué me recomiendas hoy?',
+                    'Analiza mis leads más calientes',
+                    '¿Qué unidades debería comprar?',
+                    'Estado de mi flujo de caja',
+                  ].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => sendMessage({ text: suggestion })}
+                      className="text-left p-3 rounded-xl bg-cyan-500/5 border border-cyan-500/10 hover:bg-cyan-500/10 hover:border-cyan-500/30 text-[10px] font-bold text-cyan-400 uppercase tracking-tight transition-all"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
               {messages.map((m) => {
                 const text =
                   ((m.parts as any[])?.find((p) => p.type === 'text') as any)?.text ??

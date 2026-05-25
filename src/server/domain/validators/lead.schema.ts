@@ -78,6 +78,15 @@ export const LeadSchema = z
         intentTrajectory: z.enum(['improving', 'stable', 'declining']).optional(),
       })
       .optional(),
+    customer_memory: z
+      .object({
+        last_seen: z.string().optional(),
+        whatsapp_messages: z.number().optional(),
+        preferred_contact_method: z.string().optional(),
+        search_intent_summary: z.string().optional(),
+      })
+      .catchall(z.any())
+      .optional(),
     emailSequence: z
       .object({
         welcome1SentAt: DateSchema.optional(),

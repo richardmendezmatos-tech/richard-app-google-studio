@@ -1,5 +1,4 @@
-import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export const maxDuration = 60;
 
@@ -7,10 +6,7 @@ export async function POST(req: Request) {
   try {
     const { messages, context } = await req.json();
 
-    const result = streamText({
-      model: google('gemini-2.0-flash'),
-      messages,
-      system: `
+    const systemPrompt = `
         ESTÁS OPERANDO COMO: "SENTINEL CORE ADVISOR - NIVEL 24"
         ROL: Eres el asesor táctico personal de Richard Méndez. Tu objetivo es maximizar la eficiencia del Command Center y el ROI de Richard Automotive.
 
@@ -27,10 +23,49 @@ export async function POST(req: Request) {
         5. Proporciona recomendaciones accionables (ej: "Sube el budget de ads para SUVs" o "Llama a Juan del banco X para este caso difícil").
 
         Si Richard pregunta "¿Qué me recomiendas?", realiza una auditoría rápida de los datos proporcionados y entrega 3 puntos estratégicos inmediatos.
-      `,
+
+        GUÍA DE ANÁLISIS DE DATOS:
+        - Si leads_last_24h es bajo (< 5): Sugiere revisar ads o contenido viral.
+        - Si el avg_score es alto (> 70): Felicítalo por la calidad del tráfico.
+        - Si hay "Hot Leads" sin "nudgeSent": Recomienda disparar los seguimientos IA de inmediato.
+        - Si hay "Purchase Orders" pendientes: Recuérdale que el inventario se mueve rápido.
+      `;
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      systemInstruction: systemPrompt,
     });
 
-    return result.toTextStreamResponse();
+    const lastMessage = messages[messages.length - 1];
+    const history = messages.slice(0, -1).map((m: any) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content || '' }],
+    }));
+
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessageStream(lastMessage?.content || '');
+
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of result.stream) {
+          const delta = chunk.text();
+          if (delta) {
+            controller.enqueue(encoder.encode(delta));
+          }
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
   } catch (error: any) {
     console.error('[AI Advisor API] Error:', error);
     return new Response(JSON.stringify({ error: error.message || 'Internal AI Error' }), {

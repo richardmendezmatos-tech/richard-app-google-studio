@@ -42,26 +42,27 @@ export class WhatsAppAgentService {
 
       if (existing && existing.id) {
         // Update existing lead activity
+        const currentMemory = existing.customer_memory || {};
         await this.leadRepo.updateLead(existing.id, {
           customer_memory: {
-            ...(existing.customer_memory as any || {}),
+            ...currentMemory,
             last_seen: new Date().toISOString(),
-            whatsapp_messages: ((existing.customer_memory as any)?.whatsapp_messages || 0) + messageCount,
+            whatsapp_messages: (Number(currentMemory.whatsapp_messages) || 0) + messageCount,
           },
-        } as any);
+        });
       } else {
         // Create new lead from WhatsApp
         await this.leadRepo.create({
           phone: cleanPhone,
-          first_name: 'WhatsApp',
-          last_name: 'Lead',
+          firstName: 'WhatsApp',
+          lastName: 'Lead',
           status: 'new',
-          source: 'whatsapp',
+          email: `${cleanPhone}@whatsapp.com`,
           customer_memory: {
             last_seen: new Date().toISOString(),
             whatsapp_messages: 1,
           },
-        } as any);
+        });
         console.log(`[WhatsAppAgentService] ✅ Nuevo lead creado desde WhatsApp: ${cleanPhone}`);
       }
     } catch (err) {

@@ -48,7 +48,13 @@ export interface Lead {
     preferredType?: string;
     budget?: number;
   };
-  customer_memory?: Record<string, unknown>;
+  customer_memory?: {
+    last_seen?: string;
+    whatsapp_messages?: number;
+    preferred_contact_method?: string;
+    search_intent_summary?: string;
+    [key: string]: unknown;
+  };
   behavioralMetrics?: {
     timeOnSite?: number;
     inventoryViews?: number;
