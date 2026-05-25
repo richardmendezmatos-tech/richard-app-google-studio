@@ -177,7 +177,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
       <SEO
         title={`${car.name} | Richard Automotive`}
         description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
-        image={car.img}
+        image={car.image || car.img || car.images?.[0] || ''}
         url={`/inventario/${slug || generateVehicleSlug(car)}/${car.id}`}
         type="product"
       />
@@ -558,7 +558,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               >
                 <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-slate-900/20">
                   <Image
-                    src={item.image || item.img || item.images?.[0] || '/images/placeholders/car.webp'}
+                    src={item.image || item.img || item.images?.[0] || '/placeholder-car.webp'}
                     alt={item.name}
                     fill
                     className="object-contain transition-transform duration-700 group-hover:scale-110"

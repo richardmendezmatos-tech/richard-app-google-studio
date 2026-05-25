@@ -1,4 +1,4 @@
-import { uploadVehicleImages as uploadToSupabase } from '@/shared/api/storage/storageService';
+import { uploadVehicleImages as uploadToSupabase } from '@/shared/api/supabase/storage';
 import { Car } from '@/entities/inventory/model/types';
 
 let _supabase: any = null;
@@ -28,8 +28,8 @@ const mapRowToVehicle = (item: any): Vehicle => {
     year,
     price: item.price || 0,
     mileage: item.mileage || 0,
-    image: item.images?.[0] || item.image_url || item.img || '/images/placeholders/car.webp',
-    images: item.images || (item.image_url ? [item.image_url] : []),
+    image: item.images?.[0] || '/placeholder-car.webp',
+    images: item.images || [],
     status: (item.status || 'available').toLowerCase() as any,
     condition: condition as any,
     type: (item.body_style || item.type || 'suv').toLowerCase(),
@@ -45,7 +45,7 @@ export const getInventory = async (dealerId: string): Promise<Vehicle[]> => {
   const sb = await getSupabase();
   if (!sb) return [];
 
-  const { data, error } = await sb.from('inventory').select('make, model, year, name, condition, vin, id, price, mileage, images, image_url, img, status, body_style, type, exterior_color, color, category, dealer_id').eq('dealer_id', dealerId).limit(100);
+  const { data, error } = await sb.from('inventory').select('make, model, year, name, condition, vin, id, price, mileage, images, status, body_style, type, exterior_color, color, category, dealer_id').eq('dealer_id', dealerId).limit(100);
 
   if (error) {
     console.error('[InventoryService] Error fetching inventory:', error);

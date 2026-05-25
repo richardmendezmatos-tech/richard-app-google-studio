@@ -88,7 +88,7 @@ export const calculatePredictiveDTS = (
   }
 
   // 6. Calidad de Presentación
-  if (!car.img) {
+  if (!car.image && !car.img && !car.images?.length) {
     baseDays += 30; // Un carro sin foto no se vende
     score -= 20;
   }

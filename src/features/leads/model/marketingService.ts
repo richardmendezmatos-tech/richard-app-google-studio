@@ -119,9 +119,10 @@ export const generateCarMarketingContent = async (
 
   let contents: any[] = [prompt];
 
-  if (car.img) {
+  const carImage = car.image || car.img || car.images?.[0];
+  if (carImage) {
     try {
-      const imgResponse = await fetch(car.img);
+      const imgResponse = await fetch(carImage);
       const blob = await imgResponse.blob();
       const base64Data = await blobToBase64(blob);
       const base64Content = base64Data.split(',')[1];

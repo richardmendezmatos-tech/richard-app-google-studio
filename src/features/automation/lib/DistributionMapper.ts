@@ -33,7 +33,7 @@ export class DistributionMapper {
       titulo: `${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''}`,
       precio: car.price || 0,
       descripcion: car.description || `${car.make} ${car.model} disponible en Richard Automotive.`,
-      fotos: car.images || (car.img ? [car.img] : []),
+      fotos: car.images || (car.image ? [car.image] : car.img ? [car.img] : []),
       pueblo: SITE_CONFIG.contact.address.split(',')[0].trim() || 'Vega Alta',
       telefono: SITE_CONFIG.contact.phone,
       condicion: car.condition === 'new' ? 'Nuevo' : 'Usado',
@@ -52,7 +52,7 @@ export class DistributionMapper {
       price: car.price || 0,
       condition: car.condition === 'new' ? 'new' : 'used',
       category: 'vehicles',
-      images: car.images || (car.img ? [car.img] : []),
+      images: car.images || (car.image ? [car.image] : car.img ? [car.img] : []),
       location: SITE_CONFIG.contact.address,
     };
   }

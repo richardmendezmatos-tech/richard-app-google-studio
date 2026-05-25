@@ -121,7 +121,7 @@ const Storefront: React.FC<Props> = ({
                     item: {
                       '@type': 'Product',
                       name: car.name || 'Vehículo Richard Automotive',
-                      image: car.img || car.image,
+                      image: car.image || car.img || car.images?.[0] || '',
                       description: `${car.type || 'Auto'} nuevo o certificado por Richard Automotive.`,
                       brand: { '@type': 'Brand', name: (car.name || 'Auto').split(' ')[0] },
                       offers: {

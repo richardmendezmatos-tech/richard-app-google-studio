@@ -555,7 +555,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                           <div className="w-full md:w-48 h-32 bg-white/5 rounded-2xl p-2 flex items-center justify-center shrink-0 relative overflow-hidden">
                             <img
-                              src={car.img}
+                              src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
                               alt={car.name}
                               className="max-w-full max-h-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                             />

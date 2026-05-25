@@ -77,10 +77,10 @@ const DealSheet = React.forwardRef<HTMLDivElement, DealSheetProps>(({ lead, car 
                   <div className="text-lg font-bold capitalize">{car.type}</div>
                 </div>
               </div>
-              {car.img && (
+              {(car.image || car.img || car.images?.[0]) && (
                 <div className="mt-4 border border-slate-200 rounded-xl overflow-hidden h-32 w-full">
                   <img
-                    src={car.img}
+                    src={car.image || car.img || car.images?.[0]}
                     alt={car.name}
                     className="w-full h-full object-cover"
                     loading="lazy"

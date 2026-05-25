@@ -179,7 +179,7 @@ const ComparisonView: React.FC = () => {
                   </button>
                   <div className="aspect-video mb-4 flex items-center justify-center">
                     <img
-                      src={car.img}
+                      src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
                       alt={car.name}
                       className="max-w-full max-h-full object-contain drop-shadow-xl"
                     />

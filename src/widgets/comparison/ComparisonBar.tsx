@@ -26,7 +26,7 @@ const ComparisonBar: React.FC = () => {
           {selectedCars.map((car) => (
             <div key={car.id} className="relative group shrink-0">
               <img
-                src={car.img}
+                src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
                 alt={car.name}
                 className="w-16 h-12 object-contain bg-white/5 rounded-lg border border-white/10"
               />

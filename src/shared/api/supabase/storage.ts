@@ -41,3 +41,26 @@ export const storageService = {
     return publicUrl;
   },
 };
+
+export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
+  const supabase = createClient();
+  const uploadPromises = files.map(async (file) => {
+    const fileName = `${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi, '_')}`;
+    const filePath = `${vin}/${fileName}`;
+
+    const { error } = await supabase.storage.from('inventory').upload(filePath, file);
+
+    if (error) {
+      console.error(`[Storage] Vehicle image upload failed for VIN ${vin}:`, error);
+      throw error;
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('inventory').getPublicUrl(filePath);
+
+    return publicUrl;
+  });
+
+  return Promise.all(uploadPromises);
+};

@@ -120,7 +120,7 @@ function VehicleJsonLd({ car }: { car?: Car }) {
     fuelType: car.fuel || car.fuelType,
     vehicleTransmission: car.transmission,
     vehicleEngine: car.engine ? { '@type': 'EngineSpecification', name: car.engine } : undefined,
-    image: car.img || car.image,
+    image: car.image || car.img || car.images?.[0] || '',
     itemCondition:
       car.condition === 'new'
         ? 'https://schema.org/NewCondition'

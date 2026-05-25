@@ -35,7 +35,7 @@ export async function GET() {
 
   const { data: inventory, error } = await supabase
     .from('inventory')
-    .select('id, make, model, year, trim, color, description, vin, type, transmission, mileage, price, condition, image, img, fuel, fuelType, status')
+    .select('id, make, model, year, trim, color, description, vin, type, transmission, mileage, price, condition, images, fuel, fuelType, status')
     .eq('status', 'available')
     .limit(100);
 
@@ -104,7 +104,7 @@ export async function GET() {
     <state_of_vehicle>${car.condition === 'new' ? 'new' : 'used'}</state_of_vehicle>
     <url>${vehicleUrl}</url>
     <image>
-      <url>${escapeXml(car.image || car.img)}</url>
+      <url>${escapeXml(car.image || car.img || car.images?.[0] || '')}</url>
     </image>
     <description>${cleanDescription}</description>
     <body_style>${cleanBodyStyle}</body_style>
