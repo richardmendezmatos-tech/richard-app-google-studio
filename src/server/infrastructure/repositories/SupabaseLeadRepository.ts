@@ -12,6 +12,29 @@ export class SupabaseLeadRepository implements LeadRepository {
     return data as unknown as Lead;
   }
 
+  async findByPhone(phone: string): Promise<Lead | null> {
+    const supabase = createServerSupabaseClient();
+    const clean = phone.replace('whatsapp:', '').replace(/\s/g, '');
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select('id, first_name, last_name, email, phone, status, created_at, updated_at, customer_memory, ai_analysis, vehicle_id, vehicle_of_interest, is_hot, responded, email_sequence')
+      .eq('phone', clean)
+      .maybeSingle();
+    if (error) return null;
+    return data as unknown as Lead;
+  }
+
+  async create(data: Lead): Promise<string> {
+    const supabase = createServerSupabaseClient();
+    const { data: inserted, error } = await supabase
+      .from(this.tableName)
+      .insert(data)
+      .select('id')
+      .single();
+    if (error) throw error;
+    return inserted.id;
+  }
+
   async getHotLeads(limit: number): Promise<Lead[]> {
     const supabase = createServerSupabaseClient();
     const { data, error } = await supabase

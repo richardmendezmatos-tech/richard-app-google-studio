@@ -2,6 +2,7 @@ import { Lead } from '../entities';
 
 export interface LeadRepository {
   getById(id: string): Promise<Lead | null>;
+  findByPhone(phone: string): Promise<Lead | null>;
   getHotLeads(limit: number): Promise<Lead[]>;
   getStaleLeads(days: number, limit: number): Promise<Lead[]>;
   getLeadsByVehicleId(vehicleId: string): Promise<Lead[]>;
@@ -15,3 +16,4 @@ export interface LeadRepository {
   ): Promise<Lead[]>;
   getGarageByUserId(userId: string): Promise<any[]>;
 }
+
