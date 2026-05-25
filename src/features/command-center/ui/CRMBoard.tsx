@@ -366,7 +366,7 @@ const SortableLeadItem = ({ lead, userRole }: { lead: Lead; userRole: UserRole }
 
 const CRMBoard: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>(() => {
-    if (localStorage.getItem('e2e_bypass') === 'true') {
+    if (typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') === 'true') {
       return [
         {
           id: 'e2e-mock-lead',
@@ -402,7 +402,7 @@ const CRMBoard: React.FC = () => {
     const unsubscribe = subscribeToLeads((newLeads) => {
       if (newLeads.length > 0) {
         setLeads(newLeads);
-      } else if (localStorage.getItem('e2e_bypass') !== 'true') {
+      } else if (typeof window !== 'undefined' && localStorage.getItem('e2e_bypass') !== 'true') {
         setLeads([]);
       }
       setLoading(false);
@@ -549,19 +549,20 @@ const CRMBoard: React.FC = () => {
           })}
         </div>
       </div>
-      {createPortal(
-        <DragOverlay>
-          {activeId ? (
-            <LeadCard
-              lead={leads.find((l) => l.id === activeId)!}
-              onPrint={() => {}}
-              userRole={userRole}
-              isOverlay
-            />
-          ) : null}
-        </DragOverlay>,
-        document.body,
-      )}
+      {typeof window !== 'undefined' &&
+        createPortal(
+          <DragOverlay>
+            {activeId ? (
+              <LeadCard
+                lead={leads.find((l) => l.id === activeId)!}
+                onPrint={() => {}}
+                userRole={userRole}
+                isOverlay
+              />
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
     </DndContext>
   );
 };

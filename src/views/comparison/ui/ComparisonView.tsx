@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { useComparison } from '@/features/comparison';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft, Crown, Sparkles, X } from 'lucide-react';
@@ -179,7 +180,7 @@ const ComparisonView: React.FC = () => {
                   </button>
                   <div className="aspect-video mb-4 flex items-center justify-center">
                     <img
-                      src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+                      src={getCarImage(car)}
                       alt={car.name}
                       className="max-w-full max-h-full object-contain drop-shadow-xl"
                     />

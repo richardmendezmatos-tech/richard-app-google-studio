@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 import { Car } from '@/entities/inventory';
 import { analyzeCarImage } from '@/shared/api/ai/geminiService';
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';
 
@@ -555,7 +556,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                           <div className="w-full md:w-48 h-32 bg-white/5 rounded-2xl p-2 flex items-center justify-center shrink-0 relative overflow-hidden">
                             <img
-                              src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+                              src={getCarImage(car)}
                               alt={car.name}
                               className="max-w-full max-h-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                             />

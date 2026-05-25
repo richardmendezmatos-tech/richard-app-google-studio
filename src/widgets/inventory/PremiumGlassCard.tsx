@@ -5,6 +5,7 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
 import Script from 'next/script';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
@@ -159,7 +160,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
         {/* Image */}
         <OptimizedImage
-          src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+          src={getCarImage(car)}
           alt={`${car.year} ${car.make} ${car.model} en venta Puerto Rico - Richard Automotive`}
           priority={priority}
           width={500}

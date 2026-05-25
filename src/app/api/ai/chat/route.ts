@@ -84,22 +84,26 @@ export async function POST(req: Request) {
     }));
 
     const chat = model.startChat({ history });
-    const result = await chat.sendMessage(lastMessage?.content || '');
-    const text = result.response.text();
+    const result = await chat.sendMessageStream(lastMessage?.content || '');
 
-    // SSE format compatible with @ai-sdk/react useChat
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
-      start(controller) {
-        controller.enqueue(encoder.encode(`data: {"type":"text","text":${JSON.stringify(text)}}\n\n`));
-        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+      async start(controller) {
+        let full = '';
+        for await (const chunk of result.stream) {
+          const delta = chunk.text();
+          if (delta) {
+            full += delta;
+            controller.enqueue(encoder.encode(delta));
+          }
+        }
         controller.close();
       },
     });
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
+        'Content-Type': 'text/plain',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
       },

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Smartphone, Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
 
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import CommandCenterLayout, { CommandCenterContextType } from './CommandCenterLayout';
 
 // Lazy imports for admin tabs
@@ -115,7 +116,7 @@ const MarketingWrapper = () => {
               className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-2xl border border-white/5 hover:border-primary hover:bg-slate-800 transition-all text-left group"
             >
               <img
-                src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+                src={getCarImage(car)}
                 alt={car.name}
                 className="w-12 h-12 rounded-lg object-cover"
                 loading="lazy"

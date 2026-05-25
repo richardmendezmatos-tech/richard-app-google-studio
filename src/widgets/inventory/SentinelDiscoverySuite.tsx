@@ -23,6 +23,7 @@ import {
   Search,
   Loader2,
 } from 'lucide-react';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
@@ -390,7 +391,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 >
                   <div className="h-32 w-full relative overflow-hidden bg-slate-900">
                     <OptimizedImage
-                      src={car.image || car.img || '/placeholder-car.webp'}
+                      src={getCarImage(car)}
                       alt={car.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -449,7 +450,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
           >
             <div className="h-64 sm:h-72 w-full relative bg-slate-900">
               <OptimizedImage
-                src={currentSwipeCar.image || currentSwipeCar.img || '/placeholder-car.webp'}
+                src={getCarImage(currentSwipeCar)}
                 alt={currentSwipeCar.name}
                 className="w-full h-full object-cover"
               />
@@ -534,20 +535,20 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
               </span>
               <div className="flex gap-2 overflow-x-auto pb-2 justify-center">
                 {likedList.map((likedCar, idx) => (
-                  <div
-                    key={`${likedCar.id}-${idx}`}
-                    onClick={() =>
-                      navigate(`/inventario/${generateVehicleSlug(likedCar)}/${likedCar.id}`)
-                    }
-                    className="h-10 w-10 rounded-full border border-rose-500/40 overflow-hidden shrink-0 cursor-pointer hover:scale-110 transition-transform relative group"
-                    title={likedCar.name}
-                  >
-                    <OptimizedImage
-                      src={likedCar.image || likedCar.img || '/placeholder-car.webp'}
-                      alt={likedCar.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                    <div
+                      key={`${likedCar.id}-${idx}`}
+                      onClick={() =>
+                        navigate(`/inventario/${generateVehicleSlug(likedCar)}/${likedCar.id}`)
+                      }
+                      className="h-10 w-10 rounded-full border border-rose-500/40 overflow-hidden shrink-0 cursor-pointer hover:scale-110 transition-transform relative group"
+                      title={likedCar.name}
+                    >
+                      <OptimizedImage
+                        src={getCarImage(likedCar)}
+                        alt={likedCar.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                 ))}
               </div>
             </div>
@@ -676,7 +677,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                     >
                       <div className="h-20 w-20 rounded-xl overflow-hidden shrink-0 border border-white/5">
                         <OptimizedImage
-                          src={car.image || car.img || '/placeholder-car.webp'}
+                          src={getCarImage(car)}
                           alt={car.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />

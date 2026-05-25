@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { useComparison } from '@/features/comparison';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { X, ArrowRight, GitCompare } from 'lucide-react';
@@ -26,7 +27,7 @@ const ComparisonBar: React.FC = () => {
           {selectedCars.map((car) => (
             <div key={car.id} className="relative group shrink-0">
               <img
-                src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+                src={getCarImage(car)}
                 alt={car.name}
                 className="w-16 h-12 object-contain bg-white/5 rounded-lg border border-white/10"
               />

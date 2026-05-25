@@ -4,6 +4,7 @@ import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
 import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
@@ -92,7 +93,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           </div>
 
           <OptimizedImage
-            src={car.image || car.img || car.images?.[0] || '/placeholder-car.webp'}
+            src={getCarImage(car)}
             alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
             className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
             aspectRatio="aspect-[4/3]"

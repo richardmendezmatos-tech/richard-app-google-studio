@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Car } from '@/shared/types/types';
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { compareCars } from '@/shared/api/ai';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -207,7 +208,7 @@ const UnitPanel = ({ car, side, isWinner, isLoser, stats }: any) => {
       <div className="relative mb-8 w-full max-w-xl group">
         <motion.img
           layoutId={`car-img-${car.id}`}
-          src={car.img || car.image || car.images?.[0] || '/placeholder-car.webp'}
+          src={getCarImage(car)}
           alt={car.name}
           className={`w-full object-contain drop-shadow-[0_30px_60px_rgba(34,211,238,0.2)] ${side === 'right' ? '-scale-x-100' : ''}`}
         />

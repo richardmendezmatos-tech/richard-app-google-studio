@@ -43,6 +43,7 @@ const Viewer360 = React.lazy(() =>
 const PreQualifyView = React.lazy(() =>
   import('@/views/leads/ui/PreQualifyView').then((m) => ({ default: m.default })),
 );
+import { getCarImage } from '@/entities/inventory/lib/carImage';
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
@@ -558,7 +559,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               >
                 <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-slate-900/20">
                   <Image
-                    src={item.image || item.img || item.images?.[0] || '/placeholder-car.webp'}
+                    src={getCarImage(item)}
                     alt={item.name}
                     fill
                     className="object-contain transition-transform duration-700 group-hover:scale-110"

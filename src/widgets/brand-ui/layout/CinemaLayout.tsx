@@ -4,8 +4,10 @@
 import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } from 'react';
 import { Menu, Car as CarIcon } from 'lucide-react';
 import { Link } from '@/shared/lib/next-route-adapter';
-import Sidebar from '@/widgets/brand-ui/layout/Sidebar';
+import dynamic from 'next/dynamic';
 import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
+
+const Sidebar = dynamic(() => import('@/widgets/brand-ui/layout/Sidebar'), { ssr: false });
 import SentinelFlashTicker from '@/widgets/brand-ui/layout/SentinelFlashTicker';
 import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
 import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
