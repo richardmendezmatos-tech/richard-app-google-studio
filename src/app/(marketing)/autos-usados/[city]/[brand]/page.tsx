@@ -2,35 +2,21 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/views/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { seoService } from '@/entities/inventory/api/adapters/seoService';
 import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
-
 import { CITIES_PR as CITIES } from '@/shared/config/cities';
-
-const BRANDS: Record<string, { name: string; slug: string; keywords: string[] }> = {
-  ford: { name: 'Ford', slug: 'ford', keywords: ['F-150', 'Explorer', 'Mustang', 'Ranger'] },
-  hyundai: {
-    name: 'Hyundai',
-    slug: 'hyundai',
-    keywords: ['Tucson', 'Elantra', 'Santa Fe', 'Palisade'],
-  },
-  freightliner: {
-    name: 'Freightliner',
-    slug: 'freightliner',
-    keywords: ['M2 106', 'Cascadia', 'Business Class'],
-  },
-  toyota: { name: 'Toyota', slug: 'toyota', keywords: ['Tacoma', 'Corolla', 'RAV4', 'Highlander'] },
-};
 
 interface Props {
   params: Promise<{ city: string; brand: string }>;
 }
 
 export async function generateStaticParams() {
+  const brands = await seoService.getUniqueBrands();
   const params: any[] = [];
   Object.keys(CITIES).forEach((city) => {
-    Object.keys(BRANDS).forEach((brand) => {
+    brands.forEach((brand) => {
       params.push({ city, brand });
     });
   });
@@ -40,18 +26,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug, brand: brandSlug } = await params;
   const city = CITIES[citySlug];
-  const brand = BRANDS[brandSlug];
+  const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
 
-  if (!city || !brand) return {};
+  if (!city) return {};
 
-  const title = `Venta de ${brand.name} en ${city.name}, PR | Richard Automotive`;
-  const description = `Buscas un ${brand.name} en ${city.name}? Richard Automotive tiene el mejor inventario de ${brand.name} usados y certificados en la zona de ${city.region}. Financiamiento desde 4.9% APR y aprobación rápida.`;
+  const title = `Venta de ${brandName} en ${city.name}, PR | Richard Automotive`;
+  const description = `Buscas un ${brandName} en ${city.name}? Richard Automotive tiene el mejor inventario de ${brandName} usados y certificados en la zona de ${city.region}. Financiamiento desde 4.9% APR y aprobación rápida.`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `https://richard-automotive.com/autos-usados/${city.slug}/${brand.slug}`,
+      canonical: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
     },
   };
 }
@@ -59,31 +45,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CityBrandPage({ params }: Props) {
   const { city: citySlug, brand: brandSlug } = await params;
   const city = CITIES[citySlug];
-  const brand = BRANDS[brandSlug];
+  const brandName = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
 
-  if (!city || !brand) {
+  if (!city) {
     notFound();
   }
 
   let inventory: Car[] = [];
   try {
-    const result = await getPaginatedCars(50, null, 'all');
+    const result = await getPaginatedCars(100, null, 'all');
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for city+brand page:', error);
   }
 
-  // High-performance filter
+  // High-performance filter by brand
   const filteredInventory = inventory.filter((car: Car) =>
-    (car.name || '').toLowerCase().includes(brand.slug.toLowerCase()),
+    (car.make || '').toLowerCase() === brandSlug.toLowerCase(),
   );
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
-    name: `Richard Automotive — ${brand.name} en ${city.name}`,
-    description: `Dealer especializado en ${brand.name} para residentes de ${city.name}, Puerto Rico.`,
-    url: `https://richard-automotive.com/autos-usados/${city.slug}/${brand.slug}`,
+    name: `Richard Automotive — ${brandName} en ${city.name}`,
+    description: `Dealer especializado en ${brandName} para residentes de ${city.name}, Puerto Rico.`,
+    url: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
     telephone: BUSINESS_CONTACT.phone,
     address: {
       '@type': 'PostalAddress',
@@ -108,8 +94,8 @@ export default async function CityBrandPage({ params }: Props) {
       <Suspense fallback={null}>
         <Storefront
           inventory={filteredInventory}
-          customTitle={`Inventario ${brand.name} en ${city.name}, PR`}
-          customDescription={`Disfruta de la mejor selección de unidades ${brand.name} en ${city.name}. Solo en Richard Automotive.`}
+          customTitle={`Inventario ${brandName} en ${city.name}, PR`}
+          customDescription={`Disfruta de la mejor selección de unidades ${brandName} en ${city.name}. Solo en Richard Automotive.`}
         />
       </Suspense>
     </>
