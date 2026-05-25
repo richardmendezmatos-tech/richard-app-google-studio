@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepository';
+import { whatsappAgentService } from '@/server/services/whatsappAgentService';
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'sentinel_richard_2024';
 const APP_SECRET = process.env.WHATSAPP_APP_SECRET || '';
+const WA_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || '';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -18,6 +20,40 @@ export async function GET(req: Request) {
 
   console.warn('[WhatsApp Webhook] Intento de suscripción fallido. Token incorrecto.');
   return new Response('Verification failed', { status: 403 });
+}
+
+/**
+ * Sends a reply back to WhatsApp via the Meta Cloud API.
+ */
+async function sendWhatsAppReply(phoneNumberId: string, to: string, text: string): Promise<void> {
+  if (!WA_ACCESS_TOKEN) {
+    console.warn('[WhatsApp Webhook] WHATSAPP_ACCESS_TOKEN no configurado. No se puede enviar respuesta.');
+    return;
+  }
+
+  const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
+  const payload = {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'text',
+    text: { body: text },
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${WA_ACCESS_TOKEN}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`[WhatsApp Webhook] Error enviando respuesta a ${to}:`, err);
+  } else {
+    console.log(`[WhatsApp Webhook] Respuesta enviada a ${to} via ${phoneNumberId}`);
+  }
 }
 
 export async function POST(req: Request) {
@@ -71,15 +107,14 @@ export async function POST(req: Request) {
                 phoneNumberId,
                 timestamp: status.timestamp,
               });
-              // Aquí enlazaremos con la actualización de base de datos de leads en el futuro
             }
           }
 
-          // Procesamiento de Mensajes Entrantes Crudos (Messages)
+          // 🤖 Procesamiento de Mensajes Entrantes → Houston AI
           if (value.messages && Array.isArray(value.messages)) {
             for (const message of value.messages) {
               const sender = message.from;
-              const textContent = message.text?.body || '[Contenido Multimedia/Interactivo]';
+              const textContent = message.text?.body || '';
 
               console.log(
                 `[WhatsApp Webhook] Nuevo mensaje de ${sender} (Cuenta ID: ${phoneNumberId}): ${textContent}`,
@@ -91,6 +126,25 @@ export async function POST(req: Request) {
                 text: textContent,
                 phoneNumberId,
               });
+
+              // Solo procesamos mensajes de texto con Houston AI
+              if (message.type === 'text' && textContent) {
+                try {
+                  // Usamos el número de teléfono del remitente como leadId temporal
+                  const reply = await whatsappAgentService.processInboundMessage(sender, textContent);
+
+                  // Enviamos la respuesta de vuelta al cliente
+                  if (reply && phoneNumberId) {
+                    await sendWhatsAppReply(phoneNumberId, sender, reply);
+                  }
+                } catch (agentError) {
+                  console.error('[WhatsApp Webhook] Error en Houston AI:', agentError);
+                  await audit.log('error', 'Houston AI falló al procesar mensaje', {
+                    sender,
+                    error: agentError instanceof Error ? agentError.message : String(agentError),
+                  });
+                }
+              }
             }
           }
         }
@@ -104,3 +158,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Fallo en procesamiento de Webhook' }, { status: 500 });
   }
 }
+
