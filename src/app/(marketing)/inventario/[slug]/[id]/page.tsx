@@ -12,7 +12,7 @@ interface Props {
 
 // Sentinel N23.4: Hardened Dynamic Routing
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   try {
