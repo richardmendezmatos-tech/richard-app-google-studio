@@ -86,8 +86,23 @@ export default async function InventoryRoute() {
       <main className="relative min-h-screen pt-24 bg-[#0a0a0a]">
         <Suspense
           fallback={
-            <div className="flex h-[50vh] items-center justify-center">
-              <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+            <div className="w-full p-4 md:p-6 lg:p-8 space-y-8 animate-pulse">
+              <div className="h-16 w-full rounded-2xl bg-white/5 border border-white/5" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="flex flex-col rounded-3xl border border-white/5 bg-slate-900/50 p-5 space-y-4">
+                    <div className="w-full aspect-[16/10] rounded-2xl bg-white/5" />
+                    <div className="space-y-3">
+                      <div className="h-6 w-3/4 rounded-lg bg-white/5" />
+                      <div className="h-4 w-1/2 rounded-lg bg-white/5" />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <div className="h-5 w-16 rounded-full bg-white/5" />
+                      <div className="h-5 w-16 rounded-full bg-white/5" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           }
         >

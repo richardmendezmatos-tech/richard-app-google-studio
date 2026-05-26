@@ -29,7 +29,7 @@ const GlassContainer = dynamic(
 );
 const StorefrontResultsGrid = dynamic(
   () => import('@/widgets/inventory/StorefrontResultsGrid'),
-  { ssr: false },
+  { ssr: true },
 );
 const StorefrontComparisonBar = dynamic(
   () => import('@/widgets/comparison/StorefrontComparisonBar'),

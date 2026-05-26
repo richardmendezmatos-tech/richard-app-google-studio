@@ -297,8 +297,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           to { opacity: 1; }
         }
         @keyframes heroSlideIn {
-          from { opacity: 0; transform: translateX(-20px); filter: blur(10px); }
-          to { opacity: 1; transform: translateX(0); filter: blur(0px); }
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         @keyframes heroFadeRight {
           from { opacity: 0; transform: translateX(20px); }

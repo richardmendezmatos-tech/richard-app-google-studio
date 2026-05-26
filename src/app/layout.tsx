@@ -118,6 +118,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mcp:tool" content="bono-300" />
         <meta name="mcp:tool" content="trade-in" />
         <meta name="mcp:tool" content="contact" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webmcpJsonLd) }}
+        />
       </head>
       <body className="bg-slate-950 text-white min-h-screen">
         <a
@@ -127,18 +135,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Saltar al contenido principal
         </a>
         <PerformanceInitializer />
-        <Script
-          id="person-jsonld"
-          type="application/ld+json"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <Script
-          id="webmcp-jsonld"
-          type="application/ld+json"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webmcpJsonLd) }}
-        />
         {process.env.NODE_ENV === 'development' && (
           <Script
             id="e2e-bypass-script"
