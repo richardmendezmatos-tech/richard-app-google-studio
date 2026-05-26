@@ -53,6 +53,7 @@
     "@google/genai": "^2.2.0",
     "@google/generative-ai": "^0.24.1",
     "@ionic/pwa-elements": "^3.4.0",
+    "@marsidev/react-turnstile": "^1.5.2",
     "@notionhq/client": "^5.20.0",
     "@sendgrid/mail": "^8.1.6",
     "@serwist/next": "^9.5.11",
@@ -61,6 +62,8 @@
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "@tanstack/react-query": "^5.95.2",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/node": "^5.8.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -110,7 +113,6 @@
     }
   },
   "devDependencies": {
-    "@types/canvas-confetti": "^1.9.0",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
     "@eslint/js": "^10.0.1",
@@ -122,6 +124,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/cheerio": "^0.22.35",
     "@types/dompurify": "^3.0.5",
     "@types/jspdf": "^2.0.0",

@@ -1,10 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-
-// Sentinel N20: Anti-Spam Rate Limiting Engine (Edge Persistent Map per instance)
-const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
-const LIMIT = 5; // 5 requests
-const WINDOW = 60 * 1000; // per minute
+import { checkRateLimit } from '@/lib/rateLimit';
 
 /**
  * Richard Automotive Global Proxy (Sentinel N24-PRO Edge)
@@ -16,30 +12,39 @@ export async function proxy(request: NextRequest) {
   const ip =
     (request as any).ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'anonymous';
 
-  // 0. Sentinel N20: Anti-Spam Rate Limiting
-  const protectedApiRoutes = [
-    '/api/webhooks/leads',
-    '/api/ai/chat',
-    '/api/command-center/telemetry',
-    '/api/command-center/intelligence',
+  // 0. Sentinel N20: Anti-Spam Rate Limiting (with Upstash fallback)
+  const protectedApiRoutes: { route: string; limit: number; windowMs: number }[] = [
+    { route: '/api/webhooks/leads', limit: 5, windowMs: 60_000 },
+    { route: '/api/ai/chat', limit: 10, windowMs: 60_000 },
+    { route: '/api/leads', limit: 3, windowMs: 60_000 },
+    { route: '/api/command-center/telemetry', limit: 30, windowMs: 60_000 },
+    { route: '/api/command-center/intelligence', limit: 20, windowMs: 60_000 },
+    { route: '/api/command-center/ai-advisor', limit: 10, windowMs: 60_000 },
+    { route: '/api/command-center/blog/generate', limit: 5, windowMs: 60_000 },
+    { route: '/api/command-center/nurture/generate', limit: 10, windowMs: 60_000 },
   ];
 
-  if (protectedApiRoutes.some((route) => pathname.startsWith(route))) {
-    const now = Date.now();
-    const rateData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
+  for (const rule of protectedApiRoutes) {
+    if (pathname.startsWith(rule.route)) {
+      const result = await checkRateLimit({
+        limit: rule.limit,
+        windowMs: rule.windowMs,
+        identifier: ip,
+      });
 
-    if (now - rateData.lastReset > WINDOW) {
-      rateData.count = 1;
-      rateData.lastReset = now;
-    } else {
-      rateData.count++;
-    }
-
-    rateLimitMap.set(ip, rateData);
-
-    if (rateData.count > LIMIT) {
-      console.warn(`🚨 [Rate Limit] Blocking ${ip} for too many requests on ${pathname}`);
-      return NextResponse.json({ error: 'Too many requests. Please slow down.' }, { status: 429 });
+      if (!result.success) {
+        console.warn(`[Rate Limit] Blocking ${ip} on ${pathname}`);
+        return NextResponse.json(
+          { error: 'Too many requests. Please slow down.' },
+          {
+            status: 429,
+            headers: {
+              'Retry-After': String(Math.ceil((result.reset - Date.now()) / 1000)),
+              'X-RateLimit-Remaining': '0',
+            },
+          },
+        );
+      }
     }
   }
 

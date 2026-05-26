@@ -6,10 +6,28 @@ import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookServic
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
 import { leadIntelligenceService } from './leadIntelligenceService';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
+import { LeadSchema } from '@/server/domain/validators/lead.schema';
 
 export type { Lead };
 
 const LEADS_TABLE = 'leads';
+
+function validateLeadInput(data: Record<string, any>): void {
+  const payload = {
+    firstName: data.firstName || data.name?.split(' ')[0] || '',
+    lastName: data.lastName || data.name?.split(' ').slice(1).join(' ') || '',
+    email: data.email || '',
+    phone: data.phone || '',
+  };
+  const result = LeadSchema.safeParse(payload);
+  if (!result.success) {
+    const issues = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+    if (!payload.phone && !payload.email) {
+      throw new Error(`Lead validation failed - missing both phone and email: ${issues}`);
+    }
+    console.warn(`[CRM] Lead validation warnings: ${issues}`);
+  }
+}
 
 /**
  * Adds a new lead to Supabase
@@ -17,6 +35,8 @@ const LEADS_TABLE = 'leads';
 export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): Promise<string> => {
   try {
     if (!supabase) throw new Error('Supabase client not initialized');
+
+    validateLeadInput(lead as any);
 
     // Support both { firstName, lastName } and { name } call patterns
     let firstName = (lead as any).firstName || '';

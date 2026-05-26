@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from '@/shared/lib/next-route-adapter';
 import {
   Timer,
@@ -14,8 +14,9 @@ import {
   ArrowLeft,
   ShieldCheck,
   Zap,
+  Loader2,
 } from 'lucide-react';
-import { addLead } from '@/shared/api/adapters/leads/crmService';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { getWhatsAppDeepLink } from '@/shared/api/messaging/whatsappClient';
 import { logInventoryVelocityEvent } from '@/entities/inventory/api/adapters/inventoryService';
 
@@ -49,6 +50,8 @@ export const ExpressPrequalifyPage: React.FC = () => {
   const [generatedVoucher, setGeneratedVoucher] = useState<string | null>(null);
   const [expressError, setExpressError] = useState<string | null>(null);
   const [isKnownUser, setIsKnownUser] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
 
   // Load from localStorage for frictionless re-entry
   useEffect(() => {
@@ -71,18 +74,33 @@ export const ExpressPrequalifyPage: React.FC = () => {
       return;
     }
 
+    if (!turnstileToken) {
+      setExpressError('Por favor completa la verificación de seguridad.');
+      return;
+    }
+
     setIsSubmittingExpress(true);
     setExpressError(null);
 
     try {
-      // Persistencia en CRM service
-      addLead({
-        type: 'chat',
-        name: expressForm.name,
-        phone: expressForm.phone,
-        email: expressForm.email || undefined,
-        notes: `[BONO_300_ACTIVO] Pre-cualificación Express desde Ruta Dedicada (/bono-300).${vin ? ` [VIN: ${vin}]` : ''}`,
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          turnstileToken,
+          name: expressForm.name,
+          phone: expressForm.phone,
+          email: expressForm.email || undefined,
+          type: 'chat',
+          source: 'bono-300',
+          notes: `[BONO_300_ACTIVO] Pre-cualificación Express desde Ruta Dedicada (/bono-300).${vin ? ` [VIN: ${vin}]` : ''}`,
+        }),
       });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to submit');
+      }
 
       // Si hay un VIN, registrar evento de velocidad (Inteligencia Sentinel)
       if (vin) {
@@ -95,9 +113,6 @@ export const ExpressPrequalifyPage: React.FC = () => {
 
       // Persistir para futuras sesiones
       localStorage.setItem('sentinel_user_info', JSON.stringify(expressForm));
-
-      // Simular retardo de red para dar percepción de procesamiento seguro
-      await new Promise((resolve) => setTimeout(resolve, 800));
 
       setGeneratedVoucher(voucherCode);
     } catch (err: any) {
@@ -328,13 +343,21 @@ export const ExpressPrequalifyPage: React.FC = () => {
                 />
               </div>
 
+              <div ref={turnstileRef} className="flex justify-center mb-3">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  options={{ theme: 'dark', size: 'flexible' }}
+                />
+              </div>
+
               <button
                 type="submit"
-                disabled={isSubmittingExpress}
-                className="w-full mt-2 py-4 bg-linear-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
+                disabled={isSubmittingExpress || !turnstileToken}
+                className="w-full mt-2 py-4 bg-linear-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmittingExpress ? (
-                  <span className="animate-pulse">Asegurando Código...</span>
+                  <span className="animate-pulse flex items-center gap-2"><Loader2 size={16} className="animate-spin" /> Asegurando Código...</span>
                 ) : (
                   <>
                     Reclamar Descuento de $300 <ChevronRight size={16} />

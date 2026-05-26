@@ -205,7 +205,7 @@ Cada capa solo importa desde capas a su derecha (misma o más profunda).
 - `features/` SIEMPRE tiene barrel exports
 - `entities/` SIEMPRE tiene barrel exports
 - `shared/` no importa de ninguna capa del proyecto
-- ❌ `features/` no importa de `widgets/` (⚠️ hay violación actual en `features/inventory/index.ts`)
+- ❌ `features/` no importa de `widgets/`
 - ❌ `entities/` no importa de `features/` ni `widgets/`
 - ✅ Preferir alias `@/` sobre imports relativos
 
@@ -280,4 +280,41 @@ Cuerpo opcional con líneas ≤ 100 caracteres
 - Project ref: `dizzjfijsmxdlnfqydfk`
 - Endpoint: `https://api.supabase.com/v1/projects/dizzjfijsmxdlnfqydfk/sql`
 - NOTA: La Management API requiere PAT. Para queries SQL directas usar el pooler o custom tool `supabase-query`
+
+## RLS Security Audit — Fix Completo
+
+### Problema original
+Audit reveló 5 categorías de vulnerabilidades:
+- 🔴 **leads** — PII expuesto: política `using: true` permitía a cualquier authenticated user leer todos los leads (nombre, teléfono, email, SSN)
+- 🟠 **deals** — `using: true` exponía negociaciones
+- 🟠 **api_keys** — política contradictoria bloqueaba todo acceso
+- 🟡 **blog_posts** + **ford_news_cache** — sin RLS
+- 🟢 **sentinel_metrics, system_logs, distribution_logs, market_insights** — exposición innecesaria
+
+### Fix aplicado (26-mayo-2026)
+19 políticas activas en 9 tablas:
+
+| Tabla | Estado | Políticas clave |
+|-------|--------|-----------------|
+| leads | ✅ Parcheado | service_role (ALL), admins/agents (SELECT), público (INSERT), admins (UPDATE) |
+| deals | ✅ Parcheado | service_role (ALL), admins/agents (SELECT), público (INSERT) |
+| api_keys | ✅ Parcheado | service_role (ALL), users ven sus propias keys (SELECT) |
+| blog_posts | ✅ RLS habilitado | público (SELECT), admins (ALL) |
+| ford_news_cache | ✅ RLS habilitado | público (SELECT), service_role (ALL) |
+| sentinel_metrics | ✅ Restringido | admins manage (ALL), admins view (SELECT) |
+| system_logs | ✅ Restringido | service_role (ALL), admins (SELECT) |
+| distribution_logs | ✅ Restringido | service_role (ALL) |
+| market_insights | ✅ Restringido | público (SELECT), service_role (ALL) |
+
+### Comandos de verificación
+```bash
+# Pooler directo
+PGPASSWORD="$SUPABASE_DB_PASSWORD" psql -h aws-0-us-west-2.pooler.supabase.com \
+  -p 6543 -U postgres.dizzjfijsmxdlnfqydfk -d postgres \
+  -c "SELECT relname, relrowsecurity FROM pg_class WHERE relnamespace = 'public'::regnamespace AND relrowsecurity ORDER BY 1;"
+
+# Listar todas las políticas
+PGPASSWORD="$SUPABASE_DB_PASSWORD" psql -h aws-0-us-west-2.pooler.supabase.com \
+  -p 6543 -U postgres.dizzjfijsmxdlnfqydfk -d postgres \
+  -c "SELECT relname, polname, CASE polcmd WHEN '*' THEN 'ALL' WHEN 'r' THEN 'SELECT' WHEN 'a' THEN 'INSERT' WHEN 'w' THEN 'UPDATE' WHEN 'd' THEN 'DELETE' END AS cmd FROM pg_policy JOIN pg_class ON pg_class.oid = polrelid WHERE pg_class.relnamespace = 'public'::regnamespace ORDER BY 1, 2;"
 

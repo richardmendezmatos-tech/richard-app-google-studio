@@ -2,6 +2,25 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/shared/api/supabase/client';
 import { LeadRepository } from '../LeadRepository';
 import { Lead } from '../../model/types';
+import { LeadSchema } from '@/server/domain/validators/lead.schema';
+
+function validateLeadInput(data: Partial<Lead> & Record<string, any>): void {
+  const payload = {
+    firstName: data.first_name || data.firstName || '',
+    lastName: data.last_name || data.lastName || '',
+    email: data.email || '',
+    phone: data.phone || '',
+  };
+
+  const result = LeadSchema.safeParse(payload);
+  if (!result.success) {
+    const issues = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+    if (!payload.phone && !payload.email) {
+      throw new Error(`Lead validation failed - missing both phone and email: ${issues}`);
+    }
+    console.warn(`[SupabaseLeadRepository] Lead validation warnings: ${issues}`);
+  }
+}
 
 export class SupabaseLeadRepository implements LeadRepository {
   private client: SupabaseClient;
@@ -42,6 +61,7 @@ export class SupabaseLeadRepository implements LeadRepository {
   }
 
   async saveLead(lead: Partial<Lead> & Record<string, any>): Promise<string> {
+    validateLeadInput(lead);
     const firstName = lead.first_name || lead.firstName || '';
     const lastName = lead.last_name || lead.lastName || '';
     const email = lead.email || '';
