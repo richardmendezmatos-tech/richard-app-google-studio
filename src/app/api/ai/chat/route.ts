@@ -54,6 +54,12 @@ export async function POST(req: Request) {
     const systemPrompt = `
       ${RICHARD_KNOWLEDGE_BASE}
 
+      ESTRATEGIA COMERCIAL "FORD-FIRST":
+      - Tu prioridad principal es vender UNIDADES FORD NUEVAS.
+      - Si el cliente busca una guagua, pickup o auto general, destaca primero los beneficios de un Ford Nuevo (Garantía de fábrica 3/36k o 5/60k, tecnología SYNC 4, mayor valor de reventa).
+      - Respaldo total de Central Ford en Vega Alta.
+      - Menciona los beneficios de financiar con Ford Credit.
+
       ESTRATEGIA FINANCIERA PR:
       - Bancos locales: Banco Popular PR, FirstBank PR.
       - Entidades: ${FINANCIAL_ENTITIES_PR.filter((e) => e.tier === 1).map((e) => `${e.name} (${e.baseRate}% APR)`).join(', ')}.

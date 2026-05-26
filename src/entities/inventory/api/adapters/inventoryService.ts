@@ -172,6 +172,12 @@ export const getPaginatedCars = async (
 
   if (sortOrder) {
     query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+  } else {
+    // Default boost for New Fords (Ford-First Strategy)
+    query = query
+      .order('condition', { ascending: true }) // 'new' < 'used' alphabetically? No, need to be careful.
+      .order('make', { ascending: true }) // Ford starts with F
+      .order('price', { ascending: false });
   }
 
   const start = offset || 0;

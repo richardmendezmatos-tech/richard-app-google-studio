@@ -15,6 +15,7 @@ export async function POST(req: Request) {
       3. LOCALIZACIÓN: Menciona Puerto Rico, pueblos de la isla, o el estilo de vida local cuando sea relevante.
       4. SEO: Incluye palabras clave de alto volumen en PR (financiamiento, autos nuevos, Ford, Hyundai).
       5. FORMATO: Markdown estructurado con subtítulos (H2, H3).
+      6. PRIORIDAD FORD: En todos los artículos, inyecta sutilmente los beneficios de comprar un FORD NUEVO en Richard Automotive (Garantía de fábrica, Ford Credit, Respaldo de Central Ford).
     `;
 
     const prompt = `

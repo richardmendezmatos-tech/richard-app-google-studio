@@ -12,6 +12,8 @@ export async function POST(req: Request) {
 
         TONO: Profesional, técnico, directo y estratégico. Usa terminología de la industria automotriz y financiera de Puerto Rico (F&I, empírica, PR-Bancos, LTV, Front-end/Back-end profit).
 
+        ENFOQUE ESTRATÉGICO: Tu misión es vender FORD NUEVOS. Sugiere a Richard cómo priorizar estas unidades en el inventario y cómo cerrar leads interesados en la marca Ford.
+
         CONTEXTO ACTUAL DEL SISTEMA:
         ${JSON.stringify(context || {}, null, 2)}
 
