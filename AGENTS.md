@@ -46,6 +46,193 @@ src/
     └── i18n/          ← i18next config + locales (es/en)
 ```
 
+## Convenciones de Código
+
+### Naming
+- `camelCase` para variables, funciones, instancias
+- `PascalCase` para componentes React, tipos, interfaces, clases
+- `UPPER_SNAKE_CASE` para constantes globales y env vars
+- Archivos: `kebab-case.ts` para utils, `PascalCase.tsx` para componentes
+
+### Imports
+- Usar alias `@/` en lugar de imports relativos profundos
+- Barrel exports desde `index.ts` en entities y features
+- Preferir imports nombrados sobre default exports
+
+### Server vs Client Components
+- Server Components por defecto (sin `'use client'`)
+- `'use client'` solo cuando usas: hooks, event handlers, browser APIs, estado, useEffect
+- Componentes que usan i18n necesitan `'use client'`
+
+### Librerías clave
+- `cn()` de `clsx` + `tailwind-merge` para merges de clases condicionales
+- `@tanstack/react-table` para tablas de datos
+- `recharts` para gráficos
+- `@dnd-kit` para drag and drop
+- `react-dropzone` para file uploads
+- `framer-motion` para animaciones
+
+## Patrones Zustand
+
+Los stores de estado usan `zustand` con estos 3 patrones:
+
+### Pattern 1: Basic Store
+```typescript
+import { create } from 'zustand'
+
+interface AuthState {
+  user: User | null
+  isLoading: boolean
+  setUser: (user: User | null) => void
+  setLoading: (loading: boolean) => void
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isLoading: false,
+  setUser: (user) => set({ user }),
+  setLoading: (loading) => set({ isLoading: loading }),
+}))
+```
+
+### Pattern 2: Persist Store (sessionStorage)
+```typescript
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+
+export const useTrajectoryStore = create<TrajectoryState>()(
+  persist(
+    (set) => ({ ... }),
+    { name: 'key', storage: createJSONStorage(() => sessionStorage) },
+  ),
+)
+```
+
+### Pattern 3: Avoid manual localStorage — use persist middleware instead
+
+### Convenciones
+- Archivo: `entities/<domain>/model/use<Name>Store.ts`
+- Variable: `use<Name>Store`
+- Middleware disponible: `persist`, `createJSONStorage`
+- No usar: `devtools`, `subscribeWithSelector`, `immer`, `combine`
+
+## Patrones i18n
+
+```typescript
+import { useTranslation } from 'react-i18next'
+
+function Component() {
+  const { t } = useTranslation()
+  return <h1>{t('common.welcome')}</h1>
+}
+```
+
+### Namespaces
+- `common` — textos genéricos (welcome, buttons, loading)
+- `auth` — login, register, logout, admin
+- `dashboard` — dashboard labels
+- `sidebar` — sidebar navigation
+
+### Archivos
+- Locales: `src/shared/config/i18n/locales/{es,en}/translation.json`
+- Config: `src/i18n.ts`
+- Provider: `I18nextProvider` en `AppProviders`
+
+## Manejo de Errores en API Routes
+
+```typescript
+export async function POST(req: Request) {
+  try {
+    const data = await req.json()
+    if (!data.requiredField) {
+      return NextResponse.json({ error: 'mensaje' }, { status: 400 })
+    }
+    return NextResponse.json({ ... }, { status: 200 })
+  } catch (error: any) {
+    console.error('[Prefix] Error:', error)
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
+  }
+}
+```
+
+### Status codes
+- `400` — validación / campo faltante
+- `409` — conflicto (duplicado)
+- `500` — error interno con `error.message`
+
+### Reglas
+- `try/catch` alrededor de toda la función handler
+- `catch(error: any)` con `console.error` + tag de prefijo
+- Background tasks con `.catch()` para no bloquear response
+- AppError.ts existe en `src/shared/lib/errors/` pero no se usa activamente en API routes
+
+## Ford-First (Estrategia Comercial)
+
+### Prioridad de ventas
+1. **FORD NUEVO** — garantía de fábrica, Ford Credit, Central Ford, Vega Alta
+2. **Ford CPO** — certificado, segunda opción si nuevo no es viable
+3. **Ford usado** — tercera opción
+4. **Otras marcas** — última opción, pivotear a Ford siempre posible
+
+### En cada interacción
+- Destacar pago mensual (no solo precio total)
+- Mencionar $300 Bono Web
+- Ford Credit: tasas preferenciales, aprobación rápida
+- Trade-in: aceptamos cualquier vehículo
+- Entrega en Puerto Rico
+
+### En AI/Chatbots
+- System prompt debe sesgar a Ford nuevo
+- Contenido/blog debe mencionar beneficios Ford en primeros 2 párrafos
+- Comparaciones deben ponderar garantía y financiamiento Ford
+
+### Leads
+- Lead Ford = HIGH-YIELD en CRM
+- Lead preguntando precio → responder con pago mensual + bono
+- Lead WhatsApp → priorizar en cola
+
+## FSD Layer Rules
+
+```
+app → views → widgets → features → entities → shared
+```
+
+Cada capa solo importa desde capas a su derecha (misma o más profunda).
+
+### Reglas
+- `views/` compone widgets y features — sin lógica de datos directa
+- `widgets/` NO necesita barrel exports (index.ts)
+- `features/` SIEMPRE tiene barrel exports
+- `entities/` SIEMPRE tiene barrel exports
+- `shared/` no importa de ninguna capa del proyecto
+- ❌ `features/` no importa de `widgets/` (⚠️ hay violación actual en `features/inventory/index.ts`)
+- ❌ `entities/` no importa de `features/` ni `widgets/`
+- ✅ Preferir alias `@/` sobre imports relativos
+
+## Commit Conventions
+
+### Formato
+```
+tipo: descripción en lower case
+
+Cuerpo opcional con líneas ≤ 100 caracteres
+```
+
+### Tipos
+- `feat:` — nueva funcionalidad
+- `fix:` — corrección de bug
+- `perf:` — mejora de rendimiento
+- `refactor:` — refactor sin cambio funcional
+- `chore:` — tareas de mantenimiento
+- `docs:` — documentación
+- `style:` — formato, estilos (no lógica)
+- `test:` — tests
+
+### Reglas
+- Subject en lowercase, sin punto final
+- Body lines ≤ 100 chars (exigido por commitlint)
+- Usar `-m` para subject y `-m` para body si aplica
+
 ## Base de datos
 
 ### Tabla profiles
@@ -79,9 +266,18 @@ src/
 ### Tablas NO existentes (crear si se necesitan)
 - appraisal, conversations, users
 
+### Conexión PostgreSQL Directa (vía Pooler)
+- **Host:** `aws-0-us-west-2.pooler.supabase.com`
+- **Port:** `6543` (transaction pooler)
+- **User:** `postgres.dizzjfijsmxdlnfqydfk`
+- **Password:** `${SUPABASE_DB_PASSWORD}` (en .env, cifrado con dotenvx)
+- **Database:** `postgres`
+- **SSL requerido**
+- Conexión directa IPv6 (`db.dizzjfijsmxdlnfqydfk.supabase.co`) sigue BLOQUEADA por IPv6 local
+
 ### Management API
-- PAT: `${SUPABASE_PAT}` (variable de entorno)
+- PAT: `${SUPABASE_PAT}` (variable de entorno, no configurada actualmente)
 - Project ref: `dizzjfijsmxdlnfqydfk`
 - Endpoint: `https://api.supabase.com/v1/projects/dizzjfijsmxdlnfqydfk/sql`
-- Conexión directa PostgreSQL: BLOQUEADA (IPv6)
+- NOTA: La Management API requiere PAT. Para queries SQL directas usar el pooler o custom tool `supabase-query`
 

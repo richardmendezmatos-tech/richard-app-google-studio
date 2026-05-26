@@ -1,7 +1,7 @@
 ---
 description: Expert in Vercel deployment, GitHub Actions CI/CD, PWA/serwist, project scripts, GitHub workflows, and infrastructure automation. Use for build config, CI/CD, deployment, scripts, and DevOps tasks.
 mode: subagent
-model: google/gemini-2.5-flash
+model: opencode/big-pickle
 permission:
   edit: allow
   bash: allow

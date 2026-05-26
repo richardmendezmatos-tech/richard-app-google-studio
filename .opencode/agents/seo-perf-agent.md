@@ -1,7 +1,7 @@
 ---
 description: Expert in Core Web Vitals, SEO, structured data, performance optimization, and Vercel deployment. Use for Lighthouse audits, JSON-LD, lazy loading, ISR, caching, image optimization, and speed improvements.
 mode: subagent
-model: google/gemini-2.5-flash
+model: opencode/big-pickle
 permission:
   edit: allow
   bash: allow

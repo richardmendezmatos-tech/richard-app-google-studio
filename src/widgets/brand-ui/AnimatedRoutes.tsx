@@ -107,7 +107,7 @@ const HoustonDashboard = React.lazy(() =>
 );
 const ChaosTest = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/ChaosTest')));
 const LocalClusterView = React.lazy(() =>
-  lazyRetry(() => import('@/features/inventory').then((m) => ({ default: m.LocalClusterView }))),
+  lazyRetry(() => import('@/widgets/inventory/LocalClusterView')),
 );
 const CreditAppPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/storefront/ui/CreditAppPage')),

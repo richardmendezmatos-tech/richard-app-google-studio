@@ -1,7 +1,7 @@
 ---
 description: Expert in FSD architecture, DI registry, code organization, import aliases, circular dependency prevention. Use for architecture decisions, refactors, module structure, and cross-cutting concerns.
 mode: subagent
-model: google/gemini-2.5-flash
+model: opencode/big-pickle
 permission:
   edit: allow
   bash: allow

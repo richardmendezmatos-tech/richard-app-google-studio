@@ -127,6 +127,18 @@
     "test:e2e": {
       "template": "npx playwright test",
       "description": "Run Playwright e2e tests"
+    },
+    "circular": {
+      "template": "npm run circular",
+      "description": "Check circular dependencies"
+    },
+    "format": {
+      "template": "npm run format",
+      "description": "Format code with Prettier"
+    },
+    "sitemap": {
+      "template": "npm run sitemap:generate",
+      "description": "Generate sitemap"
     }
   },
   "disabled_providers": ["opencode"]

@@ -1,7 +1,7 @@
 ---
 description: Expert in Tailwind CSS 4, Framer Motion, responsive design, FSD architecture, and UI patterns. Use for UI development, animations, layout, styling, component architecture, and design system.
 mode: subagent
-model: google/gemini-2.5-flash
+model: opencode/big-pickle
 permission:
   edit: allow
   bash: allow
