@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { optimizeWithAntigravity } from '@/shared/api/antigravity/antigravityService';
 
 interface OptimizedImageProps {
   src: string;
@@ -22,6 +21,7 @@ interface OptimizedImageProps {
 /**
  * OptimizedImage Component (Next.js Native)
  * Leverages the Next.js Image Optimization service for Richard Automotive.
+ * Note: next/image handles AVIF/WebP conversion, resizing, and CDN caching natively.
  */
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
@@ -39,12 +39,11 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 }) => {
   const [error, setError] = React.useState(false);
 
-  // Decide which source to use
+  // next/image handles all optimization — no pre-transformation needed
   const displaySrc = React.useMemo(() => {
     if (error || !src) return fallbackSrc;
-    // We can still use Antigravity for the initial source, but next/image will optimize it further
-    return optimizeWithAntigravity(src, width || 800) || src;
-  }, [error, src, fallbackSrc, width]);
+    return src;
+  }, [error, src, fallbackSrc]);
 
   const imageLoading = priority ? 'eager' : 'lazy';
   const imagePlaceholder = placeholder === 'blur' && blurDataURL ? 'blur' : 'empty';

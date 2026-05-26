@@ -1,19 +1,20 @@
 import React from 'react';
+import Image from 'next/image';
 
 export default function HeroBackground() {
   return (
     <div className="absolute inset-0 min-h-screen pointer-events-none" style={{ zIndex: 0 }}>
       <div className="absolute inset-0 bg-slate-950" style={{ zIndex: 1 }} />
-      <img
+      {/* next/image con priority=true genera preload automático + sirve AVIF/WebP optimizado */}
+      <Image
         src="/hero.avif"
         alt="Richard Automotive"
-        width="1920"
-        height="1080"
-        className="absolute inset-0 h-full w-full object-cover opacity-30"
+        fill
+        priority
+        sizes="100vw"
+        quality={75}
+        className="object-cover opacity-30"
         style={{ zIndex: 0 }}
-        loading="eager"
-        fetchPriority="high"
-        decoding="sync"
       />
       <div
         className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent"
