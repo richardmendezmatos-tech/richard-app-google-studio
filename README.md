@@ -1,66 +1,93 @@
-# 🚗 Richard Automotive: Command Center & AI Finance Advisor
+# Richard Automotive — Command Center
 
-> [!CAUTION]
-> **PROYECTO EXCLUSIVAMENTE AUTOMOTRIZ**
-> Este repositorio es para un portal web de servicios automotrices, F&I y seguros de vida vinculados a la industria. **NO tiene relación alguna con servicios de asistencia a envejecientes o adultos mayores.**
+**Portal F&I de Richard Méndez | Central Ford, Vega Alta — Puerto Rico**
 
-**Transformando la experiencia de financiamiento de autos en Puerto Rico a través de la Autonomía Sentinel y el Houston Command Center.**
-
-Este proyecto es el motor de inteligencia artificial para la marca personal de **Richard Méndez**, Gerente de Financiamiento en **Central Ford, Vega Alta**. Utilice este centro de mando para monitorear leads, telemetría de usuarios y automatizar el abasto de inventario para unidades de **Ford, Hyundai y Trucks Freightliner**.
+Stack: Next.js 16 (App Router) + Supabase + Tailwind CSS 4 + Google Gemini
 
 ---
 
-## 🚀 Sentinel N24: Hardened Infrastructure
+## Quick Start
 
-La versión **N24** representa la madurez técnica absoluta del ecosistema, eliminando dependencias fragmentadas (Firebase/GCP) y consolidando todo en un núcleo resiliente basado en **npm** y **Supabase**.
+```bash
+# 1. Instalar dependencias
+npm install --legacy-peer-deps
 
-### ⚡️ Estabilidad Industrial (Powered by npm)
+# 2. Variables de entorno
+#    Usar dotenvx localmente (NO en Vercel)
+npx dotenvx encrypt   # si cambias .env
+npx dotenvx run -- npm run dev
 
-Para asegurar despliegues predecibles y una gestión de dependencias robusta en entornos de alta producción (Vercel), el proyecto utiliza **npm** como gestor principal:
+# 3. Dev server (Turbopack)
+npm run dev
+```
 
-- **Lockfile Determinístico**: Eliminación de inconsistencias entre entornos de desarrollo y producción.
-- **Producción Vercel-Ready**: Optimización del pipeline de build para despliegues rápidos y seguros.
+## Build & Deploy
 
-### 🛠️ Tecnologías Core (Unified Stack)
+```bash
+# Local (con dotenvx)
+npx dotenvx run -- npm run build
 
-- **Framework:** **Next.js (App Router)** - Arquitectura de componentes de servidor para máximo SEO y velocidad.
-- **UI/UX Premium:** **Tailwind CSS 4 + Framer Motion v12+** - Estilo "Premium Command Center" con glassmorphism y microinteracciones cinemáticas.
-- **Base de Datos Unificada:** **Supabase (PostgreSQL)** - Única fuente de verdad. Manejo de inventario, leads y telemetría bajo un mismo esquema SQL.
-- **Inteligencia Vectorial:** **pgvector** en Supabase para "Neural Matching" (búsqueda semántica avanzada).
-- **Motor IA:** **Google Gemini API 1.5** - Visión de inventario y análisis predictivo de sourcing.
-- **Infraestructura:** Desplegado en **Vercel** con integración profunda de Supabase CLI.
+# Vercel (sin dotenvx — no hay DOTENV_PRIVATE_KEY en Vercel)
+npx vercel --prod
+```
 
-### 🧠 Capacidades de Vanguardia
+El build de Vercel corre `next build --webpack`. Node 22.x requerido.
 
-- **Neural Sourcing Intelligence (Nivel 24):** El sistema analiza automáticamente los "Search Gaps" de los usuarios para generar borradores de órdenes de compra (POs).
-- **Sistema de Resiliencia de Imágenes (N24-R):** Motor inteligente en `OptimizedImage` que maneja fallos de carga mediante re-intentos automáticos y fallbacks a placeholders optimizados, garantizando una UI impecable incluso ante inconsistencias de red o datos.
-- **Experiencia de Usuario Inmersiva (Nivel 25):**
-  - **Diseño Responsivo Adaptativo:** Interfaz optimizada para todos los dispositivos (móvil, tablet, desktop) con ajustes dinámicos de espaciado y componentes.
-  - **Microinteracciones Cinemáticas:** Animaciones fluidas y feedback visual proactivo para una experiencia de usuario envolvente.
-  - **Accesibilidad (A11y) Integrada:** Navegación mejorada con "skip to main content" y estándares WCAG para garantizar el acceso a todos los usuarios.
-  - **Estética "Command Center" Refinada:** Elementos de UI con efectos de glassmorphism mejorados, acentos luminosos y una paleta de colores de lujo tecnológico.
-- **Protocolo de Normalización de Inventario:** Auditoría automatizada que consolida campos legados (`img`) al nuevo estándar `image` y sincroniza galerías multimedia.
-- **Houston Command Center:** Panel de control táctico con telemetría en tiempo real:
-  - **Sourcing Management:** Aprobación inmediata de inventario estratégico.
-  - **Performance Sentinel:** Optimización dinámica de LCP y TBT para garantizar una experiencia fluida de 60 FPS en dispositivos móviles.
-- **Approval Simulator:** Widget premium para la pre-cualificación financiera dinámica.
+## Arquitectura SEO
 
-## 🏗️ Arquitectura del Proyecto (FSD Strict)
+| Estrategia | Detalle |
+|------------|---------|
+| Sitemap dinámico | 2,207 URLs — se genera en `/api/sitemap` con revalidate 24h |
+| Páginas programáticas | `/autos-usados/[city]`, `/[brand]`, `/[model]` |
+| Render | ISR con `revalidate = 86400` (24h) — server-render + edge cache |
+| Build-time static | Solo ~100 páginas (categories, inventory, blog) |
+| Beneficio | Build en <5 min, SEO intacto, caché en edge |
 
-El proyecto sigue rigurosamente la metodología **Feature-Sliced Design (FSD)**:
+## Environment Variables
 
-- `src/app`: Rutas de Next.js, configuraciones de API y layouts.
-- `src/widgets`: Bloques funcionales complejos (ej. `HoustonDashboard`, `CommandCenter`).
-- `src/features`: Capacidades de negocio (ej. `houston`, `inventory`, `predictive`).
-- `src/entities`: Modelos de datos y estados de negocio.
-- `src/shared`: Utilidades, diseño atómico y clientes de API (Supabase Singleton).
+| Variable | Dónde | Requerida |
+|----------|-------|-----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env` + Vercel | ✅ |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env` + Vercel | ✅ |
+| `SUPABASE_DB_PASSWORD` | `.env` (dotenvx) | Para pooler directo |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | `.env` + Vercel | ✅ |
+| `TURNSTILE_SECRET_KEY` | `.env` + Vercel | ✅ |
+| `GEMINI_API_KEY` | `.env` + Vercel | Para AI Advisor |
+| `SENDGRID_API_KEY` | `.env` + Vercel | Para emails |
 
-## 🚀 Despliegue y Acceso
+## Seguridad
 
-- **Portal Público:** [www.richard-automotive.com](https://www.richard-automotive.com)
-- **Houston Access:** Terminal de inteligencia restringida para gestión táctica.
+- **CSP + HSTS**: Headers en `next.config.js` y `vercel.json`
+- **Rate limiting**: 7 rutas protegidas en `src/proxy.ts`, fallback in-memory
+- **Turnstile**: Captcha invisible de Cloudflare en formularios de leads
+- **RLS**: 19 políticas en 9 tablas Supabase — PII restringido a admins/agents
+- **Zod validation**: Schemas estrictos en `src/server/domain/validators/`
+
+## Tests
+
+```bash
+npm test              # 147 tests (30 files)
+npm run lint          # ESLint
+```
+
+## Comandos útiles
+
+```bash
+npm run dev           # Dev con Turbopack
+npm run build         # Build local (con webpack)
+npx vercel --prod     # Deploy a producción
+npx vercel inspect    # Ver estado del último deploy
+```
+
+## Proyecto
+
+- `src/app/` — Next.js pages & layouts
+- `src/views/` — Page components
+- `src/widgets/` — Bloques complejos (Header, Footer, Command Center)
+- `src/features/` — Capacidades de negocio (auth, inventory, houston)
+- `src/entities/` — Modelos, stores, servicios
+- `src/shared/` — UI kit, API clients, lib, utils
 
 ---
 
 © 2026 Richard Automotive | Richard O. Méndez Matos | Central Ford, Vega Alta
-_Gerente de F&I, Seguros y Financiamiento Automotriz._

@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/views/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
-import { seoService } from '@/entities/inventory/api/adapters/seoService';
 import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
@@ -12,16 +11,7 @@ interface Props {
   params: Promise<{ city: string; brand: string }>;
 }
 
-export async function generateStaticParams() {
-  const brands = await seoService.getUniqueBrands();
-  const params: any[] = [];
-  Object.keys(CITIES).forEach((city) => {
-    brands.forEach((brand) => {
-      params.push({ city, brand });
-    });
-  });
-  return params;
-}
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug, brand: brandSlug } = await params;

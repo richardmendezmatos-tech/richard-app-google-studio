@@ -2,27 +2,16 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Storefront from '@/views/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
-import { seoService } from '@/entities/inventory/api/adapters/seoService';
 import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { CITIES_PR as CITIES } from '@/shared/config/cities';
-import { slugify } from '@/shared/lib/utils/seo';
 
 interface Props {
   params: Promise<{ city: string; brand: string; model: string }>;
 }
 
-export async function generateStaticParams() {
-  const combinations = await seoService.getInventoryCombinations();
-  const params: any[] = [];
-  Object.keys(CITIES).forEach((city) => {
-    combinations.forEach((combo) => {
-      params.push({ city, brand: combo.brand, model: combo.model });
-    });
-  });
-  return params;
-}
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug, brand: brandSlug, model: modelSlug } = await params;

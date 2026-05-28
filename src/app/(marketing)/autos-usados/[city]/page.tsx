@@ -11,11 +11,7 @@ interface Props {
   params: Promise<{ city: string }>;
 }
 
-export async function generateStaticParams() {
-  return Object.values(CITIES).map((city) => ({
-    city: city.slug,
-  }));
-}
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug } = await params;
