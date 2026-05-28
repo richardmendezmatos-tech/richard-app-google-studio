@@ -22,6 +22,7 @@ export async function proxy(request: NextRequest) {
     { route: '/api/command-center/ai-advisor', limit: 10, windowMs: 60_000 },
     { route: '/api/command-center/blog/generate', limit: 5, windowMs: 60_000 },
     { route: '/api/command-center/nurture/generate', limit: 10, windowMs: 60_000 },
+    { route: '/api/validate-turnstile', limit: 20, windowMs: 60_000 },
   ];
 
   for (const rule of protectedApiRoutes) {

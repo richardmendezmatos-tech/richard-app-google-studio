@@ -5,6 +5,7 @@ import { Camera, CheckCircle, ChevronRight, Info, Sparkles, BrainCircuit } from 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 import { DI } from '@/app/(dashboard)/di/registry';
 import { usePhotoUploader } from '@/shared/lib/hooks/usePhotoUploader';
@@ -346,7 +347,7 @@ const ScanStep = React.memo(
   },
 );
 
-const OfferStep = React.memo(({ amount, analysis, vehicle, onAccept, onCancel }: any) => (
+const OfferStep = React.memo(({ amount, analysis, vehicle, onAccept, onCancel, onTurnstileSuccess }: any) => (
   <motion.div
     key="offer"
     initial={{ opacity: 0, x: 20 }}
@@ -415,6 +416,12 @@ const OfferStep = React.memo(({ amount, analysis, vehicle, onAccept, onCancel }:
     </div>
 
     <div className="space-y-3">
+      <div className="flex justify-center">
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+          onSuccess={(token) => onTurnstileSuccess?.(token)}
+        />
+      </div>
       <button
         onClick={onAccept}
         className="w-full py-4 bg-[#0d2232] text-white rounded-xl font-bold uppercase tracking-widest shadow-xl active:scale-95 transition-all"
@@ -464,6 +471,7 @@ const AppraisalView: React.FC = () => {
   const [offerReady, setOfferReady] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [offerAmount, setOfferAmount] = useState({ min: 0, max: 0 });
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   // Optimized Handlers
@@ -595,7 +603,16 @@ const AppraisalView: React.FC = () => {
   };
 
   const handleAcceptOffer = async () => {
+    if (!turnstileToken) return;
     try {
+      const validateRes = await fetch('/api/validate-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+      const validateData = await validateRes.json();
+      if (!validateData.valid) return;
+
       await DI.getApplicationRepository().submitApplication(
         {
           firstName: contactInfo.name.split(' ')[0],
@@ -683,6 +700,7 @@ const AppraisalView: React.FC = () => {
             vehicle={vehicleInfo}
             onAccept={handleAcceptOffer}
             onCancel={() => navigate('/')}
+            onTurnstileSuccess={setTurnstileToken}
           />
         )}
       </AnimatePresence>

@@ -14,12 +14,14 @@ import { DI } from '@/app/(dashboard)/di/registry';
 import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
 import { PersuasionWrapper } from '@/shared/ui/containers/PersuasionWrapper';
 import { useCustomerMemory } from '@/shared/lib/persuasion/customerMemory';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export const CreditApplicationForm: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [hasRescued, setHasRescued] = useState(false);
 
   // Form State
@@ -100,6 +102,19 @@ export const CreditApplicationForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) return handleNext();
+    if (!turnstileToken) return;
+
+    try {
+      const validateRes = await fetch('/api/validate-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+      const validateData = await validateRes.json();
+      if (!validateData.valid) return;
+    } catch {
+      return;
+    }
 
     setIsSubmitting(true);
     const leadData = {
@@ -546,9 +561,17 @@ export const CreditApplicationForm: React.FC = () => {
               {!isSubmitting && <ChevronRight size={22} />}
             </button>
             {step === 3 && (
-              <p className="text-[10px] font-bold text-cyan-400 mt-3 text-center uppercase tracking-widest">
-                🔒 Autorización Segura vía Red 256-Bit.
-              </p>
+              <>
+                <div className="flex justify-center mt-3">
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                  />
+                </div>
+                <p className="text-[10px] font-bold text-cyan-400 mt-3 text-center uppercase tracking-widest">
+                  🔒 Autorización Segura vía Red 256-Bit.
+                </p>
+              </>
             )}
           </div>
         </div>

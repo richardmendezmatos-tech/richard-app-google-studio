@@ -27,6 +27,7 @@ import { useSaveApplication } from '@/features/garage/hooks/useApplications';
 import { FinancialApplication } from '@/shared/types/types';
 import { RewardPicker } from '@/features/gamification/ui/RewardPicker';
 import { useGamificationStore } from '@/features/gamification/model/useGamificationStore';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 interface Props {
   onExit?: () => void;
@@ -56,6 +57,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showSSN, setShowSSN] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [referenceId, setReferenceId] = useState('');
 
   // Form State
@@ -128,6 +130,26 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
 
   const handleSubmit = async () => {
     if (!validateStep(6)) return;
+    if (!turnstileToken) {
+      addNotification('error', 'Completa la verificación de seguridad primero.');
+      return;
+    }
+
+    try {
+      const validateRes = await fetch('/api/validate-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+      const validateData = await validateRes.json();
+      if (!validateData.valid) {
+        addNotification('error', 'Verificación de seguridad fallada. Intenta de nuevo.');
+        return;
+      }
+    } catch {
+      addNotification('error', 'Error de verificación. Intenta de nuevo.');
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -648,6 +670,13 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                       propósitos de evaluación financiera. Entiendo que esto es una solicitud de
                       crédito.
                     </p>
+                  </div>
+
+                  <div className="flex justify-center mt-4">
+                    <Turnstile
+                      siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                    />
                   </div>
                 </div>
               )}
