@@ -49,7 +49,13 @@ export const addLead = async (lead: Omit<Lead, 'id' | 'status' | 'createdAt'>): 
 
     // Determine category from notes or explicit field
     const notes = (lead as any).notes || '';
-    const category = (lead as any).category || null;
+    let category = (lead as any).category || 'WARM';
+
+    // Ford-First: Auto-escalar leads con interés en Ford a HIGH-YIELD
+    const vehicleOfInterest = (lead as any).vehicleOfInterest || (lead as any).vehicle_of_interest || '';
+    if (vehicleOfInterest.toLowerCase().includes('ford') || notes.toLowerCase().includes('ford')) {
+      category = 'HIGH-YIELD';
+    }
 
     const { data, error } = await supabase
       .from(LEADS_TABLE)

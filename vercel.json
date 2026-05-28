@@ -115,6 +115,10 @@
     {
       "path": "/api/cron/neural-sourcing",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/blog-from-gaps",
+      "schedule": "0 10 * * 1"
     }
   ]
 }
