@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "dotenvx run -- next dev",
     "build": "dotenvx run -- next build --webpack",
+    "build:ci": "next build --webpack",
     "start": "next start",
     "deploy:vercel": "dotenvx run -- npx vercel --prod",
     "test": "dotenvx run -- vitest run --exclude \".agents/**\" --exclude \"e2e/**\" --exclude \"richard-qwik-marketplace/**\"",
