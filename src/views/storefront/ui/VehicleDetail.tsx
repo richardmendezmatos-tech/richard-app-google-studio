@@ -50,6 +50,7 @@ import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import DOMPurify from 'dompurify';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
+import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -391,6 +392,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                     MARKET-VALIDATED
                   </span>
                 </div>
+                <StatusBadge status={car.status} />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-4">

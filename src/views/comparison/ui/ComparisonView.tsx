@@ -139,16 +139,22 @@ const ComparisonView: React.FC = () => {
               Mensualidad Est.
             </div>
             <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
-              Motor
+              Año
             </div>
             <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
-              MPG (Comb.)
+              Millaje
             </div>
             <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
-              Garantía
+              Transmisión
             </div>
             <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
-              Seguridad
+              Combustible
+            </div>
+            <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
+              Motor / HP
+            </div>
+            <div className="h-12 flex items-center text-slate-400 font-bold uppercase text-xs tracking-widest border-b border-white/5">
+              Condición
             </div>
           </div>
 
@@ -210,31 +216,34 @@ const ComparisonView: React.FC = () => {
                     </span>
                   </div>
                   <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
-                    <span className="lg:hidden text-xs text-slate-500">Motor</span>
-                    <span className="text-sm">2.5L 4-Cyl</span>
+                    <span className="lg:hidden text-xs text-slate-500">Año</span>
+                    <span className="font-bold">{car.year || '—'}</span>
                   </div>
                   <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
-                    <span className="lg:hidden text-xs text-slate-500">MPG</span>
-                    <span className="text-sm">28 / 35</span>
-                  </div>
-                  <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
-                    <span className="lg:hidden text-xs text-slate-500">Garantía</span>
-                    <span
-                      className={`text-xs font-bold px-2 py-1 rounded ${car.name.includes('Hyundai') ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400'}`}
-                    >
-                      {car.name.includes('Hyundai') ? '10 Años / 100k' : '3 Años / 36k'}
+                    <span className="lg:hidden text-xs text-slate-500">Millaje</span>
+                    <span className="text-sm">
+                      {car.mileage != null ? `${car.mileage.toLocaleString()} mi` : '—'}
                     </span>
                   </div>
                   <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
-                    <span className="lg:hidden text-xs text-slate-500">Seguridad</span>
-                    <div className="flex gap-1 justify-center">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <div
-                          key={i}
-                          className={`w-2 h-2 rounded-full ${i <= (car.name.includes('Hyundai') ? 5 : 4) ? 'bg-primary' : 'bg-slate-700'}`}
-                        />
-                      ))}
-                    </div>
+                    <span className="lg:hidden text-xs text-slate-500">Transmisión</span>
+                    <span className="text-sm capitalize">{car.transmission || '—'}</span>
+                  </div>
+                  <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
+                    <span className="lg:hidden text-xs text-slate-500">Combustible</span>
+                    <span className="text-sm capitalize">{car.fuel || car.fuelType || '—'}</span>
+                  </div>
+                  <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
+                    <span className="lg:hidden text-xs text-slate-500">Motor / HP</span>
+                    <span className="text-sm">
+                      {[car.engine, car.hp ? `${car.hp} HP` : null].filter(Boolean).join(' · ') || '—'}
+                    </span>
+                  </div>
+                  <div className="h-12 flex items-center justify-between lg:justify-center border-b border-white/5">
+                    <span className="lg:hidden text-xs text-slate-500">Condición</span>
+                    <span className={`text-xs font-bold px-2 py-1 rounded ${car.condition === 'new' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                      {car.condition === 'new' ? 'Nuevo' : car.condition === 'used' ? 'Usado' : '—'}
+                    </span>
                   </div>
                 </div>
 

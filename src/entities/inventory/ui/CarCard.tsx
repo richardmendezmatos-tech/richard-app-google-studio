@@ -3,6 +3,7 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
+import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { calculatePredictiveDTS } from '@/entities/inventory';
@@ -60,6 +61,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             <span className="px-3 py-1.5 bg-white/90 dark:bg-slate-700/90 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1 backdrop-blur-sm">
               <ShieldCheck size={12} className="text-emerald-500" /> Richard Certified
             </span>
+            <StatusBadge status={car.status} />
             <span className="px-3 py-1.5 bg-rose-500/90 text-white text-[10px] font-bold tracking-widest rounded-full shadow-lg flex items-center gap-1 backdrop-blur-sm animate-pulse">
               <Users size={12} /> {dailyViews} cotizaron hoy
             </span>

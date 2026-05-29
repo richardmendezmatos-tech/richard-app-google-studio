@@ -1,6 +1,9 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { getDistinctFordModels } from '@/entities/inventory/api/adapters/fordModelService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
 import HeroBackground from '@/features/inventory/ui/storefront/HeroBackground';
@@ -20,6 +23,52 @@ async function InventorySection() {
   }
 
   return <LazyStorefrontContent inventory={inventory} />;
+}
+
+async function FordModelQuickLinks() {
+  const models = await getDistinctFordModels();
+  const topModels = models.slice(0, 6);
+
+  if (topModels.length === 0) return null;
+
+  return (
+    <section className="relative z-10 -mt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center gap-6 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
+          {topModels.map((m) => (
+            <Link
+              key={m.model}
+              href={`/ford/${m.model.toLowerCase()}`}
+              className="snap-start shrink-0 group relative w-40 md:w-48 bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-400/30 transition-all duration-300"
+            >
+              <div className="aspect-[4/3] relative bg-slate-800 flex items-center justify-center p-3">
+                <Image
+                  src={m.image}
+                  alt={`Ford ${m.model}`}
+                  fill
+                  className="object-contain group-hover:scale-105 transition-transform duration-500"
+                  sizes="200px"
+                />
+              </div>
+              <div className="p-3">
+                <p className="text-xs font-bold text-white truncate">{m.model}</p>
+                <p className="text-[10px] text-slate-500">Desde ${m.minPrice.toLocaleString()}</p>
+              </div>
+            </Link>
+          ))}
+          <Link
+            href="/ford"
+            className="snap-start shrink-0 w-40 md:w-48 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center p-6 hover:bg-cyan-500/20 transition-colors text-center"
+          >
+            <div>
+              <p className="text-xs font-black text-cyan-400 uppercase tracking-widest">Ver Todos</p>
+              <p className="text-[10px] text-slate-500 mt-1">los modelos Ford</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export const metadata: Metadata = {
@@ -136,6 +185,9 @@ export default function HomePage() {
       <main className="relative">
         <SessionRecoveryBridge />
         <HeroBackground />
+        <Suspense fallback={null}>
+          <FordModelQuickLinks />
+        </Suspense>
         <Suspense fallback={null}>
           <InventorySection />
         </Suspense>
