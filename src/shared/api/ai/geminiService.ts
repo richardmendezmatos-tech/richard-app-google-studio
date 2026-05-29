@@ -540,13 +540,23 @@ export const generateStructuredJSON = async (
   instruction?: string,
   modelName: string = 'gemini-2.0-flash',
 ): Promise<any> => {
-  const schema = z.union([
-    z.record(z.string(), z.any()),
-    z.array(z.record(z.string(), z.any())),
-  ]);
-  const result = await sentinelAI.generateStructuredObject(schema, prompt, instruction, modelName);
-  if (Array.isArray(result)) return result[0] || {};
-  return result;
+  const text = await sentinelAI.quickGen(prompt, instruction);
+  if (!text) return {};
+  try {
+    const parsed = JSON.parse(text);
+    if (Array.isArray(parsed)) return parsed[0] || {};
+    return parsed;
+  } catch {
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (match) {
+      try {
+        const parsed = JSON.parse(match[1]);
+        if (Array.isArray(parsed)) return parsed[0] || {};
+        return parsed;
+      } catch {}
+    }
+    return {};
+  }
 };
 
 export const generateCode = async (prompt: string, instruction?: string): Promise<string> => {
