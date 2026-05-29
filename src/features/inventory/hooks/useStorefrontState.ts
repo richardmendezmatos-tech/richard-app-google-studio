@@ -14,8 +14,9 @@ export function useStorefrontState(
   inventory: Car[],
   onOpenGarage?: () => void,
   onMagicFix?: () => Promise<void>,
+  initialSearchTerm?: string,
 ) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
   const [filter, setFilter] = useState<CarType | 'all'>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [sortBy, setSortBy] = useState<'price' | 'year' | 'mileage' | 'created_at'>('price');

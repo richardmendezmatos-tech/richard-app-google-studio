@@ -70,11 +70,18 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
   ));
 }
 
-export default async function InventoryRoute() {
+export default async function InventoryRoute({
+  searchParams,
+}: {
+  searchParams: Promise<{ make?: string; model?: string }>;
+}) {
+  const params = await searchParams;
+  const initialSearchTerm = [params.make, params.model].filter(Boolean).join(' ');
+
   let inventory: Car[] = [];
 
   try {
-    const result = await getPaginatedCars(12, null, 'all');
+    const result = await getPaginatedCars(12, null, 'all', null, initialSearchTerm || undefined);
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for SSR:', error);
@@ -106,7 +113,7 @@ export default async function InventoryRoute() {
             </div>
           }
         >
-          <InventoryPage inventory={inventory} />
+          <InventoryPage inventory={inventory} initialSearchTerm={initialSearchTerm} />
         </Suspense>
       </main>
     </>

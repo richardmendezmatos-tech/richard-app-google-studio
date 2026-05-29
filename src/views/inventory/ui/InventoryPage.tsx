@@ -17,14 +17,15 @@ import { useStorefrontState } from '@/features/inventory';
 
 interface Props {
   inventory: Car[];
+  initialSearchTerm?: string;
   initialVisualSearch?: string | null;
   onClearVisualSearch?: () => void;
   onMagicFix?: () => Promise<void>;
   onOpenGarage?: () => void;
 }
 
-const InventoryPage: React.FC<Props> = ({ inventory, onMagicFix, onOpenGarage }) => {
-  const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix);
+const InventoryPage: React.FC<Props> = ({ inventory, initialSearchTerm, onMagicFix, onOpenGarage }) => {
+  const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix, initialSearchTerm);
 
   return (
     <>
