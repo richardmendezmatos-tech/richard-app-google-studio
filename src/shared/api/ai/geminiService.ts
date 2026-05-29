@@ -553,7 +553,9 @@ export const generateStructuredJSON = async (
         const parsed = JSON.parse(match[1]);
         if (Array.isArray(parsed)) return parsed[0] || {};
         return parsed;
-      } catch {}
+      } catch {
+        // Not valid JSON inside code block either
+      }
     }
     return {};
   }
