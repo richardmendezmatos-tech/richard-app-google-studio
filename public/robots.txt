@@ -9,4 +9,4 @@ Disallow: /profile/
 Disallow: /login/
 Disallow: /admin-login/
 
-Sitemap: https://richard-automotive.com/sitemap.xml
+Sitemap: https://www.richard-automotive.com/sitemap.xml
