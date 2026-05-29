@@ -12,7 +12,7 @@ export class FordNewsBroadcaster {
     try {
       const { data: leads, error } = await supabase
         .from('leads')
-        .select('phone, name, firstName')
+        .select('phone, first_name')
         .not('phone', 'is', null)
         .or(`vehicleOfInterest.ilike.%Ford%,vehicleOfInterest.ilike.%ford%,notes.ilike.%ford%`)
         .order('created_at', { ascending: false })
@@ -27,7 +27,7 @@ export class FordNewsBroadcaster {
       const articleUrl = `https://richard-automotive.com/blog/${news.slug}`;
 
       for (const lead of leads) {
-        const clientName = lead.firstName || lead.name?.split(' ')[0] || 'amigo';
+        const clientName = lead.first_name?.split(' ')[0] || 'amigo';
         const message = `🚗 ¡Hola ${clientName}! Richard Automotive te trae una noticia que te puede interesar:\n\n📰 *${news.title}*\n${news.excerpt}\n\nLee el artículo completo aquí:\n${articleUrl}\n\n¿Te gustaría saber más? Estamos en Vega Alta. ¡Te esperamos! 🏁`;
 
         try {
