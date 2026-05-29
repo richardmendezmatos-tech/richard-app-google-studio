@@ -5,6 +5,8 @@ import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { blogService } from '@/entities/blog/api/blogService';
 import Link from 'next/link';
 import { BlogPost } from '@/shared/types/types';
+import { ShareButton } from '@/features/blog/ui/ShareButton';
+import { EmailCapture } from '@/features/blog/ui/EmailCapture';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -54,6 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: article.date,
       authors: [article.author],
+      tags: article.tags,
       siteName: 'Richard Automotive',
       locale: 'es_PR',
       images: article.imageUrl ? [{ url: article.imageUrl, width: 1200, height: 630 }] : [],
@@ -61,14 +64,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: article.title,
-      description: article.excerpt,
+      description: article.metaDescription || article.excerpt,
       images: article.imageUrl ? [article.imageUrl] : [],
     },
   };
 }
 
 function ArticleJsonLd({ article }: { article: BlogPost }) {
-  const jsonLd = {
+  const jsonLd: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
@@ -82,16 +85,24 @@ function ArticleJsonLd({ article }: { article: BlogPost }) {
       '@type': 'Organization',
       name: 'Richard Automotive',
       url: 'https://richard-automotive.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://richard-automotive.com/app-icon.webp',
+      },
     },
     datePublished: article.date,
     dateModified: article.date,
     mainEntityOfPage: `https://richard-automotive.com/blog/${article.slug}`,
-    image: article.imageUrl,
     speakable: {
       '@type': 'SpeakableSpecification',
-      cssSelector: ['.blog-content', '.blog-summary'],
+      cssSelector: ['.prose-custom'],
     },
+    timeRequired: `PT${article.estimatedReadingTime || '5'}M`,
   };
+
+  if (article.imageUrl) {
+    jsonLd.image = article.imageUrl;
+  }
 
   return (
     <script
@@ -128,6 +139,67 @@ function BreadcrumbJsonLd({ article }: { article: BlogPost }) {
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
   );
+}
+
+function FaqJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
+  if (faqs.length === 0) return null;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+function extractFaqs(content: string, maxQuestions: number = 5): { question: string; answer: string }[] {
+  const lines = content.split('\n');
+  const faqs: { question: string; answer: string }[] = [];
+  let currentQuestion: string | null = null;
+  let currentAnswer: string[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isQuestion = trimmed.endsWith('?') && !trimmed.startsWith('|') && !trimmed.startsWith('-');
+    const isHeader = trimmed.startsWith('## ') || trimmed.startsWith('### ');
+
+    if (isQuestion) {
+      if (currentQuestion && currentAnswer.length > 0) {
+        faqs.push({ question: currentQuestion, answer: currentAnswer.join(' ').slice(0, 300) });
+        if (faqs.length >= maxQuestions) break;
+      }
+      currentQuestion = trimmed.replace(/^#{1,3}\s*/, '');
+      currentAnswer = [];
+    } else if (isHeader) {
+      if (currentQuestion && currentAnswer.length > 0) {
+        faqs.push({ question: currentQuestion, answer: currentAnswer.join(' ').slice(0, 300) });
+        if (faqs.length >= maxQuestions) break;
+      }
+      currentQuestion = null;
+      currentAnswer = [];
+    } else if (currentQuestion && trimmed && !trimmed.startsWith('|')) {
+      currentAnswer.push(trimmed.replace(/\*\*(.+?)\*\*/g, '$1'));
+    }
+  }
+
+  if (currentQuestion && currentAnswer.length > 0 && faqs.length < maxQuestions) {
+    faqs.push({ question: currentQuestion, answer: currentAnswer.join(' ').slice(0, 300) });
+  }
+
+  return faqs;
 }
 
 // ── Simple Markdown-to-JSX renderer ──
@@ -297,12 +369,21 @@ export default async function BlogArticlePage({ params }: Props) {
 
   const dynamicPosts = await blogService.getBlogPosts(50);
   const allArticles = [...SEED_ARTICLES, ...dynamicPosts] as BlogPost[];
-  const relatedArticles = allArticles.filter((a) => a.slug !== slug).slice(0, 3);
+
+  // Related articles by shared tags, fallback to recent
+  const byTag = allArticles.filter(
+    (a) => a.slug !== slug && a.tags.some((t) => article.tags.includes(t)),
+  );
+  const byRecent = allArticles.filter((a) => a.slug !== slug);
+  const relatedArticles = byTag.length >= 3 ? byTag.slice(0, 3) : byRecent.slice(0, 3);
+
+  const faqs = extractFaqs(article.content);
 
   return (
     <>
       <ArticleJsonLd article={article} />
       <BreadcrumbJsonLd article={article} />
+      {faqs.length > 0 && <FaqJsonLd faqs={faqs} />}
 
       <div className="min-h-screen bg-slate-950 text-white">
         {/* Hero */}
@@ -329,14 +410,15 @@ export default async function BlogArticlePage({ params }: Props) {
               <span className="text-slate-400 truncate max-w-[200px]">{article.title}</span>
             </nav>
 
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 flex-wrap">
               {article.tags.slice(0, 3).map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="text-[10px] px-2.5 py-1 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold"
+                  href={`/blog/tag/${encodeURIComponent(tag.toLowerCase().replace(/\s+/g, '-'))}`}
+                  className="text-[10px] px-2.5 py-1 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold hover:bg-cyan-500/20 transition"
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
 
@@ -347,18 +429,25 @@ export default async function BlogArticlePage({ params }: Props) {
               {article.title}
             </h1>
 
-            <div className="flex items-center gap-4 text-sm text-slate-400">
-              <span>
-                Por <strong className="text-white">{article.author}</strong>
-              </span>
-              <span>•</span>
-              <time dateTime={article.date}>
-                {new Date(article.date).toLocaleDateString('es-PR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
+            <div className="flex items-center justify-between gap-4 text-sm text-slate-400">
+              <div className="flex items-center gap-4">
+                <span>
+                  Por <strong className="text-white">{article.author}</strong>
+                </span>
+                <span>•</span>
+                <time dateTime={article.date}>
+                  {new Date(article.date).toLocaleDateString('es-PR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+              <ShareButton
+                title={article.title}
+                url={`https://richard-automotive.com/blog/${article.slug}`}
+                description={article.metaDescription || article.excerpt}
+              />
             </div>
           </div>
         </div>
@@ -367,6 +456,14 @@ export default async function BlogArticlePage({ params }: Props) {
         <article className="max-w-4xl mx-auto px-6 md:px-16 py-12">
           <div className="prose-custom">{renderMarkdown(article.content)}</div>
         </article>
+
+        {/* Email Capture */}
+        <section className="max-w-4xl mx-auto px-6 md:px-16 pb-8">
+          <h2 className="text-lg font-bold mb-4 text-white/80">
+            ¿Quieres recibir más noticias como esta?
+          </h2>
+          <EmailCapture />
+        </section>
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (

@@ -28,7 +28,8 @@ export class FordNewsService {
       6. Estructura: título gancho, intro impactante, 3 puntos clave, conclusión con CTA.
       7. El contenido debe ir en HTML simple (<p>, <h2>, <h3>, <ul>, <strong>).
       8. Genera un slug amigable para URL.
-      9. NO inventar fechas ni datos falsos. Basarte solo en la noticia proporcionada.
+      9. Cuando hables de un modelo específico de Ford (Explorer, F-150, Mustang, Bronco, Ranger, Edge, Escape, etc.), incluye un enlace a /inventario/ford-{modelo} o /autos-usados/{marca}/{modelo} al menos una vez en el contenido.
+      10. NO inventar fechas ni datos falsos. Basarte solo en la noticia proporcionada.
     `;
 
     const prompt = `

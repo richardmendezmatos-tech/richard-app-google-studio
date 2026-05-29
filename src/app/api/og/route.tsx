@@ -1,13 +1,102 @@
 import { ImageResponse } from 'next/og';
 import { getCarById } from '@/entities/inventory/api/adapters/inventoryService';
+import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
+import { blogService } from '@/entities/blog/api/blogService';
+import { BlogPost } from '@/shared/types/types';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const slug = searchParams.get('slug');
 
+    // Blog article OG image
+    if (slug) {
+      const allSeeds = SEED_ARTICLES as BlogPost[];
+      let article = allSeeds.find((a) => a.slug === slug) || null;
+
+      if (!article) {
+        try {
+          const dynamic = await blogService.getBlogPosts(100);
+          article = dynamic.find((a) => a.slug === slug) || null;
+        } catch {
+          // not found
+        }
+      }
+
+      if (!article) {
+        return new Response('Article not found', { status: 404 });
+      }
+
+      const title = article.title;
+      const excerpt = article.metaDescription || article.excerpt;
+      const author = article.author;
+      const date = new Date(article.date).toLocaleDateString('es-PR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+
+      return new ImageResponse(
+        (
+          <div
+            style={{
+              height: '100%',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: '#020617',
+              backgroundImage: 'radial-gradient(circle at top right, #1e293b 0%, #020617 100%)',
+              fontFamily: 'sans-serif',
+              color: 'white',
+              padding: '60px',
+            }}
+          >
+            {/* Top Header */}
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#00e5ff', letterSpacing: '0.1em' }}>RICHARD</span>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#94a3b8', letterSpacing: '0.3em' }}>AUTOMOTIVE</span>
+              </div>
+              <div style={{ backgroundColor: '#00e5ff', color: '#020617', padding: '8px 16px', borderRadius: '100px', fontSize: '14px', fontWeight: '900' }}>
+                BLOG
+              </div>
+            </div>
+
+            {/* Article Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', maxWidth: '900px' }}>
+              <h1 style={{ fontSize: '56px', fontWeight: '900', lineHeight: 1.1, margin: 0, marginBottom: '20px' }}>
+                {title}
+              </h1>
+              <p style={{ fontSize: '22px', color: '#94a3b8', lineHeight: 1.4, margin: 0, marginBottom: '30px' }}>
+                {excerpt.length > 120 ? excerpt.slice(0, 120) + '...' : excerpt}
+              </p>
+              <div style={{ display: 'flex', gap: '20px', fontSize: '16px', color: '#64748b' }}>
+                <span style={{ color: '#00e5ff', fontWeight: 'bold' }}>{author}</span>
+                <span>•</span>
+                <span>{date}</span>
+              </div>
+            </div>
+
+            {/* Bottom */}
+            <div style={{ display: 'flex', width: '100%', borderTop: '1px solid #1e293b', paddingTop: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#94a3b8', fontWeight: 'bold' }}>BONO DE $300 WEB ACTIVO</span>
+              </div>
+              <span style={{ fontSize: '14px', color: '#64748b' }}>richard-automotive.com/blog</span>
+            </div>
+          </div>
+        ),
+        {
+          width: 1200,
+          height: 630,
+        },
+      );
+    }
+
+    // Vehicle OG image (existing)
     if (!id) {
-      return new Response('Missing car ID', { status: 400 });
+      return new Response('Missing car ID or blog slug', { status: 400 });
     }
 
     const car = await getCarById(id);
@@ -86,7 +175,7 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
-      }
+      },
     );
   } catch (e: any) {
     console.error('OG Image Generation Error:', e);
