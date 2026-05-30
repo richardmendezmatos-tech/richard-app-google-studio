@@ -6,7 +6,8 @@ import { updateUserProfile, updateUserPassword, User as AppAuthUser } from '@/fe
 import { usePrivacyStore } from '@/features/privacy';
 
 import { DI } from '@/app/(dashboard)/di/registry';
-import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2 } from 'lucide-react';
+import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2, Gift } from 'lucide-react';
+import { ReferralWidget } from '@/features/referrals';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 import SEO from '@/shared/ui/seo/SEO';
 
@@ -313,6 +314,28 @@ const ProfilePage: React.FC = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* 4. Referral Program */}
+            <div className="bg-white dark:bg-slate-900 rounded-[30px] p-8 shadow-xl border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500">
+                  <Gift size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-slate-800 dark:text-white">
+                    Recomienda y Gana
+                  </h3>
+                  <p className="text-sm text-slate-500">Comparte con amigos y gana hasta $200 por cada compra.</p>
+                </div>
+              </div>
+
+              <div className="flex justify-center sm:justify-start">
+                <ReferralWidget
+                  phone={(authUser as any).phoneNumber || user.email || 'unknown'}
+                  name={authUser.displayName || undefined}
+                />
               </div>
             </div>
           </div>

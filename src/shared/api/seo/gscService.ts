@@ -1,4 +1,4 @@
-import { JWT } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 export interface GSCSiteStatus {
@@ -44,23 +44,32 @@ type GSCResult<T> =
   | { ok: false; error: GSCError };
 
 const getCredentials = () => {
-  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GOOGLE_PRIVATE_KEY;
-  if (!email || !key) return null;
-  return { email, key: key.replace(/\\n/g, '\n') };
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  if (!clientId || !refreshToken) return null;
+  return { clientId, refreshToken };
 };
 
-const getClient = async (): Promise<JWT | null> => {
+let cachedClient: OAuth2Client | null = null;
+
+const getClient = async (): Promise<OAuth2Client | null> => {
+  if (cachedClient) return cachedClient;
+
   const creds = getCredentials();
   if (!creds) return null;
 
-  const client = new JWT({
-    email: creds.email,
-    key: creds.key,
-    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+  const client = new OAuth2Client({
+    clientId: creds.clientId,
+    clientSecret: 'd-FL95Q19q7MQmFpd7hHD0Ty',
+    redirectUri: 'http://localhost:8085',
   });
 
-  await client.authorize();
+  client.quotaProjectId = 'richard-automotive';
+  client.setCredentials({
+    refresh_token: creds.refreshToken,
+  });
+
+  cachedClient = client;
   return client;
 };
 
@@ -69,7 +78,7 @@ const siteUrl = SITE_CONFIG.url;
 export async function getSiteStatus(): Promise<GSCResult<GSCSiteStatus>> {
   const client = await getClient();
   if (!client) {
-    return { ok: false, error: { code: 401, message: 'GSC not configured — set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY', status: 'UNAUTHENTICATED' } };
+    return { ok: false, error: { code: 401, message: 'GSC not configured — run `node scripts/setup-gsc-oauth.mjs` to set up OAuth', status: 'UNAUTHENTICATED' } };
   }
 
   try {

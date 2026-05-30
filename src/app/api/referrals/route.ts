@@ -1,5 +1,26 @@
-import { NextResponse } from 'next/server';
-import { registerReferral } from '@/features/referrals/api/referralService';
+import { NextRequest, NextResponse } from 'next/server';
+import { registerReferral, getReferralStats, getReferralsByPhone } from '@/features/referrals/api/referralService';
+
+export async function GET(req: NextRequest) {
+  try {
+    const phone = req.nextUrl.searchParams.get('phone');
+    if (!phone) {
+      return NextResponse.json({ error: 'Phone parameter is required' }, { status: 400 });
+    }
+
+    const [stats, referrals] = await Promise.all([
+      getReferralStats(phone),
+      getReferralsByPhone(phone),
+    ]);
+
+    const existingCode = referrals.length > 0 ? referrals[0].code : null;
+
+    return NextResponse.json({ stats, code: existingCode, referrals });
+  } catch (error: any) {
+    console.error('[Referrals API] Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
