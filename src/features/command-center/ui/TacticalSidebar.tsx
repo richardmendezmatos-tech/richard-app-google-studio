@@ -17,6 +17,7 @@ import {
   LogOut,
   ShieldCheck,
   LayoutGrid,
+  Globe,
 } from 'lucide-react';
 import { useAuthStore } from '@/entities/session';
 
@@ -34,6 +35,7 @@ export const TacticalSidebar: React.FC = () => {
     { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
     { icon: Newspaper, label: 'Newsroom', path: '/admin/newsroom' },
     { icon: Users, label: 'Audiences', path: '/admin/audiences' },
+    { icon: Globe, label: 'GSC', path: '/admin/seo' },
     { icon: LayoutGrid, label: 'Strategy', path: '/strategy-lab' },
   ];
 

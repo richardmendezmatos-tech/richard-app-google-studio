@@ -35,6 +35,9 @@ const DealDesker = React.lazy(() =>
 );
 const NewsroomPage = React.lazy(() => import('@/pages/admin/newsroom/ui/NewsroomPage'));
 const AudiencesView = React.lazy(() => import('@/pages/admin/audiences/ui/AudiencesView'));
+const GSCDashboard = React.lazy(() =>
+  import('./GSCDashboard').then((m) => ({ default: m.GSCDashboard })),
+);
 
 const LeadAnalyticsPage = React.lazy(() =>
   import('@/features/leads').then((m) => ({ default: m.LeadAnalyticsPage })),
@@ -227,6 +230,14 @@ export const AdminRoutes = (props: any) => {
         />
         <Route path="marketing" element={<MarketingWrapper />} />
         <Route path="houston" element={<HoustonDashboard />} />
+        <Route
+          path="seo"
+          element={
+            <Suspense fallback={<div className="p-8 text-slate-500">Cargando GSC...</div>}>
+              <GSCDashboard />
+            </Suspense>
+          }
+        />
       </Route>
     </Routes>
   );
