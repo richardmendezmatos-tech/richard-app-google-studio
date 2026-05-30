@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@/shared/lib/next-route-adapter';
@@ -8,6 +8,7 @@ import { Car } from '@/entities/inventory';
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Share2,
   Sparkles,
   Loader2,
@@ -27,7 +28,7 @@ import {
   Key,
   Gift,
 } from 'lucide-react';
-import { generateCarPitch, sentinelAI } from '@/shared/api/ai';
+import { sentinelAI } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
@@ -49,7 +50,6 @@ import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
-import DOMPurify from 'dompurify';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
@@ -64,15 +64,23 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const { id, slug } = useParams<{ id: string; slug?: string }>();
   const navigate = useNavigate();
   const { currentDealer } = useDealer();
-  const [engagedTime, setEngagedTime] = useState(0);
+  const engagedTimeRef = useRef(0);
   const [isPreQualifyOpen, setIsPreQualifyOpen] = useState(false);
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
 
-  // Mocked dynamic urgency (for CRO)
-  const [viewersCount, setViewersCount] = React.useState(5);
+  // Dynamic urgency simulation (decay/rebound)
+  const [viewersCount, setViewersCount] = React.useState(() => Math.floor(Math.random() * 6) + 4);
   React.useEffect(() => {
-    setViewersCount(Math.floor(Math.random() * 5) + 3);
+    const interval = setInterval(() => {
+      setViewersCount((prev) => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + delta;
+        return Math.max(2, Math.min(12, next));
+      });
+    }, Math.random() * 10000 + 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const car = propCar || inventory.find((c) => c.id === id);
@@ -101,20 +109,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   // Moat: Track engaged time on vehicle
   useEffect(() => {
     if (!car) return;
-    const timer = setInterval(() => setEngagedTime((prev) => prev + 1), 5000);
+    const timer = setInterval(() => {
+      engagedTimeRef.current += 1;
+    }, 5000);
     return () => {
-      if (engagedTime > 0) {
+      if (engagedTimeRef.current > 0) {
         logIntentSignal({
           carId: id || 'unknown',
           dealerId: currentDealer.id,
           eventType: 'engaged_time',
-          value: engagedTime,
+          value: engagedTimeRef.current,
           sessionId: sessionStorage.getItem('session_id') || 'anon',
         });
       }
       clearInterval(timer);
     };
-  }, [engagedTime, car, id, currentDealer.id]);
+  }, [car, id, currentDealer.id]);
 
   const handleGalleryOpen = () => {
     logIntentSignal({
@@ -176,7 +186,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   )}`;
 
   return (
-    <div className="min-h-screen bg-[#020617] pb-24 pt-24 lg:pt-0 selection:bg-primary/30">
+    <div className="min-h-screen bg-[#020617] pb-32 pt-24 lg:pt-0 selection:bg-primary/30">
       <SEO
         title={`${car.name} | Richard Automotive`}
         description={`Compra este ${car.name} ${year} por $${car.price.toLocaleString()}. Financiamiento disponible, garantía incluida y entrega rápida en Puerto Rico.`}
@@ -247,100 +257,117 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           >
             {/* Gold Laser Scanner (CRO / Nivel 18 Precision) */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-[#C5A880] shadow-[0_0_20px_#C5A880] opacity-0 group-hover:opacity-100 animate-scan transition-opacity" />
-            <div className="flex items-center justify-between mb-6 relative z-10">
+            <button
+              onClick={() => setIsAnalysisOpen(!isAnalysisOpen)}
+              className="w-full flex items-center justify-between mb-6 relative z-10"
+            >
               <div className="flex items-center gap-3">
                 <Sparkles className="text-[#C5A880] animate-pulse" size={20} />
                 <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
                   SENTINEL <span className="text-[#C5A880]">DEEP ANALYSIS</span>
                 </h3>
               </div>
-              <span className="text-[8px] font-tech font-black text-slate-500 uppercase tracking-widest bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
-                S-AI v2.4 Active
-              </span>
-            </div>
+              <ChevronDown
+                className={`text-slate-500 transition-transform duration-300 ${isAnalysisOpen ? 'rotate-180' : ''}`}
+                size={16}
+              />
+            </button>
 
-            {loadingAnalysis ? (
-              <div className="h-48 flex flex-col items-center justify-center gap-4 text-[#C5A880] relative z-10">
-                <Loader2 className="w-8 h-8 animate-spin" />
-                <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
-                  EXECUTING NEURAL SCAN...
-                </span>
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-8 relative z-10"
-              >
-                <div className="space-y-3">
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                    Technical Profile
-                  </p>
-                  <p className="text-sm font-medium text-slate-200 leading-relaxed italic border-l-2 border-[#C5A880]/40 pl-4 py-1">
-                    "{deepAnalysis?.technicalProfile}"
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => {
-                    const iconName = feature.icon || 'Sparkles';
-                    return (
-                      <div
-                        key={i}
-                        className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 hover:border-[#C5A880]/30 transition-all flex items-start gap-3"
-                      >
-                        <div className="h-8 w-8 shrink-0 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
-                          {(() => {
-                            const iconClass = 'text-[#C5A880] shrink-0';
-                            switch (iconName) {
-                              case 'ShieldCheck':
-                                return <ShieldCheck className={iconClass} size={16} />;
-                              case 'Zap':
-                                return <Zap className={iconClass} size={16} />;
-                              case 'Wind':
-                                return <Wind className={iconClass} size={16} />;
-                              case 'Gauge':
-                                return <Gauge className={iconClass} size={16} />;
-                              case 'Compass':
-                                return <Compass className={iconClass} size={16} />;
-                              case 'Cpu':
-                                return <Cpu className={iconClass} size={16} />;
-                              case 'Coins':
-                                return <Coins className={iconClass} size={16} />;
-                              case 'Flame':
-                                return <Flame className={iconClass} size={16} />;
-                              case 'Crown':
-                                return <Crown className={iconClass} size={16} />;
-                              case 'Activity':
-                                return <Activity className={iconClass} size={16} />;
-                              case 'Key':
-                                return <Key className={iconClass} size={16} />;
-                              default:
-                                return <Sparkles className={iconClass} size={16} />;
-                            }
-                          })()}
-                        </div>
-                        <div>
-                          <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-0.5">
-                            {feature.label}
-                          </p>
-                          <p className="text-xs font-bold text-white">{feature.value}</p>
-                        </div>
+            <AnimatePresence initial={false}>
+              {isAnalysisOpen && (
+                <motion.div
+                  key="deep-analysis-content"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  {loadingAnalysis ? (
+                    <div className="h-48 flex flex-col items-center justify-center gap-4 text-[#C5A880] relative z-10">
+                      <Loader2 className="w-8 h-8 animate-spin" />
+                      <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
+                        EXECUTING NEURAL SCAN...
+                      </span>
+                    </div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="space-y-8 relative z-10"
+                    >
+                      <div className="space-y-3">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                          Technical Profile
+                        </p>
+                        <p className="text-sm font-medium text-slate-200 leading-relaxed italic border-l-2 border-[#C5A880]/40 pl-4 py-1">
+                          "{deepAnalysis?.technicalProfile}"
+                        </p>
                       </div>
-                    );
-                  })}
-                </div>
 
-                <div className="p-5 rounded-2xl bg-[#C5A880]/5 border border-[#C5A880]/10">
-                  <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <ShieldCheck size={12} className="text-[#C5A880]" /> Psychological Hook
-                  </p>
-                  <p className="text-xs md:text-sm font-semibold text-slate-300 leading-relaxed pl-1">
-                    {deepAnalysis?.psychologicalHook}
-                  </p>
-                </div>
-              </motion.div>
-            )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {(deepAnalysis?.keyFeatures || []).map((feature: any, i: number) => {
+                          const iconName = feature.icon || 'Sparkles';
+                          return (
+                            <div
+                              key={i}
+                              className="bg-slate-950/40 p-4 rounded-2xl border border-white/5 hover:border-[#C5A880]/30 transition-all flex items-start gap-3"
+                            >
+                              <div className="h-8 w-8 shrink-0 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
+                                {(() => {
+                                  const iconClass = 'text-[#C5A880] shrink-0';
+                                  switch (iconName) {
+                                    case 'ShieldCheck':
+                                      return <ShieldCheck className={iconClass} size={16} />;
+                                    case 'Zap':
+                                      return <Zap className={iconClass} size={16} />;
+                                    case 'Wind':
+                                      return <Wind className={iconClass} size={16} />;
+                                    case 'Gauge':
+                                      return <Gauge className={iconClass} size={16} />;
+                                    case 'Compass':
+                                      return <Compass className={iconClass} size={16} />;
+                                    case 'Cpu':
+                                      return <Cpu className={iconClass} size={16} />;
+                                    case 'Coins':
+                                      return <Coins className={iconClass} size={16} />;
+                                    case 'Flame':
+                                      return <Flame className={iconClass} size={16} />;
+                                    case 'Crown':
+                                      return <Crown className={iconClass} size={16} />;
+                                    case 'Activity':
+                                      return <Activity className={iconClass} size={16} />;
+                                    case 'Key':
+                                      return <Key className={iconClass} size={16} />;
+                                    default:
+                                      return <Sparkles className={iconClass} size={16} />;
+                                  }
+                                })()}
+                              </div>
+                              <div>
+                                <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-0.5">
+                                  {feature.label}
+                                </p>
+                                <p className="text-xs font-bold text-white">{feature.value}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="p-5 rounded-2xl bg-[#C5A880]/5 border border-[#C5A880]/10">
+                        <p className="text-[9px] font-black text-[#C5A880] uppercase tracking-widest mb-2 flex items-center gap-2">
+                          <ShieldCheck size={12} className="text-[#C5A880]" /> Psychological Hook
+                        </p>
+                        <p className="text-xs md:text-sm font-semibold text-slate-300 leading-relaxed pl-1">
+                          {deepAnalysis?.psychologicalHook}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div className="absolute inset-0 bg-linear-to-br from-[#C5A880]/5 to-transparent pointer-events-none" />
           </GlassContainer>
         </div>
@@ -376,7 +403,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px]">
-                {car.type} • {year} • DATABASE-RECOGNIZED
+                {car.type} • {year}{car.vin ? ` • ••••${car.vin.slice(-4)}` : ''} • Vega Alta, PR
               </span>
             </motion.div>
             <h1 className="font-cinematic text-5xl lg:text-8xl text-white tracking-tighter leading-none text-glow uppercase">
@@ -387,12 +414,9 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 <span className="font-tech text-5xl font-black text-white decoration-primary/30 underline-offset-8">
                   ${car.price.toLocaleString()}
                 </span>
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400">
-                    MARKET-VALIDATED
-                  </span>
-                </div>
+                <span className="font-tech text-lg font-black text-emerald-400/80">
+                  ~${Math.round((car.price - 2000) * (1.049 / 60)).toLocaleString()}/mes
+                </span>
                 <StatusBadge status={car.status} />
               </div>
 
@@ -480,6 +504,58 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </div>
           </GlassContainer>
 
+          {/* Features Tags */}
+          {car.features && car.features.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                CARACTERÍSTICAS
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {car.features.map((feature, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-slate-300"
+                  >
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Deal Builder */}
+          <div id="deal-builder-section" className="scroll-mt-32">
+            <React.Suspense
+              fallback={
+                <div className="w-full h-[600px] rounded-5xl border border-white/10 overflow-hidden p-8 space-y-6">
+                  <div className="h-8 w-48 animate-pulse bg-white/5 rounded-lg" />
+                  <div className="h-4 w-64 animate-pulse bg-white/5 rounded-lg" />
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
+                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
+                  </div>
+                  <div className="h-24 animate-pulse bg-white/5 rounded-2xl" />
+                  <div className="h-16 animate-pulse bg-white/5 rounded-2xl" />
+                  <div className="flex gap-4">
+                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
+                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
+                  </div>
+                </div>
+              }
+            >
+              <GlassContainer intensity="medium" opacity={0.02} className="p-1">
+                <ApprovalSimulatorWidget
+                  vehicleId={car.id}
+                  basePrice={car.price}
+                  vehicleName={car.name}
+                  dealerId={currentDealer?.id || 'richard-automotive'}
+                />
+              </GlassContainer>
+            </React.Suspense>
+          </div>
+
+          <div className="h-px bg-white/5" />
+
           <GlassContainer
             intensity="high"
             opacity={0.04}
@@ -491,21 +567,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 PERFORMANCE INDEX <span className="text-white">/ SENTINEL LAB</span>
               </h3>
             </div>
-            <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="flex justify-center mb-8">
               <ProgressRing
                 label="SENTINEL SCORE"
                 value={deepAnalysis?.advantageScore || 85}
                 max={100}
                 size={140}
                 strokeWidth={12}
-              />
-              <ProgressRing
-                label="TECH RANK"
-                value={car.type === 'luxury' ? 98 : 92}
-                max={100}
-                size={140}
-                strokeWidth={12}
-                color="#f59e0b"
               />
             </div>
 
@@ -564,37 +632,6 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </a>
           </div>
 
-          <div className="h-px bg-white/5" />
-
-          <div id="deal-builder-section" className="scroll-mt-32">
-            <React.Suspense
-              fallback={
-                <div className="w-full h-[600px] rounded-5xl border border-white/10 overflow-hidden p-8 space-y-6">
-                  <div className="h-8 w-48 animate-pulse bg-white/5 rounded-lg" />
-                  <div className="h-4 w-64 animate-pulse bg-white/5 rounded-lg" />
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
-                    <div className="h-32 animate-pulse bg-white/5 rounded-2xl" />
-                  </div>
-                  <div className="h-24 animate-pulse bg-white/5 rounded-2xl" />
-                  <div className="h-16 animate-pulse bg-white/5 rounded-2xl" />
-                  <div className="flex gap-4">
-                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
-                    <div className="h-14 flex-1 animate-pulse bg-white/5 rounded-2xl" />
-                  </div>
-                </div>
-              }
-            >
-              <GlassContainer intensity="medium" opacity={0.02} className="p-1">
-                <ApprovalSimulatorWidget
-                  vehicleId={car.id}
-                  basePrice={car.price}
-                  vehicleName={car.name}
-                  dealerId={currentDealer?.id || 'richard-automotive'}
-                />
-              </GlassContainer>
-            </React.Suspense>
-          </div>
         </div>
       </main>
 
@@ -738,7 +775,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
           onClick={() => {
             document.getElementById('deal-builder-section')?.scrollIntoView({ behavior: 'smooth' });
           }}
-          className="flex-1 bg-primary hover:bg-primary/90 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95 animate-btn-glow"
+          className="flex-1 bg-primary hover:bg-primary/90 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,229,255,0.4)] transition-all active:scale-95"
         >
           ME INTERESA
         </button>

@@ -32,8 +32,8 @@ const SpecsTab: React.FC<Props> = ({ car }) => (
               label: 'Transmisión',
               value: car.transmission || 'Automática Selective',
             },
-            { label: 'Tracción', value: 'Delantera AWD System' },
-            { label: 'Motor', value: car.engine || 'Turbocard Intercooled' },
+            { label: 'Tracción', value: car.specs?.find((s) => s.label.toLowerCase().includes('tracción'))?.value || 'Delantera' },
+            { label: 'Motor', value: car.engine || 'N/A' },
           ].map((spec) => (
             <div key={spec.label} className="group">
               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 group-hover:text-cyan-400 transition-colors">
@@ -53,12 +53,12 @@ const SpecsTab: React.FC<Props> = ({ car }) => (
           </h4>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          {[
+          {(car.features?.length ? car.features.slice(0, 4) : [
             'Frenado Autónomo',
             'Sensores Blind-Spot',
             'Cámara 360 Scan',
             'Alerta de Tráfico Cruzado',
-          ].map((f) => (
+          ]).map((f) => (
             <div
               key={f}
               className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5"

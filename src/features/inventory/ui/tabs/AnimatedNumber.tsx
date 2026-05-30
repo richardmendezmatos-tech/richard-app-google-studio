@@ -19,7 +19,7 @@ const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
     return () => controls.stop();
   }, [value]);
 
-  return <span className="tabular-nums">{displayValue.toLocaleString()}</span>;
+  return <span className="tabular-nums" aria-live="polite" aria-atomic="true">{displayValue.toLocaleString()}</span>;
 };
 
 export default AnimatedNumber;

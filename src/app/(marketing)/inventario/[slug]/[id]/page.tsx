@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
-import { getCarById, getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { getCarById, getSimilarCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -186,11 +186,13 @@ function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
 export default async function VehicleDetailPage({ params }: Props) {
   const { id } = await params;
 
-  // Parallel fetch for current car and initial inventory (for related/sidebar)
-  const [currentCar, { cars: inventory }] = await Promise.all([
-    getCarById(id),
-    getPaginatedCars(12, 0, 'all'),
-  ]);
+  // Fetch current car
+  const currentCar = await getCarById(id);
+
+  // Fetch similar cars by make or type (for related/sidebar)
+  const inventory = currentCar
+    ? await getSimilarCars(currentCar.make, currentCar.type, id, 4)
+    : [];
 
   // Generate default FAQs if not provided by the entity
   const defaultFaqs = currentCar

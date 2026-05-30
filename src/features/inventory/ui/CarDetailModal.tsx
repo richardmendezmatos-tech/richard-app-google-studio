@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Car } from '@/entities/inventory';
 import {
   X,
@@ -22,6 +22,7 @@ import FinancialsTab from './tabs/FinancialsTab';
 import SpecsTab from './tabs/SpecsTab';
 import ContactTab from './tabs/ContactTab';
 import AnimatedNumber from './tabs/AnimatedNumber';
+import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 
 const auditRepo = new AuditRepository();
 
@@ -43,6 +44,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
   const [loadingPitch, setLoadingPitch] = useState(false);
   const [showHeavyContent, setShowHeavyContent] = useState(false);
   const [showAR, setShowAR] = useState(false);
+  const leadCapturedRef = useRef(false);
 
   const analytics = useInventoryAnalytics();
 
@@ -96,6 +98,8 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
   }, [activeTab, aiPitch, car, loadingPitch]);
 
   const handleAction = () => {
+    if (leadCapturedRef.current) return;
+    leadCapturedRef.current = true;
     const dpVal = downPayment === '' ? 0 : downPayment;
     const tiVal = tradeIn === '' ? 0 : tradeIn;
 
@@ -128,12 +132,14 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     );
 
     window.open(
-      `https://wa.me/17873682880?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
+      `https://wa.me/${BUSINESS_CONTACT.phone.replace(/-/g, '')}?text=Hola Richard, me interesa el ${car.name}. Vi el reporte IA y calculé un pago de $${calculatedPayment}/mes.`,
       '_blank',
     );
   };
 
   const handleCall = () => {
+    if (leadCapturedRef.current) return;
+    leadCapturedRef.current = true;
     // 1. Silent Lead Capture
     captureHotLead({
       vehicleId: car.id,
@@ -149,7 +155,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
       'CarDetailModal',
     );
 
-    window.location.href = 'tel:7873682880';
+    window.location.href = `tel:${BUSINESS_CONTACT.phone.replace(/-/g, '')}`;
   };
 
   const handleShare = async () => {
@@ -230,10 +236,12 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
 
         {/* Sentinel Tab Bar */}
         <div className="px-6 lg:px-12 mb-4 relative z-20">
-          <div className="flex gap-2 bg-white/5 p-1.5 rounded-[24px] border border-white/5 backdrop-blur-md">
+          <div role="tablist" className="flex gap-2 bg-white/5 p-1.5 rounded-[24px] border border-white/5 backdrop-blur-md">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 py-4 px-4 rounded-[18px] flex flex-col md:flex-row items-center justify-center gap-2 transition-all relative overflow-hidden group ${activeTab === tab.id ? 'bg-linear-to-br from-primary to-cyan-600 shadow-[0_10px_30px_rgba(0,180,216,0.3)]' : 'hover:bg-white/5'}`}
               >
@@ -263,6 +271,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
+              role="tabpanel"
               initial={{ opacity: 0, x: 20, scale: 0.99 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: -20, scale: 1.01 }}

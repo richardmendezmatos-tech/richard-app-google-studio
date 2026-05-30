@@ -131,6 +131,29 @@ export const getCarById = async (id: string): Promise<Vehicle | null> => {
   return mapRowToVehicle(data);
 };
 
+export const getSimilarCars = async (
+  make: string,
+  type: string,
+  excludeId: string,
+  limit: number = 4,
+): Promise<Car[]> => {
+  const sb = await getSupabase();
+  if (!sb) return [];
+
+  const { data, error } = await sb
+    .from('inventory')
+    .select('*')
+    .neq('vin', excludeId)
+    .or(`make.ilike.${make},type.ilike.${type}`)
+    .limit(limit);
+
+  if (error) {
+    console.error('[InventoryService] Error fetching similar cars:', error);
+    return [];
+  }
+  return (data || []).map(mapRowToVehicle);
+};
+
 export const uploadVehicleImages = async (files: File[], vin: string): Promise<string[]> => {
   try {
     return await uploadToSupabase(files, vin);
