@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Car } from '@/entities/inventory';
 import { analyzeCarImage } from '@/shared/api/ai/geminiService';
-import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';
+import { LIFESTYLE_TAGS } from './neuralMatchConstants';
 
 const auditRepo = new AuditRepository();
 
@@ -15,17 +15,11 @@ import {
   CheckCircle2,
   ChevronRight,
   Sparkles,
-  Car as CarIcon,
-  Baby,
-  Mountain,
-  Gauge,
-  Wallet,
-  Briefcase,
-  Leaf,
   Mic,
   MicOff,
   UploadCloud,
   User,
+  Search,
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 
@@ -42,57 +36,14 @@ interface MatchResult {
   intent?: any;
 }
 
-const LIFESTYLE_TAGS = [
-  {
-    id: 'family',
-    label: 'Familia & Seguridad',
-    icon: <Baby size={14} />,
-    text: 'Priorizo la seguridad y el espacio para mi familia.',
-  },
-  {
-    id: 'adventure',
-    label: 'Aventura & Off-road',
-    icon: <Mountain size={14} />,
-    text: 'Me gusta salir de la carretera y necesito capacidad todoterreno.',
-  },
-  {
-    id: 'performance',
-    label: 'Velocidad & Sport',
-    icon: <Gauge size={14} />,
-    text: 'Busco alto rendimiento, aceleración y manejo deportivo.',
-  },
-  {
-    id: 'commute',
-    label: 'Uso Diario',
-    icon: <CarIcon size={14} />,
-    text: 'Necesito algo eficiente y cómodo para el tráfico diario.',
-  },
-  {
-    id: 'budget',
-    label: 'Económico',
-    icon: <Wallet size={14} />,
-    text: 'Mi prioridad es el ahorro de combustible y bajo costo de mantenimiento.',
-  },
-  {
-    id: 'luxury',
-    label: 'Lujo & Tech',
-    icon: <Briefcase size={14} />,
-    text: 'Quiero la mejor tecnología, confort premium y estatus.',
-  },
-  {
-    id: 'eco',
-    label: 'Eco-Friendly',
-    icon: <Leaf size={14} />,
-    text: 'Me interesa reducir mi huella de carbono (Híbrido/Eléctrico).',
-  },
-];
+
 
 const SCAN_MESSAGES = [
-  'Extrayendo variables de estilo de vida...',
-  'Analizando patrones de conducción...',
-  'Consultando base de datos global...',
-  'Calculando probabilidades de compatibilidad...',
-  'Generando perfil psicográfico...',
+  'Analizando Patrón Neural',
+  'Procesando Perfil Psicológico',
+  'Mapeando Compatibilidad',
+  'Optimizando Preferencias',
+  'Calculando Puntuación de Afinidad Neural',
 ];
 
 const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) => {
@@ -103,12 +54,13 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
   const [step, setStep] = useState<'input' | 'scanning' | 'results'>('input');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const [scanMessageIndex, setScanMessageIndex] = useState(0);
   const [droppedImage, setDroppedImage] = useState<string | null>(null);
+  const [scanMessageIndex, setScanMessageIndex] = useState(0);
+  const [refineQuery, setRefineQuery] = useState('');
   const analytics = useInventoryAnalytics();
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Speech Recognition Setup
   const recognitionRef = useRef<any>(null);
@@ -133,17 +85,14 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
     }
   }, []);
 
-  const toggleListening = () => {
-    if (!recognitionRef.current) return;
-    if (isListening) {
-      recognitionRef.current.stop();
-    } else {
-      setIsListening(true);
-      recognitionRef.current.start();
-    }
-  };
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
-  // Scanning Text Animation
+  // Scanning message cycling
   useEffect(() => {
     let interval: number;
     if (step === 'scanning') {
@@ -154,6 +103,16 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
     }
     return () => clearInterval(interval);
   }, [step]);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  };
 
   const handleTagToggle = (tagId: string, tagText: string) => {
     if (activeTags.includes(tagId)) {
@@ -177,12 +136,13 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
       setStep('scanning');
       setIsAnalyzing(true);
+      setDroppedImage(null);
 
       try {
         analytics.trackNeuralMatch(finalProfile);
         auditRepo.log(
           'info',
-          `Neural Match Scan Initiated`,
+          'Neural Match Scan Initiated',
           { profile_length: finalProfile.length, tags: activeTags },
           'NeuralMatchModal',
         );
@@ -223,7 +183,6 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
       reader.onload = async () => {
         const base64 = reader.result as string;
         setDroppedImage(base64);
-        setStep('scanning');
 
         try {
           const analysis = await analyzeCarImage(base64);
@@ -236,13 +195,11 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
           if (query && typeof query === 'string' && query !== '[object Object]') {
             setProfile(query);
             analytics.trackVisualSearch('neural_match_upload');
-            // Trigger auto-scan after short delay
-            setTimeout(() => handleScan(query), 500);
+            timeoutRef.current = setTimeout(() => handleScan(query), 500);
           }
         } catch (error) {
           console.error('Image analysis failed', error);
-        } finally {
-          // Image processing complete
+          setDroppedImage(null);
         }
       };
       reader.readAsDataURL(file);
@@ -257,29 +214,28 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
     noClick: false,
   });
 
+  // Focus trap: focus textarea on mount, listen for Escape
+  useEffect(() => {
+    textareaRef.current?.focus();
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && profile.trim()) {
+        handleScan();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onClose, handleScan, profile]);
+
   const getCarById = (id: string) => inventory.find((c) => c.id === id);
 
   const promptStrength = Math.min(100, (profile.length / 100) * 100);
   const strengthColor =
     promptStrength < 30 ? 'bg-red-500' : promptStrength < 70 ? 'bg-yellow-500' : 'bg-primary';
 
-  useLayoutEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.style.setProperty('--prompt-strength', `${promptStrength}%`);
-    }
-  }, [promptStrength]);
-
-  useLayoutEffect(() => {
-    results.forEach((res) => {
-      const el = itemRefs.current.get(res.carId);
-      if (el) el.style.setProperty('--match-score', `${res.score}%`);
-    });
-  }, [results]);
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in">
       <div
-        ref={containerRef}
         className="glass-premium w-full max-w-4xl shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh] rounded-5xl"
       >
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
@@ -327,14 +283,21 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     <button
                       key={tag.id}
                       onClick={() => handleTagToggle(tag.id, tag.text)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleTagToggle(tag.id, tag.text);
+                        }
+                      }}
                       className={`
-                                            flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide border transition-all duration-200
-                                            ${
-                                              activeTags.includes(tag.id)
-                                                ? 'bg-ra-primary text-slate-950 border-ra-primary shadow-lg shadow-ra-primary/30'
-                                                : 'bg-white/5 text-slate-400 border-white/10 hover:border-ra-primary/50 hover:text-white'
-                                            }
-                                        `}
+                        flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide border transition-all duration-200
+                        ${
+                          activeTags.includes(tag.id)
+                            ? 'bg-ra-primary text-slate-950 border-ra-primary shadow-lg shadow-ra-primary/30'
+                            : 'bg-white/5 text-slate-400 border-white/10 hover:border-ra-primary/50 hover:text-white'
+                        }
+                      `}
+                      aria-pressed={activeTags.includes(tag.id)}
                     >
                       {tag.icon} {tag.label}
                     </button>
@@ -345,7 +308,8 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                   <div className="flex-1 relative group">
                     <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 rounded-t-3xl overflow-hidden">
                       <div
-                        className={`h-full ${strengthColor} transition-all duration-500 w-[var(--prompt-strength)]`}
+                        className={`h-full ${strengthColor} transition-all duration-500`}
+        style={{ width: `${promptStrength}%` }}
                       ></div>
                     </div>
                     <textarea
@@ -377,9 +341,14 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                       >
                         {isListening ? 'Escuchando...' : 'IA de Análisis Activa'}
                       </span>
-                      <span className="text-[10px] text-slate-600 font-mono">
-                        {profile.length} chars
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[9px] text-slate-700 font-mono">
+                          ⌘+Enter
+                        </span>
+                        <span className="text-[10px] text-slate-600 font-mono">
+                          {profile.length} chars
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -445,7 +414,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
             )}
 
             {step === 'scanning' && (
-              <div className="h-full flex flex-col items-center justify-center space-y-12">
+              <div className="h-full flex flex-col items-center justify-center space-y-12 py-16">
                 <div className="relative">
                   <div className="w-48 h-48 border border-slate-700/50 rounded-full animate-[spin_10s_linear_infinite]"></div>
                   <div className="absolute inset-4 border border-primary/30 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
@@ -461,7 +430,10 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     {SCAN_MESSAGES[scanMessageIndex]}
                   </h3>
                   <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary animate-[translateX_2s_ease-in-out_infinite] w-1/3 rounded-full"></div>
+                    <div
+                      className="h-full bg-primary rounded-full animate-shimmer"
+                      style={{ width: '33%' }}
+                    ></div>
                   </div>
                   <p className="text-slate-500 font-mono text-xs">
                     Procesando {inventory.length} vectores de datos.
@@ -471,8 +443,8 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
             )}
 
             {step === 'results' && (
-              <div className="space-y-6">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 bg-[#173d57]/50 p-6 rounded-4xl border border-primary/30">
+              <div className="space-y-6" aria-live="polite" aria-label="Resultados del análisis">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#173d57]/50 p-6 rounded-4xl border border-primary/30">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
                       <User size={24} className="text-white" />
@@ -494,9 +466,39 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                   </button>
                 </div>
 
+                {/* Refine bar */}
+                <div className="flex gap-2">
+                  <input
+                    value={refineQuery}
+                    onChange={(e) => setRefineQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && refineQuery.trim()) {
+                        handleScan(refineQuery.trim());
+                        setRefineQuery('');
+                      }
+                    }}
+                    placeholder="Refina tu búsqueda..."
+                    className="ra-input-base flex-1 px-4 py-2 text-sm"
+                    aria-label="Refinar búsqueda"
+                  />
+                  <button
+                    onClick={() => {
+                      if (refineQuery.trim()) {
+                        handleScan(refineQuery.trim());
+                        setRefineQuery('');
+                      }
+                    }}
+                    disabled={!refineQuery.trim() || isAnalyzing}
+                    className="px-4 py-2 bg-ra-primary text-slate-950 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+                    aria-label="Refinar"
+                  >
+                    <Search size={16} />
+                  </button>
+                </div>
+
                 {/* Intent Parameter Chips */}
                 {results.length > 0 && results[0].intent && (
-                  <div className="flex flex-wrap gap-2 mb-4 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-2">
                     {results[0].intent.budget?.maxMonthlyPayment && (
                       <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
                         Pago Max: ${results[0].intent.budget.maxMonthlyPayment}/mes
@@ -516,13 +518,22 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                 )}
 
                 {results.length === 0 ? (
-                  <div className="text-center py-20">
+                  <div className="text-center py-16">
                     <div className="mx-auto text-slate-600 mb-4 flex justify-center">
                       <BrainCircuit size={48} />
                     </div>
-                    <p className="text-slate-400">
+                    <p className="text-slate-400 font-bold mb-2">
                       No encontramos coincidencias claras para este perfil.
                     </p>
+                    <p className="text-slate-600 text-sm">
+                      Intenta con un perfil más detallado o ajusta las etiquetas de estilo de vida.
+                    </p>
+                    <button
+                      onClick={() => setStep('input')}
+                      className="mt-6 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl text-sm font-bold uppercase tracking-wide"
+                    >
+                      Volver al perfil
+                    </button>
                   </div>
                 ) : (
                   <div className="grid gap-4 animate-in slide-in-from-bottom-10 duration-500">
@@ -534,19 +545,15 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                       return (
                         <div
                           key={result.carId}
-                          ref={(el) => {
-                            if (el) itemRefs.current.set(result.carId, el);
-                            else itemRefs.current.delete(result.carId);
-                          }}
                           onClick={() => onSelectCar(car)}
                           className={`
-                                                    group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-4xl cursor-pointer transition-all duration-300
-                                                    ${
-                                                      isTopMatch
-                                                        ? 'bg-linear-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] transform scale-[1.02]'
-                                                        : 'bg-slate-800/30 border border-slate-700 hover:bg-slate-800/80'
-                                                    }
-                                                `}
+                            group relative flex flex-col md:flex-row items-center gap-6 p-6 rounded-4xl cursor-pointer transition-all duration-300
+                            ${
+                              isTopMatch
+                                ? 'bg-linear-to-r from-primary/20 to-slate-800/80 border border-primary/50 shadow-[0_0_30px_rgba(0,174,217,0.15)] md:scale-[1.02]'
+                                : 'bg-slate-800/30 border border-slate-700 hover:bg-slate-800/80'
+                            }
+                          `}
                         >
                           {isTopMatch && (
                             <div className="absolute -top-3 -right-3 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-10">
@@ -584,11 +591,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
 
                             <div className="w-full h-2 bg-slate-700 rounded-full mb-3 overflow-hidden">
                               <div
-                                className={`h-full rounded-full transition-all duration-1000 ease-out ${result.score > 85 ? 'bg-primary' : result.score > 60 ? 'bg-emerald-500' : 'bg-amber-500'} w-[var(--match-score)]`}
+                                className={`h-full rounded-full transition-all duration-1000 ease-out ${result.score > 85 ? 'bg-primary' : result.score > 60 ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                                style={{ width: `${Math.max(result.score, 5)}%` }}
                               />
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed border-l-2 border-slate-600 pl-3 italic">
-                              "{result.reason}"
+                              &ldquo;{result.reason}&rdquo;
                             </p>
                           </div>
 
