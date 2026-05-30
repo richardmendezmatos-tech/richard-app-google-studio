@@ -25,6 +25,7 @@ import {
   Crown,
   Activity,
   Key,
+  Gift,
 } from 'lucide-react';
 import { generateCarPitch, sentinelAI } from '@/shared/api/ai';
 import { useDealer } from '@/entities/dealer';
@@ -435,22 +436,49 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             </div>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            {[
-              {
-                icon: <ShieldCheck size={16} className="text-emerald-500" />,
-                label: 'SENTINEL WARRANTY',
-              },
-              { icon: <Zap size={16} className="text-amber-500" />, label: 'EXPRESS DELIVERY' },
-            ].map((b, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap"
-              >
-                {b.icon} {b.label}
-              </div>
-            ))}
+          {/* Ford-First Badges */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide flex-wrap">
+            {car.make?.toLowerCase() === 'ford' && (
+              <>
+                <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-emerald-400 whitespace-nowrap">
+                  <ShieldCheck size={14} /> Garantía 10 Años / 100k
+                </div>
+                <div className="flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-cyan-400 whitespace-nowrap">
+                  <Zap size={14} /> Bono Web $300
+                </div>
+                <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-400 whitespace-nowrap">
+                  <Coins size={14} /> Ford Credit
+                </div>
+              </>
+            )}
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap">
+              <ShieldCheck size={14} className="text-emerald-500" /> SENTINEL WARRANTY
+            </div>
           </div>
+
+          {/* Dynamic Specs Grid */}
+          <GlassContainer intensity="low" opacity={0.04} className="p-6">
+            <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">
+              ESPECIFICACIONES
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Año', value: car.year?.toString() },
+                { label: 'Condición', value: car.condition === 'new' ? 'Nuevo' : car.condition === 'used' ? 'Usado' : null },
+                { label: 'Millaje', value: car.mileage != null ? `${car.mileage.toLocaleString()} mi` : null },
+                { label: 'Transmisión', value: car.transmission ? car.transmission.charAt(0).toUpperCase() + car.transmission.slice(1) : null },
+                { label: 'Combustible', value: (car.fuel || car.fuelType) ? (car.fuel || car.fuelType || '').charAt(0).toUpperCase() + (car.fuel || car.fuelType || '').slice(1) : null },
+                { label: 'Motor / HP', value: [car.engine, car.hp ? `${car.hp} HP` : null].filter(Boolean).join(' · ') || null },
+                { label: 'Tipo', value: car.type ? car.type.charAt(0).toUpperCase() + car.type.slice(1) : null },
+                { label: 'Color', value: car.color || null },
+              ].filter((s) => s.value).map((spec) => (
+                <div key={spec.label} className="bg-white/5 rounded-xl p-3">
+                  <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{spec.label}</p>
+                  <p className="text-sm font-bold text-white mt-0.5">{spec.value}</p>
+                </div>
+              ))}
+            </div>
+          </GlassContainer>
 
           <GlassContainer
             intensity="high"
@@ -496,6 +524,45 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
 
             <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-primary/5 blur-3xl pointer-events-none" />
           </GlassContainer>
+
+          {/* Quick CTAs */}
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href="/prueba-de-manejo"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all"
+            >
+              Prueba de Manejo
+            </a>
+            <a
+              href="/trade-in"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all"
+            >
+              Trade-In
+            </a>
+            <a
+              href="/bono-300"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest rounded-xl transition-all col-span-2"
+            >
+              <Gift size={14} /> Bono Web $300 — Canjea tu Descuento
+            </a>
+          </div>
+
+          {/* Referral CTA */}
+          <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 text-center">
+            <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest mb-1">
+              Recomienda y Gana
+            </p>
+            <p className="text-xs text-slate-400 mb-3">
+              Invita a un amigo y recibe <strong className="text-amber-400">$200</strong>. Tu amigo recibe{' '}
+              <strong className="text-amber-400">$100</strong> de descuento.
+            </p>
+            <a
+              href="/recomienda"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 border border-amber-500/30 hover:bg-amber-500/30 text-amber-400 font-bold text-xs uppercase tracking-widest rounded-xl transition-all"
+            >
+              <Gift size={14} /> Recomendar Ahora
+            </a>
+          </div>
 
           <div className="h-px bg-white/5" />
 
