@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 /**
- * Richard Automotive Global Proxy (Sentinel N24-PRO Edge)
+ * Richard Automotive Global Proxy
  * Replaces the deprecated 'middleware' convention for Next.js 16.
  * Handles Supabase sessions, protections, and security headers.
  */
@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
   const ip =
     (request as any).ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'anonymous';
 
-  // 0. Sentinel N20: Anti-Spam Rate Limiting (with Upstash fallback)
+  // 0. Anti-Spam Rate Limiting (with Upstash fallback)
   const protectedApiRoutes: { route: string; limit: number; windowMs: number }[] = [
     { route: '/api/webhooks/leads', limit: 5, windowMs: 60_000 },
     { route: '/api/ai/chat', limit: 10, windowMs: 60_000 },
@@ -74,7 +74,7 @@ export async function proxy(request: NextRequest) {
     request,
   });
 
-  // 0.5. Edge Caching for Intelligence (Nivel 22)
+  // 0.5. Edge Caching for Intelligence
   if (pathname.includes('/api/command-center/intelligence') && request.method === 'GET') {
     supabaseResponse.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=30');
   }
@@ -117,7 +117,7 @@ export async function proxy(request: NextRequest) {
   const isPrivate = privateRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
-  // SENTINEL BYPASS: Allow local development bypass for e2e testing
+  // E2E bypass: Allow local development bypass for e2e testing
   const bypassCookie = request.cookies.get('e2e_bypass')?.value;
   const isDevBypass =
     process.env.NODE_ENV === 'development' &&
@@ -160,12 +160,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 3. Security Headers & Telemetry
-  supabaseResponse.headers.set('X-Richard-Edge', 'true');
-  supabaseResponse.headers.set('X-Sentinel-Version', 'N24-PRO');
-  supabaseResponse.headers.set('X-Vibecoding-Layer', 'Nivel-15');
-
-  // 4. Geo-headers for localization
+  // 3. Geo-headers for localization
   const country = request.headers.get('x-vercel-ip-country') || 'PR';
   const region = request.headers.get('x-vercel-ip-country-region') || '';
   const city = request.headers.get('x-vercel-ip-city') || '';

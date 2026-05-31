@@ -1,8 +1,6 @@
 'use client';
 
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Calculator,
   Save,
@@ -16,122 +14,37 @@ import {
   CheckCircle,
   AlertTriangle,
 } from 'lucide-react';
-import { calculateOTD, calculateLoan, CreditTier, FinancingStructure } from '@/entities/finance';
 import {
   CONSTANTES_PR,
   PRODUCTOS_BACKEND_RANGOS,
   PREMIER_WARRANTY,
-  calculateProductAmortization,
 } from '@/entities/finance';
 import { workspaceManager } from '@/features/automation/api/workspaceManager';
 import { generatePDFFromDOM } from '@/features/sales-automation/lib/pdfGenerator';
 import { BillOfSaleTemplate } from './BillOfSaleTemplate';
+import { useDealCalculations } from '../lib/useDealCalculations';
 
 const DealDesker: React.FC = () => {
-  // Frontend Control State
-  const [vehiclePrice, setVehiclePrice] = useState(35000);
-  const [tradeInValue, setTradeInValue] = useState(0);
-  const [tradeInPayoff, setTradeInPayoff] = useState(0);
-  const [downPayment, setDownPayment] = useState(2500);
-
-  // Backend Control State (F&I Products)
-  const [gapInsurance, setGapInsurance] = useState(0);
-  const [extendedWarranty, setExtendedWarranty] = useState(0);
-  const [paintProtection, setPaintProtection] = useState(0);
-  const [powerPack, setPowerPack] = useState(0);
-
-  // UX Control: Richard Mode (Oculta precios totales por defecto al cliente)
-  const [showPrices, setShowPrices] = useState(false);
-
-  // Terms Control State
-  const [termMonths, setTermMonths] = useState(72);
-  const [creditTier, setCreditTier] = useState<CreditTier>('good');
-
-  // Unified Structure
-  const currentStructure: FinancingStructure = {
-    vehiclePrice,
-    tradeInValue,
-    tradeInPayoff,
-    downPayment,
-    gapInsurance,
-    extendedWarranty,
-    paintProtection,
-    powerPack,
-    creditLife: 0,
-    termMonths,
-    creditTier,
-  };
-
-  // Math Engine Calculations (Sync)
-  const otdCalculation = calculateOTD(
-    vehiclePrice,
-    tradeInValue,
-    tradeInPayoff,
-    gapInsurance,
-    extendedWarranty,
-    paintProtection,
-    0,
-    powerPack,
-  );
-
-  const loanCalculation = calculateLoan(currentStructure);
-
-  // Dynamic F&I Menu Packages Calculations (Covert selling strategy)
-  const loanPlatinum = calculateLoan({
-    ...currentStructure,
-    extendedWarranty: PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO,
-    gapInsurance: PREMIER_WARRANTY.PRECIOS.GAP,
-    paintProtection: PREMIER_WARRANTY.PRECIOS.CERAMICA,
-    powerPack: PREMIER_WARRANTY.PRECIOS.POWER_PACK,
-  });
-
-  const loanGold = calculateLoan({
-    ...currentStructure,
-    extendedWarranty: PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO,
-    gapInsurance: PREMIER_WARRANTY.PRECIOS.GAP,
-    paintProtection: PREMIER_WARRANTY.PRECIOS.CERAMICA,
-    powerPack: 0,
-  });
-
-  const loanSilver = calculateLoan({
-    ...currentStructure,
-    extendedWarranty: PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO,
-    gapInsurance: PREMIER_WARRANTY.PRECIOS.GAP,
-    paintProtection: 0,
-    powerPack: 0,
-  });
-
-  const loanBase = calculateLoan({
-    ...currentStructure,
-    extendedWarranty: 0,
-    gapInsurance: 0,
-    paintProtection: 0,
-    powerPack: 0,
-  });
-
-  // Amortized dynamic payment impacts for product-centric pitch
-  const gapAmortized = calculateProductAmortization(
-    PREMIER_WARRANTY.PRECIOS.GAP,
-    termMonths,
-    creditTier,
-  );
-  const warrantyAmortized = calculateProductAmortization(
-    PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO,
-    termMonths,
-    creditTier,
-  );
-  const ceramicAmortized = calculateProductAmortization(
-    PREMIER_WARRANTY.PRECIOS.CERAMICA,
-    termMonths,
-    creditTier,
-  );
-  const powerPackAmortized = calculateProductAmortization(
-    PREMIER_WARRANTY.PRECIOS.POWER_PACK,
-    termMonths,
-    creditTier,
-  );
-
-  const formatCurrency = (val: number) => `$${Math.round(val).toLocaleString()}`;
+  const {
+    vehiclePrice, setVehiclePrice,
+    tradeInValue, setTradeInValue,
+    tradeInPayoff, setTradeInPayoff,
+    downPayment, setDownPayment,
+    gapInsurance, setGapInsurance,
+    extendedWarranty, setExtendedWarranty,
+    paintProtection, setPaintProtection,
+    powerPack, setPowerPack,
+    showPrices, setShowPrices,
+    termMonths, setTermMonths,
+    creditTier, setCreditTier,
+    currentStructure,
+    otdCalculation,
+    loanCalculation,
+    loanPlatinum, loanGold, loanSilver, loanBase,
+    gapAmortized, warrantyAmortized, ceramicAmortized, powerPackAmortized,
+    formatCurrency,
+    applyPlatinum, applyGold, applySilver, applyBase,
+  } = useDealCalculations();
 
   const handleSaveDeal = async () => {
     try {
@@ -512,12 +425,7 @@ const DealDesker: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {/* PLATINUM VIP */}
               <div
-                onClick={() => {
-                  setExtendedWarranty(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO);
-                  setGapInsurance(PREMIER_WARRANTY.PRECIOS.GAP);
-                  setPaintProtection(PREMIER_WARRANTY.PRECIOS.CERAMICA);
-                  setPowerPack(PREMIER_WARRANTY.PRECIOS.POWER_PACK);
-                }}
+                onClick={applyPlatinum}
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty > 0 && gapInsurance > 0 && paintProtection > 0 && powerPack > 0
                     ? 'bg-gradient-to-br from-slate-900 to-emerald-950/70 border-emerald-500 shadow-lg shadow-emerald-950/50 scale-[1.03]'
@@ -581,12 +489,7 @@ const DealDesker: React.FC = () => {
 
               {/* GOLD PREMIUM */}
               <div
-                onClick={() => {
-                  setExtendedWarranty(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO);
-                  setGapInsurance(PREMIER_WARRANTY.PRECIOS.GAP);
-                  setPaintProtection(PREMIER_WARRANTY.PRECIOS.CERAMICA);
-                  setPowerPack(0);
-                }}
+                onClick={applyGold}
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty > 0 && gapInsurance > 0 && paintProtection > 0 && powerPack === 0
                     ? 'bg-gradient-to-br from-slate-900 to-amber-950/40 border-amber-500/60 shadow-lg shadow-amber-950/30 scale-[1.03]'
@@ -646,12 +549,7 @@ const DealDesker: React.FC = () => {
 
               {/* SILVER CORE */}
               <div
-                onClick={() => {
-                  setExtendedWarranty(PREMIER_WARRANTY.PRECIOS.CONTRATO_SERVICIO);
-                  setGapInsurance(PREMIER_WARRANTY.PRECIOS.GAP);
-                  setPaintProtection(0);
-                  setPowerPack(0);
-                }}
+                onClick={applySilver}
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty > 0 &&
                   gapInsurance > 0 &&
@@ -716,12 +614,7 @@ const DealDesker: React.FC = () => {
 
               {/* BASE BARE */}
               <div
-                onClick={() => {
-                  setExtendedWarranty(0);
-                  setGapInsurance(0);
-                  setPaintProtection(0);
-                  setPowerPack(0);
-                }}
+                onClick={applyBase}
                 className={`group relative rounded-3xl p-6 cursor-pointer border transition-all flex flex-col justify-between h-[360px] ${
                   extendedWarranty === 0 &&
                   gapInsurance === 0 &&
