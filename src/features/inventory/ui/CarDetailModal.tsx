@@ -339,7 +339,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             onClick={handleAction}
             className="w-full md:w-auto px-16 py-6 bg-linear-to-r from-primary to-cyan-500 text-white rounded-4xl font-black text-lg uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(0,180,216,0.3)] hover:scale-[1.05] active:scale-95 transition-all group"
           >
-            <Zap size={20} className="fill-white group-hover:animate-bounce" /> Autorizar Misión
+            <Zap size={20} className="fill-white group-hover:animate-bounce" /> Cotizar por WhatsApp
           </button>
         </div>
 

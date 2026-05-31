@@ -10,6 +10,7 @@ interface OptimizedImageProps {
   priority?: boolean;
   aspectRatio?: string;
   onLoad?: () => void;
+  onClick?: () => void;
   fallbackSrc?: string;
   placeholder?: 'blur' | 'empty';
   loading?: 'lazy' | 'eager';
@@ -31,6 +32,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   height,
   priority = false,
   onLoad,
+  onClick,
   placeholder = 'empty',
   fill = false,
   fallbackSrc = '/placeholder-car.webp',
@@ -64,6 +66,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           priority={priority}
           className="object-cover"
           onLoad={onLoad}
+          onClick={onClick}
           onError={() => setError(true)}
           sizes={sizes}
           loading={imageLoading}
@@ -83,6 +86,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       priority={priority}
       className={className}
       onLoad={onLoad}
+      onClick={onClick}
       onError={() => setError(true)}
       sizes={sizes}
       loading={imageLoading}

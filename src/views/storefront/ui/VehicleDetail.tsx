@@ -50,6 +50,7 @@ import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
+import { ImageLightbox } from '@/shared/ui/common/ImageLightbox';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
@@ -67,6 +68,9 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
   const engagedTimeRef = useRef(0);
   const [isPreQualifyOpen, setIsPreQualifyOpen] = useState(false);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxSession, setLightboxSession] = useState(0);
   const { trackEvent } = useMetaPixel();
   const analytics = useInventoryAnalytics();
 
@@ -246,9 +250,22 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                 carPrice={car.price}
                 carType={car.type}
                 onFullscreen={handleGalleryOpen}
+                onImageClick={(index) => {
+                  setLightboxIndex(index);
+                  setLightboxSession(s => s + 1);
+                  setLightboxOpen(true);
+                }}
               />
             </React.Suspense>
           </div>
+
+          <ImageLightbox
+            key={lightboxSession}
+            images={(car.images || [car.image || car.img]).filter(Boolean) as string[]}
+            initialIndex={lightboxIndex}
+            isOpen={lightboxOpen}
+            onClose={() => setLightboxOpen(false)}
+          />
 
           <GlassContainer
             intensity="medium"

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Car } from '@/entities/inventory';
-import { Loader2, Cpu, Rotate3D } from 'lucide-react';
+import { Loader2, Cpu, Rotate3D, Zap, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import Viewer360 from '@/features/inventory/ui/common/Viewer360';
@@ -24,7 +24,7 @@ const OverviewTab: React.FC<Props> = ({ car, showHeavyContent, loadingPitch, aiP
         <div className="w-full h-full relative">
           <div className="absolute top-8 left-8 p-4 border-l-2 border-cyan-500 opacity-60 z-20 pointer-events-none">
             <p className="font-tech text-[8px] font-black uppercase tracking-[0.4em] text-cyan-400">
-              Tactical Scan ACTIVE
+              Vista del Vehículo
             </p>
             <div className="flex gap-2 mt-2">
               {[1, 2, 3, 4].map((i) => (
@@ -42,7 +42,7 @@ const OverviewTab: React.FC<Props> = ({ car, showHeavyContent, loadingPitch, aiP
               CERTIFIED
             </p>
             <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
-              Sentinel Elite Unit
+              Certificado Richard Automotive
             </p>
           </div>
 
@@ -74,85 +74,124 @@ const OverviewTab: React.FC<Props> = ({ car, showHeavyContent, loadingPitch, aiP
         <div className="flex flex-col items-center gap-4">
           <Loader2 size={40} className="animate-spin text-cyan-500" />
           <span className="font-tech text-[10px] uppercase tracking-[0.5em] text-cyan-500 animate-pulse">
-            Syncing Garage...
+            Cargando...
           </span>
         </div>
       )}
     </div>
 
-    <div className="w-full lg:w-1/3 flex flex-col gap-4">
+    <div className="w-full lg:w-1/3 flex flex-col gap-4 overflow-hidden">
       <GlassContainer
         intensity="high"
-        className="p-8 rounded-5xl flex-1 border-t-2 border-cyan-500/30 overflow-hidden flex flex-col shadow-2xl"
+        className="p-8 rounded-5xl flex-1 border-t-2 border-cyan-500/30 flex flex-col shadow-2xl gap-6"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Cpu size={20} className="text-cyan-400" />
+        {/* 1. Datos Rápidos */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Zap size={16} className="text-cyan-400" />
             <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">
-              IA Richard Report
+              Datos Rápidos
             </span>
           </div>
-          <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/20 rounded-full">
-            <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">
-              PRO VERSION
-            </span>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-          {loadingPitch ? (
-            <div className="h-full flex flex-col items-center justify-center gap-6 overflow-hidden">
-              <div className="relative w-full h-32 overflow-hidden bg-slate-900/50 rounded-2xl flex items-center justify-center">
-                <motion.div
-                  className="absolute inset-0 bg-linear-to-r from-transparent via-cyan-500/20 to-transparent"
-                  animate={{ x: ['-100%', '100%'] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                />
-                <div className="flex gap-2">
-                  {[0, 1, 2].map((i) => (
-                    <motion.div
-                      key={i}
-                      className="w-2 h-8 bg-cyan-500/30 rounded-full"
-                      animate={{ height: [32, 48, 32] }}
-                      transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
-                    />
-                  ))}
-                </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: 'Año', value: car.year },
+              { label: 'Millas', value: car.mileage ? `${car.mileage.toLocaleString()} mi` : '—' },
+              { label: 'Transmisión', value: car.transmission || 'Automática' },
+              { label: 'Combustible', value: car.fuel || car.fuelType || 'Gasolina' },
+              { label: 'Motor', value: car.engine || '—' },
+              { label: 'HP', value: car.hp ? `${car.hp} HP` : '—' },
+            ].map((item) => (
+              <div key={item.label} className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
+                  {item.label}
+                </p>
+                <p className="text-xs font-black text-white italic truncate">
+                  {item.value}
+                </p>
               </div>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-400 font-black animate-pulse">
-                Running Neural Analysis...
-              </p>
-            </div>
-          ) : (
-            <div className="text-[14px] leading-relaxed text-slate-300 font-medium space-y-4">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    aiPitch
-                      .replace(
-                        /\*\*(.*?)\*\*/g,
-                        '<strong class="text-cyan-400 font-black">$1</strong>',
-                      )
-                      .replace(/\n/g, '<br/>'),
-                  ),
-                }}
-              />
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/5">
-          <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
-            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
-              Condition
-            </p>
-            <p className="text-xs font-black text-white italic">Elite Certified</p>
+        {/* 2. Características */}
+        {car.features && car.features.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Award size={16} className="text-cyan-400" />
+              <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">
+                Características
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {car.features.slice(0, 6).map((f, i) => (
+                <span
+                  key={i}
+                  className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold text-slate-300"
+                >
+                  {f}
+                </span>
+              ))}
+              {car.features.length > 6 && (
+                <span className="px-2.5 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-[10px] font-bold text-cyan-400">
+                  +{car.features.length - 6}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
-            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">
-              Fuel Economy
-            </p>
-            <p className="text-xs font-black text-white italic">Optimal</p>
+        )}
+
+        {/* 3. Reporte del Vehículo */}
+        <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Cpu size={16} className="text-cyan-400" />
+              <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">
+                Reporte del Vehículo
+              </span>
+            </div>
+            <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/20 rounded-full">
+              <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">Premium</span>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            {loadingPitch ? (
+              <div className="h-full flex flex-col items-center justify-center gap-6 overflow-hidden">
+                <div className="relative w-full h-32 overflow-hidden bg-slate-900/50 rounded-2xl flex items-center justify-center">
+                  <motion.div
+                    className="absolute inset-0 bg-linear-to-r from-transparent via-cyan-500/20 to-transparent"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                  />
+                  <div className="flex gap-2">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="w-2 h-8 bg-cyan-500/30 rounded-full"
+                        animate={{ height: [32, 48, 32] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.4em] text-cyan-400 font-black animate-pulse">
+                  Analizando...
+                </p>
+              </div>
+            ) : (
+              <div className="text-[14px] leading-relaxed text-slate-300 font-medium space-y-4">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      aiPitch
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-black">$1</strong>')
+                        .replace(/\n/g, '<br/>'),
+                    ),
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </GlassContainer>

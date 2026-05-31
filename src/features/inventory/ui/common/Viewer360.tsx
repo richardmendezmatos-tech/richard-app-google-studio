@@ -18,6 +18,7 @@ interface Props {
   carPrice?: number;
   carType?: string;
   onFullscreen?: () => void;
+  onImageClick?: (index: number) => void;
 }
 
 const Viewer360: React.FC<Props> = ({
@@ -27,6 +28,7 @@ const Viewer360: React.FC<Props> = ({
   carPrice = 0,
   carType = 'sedan',
   onFullscreen,
+  onImageClick,
 }) => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -289,6 +291,7 @@ const Viewer360: React.FC<Props> = ({
           className={`object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           priority={currentFrame === 0}
           onLoad={() => setLoadedIndices((prev) => new Set(prev).add(currentFrame))}
+          onClick={() => onImageClick?.(currentFrame)}
         />
       </div>
 
