@@ -111,8 +111,8 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const privateRoutes = ['/admin', '/garage', '/profile', '/command-center'];
-  const adminRoutes = ['/admin', '/command-center'];
+  const privateRoutes = ['/admin', '/garage', '/profile', '/panel-control'];
+  const adminRoutes = ['/admin', '/panel-control'];
 
   const isPrivate = privateRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
@@ -191,7 +191,7 @@ export const config = {
     '/admin/:path*',
     '/garage/:path*',
     '/profile/:path*',
-    '/command-center/:path*',
+    '/panel-control/:path*',
     '/login',
     '/admin-login',
     '/api/:path*',

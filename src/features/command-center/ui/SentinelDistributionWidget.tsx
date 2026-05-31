@@ -81,7 +81,7 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({
             <Share2 className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h2 className="font-bold text-sm tracking-wide">Distribution Tower</h2>
+            <h2 className="font-bold text-sm tracking-wide">Torre de Distribución</h2>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
               Nivel 26 • Autonomous
             </p>
@@ -93,7 +93,7 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({
             onClick={handleAutonomousCycle}
             disabled={syncing}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/30 transition-all group relative overflow-hidden ${syncing ? 'cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
-            title="Ejecutar Ciclo Autónomo (Neural Pitch)"
+            title="Ejecutar Ciclo Autónomo"
           >
             {syncing && (
               <motion.div
@@ -107,7 +107,7 @@ export const SentinelDistributionWidget: React.FC<DistributionWidgetProps> = ({
               className={`w-3.5 h-3.5 ${syncing ? 'animate-pulse text-cyan-400' : 'text-cyan-400 group-hover:rotate-12 transition-transform'}`}
             />
             <span className="text-[10px] font-black text-cyan-400 uppercase tracking-tighter">
-              {syncing ? 'Syncing...' : 'Run Neural Cycle'}
+              {syncing ? 'Syncing...' : 'Ejecutar Ciclo'}
             </span>
           </button>
         </div>

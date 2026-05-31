@@ -79,7 +79,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                 </h2>
               </div>
               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
-                {car.name} • <span className="text-white/60">Multichannel Distribution</span>
+                {car.name} • <span className="text-white/60">Distribución Multicanal</span>
               </p>
             </div>
           </div>
@@ -341,7 +341,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                           <div className="w-full p-6 bg-white/2 rounded-2xl border border-white/5 text-left">
                             <div className="flex justify-between items-center mb-4">
                               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                                AI Prompt Optimized
+                                Prompt Optimizado
                               </span>
                               <button
                                 onClick={() =>

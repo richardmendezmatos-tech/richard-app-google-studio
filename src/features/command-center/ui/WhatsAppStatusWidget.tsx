@@ -103,7 +103,7 @@ export const WhatsAppStatusWidget = () => {
           <div className="flex items-center gap-2 text-emerald-400">
             <ShieldCheck size={14} />
             <span className="text-[9px] font-black uppercase tracking-widest">
-              Neural Link Secure
+              Enlace Seguro
             </span>
           </div>
           <span className="text-[10px] font-mono text-emerald-500/50">#RA-WS-787</span>

@@ -58,7 +58,7 @@ export const HoloDashboard: React.FC<Props> = ({
           <div className="absolute inset-0 bg-cyan-400/5 rounded-full animate-ping" />
           <Cpu className="text-cyan-400 mb-2" size={32} />
           <span className="text-[8px] font-black text-cyan-400 uppercase tracking-[0.4em]">
-            Neural Core
+            Core
           </span>
           <span className="text-2xl font-black text-white italic tracking-tighter mt-1">
             {aiConfidence}%

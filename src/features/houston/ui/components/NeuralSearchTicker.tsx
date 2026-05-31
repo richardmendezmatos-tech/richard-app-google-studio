@@ -83,7 +83,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
           </div>
           <div>
             <h4 className="text-[10px] font-black text-violet-400 uppercase tracking-[0.4em]">
-              Neural Inventory Sourcing
+              Abasto de Inventario
             </h4>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" />
@@ -95,7 +95,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
         </div>
         <div className="px-3 py-1 bg-violet-500/10 rounded-full border border-violet-500/20">
           <span className="text-[8px] font-black text-violet-400 uppercase tracking-widest">
-            RA Sentinel Intel
+            RA Intel
           </span>
         </div>
       </div>
@@ -242,7 +242,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
                         ) : isSubmitting === opp.query ? (
                           <>
                             <div className="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                            Sentinel N24 Procesando...
+                            Richard Procesando...
                           </>
                         ) : (
                           <>Activar Estrategia de Abasto</>
@@ -259,7 +259,7 @@ export const NeuralSearchTicker: React.FC<Props> = ({ gaps = [] }) => {
 
       <div className="mt-8 pt-4 border-t border-white/5 text-center relative z-10">
         <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">
-          Sincronizado con Sentinel Neural Ops • N15 Deployment
+            Sincronizado con Richard Ops • N15
         </p>
       </div>
     </div>

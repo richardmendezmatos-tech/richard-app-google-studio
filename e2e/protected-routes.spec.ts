@@ -5,7 +5,7 @@ test.describe('Protected Routes', () => {
     { path: '/admin', label: 'Admin' },
     { path: '/garage', label: 'Garage' },
     { path: '/profile', label: 'Profile' },
-    { path: '/command-center', label: 'Command Center' },
+    { path: '/panel-control', label: 'Panel Control' },
   ];
 
   for (const route of protectedRoutes) {
@@ -24,11 +24,11 @@ test.describe('Protected Routes', () => {
 
   test('/admin-login is accessible without auth', async ({ page }) => {
     await page.goto('/admin-login');
-    await expect(page.locator('h1')).toContainText(/Command Center/);
+    await expect(page.locator('h1')).toContainText(/Panel Principal/);
   });
 
   test('bypass query param allows access to protected routes', async ({ page }) => {
     await page.goto('/admin?bypass=true');
-    await expect(page.getByRole('heading', { name: /Houston/ })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: /Panel de Ventas/ })).toBeVisible({ timeout: 15000 });
   });
 });

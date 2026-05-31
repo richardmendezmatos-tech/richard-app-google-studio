@@ -58,7 +58,7 @@ export const SentinelStatusBar: React.FC = () => {
         </div>
         <div className="flex items-center gap-2 text-slate-500">
           <ShieldCheck size={10} className="text-primary" />
-          <span>Sentinel v2.7 Protected</span>
+          <span>Richard v2.7 Activo</span>
         </div>
       </div>
     </div>

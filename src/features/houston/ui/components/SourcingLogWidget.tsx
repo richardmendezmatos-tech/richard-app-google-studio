@@ -59,11 +59,11 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
           </div>
           <div>
             <h4 className="text-xs font-black text-cyan-400 uppercase tracking-[0.4em] mb-1">
-              Sourcing Intelligence
+              Abasto Inteligente
             </h4>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">
-                Neural Loop v2.4
+                Loop v2.4
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
@@ -206,7 +206,7 @@ export const SourcingLogWidget: React.FC<Props> = ({ orders = [], onUpdate }) =>
                 <div className="flex items-center gap-1.5 opacity-60">
                   <TrendingUp size={12} className="text-cyan-400" />
                   <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">
-                    Neural Projected
+                    Proyectado
                   </span>
                 </div>
               </div>

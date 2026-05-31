@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     // 1. Revalidar rutas críticas
     revalidatePath('/sitemap.xml');
     revalidatePath('/inventario');
-    revalidatePath('/(dashboard)/command-center', 'page');
+    revalidatePath('/(dashboard)/panel-control', 'page');
 
     // 2. Log de auditoría
     await audit.log(

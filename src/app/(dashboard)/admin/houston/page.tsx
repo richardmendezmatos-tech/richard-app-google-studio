@@ -393,7 +393,7 @@ const SourcingGapsWidget: React.FC<SourcingGapsWidgetProps> = ({ telemetry, onRe
         recommendation: aiIntel.recommendation || `Procure ${gap.query} from local markets.`,
         roi: aiIntel.roi || 18,
         priority: aiIntel.priority?.toLowerCase() || gap.priority.toLowerCase(),
-        reason: aiIntel.reason || 'Sourcing gap analysis completed by Sentinel.',
+        reason: aiIntel.reason || 'Sourcing gap analysis completed by Richard.',
         estimatedPurchasePrice: aiIntel.estimatedPurchasePrice,
         estimatedResalePrice: aiIntel.estimatedResalePrice,
         marketScarcity: aiIntel.marketScarcity,
@@ -1001,7 +1001,7 @@ export default function HoustonMissionControlPage() {
                 isUrgent: false,
               },
               {
-                label: 'Sentinel token speed',
+                label: 'Token speed',
                 value: telemetry.metrics.tokenUsage.value,
                 unit: telemetry.metrics.tokenUsage.unit,
                 icon: <Cpu size={16} className="text-cyan-400" />,

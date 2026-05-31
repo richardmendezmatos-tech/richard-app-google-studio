@@ -28,7 +28,7 @@ export const NewsroomControlWidget: React.FC = () => {
           title: aiIntel.title,
           excerpt: aiIntel.excerpt,
           content: aiIntel.content,
-          author: 'Richard AI Editor',
+          author: 'Richard Editor',
           tags: aiIntel.tags,
           date: new Date().toLocaleDateString('es-PR', {
             day: 'numeric',

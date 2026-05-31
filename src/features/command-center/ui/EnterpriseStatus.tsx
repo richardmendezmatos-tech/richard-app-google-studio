@@ -59,7 +59,7 @@ export const EnterpriseStatus = () => {
             <Server size={20} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white tracking-wide">ENTERPRISE CORE</h3>
+            <h3 className="text-sm font-bold text-white tracking-wide">NÚCLEO EMPRESARIAL</h3>
             <p className="text-[10px] text-slate-400 font-mono">JAVA • REST • API</p>
           </div>
         </div>

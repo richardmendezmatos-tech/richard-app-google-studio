@@ -81,7 +81,7 @@ export const BusinessHealthWidget: React.FC = () => {
     },
     {
       icon: <TrendingUp size={14} className="text-emerald-500" />,
-      label: 'AI Score Prom.',
+      label: 'Score Prom.',
       value: metrics.avgAiScore,
       suffix: '%',
       color: 'text-emerald-400',

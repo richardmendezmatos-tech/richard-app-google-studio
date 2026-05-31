@@ -764,7 +764,7 @@ export const DealDeskerHUD: React.FC = () => {
             <div>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-[10px] font-black text-violet-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <Sparkles size={12} className="animate-pulse" /> Sentinel AI Advisor
+                  <Sparkles size={12} className="animate-pulse" /> Richard Advisor
                 </span>
                 <button
                   onClick={handleConsultSentinel}

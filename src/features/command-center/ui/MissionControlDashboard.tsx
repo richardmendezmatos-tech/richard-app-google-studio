@@ -139,7 +139,7 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
               Sentinel está monitoreando{' '}
               <span className="text-white font-bold">{leads.length} leads</span>. Los seguimientos
               están programados basándose en el{' '}
-              <span className="text-emerald-400 font-bold italic">Neural Match Engine</span> de
+              <span className="text-emerald-400 font-bold italic">Match Automotriz</span> de
               Nivel 29.
             </p>
           </div>

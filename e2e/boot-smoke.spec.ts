@@ -8,7 +8,7 @@ test.describe('Next.js Migration Route Audit', () => {
     { path: '/precualificacion', title: /Pre-Cualificación/i },
     { path: '/financiamiento', title: /Financiamiento/i },
     { path: '/contacto', title: /Contacto/i },
-    { path: '/ai-lab', title: /AI Lab/i },
+    { path: '/laboratorio', title: /Lab/i },
   ];
 
   for (const route of routes) {

@@ -4,7 +4,7 @@ import React from 'react';
 import AILabPage from '@/pages/ai-lab/ui/AILabPage';
 
 /**
- * Next.js App Router entry point for /ai-lab
+ * Next.js App Router entry point for /laboratorio
  * Bridges to the FSD AI Lab layer component.
  */
 export default function AiLabRoute() {

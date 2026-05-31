@@ -164,7 +164,7 @@ const UserLogin: React.FC = () => {
             {isRegistering ? 'Crear Perfil' : 'Bienvenido'}
           </h2>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-6">
-            Richard <span className="text-cyan-500 italic">Automotive</span> Command Center
+            Richard <span className="text-cyan-500 italic">Automotive</span>
           </p>
         </div>
 

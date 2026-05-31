@@ -7,14 +7,14 @@ export const MobileBottomBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isDashboard = location.pathname.startsWith('/command-center') ||
+  const isDashboard = location.pathname.startsWith('/panel-control') ||
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/consultant') ||
     location.pathname.startsWith('/compare');
 
   const navItems = isDashboard
     ? [
-        { label: 'Centro', icon: LayoutDashboard, path: '/command-center' },
+        { label: 'Centro', icon: LayoutDashboard, path: '/panel-control' },
         { label: 'Admin', icon: BrainCircuit, path: '/admin' },
         { label: 'Consultor', icon: User, path: '/consultant' },
         { label: 'Perfil', icon: User, path: '/profile' },

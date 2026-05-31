@@ -218,7 +218,7 @@ const LeadCard: React.FC<LeadCardProps> = ({
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1 h-3 bg-cyan-500 rounded-full animate-pulse" />
             <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">
-              Neural Insight: {lead.aiAnalysis.nextAction}
+              Análisis: {lead.aiAnalysis.nextAction}
             </span>
           </div>
         )}
@@ -303,7 +303,7 @@ const LeadCard: React.FC<LeadCardProps> = ({
                       },
                       {
                         id: 'analytics',
-                        label: 'Neural Insights',
+                        label: 'Análisis',
                         icon: TrendingUp,
                         onClick: () => navigate(`/admin/analytics/${lead.id}`),
                         color: 'text-cyan-400',

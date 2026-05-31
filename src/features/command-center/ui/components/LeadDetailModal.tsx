@@ -222,7 +222,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
               {/* Financial / Credit Info */}
               <div className="space-y-4">
                 <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <BadgeDollarSign size={14} className="text-indigo-500" /> Financial Intelligence
+                  <BadgeDollarSign size={14} className="text-indigo-500" /> Información Financiera
                 </h3>
 
                 {isFinance ? (
@@ -321,7 +321,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose }) => {
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
                   <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-3">
-                    <Zap size={20} className="text-cyan-400" /> Sentinel Intelligence Core
+                    <Zap size={20} className="text-cyan-400" /> Richard Core
                   </h3>
                 </div>
 

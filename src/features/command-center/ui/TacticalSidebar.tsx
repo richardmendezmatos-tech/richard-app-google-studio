@@ -65,7 +65,7 @@ export const TacticalSidebar: React.FC = () => {
                   Richard
                 </span>
                 <span className="text-[10px] font-black text-primary leading-none uppercase tracking-widest">
-                  Sentinel 3.2
+                  Richard 3.2
                 </span>
               </motion.div>
             )}

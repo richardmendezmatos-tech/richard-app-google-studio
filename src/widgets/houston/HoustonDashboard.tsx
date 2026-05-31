@@ -590,7 +590,7 @@ const LogsTab: React.FC<{ telemetry: HoustonTelemetry }> = ({ telemetry }) => {
               label: 'Inference',
               content: 'Optimizador táctico activo. Latencia -14% vs baseline temporal.',
             },
-            { label: 'Autonomy', content: 'Richard AI ejecutando flujos de prospección nivel 14.' },
+            { label: 'Autonomy', content: 'Richard ejecutando flujos de prospección nivel 14.' },
             {
               label: 'Appraisals',
               content: 'RA_VALUATOR detectó tendencia alcista en inventario Europeo.',
@@ -997,7 +997,7 @@ const HoustonDashboard: React.FC = () => {
 
                     <div className="p-4 border border-purple-500/20 bg-purple-500/5 rounded-2xl">
                       <p className="text-[9px] text-purple-400 font-bold leading-relaxed">
-                        "Sentinel detectó 12.4% de incremento en la demanda de SUVs compactas en el
+                        "Richard detectó 12.4% de incremento en la demanda de SUVs compactas en el
                         norte de la isla."
                       </p>
                     </div>

@@ -58,7 +58,21 @@ const nextConfig = {
     return config;
   },
   
-  // ─── Edge Layer Optimization (Antigravity Sentinel) ────────────────
+  // ─── URL Redirects (SEO route migrations) ──────────────────────────
+  async redirects() {
+    return [
+      { source: '/sentinel-vision', destination: '/vision-automotriz', permanent: true },
+      { source: '/sentinel-vision/:path*', destination: '/vision-automotriz/:path*', permanent: true },
+      { source: '/command-center', destination: '/panel-control', permanent: true },
+      { source: '/command-center/:path*', destination: '/panel-control/:path*', permanent: true },
+      { source: '/ai-lab', destination: '/laboratorio', permanent: true },
+      { source: '/ai-lab/:path*', destination: '/laboratorio/:path*', permanent: true },
+      { source: '/deal-matcher', destination: '/match-automotriz', permanent: true },
+      { source: '/deal-matcher/:path*', destination: '/match-automotriz/:path*', permanent: true },
+    ];
+  },
+
+  // ─── Edge Layer Optimization ────────────────────────────────────────
   async headers() {
     return [
       {

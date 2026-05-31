@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
               Financiamiento
             </Link>
             <Link
-              to="/deal-matcher"
+              to="/match-automotriz"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200 flex items-center gap-1.5"
             >
               <span>Deal Matcher</span>
@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
               Contacto
             </Link>
             <Link
-              to="/ai-lab"
+              to="/laboratorio"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
               Laboratorio
@@ -167,7 +167,7 @@ const Navbar: React.FC = () => {
             Financiamiento
           </Link>
           <Link
-            to="/deal-matcher"
+            to="/match-automotriz"
             className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             <span>Deal Matcher</span>
@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
             Contacto
           </Link>
           <Link
-            to="/ai-lab"
+            to="/laboratorio"
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             Lab

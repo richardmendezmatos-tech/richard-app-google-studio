@@ -30,7 +30,7 @@ export const AdminHeader: React.FC<Props> = ({
       <div>
         <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.25em] mb-2 animate-in fade-in slide-in-from-left-5">
           <ShieldCheck size={12} />
-          <span>Command Center v2.0</span>
+          <span>Panel de Control v2.0</span>
         </div>
         <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-linear-to-r from-white to-slate-500 tracking-tighter animate-in fade-in slide-in-from-bottom-4 duration-500">
           {currentDealer.name}
@@ -90,7 +90,7 @@ export const AdminHeader: React.FC<Props> = ({
             </div>
             <div className="w-1 h-1 bg-slate-700 rounded-full" />
             <div className="text-[9px] text-amber-500 font-bold uppercase tracking-widest mt-0.5 flex items-center gap-1">
-              <Scale size={8} /> AI Fairness: 99%
+              <Scale size={8} /> Precisión: 99%
             </div>
           </div>
         </div>

@@ -53,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
-      url: `${SITE_URL}/command-center`,
+      url: `${SITE_URL}/panel-control`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.3,
