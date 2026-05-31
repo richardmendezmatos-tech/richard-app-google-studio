@@ -27,11 +27,10 @@ export default function SentinelVisionPage() {
               <span className="text-ra-primary font-bold">01</span>
             </div>
             <h4 className="text-xl font-bold text-white uppercase tracking-tighter-caps">
-              Neural Decoding
+              Decodificación Digital
             </h4>
             <p className="text-text-muted text-sm leading-relaxed">
-              Our advanced AI architecture identifies over 2,000 vehicle parameters from a single
-              high-resolution capture.
+              Nuestra arquitectura de IA identifica más de 2,000 parámetros del vehículo desde una sola imagen de alta resolución.
             </p>
           </div>
           <div className="space-y-4">
@@ -39,11 +38,10 @@ export default function SentinelVisionPage() {
               <span className="text-ra-accent font-bold">02</span>
             </div>
             <h4 className="text-xl font-bold text-white uppercase tracking-tighter-caps">
-              Market Pulse Integration
+              Integración de Mercado
             </h4>
             <p className="text-text-muted text-sm leading-relaxed">
-              Real-time cross-referencing with global auction data and local market inventory for
-              precision valuation.
+              Referencias en tiempo real con datos de subastas y el mercado local para una valuación de precisión.
             </p>
           </div>
           <div className="space-y-4">

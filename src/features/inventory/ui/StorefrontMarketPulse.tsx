@@ -140,7 +140,7 @@ const StorefrontMarketPulse: React.FC<StorefrontMarketPulseProps> = ({
 }) => {
   return (
     <section
-      aria-label="Richard Intelligence Dashboard"
+      aria-label="Panel de Mercado Richard"
       className="reveal-up grid gap-6 md:grid-cols-3"
     >
       <PulseCard

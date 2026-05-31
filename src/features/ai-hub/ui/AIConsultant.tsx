@@ -54,7 +54,7 @@ const AIConsultant: React.FC<Props> = ({ inventory }) => {
               <Sparkles className="text-white animate-pulse" size={24} />
             </div>
             <div>
-              <h2 className="text-xl font-black">Richard AI Assistant</h2>
+              <h2 className="text-xl font-black">Asistente Richard</h2>
               <p className="text-xs text-cyan-300 font-bold uppercase tracking-widest">
                 Consultor Certificado
               </p>

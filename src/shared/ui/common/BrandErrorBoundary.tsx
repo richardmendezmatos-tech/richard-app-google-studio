@@ -54,9 +54,9 @@ export class BrandErrorBoundary extends Component<Props, State> {
             <div className="flex items-center gap-4 mb-6 border-b border-cyan-900/50 pb-4">
               <ShieldAlert className="w-12 h-12 text-red-500 animate-pulse" />
               <div>
-                <h1 className="text-2xl font-black tracking-widest text-white">SYSTEM FAILURE</h1>
+                <h1 className="text-2xl font-black tracking-widest text-white">ERROR DEL SISTEMA</h1>
                 <p className="text-xs uppercase tracking-[0.3em] text-red-400">
-                  Critical Error Detected
+                  Error Crítico Detectado
                 </p>
               </div>
             </div>

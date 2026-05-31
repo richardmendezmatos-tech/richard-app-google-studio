@@ -62,8 +62,8 @@ describe('DealMatcherWidget Component', () => {
   it('debe renderizar el encabezado y titulo del Deal-Matcher de show', () => {
     render(<DealMatcherWidget />);
 
-    expect(screen.getByText('Sentinel')).toBeInTheDocument();
-    expect(screen.getByText('Deal-Matcher')).toBeInTheDocument();
+    expect(screen.getByText('Deal')).toBeInTheDocument();
+    expect(screen.getByText('Matcher')).toBeInTheDocument();
     expect(screen.getByText('Desliza. Conecta. Monta tu Guagua de Show')).toBeInTheDocument();
   });
 

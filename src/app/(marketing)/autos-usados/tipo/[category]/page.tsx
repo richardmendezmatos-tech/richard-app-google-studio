@@ -132,7 +132,7 @@ function CategoryFAQJsonLd({ cat }: { cat: (typeof CATEGORIES)[string] }) {
     },
     {
       question: `¿Puedo hacer trade-in para comprar un ${cat.name.toLowerCase() === 'lujo' ? 'auto de lujo' : cat.name.toLowerCase().slice(0, -1)}?`,
-      answer: `Absolutamente. Aceptamos trade-ins y nuestro motor de tasación neural calcula el valor justo de mercado de tu vehículo actual en 90 segundos. Obtienes el máximo valor garantizado.`,
+      answer: `Absolutamente. Aceptamos trade-ins y nuestro sistema de tasación calcula el valor justo de mercado de tu vehículo actual en 90 segundos. Obtienes el máximo valor garantizado.`,
     },
   ];
 

@@ -61,7 +61,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
 
   const getPowerLabel = (score: number) => {
     if (score > 80)
-      return { text: 'SENTINEL APPROVED', color: 'text-emerald-400', bg: 'bg-emerald-500' };
+      return { text: 'APROBADO', color: 'text-emerald-400', bg: 'bg-emerald-500' };
     if (score > 40) return { text: 'BAJO REVISIÓN', color: 'text-primary', bg: 'bg-primary' };
     return { text: 'REQUIERE EVALUACIÓN DIRECTA', color: 'text-amber-400', bg: 'bg-amber-500' };
   };

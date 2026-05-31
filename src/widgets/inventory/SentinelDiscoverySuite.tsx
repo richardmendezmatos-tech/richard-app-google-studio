@@ -227,7 +227,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             }`}
           >
             <Brain size={14} /> <span className="hidden sm:inline">Match Ideal</span>
-            <span className="sm:hidden">AI</span>
+            <span className="sm:hidden">Match</span>
           </button>
         </div>
       </div>
@@ -657,7 +657,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
             <div className="space-y-4 animate-in fade-in zoom-in-95 duration-500">
               <div className="flex items-center justify-between px-2 border-b border-white/5 pb-2">
                 <span className="text-[10px] font-tech text-indigo-400 uppercase tracking-widest flex items-center gap-2">
-                  <Sparkles size={12} /> COINCIDENCIAS NEURALES ENCONTRADAS
+                  <Sparkles size={12} /> COINCIDENCIAS ENCONTRADAS
                 </span>
                 <button
                   onClick={() => setNeuralResults([])}

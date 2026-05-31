@@ -72,7 +72,7 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-widest border border-primary/20">
-                  AI Engine 2.0
+                  Engine 2.0
                 </span>
                 <h2 className="text-2xl font-black text-white tracking-tighter uppercase">
                   Creative Studio
@@ -315,8 +315,8 @@ export const MarketingCreativeStudio: React.FC<Props> = ({ car, onClose }) => {
                             <Layout size={24} className="text-purple-500" />
                           </div>
                           <div>
-                            <h4 className="text-lg font-black text-white uppercase tracking-tighter">
-                              AI Poster Designer
+                              <h4 className="text-lg font-black text-white uppercase tracking-tighter">
+                                Diseñador de Anuncios
                             </h4>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
                               Generación de Activos Visuales

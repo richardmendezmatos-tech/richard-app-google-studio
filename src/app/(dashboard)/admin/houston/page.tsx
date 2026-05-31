@@ -563,14 +563,14 @@ const SentinelVisionPanel: React.FC = () => {
     <div className="glass-premium border border-emerald-500/10 p-6 relative flex flex-col justify-between h-full bg-slate-950/45 min-h-[420px]">
       {/* Brackets */}
       <div className="absolute top-2 left-2 text-[8px] font-mono text-emerald-400/40">
-        SENTINEL_VISION // LIVE
+        VISIÓN // EN VIVO
       </div>
 
       <div>
         <div className="flex justify-between items-center mb-4">
           <div>
             <h3 className="text-xs font-black text-white uppercase tracking-[0.3em] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Sentinel Vision
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Visión del Vehículo
             </h3>
             <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">
               ACTUARIAL & INVESTMENT SIMULATOR PROTOCOLS
@@ -804,7 +804,7 @@ const SentinelVisionPanel: React.FC = () => {
       {activeTab === 'scan' ? (
         <div className="bg-slate-900/40 border border-white/5 rounded-xl p-3 space-y-2 mt-4">
           <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest block border-b border-white/5 pb-1">
-            SENTINEL COMPLIANCE CHECKS
+                SISTEMA DE VERIFICACIÓN
           </span>
           <div className="grid grid-cols-2 gap-2 text-[9px] font-mono">
             {[
@@ -923,8 +923,8 @@ export default function HoustonMissionControlPage() {
   return (
     <div className="min-h-screen bg-[#02060a] text-white relative overflow-hidden font-manrope">
       <SEO
-        title="Sovereign Cockpit Terminal | Richard Automotive"
-        description="Premium executive cyberpunk command dashboard for Sentinel AI."
+        title="Panel Principal | Richard Automotive"
+        description="Panel de monitoreo y control del inventario y operaciones."
         noIndex={true}
       />
 
@@ -943,15 +943,15 @@ export default function HoustonMissionControlPage() {
           <div>
             <div className="flex items-center gap-3">
               <span className="px-2 py-0.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[8px] font-black uppercase rounded tracking-widest">
-                COCKPIT TERMINAL N19
+                TERMINAL PRINCIPAL N19
               </span>
               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
             </div>
             <h1 className="text-3xl font-black font-tech uppercase tracking-[0.25em] text-white mt-2">
-              SOVEREIGN <span className="text-gradient-cyan text-glow">COCKPIT</span>
+              PANEL <span className="text-gradient-cyan text-glow">PRINCIPAL</span>
             </h1>
             <p className="text-[10px] text-slate-500 font-mono tracking-widest mt-1">
-              VEGA ALTA MISSION CONTROL HUB • SYSTEM TELEMETRY FLOW
+              CENTRO DE MONITOREO • FLUJO DE TELEMETRÍA
             </p>
           </div>
 
@@ -970,7 +970,7 @@ export default function HoustonMissionControlPage() {
               onClick={() => (window.location.href = '/admin')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 hover:border-cyan-500/40 text-[10px] font-black uppercase tracking-widest transition-all bg-slate-900/40 text-slate-300 hover:text-white"
             >
-              Exit Cockpit <ChevronRight size={12} />
+              Salir del Panel <ChevronRight size={12} />
             </button>
           </div>
         </header>

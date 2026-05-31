@@ -61,10 +61,10 @@ export const AILabPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-2">
-              Richard <span className="text-primary">AI Lab</span>
+              Richard <span className="text-primary">Lab</span>
             </h1>
             <span className="px-2 py-0.5 bg-primary/20 text-primary text-[10px] uppercase font-black tracking-widest rounded-full border border-primary/30">
-              Beta Enterprise
+              Enterprise
             </span>
           </div>
           <p className="text-xs text-slate-400 font-medium uppercase tracking-widest mt-1">

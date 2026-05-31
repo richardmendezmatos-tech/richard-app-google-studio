@@ -234,10 +234,10 @@ export const DealMatcherWidget: React.FC = () => {
         <div>
           <div className="flex items-center gap-3">
             <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase">
-              Sentinel <span className="text-cyan-400">Deal-Matcher</span>
+              Deal <span className="text-cyan-400">Matcher</span>
             </h2>
             <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[9px] font-black uppercase tracking-widest rounded-full animate-pulse">
-              Match! AI
+              Match!
             </span>
           </div>
           <p className="text-[10px] text-white/40 uppercase tracking-[0.4em] font-black mt-2">
@@ -541,7 +541,7 @@ export const DealMatcherWidget: React.FC = () => {
                     <div className="p-4 bg-white/[0.02] border border-white/5 rounded-3xl relative">
                       <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-slate-950 border border-white/5 rounded text-[7px] font-black text-cyan-300 uppercase tracking-widest flex items-center gap-1">
                         <Zap size={6} />
-                        <span>Sentinel Hook</span>
+                        <span>Match Hook</span>
                       </div>
                       <p className="text-xs text-slate-300 leading-relaxed font-bold tracking-wide italic">
                         "{activeCar.lifestyleHook}"
@@ -694,7 +694,7 @@ export const DealMatcherWidget: React.FC = () => {
                           ¡Pre-cualificación VIP!
                         </h4>
                         <p className="text-[9px] text-white/40 uppercase tracking-widest font-black">
-                          Sentinel Secure Encryption Protocol v3.1
+                          Protocolo de Seguridad v3.1
                         </p>
                       </div>
                     </div>
@@ -767,7 +767,7 @@ export const DealMatcherWidget: React.FC = () => {
                     <div className="flex items-center gap-3 p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl">
                       <ShieldCheck className="w-5 h-5 text-cyan-400 flex-shrink-0" />
                       <p className="text-[9px] text-white/40 leading-relaxed font-bold uppercase tracking-wide">
-                        Al enviar, nuestro robot AI procesará tu pronto de <strong className="text-cyan-300">${filters.downPayment.toLocaleString()}</strong> y cuota de forma segura sin impacto crediticio inmediato.
+                        Al enviar, nuestro sistema procesará tu pronto de <strong className="text-cyan-300">${filters.downPayment.toLocaleString()}</strong> y cuota de forma segura sin impacto crediticio inmediato.
                       </p>
                     </div>
 
@@ -814,7 +814,7 @@ export const DealMatcherWidget: React.FC = () => {
 
                     <div className="p-4 bg-white/[0.02] border border-white/5 rounded-3xl inline-flex flex-col items-center">
                       <span className="text-[9px] text-white/30 uppercase font-black tracking-widest">
-                        Cuota AI Asignada
+                        Cuota Asignada
                       </span>
                       <span className="text-3xl font-black text-emerald-400 mt-1 italic">
                         ${qualifyCar.monthlyPayment} / mes*

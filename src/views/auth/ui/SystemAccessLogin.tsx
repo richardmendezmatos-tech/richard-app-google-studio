@@ -223,7 +223,7 @@ const SystemAccessLogin: FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#050b14] relative overflow-hidden font-sans selection:bg-primary/30">
       <SEO
-        title="Houston Access | Richard Automotive"
+        title="Acceso Administrativo | Richard Automotive"
         description="Panel de Control de Sistemas Richard Automotive."
         url="/admin-login"
         noIndex

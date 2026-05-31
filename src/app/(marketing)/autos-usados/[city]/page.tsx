@@ -103,7 +103,7 @@ function CityFAQJsonLd({ city }: { city: (typeof CITIES)[string] }) {
     },
     {
       question: `¿Puedo hacer trade-in de mi auto en ${city.name}?`,
-      answer: `Absolutamente. Nuestro motor de tasación neural valora tu vehículo actual en 90 segundos. Ofrecemos el máximo valor de trade-in garantizado para residentes de ${city.name} y ${city.region}.`,
+      answer: `Absolutamente. Nuestro sistema de tasación valora tu vehículo actual en 90 segundos. Ofrecemos el máximo valor de trade-in garantizado para residentes de ${city.name} y ${city.region}.`,
     },
     {
       question: `¿Qué marcas de autos usados tienen disponibles en ${city.name}?`,

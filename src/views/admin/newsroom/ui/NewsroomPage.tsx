@@ -154,7 +154,7 @@ const NewsroomPage: React.FC = () => {
   return (
     <div className="p-6 lg:p-12 max-w-[1700px] mx-auto min-h-screen space-y-16">
       <SEO
-        title="Blog | Richard Automotive Newsroom"
+        title="Blog | Richard Automotive"
         description="Inteligencia editorial y noticias exclusivas de Richard Automotive."
         url="/blog"
         type="website"
@@ -168,10 +168,10 @@ const NewsroomPage: React.FC = () => {
           className="space-y-4"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest border border-primary/20">
-            <Newspaper size={12} /> Newsroom Command Center
+            <Newspaper size={12} /> Newsroom
           </div>
           <h1 className="newsroom-title text-slate-800 dark:text-white text-4xl xl:text-5xl font-black tracking-tighter decoration-primary decoration-4 underline-offset-8">
-            AI <span className="text-gradient-premium">Journalist 2.0</span>
+            Editor <span className="text-gradient-premium">Automotriz 2.0</span>
           </h1>
           <p className="text-slate-500 dark:text-slate-400 max-w-2xl text-xl font-light leading-relaxed">
             Experimenta el futuro de la comunicación automotriz a través de nuestra IA editorial de

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Financiamiento Inteligente de Autos | Richard Automotive',
     description:
-      'Aprobación expresa desde 4.9% APR. IA Sentinel analiza tu perfil y encuentra la mejor tasa. Soft pull, sin compromiso.',
+      'Aprobación expresa desde 4.9% APR. Analizamos tu perfil y encontramos la mejor tasa. Soft pull, sin compromiso.',
     url: 'https://richard-automotive.com/financiamiento',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
@@ -44,7 +44,7 @@ function FinanciamientoJsonLd() {
       },
       {
         name: 'Recibe ofertas personalizadas',
-        text: 'Nuestra IA Sentinel analiza múltiples instituciones financieras y encuentra la mejor tasa para ti.',
+        text: 'Nuestro sistema analiza múltiples instituciones financieras y encuentra la mejor tasa para ti.',
       },
       {
         name: 'Elige tu vehículo',

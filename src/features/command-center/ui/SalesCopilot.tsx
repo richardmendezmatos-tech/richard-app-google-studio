@@ -64,10 +64,10 @@ const SalesCopilot: React.FC = () => {
           </div>
           <div>
             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-              Sales Copilot AI
+              Asistente de Ventas
             </h2>
             <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest text-primary">
-              Real-time Negotiation Intelligence
+              Negociación en Tiempo Real
             </p>
           </div>
         </div>

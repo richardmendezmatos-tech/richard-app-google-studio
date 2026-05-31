@@ -155,7 +155,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
             percentage={(telemetry.temp / 120) * 100}
           />
 
-          {/* AI Smart Alerts Panel */}
+          {/* Panel de Alertas Inteligentes */}
           <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-slate-800/80 p-6 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -189,7 +189,7 @@ const VehicleMonitor: React.FC<{ vehicleId: string }> = ({ vehicleId }) => {
                 </div>
               </div>
               <div className="text-[10px] font-bold text-slate-400 uppercase bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
-                Last AI Audit: {health ? new Date(health.lastCheck).toLocaleTimeString() : 'N/A'}
+                Última Auditoría: {health ? new Date(health.lastCheck).toLocaleTimeString() : 'N/A'}
               </div>
             </div>
 

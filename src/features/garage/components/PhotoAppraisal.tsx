@@ -115,7 +115,7 @@ const PhotoAppraisal: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">
-                  Condición AI
+                  Condición
                 </p>
                 <span className="text-white font-bold">{result.condition}</span>
               </div>

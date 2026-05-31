@@ -61,7 +61,7 @@ const PrivacyConsent: React.FC = () => {
             </div>
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight text-white">
-                Privacidad Richard AI
+                Privacidad Richard
               </h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 GDPR & Compliance Hub

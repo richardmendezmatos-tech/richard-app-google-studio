@@ -142,10 +142,10 @@ export default function CommandCenterPage() {
                 className="text-lg font-black uppercase tracking-[0.25em]"
                 style={{ fontFamily: 'var(--font-cinematic)' }}
               >
-                Command <span className="text-cyan-400">Center</span>
+                Panel de <span className="text-cyan-400">Control</span>
               </h1>
               <p className="text-[10px] text-slate-500 tracking-widest uppercase font-bold">
-                Nivel 24 • Inteligencia Neural Activa
+                Nivel 24 • Monitoreo Activo
               </p>
             </div>
           </div>

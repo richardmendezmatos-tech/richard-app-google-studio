@@ -120,7 +120,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
             <div className="hidden lg:block">
               <div className="flex items-center gap-2 text-primary font-black text-[8px] uppercase tracking-[0.4em] mb-1 opacity-60">
                 <ShieldCheck size={10} />
-                <span>MISSION CONTROL</span>
+                <span>PANEL DE CONTROL</span>
               </div>
               <h1 className="text-3xl font-black text-white tracking-tighter leading-none">
                 {currentDealer.name}

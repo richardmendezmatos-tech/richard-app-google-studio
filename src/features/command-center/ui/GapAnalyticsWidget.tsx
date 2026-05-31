@@ -210,7 +210,7 @@ export const GapAnalyticsWidget: React.FC = () => {
                     ) : (
                       <Zap size={10} />
                     )}
-                    Houston AI
+                    Hub de Abasto
                   </button>
                 </div>
               </div>
@@ -229,7 +229,7 @@ export const GapAnalyticsWidget: React.FC = () => {
       <div className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-center gap-3">
         <ShoppingCart className="text-emerald-500" size={16} />
         <p className="text-[9px] text-emerald-500/80 font-bold uppercase tracking-widest leading-relaxed">
-          Usa <span className="text-emerald-400 font-black">Houston AI</span> para convertir estos
+          Usa <span className="text-emerald-400 font-black">Hub de Abasto</span> para convertir estos
           gaps en órdenes de compra estratégicas.
         </p>
       </div>

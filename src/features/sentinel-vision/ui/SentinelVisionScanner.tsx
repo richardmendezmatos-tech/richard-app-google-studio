@@ -167,10 +167,10 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
         <h2 className="text-4xl font-cinematic text-gradient-cyan text-glow">
-          <GlitchText text="SENTINEL NEURAL VISION" />
+          <GlitchText text="VISIÓN RICHARD AUTOMOTIVE" />
         </h2>
         <p className="text-text-muted font-tech text-sm uppercase tracking-widest">
-          Military Grade Automotive Analysis Layer
+          Capa de Análisis Automotriz Avanzado
         </p>
       </div>
 
@@ -235,7 +235,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({
                         className="bg-black/60 backdrop-blur-md p-3 border-l-2 border-ra-primary"
                       >
                         <p className="text-[10px] text-ra-primary font-mono uppercase">
-                          Neural Stream
+                          Flujo de Datos
                         </p>
                         <p className="text-xs font-mono text-white">0x44F_DECODING...</p>
                       </motion.div>
@@ -322,7 +322,7 @@ export const SentinelVisionScanner: React.FC<SentinelVisionScannerProps> = ({
                     </h3>
                   </div>
                   <div className="text-right">
-                    <p className="text-text-muted font-mono text-xs uppercase">Sentinel Score</p>
+                    <p className="text-text-muted font-mono text-xs uppercase">Puntuación</p>
                     <p className="text-5xl font-cinematic text-ra-accent">{result.score}</p>
                   </div>
                 </div>

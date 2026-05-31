@@ -101,9 +101,9 @@ export const SentinelFinancialOptimizer: React.FC = () => {
             <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">
               Información Financiera
             </h3>
-            <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">
-              Deal & Yield Optimizer • Sentinel N28
-            </p>
+              <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">
+                Deal & Yield Optimizer • N28
+              </p>
           </div>
         </div>
         <div className="px-3 py-1 bg-white/5 rounded-full border border-white/5 flex items-center gap-2">

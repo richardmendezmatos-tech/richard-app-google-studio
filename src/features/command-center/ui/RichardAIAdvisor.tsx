@@ -39,11 +39,11 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
         id: 'welcome',
         role: 'assistant',
         content:
-          'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
+          'Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
         parts: [
           {
             type: 'text',
-            text: 'Sentinel N24 Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
+            text: 'Advisor activo. ¿En qué área estratégica deseas profundizar hoy, Richard?',
           },
         ],
       },
@@ -208,7 +208,7 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
               </div>
               <div className="mt-3 flex items-center justify-center gap-4">
                 <p className="text-[9px] text-slate-600 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> Cifrado Sentinel Activo
+                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> Cifrado Activo
                 </p>
               </div>
             </form>

@@ -281,7 +281,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               <div className="flex items-center gap-3">
                 <Sparkles className="text-[#C5A880] animate-pulse" size={20} />
                 <h3 className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
-                  SENTINEL <span className="text-[#C5A880]">DEEP ANALYSIS</span>
+                  ANÁLISIS <span className="text-[#C5A880]">COMPLETO</span>
                 </h3>
               </div>
               <ChevronDown
@@ -304,7 +304,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
                     <div className="h-48 flex flex-col items-center justify-center gap-4 text-[#C5A880] relative z-10">
                       <Loader2 className="w-8 h-8 animate-spin" />
                       <span className="font-tech text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
-                        EXECUTING NEURAL SCAN...
+                        EJECUTANDO ANÁLISIS...
                       </span>
                     </div>
                   ) : (
@@ -493,7 +493,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               </>
             )}
             <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 whitespace-nowrap">
-              <ShieldCheck size={14} className="text-emerald-500" /> SENTINEL WARRANTY
+              <ShieldCheck size={14} className="text-emerald-500" /> GARANTÍA RICHARD
             </div>
           </div>
 
@@ -581,12 +581,12 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             <div className="flex items-center gap-3 mb-6">
               <div className="h-1 w-8 bg-primary rounded-full group-hover:w-12 transition-all" />
               <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em]">
-                PERFORMANCE INDEX <span className="text-white">/ SENTINEL LAB</span>
+                PERFORMANCE                 INDEX <span className="text-white">/ LAB</span>
               </h3>
             </div>
             <div className="flex justify-center mb-8">
               <ProgressRing
-                label="SENTINEL SCORE"
+                label="PUNTUACIÓN"
                 value={deepAnalysis?.advantageScore || 85}
                 max={100}
                 size={140}

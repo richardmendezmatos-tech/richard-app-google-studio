@@ -128,7 +128,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-2 backdrop-blur-3xl shadow-[0_0_20px_rgba(0,229,255,0.1)]">
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_12px_#00e5ff]" />
               <span className="font-tech text-xs font-black uppercase tracking-[0.4em] text-white">
-                SENTINEL<span className="text-primary/70">.PRO</span>
+                RICHARD<span className="text-primary/70">.AUTO</span>
               </span>
             </div>
             <span className="font-tech text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">

@@ -172,7 +172,7 @@ const Navbar: React.FC = () => {
           >
             <span>Deal Matcher</span>
             <span className="rounded-full bg-cyan-500/25 px-2 py-0.5 text-[9px] font-black text-cyan-300 animate-pulse border border-cyan-500/30">
-              MATCH! AI
+              MATCH!
             </span>
           </Link>
           <Link
@@ -185,7 +185,7 @@ const Navbar: React.FC = () => {
             to="/ai-lab"
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
-            AI Lab
+            Lab
           </Link>
           <div className="border-t border-white/10 pt-4">
             {isAuthenticated ? (

@@ -144,7 +144,7 @@ const SmartDealSheetModal: React.FC<SmartDealSheetModalProps> = ({
                 {/* Executive Summary */}
                 <div className="p-5 sm:p-6 bg-white dark:bg-slate-800/80 rounded-4xl border border-slate-200 dark:border-slate-700 shadow-sm">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500 mb-3 flex items-center gap-2">
-                    <Target size={14} /> Resumen Ejecutivo AI
+                    <Target size={14} /> Resumen Ejecutivo
                   </h3>
                   <p className="text-lg sm:text-xl font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
                     "{dealData.executiveSummary}"

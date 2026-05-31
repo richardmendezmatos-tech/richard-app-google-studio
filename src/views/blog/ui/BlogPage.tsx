@@ -96,7 +96,7 @@ const BlogPage: React.FC = () => {
   return (
     <div className="p-6 lg:p-12 max-w-[1700px] mx-auto min-h-screen space-y-20 bg-slate-950">
       <SEO
-        title="Newsroom | Sentinel N24 Intelligence"
+        title="Blog | Richard Automotive"
         description="Perspectivas estratégicas, análisis de mercado y la vanguardia del financiamiento automotriz."
         url="/blog"
         type="website"
@@ -238,7 +238,7 @@ const BlogPage: React.FC = () => {
 
               <div>
                 <h4 className="font-black text-3xl text-white tracking-tighter uppercase leading-tight italic">
-                  Neural <br /> Newsroom
+                  Blog <br /> Newsroom
                 </h4>
                 <p className="text-sm text-slate-400 font-medium leading-relaxed mt-4">
                   Recibe análisis de mercado y oportunidades de abasto exclusivas de Richard
@@ -333,7 +333,7 @@ const BlogPage: React.FC = () => {
                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
                   </div>
                   <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] hidden sm:block">
-                    Sentinel Reader v2.4
+                    Blog Reader v2.4
                   </span>
                 </div>
                 <div className="flex items-center gap-4">

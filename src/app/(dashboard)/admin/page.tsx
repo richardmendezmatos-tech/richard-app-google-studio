@@ -16,8 +16,8 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#0d2232] text-white overflow-x-hidden">
       <SEO
-        title="Houston Mission Control | Richard Automotive"
-        description="Panel de comando inteligente para la gestión de leads e inventario."
+        title="Panel de Ventas | Richard Automotive"
+        description="Panel de gestión de leads e inventario."
         noIndex={true}
       />
 
@@ -26,7 +26,7 @@ export default function AdminPage() {
         <div className="flex items-center gap-4">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_#10b981]" />
           <h1 className="text-sm font-black uppercase tracking-[0.3em] font-orbitron">
-            Houston <span className="text-cyan-400">Mission Control</span>
+            Houston <span className="text-cyan-400">Panel de Ventas</span>
           </h1>
         </div>
 
@@ -65,7 +65,7 @@ export default function AdminPage() {
             href="/admin/houston"
             className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
           >
-            Terminal Cockpit ⚡
+            Terminal Principal ⚡
           </a>
         </nav>
       </header>

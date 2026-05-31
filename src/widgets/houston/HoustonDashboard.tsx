@@ -86,13 +86,13 @@ const TABS: { id: DashboardTab; label: string; icon: React.ReactNode; accentColo
   },
   {
     id: 'SOURCING',
-    label: 'Sourcing Intelligence',
+    label: 'Abasto Inteligente',
     icon: <PackageSearch size={14} />,
     accentColor: 'purple',
   },
   {
     id: 'LOGS',
-    label: 'Sentinel Logs',
+    label: 'Registros',
     icon: <TerminalIcon size={14} />,
     accentColor: 'amber',
   },
@@ -798,7 +798,7 @@ const HoustonDashboard: React.FC = () => {
             />
             Houston
             <span className="text-cyan-500 text-lg font-mono tracking-[0.5em] ml-4 opacity-70">
-              RA SENTINEL
+              RA MONITOR
             </span>
           </h1>
           <div className="flex items-center gap-6 text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black">

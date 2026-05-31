@@ -20,7 +20,7 @@ export const BlogArticleSidebar: React.FC<Props> = ({ post }) => {
               <ShieldCheck size={20} className="text-primary" />
             </div>
             <h4 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">
-              Sentinel Score
+              Puntuación
             </h4>
           </div>
 

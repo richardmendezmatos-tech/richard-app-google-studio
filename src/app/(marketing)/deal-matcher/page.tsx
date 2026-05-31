@@ -4,9 +4,9 @@ import { DealMatcherWidget } from '@/features/deal-matcher/ui/DealMatcherWidget'
 import { Compass, Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Sentinel Deal-Matcher AI | Encuentra tu Auto o Guagua Ideal | Richard Automotive',
+  title: 'Encuentra tu Auto Ideal | Match Inteligente | Richard Automotive',
   description:
-    'Utiliza nuestro recomendador inteligente estilo Tinder-Swiper. Filtra por tu pronto disponible y cuota mensual para hacer match con tu próximo carro certificado en Vega Alta, Puerto Rico.',
+    'Descubre tu próximo carro o guagua en Puerto Rico. Filtra por tu pronto disponible y cuota mensual para encontrar el vehículo ideal en Vega Alta.',
   keywords: [
     'deal matcher puerto rico',
     'tinder de autos vega alta',
@@ -56,7 +56,7 @@ export default function DealMatcherPage() {
           <div className="flex justify-center mb-6">
             <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-slate-400">
               <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" />
-              <span>Richard Automotive AI Laboratory</span>
+              <span>Richard Automotive Match</span>
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export default function DealMatcherPage() {
               </p>
             </div>
             <div className="p-8 rounded-4xl bg-white/[0.02] border border-white/5 space-y-3">
-              <span className="text-cyan-400 font-black text-lg italic block">02 / Inteligencia Sentinel</span>
+              <span className="text-cyan-400 font-black text-lg italic block">02 / Inteligencia de Mercado</span>
               <h4 className="text-white font-black text-xs uppercase tracking-widest">Matemática Actuarial</h4>
               <p className="text-slate-400 text-xs leading-relaxed font-bold uppercase tracking-wider">
                 Las cuotas mensuales y porcentajes de compatibilidad se calculan usando tasas reales del mercado bancario local.

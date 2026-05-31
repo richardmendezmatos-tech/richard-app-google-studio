@@ -276,7 +276,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
           <div className="absolute top-0 right-0 p-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
           <h4 className="font-bold text-primary text-xs uppercase tracking-wider mb-4 relative z-10 flex items-center gap-2">
-            <Zap size={14} /> AI Context Memory
+            <Zap size={14} /> Contexto de Preferencias
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
@@ -308,7 +308,7 @@ export const LeadLifecycleAnalytics: React.FC<LeadLifecycleAnalyticsProps> = ({ 
 
             <div>
               <p className="text-[10px] text-slate-400 uppercase font-bold mb-2">
-                Lifestyle AI Profile
+                Perfil de Estilo de Vida
               </p>
               <p className="text-sm font-medium text-slate-200">
                 {lead.customerMemory.lifestyle || 'Perfil no detectado aún.'}

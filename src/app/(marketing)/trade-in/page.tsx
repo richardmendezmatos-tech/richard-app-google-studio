@@ -4,9 +4,9 @@ import TradeInClient from './TradeInClient';
 import { getBreadcrumbSchema, getHowToSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 
 export const metadata: Metadata = {
-  title: 'Trade-In de Autos en Puerto Rico | Tasación Neural en 90s',
+  title: 'Trade-In de Autos en Puerto Rico | Tasación en 90s',
   description:
-    'Tasación neural de tu vehículo en 90 segundos. Recibe el máximo valor de trade-in garantizado. Aplica tu trade-in como down payment y maneja tu auto actual mientras procesamos el nuevo.',
+    'Recibe el máximo valor de trade-in garantizado por tu vehículo en 90 segundos. Aplica tu trade-in como down payment y maneja tu auto actual mientras procesamos el nuevo.',
   keywords: [
     'trade in puerto rico',
     'tasacion de autos pr',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Trade-In Inteligente | Richard Automotive',
     description:
-      'Tasación neural en 90 segundos. Recibe el máximo valor por tu auto usado y aplícalo a tu próximo vehículo.',
+      'Recibe el máximo valor por tu auto usado en 90 segundos y aplícalo a tu próximo vehículo.',
     url: 'https://richard-automotive.com/trade-in',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
@@ -51,12 +51,12 @@ function TradeInJsonLd() {
       },
     ],
     'Cómo hacer trade-in de tu auto en Richard Automotive',
-    'Proceso de trade-in rápido con tasación neural. Recibe el máximo valor garantizado por tu vehículo usado en Puerto Rico.',
+    'Proceso de trade-in rápido con tasación digital. Recibe el máximo valor garantizado por tu vehículo usado en Puerto Rico.',
   );
 
   const faq = getFAQSchema([
     {
-      question: '¿Cómo funciona la tasación neural?',
+      question: '¿Cómo funciona la tasación digital?',
       answer:
         'Usamos inteligencia artificial para analizar el valor de mercado de tu vehículo en tiempo real. La tasación preliminar toma 90 segundos y considera año, marca, modelo, millaje, condición y demanda actual en Puerto Rico.',
     },

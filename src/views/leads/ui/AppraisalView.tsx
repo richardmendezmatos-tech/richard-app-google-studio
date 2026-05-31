@@ -626,7 +626,7 @@ const AppraisalView: React.FC = () => {
           status: 'new',
           aiSummary: aiAnalysis
             ? `IA Condition: ${aiAnalysis.condition}. Reasoning: ${aiAnalysis.reasoning}`
-            : 'No AI Analysis',
+            : 'Sin Análisis',
         },
         'richard-automotive',
       );
