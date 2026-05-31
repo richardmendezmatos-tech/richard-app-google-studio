@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
-import { getCarImage } from '@/entities/inventory/lib/carImage';
+import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
 import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
@@ -37,6 +37,27 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     // Social Proof: real-time view stats from Supabase
     const { data: stats } = useVehicleStats(car.id);
     const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
+
+    const carImages = getCarImages(car, 3);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const isHovering = useRef(false);
+
+    useEffect(() => {
+      if (carImages.length < 2) return;
+      intervalRef.current = setInterval(() => {
+        if (!isHovering.current) {
+          setActiveImageIndex((prev) => (prev + 1) % carImages.length);
+        }
+      }, 4000);
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }, [carImages.length]);
+
+    const currentSrc = carImages.length > 1
+      ? carImages[activeImageIndex]
+      : getCarImage(car);
 
     return (
       <div
@@ -95,11 +116,32 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           </div>
 
           <OptimizedImage
-            src={getCarImage(car)}
+            src={currentSrc}
             alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
             className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
             aspectRatio="aspect-[4/3]"
           />
+
+          {carImages.length > 1 && (
+            <div
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5"
+              onMouseEnter={() => { isHovering.current = true; }}
+              onMouseLeave={() => { isHovering.current = false; }}
+            >
+              {carImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === activeImageIndex
+                      ? 'bg-white w-4 shadow-md'
+                      : 'bg-white/40 hover:bg-white/70'
+                  }`}
+                  aria-label={`Imagen ${i + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="p-8 flex-1 flex flex-col">

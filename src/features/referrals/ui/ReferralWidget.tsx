@@ -28,20 +28,19 @@ export function ReferralWidget({
 
   useEffect(() => {
     if (initialCode) return;
-    fetch(`/api/referrals?phone=${encodeURIComponent(phone)}`)
+    const params = new URLSearchParams({ phone });
+    if (name) params.set('name', name);
+    fetch(`/api/referrals?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.code) setCode(data.code);
         if (data.stats) setStats(data.stats);
-        if (!data.code) {
-          setCode(generateLocalCode(phone));
-        }
       })
       .catch(() => {
-        setCode(generateLocalCode(phone));
+        /* API unavailable — keep default empty state */
       })
       .finally(() => setLoading(false));
-  }, [phone, initialCode]);
+  }, [phone, initialCode, name]);
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://richard-automotive.com';
   const referralUrl = `${baseUrl}/recomienda?ref=${code}`;
@@ -167,11 +166,4 @@ export function ReferralWidget({
   );
 }
 
-function generateLocalCode(phone: string): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = phone.slice(-4);
-  for (let i = code.length; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code.toUpperCase();
-}
+

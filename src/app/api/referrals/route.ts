@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { registerReferral, getReferralStats, getReferralsByPhone } from '@/features/referrals/api/referralService';
+import { registerReferral, getReferralStats, getReferralsByPhone, ensureReferralCode } from '@/features/referrals/api/referralService';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +13,13 @@ export async function GET(req: NextRequest) {
       getReferralsByPhone(phone),
     ]);
 
-    const existingCode = referrals.length > 0 ? referrals[0].code : null;
+    const name = req.nextUrl.searchParams.get('name') || undefined;
+
+    let existingCode = referrals.length > 0 ? referrals[0].code : null;
+    if (!existingCode) {
+      const result = await ensureReferralCode(phone, name);
+      existingCode = result.code;
+    }
 
     return NextResponse.json({ stats, code: existingCode, referrals });
   } catch (error: any) {

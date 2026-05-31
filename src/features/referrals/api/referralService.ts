@@ -133,6 +133,40 @@ export async function getReferralStats(phone: string) {
   return { total, pending, converted, earned };
 }
 
+export async function ensureReferralCode(
+  phone: string,
+  name?: string,
+): Promise<{ code: string }> {
+  const supabase = createClient();
+
+  const existing = await getReferralsByPhone(phone);
+  if (existing.length > 0 && existing[0].code) {
+    return { code: existing[0].code };
+  }
+
+  const code = generateCode();
+
+  const { error } = await supabase.from('referrals').insert({
+    referrer_phone: phone,
+    referrer_name: name || null,
+    referee_name: null,
+    referee_phone: null,
+    code,
+    status: 'pending',
+    referrer_reward_amount: 0,
+    referee_reward_amount: 0,
+  });
+
+  if (error) {
+    if (error.code === '23505') {
+      return ensureReferralCode(phone, name);
+    }
+    throw new Error(error.message);
+  }
+
+  return { code };
+}
+
 function generateCode(length = 6): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
