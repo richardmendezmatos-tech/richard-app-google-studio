@@ -182,7 +182,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full text-[9px] font-tech uppercase tracking-[0.2em] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-              ⚡ Sentinel Suite v24
+              ⚡ Suite de Descubrimiento v24
             </span>
             <span className="text-[10px] text-slate-500 font-tech">| INTELIGENCIA INTERACTIVA</span>
           </div>
@@ -226,7 +226,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Brain size={14} /> <span className="hidden sm:inline">Neural Match</span>
+            <Brain size={14} /> <span className="hidden sm:inline">Match Ideal</span>
             <span className="sm:hidden">AI</span>
           </button>
         </div>
@@ -571,7 +571,7 @@ const SentinelDiscoverySuite: React.FC<SentinelDiscoverySuiteProps> = ({ invento
               Buscas
             </h3>
             <p className="text-slate-500 text-xs mt-2 max-w-lg mx-auto leading-relaxed">
-              Nuestro motor neural analiza el inventario en tiempo real para encontrar unidades que
+              Nuestro sistema inteligente analiza el inventario en tiempo real para encontrar unidades que
               no solo encajen con tu bolsillo, sino con tu estilo de vida en la isla.
             </p>
           </div>

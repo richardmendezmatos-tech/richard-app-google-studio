@@ -50,7 +50,7 @@ const PhotoAppraisal: React.FC = () => {
               <Camera className="text-primary" size={18} />
             </div>
             <h3 className="text-xl font-black text-white uppercase tracking-tighter">
-              Avalúo por Foto AI
+              Avalúo por Foto
             </h3>
           </div>
           <p className="text-slate-500 text-xs font-bold leading-relaxed">

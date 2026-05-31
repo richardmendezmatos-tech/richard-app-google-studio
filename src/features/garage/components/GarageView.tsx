@@ -86,7 +86,7 @@ const VehicleCard = ({ vehicle }: { vehicle: GarageVehicle }) => {
       {/* Asset Value */}
       <div className="mb-8 p-6 bg-white/5 rounded-4xl border border-white/5">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
-          Valor de Mercado (AI)
+          Valor de Mercado
         </p>
         <div className="flex items-end gap-2">
           <span className="text-3xl font-black text-white">

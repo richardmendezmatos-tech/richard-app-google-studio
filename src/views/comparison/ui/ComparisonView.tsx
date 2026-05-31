@@ -91,10 +91,10 @@ const ComparisonView: React.FC = () => {
       <main className="p-8 relative z-10 max-w-[1800px] mx-auto pb-24">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-            Batalla de <span className="text-primary">Especificaciones</span>
+            Comparativa de <span className="text-primary">Especificaciones</span>
           </h1>
           <p className="text-slate-400 max-w-xl mx-auto text-lg">
-            Comparativa directa asistida por IA para encontrar tu mejor inversión.
+            Comparativa asistida por IA para encontrar tu mejor inversión.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ const ComparisonView: React.FC = () => {
                   <Sparkles size={32} />
                 </div>
                 <span className="text-[10px] uppercase font-black tracking-widest text-primary">
-                  Richard AI Veredict
+                  Veredicto Richard
                 </span>
               </div>
               <div className="text-center md:text-left">

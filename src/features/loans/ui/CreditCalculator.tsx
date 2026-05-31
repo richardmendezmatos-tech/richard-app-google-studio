@@ -37,7 +37,7 @@ export const CreditCalculator: React.FC = () => {
           <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-6">
             <Calculator size={14} className="text-cyan-400" />
             <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest italic">
-              Calculadora F&I Elite
+              Calculadora Financiera
             </span>
           </div>
 

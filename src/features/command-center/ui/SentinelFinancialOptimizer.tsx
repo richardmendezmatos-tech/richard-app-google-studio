@@ -99,7 +99,7 @@ export const SentinelFinancialOptimizer: React.FC = () => {
           </div>
           <div>
             <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">
-              Financial Intelligence
+              Información Financiera
             </h3>
             <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">
               Deal & Yield Optimizer • Sentinel N28
@@ -204,7 +204,7 @@ export const SentinelFinancialOptimizer: React.FC = () => {
       </div>
 
       <button className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-2">
-        <TrendingUp size={14} className="text-emerald-400" /> Generar Reporte de Rentabilidad
+              <TrendingUp size={14} className="text-emerald-400" /> Generar Informe de Rentabilidad
       </button>
     </div>
   );

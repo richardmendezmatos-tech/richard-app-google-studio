@@ -222,7 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 import('@/features/command-center/ui/MissionControlDashboard').catch(() => {})
               }
               icon={<Monitor size={19} />}
-              label="Mission Control"
+              label="Panel de Control"
               isCollapsed={isCollapsed}
             />
             <NavButton
@@ -280,7 +280,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <p
               className={`mb-2 px-2 text-[9px] font-black uppercase tracking-[0.2em] text-purple-400 ${isCollapsed ? 'text-center' : ''}`}
             >
-              {!isCollapsed ? 'Inteligencia IA' : 'AI'}
+              {!isCollapsed ? 'Inteligencia' : 'IA'}
             </p>
             <NavButton
               active={location.pathname === '/admin/copilot'}

@@ -55,7 +55,7 @@ const OverviewTab: React.FC<Props> = ({ car, showHeavyContent, loadingPitch, aiP
                 size={16}
                 className="text-cyan-400 group-hover/ar:text-slate-950 transition-colors"
               />
-              Activate AR-Vision
+              Ver en 3D
             </button>
           </div>
 
@@ -151,7 +151,7 @@ const OverviewTab: React.FC<Props> = ({ car, showHeavyContent, loadingPitch, aiP
               </span>
             </div>
             <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/20 rounded-full">
-              <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">Premium</span>
+              <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest">Reporte IA</span>
             </div>
           </div>
 

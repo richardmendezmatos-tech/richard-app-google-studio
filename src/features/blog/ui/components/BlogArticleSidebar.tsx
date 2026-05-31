@@ -40,7 +40,7 @@ export const BlogArticleSidebar: React.FC<Props> = ({ post }) => {
       {/* Quick Specs Overview */}
       <div className="p-8 rounded-[2.5rem] border border-white/5 bg-white/5 space-y-6">
         <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] flex items-center gap-2">
-          <Info size={14} /> Quick Intelligence
+          <Info size={14} /> Resumen Rápido
         </h4>
 
         <div className="space-y-4">

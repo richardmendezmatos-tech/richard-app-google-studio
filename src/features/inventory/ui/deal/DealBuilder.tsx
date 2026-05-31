@@ -248,7 +248,7 @@ const DealBuilder: React.FC<DealBuilderProps> = ({
               {/* Sentinel Strategy */}
               <div className="space-y-4">
                 <h4 className="text-[9px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
-                  <Sparkles size={12} /> Sentinel AI Advice
+                  <Sparkles size={12} /> Asesoría Inteligente
                 </h4>
                 <div className="space-y-3">
                   {generarPersuasionVenta

@@ -20,7 +20,7 @@ const ContactTab: React.FC<Props> = ({ car, onAction, onCall }) => (
           <MessageCircle size={48} className="text-white" />
         </div>
         <h3 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4">
-          ¿Listo para la Misión?
+          ¿Listo para tu próximo auto?
         </h3>
         <p className="text-lg text-slate-400 font-medium mb-12 max-w-md">
           Conversa directamente con Richard IA o un estratega certificado para
@@ -71,7 +71,7 @@ const ContactTab: React.FC<Props> = ({ car, onAction, onCall }) => (
               value={95}
               size={45}
               strokeWidth={3}
-              label="Neural Log"
+              label="Registro de Actividad"
               color="#8b5cf6"
             />
             <span className="text-[10px] font-black uppercase tracking-widest italic text-white">

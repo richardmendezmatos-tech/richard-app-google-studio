@@ -17,7 +17,7 @@ const TrustBar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Activity size={12} className="text-cyan-400 animate-pulse" />
                 <span className="font-tech text-[10px] uppercase tracking-[0.5em] text-cyan-400">
-                  SENTINEL TRUST ENGINE V2
+                  SISTEMA DE CONFIANZA V2
                 </span>
               </div>
             </div>
@@ -32,7 +32,7 @@ const TrustBar: React.FC = () => {
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <span className="relative flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400">
                 <BadgeCheck size={16} className="text-emerald-500" />
-                Verified Richard Elite Dealer
+                Concesionario Certificado Richard Automotive
               </span>
             </div>
           </div>
@@ -41,21 +41,21 @@ const TrustBar: React.FC = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <TrustItem
             icon={<ShieldCheck size={32} />}
-            title="PROTOCOL 150+"
-            desc="Certificación neurálgica masiva. Cada unidad es auditada bajo los estándares de Richard para una confiabilidad total."
+            title="PROTOCOLO 150+"
+            desc="Cada unidad es auditada bajo los estándares de Richard para una confiabilidad total."
             color="cyan"
             delay={1}
           />
           <TrustItem
             icon={<Zap size={32} />}
-            title="MISSION: DELIVERY"
-            desc="Manejamos la logística con guante blanco. Entrega en 24h a cualquier punto de la isla con precisión Sentinel."
+            title="ENTREGA EXPRÉS"
+            desc="Manejamos la logística con guante blanco. Entrega en 24h a cualquier punto de la isla con precisión certificada."
             color="primary"
             delay={3}
           />
           <TrustItem
             icon={<Sparkles size={32} />}
-            title="RICHARD GUARANTEE"
+            title="GARANTÍA RICHARD"
             desc="72 horas de prueba real. Si no sientes que es el auto de tus sueños, ejecutamos el retorno sin fricciones."
             color="emerald"
             delay={5}

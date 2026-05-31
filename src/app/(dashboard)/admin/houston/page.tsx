@@ -243,10 +243,10 @@ const TacticalRadar: React.FC = () => {
       <div className="flex justify-between items-center w-full mb-4">
         <div>
           <h3 className="text-xs font-black text-white uppercase tracking-[0.3em] flex items-center gap-2">
-            <Atom className="text-cyan-400 animate-spin-slow" size={14} /> Tactical Scanning Radar
+            <Atom className="text-cyan-400 animate-spin-slow" size={14} /> Radar de Inventario
           </h3>
           <p className="text-[8px] text-slate-500 font-mono tracking-widest mt-1">
-            SENTINEL LIVE GEOLOCATION ENGINE
+            SISTEMA DE GEOLOCALIZACIÓN
           </p>
         </div>
         <button

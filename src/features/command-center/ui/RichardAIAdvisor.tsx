@@ -86,10 +86,10 @@ export const RichardAIAdvisor: React.FC<RichardAIAdvisorProps> = ({ businessCont
               className="font-black uppercase tracking-widest text-sm"
               style={{ fontFamily: 'var(--font-cinematic)' }}
             >
-              Richard <span className="text-cyan-400">AI Advisor</span>
+              Richard <span className="text-cyan-400">Advisor</span>
             </h2>
             <p className="text-[10px] text-slate-500 tracking-tighter uppercase font-bold">
-              Sentinel Intelligence Nivel 24 • Auditoría en tiempo real
+              Inteligencia Activa • Auditoría en tiempo real
             </p>
           </div>
         </div>

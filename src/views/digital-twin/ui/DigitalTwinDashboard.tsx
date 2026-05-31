@@ -517,7 +517,7 @@ const DigitalTwinDashboard: React.FC = () => {
               </div>
             </label>
             <p className="text-[10px] text-slate-500 leading-tight">
-              Activar Composio Sync enviará los datos recopilados por RA Digital (Leads y
+              Activar Sincronización enviará los datos recopilados por RA Digital (Leads y
               Preferencias) al CRM externo automáticamente.
             </p>
           </div>

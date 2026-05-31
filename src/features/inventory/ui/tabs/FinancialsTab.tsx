@@ -144,7 +144,7 @@ const FinancialsTab: React.FC<Props> = ({
           $<AnimatedNumber value={calculatedPayment} />
         </div>
         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">
-          + Tax & Licensing
+          + Impuestos y Arbitrios
         </p>
 
         <div className="mt-12 w-full space-y-3">

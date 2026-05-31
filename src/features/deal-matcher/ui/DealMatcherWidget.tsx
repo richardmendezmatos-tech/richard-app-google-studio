@@ -184,7 +184,7 @@ export const DealMatcherWidget: React.FC = () => {
           score: qualifyCar.matchScore,
           category: 'deal_matcher_gamified_match',
           insights: [
-            `Sentinel Matcher Premium v3`,
+            `Match Automotriz v3`,
             `Auto Seleccionado: ${qualifyCar.name}`,
             `Match Score del Matcher: ${qualifyCar.matchScore}%`,
             `Cuota Estimada: $${qualifyCar.monthlyPayment}/mes`,
@@ -842,7 +842,7 @@ export const DealMatcherWidget: React.FC = () => {
       {/* Footnote Disclaimers */}
       <div className="mt-12 text-center max-w-2xl mx-auto opacity-25 hover:opacity-50 transition-opacity">
         <p className="text-[8px] text-white uppercase font-bold tracking-widest leading-relaxed">
-          *Las cuotas provistas son estimaciones financieras matemáticas del motor Sentinel AI basadas en un término estándar de 72 meses y una tasa sugerida del 8.9% APR. No constituyen una oferta contractual final de financiamiento. Sujeto a aprobación crediticia de las instituciones financieras locales en Puerto Rico.
+          *Las cuotas provistas son estimaciones financieras matemáticas del motor de inteligencia artificial basadas en un término estándar de 72 meses y una tasa sugerida del 8.9% APR. No constituyen una oferta contractual final de financiamiento. Sujeto a aprobación crediticia de las instituciones financieras locales en Puerto Rico.
         </p>
       </div>
 

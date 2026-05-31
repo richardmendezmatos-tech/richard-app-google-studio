@@ -341,7 +341,7 @@ const QuickQualifyCard: React.FC = React.memo(() => {
 
             <div className="bg-[#0b1116] border border-white/5 rounded-2xl p-6 mb-8 relative">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#131f2a] px-4 text-[8px] font-black text-primary uppercase tracking-widest border border-white/5 rounded-full">
-                Sales Script AI
+                Guión de Ventas
               </span>
               <p className="text-white font-bold leading-relaxed italic text-sm">
                 "{resultado?.mensajeVenta}"

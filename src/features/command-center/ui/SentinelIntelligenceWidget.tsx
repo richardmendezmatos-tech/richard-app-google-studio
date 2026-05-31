@@ -53,7 +53,7 @@ export const SentinelIntelligenceWidget: React.FC<SentinelIntelligenceWidgetProp
       <div className="p-4 bg-slate-900/40 border border-white/5 rounded-2xl mb-8 flex items-center justify-center gap-3">
         <BrainCircuit className="w-4 h-4 text-slate-500" />
         <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-          Neural Intelligence: All systems nominal. No urgent signals detected.
+          Monitoreo: Sin señales urgentes detectadas.
         </span>
       </div>
     );

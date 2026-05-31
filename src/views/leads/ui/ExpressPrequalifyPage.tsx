@@ -257,7 +257,7 @@ export const ExpressPrequalifyPage: React.FC = () => {
                   <span className="text-amber-400">{expressForm.name.split(' ')[0]}</span>!
                 </h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Detectamos tu perfil Sentinel. Puedes reclamar tu bono instantáneamente.
+                  Detectamos tu perfil. Puedes reclamar tu bono instantáneamente.
                 </p>
               </div>
 

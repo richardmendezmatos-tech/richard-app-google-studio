@@ -87,7 +87,7 @@ const Navbar: React.FC = () => {
               to="/ai-lab"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
-              AI Lab
+              Laboratorio
             </Link>
 
             {isAuthenticated ? (

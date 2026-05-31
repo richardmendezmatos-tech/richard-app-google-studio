@@ -39,11 +39,11 @@ interface MatchResult {
 
 
 const SCAN_MESSAGES = [
-  'Analizando Patrón Neural',
-  'Procesando Perfil Psicológico',
+  'Analizando tu Perfil',
+  'Procesando tu Perfil',
   'Mapeando Compatibilidad',
   'Optimizando Preferencias',
-  'Calculando Puntuación de Afinidad Neural',
+  'Calculando tu Match Ideal',
 ];
 
 const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) => {
@@ -257,10 +257,10 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
             </div>
             <div>
               <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-                Neural Match <span className="text-ra-primary">v23.0</span>
+                Match Ideal <span className="text-ra-primary">v23.0</span>
               </h2>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                Identidad Digital & Compatibilidad
+                Encuentra tu Vehículo Ideal
               </p>
             </div>
           </div>
@@ -368,7 +368,7 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                           className="w-24 h-24 object-cover rounded-2xl shadow-lg border-2 border-primary/50"
                         />
                         <span className="text-[10px] font-black uppercase text-primary animate-pulse">
-                          Escaneando Imagen...
+                          Analizando Imagen...
                         </span>
                       </div>
                     ) : (
@@ -396,12 +396,12 @@ const NeuralMatchModal: React.FC<Props> = ({ inventory, onClose, onSelectCar }) 
                     onClick={() => handleScan()}
                     disabled={isAnalyzing || !profile.trim()}
                     className="w-full md:w-auto px-12 py-5 bg-ra-primary hover:bg-ra-primary-light text-slate-950 rounded-[30px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-ra-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:scale-100"
-                    title="Iniciar Escaneo Neural"
+                    title="Iniciar Búsqueda"
                   >
                     <div className="p-2 bg-slate-950/20 rounded-full group-hover:bg-slate-950/30 transition-colors shadow-inner">
                       <ScanLine size={32} strokeWidth={3} className="drop-shadow-sm" />
                     </div>
-                    <span className="drop-shadow-md">Iniciar Escaneo</span>
+                    <span className="drop-shadow-md">Iniciar Búsqueda</span>
                     {profile.trim() && (
                       <Sparkles
                         size={32}

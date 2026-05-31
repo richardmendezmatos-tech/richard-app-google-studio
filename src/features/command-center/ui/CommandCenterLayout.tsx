@@ -152,7 +152,7 @@ const CommandCenterLayout: React.FC<Props> = (props) => {
             <button
               onClick={() => navigate('/strategy-lab')}
               className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 rounded-lg border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none ring-1 ring-white/5 shadow-2xl transition-all hover:bg-slate-800"
-              title="Nodo Houston Sentinel"
+              title="Centro Houston"
             >
               <Zap size={14} className="text-purple-400" />{' '}
               <span className="hidden sm:inline">Strategy Lab</span>

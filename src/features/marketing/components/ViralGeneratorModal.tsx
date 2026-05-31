@@ -75,7 +75,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
         <div className="text-center py-12 space-y-6">
           <div className="max-w-md mx-auto">
             <p className="text-slate-400 text-sm mb-8">
-              Richard Automotive AI transformará las fotos y especificaciones de este auto en un
+              Richard Automotive transformará las fotos y especificaciones de este auto en un
               Reel de alto impacto para Instagram y TikTok.
             </p>
             <button
@@ -166,7 +166,7 @@ const ViralGeneratorModal: React.FC<ViralGeneratorModalProps> = ({ car, isOpen, 
                 </div>
                 <div>
                   <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-                    AI Viral Generator
+                    Generador de Marketing
                   </h2>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
                     {car.name}

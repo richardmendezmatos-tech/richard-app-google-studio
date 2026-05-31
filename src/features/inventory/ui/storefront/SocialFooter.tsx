@@ -31,8 +31,7 @@ const SocialFooter: React.FC = () => {
             Richard<span className="text-cyan-400">Automotive</span>
           </motion.h2>
           <p className="text-sm font-medium leading-relaxed text-slate-400 max-w-xs">
-            Redefiniendo la soberanía automotriz en Puerto Rico a través de Inteligencia Artificial
-            y transparencia de Command Center.
+            Redefiniendo la experiencia automotriz en Puerto Rico con transparencia y tecnología.
           </p>
           <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10">
@@ -40,7 +39,7 @@ const SocialFooter: React.FC = () => {
             </div>
             <div className="space-y-0.5">
               <p className="font-tech text-[10px] font-black uppercase tracking-widest text-white">
-                Sentinel Certified
+                Certificado Richard Automotive
               </p>
               <p className="text-[9px] text-slate-600">Enterprise Security v2.0</p>
             </div>
@@ -50,27 +49,27 @@ const SocialFooter: React.FC = () => {
         {/* Strategic Links */}
         <div className="space-y-6">
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-            OPERATIONS
+            OPERACIONES
           </h3>
           <ul className="space-y-3 font-tech text-sm">
             <li>
-              <FooterLink label="Inventario Elite" href="/inventario" />
+              <FooterLink label="Inventario" href="/inventario" />
             </li>
             <li>
-              <FooterLink label="Neural Appraisal" href="/tasacion" />
+              <FooterLink label="Tasación" href="/tasacion" />
             </li>
             <li>
-              <FooterLink label="Mission: Financials" href="/financiamiento" />
+              <FooterLink label="Financiamiento" href="/financiamiento" />
             </li>
             <li>
-              <FooterLink label="Richard AI Chat" href="/api/ai/chat" />
+              <FooterLink label="Chat" href="/api/ai/chat" />
             </li>
           </ul>
         </div>
 
         <div className="space-y-6">
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-            NETWORK NODES
+            NODOS DE RED
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <ul className="space-y-3 font-tech text-[11px]">
@@ -89,7 +88,7 @@ const SocialFooter: React.FC = () => {
             </ul>
             <ul className="space-y-3 font-tech text-[11px]">
               <li>
-                <FooterLink label="SUVs Elite" href="/autos-usados/tipo/suv" />
+                <FooterLink label="SUVs Premium" href="/autos-usados/tipo/suv" />
               </li>
               <li>
                 <FooterLink label="Pickups" href="/autos-usados/tipo/pickup" />
@@ -107,14 +106,14 @@ const SocialFooter: React.FC = () => {
         {/* Intelligence Pulse */}
         <div className="space-y-6">
           <h3 className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">
-            LIVE PULSE
+            PULSO EN VIVO
           </h3>
           <div className="rounded-4xl border border-white/5 bg-white/5 p-6 backdrop-blur-xl space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-tech text-[10px] font-bold text-slate-400">AI SERVER</span>
+              <span className="font-tech text-[10px] font-bold text-slate-400">SERVIDOR</span>
               <div className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                <span className="font-tech text-[10px] text-emerald-500">ONLINE</span>
+                <span className="font-tech text-[10px] text-emerald-500">ACTIVO</span>
               </div>
             </div>
             <div className="flex items-baseline gap-2">

@@ -350,7 +350,7 @@ const NewsroomPage: React.FC = () => {
                   Be the First
                 </h4>
                 <p className="text-sm text-slate-300 font-light leading-relaxed">
-                  Exclusive news, market analysis and VIP drops in your inbox.
+                  Noticias exclusivas, análisis de mercado y ofertas VIP en tu bandeja de entrada.
                 </p>
               </div>
               <div className="space-y-3">

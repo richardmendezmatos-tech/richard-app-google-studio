@@ -47,7 +47,7 @@ const InventoryPage: React.FC<Props> = ({ inventory, initialSearchTerm, onMagicF
             </h1>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
               Encuentra el vehículo perfecto para ti. Usa nuestros filtros inteligentes o la
-              búsqueda neural para explorar nuestra selección premium.
+              búsqueda inteligente para explorar nuestra selección premium.
             </p>
           </div>
 

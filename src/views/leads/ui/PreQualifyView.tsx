@@ -323,12 +323,12 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
               <div className="w-14 h-14 rounded-full bg-linear-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center shadow-lg border-2 border-primary/30">
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/4128/4128335.png"
-                  alt="Sofia AI"
+                  alt="Asistente Sofia"
                   className="w-10 h-10 object-cover"
                 />
               </div>
-              <div>
-                <h3 className="font-bold text-lg">Sofia AI</h3>
+                <div>
+                  <h3 className="font-bold text-lg">Asistente Sofia</h3>
                 <p className="text-xs text-primary font-mono">ASISTENTE DE SOLICITUD</p>
               </div>
             </div>

@@ -212,7 +212,7 @@ const Viewer360: React.FC<Props> = ({
           </span>
         ) : (
           <span className="bg-slate-900/80 backdrop-blur text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit border border-white/10">
-            <ZoomIn size={12} className="text-primary" /> AI Enhanced
+            <ZoomIn size={12} className="text-primary" /> Visión Mejorada
           </span>
         )}
       </div>
@@ -257,7 +257,7 @@ const Viewer360: React.FC<Props> = ({
             </div>
             <div>
               <p className="text-[8px] text-amber-400 font-bold uppercase tracking-tight">
-                AI Score
+                Puntuación
               </p>
               <p className="text-xs text-white font-black">{metrics.tech}/100</p>
             </div>
@@ -329,7 +329,7 @@ const Viewer360: React.FC<Props> = ({
           className={`p-3 backdrop-blur-md rounded-full text-white transition-all border border-white/10 hover:scale-110 active:scale-95 flex items-center gap-2 px-5 ${isScanning ? 'bg-cyan-500' : 'bg-white/10 hover:bg-cyan-500'}`}
         >
           <Cpu size={20} className={isScanning ? 'animate-spin' : ''} />
-          <span className="text-[10px] font-black uppercase tracking-widest">Digital Scan</span>
+          <span className="text-[10px] font-black uppercase tracking-widest">Visión Digital</span>
         </button>
         <button
           onClick={onFullscreen}

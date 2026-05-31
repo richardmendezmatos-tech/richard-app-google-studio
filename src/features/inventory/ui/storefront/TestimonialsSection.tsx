@@ -28,7 +28,7 @@ const testimonials = [
     name: 'Carlos Rodríguez',
     role: 'DUEÑO DE SANTA FE 2024',
     comment:
-      'La experiencia con Richard Automotive fue de otro nivel. El motor de IA Sentinel me ayudó a elegir la SUV perfecta con una precisión absoluta.',
+      'La experiencia con Richard Automotive fue de otro nivel. El motor de inteligencia artificial me ayudó a elegir la SUV perfecta con una precisión absoluta.',
     rating: 5,
     location: 'Bayamón, PR',
     img: 'https://randomuser.me/api/portraits/men/32.jpg',
@@ -38,7 +38,7 @@ const testimonials = [
     name: 'Sofía Méndez',
     role: 'DUEÑA DE IONIQ 5',
     comment:
-      "El 'Neural Match' de Richard es increíble. Acertó con mi estilo de vida eléctrico de forma quirúrgica. Proceso 100% digital y sin trucos.",
+      "El 'Match Ideal' de Richard es increíble. Acertó con mi estilo de vida eléctrico de forma quirúrgica. Proceso 100% digital y sin trucos.",
     rating: 5,
     location: 'San Juan, PR',
     img: 'https://randomuser.me/api/portraits/women/44.jpg',
@@ -70,7 +70,7 @@ const TestimonialsSection: React.FC = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-cyan-500/50" />
             <span className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400">
-              MISSION SATISFIED
+              CLIENTES SATISFECHOS
             </span>
             <div className="h-px w-8 bg-cyan-500/50" />
           </div>
@@ -78,7 +78,7 @@ const TestimonialsSection: React.FC = () => {
             HISTORIAS DE <span className="text-cyan-400">AUTORIDAD</span>
           </h2>
           <p className="font-tech text-xs uppercase tracking-widest text-slate-400">
-            Voces de nuestra comunidad de élite en Puerto Rico.
+            Voces de nuestros clientes en Puerto Rico.
           </p>
         </div>
 

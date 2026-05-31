@@ -64,7 +64,7 @@ export const StorefrontToolbar: React.FC<Props> = ({ state, actions }) => {
                 className="btn-glow hidden items-center gap-2 rounded-xl border border-primary/20 bg-slate-800/90 px-4 min-h-[44px] text-[11px] font-black uppercase tracking-[0.12em] text-cyan-200 transition-all hover:border-primary/40 hover:bg-primary hover:text-white md:flex"
                 title="Encuentra tu auto ideal por estilo de vida"
               >
-                <BrainCircuit size={16} /> Neural Match
+                <BrainCircuit size={16} /> Match Ideal
               </button>
               <button
                 onClick={() => actions.openVisualSearch('search_bar')}

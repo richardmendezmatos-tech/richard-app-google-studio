@@ -100,7 +100,7 @@ export const MissionControlWidget: React.FC = () => {
                 <Zap size={18} className="text-primary fill-primary/30" />
               </div>
               <h2 className="text-xl font-black text-white uppercase tracking-tighter">
-                AI Mission Control
+                Panel de Control
               </h2>
             </div>
             <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest pl-1">

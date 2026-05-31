@@ -577,12 +577,12 @@ const LogsTab: React.FC<{ telemetry: HoustonTelemetry }> = ({ telemetry }) => {
       transition={{ duration: 0.35, ease: 'easeOut' }}
       className="grid grid-cols-1 xl:grid-cols-3 gap-6"
     >
-      {/* Sentinel Analysis */}
+      {/* Análisis */}
       <div className="xl:col-span-1 glass-premium glass-sentinel p-8 border border-white/5 group relative overflow-hidden">
         <div className="absolute -right-12 -bottom-12 bg-amber-500/10 w-32 h-32 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-1000" />
         <AlertCircle className="text-amber-500 mb-6 animate-bounce-slow" size={36} />
         <h3 className="text-xl font-black text-white uppercase mb-6 tracking-tighter">
-          Sentinel Analysis
+          Análisis de Datos
         </h3>
         <ul className="space-y-8 text-xs text-slate-400">
           {[

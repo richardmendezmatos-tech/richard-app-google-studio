@@ -280,7 +280,7 @@ const ScanStep = React.memo(
           <p className="text-xs text-slate-400 uppercase tracking-widest">
             {offerReady
               ? 'Análisis exitoso. Listo para revelar.'
-              : 'Sentinel Vision está analizando tus 4 fotos'}
+              : 'Analizando tus fotos...'}
           </p>
         </div>
 
@@ -372,7 +372,7 @@ const OfferStep = React.memo(({ amount, analysis, vehicle, onAccept, onCancel, o
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className="text-amber-400" size={20} fill="currentColor" />
         <h3 className="font-bold text-lg text-slate-800 dark:text-white">
-          Reporte de Inspección IA
+          Informe de Inspección
         </h3>
       </div>
 

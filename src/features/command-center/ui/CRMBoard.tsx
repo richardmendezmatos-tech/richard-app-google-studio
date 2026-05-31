@@ -306,7 +306,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onPrint, userRole, isOverlay 
               generateActuarialReport(data);
             }}
             className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500/20 hover:scale-105 transition-all"
-            title="Reporte Actuarial"
+            title="Informe Actuarial"
           >
             <FileText size={16} />
           </button>

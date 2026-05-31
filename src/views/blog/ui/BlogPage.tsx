@@ -115,7 +115,7 @@ const BlogPage: React.FC = () => {
           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">
-              Sentinel Intelligence Newsroom
+              Noticias de Autoridad
             </span>
           </div>
 
@@ -145,7 +145,7 @@ const BlogPage: React.FC = () => {
               </span>
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">
-                Sentinel Sourcing: 4 Gaps detectados en SUVs Compactas
+                Abasto Inteligente: 4 oportunidades detectadas en SUVs Compactas
               </span>
             </div>
           ))}
@@ -259,7 +259,7 @@ const BlogPage: React.FC = () => {
                   disabled={isSubscribing}
                   className="w-full h-16 bg-primary text-black hover:bg-white transition-all rounded-2xl flex items-center justify-center font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-primary/20"
                 >
-                  {isSubscribing ? <Loader2 className="animate-spin" /> : 'Activar Intel'}
+                  {isSubscribing ? <Loader2 className="animate-spin" /> : 'Suscribirme'}
                 </button>
               </div>
             </div>
@@ -274,7 +274,7 @@ const BlogPage: React.FC = () => {
               ¿Qué vale tu auto?
             </h4>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-              Obtén una tasación Sentinel en 30 segundos.
+              Obtén una tasación en 30 segundos.
             </p>
             <button className="w-full py-4 bg-white/10 hover:bg-primary hover:text-black border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
               Tasar mi Unidad
@@ -385,7 +385,7 @@ const BlogPage: React.FC = () => {
                               Por {selectedPost.author}
                             </p>
                             <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1 font-bold">
-                              Sentinel AI Editorial Staff
+                              Equipo Editorial Richard
                             </p>
                           </div>
                         </div>

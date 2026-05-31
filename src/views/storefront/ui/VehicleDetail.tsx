@@ -659,7 +659,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               Unidades Similares
             </h2>
             <p className="font-tech text-[10px] text-primary font-black uppercase tracking-[0.4em]">
-              Sugerencias de la Red Sentinel
+              Sugerencias para ti
             </p>
           </div>
           <a

@@ -269,10 +269,10 @@ export const MissionControlDashboard: React.FC<Props> = ({ inventory, leads, dev
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all" />
           <Radio className="text-cyan-400 mb-4 group-hover:animate-pulse" size={32} />
           <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">
-            Houston Hub
+            Centro de Información
           </h3>
           <p className="text-slate-400 text-[11px] leading-relaxed mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
-            Terminal de telemetría avanzada y control maestro.
+            Terminal de monitoreo y control.
           </p>
           <div className="flex items-center gap-2 text-cyan-400 font-black text-[9px] uppercase tracking-widest">
             Terminal{' '}

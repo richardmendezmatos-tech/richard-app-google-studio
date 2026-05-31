@@ -111,12 +111,12 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                 </div>
                 <div>
                   <h2 className="font-tech text-2xl font-black uppercase tracking-[0.1em] text-white">
-                    Neural Match <span className="text-cyan-400">v2.1</span>
+                    Búsqueda Visual <span className="text-cyan-400">v2.1</span>
                   </h2>
                   <div className="flex items-center gap-2">
                     <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
                     <span className="text-[8px] font-black text-cyan-500 uppercase tracking-widest">
-                      Active AI Protocol
+                      Protocolo Activo
                     </span>
                   </div>
                 </div>
@@ -236,14 +236,14 @@ const VisualSearchModal: React.FC<Props> = ({ isOpen, onClose, onAnalyze, isAnal
                 )}
               </div>
 
-              {/* Tactical Reference Context */}
+              {/* Contexto de Referencia */}
               {!preview && !isAnalyzing && (
                 <div className="mt-10 animate-fade-in-up">
                   <div className="flex items-center justify-center gap-3 mb-6">
                     <div className="h-[1px] w-12 bg-white/5" />
                     <Sparkles size={14} className="text-cyan-500" />
                     <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
-                      Digital Data Analysis
+                      Análisis Digital
                     </span>
                     <div className="h-[1px] w-12 bg-white/5" />
                   </div>

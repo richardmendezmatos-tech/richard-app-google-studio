@@ -406,7 +406,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
                 </div>
                 <div>
                   <h4 className="text-white font-black text-sm uppercase tracking-widest mb-1">
-                    Reserva Digital Sentinel
+                    Reserva Digital
                   </h4>
                   <p className="text-[10px] text-white/40 leading-relaxed uppercase font-bold tracking-wider">
                     Certificación de privacidad RSA-2048. Sin impacto crediticio inmediato.
@@ -484,7 +484,7 @@ export const ApprovalSimulatorWidget: React.FC<ApprovalSimulatorWidgetProps> = (
                 </div>
               </div>
               <h3 className="text-4xl font-black text-white mb-6 tracking-tighter italic">
-                ¡Sentinel High-Intent!
+                ¡Alta Intención!
               </h3>
               <p className="text-white/40 leading-relaxed mb-12 max-w-sm mx-auto text-sm font-bold uppercase tracking-wider">
                 Reserva confirmada por{' '}

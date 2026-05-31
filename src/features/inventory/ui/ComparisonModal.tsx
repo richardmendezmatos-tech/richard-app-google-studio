@@ -70,12 +70,12 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
             <div className="flex items-center gap-4">
               <div className="h-px w-12 bg-cyan-500/30" />
               <span className="font-tech text-xs uppercase tracking-[0.5em] text-cyan-400">
-                SENTINEL COMPARISON PROTOCOL
+                COMPARATIVA DE VEHÍCULOS
               </span>
               <div className="h-px w-12 bg-cyan-500/30" />
             </div>
             <h2 className="font-cinematic text-4xl lg:text-5xl text-white tracking-tight">
-              Richard <span className="italic text-slate-500">Neural Combat</span>
+              Comparativa <span className="italic text-slate-500">Inteligente</span>
             </h2>
           </motion.div>
         </div>
@@ -123,7 +123,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
                     />
                   </div>
                   <p className="font-tech text-[10px] uppercase tracking-[0.4em] text-cyan-400 animate-pulse">
-                    Computing Vectors...
+                    Analizando...
                   </p>
                 </motion.div>
               ) : (
@@ -135,14 +135,14 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
                 >
                   <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-6 py-2 backdrop-blur-xl">
                     <span className="font-tech text-[10px] font-black uppercase tracking-widest text-emerald-400">
-                      Sync Complete
+                      Comparación Completa
                     </span>
                   </div>
                   <button
                     onClick={() => setResult(null)}
                     className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors underline underline-offset-4"
                   >
-                    Reset Simulation
+                    Reiniciar
                   </button>
                 </motion.div>
               )}
@@ -173,7 +173,7 @@ const ComparisonModal: React.FC<Props> = ({ cars, onClose }) => {
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles size={16} className="text-cyan-400" />
                     <span className="font-tech text-[10px] uppercase tracking-[0.4em] text-cyan-400">
-                      INTELLIGENCE HUB VERDICT
+                      VEREDICTO INTELIGENTE
                     </span>
                   </div>
                   <p className="font-cinematic text-2xl lg:text-3xl text-white leading-tight max-w-4xl">

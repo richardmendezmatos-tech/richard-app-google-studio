@@ -2,9 +2,9 @@ import { SentinelVisionScanner } from '@/features/sentinel-vision/ui/SentinelVis
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Sentinel Neural Vision | Richard Automotive',
+  title: 'Visión Richard Automotive | Escáner de Vehículos',
   description:
-    'Military-grade AI automotive scanner. Analyze your vehicle with neural vision technology.',
+    'Escáner automotriz con inteligencia artificial. Analiza tu vehículo con tecnología de visión digital.',
 };
 
 export default function SentinelVisionPage() {
@@ -51,11 +51,10 @@ export default function SentinelVisionPage() {
               <span className="text-white font-bold">03</span>
             </div>
             <h4 className="text-xl font-bold text-white uppercase tracking-tighter-caps">
-              Sentinel Verification
+              Richard Verification
             </h4>
             <p className="text-text-muted text-sm leading-relaxed">
-              Every scan is cryptographically signed and verified by the Richard Automotive Command
-              Center.
+              Cada análisis es verificado por el sistema Richard Automotive.
             </p>
           </div>
         </section>

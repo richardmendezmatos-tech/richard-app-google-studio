@@ -15,7 +15,7 @@ const SandboxView = React.lazy(() => import('./views/SandboxView'));
 type AILabTab = 'chat' | 'voice' | 'vision' | 'video' | 'sandbox' | 'matcher';
 
 const tabs: { id: AILabTab; label: string; icon: React.FC<any>; color: string }[] = [
-  { id: 'chat', label: 'Consultor AI', icon: Bot, color: 'text-cyan-400' },
+  { id: 'chat', label: 'Consultor', icon: Bot, color: 'text-cyan-400' },
   { id: 'matcher', label: 'Deal Matcher', icon: Flame, color: 'text-orange-400' },
   { id: 'voice', label: 'Asistente de Voz', icon: Mic, color: 'text-emerald-400' },
   { id: 'vision', label: 'Visión Computacional', icon: ImageIcon, color: 'text-purple-400' },
@@ -52,7 +52,7 @@ export const AILabPage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#0d2232] text-white">
       <SEO
-        title="Richard AI Lab"
+        title="Laboratorio Richard"
         description="Centro experimental de inteligencia artificial generativa, asistentes de voz y visión computacional."
       />
 

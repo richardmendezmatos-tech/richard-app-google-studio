@@ -68,7 +68,7 @@ export const TradeInCalculator: React.FC = () => {
         </div>
         <div className="bg-cyan-500/10 px-4 py-1 rounded-full border border-cyan-500/20">
           <span className="text-cyan-400 text-xs font-mono uppercase tracking-widest">
-            Sentinel Active v2.0
+            Sistema Activo v2.0
           </span>
         </div>
       </header>

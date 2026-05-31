@@ -91,7 +91,7 @@ const MaintenanceTimeline: React.FC = () => {
       </div>
 
       <button className="w-full mt-8 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest border border-white/5 transition-all">
-        Ver Reporte Completo de Salud
+        Ver Informe Completo de la Unidad
       </button>
     </div>
   );

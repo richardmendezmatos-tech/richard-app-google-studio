@@ -208,7 +208,7 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
               <p className="font-tech text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/80">
-                Mission Critical Unit {(car?.id || '').slice(0, 6).toUpperCase()}
+                Unidad Certificada {(car?.id || '').slice(0, 6).toUpperCase()}
               </p>
             </div>
             <h2 className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">

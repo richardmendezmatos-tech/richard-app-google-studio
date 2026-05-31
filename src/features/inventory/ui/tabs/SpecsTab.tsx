@@ -49,14 +49,14 @@ const SpecsTab: React.FC<Props> = ({ car }) => (
         <div className="flex items-center gap-3">
           <ShieldCheck size={20} className="text-cyan-400" />
           <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">
-            Sentinel Security
+            Seguridad Certificada
           </h4>
         </div>
         <div className="grid grid-cols-1 gap-4">
           {(car.features?.length ? car.features.slice(0, 4) : [
             'Frenado Autónomo',
             'Sensores Blind-Spot',
-            'Cámara 360 Scan',
+            'Cámara 360°',
             'Alerta de Tráfico Cruzado',
           ]).map((f) => (
             <div
@@ -104,7 +104,7 @@ const SpecsTab: React.FC<Props> = ({ car }) => (
           <div className="p-4 bg-cyan-400/10 rounded-2xl border border-cyan-400/20">
             <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-[0.2em] leading-relaxed">
               Esta unidad ha sido sometida a un escaneo digital completo y validada
-              por Sentinel Engine.
+               por nuestro sistema de certificación.
             </p>
           </div>
         </GlassContainer>

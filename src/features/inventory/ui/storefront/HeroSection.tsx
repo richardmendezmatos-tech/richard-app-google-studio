@@ -18,35 +18,35 @@ interface HeroSectionProps {
 
 const HEADLINES = [
   {
-    eyebrow: 'PROTOCOL: DOMINANCE',
+    eyebrow: 'DOMINA LA CARRETERA',
     line1: 'AUTOS NUEVOS',
     line2: 'Y USADOS',
-    accent: 'READY TO LAUNCH',
+    accent: 'LISTO PARA ACCIONAR',
     sub: 'Concesionario oficial de autos nuevos en Vega Alta. Garantizamos la estructura de financiamiento más agresiva de Puerto Rico. Unidades exclusivas, aprobaciones blindadas.',
   },
   {
-    eyebrow: 'PROTOCOL: APPROVAL',
+    eyebrow: 'PROTOCOLO: APROBACIÓN',
     line1: 'TU CRÉDITO',
     line2: 'ESTÁ PROTEGIDO',
-    accent: 'ZERO DOWN',
+    accent: 'SIN PRONTO',
     sub: 'Nuestros especialistas ejecutan aprobaciones de alta velocidad incluso con desafíos crediticios. Transparencia Richard.',
   },
   {
-    eyebrow: 'PROTOCOL: TRADE-IN',
+    eyebrow: 'PROTOCOLO: TRADE-IN',
     line1: 'PAGAMOS EL',
     line2: 'MAX TOTAL',
-    accent: 'EXCHANGE NOW',
-    sub: 'Valora tu activo en 90 segundos con nuestro motor de tasación neural. Sal montado en una unidad superior hoy.',
+    accent: 'INTERCAMBIO AHORA',
+    sub: 'Valora tu activo en 90 segundos con nuestro motor de tasación inteligente. Sal montado en una unidad superior hoy.',
   },
 ];
 
 const TICKER_ITEMS = [
   '⚡ ESTRUCTURAS DESDE 4.9% APR',
   '🎁 BONO DE $300 WEB ACTIVO',
-  '🛡 SEGURIDAD SENTINEL CERTIFICADA',
-  '🔁 VALORACIÓN NEURAL EN 90S',
+  '🛡 SEGURIDAD CERTIFICADA',
+  '🔁 VALORACIÓN EN 90S',
   '📍 HUB CENTRAL: BAYAMÓN, PR',
-  '🤖 RICHARD AI ADVISOR: ONLINE',
+  '🤖 ASESOR VIRTUAL: ACTIVO',
   '✅ SIN TRUCOS, SIN COSTOS OCULTOS',
 ];
 
@@ -164,9 +164,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
           <div className="flex flex-wrap gap-4 pt-4">
             {[
-              { icon: <Shield size={14} />, label: 'Certified' },
-              { icon: <Clock size={14} />, label: 'Express Approval' },
-              { icon: <Zap size={14} />, label: 'Same Day' },
+              { icon: <Shield size={14} />, label: 'Certificado' },
+              { icon: <Clock size={14} />, label: 'Aprobación Rápida' },
+              { icon: <Zap size={14} />, label: 'Mismo Día' },
             ].map((p, i) => (
               <span
                 key={i}
@@ -194,7 +194,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
             <div className="space-y-3 relative">
               <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">
-                COMMAND HUB / <span className="text-primary animate-pulse">DIRECT ACTION</span>
+                CENTRO DE CONTROL / <span className="text-primary animate-pulse">ACCIÓN DIRECTA</span>
               </p>
               <div className="h-1 w-16 bg-linear-to-r from-primary to-transparent rounded-full shadow-[0_0_10px_#00e5ff]" />
             </div>
@@ -202,21 +202,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="space-y-4 relative">
               <PremiumCTA
                 label="EXPLORAR INVENTARIO"
-                tag="UNIT DATABASE"
+                tag="BASE DE UNIDADES"
                 icon={<ArrowRight size={22} />}
                 variant="primary"
                 onClick={onBrowseInventory}
               />
               <PremiumCTA
-                label="NEURAL MATCH"
-                tag="AI DISCOVERY"
+                label="MATCH IDEAL"
+                tag="DESCUBRIMIENTO"
                 icon={<BrainCircuit size={22} />}
                 variant="secondary"
                 onClick={onNeuralMatch}
               />
               <PremiumCTA
                 label="COTIZAR MI AUTO"
-                tag="TRADE-IN EVAL"
+                tag="EVALÚO DE TRADE-IN"
                 icon={<DollarSign size={22} />}
                 variant="tertiary"
                 onClick={onSellCar}
@@ -226,9 +226,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Micro Dashboard */}
             <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 relative">
               {[
-                { val: '500+', lbl: 'FAMILIES' },
-                { val: '4.9%', lbl: 'MIN APR' },
-                { val: '24/7', lbl: 'LIVE OPS' },
+                { val: '500+', lbl: 'FAMILIAS' },
+                { val: '4.9%', lbl: 'APR MÍNIMO' },
+                { val: '24/7', lbl: 'OPERACIÓN' },
               ].map((s, i) => (
                 <div key={i} className="text-center group/stat">
                   <div className="font-tech text-xl font-black text-white group-hover/stat:text-primary transition-colors">

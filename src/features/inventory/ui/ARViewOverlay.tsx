@@ -62,15 +62,15 @@ export const ARViewOverlay: React.FC<Props> = ({ image, vehicleName, specs, onCl
         <div className="hidden lg:flex flex-col gap-6 w-64">
           <HUDDataCard
             icon={<Target className="text-cyan-400" size={16} />}
-            label="Engine Output"
+            label="Potencia del Motor"
             value={`${specs.hp} HP`}
             subValue={`${specs.torque} lb-ft`}
           />
           <HUDDataCard
             icon={<ShieldCheck className="text-emerald-400" size={16} />}
-            label="Safety Core"
+            label="Seguridad"
             value={`${specs.safety}/100`}
-            subValue="Active Protection"
+            subValue="Protección Activa"
           />
         </div>
 
@@ -107,7 +107,7 @@ export const ARViewOverlay: React.FC<Props> = ({ image, vehicleName, specs, onCl
             <div className="flex items-center gap-2 justify-center mt-2">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
               <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.5em]">
-                Sentinel Vision™
+                Visión 360°
               </span>
             </div>
           </motion.div>
@@ -117,18 +117,18 @@ export const ARViewOverlay: React.FC<Props> = ({ image, vehicleName, specs, onCl
         <div className="hidden lg:flex flex-col gap-6 w-64">
           <HUDDataCard
             icon={<Box className="text-blue-400" size={16} />}
-            label="Spatial Mapping"
-            value="1:1 Ratio"
-            subValue="Verified Precision"
+            label="Mapeo Espacial"
+            value="1:1"
+            subValue="Precisión"
           />
           <div className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-4xl hud-brackets">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">
-              Neural Analysis
+              Análisis del Vehículo
             </p>
             <div className="space-y-3">
-              <ProgressBar label="Dynamics" progress={85} />
-              <ProgressBar label="Tech Core" progress={92} />
-              <ProgressBar label="Efficiency" progress={78} />
+              <ProgressBar label="Dinámica" progress={85} />
+              <ProgressBar label="Tecnología" progress={92} />
+              <ProgressBar label="Eficiencia" progress={78} />
             </div>
           </div>
         </div>
