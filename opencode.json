@@ -141,5 +141,32 @@
       "description": "Generate sitemap"
     }
   },
-  "disabled_providers": ["opencode"]
+  "disabled_providers": ["opencode"],
+  "mcp": {
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=dizzjfijsmxdlnfqydfk&read_only=true",
+      "enabled": true
+    },
+    "vercel": {
+      "type": "remote",
+      "url": "https://mcp.vercel.com",
+      "enabled": true
+    },
+    "gemini": {
+      "type": "local",
+      "command": ["gemini-cli-mcp"],
+      "env": {
+        "GOOGLE_GENAI_USE_GCA": "true",
+        "GEMINI_CLI_TRUST_WORKSPACE": "true"
+      },
+      "enabled": true
+    },
+    "twilio-docs": {
+      "type": "remote",
+      "url": "https://mcp.twilio.com/docs",
+      "enabled": true,
+      "oauth": false
+    }
+  }
 }
