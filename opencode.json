@@ -167,6 +167,11 @@
       "url": "https://mcp.twilio.com/docs",
       "enabled": true,
       "oauth": false
+    },
+    "lsp": {
+      "type": "local",
+      "command": ["lsp-mcp-server"],
+      "enabled": true
     }
   }
 }
