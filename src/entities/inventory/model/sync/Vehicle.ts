@@ -77,4 +77,10 @@ export class Vehicle {
       ...metadata,
     };
   }
+
+  public updateImages(images: string[]): void {
+    if (images.length > 0) {
+      this._props.images = images;
+    }
+  }
 }
