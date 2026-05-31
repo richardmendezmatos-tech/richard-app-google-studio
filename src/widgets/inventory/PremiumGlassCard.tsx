@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
-import { getCarImage } from '@/entities/inventory/lib/carImage';
+import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
 import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
 import Script from 'next/script';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
@@ -72,6 +72,21 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
   // Social Proof: real-time view/lead stats from Supabase
   const { data: stats } = useVehicleStats(car.id);
+
+  const carImages = getCarImages(car, 3);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (carImages.length < 2) return;
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % carImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [carImages.length]);
+
+  const currentSrc = carImages.length > 1
+    ? carImages[activeImageIndex]
+    : getCarImage(car);
 
   return (
     <div
@@ -160,7 +175,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
 
         {/* Image */}
         <OptimizedImage
-          src={getCarImage(car)}
+          src={currentSrc}
           alt={`${car.year} ${car.make} ${car.model} en venta Puerto Rico - Richard Automotive`}
           priority={priority}
           width={500}
@@ -168,6 +183,23 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           className="w-full h-full object-contain transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.25)]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
+
+        {carImages.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+            {carImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === activeImageIndex
+                    ? 'bg-white w-4 shadow-md'
+                    : 'bg-white/40 hover:bg-white/70'
+                }`}
+                aria-label={`Imagen ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* SEO Schema.org: Rich Results Injection */}
