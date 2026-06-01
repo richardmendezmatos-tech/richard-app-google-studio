@@ -22,6 +22,12 @@ function TestimonialsJsonLd() {
   );
 }
 
+const AVATARS = [
+  'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22%3E%3Crect width=%2256%22 height=%2256%22 fill=%22%23022c3d%22 rx=%228%22/%3E%3Ccircle cx=%2228%22 cy=%2222%22 r=%228%22 fill=%22%2333d4ff%22/%3E%3Cpath d=%22M14 44c0-8 6-14 14-14s14 6 14 14%22 fill=%22%2333d4ff%22 opacity=%22.8%22/%3E%3C/svg%3E',
+  'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22%3E%3Crect width=%2256%22 height=%2256%22 fill=%22%231a2e3d%22 rx=%228%22/%3E%3Ccircle cx=%2228%22 cy=%2222%22 r=%228%22 fill=%22%2333d4ff%22/%3E%3Cpath d=%22M14 44c0-8 6-14 14-14s14 6 14 14%22 fill=%22%2333d4ff%22 opacity=%22.8%22/%3E%3C/svg%3E',
+  'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22%3E%3Crect width=%2256%22 height=%2256%22 fill=%22%230d2b3d%22 rx=%228%22/%3E%3Ccircle cx=%2228%22 cy=%2222%22 r=%228%22 fill=%22%2333d4ff%22/%3E%3Cpath d=%22M14 44c0-8 6-14 14-14s14 6 14 14%22 fill=%22%2333d4ff%22 opacity=%22.8%22/%3E%3C/svg%3E',
+];
+
 const testimonials = [
   {
     id: 1,
@@ -31,7 +37,7 @@ const testimonials = [
       'La experiencia con Richard Automotive fue de otro nivel. Me ayudaron a elegir la SUV perfecta para mi familia.',
     rating: 5,
     location: 'Bayamón, PR',
-    img: 'https://randomuser.me/api/portraits/men/32.jpg',
+    img: AVATARS[0],
   },
   {
     id: 2,
@@ -41,7 +47,7 @@ const testimonials = [
       "El servicio de Richard es increíble. Encontraron el auto perfecto para mi estilo de vida y todo el proceso fue digital y sin complicaciones.",
     rating: 5,
     location: 'San Juan, PR',
-    img: 'https://randomuser.me/api/portraits/women/44.jpg',
+    img: AVATARS[1],
   },
   {
     id: 3,
@@ -51,7 +57,7 @@ const testimonials = [
       'Me trajeron el auto a la oficina para la entrega final y cerramos en tiempo récord. Súper recomendados.',
     rating: 5,
     location: 'Guaynabo, PR',
-    img: 'https://randomuser.me/api/portraits/men/85.jpg',
+    img: AVATARS[2],
   },
 ];
 

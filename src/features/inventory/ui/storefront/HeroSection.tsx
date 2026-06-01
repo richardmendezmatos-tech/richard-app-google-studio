@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, useRef, lazy } from 'react';
-import { ArrowRight, BrainCircuit, DollarSign, Sparkles, Shield, Clock, Zap } from 'lucide-react';
-import { GlassContainer } from '@/shared/ui/common/GlassContainer';
-import { PremiumCTA } from '@/shared/ui/common/PremiumCTA';
+import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import { Shield, Clock, Zap } from 'lucide-react';
 import { trackInterestIndex } from '@/shared/api/metrics/analytics';
 
 const NeuralBackground = lazy(() =>
   import('@/shared/ui/common/NeuralBackground').then((m) => ({ default: m.NeuralBackground })),
 );
+const HeroCTAPanel = lazy(() => import('./HeroCTAPanel').then((m) => ({ default: m.HeroCTAPanel })));
 
 interface HeroSectionProps {
   onNeuralMatch: () => void;
@@ -178,75 +177,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Right: Command Panel CTAs */}
-        <div
-          className="w-full lg:w-[460px] hero-fade-right"
+        {/* Right: Command Panel CTAs (lazy-loaded to defer framer-motion) */}
+        <Suspense
+          fallback={
+            <div className="w-full lg:w-[460px] min-h-[400px] rounded-2xl bg-slate-900/30 animate-pulse" />
+          }
         >
-          <GlassContainer
-            intensity="high"
-            opacity={0.07}
-            withBrackets
-            className="p-10 space-y-8 relative group"
-          >
-            {/* Holographic scanner effect */}
-            <div className="absolute inset-0 bg-linear-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
-            <div className="scanline-overlay opacity-20" />
-
-            <div className="space-y-3 relative">
-              <p className="font-tech text-xs font-black uppercase tracking-[0.5em] text-slate-400">
-                CENTRO DE CONTROL / <span className="text-primary animate-pulse">ACCIÓN DIRECTA</span>
-              </p>
-              <div className="h-1 w-16 bg-linear-to-r from-primary to-transparent rounded-full shadow-[0_0_10px_#00e5ff]" />
-            </div>
-
-            <div className="space-y-4 relative">
-              <PremiumCTA
-                label="EXPLORAR INVENTARIO"
-                tag="BASE DE UNIDADES"
-                icon={<ArrowRight size={22} />}
-                variant="primary"
-                onClick={onBrowseInventory}
-              />
-              <PremiumCTA
-                label="MATCH IDEAL"
-                tag="DESCUBRIMIENTO"
-                icon={<BrainCircuit size={22} />}
-                variant="secondary"
-                onClick={onNeuralMatch}
-              />
-              <PremiumCTA
-                label="COTIZAR MI AUTO"
-                tag="EVALÚO DE TRADE-IN"
-                icon={<DollarSign size={22} />}
-                variant="tertiary"
-                onClick={onSellCar}
-              />
-            </div>
-
-            {/* Micro Dashboard */}
-            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 relative">
-              {[
-                { val: '500+', lbl: 'FAMILIAS' },
-                { val: '4.9%', lbl: 'APR MÍNIMO' },
-                { val: '24/7', lbl: 'OPERACIÓN' },
-              ].map((s, i) => (
-                <div key={i} className="text-center group/stat">
-                  <div className="font-tech text-xl font-black text-white group-hover/stat:text-primary transition-colors">
-                    {s.val}
-                  </div>
-                  <div className="font-tech text-[8px] uppercase tracking-[0.3em] text-slate-500 font-bold">
-                    {s.lbl}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <Sparkles
-              className="absolute bottom-6 right-6 text-primary/10 group-hover:text-primary/30 transition-colors animate-spin-slow"
-              size={60}
+          <div className="w-full lg:w-[460px]">
+            <HeroCTAPanel
+              onBrowseInventory={onBrowseInventory}
+              onNeuralMatch={onNeuralMatch}
+              onSellCar={onSellCar}
             />
-          </GlassContainer>
-        </div>
+          </div>
+        </Suspense>
       </div>
 
       {/* ── Global Ticker Protocol (CSS animation, no forced reflow) ── */}

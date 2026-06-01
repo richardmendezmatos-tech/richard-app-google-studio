@@ -111,6 +111,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://va.vercel-scripts.com" />
         <link rel="icon" href="/favicon.png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/app-icon.webp" />
         <meta name="google-site-verification" content="-Gsbiu2xa3UZQ9sCSRb-P2Zk2boNjtO6o2849bdY1Dw" />
