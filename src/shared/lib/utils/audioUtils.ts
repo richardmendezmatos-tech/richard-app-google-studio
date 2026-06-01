@@ -1,4 +1,4 @@
-import { Blob } from '@google/genai';
+import { GeminiBlob } from '@/shared/api/ai/geminiLiveTypes';
 
 /**
  * Decodes a base64 string into a Uint8Array.
@@ -50,7 +50,7 @@ export function encode(bytes: Uint8Array): string {
 /**
  * Creates a Gemini API-compatible Blob from raw audio data.
  */
-export function createBlob(data: Float32Array): Blob {
+export function createBlob(data: Float32Array): GeminiBlob {
   const l = data.length;
   const int16 = new Int16Array(l);
   for (let i = 0; i < l; i++) {

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { connectToVoiceSession } from '@/shared/api/ai';
 import { VoiceCommandService } from '@/features/ai-hub/voice-command/api/VoiceCommandService';
-import { LiveServerMessage, Blob as GeminiBlob } from '@google/genai';
+import { LiveServerMessage, GeminiBlob, ServerContent } from '@/shared/api/ai/geminiLiveTypes';
 import { decode, decodeAudioData, createBlob } from '@/shared/lib/utils/audioUtils';
 
 const WORKLET_NAME = 'pcm-processor';
@@ -30,17 +30,6 @@ export type Transcription = { id: number; role: 'user' | 'model'; text: string; 
 type RealtimeSession = {
   close: () => void;
   sendRealtimeInput: (payload: { media: GeminiBlob }) => void;
-};
-
-type ServerContent = {
-  outputTranscription?: { text: string };
-  inputTranscription?: { text: string };
-  turnComplete?: boolean;
-  modelTurn?: {
-    parts?: Array<{
-      inlineData?: { data?: string };
-    }>;
-  };
 };
 
 import { Capacitor } from '@capacitor/core';

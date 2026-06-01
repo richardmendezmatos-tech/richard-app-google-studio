@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
-import { Blob as GeminiBlob } from '@google/genai';
+import { GeminiBlob } from '@/shared/api/ai/geminiLiveTypes';
 import { Car, BlogPost } from '@/shared/types/types';
 import { z } from 'zod';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
