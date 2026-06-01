@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, FC } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithGoogleCredential } from '@/features/auth';
+import { signInWithGoogleCredential } from '@/features/auth/services/authService';
 
 interface GoogleOneTapProps {
   clientId?: string;

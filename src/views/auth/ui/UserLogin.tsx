@@ -14,7 +14,7 @@ import { useNavigate, Link, useLocation } from '@/shared/lib/next-route-adapter'
 import { useAuthStore } from '@/entities/session';
 import SEO from '@/shared/ui/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
+import GoogleOneTap from '@/features/auth/components/GoogleOneTap';
 
 interface AuthLikeError {
   code?: string;

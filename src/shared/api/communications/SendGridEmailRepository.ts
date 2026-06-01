@@ -1,4 +1,4 @@
-import { EmailRepository, EmailOptions } from '@/features/automation/api';
+import { EmailRepository, EmailOptions } from '@/shared/api/repositories/IEmailRepository';
 import { sendPlainEmail } from '@/shared/api/communications/SendGridAdapter';
 
 export class SendGridEmailRepository implements EmailRepository {

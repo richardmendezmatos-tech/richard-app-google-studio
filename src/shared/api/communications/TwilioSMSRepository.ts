@@ -1,4 +1,4 @@
-import { SMSRepository } from '@/features/automation/api';
+import { SMSRepository } from '@/shared/api/repositories/ISMSRepository';
 import { sendTwilioMessage } from '@/shared/api/communications/TwilioAdapter';
 
 export class TwilioSMSRepository implements SMSRepository {

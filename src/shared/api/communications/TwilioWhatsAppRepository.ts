@@ -1,4 +1,5 @@
-import { WhatsAppRepository, WhatsAppSequence, WhatsAppStage } from '@/features/automation/api';
+import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
+import type { WhatsAppSequence, WhatsAppStage } from '@/shared/api/repositories/IWhatsAppRepository';
 import { sendTwilioMessage } from '@/shared/api/communications/TwilioAdapter';
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 

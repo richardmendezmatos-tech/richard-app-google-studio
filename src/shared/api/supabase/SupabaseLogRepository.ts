@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
-import { LogRepository } from '@/features/command-center/api/ILogRepository';
+import { LogRepository } from '@/shared/api/repositories/ILogRepository';
 
 export class SupabaseLogRepository implements LogRepository {
   private tableName = 'audit_logs';

@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
-import { LeadRepository } from '@/entities/lead/api/repositories/ILeadRepository';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
 import { Lead } from '@/entities/lead/model/LeadEntity';
 
 export class SupabaseLeadRepository implements LeadRepository {

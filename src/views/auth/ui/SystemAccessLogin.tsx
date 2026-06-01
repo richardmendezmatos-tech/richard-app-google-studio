@@ -15,7 +15,7 @@ import {
   Cpu,
 } from 'lucide-react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
-import GoogleOneTap from '@/shared/ui/components/GoogleOneTap';
+import GoogleOneTap from '@/features/auth/components/GoogleOneTap';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAuthStore } from '@/entities/session';
