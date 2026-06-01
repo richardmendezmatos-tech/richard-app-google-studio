@@ -52,7 +52,7 @@ export function RecomiendaForm() {
     const shareText = encodeURIComponent(
       `🎁 Te invito a Richard Automotive — Recibe $100 de descuento en tu compra. Usa mi código: ${resultCode}`,
     );
-    const shareUrl = encodeURIComponent('https://richard-automotive.com/recomienda');
+    const shareUrl = encodeURIComponent('https://www.richard-automotive.com/recomienda');
 
     return (
       <div className="text-center py-12 space-y-6">

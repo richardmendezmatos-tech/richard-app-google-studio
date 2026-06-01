@@ -19,7 +19,7 @@ export const sendAutoNewsletter = async (email: string) => {
             <h2>${news.title}</h2>
             <p>${news.excerpt}</p>
             <br />
-            <a href="https://richard-automotive.com/blog/${news.id}">Leer completo</a>
+            <a href="https://www.richard-automotive.com/blog/${news.id}">Leer completo</a>
         `,
   };
 

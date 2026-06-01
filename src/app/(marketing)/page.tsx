@@ -85,17 +85,17 @@ export const metadata: Metadata = {
     'pickups nuevas',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/',
+    canonical: 'https://www.richard-automotive.com/',
   },
   openGraph: {
     title: 'Richard Automotive | Dealer de Autos Nuevos y Usados Certificados',
     description:
       'Ubicados en Central Ford, Vega Alta. Concesionario oficial de autos nuevos y selección premium de usados.',
-    url: 'https://richard-automotive.com/',
+    url: 'https://www.richard-automotive.com/',
     siteName: 'Richard Automotive',
     images: [
       {
-        url: 'https://richard-automotive.com/og-image.jpg',
+        url: 'https://www.richard-automotive.com/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Richard Automotive Storefront',
@@ -111,7 +111,7 @@ function HomeJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
     ],
   };
 
@@ -120,9 +120,9 @@ function HomeJsonLd() {
     '@type': 'AutoDealer',
     name: BUSINESS_CONTACT.name,
     legalName: BUSINESS_CONTACT.legalName,
-    url: 'https://richard-automotive.com',
-    logo: 'https://richard-automotive.com/logo.png',
-    image: 'https://richard-automotive.com/dealership-front.jpg',
+    url: 'https://www.richard-automotive.com',
+    logo: 'https://www.richard-automotive.com/logo.png',
+    image: 'https://www.richard-automotive.com/dealership-front.jpg',
     description:
       'Dealer de autos usados certificados, especializado en pickups y guaguas de lujo. Ubicado en las facilidades de Central Ford.',
     telephone: BUSINESS_CONTACT.phone,

@@ -24,7 +24,7 @@ export class FordNewsBroadcaster {
       }
 
       let notified = 0;
-      const articleUrl = `https://richard-automotive.com/blog/${news.slug}`;
+      const articleUrl = `https://www.richard-automotive.com/blog/${news.slug}`;
 
       for (const lead of leads) {
         const clientName = lead.first_name?.split(' ')[0] || 'amigo';

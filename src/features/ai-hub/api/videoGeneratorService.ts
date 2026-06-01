@@ -54,6 +54,6 @@ export class VideoGeneratorService {
   static async generateVoiceOver(carId: string): Promise<string> {
     console.log(`Orchestrating voice-over for ${carId}`);
     // Aquí se integraría con una API de Text-to-Speech
-    return 'https://richard-automotive.com/assets/voice-preview.mp3';
+    return 'https://www.richard-automotive.com/assets/voice-preview.mp3';
   }
 }

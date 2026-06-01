@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     'Guías, consejos y recursos para comprar, financiar y mantener tu auto en Puerto Rico. Artículos escritos por expertos del mercado automotriz puertorriqueño.',
   alternates: {
-    canonical: 'https://richard-automotive.com/blog',
+    canonical: 'https://www.richard-automotive.com/blog',
   },
   openGraph: {
     title: 'Blog | Richard Automotive',
@@ -29,11 +29,11 @@ function BlogJsonLd() {
     '@type': 'Blog',
     name: 'Richard Automotive Blog',
     description: 'Guías y consejos para comprar autos usados en Puerto Rico.',
-    url: 'https://richard-automotive.com/blog',
+    url: 'https://www.richard-automotive.com/blog',
     publisher: {
       '@type': 'Organization',
       name: 'Richard Automotive',
-      url: 'https://richard-automotive.com',
+      url: 'https://www.richard-automotive.com',
     },
     blogPost: SEED_ARTICLES.map((article) => ({
       '@type': 'BlogPosting',
@@ -41,7 +41,7 @@ function BlogJsonLd() {
       description: article.excerpt,
       datePublished: article.date,
       author: { '@type': 'Person', name: article.author },
-      url: `https://richard-automotive.com/blog/${article.slug}`,
+      url: `https://www.richard-automotive.com/blog/${article.slug}`,
     })),
   };
 

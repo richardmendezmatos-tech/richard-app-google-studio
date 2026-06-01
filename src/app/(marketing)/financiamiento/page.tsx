@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     'tasa fija auto pr',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/financiamiento',
+    canonical: 'https://www.richard-automotive.com/financiamiento',
   },
   openGraph: {
     title: 'Financiamiento Inteligente de Autos | Richard Automotive',
     description:
       'Aprobación expresa desde 4.9% APR. Analizamos tu perfil y encontramos la mejor tasa. Soft pull, sin compromiso.',
-    url: 'https://richard-automotive.com/financiamiento',
+    url: 'https://www.richard-automotive.com/financiamiento',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
     type: 'website',

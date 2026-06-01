@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     'valor de mi auto usado',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/trade-in',
+    canonical: 'https://www.richard-automotive.com/trade-in',
   },
   openGraph: {
     title: 'Trade-In Inteligente | Richard Automotive',
     description:
       'Recibe el máximo valor por tu auto usado en 90 segundos y aplícalo a tu próximo vehículo.',
-    url: 'https://richard-automotive.com/trade-in',
+    url: 'https://www.richard-automotive.com/trade-in',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
     type: 'website',
@@ -78,7 +78,7 @@ function TradeInJsonLd() {
   ]);
 
   const schemas = [
-    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     howTo,
     faq,
   ];

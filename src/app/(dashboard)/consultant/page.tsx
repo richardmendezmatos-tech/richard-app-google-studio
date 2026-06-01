@@ -69,7 +69,7 @@ export default async function ConsultantRoute() {
     url: `${SITE_CONFIG.url}/consultant`,
     sameAs: [
       'https://www.linkedin.com/in/richard-mendez-matos',
-      'https://richard-automotive.com',
+      'https://www.richard-automotive.com',
     ],
     knowsAbout: [
       'Financiamiento automotriz',
@@ -80,7 +80,7 @@ export default async function ConsultantRoute() {
     ],
     description:
       'Gerente de F&I en Central Ford, Vega Alta, Puerto Rico. Especialista en financiamiento automotriz, seguros, y aprobación de crédito.',
-    image: 'https://richard-automotive.com/richard-mendez.jpg',
+    image: 'https://www.richard-automotive.com/richard-mendez.jpg',
   };
 
   return (

@@ -1,10 +1,23 @@
 import { SentinelVisionScanner } from '@/features/sentinel-vision/ui/SentinelVisionScanner';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
 export const metadata: Metadata = {
-  title: 'Visión Richard Automotive | Escáner de Vehículos',
+  title: 'Visión Automotriz | Escáner de Vehículos con IA | Richard Automotive',
   description:
-    'Escáner automotriz con inteligencia artificial. Analiza tu vehículo con tecnología de visión digital.',
+    'Escáner automotriz con inteligencia artificial en Puerto Rico. Analiza tu vehículo al instante y recibe una evaluación detallada con tecnología de visión digital.',
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/vision-automotriz`,
+  },
+  openGraph: {
+    title: 'Visión Automotriz | Escáner de Vehículos con IA | Richard Automotive',
+    description:
+      'Escanea tu vehículo con IA y recibe una evaluación detallada al instante. Tecnología de visión digital para tu carro en Puerto Rico.',
+    url: `${SITE_CONFIG.url}/vision-automotriz`,
+    siteName: SITE_CONFIG.name,
+    locale: SITE_CONFIG.seo.locale,
+    type: 'website',
+  },
 };
 
 export default function SentinelVisionPage() {

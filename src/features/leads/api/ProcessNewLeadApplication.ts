@@ -162,7 +162,7 @@ export class ProcessNewLeadApplication {
     entity: LeadEntity,
     leadId: string,
   ): Promise<void> {
-    const baseUrl = process.env.VITE_APP_URL || 'https://richard-automotive.com';
+    const baseUrl = process.env.VITE_APP_URL || 'https://www.richard-automotive.com';
     const crmLink = `${baseUrl}/admin/pipeline?leadId=${leadId}`;
 
     // Notificación al equipo (Admin)

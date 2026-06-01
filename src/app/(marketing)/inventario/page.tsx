@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     'richard automotive inventario',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/inventario',
+    canonical: 'https://www.richard-automotive.com/inventario',
   },
 };
 
@@ -29,8 +29,8 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
-      { '@type': 'ListItem', position: 2, name: 'Inventario', item: 'https://richard-automotive.com/inventario' },
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
+      { '@type': 'ListItem', position: 2, name: 'Inventario', item: 'https://www.richard-automotive.com/inventario' },
     ],
   };
 
@@ -39,7 +39,7 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
     '@type': 'CollectionPage',
     name: 'Inventario de Autos Richard Automotive',
     description: 'Explora nuestra selección de autos nuevos Ford y usados certificados en Puerto Rico.',
-    url: 'https://richard-automotive.com/inventario',
+    url: 'https://www.richard-automotive.com/inventario',
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: (inventory || []).slice(0, 12).map((car, i) => ({

@@ -15,7 +15,7 @@ const escapeXml = (str: string = ''): string => {
 };
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://richard-automotive.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.richard-automotive.com';
 
   let posts = [...SEED_ARTICLES];
   try {

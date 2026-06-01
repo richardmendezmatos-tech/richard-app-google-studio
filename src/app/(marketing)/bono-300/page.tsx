@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     'gastos de cierre auto',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/bono-300',
+    canonical: 'https://www.richard-automotive.com/bono-300',
   },
   openGraph: {
     title: 'Bono $300 de Bienvenida | Richard Automotive',
     description:
       'Aplica tu bono de $300 para gastos de cierre al comprar tu próximo auto con Richard Automotive.',
-    url: 'https://richard-automotive.com/bono-300',
+    url: 'https://www.richard-automotive.com/bono-300',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
     type: 'website',
@@ -53,7 +53,7 @@ function BonoJsonLd() {
   ]);
 
   const schemas = [
-    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     faq,
   ];
 

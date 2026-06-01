@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${capitalized} | Blog Richard Automotive`,
     description: `Artículos sobre ${displayTag} en Puerto Rico. Guías, consejos y noticias automotrices.`,
     alternates: {
-      canonical: `https://richard-automotive.com/blog/tag/${tag}`,
+      canonical: `https://www.richard-automotive.com/blog/tag/${tag}`,
     },
     openGraph: {
       title: `${capitalized} — Blog Richard Automotive`,
@@ -118,7 +118,7 @@ export default async function TagPage({ params }: Props) {
             '@type': 'CollectionPage',
             name: `Artículos sobre ${capitalized}`,
             description: `Artículos sobre ${displayTag} en Puerto Rico.`,
-            url: `https://richard-automotive.com/blog/tag/${tag}`,
+            url: `https://www.richard-automotive.com/blog/tag/${tag}`,
           }),
         }}
       />
@@ -129,9 +129,9 @@ export default async function TagPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
-              { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://richard-automotive.com/blog' },
-              { '@type': 'ListItem', position: 3, name: capitalized, item: `https://richard-automotive.com/blog/tag/${tag}` },
+              { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
+              { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.richard-automotive.com/blog' },
+              { '@type': 'ListItem', position: 3, name: capitalized, item: `https://www.richard-automotive.com/blog/tag/${tag}` },
             ],
           }),
         }}

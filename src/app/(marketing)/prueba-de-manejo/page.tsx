@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'Agenda una prueba de manejo sin compromiso en Richard Automotive. Ford, SUV, pickups y más. Te esperamos en Vega Alta, Puerto Rico.',
   alternates: {
-    canonical: 'https://richard-automotive.com/prueba-de-manejo',
+    canonical: 'https://www.richard-automotive.com/prueba-de-manejo',
   },
   openGraph: {
     title: 'Prueba de Manejo | Richard Automotive',

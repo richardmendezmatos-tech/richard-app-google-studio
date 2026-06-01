@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     'suv ford pr',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/ford',
+    canonical: 'https://www.richard-automotive.com/ford',
   },
   openGraph: {
     title: 'Vehículos Ford en Puerto Rico | Richard Automotive',

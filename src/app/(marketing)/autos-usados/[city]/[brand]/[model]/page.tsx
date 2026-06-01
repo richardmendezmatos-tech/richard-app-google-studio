@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: {
-      canonical: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}/${modelSlug}`,
+      canonical: `https://www.richard-automotive.com/autos-usados/${city.slug}/${brandSlug}/${modelSlug}`,
     },
     openGraph: { title, description, type: 'website', siteName: 'Richard Automotive', locale: 'es_PR' },
   };
@@ -77,7 +77,7 @@ export default async function CityBrandModelPage({ params }: Props) {
     '@type': 'AutoDealer',
     name: `Richard Automotive — ${brandName} ${modelName} en ${city.name}`,
     description: `Compra ${brandName} ${modelName} en ${city.name}, Puerto Rico. Financiamiento disponible.`,
-    url: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}/${modelSlug}`,
+    url: `https://www.richard-automotive.com/autos-usados/${city.slug}/${brandSlug}/${modelSlug}`,
     telephone: BUSINESS_CONTACT.phone,
     address: { '@type': 'PostalAddress', addressLocality: city.name, addressRegion: 'PR', postalCode: city.zipCodes[0], addressCountry: 'US' },
     makesOffer: { '@type': 'Offer', itemOffered: { '@type': 'Vehicle', model: modelName, manufacturer: brandName } },

@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: {
-      canonical: `https://richard-automotive.com/autos-usados/${city.slug}`,
+      canonical: `https://www.richard-automotive.com/autos-usados/${city.slug}`,
     },
     openGraph: {
       title,
@@ -48,7 +48,7 @@ function CityJsonLd({ city }: { city: (typeof CITIES)[string] }) {
     '@type': 'AutoDealer',
     name: `Richard Automotive — ${city.name}`,
     description: `Dealer de autos usados certificados en ${city.name}, Puerto Rico. ${city.meta}. Con el respaldo de Central Ford.`,
-    url: `https://richard-automotive.com/autos-usados/${city.slug}`,
+    url: `https://www.richard-automotive.com/autos-usados/${city.slug}`,
     telephone: BUSINESS_CONTACT.phone,
     address: {
       '@type': 'PostalAddress',

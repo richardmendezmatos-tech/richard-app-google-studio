@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: article.metaDescription || article.excerpt,
     authors: [{ name: article.author }],
     alternates: {
-      canonical: `https://richard-automotive.com/blog/${article.slug}`,
+      canonical: `https://www.richard-automotive.com/blog/${article.slug}`,
     },
     openGraph: {
       title: article.title,
@@ -79,20 +79,20 @@ function ArticleJsonLd({ article }: { article: BlogPost }) {
     author: {
       '@type': 'Person',
       name: article.author,
-      url: 'https://richard-automotive.com',
+      url: 'https://www.richard-automotive.com',
     },
     publisher: {
       '@type': 'Organization',
       name: 'Richard Automotive',
-      url: 'https://richard-automotive.com',
+      url: 'https://www.richard-automotive.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://richard-automotive.com/app-icon.webp',
+        url: 'https://www.richard-automotive.com/app-icon.webp',
       },
     },
     datePublished: article.date,
     dateModified: article.date,
-    mainEntityOfPage: `https://richard-automotive.com/blog/${article.slug}`,
+    mainEntityOfPage: `https://www.richard-automotive.com/blog/${article.slug}`,
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['.prose-custom'],
@@ -117,18 +117,18 @@ function BreadcrumbJsonLd({ article }: { article: BlogPost }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Blog',
-        item: 'https://richard-automotive.com/blog',
+        item: 'https://www.richard-automotive.com/blog',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: article.title,
-        item: `https://richard-automotive.com/blog/${article.slug}`,
+        item: `https://www.richard-automotive.com/blog/${article.slug}`,
       },
     ],
   };
@@ -445,7 +445,7 @@ export default async function BlogArticlePage({ params }: Props) {
               </div>
               <ShareButton
                 title={article.title}
-                url={`https://richard-automotive.com/blog/${article.slug}`}
+                url={`https://www.richard-automotive.com/blog/${article.slug}`}
                 description={article.metaDescription || article.excerpt}
               />
             </div>

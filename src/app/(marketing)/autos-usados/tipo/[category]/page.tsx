@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: cat.description,
     keywords: cat.keywords,
     alternates: {
-      canonical: `https://richard-automotive.com/autos-usados/tipo/${cat.slug}`,
+      canonical: `https://www.richard-automotive.com/autos-usados/tipo/${cat.slug}`,
     },
     openGraph: {
       title: `${cat.title} | Richard Automotive`,
@@ -160,11 +160,11 @@ function CollectionJsonLd({ cat }: { cat: (typeof CATEGORIES)[string] }) {
     '@type': 'CollectionPage',
     name: cat.title,
     description: cat.description,
-    url: `https://richard-automotive.com/autos-usados/tipo/${cat.slug}`,
+    url: `https://www.richard-automotive.com/autos-usados/tipo/${cat.slug}`,
     isPartOf: {
       '@type': 'WebSite',
       name: 'Richard Automotive',
-      url: 'https://richard-automotive.com',
+      url: 'https://www.richard-automotive.com',
     },
     provider: {
       '@type': 'AutoDealer',

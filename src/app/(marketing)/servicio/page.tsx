@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'Agenda tu cita de servicio automotriz en Richard Automotive. Cambio de aceite, frenos, A/C, inspección y más. Vega Alta, Puerto Rico.',
   alternates: {
-    canonical: 'https://richard-automotive.com/servicio',
+    canonical: 'https://www.richard-automotive.com/servicio',
   },
   openGraph: {
     title: 'Servicio Automotriz | Richard Automotive',

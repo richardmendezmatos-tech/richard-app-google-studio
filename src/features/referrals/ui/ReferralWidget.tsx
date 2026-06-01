@@ -42,7 +42,7 @@ export function ReferralWidget({
       .finally(() => setLoading(false));
   }, [phone, initialCode, name]);
 
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://richard-automotive.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.richard-automotive.com';
   const referralUrl = `${baseUrl}/recomienda?ref=${code}`;
   const encodedUrl = encodeURIComponent(referralUrl);
 

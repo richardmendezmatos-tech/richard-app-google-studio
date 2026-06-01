@@ -4,8 +4,12 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /command-center/
 Disallow: /ai-lab/
+Disallow: /panel-control/
+Disallow: /laboratorio/
 Disallow: /consultant/
 Disallow: /profile/
+Disallow: /garage/
+Disallow: /qualify/
 Disallow: /login/
 Disallow: /admin-login/
 

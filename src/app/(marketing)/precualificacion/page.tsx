@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     'como precalificar para carro',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/precualificacion',
+    canonical: 'https://www.richard-automotive.com/precualificacion',
   },
   openGraph: {
     title: 'Precalifícate en 2 Min | Richard Automotive',
     description:
       'Soft pull sin afectar tu crédito. Recibe tu aprobación expresa hoy.',
-    url: 'https://richard-automotive.com/precualificacion',
+    url: 'https://www.richard-automotive.com/precualificacion',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
     type: 'website',
@@ -86,7 +86,7 @@ function PreQualifyJsonLd() {
   ]);
 
   const schemas = [
-    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     howTo,
     faq,
     qaPage,

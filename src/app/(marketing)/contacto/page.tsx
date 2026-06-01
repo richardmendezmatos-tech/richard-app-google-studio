@@ -9,13 +9,13 @@ export const metadata: Metadata = {
   description:
     'Visítanos en Central Ford, Vega Alta. Carr. #2 KM 28.5, Bo. Espinosa. Tel: +1 (787) 368-2880. Horario: Lun-Vie 9AM-6PM, Sáb 9AM-5PM.',
   alternates: {
-    canonical: 'https://richard-automotive.com/contacto',
+    canonical: 'https://www.richard-automotive.com/contacto',
   },
   openGraph: {
     title: 'Contacta a Richard Automotive | Dealer en Vega Alta',
     description:
       'Estamos ubicados en Central Ford, Vega Alta, Puerto Rico. Visítanos, llámanos o escríbenos por WhatsApp.',
-    url: 'https://richard-automotive.com/contacto',
+    url: 'https://www.richard-automotive.com/contacto',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
     type: 'website',
@@ -55,7 +55,7 @@ function ContactoJsonLd() {
   ]);
 
   const schemas = [
-    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://richard-automotive.com${item.url}` })) },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     faq,
     { '@context': 'https://schema.org', ...CONTACT_POINT },
   ];

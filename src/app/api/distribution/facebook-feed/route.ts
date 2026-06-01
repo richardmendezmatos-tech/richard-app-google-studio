@@ -43,7 +43,7 @@ export async function GET() {
 
   const cars = inventory as Car[];
   const fbPageId = process.env.FB_PAGE_ID || 'RICHARD_AUTOMOTIVE_FB_ID';
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://richard-automotive.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.richard-automotive.com';
 
   // XML Header declaration (Meta Compatible)
   let xml = `<?xml version="1.0" encoding="UTF-8"?>

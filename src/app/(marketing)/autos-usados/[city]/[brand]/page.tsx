@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: {
-      canonical: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
+      canonical: `https://www.richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
     },
   };
 }
@@ -59,7 +59,7 @@ export default async function CityBrandPage({ params }: Props) {
     '@type': 'AutoDealer',
     name: `Richard Automotive — ${brandName} en ${city.name}`,
     description: `Dealer especializado en ${brandName} para residentes de ${city.name}, Puerto Rico.`,
-    url: `https://richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
+    url: `https://www.richard-automotive.com/autos-usados/${city.slug}/${brandSlug}`,
     telephone: BUSINESS_CONTACT.phone,
     address: {
       '@type': 'PostalAddress',

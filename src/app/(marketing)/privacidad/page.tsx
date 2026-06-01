@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'Política de privacidad de Richard Automotive. Conoce cómo protegemos y manejamos tu información personal en cumplimiento con las leyes de Puerto Rico y EE.UU.',
   alternates: {
-    canonical: 'https://richard-automotive.com/privacidad',
+    canonical: 'https://www.richard-automotive.com/privacidad',
   },
 };
 

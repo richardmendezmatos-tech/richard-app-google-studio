@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'Invita a tus amigos y gana $200 por cada compra. Ellos reciben $100 de descuento. Sin límite de referidos.',
   alternates: {
-    canonical: 'https://richard-automotive.com/recomienda',
+    canonical: 'https://www.richard-automotive.com/recomienda',
   },
   openGraph: {
     title: 'Recomienda y Gana $200 | Richard Automotive',

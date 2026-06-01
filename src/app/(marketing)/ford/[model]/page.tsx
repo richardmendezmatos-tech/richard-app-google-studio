@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `comprar ford ${modelName} pr`,
     ],
     alternates: {
-      canonical: `https://richard-automotive.com/ford/${model}`,
+      canonical: `https://www.richard-automotive.com/ford/${model}`,
     },
     openGraph: {
       title: `Ford ${modelName} 2026 | Richard Automotive — Central Ford PR`,
@@ -90,13 +90,13 @@ function ModelJsonLd({
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
-        { '@type': 'ListItem', position: 2, name: 'Ford', item: 'https://richard-automotive.com/ford' },
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
+        { '@type': 'ListItem', position: 2, name: 'Ford', item: 'https://www.richard-automotive.com/ford' },
         {
           '@type': 'ListItem',
           position: 3,
           name: `Ford ${modelName}`,
-          item: `https://richard-automotive.com/ford/${modelName.toLowerCase()}`,
+          item: `https://www.richard-automotive.com/ford/${modelName.toLowerCase()}`,
         },
       ],
     },
@@ -105,7 +105,7 @@ function ModelJsonLd({
       '@type': 'CollectionPage',
       name: `Ford ${modelName} en Puerto Rico`,
       description: `Inventario de Ford ${modelName} nuevo y usado en Central Ford, Vega Alta.`,
-      url: `https://richard-automotive.com/ford/${modelName.toLowerCase()}`,
+      url: `https://www.richard-automotive.com/ford/${modelName.toLowerCase()}`,
       mainEntity: {
         '@type': 'ItemList',
         itemListElement: cars.slice(0, 12).map((car, i) => ({

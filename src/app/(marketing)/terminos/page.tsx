@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'Términos y condiciones de uso del sitio web y servicios de Richard Automotive. Al usar nuestro sitio aceptas estos términos.',
   alternates: {
-    canonical: 'https://richard-automotive.com/terminos',
+    canonical: 'https://www.richard-automotive.com/terminos',
   },
 };
 

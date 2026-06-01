@@ -139,7 +139,7 @@ function VehicleJsonLd({ car }: { car?: Car }) {
       seller: {
         '@type': 'AutoDealer',
         name: 'Richard Automotive',
-        url: 'https://richard-automotive.com',
+        url: 'https://www.richard-automotive.com',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Bayamón',

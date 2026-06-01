@@ -70,7 +70,7 @@ export class TriggerRetargeting {
               Nuestra meta es tenerte <strong>montao</strong> con los mejores términos de financiamiento en todo Puerto Rico. Las tasas están de show y el inventario vuela rápido.
             </p>
             <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-              <a href="https://richard-automotive.com/qualify" style="background-color: #0f172a; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 12px rgba(15,23,42,0.15); text-transform: uppercase; letter-spacing: 1px;">Coordinar Cita de Test Drive</a>
+              <a href="https://www.richard-automotive.com/qualify" style="background-color: #0f172a; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 12px rgba(15,23,42,0.15); text-transform: uppercase; letter-spacing: 1px;">Coordinar Cita de Test Drive</a>
             </div>
             <p style="font-size: 13px; color: #64748b; text-align: center; margin-top: 30px;">
               Richard Automotive Command Center • Vega Alta, Puerto Rico

@@ -107,7 +107,7 @@ export async function GET(request: Request) {
 
     const price = Number(car.price) || 0;
     const monthly = Math.round((price - 2000) * (0.085 / 12) / (1 - Math.pow(1 + 0.085 / 12, -72)));
-    const carImage = car.images?.[0] || car.image || car.img || 'https://richard-automotive.com/placeholder-car.webp';
+    const carImage = car.images?.[0] || car.image || car.img || 'https://www.richard-automotive.com/placeholder-car.webp';
 
     return new ImageResponse(
       (

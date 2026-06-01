@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     'autos de show puerto rico',
   ],
   alternates: {
-    canonical: 'https://richard-automotive.com/match-automotriz',
+    canonical: 'https://www.richard-automotive.com/match-automotriz',
   },
 };
 
@@ -25,8 +25,8 @@ function DealMatcherJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://richard-automotive.com' },
-      { '@type': 'ListItem', position: 2, name: 'Match Automotriz', item: 'https://richard-automotive.com/match-automotriz' },
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
+      { '@type': 'ListItem', position: 2, name: 'Match Automotriz', item: 'https://www.richard-automotive.com/match-automotriz' },
     ],
   };
 
