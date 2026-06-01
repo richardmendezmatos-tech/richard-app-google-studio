@@ -9,7 +9,7 @@ const bebasNeue = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-cinematic',
-  display: 'swap',
+  display: 'optional',
 });
 const sora = Sora({ subsets: ['latin'], variable: '--font-tech', display: 'swap' });
 const manrope = Manrope({
