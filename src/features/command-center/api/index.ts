@@ -4,4 +4,4 @@ export * from './observabilityService';
 export * from './raSentinel';
 
 // Repository interfaces
-export type { LogRepository } from './ILogRepository';
+export type { LogRepository } from '@/shared/api/repositories/ILogRepository';

@@ -18,6 +18,7 @@ import {
   CONSTANTES_PR,
   PRODUCTOS_BACKEND_RANGOS,
   PREMIER_WARRANTY,
+  CreditTier,
 } from '@/entities/finance';
 import { workspaceManager } from '@/features/automation/api/workspaceManager';
 import { generatePDFFromDOM } from '@/features/sales-automation/lib/pdfGenerator';

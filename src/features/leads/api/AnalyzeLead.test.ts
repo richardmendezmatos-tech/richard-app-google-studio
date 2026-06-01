@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { AnalyzeLead } from './AnalyzeLead';
 import { InventoryRepository } from '@/features/leads/api';
-import { Car, Lead } from '@/entities/lead/model/LeadEntity';
+import { Car } from '@/entities/inventory/model/CarEntity';
+import { Lead } from '@/entities/lead/model/LeadEntity';
 
 describe('AnalyzeLead Use Case', () => {
   const mockInventoryRepo: InventoryRepository = {

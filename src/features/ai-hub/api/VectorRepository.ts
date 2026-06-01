@@ -1,4 +1,4 @@
-import { Car } from '@/entities/lead/model/LeadEntity';
+import { Car } from '@/entities/inventory/model/CarEntity';
 
 export interface VectorRepository {
   generateEmbedding(text: string): Promise<number[]>;

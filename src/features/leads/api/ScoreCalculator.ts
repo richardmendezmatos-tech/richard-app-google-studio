@@ -1,4 +1,12 @@
-import { Lead, LeadScore } from '@/entities/lead/model/LeadEntity';
+import { Lead } from '@/entities/lead/model/LeadEntity';
+
+interface LeadScore {
+  score: number;
+  category: 'HOT' | 'WARM' | 'COLD';
+  insights: string[];
+  nextAction: string;
+  reasoning: string;
+}
 
 /**
  * Use Case: Calculate Lead Score

@@ -1,6 +1,6 @@
 import { GenkitVectorRepository } from '@/features/ai-hub/api/GenkitVectorRepository';
 import { InventorySearcher } from '@/features/inventory/api';
-import { Car } from '@/entities/lead/model/LeadEntity';
+import { Car } from '@/entities/inventory/model/CarEntity';
 
 const vectorRepo = new GenkitVectorRepository();
 const searcher = new InventorySearcher(vectorRepo);

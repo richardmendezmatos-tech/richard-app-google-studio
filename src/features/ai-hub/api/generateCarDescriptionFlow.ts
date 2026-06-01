@@ -8,7 +8,7 @@ export const generateCarDescriptionFlow = async (
 ) => {
   const { carModel, features } = input;
   const cacheKey = `car_desc_${carModel.toLowerCase().replace(/\s+/g, '_')}_${features?.join('_').toLowerCase().replace(/\s+/g, '_')}`;
-  const { cache } = await import('../../../services/cacheService');
+  const { cache } = await import('@/shared/lib/cacheService');
   const cachedResult = await cache.get<string>(cacheKey);
 
   if (cachedResult) {

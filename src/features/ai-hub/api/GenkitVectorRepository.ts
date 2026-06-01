@@ -1,5 +1,5 @@
 import { VectorRepository } from '@/features/ai-hub/api/IVectorRepository';
-import { Car } from '@/entities/lead/model/LeadEntity';
+import { Car } from '@/entities/inventory/model/CarEntity';
 
 /**
  * GenkitVectorRepository - Stub for semantic search integration.
