@@ -12,36 +12,37 @@ import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
 const SocialFooter = dynamic(() => import('@/features/inventory/ui/storefront/SocialFooter'), {
-  ssr: false,
+  ssr: true,
+  loading: () => <div className="h-40 bg-slate-900/20 animate-pulse rounded-3xl mx-6" />,
 });
 const AuthoritySection = dynamic(
   () => import('@/features/marketing').then((mod) => ({ default: mod.AuthoritySection })),
-  { ssr: false },
+  { ssr: true, loading: () => <div className="h-64 bg-slate-900/20 animate-pulse rounded-3xl" /> },
 );
 const StorefrontMarketPulse = dynamic(
   () => import('@/features/inventory/ui/StorefrontMarketPulse'),
-  { ssr: false },
+  { ssr: true, loading: () => <div className="h-48 bg-slate-900/20 animate-pulse rounded-3xl" /> },
 );
 
 const GlassContainer = dynamic(
   () => import('@/shared/ui/common/GlassContainer').then((mod) => ({ default: mod.GlassContainer })),
-  { ssr: false },
+  { ssr: true, loading: () => <div className="h-48 bg-slate-900/20 animate-pulse rounded-3xl" /> },
 );
 const StorefrontResultsGrid = dynamic(
   () => import('@/widgets/inventory/StorefrontResultsGrid'),
-  { ssr: true },
+  { ssr: true, loading: () => <div className="min-h-[400px] bg-slate-900/20 animate-pulse rounded-3xl" /> },
 );
 const StorefrontComparisonBar = dynamic(
   () => import('@/widgets/comparison/StorefrontComparisonBar'),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 const StorefrontModals = dynamic(
   () => import('@/features/inventory/ui/StorefrontModals'),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 const SocialProofWidget = dynamic(
   () => import('@/widgets/brand-ui/layout/conversion/SocialProofWidget').then((mod) => ({ default: mod.SocialProofWidget })),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 
 // Custom Hook
@@ -177,7 +178,7 @@ const Storefront: React.FC<Props> = ({
               </div>
               <a
                 href="/inventario"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500 text-black font-bold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all whitespace-nowrap group"
+                className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] rounded-full bg-cyan-500 text-black font-bold hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all whitespace-nowrap group"
               >
                 Ver Inventario Completo
                 <svg

@@ -12,6 +12,35 @@ import TestimonialsSection from '@/features/inventory/ui/storefront/Testimonials
 import FAQSection from '@/shared/ui/components/FAQSection';
 import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontContent';
 
+function FordModelQuickLinksSkeleton() {
+  return (
+    <section className="relative z-10 -mt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex gap-6 overflow-hidden pb-4">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="shrink-0 w-40 md:w-48 bg-slate-900/40 rounded-2xl overflow-hidden"
+            >
+              <div className="aspect-[4/3] bg-slate-800 animate-pulse" />
+              <div className="p-3 space-y-2">
+                <div className="h-3 bg-slate-800 rounded animate-pulse w-3/4" />
+                <div className="h-2 bg-slate-800/50 rounded animate-pulse w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function InventorySectionSkeleton() {
+  return (
+    <div className="min-h-[1600px] bg-slate-900/20 rounded-3xl mx-6 animate-pulse" />
+  );
+}
+
 async function InventorySection() {
   let inventory: any[] = [];
 
@@ -95,7 +124,7 @@ export const metadata: Metadata = {
     siteName: 'Richard Automotive',
     images: [
       {
-        url: 'https://www.richard-automotive.com/og-image.jpg',
+        url: 'https://www.richard-automotive.com/og-image.webp',
         width: 1200,
         height: 630,
         alt: 'Richard Automotive Storefront',
@@ -185,10 +214,10 @@ export default function HomePage() {
       <main className="relative">
         <SessionRecoveryBridge />
         <HeroBackground />
-        <Suspense fallback={null}>
+        <Suspense fallback={<FordModelQuickLinksSkeleton />}>
           <FordModelQuickLinks />
         </Suspense>
-        <Suspense fallback={null}>
+        <Suspense fallback={<InventorySectionSkeleton />}>
           <InventorySection />
         </Suspense>
       </main>

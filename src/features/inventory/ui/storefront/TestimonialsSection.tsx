@@ -139,20 +139,13 @@ const TestimonialsSection: React.FC = () => {
       </div>
 
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cardFadeIn {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
         .animate-fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
+          opacity: 1;
+          transform: translateY(0);
         }
         .card-fade-in {
-          opacity: 0;
-          animation: cardFadeIn 0.6s ease-out forwards;
+          opacity: 1;
+          transform: translateY(0);
         }
       `}</style>
     </section>

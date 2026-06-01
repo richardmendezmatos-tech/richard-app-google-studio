@@ -13,7 +13,7 @@ export const getAutoDealerSchema = (city?: string) => {
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/app-icon.webp`,
-    image: `${SITE_CONFIG.url}/og-image.png`,
+    image: `${SITE_CONFIG.url}/og-image.webp`,
     telephone: C.phone,
     email: C.email,
     address: {

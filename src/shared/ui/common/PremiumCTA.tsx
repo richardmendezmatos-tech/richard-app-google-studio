@@ -65,7 +65,7 @@ export const PremiumCTA: React.FC<PremiumCTAProps> = ({
       onClick={onClick}
       style={{ x: mouseX, y: mouseY }}
       whileTap={{ scale: 0.98 }}
-      className={`group relative overflow-hidden flex items-center justify-between p-5 rounded-2xl transition-colors duration-500 ${styles[variant]} ${className}`}
+      className={`group relative overflow-hidden flex items-center justify-between min-h-[48px] p-5 rounded-2xl transition-colors duration-500 ${styles[variant]} ${className}`}
     >
       {/* Cinematic Flare Effect */}
       <motion.div

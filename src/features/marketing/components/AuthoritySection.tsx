@@ -213,6 +213,7 @@ export const AuthoritySection: React.FC = () => {
                 .ra-authority__cta {
                     display: inline-flex; align-items: center; gap: 0.6rem;
                     padding: 0.9rem 2rem;
+                    min-height: 48px;
                     border-radius: 50px;
                     background: linear-gradient(130deg, #00b4d8, #0077a8);
                     color: #fff;

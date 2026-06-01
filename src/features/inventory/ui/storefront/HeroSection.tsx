@@ -284,25 +284,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           100% { background-position: 0% 50%; }
         }
         .hero-fade-in {
-          animation: heroFadeIn 0.6s ease-out both;
+          opacity: 1;
         }
         .hero-fade-slide {
-          animation: heroSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+          opacity: 1;
+          transform: translateX(0);
         }
         .hero-fade-right {
-          animation: heroFadeRight 0.6s ease-out 0.2s both;
-        }
-        @keyframes heroFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes heroSlideIn {
-          from { opacity: 0; transform: translateX(-20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes heroFadeRight {
-          from { opacity: 0; transform: translateX(20px); }
-          to { opacity: 1; transform: translateX(0); }
+          opacity: 1;
+          transform: translateX(0);
         }
       `}</style>
     </section>

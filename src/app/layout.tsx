@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Richard Automotive | Dealer de Autos Nuevos en Puerto Rico',
     description:
       'Estrena tu Ford hoy con financiamiento inteligente en Richard Automotive Vega Alta.',
-    images: ['https://www.richard-automotive.com/og-image.jpg'],
+    images: ['https://www.richard-automotive.com/og-image.webp'],
     locale: 'es_PR',
     type: 'website',
   },

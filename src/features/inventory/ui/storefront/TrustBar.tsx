@@ -64,20 +64,13 @@ const TrustBar: React.FC = () => {
       </div>
 
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUpCard {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
         .animate-fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
+          opacity: 1;
+          transform: translateY(0);
         }
         .trust-card {
-          opacity: 0;
-          animation: fadeInUpCard 0.8s ease-out forwards;
+          opacity: 1;
+          transform: translateY(0);
         }
       `}</style>
     </section>
