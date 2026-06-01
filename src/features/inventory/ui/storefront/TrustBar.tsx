@@ -17,7 +17,7 @@ const TrustBar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Activity size={12} className="text-cyan-400 animate-pulse" />
                 <span className="font-tech text-[10px] uppercase tracking-[0.5em] text-cyan-400">
-                  SISTEMA DE CONFIANZA V2
+                  GARANTÍA DE CONFIANZA
                 </span>
               </div>
             </div>
@@ -41,8 +41,8 @@ const TrustBar: React.FC = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <TrustItem
             icon={<ShieldCheck size={32} />}
-            title="PROTOCOLO 150+"
-            desc="Cada unidad es auditada bajo los estándares de Richard para una confiabilidad total."
+            title="INSPECCIÓN 150+"
+            desc="Cada unidad pasa nuestra inspección de 150 puntos para tu tranquilidad."
             color="cyan"
             delay={1}
           />

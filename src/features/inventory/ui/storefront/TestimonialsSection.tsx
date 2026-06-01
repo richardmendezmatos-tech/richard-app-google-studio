@@ -28,7 +28,7 @@ const testimonials = [
     name: 'Carlos Rodríguez',
     role: 'DUEÑO DE SANTA FE 2024',
     comment:
-      'La experiencia con Richard Automotive fue de otro nivel. El motor de inteligencia artificial me ayudó a elegir la SUV perfecta con una precisión absoluta.',
+      'La experiencia con Richard Automotive fue de otro nivel. Me ayudaron a elegir la SUV perfecta para mi familia.',
     rating: 5,
     location: 'Bayamón, PR',
     img: 'https://randomuser.me/api/portraits/men/32.jpg',
@@ -38,7 +38,7 @@ const testimonials = [
     name: 'Sofía Méndez',
     role: 'DUEÑA DE IONIQ 5',
     comment:
-      "El 'Match Ideal' de Richard es increíble. Acertó con mi estilo de vida eléctrico de forma quirúrgica. Proceso 100% digital y sin trucos.",
+      "El servicio de Richard es increíble. Encontraron el auto perfecto para mi estilo de vida y todo el proceso fue digital y sin complicaciones.",
     rating: 5,
     location: 'San Juan, PR',
     img: 'https://randomuser.me/api/portraits/women/44.jpg',
@@ -48,7 +48,7 @@ const testimonials = [
     name: 'Miguel Ángel',
     role: 'DUEÑO DE GENESIS GV80',
     comment:
-      'Plenitud total. Me trajeron el auto a la oficina para el briefing final y cerramos en tiempo récord. Autoridad absoluta en el mercado.',
+      'Me trajeron el auto a la oficina para la entrega final y cerramos en tiempo récord. Súper recomendados.',
     rating: 5,
     location: 'Guaynabo, PR',
     img: 'https://randomuser.me/api/portraits/men/85.jpg',
@@ -75,7 +75,7 @@ const TestimonialsSection: React.FC = () => {
             <div className="h-px w-8 bg-cyan-500/50" />
           </div>
           <h2 className="font-cinematic text-5xl md:text-7xl text-white tracking-widest leading-none">
-            HISTORIAS DE <span className="text-cyan-400">AUTORIDAD</span>
+            HISTORIAS DE <span className="text-cyan-400">CLIENTES</span>
           </h2>
           <p className="font-tech text-xs uppercase tracking-widest text-slate-400">
             Voces de nuestros clientes en Puerto Rico.
