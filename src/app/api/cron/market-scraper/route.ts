@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { runMarketIntelScraper } = await import('@/server/services/marketIntelService');
+    const { runMarketIntelScraper } = await import('@/features/market-intelligence/api/marketIntelService');
     await runMarketIntelScraper();
     return NextResponse.json({ success: true, message: 'Market Intel Scraper finished' });
   } catch (error: any) {

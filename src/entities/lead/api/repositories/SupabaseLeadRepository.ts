@@ -2,7 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/shared/api/supabase/client';
 import { LeadRepository } from '../LeadRepository';
 import { Lead } from '../../model/types';
-import { LeadSchema } from '@/server/domain/validators/lead.schema';
+import { LeadSchema } from '@/entities/lead/lib/leadSchema';
 
 function validateLeadInput(data: Partial<Lead> & Record<string, any>): void {
   const payload = {

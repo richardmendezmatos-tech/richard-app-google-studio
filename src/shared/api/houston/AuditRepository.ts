@@ -102,7 +102,7 @@ export class AuditRepository {
       // Trigger proactive alerts if needed
       if (type === 'critical' || type === 'error') {
         if (typeof window === 'undefined') {
-          const { ObservabilityService } = await import('@/server/services/observabilityService');
+          const { ObservabilityService } = await import('@/features/command-center/api/observabilityService');
           await ObservabilityService.triggerCriticalAlert(
             `System Log: ${type.toUpperCase()}`,
             sanitizedMessage,

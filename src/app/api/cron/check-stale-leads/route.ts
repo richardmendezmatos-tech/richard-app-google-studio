@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { NudgeStaleLeads } from '@/server/application/use-cases';
-import { SupabaseLeadRepository } from '@/server/infrastructure/repositories/SupabaseLeadRepository';
-import { SendGridEmailRepository } from '@/server/infrastructure/repositories/SendGridEmailRepository';
+import { NudgeStaleLeads } from '@/features/leads/api/NudgeStaleLeads';
+import { SupabaseLeadRepository } from '@/shared/api/supabase/SupabaseLeadRepository';
+import { SendGridEmailRepository } from '@/shared/api/communications/SendGridEmailRepository';
 
 export async function GET(request: Request) {
   // Authorization header verification can be added here

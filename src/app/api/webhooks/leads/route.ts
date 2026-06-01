@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const score = Number(data.closureProbability || data.aiScore || 80);
     if (score >= 75) {
       try {
-        const { TriggerRetargeting } = await import('@/server/application/use-cases/automation/TriggerRetargeting.usecase');
+        const { TriggerRetargeting } = await import('@/features/automation/api/TriggerRetargeting');
         await TriggerRetargeting.execute({
           leadId: data.id,
           leadName: `${data.firstName || 'Cliente'} ${data.lastName || ''}`.trim(),

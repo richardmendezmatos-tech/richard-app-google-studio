@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/client';
 import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseInventoryRepository';
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
-import { InventoryMatchingService } from '@/server/services/inventoryMatchingService';
+import { InventoryMatchingService } from '@/features/inventory/api/inventoryMatchingService';
 
 export async function POST(request: Request) {
   try {

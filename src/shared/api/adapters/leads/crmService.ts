@@ -6,7 +6,7 @@ import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookServic
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
 import { leadIntelligenceService } from './leadIntelligenceService';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
-import { LeadSchema } from '@/server/domain/validators/lead.schema';
+import { LeadSchema } from '@/entities/lead/lib/leadSchema';
 
 export type { Lead };
 

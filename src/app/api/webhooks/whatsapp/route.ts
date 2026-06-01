@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepository';
-import { whatsappAgentService } from '@/server/services/whatsappAgentService';
+import { whatsappAgentService } from '@/features/automation/api/whatsappAgentService';
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'sentinel_richard_2024';
 const APP_SECRET = process.env.WHATSAPP_APP_SECRET || '';

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { CleanAuditLogs } from '@/server/application/use-cases';
-import { SupabaseLogRepository } from '@/server/infrastructure/repositories/SupabaseLogRepository';
+import { CleanAuditLogs } from '@/features/command-center/api/CleanAuditLogs';
+import { SupabaseLogRepository } from '@/shared/api/supabase/SupabaseLogRepository';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
