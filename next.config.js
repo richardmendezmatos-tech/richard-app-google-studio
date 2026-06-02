@@ -55,6 +55,16 @@ const nextConfig = {
       '@/pages': './src/views',
       '@/processes': './src/processes',
     };
+
+    if (config.optimization?.splitChunks) {
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        minSize: 50000,
+        maxInitialRequests: 25,
+        maxAsyncRequests: 25,
+      };
+    }
+
     return config;
   },
   
