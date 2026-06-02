@@ -2,15 +2,19 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { getDistinctFordModels } from '@/entities/inventory/api/adapters/fordModelService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
-import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
 import HeroBackground from '@/features/inventory/ui/storefront/HeroBackground';
 import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontContent';
 import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
 import FAQSection from '@/shared/ui/components/FAQSection';
 import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
+
+const SessionRecoveryBridge = dynamic(() => import('@/features/auth/ui/SessionRecoveryBridge'), {
+  ssr: false,
+});
 
 function FordModelQuickLinksSkeleton() {
   return (

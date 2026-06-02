@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
  * Richard Automotive Sentinel: Session Recovery Bridge
  * Purpose: Catch accidental OAuth redirects to the root page and bridge them to /auth/callback.
  */
-export const SessionRecoveryBridge = () => {
+export default function SessionRecoveryBridge() {
   const router = useRouter();
   const searchParams = useSearchParams();
 

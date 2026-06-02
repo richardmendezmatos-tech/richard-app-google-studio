@@ -12,7 +12,7 @@ export default function HeroBackground() {
         fill
         priority
         sizes="100vw"
-        quality={75}
+        quality={50}
         className="object-cover opacity-30"
         style={{ zIndex: 0 }}
       />
