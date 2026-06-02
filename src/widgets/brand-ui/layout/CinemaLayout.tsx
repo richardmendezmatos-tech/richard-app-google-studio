@@ -5,16 +5,16 @@ import React, { useState, useContext, useEffect, Suspense, lazy, useCallback } f
 import { Menu, Car as CarIcon } from 'lucide-react';
 import { Link } from '@/shared/lib/next-route-adapter';
 import dynamic from 'next/dynamic';
-import OfflineIndicator from '@/widgets/brand-ui/layout/OfflineIndicator';
 
 const Sidebar = dynamic(() => import('@/widgets/brand-ui/layout/Sidebar'), { ssr: false });
-import SentinelFlashTicker from '@/widgets/brand-ui/layout/SentinelFlashTicker';
-import ChatErrorBoundary from '@/shared/ui/error-boundary/ChatErrorBoundary';
-import { FloatingActionOrbit } from '@/widgets/brand-ui/layout/FloatingActionOrbit';
-import { MobileBottomBar } from '@/widgets/brand-ui/layout/MobileBottomBar';
-import { NeuroTrajectoryDriver } from '@/features/predictive/ui/NeuroTrajectoryDriver';
-import { NeuroUIAdapter } from '@/widgets/brand-ui/layout/NeuroUIAdapter';
-import SentinelPulseFeed from '@/widgets/brand-ui/layout/SentinelPulseFeed';
+const OfflineIndicator = dynamic(() => import('@/widgets/brand-ui/layout/OfflineIndicator'), { ssr: false });
+const SentinelFlashTicker = dynamic(() => import('@/widgets/brand-ui/layout/SentinelFlashTicker'), { ssr: false });
+const ChatErrorBoundary = dynamic(() => import('@/shared/ui/error-boundary/ChatErrorBoundary'), { ssr: false });
+const FloatingActionOrbit = dynamic(() => import('@/widgets/brand-ui/layout/FloatingActionOrbit').then(m => m.FloatingActionOrbit), { ssr: false });
+const MobileBottomBar = dynamic(() => import('@/widgets/brand-ui/layout/MobileBottomBar').then(m => m.MobileBottomBar), { ssr: false });
+const NeuroTrajectoryDriver = dynamic(() => import('@/features/predictive/ui/NeuroTrajectoryDriver').then(m => m.NeuroTrajectoryDriver), { ssr: false });
+const NeuroUIAdapter = dynamic(() => import('@/widgets/brand-ui/layout/NeuroUIAdapter').then(m => m.NeuroUIAdapter), { ssr: false });
+const SentinelPulseFeed = dynamic(() => import('@/widgets/brand-ui/layout/SentinelPulseFeed'), { ssr: false });
 import { ThemeContext } from '@/shared/ui/providers/ThemeProvider';
 import { usePathname } from 'next/navigation';
 import { Car } from '@/shared/types/types';
