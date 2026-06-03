@@ -1,5 +1,4 @@
 import React from 'react';
-import Script from 'next/script';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import telemetry from '@/shared/api/metrics/analytics';
 
@@ -62,8 +61,7 @@ const SEO: React.FC<SEOProps> = ({
   return (
     <>
       {schema && (
-        <Script
-          id="seo-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />

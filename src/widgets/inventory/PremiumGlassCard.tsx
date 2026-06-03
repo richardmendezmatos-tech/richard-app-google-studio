@@ -7,7 +7,6 @@ import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from
 import { useComparison } from '@/features/comparison';
 import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
 import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
-import Script from 'next/script';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
@@ -203,25 +202,24 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
       </div>
 
       {/* SEO Schema.org: Rich Results Injection */}
-      <Script
-        id={`schema-car-${car.id}`}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org/',
             '@type': 'Product',
-            name: car.name,
-            image: car.images ? car.images[0] : car.image || car.img,
-            description: `Compra este ${car.name} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
+            name: car.name || `${car.make || 'Ford'} ${car.model || 'Auto'} ${car.year || ''}`.trim(),
+            image: (car.images && car.images[0]) || car.image || car.img || '',
+            description: `Compra este ${car.name || 'vehículo'} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
             brand: {
               '@type': 'Brand',
-              name: car.make,
+              name: car.make || 'Ford',
             },
             offers: {
               '@type': 'Offer',
               url: `https://www.richard-automotive.com/inventario/${car.id}`,
               priceCurrency: 'USD',
-              price: car.price,
+              price: car.price || 0,
               availability: 'https://schema.org/InStock',
               itemCondition: 'https://schema.org/UsedCondition',
             },
