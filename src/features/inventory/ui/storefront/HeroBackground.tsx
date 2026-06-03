@@ -1,19 +1,15 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function HeroBackground() {
   return (
     <div className="absolute inset-0 min-h-screen pointer-events-none" style={{ zIndex: 0 }}>
       <div className="absolute inset-0 bg-slate-950" style={{ zIndex: 1 }} />
-      <Image
+      <img
         src="/hero.avif"
         alt="Richard Automotive — Central Ford Vega Alta"
-        fill
-        priority
-        sizes="100vw"
-        quality={50}
-        className="object-cover opacity-30"
+        fetchPriority="high"
+        className="absolute inset-0 w-full h-full object-cover opacity-30"
         style={{ zIndex: 0 }}
       />
       <div

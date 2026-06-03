@@ -177,6 +177,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           src={currentSrc}
           alt={`${car.year} ${car.make} ${car.model} en venta Puerto Rico - Richard Automotive`}
           priority={priority}
+          fetchPriority="low"
           width={500}
           height={300}
           className="w-full h-full object-contain transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.25)]"

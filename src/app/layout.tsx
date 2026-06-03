@@ -2,7 +2,6 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { Bebas_Neue, Sora, Manrope } from 'next/font/google';
 import '@/index.css';
-import { AppProviders } from '@/widgets/brand-ui/providers/AppProviders';
 import Script from 'next/script';
 
 const bebasNeue = Bebas_Neue({
@@ -131,6 +130,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-slate-950 text-white min-h-screen">
+        <img
+          src="/hero.avif"
+          alt=""
+          fetchPriority="high"
+          className="fixed inset-0 w-full h-full object-cover opacity-30 -z-10 pointer-events-none"
+          aria-hidden="true"
+        />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-6 focus:py-3 focus:bg-cyan-500 focus:text-black focus:font-bold focus:rounded-xl focus:shadow-2xl focus:outline-none"
@@ -147,11 +153,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
         )}
-        <AppProviders>
-          <main id="main-content" className="relative z-0 p-4 md:p-6 lg:p-8 max-w-[1920px] mx-auto">
-            {children}
-          </main>
-        </AppProviders>
+        <main id="main-content" className="relative z-0 p-4 md:p-6 lg:p-8 max-w-[1920px] mx-auto">
+          {children}
+        </main>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { getSupabase } from '@/shared/api/supabase/supabaseClient';
 
 interface VehicleStats {
@@ -27,12 +27,19 @@ async function fetchVehicleStats(vehicleId: string): Promise<VehicleStats> {
   };
 }
 
+const defaultStats: VehicleStats = { views: 0, leads: 0, dailyViews: 0, weeklyViews: 0 };
+
 export function useVehicleStats(vehicleId: string) {
-  return useQuery({
-    queryKey: ['vehicle_stats', vehicleId],
-    queryFn: () => fetchVehicleStats(vehicleId),
-    staleTime: 60_000,
-    refetchInterval: 300_000,
-    enabled: !!vehicleId,
-  });
+  const [data, setData] = useState<VehicleStats>(defaultStats);
+  const [isLoading, setIsLoading] = useState(!!vehicleId);
+
+  useEffect(() => {
+    if (!vehicleId) return;
+    fetchVehicleStats(vehicleId).then((stats) => {
+      setData(stats);
+      setIsLoading(false);
+    });
+  }, [vehicleId]);
+
+  return { data, isLoading };
 }

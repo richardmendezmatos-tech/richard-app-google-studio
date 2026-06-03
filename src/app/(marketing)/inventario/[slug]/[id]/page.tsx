@@ -5,6 +5,7 @@ import { getCarById, getSimilarCars, getPaginatedCars } from '@/entities/invento
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import { ReactQueryProvider } from '@/shared/ui/providers/ReactQueryProvider';
 
 interface Props {
   params: Promise<{ id: string; slug: string }>;
@@ -224,7 +225,9 @@ export default async function VehicleDetailPage({ params }: Props) {
     <>
       <VehicleJsonLd car={currentCar || undefined} />
       <FAQJsonLd faqs={faqs} />
-      <VehicleDetail car={currentCar || undefined} inventory={inventory} />
+      <ReactQueryProvider>
+        <VehicleDetail car={currentCar || undefined} inventory={inventory} />
+      </ReactQueryProvider>
     </>
   );
 }

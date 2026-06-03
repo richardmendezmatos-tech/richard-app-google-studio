@@ -8,6 +8,7 @@ interface OptimizedImageProps {
   width?: number;
   height?: number;
   priority?: boolean;
+  fetchPriority?: 'high' | 'low' | 'auto';
   aspectRatio?: string;
   onLoad?: () => void;
   onClick?: () => void;
@@ -31,6 +32,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   width,
   height,
   priority = false,
+  fetchPriority,
   onLoad,
   onClick,
   placeholder = 'empty',
@@ -64,6 +66,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           alt={alt}
           fill
           priority={priority}
+          fetchPriority={fetchPriority}
           className="object-cover"
           onLoad={onLoad}
           onClick={onClick}
@@ -84,6 +87,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       width={width || 800}
       height={height || 600}
       priority={priority}
+      fetchPriority={fetchPriority}
       className={className}
       onLoad={onLoad}
       onClick={onClick}

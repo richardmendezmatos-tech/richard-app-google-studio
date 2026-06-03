@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Zap, Activity, DollarSign } from 'lucide-react';
 import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';
-import { InventoryHeatmap } from '@/features/inventory';
+import { InventoryHeatmap } from '@/features/inventory/ui/InventoryHeatmap';
 import { LeadSourceChart } from './LeadSourceChart';
 import { ConversionFunnel } from './ConversionFunnel';
 import { InventoryFinancialsChart } from './InventoryFinancialsChart';

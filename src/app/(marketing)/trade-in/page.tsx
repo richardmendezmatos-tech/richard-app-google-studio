@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import TradeInClient from './TradeInClient';
+import { ReactQueryProvider } from '@/shared/ui/providers/ReactQueryProvider';
 import { getBreadcrumbSchema, getHowToSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 
 export const metadata: Metadata = {
@@ -96,7 +97,9 @@ export default function TradeInRoute() {
   return (
     <>
       <TradeInJsonLd />
-      <TradeInClient />
+      <ReactQueryProvider>
+        <TradeInClient />
+      </ReactQueryProvider>
     </>
   );
 }

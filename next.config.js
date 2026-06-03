@@ -59,9 +59,34 @@ const nextConfig = {
     if (config.optimization?.splitChunks) {
       config.optimization.splitChunks = {
         ...config.optimization.splitChunks,
+        chunks: 'all',
         minSize: 50000,
         maxInitialRequests: 25,
         maxAsyncRequests: 25,
+        cacheGroups: {
+          ...(config.optimization.splitChunks.cacheGroups || {}),
+          recharts: {
+            test: /[\\/]node_modules[\\/](recharts|@reduxjs\/toolkit|react-redux|redux|immer|decimal\.js-light|reselect|es-toolkit|victory-vendor)[\\/]/,
+            chunks: 'async',
+            priority: 20,
+            reuseExistingChunk: true,
+            name: 'recharts',
+          },
+          markdown: {
+            test: /[\\/]node_modules[\\/](react-markdown|remark-gfm|unified|remark-parse|micromark|mdast|hast|vfile|property-information|trough|zwitch|bail|trim-lines|decode-named-character-reference|character-entities|@ungap|ccount|comma-separated-tokens|space-separated-tokens|style-to-object|hast-util-to-jsx)[\\/]/,
+            chunks: 'async',
+            priority: 20,
+            reuseExistingChunk: true,
+            name: 'markdown',
+          },
+          heavy: {
+            test: /[\\/]node_modules[\\/](jspdf|jspdf-autotable|html2canvas)[\\/]/,
+            chunks: 'async',
+            priority: 20,
+            reuseExistingChunk: true,
+            name: 'heavy',
+          },
+        },
       };
     }
 
