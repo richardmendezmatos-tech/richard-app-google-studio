@@ -74,6 +74,9 @@ export async function proxy(request: NextRequest) {
     request,
   });
 
+  // 0.4. Homepage detection for layout optimization
+  supabaseResponse.headers.set('x-is-homepage', pathname === '/' ? '1' : '0');
+
   // 0.5. Edge Caching for Intelligence
   if (pathname.includes('/api/command-center/intelligence') && request.method === 'GET') {
     supabaseResponse.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=30');
