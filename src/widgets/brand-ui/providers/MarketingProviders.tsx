@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { ThemeProvider } from '@/shared/ui/providers/ThemeProvider';
 import { TelemetryProvider } from '@/shared/ui/providers/TelemetryProvider';
 import { LazyMotion } from 'framer-motion';
+import { ReactQueryProvider } from '@/shared/ui/providers/ReactQueryProvider';
 
 const loadAnimationFeatures = () => import('framer-motion').then((mod) => mod.domAnimation);
 
@@ -16,10 +17,12 @@ export const MarketingProviders: React.FC<{ children: React.ReactNode }> = ({ ch
   }, []);
 
   return (
-    <ThemeProvider>
-      <TelemetryProvider>
-        <LazyMotion features={loadAnimationFeatures}>{children}</LazyMotion>
-      </TelemetryProvider>
-    </ThemeProvider>
+    <ReactQueryProvider>
+      <ThemeProvider>
+        <TelemetryProvider>
+          <LazyMotion features={loadAnimationFeatures}>{children}</LazyMotion>
+        </TelemetryProvider>
+      </ThemeProvider>
+    </ReactQueryProvider>
   );
 };
