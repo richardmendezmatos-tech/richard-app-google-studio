@@ -13,6 +13,10 @@ interface Props {
 
 export const revalidate = 86400;
 
+export function generateStaticParams() {
+  return Object.keys(CITIES).map((city) => ({ city }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: citySlug } = await params;
   const city = CITIES[citySlug];
