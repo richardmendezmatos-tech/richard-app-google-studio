@@ -7,6 +7,7 @@ import { getDistinctFordModels } from '@/entities/inventory/api/adapters/fordMod
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
 import HeroBackground from '@/features/inventory/ui/storefront/HeroBackground';
+import HeroStaticContent from '@/features/inventory/ui/storefront/HeroStaticContent';
 import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontContent';
 import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
 import FAQSection from '@/shared/ui/components/FAQSection';
@@ -210,6 +211,7 @@ export default function HomePage() {
   return (
     <>
       <HomeJsonLd />
+      <HeroStaticContent />
 
       <main className="relative">
         <SessionRecoveryBridge />
