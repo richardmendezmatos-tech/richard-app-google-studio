@@ -70,12 +70,11 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  request.headers.set('x-is-homepage', pathname === '/' ? '1' : '0');
+
   let supabaseResponse = NextResponse.next({
     request,
   });
-
-  // 0.4. Homepage detection for layout optimization
-  supabaseResponse.headers.set('x-is-homepage', pathname === '/' ? '1' : '0');
 
   // 0.5. Edge Caching for Intelligence
   if (pathname.includes('/api/command-center/intelligence') && request.method === 'GET') {
