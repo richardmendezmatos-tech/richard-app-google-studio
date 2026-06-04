@@ -95,7 +95,12 @@ export class AuditRepository {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501') {
+          return;
+        }
+        throw error;
+      }
 
       console.log(`[Audit] ${type.toUpperCase()}: ${sanitizedMessage} (${source})`);
 
