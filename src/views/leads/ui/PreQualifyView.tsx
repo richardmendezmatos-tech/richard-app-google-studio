@@ -346,7 +346,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
             </p>
             <div className="p-4 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
               <img
-                src="/assets/branding/bank-partners-pr.png"
+                src="/assets/branding/bank-partners-pr.webp"
                 alt="Bank Partners PR"
                 className="w-full opacity-80 hover:opacity-100 transition-opacity"
               />

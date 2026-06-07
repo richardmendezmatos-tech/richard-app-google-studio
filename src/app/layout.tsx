@@ -28,14 +28,14 @@ export const metadata: Metadata = {
     title: 'RichardAuto',
     startupImage: [
       {
-        url: '/app-icon.png',
+        url: '/app-icon.webp',
         media:
           '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
       },
     ],
   },
   icons: {
-    apple: '/app-icon.png',
+    apple: '/app-icon.webp',
   },
   formatDetection: {
     telephone: false,

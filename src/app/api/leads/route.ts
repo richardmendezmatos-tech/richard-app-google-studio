@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/client';
 
-export const maxDuration = 15;
+export const runtime = 'edge';
 
 export async function POST(req: Request) {
   try {

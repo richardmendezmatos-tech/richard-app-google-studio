@@ -27,6 +27,8 @@ import {
   Radio,
   CreditCard,
   Activity,
+  Megaphone,
+  Mail,
 } from 'lucide-react';
 import { ViewMode } from '@/shared/types/types';
 
@@ -275,6 +277,16 @@ const Sidebar: React.FC<SidebarProps> = ({
               label="Audiencias"
               isCollapsed={isCollapsed}
             />
+            <NavButton
+              active={location.pathname === '/admin/newsroom/email-sequences'}
+              onClick={() => {
+                navigate('/admin/newsroom/email-sequences');
+                setIsMobileOpen(false);
+              }}
+              icon={<Mail size={19} />}
+              label="Email Sequences"
+              isCollapsed={isCollapsed}
+            />
 
             <div className="my-3 border-t border-white/5 opacity-50" />
             <p
@@ -300,6 +312,19 @@ const Sidebar: React.FC<SidebarProps> = ({
               }}
               icon={<BarChart3 size={19} />}
               label="Analytics"
+              isCollapsed={isCollapsed}
+            />
+            <NavButton
+              active={location.pathname === '/panel-control/marketing'}
+              onClick={() => {
+                navigate('/panel-control/marketing');
+                setIsMobileOpen(false);
+              }}
+              onMouseEnter={() =>
+                import('@/app/(dashboard)/panel-control/marketing/page').catch(() => {})
+              }
+              icon={<Megaphone size={19} />}
+              label="Marketing"
               isCollapsed={isCollapsed}
             />
 

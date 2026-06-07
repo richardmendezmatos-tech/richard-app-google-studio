@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 import { CONSTANTES_PR } from '@/entities/finance/lib/fiConstants';
 
+export const runtime = 'edge';
+
 export async function GET() {
   try {
     const supabase = createServerSupabaseClient();
@@ -42,6 +44,8 @@ export async function GET() {
         maxLtvLimit: CONSTANTES_PR.MAX_LTV_RATIO * 100,
       },
       timestamp: new Date().toISOString(),
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=600' },
     });
   } catch (error: any) {
     console.error('❌ [FinanceStatsAPI] Error:', error);

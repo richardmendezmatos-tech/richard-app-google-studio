@@ -96,7 +96,7 @@ const FinanciamientoPage: React.FC = () => {
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
             <img
-              src="/assets/seo/financing-hero.png"
+              src="/assets/seo/financing-hero.webp"
               alt="Luxury car financing in Puerto Rico"
               className="w-full h-full object-cover opacity-40 scale-105"
             />

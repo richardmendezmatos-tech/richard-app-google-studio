@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
+export const runtime = 'edge';
+
 /**
  * POST /api/seo/reindex
  * Triggers an on-demand revalidation of the sitemap and core inventory pages.

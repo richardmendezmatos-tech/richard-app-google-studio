@@ -1,5 +1,9 @@
 import { raSentinel } from './raSentinelService';
-import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
+
+const CORE_METRICS = new Set(['TTFB', 'FCP', 'LCP', 'CLS', 'INP', 'FID']);
+const pendingBatch: Array<{ metric: string; value: number; rating: string; page: string }> = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+const PAGE = typeof window !== 'undefined' ? window.location.pathname : '';
 
 function getRating(metric: string, value: number): 'good' | 'needs-improvement' | 'poor' {
   switch (metric) {
@@ -25,38 +29,50 @@ function getScore(metric: string, value: number): number {
   }
 }
 
-function reportToApi(metric: string, value: number, rating: string) {
+function flushBatch() {
+  if (flushTimer) {
+    clearTimeout(flushTimer);
+    flushTimer = null;
+  }
+  const batch = pendingBatch.splice(0);
+  if (batch.length === 0) return;
+
   try {
-    const payload = { metric, value, rating, page: window.location.pathname };
+    const payload = JSON.stringify({ metrics: batch, page: PAGE });
     if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/monitoring/vitals', JSON.stringify(payload));
+      navigator.sendBeacon('/api/monitoring/vitals', payload);
     } else {
-      fetch('/api/monitoring/vitals', { method: 'POST', body: JSON.stringify(payload), keepalive: true }).catch(() => {});
+      fetch('/api/monitoring/vitals', { method: 'POST', body: payload, keepalive: true }).catch(() => {});
     }
   } catch {
     // fire-and-forget
   }
 }
 
+function scheduleFlush() {
+  if (flushTimer) return;
+  flushTimer = setTimeout(flushBatch, 10000);
+}
+
 function report(metric: string, value: number) {
+  if (!CORE_METRICS.has(metric)) return;
   const rating = getRating(metric, value);
   const score = getScore(metric, value);
 
   raSentinel.reportPerformance(metric, value, score);
-  reportToApi(metric, value, rating);
 
-  getAuditRepository().then((repo) =>
-    repo.log(
-      rating === 'poor' ? 'warning' : 'info',
-      `RUM ${metric}: ${rating} (${Math.round(value)}${metric === 'CLS' ? '' : 'ms'})`,
-      { [metric]: value, rating, score },
-      'Sentinel-Vitals',
-    ),
-  );
+  pendingBatch.push({ metric, value, rating, page: PAGE });
+
+  if (metric === 'LCP' || metric === 'CLS') {
+    scheduleFlush();
+  }
 }
 
 export const observerPerformance = () => {
   if (typeof window === 'undefined') return;
+
+  addEventListener('pagehide', flushBatch);
+  addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushBatch(); });
 
   // TTFB via Navigation Timing API
   if (performance?.getEntriesByType?.('navigation')?.length) {

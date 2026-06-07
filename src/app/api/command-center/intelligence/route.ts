@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-/**
- * GET /api/command-center/intelligence
- * Sentinel N24: Unified Intelligence Signal Engine
- * Aggregates behavioral, inventory, and lead signals into actionable items.
- */
+export const runtime = 'edge';
+
 export async function GET(req: Request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

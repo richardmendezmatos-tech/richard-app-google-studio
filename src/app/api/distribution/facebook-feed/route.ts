@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/client';
 import { Car } from '@/entities/inventory';
 
+export const runtime = 'edge';
+
 /**
  * Reusable helper to securely sanitize strings for valid XML outputs.
  */

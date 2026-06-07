@@ -13,12 +13,10 @@ interface Props {
 
 // Sentinel N23.4: Hardened Dynamic Routing
 
-export const revalidate = 3600;
-
 export async function generateStaticParams() {
   try {
-    // Fetch first 50 cars for build-time static generation
-    const { cars } = await getPaginatedCars(50, 0, 'all');
+    // Fetch all cars for build-time static generation
+    const { cars } = await getPaginatedCars(500, 0, 'all');
 
     if (!cars || cars.length === 0) {
       console.warn(

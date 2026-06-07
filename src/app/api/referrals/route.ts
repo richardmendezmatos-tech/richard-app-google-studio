@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { registerReferral, getReferralStats, getReferralsByPhone, ensureReferralCode } from '@/features/referrals/api/referralService';
 
+export const runtime = 'edge';
+
 export async function GET(req: NextRequest) {
   try {
     const phone = req.nextUrl.searchParams.get('phone');

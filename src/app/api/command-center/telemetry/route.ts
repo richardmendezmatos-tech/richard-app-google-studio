@@ -6,9 +6,7 @@ import { Lead } from '@/shared/types/lead';
 
 const DEALER_ID = 'richard-automotive-main';
 
-/**
- * GET /api/command-center/telemetry
- */
+export const runtime = 'edge';
 export async function GET(req: Request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -39,7 +37,7 @@ export async function GET(req: Request) {
     const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     // 1. Parallel Aggregation
-    const [searchGaps, messageStats, embeddingCount, rawLeads, purchaseOrders, distributionStats] =
+    const [searchGaps, messageStats, embeddingCount, rawLeads, purchaseOrders, distributionStats, velocityData, hotLeadRows] =
       await Promise.all([
         supabase
           .from('search_gaps')
@@ -56,6 +54,14 @@ export async function GET(req: Request) {
           .order('created_at', { ascending: false })
           .limit(10),
         supabase.from('system_logs').select('level').eq('category', 'SentinelDistribution'),
+        supabase
+          .from('sentinel_metrics')
+          .select('data, operational_score, type, timestamp')
+          .eq('type', 'inventory_velocity')
+          .gte('timestamp', last7d)
+          .order('operational_score', { ascending: false })
+          .limit(100),
+        supabase.from('leads').select('id, first_name, ai_analysis').order('ai_analysis->score', { ascending: false }).limit(5),
       ]);
 
     // 2. Map and Score Leads
@@ -111,6 +117,51 @@ export async function GET(req: Request) {
       .sort((a, b) => b.score - a.score)
       .slice(0, 5);
 
+    // 6. Intelligence Signals (merged from former /api/command-center/intelligence)
+    const signals: any[] = [];
+    const vinMap = new Map<string, number>();
+    velocityData.data?.forEach((m: any) => {
+      const vin = m.data?.vin;
+      if (vin) vinMap.set(vin, (vinMap.get(vin) || 0) + (m.operational_score || 1));
+    });
+    vinMap.forEach((score, vin) => {
+      if (score >= 5) {
+        signals.push({
+          id: `SIG-VEL-${vin}`,
+          type: 'HOT_INVENTORY',
+          severity: score >= 10 ? 'high' : 'medium',
+          message: `Unidad con alta velocidad de conversión detectada.`,
+          vin, score,
+          action: 'BUMP_PRICE_OR_PROMOTE',
+        });
+      }
+    });
+    searchGaps.data?.forEach((gap: any) => {
+      if (gap.count >= 3) {
+        signals.push({
+          id: `SIG-GAP-${gap.id}`,
+          type: 'INVENTORY_GAP',
+          severity: gap.count >= 10 ? 'high' : 'medium',
+          message: `Demanda insatisfecha para: "${gap.query}".`,
+          query: gap.query, hits: gap.count,
+          action: 'SOURCE_UNIT',
+        });
+      }
+    });
+    hotLeadRows.data?.forEach((lead: any) => {
+      const score = lead.ai_analysis?.score || 0;
+      if (score >= 90) {
+        signals.push({
+          id: `SIG-LEAD-${lead.id}`,
+          type: 'VIP_LEAD_READY',
+          severity: 'critical',
+          message: `Lead de alta intención listo para cierre: ${lead.first_name}.`,
+          leadId: lead.id, score,
+          action: 'CALL_NOW',
+        });
+      }
+    });
+
     return NextResponse.json({
       timestamp: now.toISOString(),
       summary: {
@@ -136,6 +187,13 @@ export async function GET(req: Request) {
       whatsapp,
       distribution,
       purchaseOrders: purchaseOrders.data || [],
+      signals: signals.sort((a, b) => {
+        const severityOrder: any = { critical: 3, high: 2, medium: 1 };
+        return severityOrder[b.severity] - severityOrder[a.severity];
+      }),
+      version: 'N24-PRO',
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     });
   } catch (error: any) {
     console.error('[Telemetry] Sentinel Overload:', error);

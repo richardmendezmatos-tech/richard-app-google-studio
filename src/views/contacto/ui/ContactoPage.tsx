@@ -26,7 +26,7 @@ const ContactoPage: React.FC = () => {
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
             <img
-              src="/assets/seo/contact-hero.png"
+              src="/assets/seo/contact-hero.webp"
               alt="Richard Automotive Dealership in Bayamón, Puerto Rico"
               className="w-full h-full object-cover opacity-50"
             />

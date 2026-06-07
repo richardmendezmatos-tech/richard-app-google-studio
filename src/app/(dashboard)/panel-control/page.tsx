@@ -35,6 +35,7 @@ import {
   IntelligenceSignal,
 } from '@/features/command-center/ui/SentinelIntelligenceWidget';
 import { RichardAIAdvisor } from '@/features/command-center/ui/RichardAIAdvisor';
+import { subscribeDashboard } from '@/shared/api/realtime/dashboardChannel';
 
 interface HotLead {
   id: string;
@@ -59,6 +60,8 @@ interface TelemetryData {
   whatsapp: { sent: number; scheduled: number; failed: number };
   distribution?: { active: number; pending: number; error: number };
   purchaseOrders: PurchaseOrder[];
+  signals?: IntelligenceSignal[];
+  version?: string;
 }
 
 const CARD_CLASSES =
@@ -74,22 +77,13 @@ export default function CommandCenterPage() {
   const fetchTelemetry = useCallback(async () => {
     try {
       setLoading(true);
-      const [telemetryRes, intelligenceRes] = await Promise.all([
-        fetch('/api/command-center/telemetry', {
-          headers: { 'x-antigravity-token': 'client-internal' },
-        }),
-        fetch('/api/command-center/intelligence', {
-          headers: { 'x-antigravity-token': 'client-internal' },
-        }),
-      ]);
+      const telemetryRes = await fetch('/api/command-center/telemetry', {
+        headers: { 'x-antigravity-token': 'client-internal' },
+      });
 
       if (telemetryRes.ok) {
         const json = await telemetryRes.json();
         setData(json);
-      }
-
-      if (intelligenceRes.ok) {
-        const json = await intelligenceRes.json();
         setSignals(json.signals || []);
       }
 
@@ -121,8 +115,10 @@ export default function CommandCenterPage() {
 
   useEffect(() => {
     fetchTelemetry();
-    const interval = setInterval(fetchTelemetry, 60000);
-    return () => clearInterval(interval);
+    const unsubscribe = subscribeDashboard(() => {
+      fetchTelemetry();
+    });
+    return () => unsubscribe();
   }, [fetchTelemetry]);
 
   return (

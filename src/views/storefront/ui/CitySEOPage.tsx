@@ -20,7 +20,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'guaynabo',
     description:
       'Encuentra los autos usados de lujo más exclusivos en Guaynabo. Richard Automotive ofrece inventario premium para los conductores más exigentes de San Patricio y alrededores.',
-    heroImage: '/assets/seo/guaynabo-hero.png',
+    heroImage: '/assets/seo/guaynabo-hero.webp',
     keywords: [
       'autos usados guaynabo',
       'dealer de lujo guaynabo',
@@ -33,7 +33,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'dorado',
     description:
       'Servicio de guante blanco para la comunidad de Dorado. Autos usados de lujo certificados y listos para el estilo de vida de Sabanera y Dorado Beach.',
-    heroImage: '/assets/seo/dorado-hero.png',
+    heroImage: '/assets/seo/dorado-hero.webp',
     keywords: ['autos usados dorado', 'dealer de lujo dorado', 'dorado beach cars'],
     landmark: 'Dorado Beach',
   },
@@ -42,7 +42,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'vega-alta',
     description:
       'Descubre los mejores autos usados de lujo en Vega Alta. Richard Automotive ofrece una selección de clase mundial con financiamiento flexible en la zona norte.',
-    heroImage: '/assets/seo/vega-alta-hero.png',
+    heroImage: '/assets/seo/vega-alta-hero.webp',
     keywords: [
       'autos usados vega alta',
       'dealer de lujo vega alta',
@@ -56,7 +56,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'vega-baja',
     description:
       'Expertos en autos usados de lujo en Vega Baja. Inventario seleccionado para garantizar la máxima calidad y prestigio en cada milla.',
-    heroImage: '/assets/seo/vega-baja-hero.png',
+    heroImage: '/assets/seo/vega-baja-hero.webp',
     keywords: ['autos usados vega baja', 'dealer vega baja'],
   },
   carolina: {
@@ -64,7 +64,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'carolina',
     description:
       'Richard Automotive en Carolina: Elevando el estándar de los autos usados. Descubre nuestra colección exclusiva en la Ciudad Gigante.',
-    heroImage: '/assets/seo/carolina-hero.png',
+    heroImage: '/assets/seo/carolina-hero.webp',
     keywords: ['autos usados carolina', 'dealer de lujo carolina', 'venda de autos carolina'],
     landmark: 'Isla Verde',
   },
@@ -73,7 +73,7 @@ const cities: Record<string, CityConfig> = {
     slug: 'bayamon',
     description:
       'Los mejores autos usados certificados en Bayamón. Richard Automotive ofrece financiamiento experto y trade-ins valorados al máximo en el corazón del área metro.',
-    heroImage: '/assets/seo/bayamon-hero.png',
+    heroImage: '/assets/seo/bayamon-hero.webp',
     keywords: [
       'autos usados bayamon',
       'dealer de autos bayamon',

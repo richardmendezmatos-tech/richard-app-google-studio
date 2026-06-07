@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSitemaps, getSearchAnalytics } from '@/shared/api/seo/gscService';
 
+export const runtime = 'edge';
+
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');

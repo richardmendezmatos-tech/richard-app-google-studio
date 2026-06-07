@@ -58,16 +58,6 @@ export const initMetaPixel = (pixelId: string) => {
 export const trackMetaEvent = (eventName: string, data = {}) => {
   if (typeof window !== 'undefined' && window.fbq) {
     window.fbq('track', eventName, data);
-
-    // Send to CAPI (Server-Side) for redundancy
-    // Only fire if not in dev mode to save quota/noise, or if explicitly testing
-    if (!process.env.DEV) {
-      fetch('/api/meta-conversion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventName, data, url: window.location.href }),
-      }).catch((err) => console.error('CAPI Error:', err));
-    }
   }
 };
 
