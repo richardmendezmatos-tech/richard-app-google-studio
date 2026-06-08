@@ -14,9 +14,9 @@
   },
   "screenshots": [
     {
-      "src": "/houston_terminal.png",
+      "src": "/optimized/houston_terminal-desktop.webp",
       "sizes": "1280x720",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "wide",
       "label": "Richard Automotive Inventory"
     }

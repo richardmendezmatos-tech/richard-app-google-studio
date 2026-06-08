@@ -8,7 +8,7 @@ const bebasNeue = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-cinematic',
-  display: 'optional',
+  display: 'swap',
 });
 const sora = Sora({ subsets: ['latin'], variable: '--font-tech', display: 'swap' });
 const manrope = Manrope({
@@ -110,8 +110,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <link rel="preload" as="image" href="/hero.avif" fetchPriority="high" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://va.vercel-scripts.com" />
         <link rel="icon" href="/favicon.png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/app-icon.webp" />
