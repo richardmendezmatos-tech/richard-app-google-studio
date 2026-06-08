@@ -68,9 +68,10 @@ const WhatsAppFloat = safeLazy(
 interface CinemaLayoutProps {
   children: React.ReactNode;
   inventory?: Car[];
+  showSidebar?: boolean;
 }
 
-export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [] }) => {
+export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [], showSidebar = false }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFloatingWidget, setActiveFloatingWidget] = useState<
     'chat' | 'voice' | 'whatsapp' | null
@@ -101,7 +102,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
   // Scroll to top on route change
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      const main = document.getElementById('main-content');
+      const main = document.getElementById('cinema-content');
       if (main) main.scrollTo(0, 0);
     }
   }, [pathname]);
@@ -169,17 +170,19 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
       </div>
 
       {/* Main Sidebar Component */}
-      <Sidebar
-        isMobileOpen={isMobileMenuOpen}
-        setIsMobileOpen={setIsMobileMenuOpen}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
+      {showSidebar && (
+        <Sidebar
+          isMobileOpen={isMobileMenuOpen}
+          setIsMobileOpen={setIsMobileMenuOpen}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
+      )}
 
       {/* Main Content Area */}
       <main
-        id="main-content"
-        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]'}`}
+        id="cinema-content"
+        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${showSidebar ? (isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]') : 'w-full'}`}
       >
         {/* Global Floating Notification Layer */}
         <div className="sticky top-0 z-50 pointer-events-none">
