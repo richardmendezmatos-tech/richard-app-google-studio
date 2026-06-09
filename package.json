@@ -48,15 +48,12 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@dotenvx/dotenvx": "^1.65.0",
-
     "@google/generative-ai": "^0.24.1",
     "@ionic/pwa-elements": "^3.4.0",
     "@marsidev/react-turnstile": "^1.5.2",
-
     "@sendgrid/mail": "^8.1.6",
     "@serwist/next": "^9.5.11",
     "@serwist/sw": "^9.5.11",
-
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "@tailwindcss/postcss": "^4.3.0",
@@ -70,38 +67,33 @@
     "autoprefixer": "^10.5.0",
     "canvas-confetti": "^1.9.4",
     "capacitor-voice-recorder": "^7.0.6",
-
+    "cheerio": "^1.2.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.3.3",
     "framer-motion": "^12.38.0",
-
     "html2canvas": "^1.4.1",
     "i18next": "^26.2.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^1.16.0",
-
     "next": "^16.2.4",
     "nodemailer": "^8.0.7",
-
     "postcss": "^8.5.15",
     "postcss-nesting": "^14.0.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-dropzone": "^15.0.0",
-
-
+    "react-ga4": "^3.0.1",
     "react-i18next": "^17.0.8",
     "react-markdown": "^10.1.0",
     "recharts": "^3.7.0",
     "remark-gfm": "^4.0.1",
-
+    "rss-parser": "^3.13.0",
     "sharp": "^0.34.0",
     "tailwindcss": "^4.3.0",
-
+    "twilio": "^6.0.2",
     "uuid": "^14.0.0",
-
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
@@ -119,15 +111,12 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/canvas-confetti": "^1.9.0",
-
     "@types/dompurify": "^3.0.5",
     "@types/jspdf": "^2.0.0",
-
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/uuid": "^10.0.0",
-
     "@vitest/coverage-v8": "^4.1.6",
     "@vitest/ui": "^4.1.6",
     "chalk": "^5.6.2",
@@ -142,10 +131,10 @@
     "jsdom": "^29.0.2",
     "madge": "^8.0.0",
     "ora": "^9.4.0",
+    "playwright-core": "^1.60.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.3",
-    "playwright-core": "^1.60.0",
     "vercel": "^54.0.0",
     "vitest": "^4.1.6"
   },
