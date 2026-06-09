@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { twilioBackendService } from '@/shared/services/twilioService';
 
+export const runtime = 'nodejs';
+
 interface SmsLeadPayload {
   toParams: {
     phone: string;

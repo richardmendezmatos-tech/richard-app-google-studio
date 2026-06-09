@@ -3,6 +3,8 @@ import { NudgeStaleLeads } from '@/features/leads/api/NudgeStaleLeads';
 import { SupabaseLeadRepository } from '@/shared/api/supabase/SupabaseLeadRepository';
 import { SendGridEmailRepository } from '@/shared/api/communications/SendGridEmailRepository';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: Request) {
   // Authorization header verification can be added here
   const authHeader = request.headers.get('authorization');

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { autonomousDistributionAgent } from '@/features/automation/api/distributionAgent';
 
+export const runtime = 'nodejs';
+
 /**
  * POST /api/distribution/sync
  * Dispara el ciclo autónomo de distribución Sentinel (Nivel 26).

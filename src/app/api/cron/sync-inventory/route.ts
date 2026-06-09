@@ -7,6 +7,8 @@ import { RestApiExtractorAdapter } from '@/shared/api/scrapers/RestApiExtractorA
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+export const runtime = 'nodejs';
+
 // Evita que Next.js convierta esta ruta en estática
 
 // Vercel Serverless Functions para Playwright necesitan más memoria/tiempo (si el plan lo permite)

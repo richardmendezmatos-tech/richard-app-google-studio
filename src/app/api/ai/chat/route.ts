@@ -6,6 +6,8 @@ import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { aiTools } from '@/shared/api/ai/tools';
 
+export const runtime = 'nodejs';
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {

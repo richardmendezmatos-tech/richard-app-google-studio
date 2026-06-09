@@ -3,6 +3,8 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+export const runtime = 'edge';
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 async function checkAuth(): Promise<boolean> {

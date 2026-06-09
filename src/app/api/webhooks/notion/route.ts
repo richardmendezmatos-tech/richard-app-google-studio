@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createFiProgressInNotion } from '@/shared/services/notionService';
 
+export const runtime = 'edge';
+
 // Note: authentication should be handled here, e.g. checking a bearer token
 // or integrating with Supabase Auth to ensure only authenticated users can call this.
 

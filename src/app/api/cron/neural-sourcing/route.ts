@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { NeuralSourcingService } from '@/features/houston/api/NeuralSourcingService';
 
+export const runtime = 'edge';
+
 /**
  * GET /api/cron/neural-sourcing
  * Triggered by Vercel Cron or manual admin action.

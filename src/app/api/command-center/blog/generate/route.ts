@@ -3,6 +3,8 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
+export const runtime = 'nodejs';
+
 async function checkAuth(): Promise<boolean> {
   try {
     const cookieStore = await cookies();

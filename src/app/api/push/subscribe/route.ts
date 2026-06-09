@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/server';
 
+export const runtime = 'edge';
+
 export async function POST(request: Request) {
   try {
     const { subscription } = await request.json();

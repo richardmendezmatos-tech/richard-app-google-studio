@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { checkAdmin } from '@/shared/api/supabase/adminGuard';
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 
+export const runtime = 'edge';
+
 export async function GET() {
   if (!(await checkAdmin())) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 403 });

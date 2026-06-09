@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { submitAppointment, AppointmentInput } from '@/features/appointments/api/submitAppointment';
 
+export const runtime = 'edge';
+
 export async function POST(request: Request) {
   try {
     const body: AppointmentInput = await request.json();

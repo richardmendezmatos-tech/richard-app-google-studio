@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { whatsappAgent } from '@/features/automation/api/whatsappAgent';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   try {
     const data = await req.json();

@@ -5,6 +5,8 @@ import {
 } from '@/shared/security/webhooks';
 import { SupabaseLeadRepository } from '@/entities/lead/api/repositories/SupabaseLeadRepository';
 
+export const runtime = 'nodejs';
+
 interface SendGridEvent {
   email: string;
   event:

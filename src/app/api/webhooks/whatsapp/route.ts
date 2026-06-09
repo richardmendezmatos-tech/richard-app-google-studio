@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepository';
 import { whatsappAgentService } from '@/features/automation/api/whatsappAgentService';
 
+export const runtime = 'nodejs';
+
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'sentinel_richard_2024';
 const APP_SECRET = process.env.WHATSAPP_APP_SECRET || '';
 const WA_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || '';

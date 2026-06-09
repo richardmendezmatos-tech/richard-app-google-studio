@@ -3,6 +3,8 @@ import { google } from '@ai-sdk/google';
 import { createClient } from '@/shared/api/supabase/client';
 import { triggerSentinelNurture } from '@/shared/api/communications/whatsappService';
 
+export const runtime = 'edge';
+
 /**
  * Sentinel N25: Agentic Nurture Workflow
  * A durable, resilient sales follow-up engine.

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 
+export const runtime = 'nodejs';
+
 /**
  * POST /api/command-center/sourcing/analyze
  *

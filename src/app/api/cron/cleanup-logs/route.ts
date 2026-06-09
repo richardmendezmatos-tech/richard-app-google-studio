@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { CleanAuditLogs } from '@/features/command-center/api/CleanAuditLogs';
 import { SupabaseLogRepository } from '@/shared/api/supabase/SupabaseLogRepository';
 
+export const runtime = 'edge';
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {

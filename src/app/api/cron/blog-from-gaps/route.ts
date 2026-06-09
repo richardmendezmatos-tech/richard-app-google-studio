@@ -4,6 +4,8 @@ import { cookies } from 'next/headers';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 import { blogService } from '@/entities/blog/api/blogService';
 
+export const runtime = 'nodejs';
+
 function extractTopic(query: string): string {
   const stopWords = ['como', 'que', 'cuanto', 'donde', 'cual', 'cuando', 'el', 'la', 'los', 'las', 'un', 'una', 'en', 'de', 'para', 'por', 'con', 'del'];
   const words = query.toLowerCase().split(' ').filter(w => w.length > 2 && !stopWords.includes(w));

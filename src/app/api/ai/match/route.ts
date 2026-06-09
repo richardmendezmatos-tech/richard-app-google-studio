@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   try {
     const { query } = await req.json();

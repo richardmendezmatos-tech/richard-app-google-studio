@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getAuditRepository } from '@/shared/api/houston/AuditRepositoryProvider';
 
+export const runtime = 'nodejs';
+
 
 /**
  * POST /api/seo/reindex

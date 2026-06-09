@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request) {
   try {
     const { text } = await req.json();

@@ -2,6 +2,8 @@ import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
   try {
     const { contents, model = 'gemini-2.0-flash' } = await req.json();

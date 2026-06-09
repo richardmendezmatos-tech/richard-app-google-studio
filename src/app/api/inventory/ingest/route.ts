@@ -4,6 +4,8 @@ import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseIn
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 import { InventoryMatchingService } from '@/features/inventory/api/inventoryMatchingService';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const carData = await request.json();

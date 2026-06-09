@@ -4,6 +4,8 @@ import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { blogService } from '@/entities/blog/api/blogService';
 import { BlogPost } from '@/shared/types/types';
 
+export const runtime = 'edge';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
