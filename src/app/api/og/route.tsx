@@ -1,10 +1,8 @@
 import { ImageResponse } from 'next/og';
-import { getCarById } from '@/entities/inventory/api/adapters/inventoryService';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
-import { blogService } from '@/entities/blog/api/blogService';
-import { BlogPost } from '@/shared/types/types';
+import type { BlogPost } from '@/shared/types/types';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
   try {
@@ -19,6 +17,7 @@ export async function GET(request: Request) {
 
       if (!article) {
         try {
+          const { blogService } = await import('@/entities/blog/api/blogService');
           const dynamic = await blogService.getBlogPosts(100);
           article = dynamic.find((a) => a.slug === slug) || null;
         } catch {
@@ -101,6 +100,7 @@ export async function GET(request: Request) {
       return new Response('Missing car ID or blog slug', { status: 400 });
     }
 
+    const { getCarById } = await import('@/entities/inventory/api/adapters/inventoryService');
     const car = await getCarById(id);
 
     if (!car) {
