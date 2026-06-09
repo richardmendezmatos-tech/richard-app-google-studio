@@ -69,9 +69,10 @@ interface CinemaLayoutProps {
   children: React.ReactNode;
   inventory?: Car[];
   showSidebar?: boolean;
+  showFloatingWidgets?: boolean;
 }
 
-export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [], showSidebar = false }) => {
+export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory = [], showSidebar = false, showFloatingWidgets = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFloatingWidget, setActiveFloatingWidget] = useState<
     'chat' | 'voice' | 'whatsapp' | null
@@ -195,41 +196,47 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
         {/* Dynamic Content */}
         <div className="relative z-10 min-h-full transition-all duration-500">{children}</div>
 
-        {/* Nivel 13: Autonomous Drivers & Adaptive UI */}
-        <NeuroTrajectoryDriver />
-        <NeuroUIAdapter />
-        <SentinelPulseFeed />
+        {showFloatingWidgets && (
+          <>
+            <NeuroTrajectoryDriver />
+            <NeuroUIAdapter />
+            <SentinelPulseFeed />
+          </>
+        )}
       </main>
 
-      {/* Global Portals / Floating Widgets (Moved to Root for Mobile Visibility) */}
-      {showDeferredWidgets && (
-        <FloatingActionOrbit
-          activeWidget={activeFloatingWidget}
-          onWidgetSelect={handleWidgetSelect}
-          chatWidget={
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <AIChatWidget inventory={inventory} />
-              </Suspense>
-            </ChatErrorBoundary>
-          }
-          voiceWidget={
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <VoiceWidget />
-              </Suspense>
-            </ChatErrorBoundary>
-          }
-          whatsappWidget={
-            <ChatErrorBoundary>
-              <Suspense fallback={null}>
-                <WhatsAppFloat isEmbedded={true} inventory={inventory} />
-              </Suspense>
-            </ChatErrorBoundary>
-          }
-        />
+      {showFloatingWidgets && (
+        <>
+          {showDeferredWidgets && (
+            <FloatingActionOrbit
+              activeWidget={activeFloatingWidget}
+              onWidgetSelect={handleWidgetSelect}
+              chatWidget={
+                <ChatErrorBoundary>
+                  <Suspense fallback={null}>
+                    <AIChatWidget inventory={inventory} />
+                  </Suspense>
+                </ChatErrorBoundary>
+              }
+              voiceWidget={
+                <ChatErrorBoundary>
+                  <Suspense fallback={null}>
+                    <VoiceWidget />
+                  </Suspense>
+                </ChatErrorBoundary>
+              }
+              whatsappWidget={
+                <ChatErrorBoundary>
+                  <Suspense fallback={null}>
+                    <WhatsAppFloat isEmbedded={true} inventory={inventory} />
+                  </Suspense>
+                </ChatErrorBoundary>
+              }
+            />
+          )}
+          <MobileBottomBar />
+        </>
       )}
-      <MobileBottomBar />
     </div>
   );
 };
