@@ -53,6 +53,12 @@ function BlogJsonLd() {
   );
 }
 
+function cleanReadingTime(time: string | number | undefined): string {
+  if (!time) return '5 min';
+  const matched = String(time).match(/^(\d+)/);
+  return matched ? `${matched[1]} min` : String(time);
+}
+
 export default async function BlogIndexPage() {
   let dynamicPosts: BlogPost[] = [];
   try {
@@ -102,11 +108,11 @@ export default async function BlogIndexPage() {
           {featured && (
             <Link
               href={`/blog/${featured.slug}`}
-              className="group block mb-12 rounded-4xl overflow-hidden border border-white/5 hover:border-cyan-500/20 transition-all bg-slate-900/40"
+              className="group block bg-slate-900/40 border border-white/5 rounded-3xl overflow-hidden hover:border-cyan-500/20 transition-all duration-300 mb-12"
             >
-              <div className="grid md:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
                 {featured.imageUrl && (
-                  <div className="h-64 md:h-auto overflow-hidden">
+                  <div className="h-64 lg:h-auto overflow-hidden">
                     <img
                       src={featured.imageUrl}
                       alt={featured.title}
@@ -133,7 +139,7 @@ export default async function BlogIndexPage() {
                       })}
                     </time>
                     <span>•</span>
-                    <span>{featured.estimatedReadingTime || 5} min de lectura</span>
+                    <span>{cleanReadingTime(featured.estimatedReadingTime)} de lectura</span>
                   </div>
                 </div>
               </div>
@@ -183,7 +189,7 @@ export default async function BlogIndexPage() {
                       })}
                     </time>
                     <span>•</span>
-                    <span>{article.estimatedReadingTime || 5} min de lectura</span>
+                    <span>{cleanReadingTime(article.estimatedReadingTime)} de lectura</span>
                   </div>
                 </div>
               </Link>

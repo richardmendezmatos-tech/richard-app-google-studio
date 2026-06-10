@@ -70,6 +70,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+function cleanReadingTime(time: string | number | undefined): string {
+  if (!time) return '5 min';
+  const matched = String(time).match(/^(\d+)/);
+  return matched ? `${matched[1]} min` : String(time);
+}
+
+function cleanReadingMinutesOnly(time: string | number | undefined): string {
+  if (!time) return '5';
+  const matched = String(time).match(/^(\d+)/);
+  return matched ? matched[1] : '5';
+}
+
 function ArticleJsonLd({ article }: { article: BlogPost }) {
   const jsonLd: Record<string, any> = {
     '@context': 'https://schema.org',
@@ -97,7 +109,7 @@ function ArticleJsonLd({ article }: { article: BlogPost }) {
       '@type': 'SpeakableSpecification',
       cssSelector: ['.prose-custom'],
     },
-    timeRequired: `PT${article.estimatedReadingTime || '5'}M`,
+    timeRequired: `PT${cleanReadingMinutesOnly(article.estimatedReadingTime)}M`,
   };
 
   if (article.imageUrl) {
@@ -443,7 +455,7 @@ export default async function BlogArticlePage({ params }: Props) {
                   })}
                 </time>
                 <span>•</span>
-                <span>{article.estimatedReadingTime || 5} min de lectura</span>
+                <span>{cleanReadingTime(article.estimatedReadingTime)} de lectura</span>
               </div>
               <ShareButton
                 title={article.title}
