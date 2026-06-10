@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
+import { searchInventory } from '@/entities/inventory/api/actions/searchInventory';
 
 export const useCars = (
   pageSize: number = 9,
@@ -11,7 +11,7 @@ export const useCars = (
   return useInfiniteQuery({
     queryKey: ['cars', filterType, sortOrder, searchTerm, sortBy],
     queryFn: async ({ pageParam }) => {
-      const result = await getPaginatedCars(
+      const result = await searchInventory(
         pageSize,
         pageParam as number,
         filterType,

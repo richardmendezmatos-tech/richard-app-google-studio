@@ -4,6 +4,7 @@ import Link from 'next/link';
 export default function HeroStaticContent() {
   return (
     <div
+      id="hero-content"
       className="fixed inset-0 min-h-screen pointer-events-none"
       style={{ zIndex: 30 }}
     >

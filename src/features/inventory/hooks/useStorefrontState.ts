@@ -147,15 +147,18 @@ export function useStorefrontState(
 
   const displayCars = hasClientFilters || preferredCategory ? filteredAndSorted : serverCars;
 
-  // Sentinel N24: Search Gap Intelligence
-  // Captura automáticamente búsquedas visuales que no arrojan resultados para el análisis de Houston.
-  useEffect(() => {
+    useEffect(() => {
     if (hasClientFilters && displayCars.length === 0 && visualContext) {
-      const timer = setTimeout(async () => {
-        const { logSearchGap: lg } = await import('@/shared/api/supabase/supabaseClient');
-        await lg(searchTerm, filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap');
-        console.log(`[Sentinel] Search Gap logged: ${searchTerm}`);
-      }, 5000); // Debounce extendido para precisión
+      const timer = setTimeout(() => {
+        fetch('/api/telemetry/search-gap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            searchTerm,
+            context: filter !== 'all' ? `Filter: ${filter}` : 'Visual/Text Gap',
+          }),
+        }).catch(() => {});
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [isSearching, displayCars.length, searchTerm, filter, hasClientFilters, visualContext]);

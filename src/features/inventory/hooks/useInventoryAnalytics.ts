@@ -1,16 +1,18 @@
 import { useCallback } from 'react';
 
-import { incrementCarView } from '@/entities/inventory/api/adapters/inventoryService';
 import * as ga from '@/shared/api/metrics/analytics';
 
 export const useInventoryAnalytics = () => {
   const trackCarView = useCallback((carId: string) => {
-    // Event logging delegated to pure GA
     ga.trackEvent('Engagement', 'view_car', carId);
   }, []);
 
   const trackCarViewIncremental = useCallback((carId: string) => {
-    incrementCarView(carId);
+    fetch('/api/inventory/view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ carId }),
+    }).catch(() => {});
     ga.trackEvent('Engagement', 'view_car', carId);
   }, []);
 

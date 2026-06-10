@@ -3,19 +3,12 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/entities/session';
 import { Link, useNavigate } from '@/shared/lib/next-route-adapter';
-import { Menu, X, User, LogOut, Car, Radio } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { getInventoryCount } from '@/shared/api/supabase/supabaseClient';
+import { Menu, X, User, LogOut, Car } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [stockCount, setStockCount] = useState<number | null>(null);
-
-  React.useEffect(() => {
-    getInventoryCount().then(setStockCount);
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -49,17 +42,7 @@ const Navbar: React.FC = () => {
               </div>
               <span className="relative">
                 Inventario
-                {stockCount !== null && (
-                  <span className="absolute -top-3 -right-6 flex items-center gap-1 rounded-full bg-cyan-500/10 px-1.5 py-0.5 text-[7px] font-black text-cyan-300 border border-cyan-500/20 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
-                    <Radio size={6} className="animate-pulse" />
-                    {stockCount}
-                  </span>
-                )}
-                <motion.div
-                  className="absolute -bottom-1 left-0 h-[1px] w-0 bg-cyan-400"
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
+                <div className="absolute -bottom-1 left-0 h-[1px] w-0 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
               </span>
             </Link>
             <Link
@@ -154,11 +137,6 @@ const Navbar: React.FC = () => {
               <Car size={16} className="text-cyan-400" />
               <span>Inventario</span>
             </div>
-            {stockCount !== null && (
-              <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-[9px] text-cyan-300">
-                {stockCount} UNIDADES
-              </span>
-            )}
           </Link>
           <Link
             to="/financiamiento"

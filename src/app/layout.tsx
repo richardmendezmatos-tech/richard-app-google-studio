@@ -66,6 +66,7 @@ export const viewport = {
 };
 
 import { PerformanceInitializer } from '@/shared/lib/monitoring/PerformanceInitializer';
+import HeroStaticContent from '@/features/inventory/ui/storefront/HeroStaticContent';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react';
@@ -151,6 +152,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
         )}
+        <HeroStaticContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var h=document.getElementById('hero-content');if(h&&location.pathname!=='/'&&location.pathname!=='/en'){h.style.display='none'}})();`,
+          }}
+        />
         <main id="main-content" className="relative z-0">
           {children}
         </main>

@@ -1,5 +1,3 @@
-import { supabase } from '@/shared/api/supabase/supabase';
-
 export interface SentinelMetric {
   type:
     | 'trade_in_calculation'
@@ -22,23 +20,13 @@ export interface SentinelMetric {
  * Optimización de Cierre: Monitoreo en tiempo real de la viabilidad del negocio y maximización del ROI.
  */
 export class RaSentinelService {
-  private readonly tableName = 'sentinel_metrics';
-
   async reportActivity(metric: SentinelMetric): Promise<void> {
     try {
-      if (!supabase) return;
-
-      await supabase.from(this.tableName).insert([
-        {
-          type: metric.type,
-          data: metric.data,
-          operational_score: metric.operationalScore,
-          friction_point: metric.frictionPoint,
-          persuasion_profile: metric.persuasionProfile,
-          metadata: metric.metadata,
-          timestamp: new Date().toISOString(),
-        },
-      ]);
+      await fetch('/api/telemetry/sentinel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metric),
+      });
 
       console.log(
         `[Sentinel] Actividad registrada: ${metric.type} | Score: ${metric.operationalScore}`,
