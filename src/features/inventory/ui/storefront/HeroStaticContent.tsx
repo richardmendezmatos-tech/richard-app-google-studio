@@ -5,8 +5,9 @@ export default function HeroStaticContent() {
   return (
     <div
       id="hero-content"
-      className="fixed inset-0 min-h-screen pointer-events-none"
+      className="absolute inset-x-0 top-0 min-h-screen pointer-events-none"
       style={{ zIndex: 30 }}
+      suppressHydrationWarning
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
