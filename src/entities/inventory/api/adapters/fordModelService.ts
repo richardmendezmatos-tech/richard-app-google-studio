@@ -94,7 +94,7 @@ export async function getDistinctFordModels(): Promise<FordModelSummary[]> {
     const entry = modelMap.get(model)!;
     entry.models.add(model);
     if (row.price) entry.prices.push(row.price);
-    const img = row.images?.[0] || row.image || '';
+    const img = row.images?.[0] || '';
     if (img) entry.images.push(img);
     if (row.year) entry.years.add(row.year);
     const style = row.body_style || row.type || '';
