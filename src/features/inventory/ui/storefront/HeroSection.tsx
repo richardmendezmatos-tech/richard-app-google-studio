@@ -56,7 +56,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const [isMobile, setIsMobile] = useState(true);
   const [idx, setIdx] = useState(0);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const tickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,12 +69,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       setIdx((p) => (p + 1) % HEADLINES.length);
     }, 8000);
 
-    // Delay video loading to prioritize LCP
-    const timer = setTimeout(() => setVideoLoaded(true), 2000);
-
     return () => {
       clearInterval(iv);
-      clearTimeout(timer);
       mql.removeEventListener('change', handler);
     };
   }, []);
@@ -100,21 +95,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Neural Depth Layer */}
         <NeuralBackground className="z-[4]" count={isMobile ? 10 : 30} />
 
-        {/* Living Video Layer - Only Desktop & only after initial LCP */}
-        {videoLoaded && !isMobile && (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-cover opacity-20 scale-105 transition-opacity duration-1000"
-          >
-            <source
-              src="https://cdn.pixabay.com/video/2019/11/12/28929-373024345_tiny.mp4"
-              type="video/mp4"
-            />
-          </video>
-        )}
+        {/* Premium Background Image Layer - Adds deep cinematic context */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-15 mix-blend-luminosity scale-105 transition-opacity duration-1000"
+          style={{ backgroundImage: 'url("/images/hero-fallback.png")' }}
+        />
       </div>
 
       {/* ── Tactical Content Grid ── */}
