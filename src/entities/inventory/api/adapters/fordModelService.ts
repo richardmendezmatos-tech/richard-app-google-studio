@@ -61,7 +61,7 @@ export async function getDistinctFordModels(): Promise<FordModelSummary[]> {
 
   const { data, error } = await sb
     .from('inventory')
-    .select('make, model, year, price, images, body_style, type, name, image, condition')
+    .select('make, model, year, price, images, body_style, type, name, condition')
     .eq('make', 'Ford')
     .neq('status', 'sold');
 
