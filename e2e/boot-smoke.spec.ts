@@ -4,8 +4,8 @@ test.describe('Next.js Migration Route Audit', () => {
   const routes = [
     { path: '/', title: /Richard Automotive/ },
     { path: '/blog', title: /Blog/ },
-    { path: '/consultant', title: /Consultante/i },
-    { path: '/precualificacion', title: /Pre-Cualificación/i },
+    { path: '/consultant', title: /Consultor/i },
+    { path: '/precualificacion', title: /Precalificación/i },
     { path: '/financiamiento', title: /Financiamiento/i },
     { path: '/contacto', title: /Contacto/i },
     { path: '/laboratorio', title: /Lab/i },
@@ -13,7 +13,7 @@ test.describe('Next.js Migration Route Audit', () => {
 
   for (const route of routes) {
     test(`route ${route.path} should load properly`, async ({ page }) => {
-      await page.goto(route.path);
+      await page.goto(route.path, { waitUntil: 'domcontentloaded' });
       // Wait for the startup overlay to clear (it shouldn't be there)
       await expect(page.locator('#startup-error-overlay')).toHaveCount(0);
       
@@ -30,7 +30,7 @@ test.describe('Next.js Migration Route Audit', () => {
   }
 
   test('home should show main CTA', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText(/Asesoría que/i)).toBeVisible({ timeout: 15_000 });
   });
 });
