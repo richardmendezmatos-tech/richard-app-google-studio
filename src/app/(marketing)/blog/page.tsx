@@ -73,6 +73,15 @@ export default async function BlogIndexPage() {
       <BlogJsonLd />
       <div className="min-h-screen bg-slate-950 text-white pt-24 pb-16">
         <div className="max-w-6xl mx-auto px-6">
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
+            <Link href="/" className="hover:text-white transition">
+              Inicio
+            </Link>
+            <span>/</span>
+            <span className="text-slate-400">Blog</span>
+          </nav>
+
           {/* Header */}
           <header className="mb-12">
             <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 font-bold mb-3">
@@ -123,6 +132,8 @@ export default async function BlogIndexPage() {
                         day: 'numeric',
                       })}
                     </time>
+                    <span>•</span>
+                    <span>{featured.estimatedReadingTime || 5} min de lectura</span>
                   </div>
                 </div>
               </div>
@@ -171,6 +182,8 @@ export default async function BlogIndexPage() {
                         year: 'numeric',
                       })}
                     </time>
+                    <span>•</span>
+                    <span>{article.estimatedReadingTime || 5} min de lectura</span>
                   </div>
                 </div>
               </Link>

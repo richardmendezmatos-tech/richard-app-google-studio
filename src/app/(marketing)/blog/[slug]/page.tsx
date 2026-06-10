@@ -442,6 +442,8 @@ export default async function BlogArticlePage({ params }: Props) {
                     day: 'numeric',
                   })}
                 </time>
+                <span>•</span>
+                <span>{article.estimatedReadingTime || 5} min de lectura</span>
               </div>
               <ShareButton
                 title={article.title}
