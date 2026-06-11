@@ -146,7 +146,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
       if (!car) throw new Error('No vehicle found');
       return await sentinelAI.generateVehicleDeepAnalysis(car);
     },
-    enabled: !!car,
+    enabled: !!car && isAnalysisOpen,
     staleTime: 1000 * 60 * 60 * 24,
   });
 
