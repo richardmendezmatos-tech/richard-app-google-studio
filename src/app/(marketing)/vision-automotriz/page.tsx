@@ -2,6 +2,8 @@ import { SentinelVisionScanner } from '@/features/sentinel-vision/ui/SentinelVis
 import type { Metadata } from 'next';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Visión Automotriz | Escáner de Vehículos con IA | Richard Automotive',
   description:

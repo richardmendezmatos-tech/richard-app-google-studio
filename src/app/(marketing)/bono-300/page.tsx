@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import BonoClient from './BonoClient';
+
+export const dynamic = 'force-static';
 import { getBreadcrumbSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 
 export const metadata: Metadata = {

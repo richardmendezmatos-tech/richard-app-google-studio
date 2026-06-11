@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import PreQualifyClient from './PreQualifyClient';
+
+export const dynamic = 'force-static';
 import { getBreadcrumbSchema, getHowToSchema, getFAQSchema, getQAPageSchema } from '@/shared/config/seoSchemas';
 
 export const metadata: Metadata = {

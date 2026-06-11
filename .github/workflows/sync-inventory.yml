@@ -2,7 +2,7 @@ name: Sync Inventory (Central Ford)
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch:
     inputs:
       manual:

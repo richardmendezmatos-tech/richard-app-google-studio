@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
-export const revalidate = 600;
+export const revalidate = 3600;
 
 function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
   const breadcrumb = {

@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import FinanciamientoClient from './FinanciamientoClient';
+
+export const dynamic = 'force-static';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { getBreadcrumbSchema, getHowToSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 

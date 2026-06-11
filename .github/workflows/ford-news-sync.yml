@@ -2,7 +2,7 @@ name: Ford News Sync
 
 on:
   schedule:
-    - cron: '0 8,18 * * *'
+    - cron: '0 10 * * *'
   workflow_dispatch:
 
 jobs:

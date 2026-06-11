@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 import { CONSTANTES_PR } from '@/entities/finance/lib/fiConstants';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function GET() {
   try {

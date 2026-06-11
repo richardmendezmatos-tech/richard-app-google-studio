@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/server';
 import { paginateCursor } from '@/shared/api/supabase/cursorPagination';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   try {

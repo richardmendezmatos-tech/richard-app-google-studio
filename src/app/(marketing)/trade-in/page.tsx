@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import TradeInClient from './TradeInClient';
+
+export const dynamic = 'force-static';
 import { ReactQueryProvider } from '@/shared/ui/providers/ReactQueryProvider';
 import { getBreadcrumbSchema, getHowToSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 

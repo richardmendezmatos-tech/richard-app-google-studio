@@ -2,6 +2,8 @@ import ComparisonView from '@/views/comparison/ui/ComparisonView';
 import type { Metadata } from 'next';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Compara Autos en Puerto Rico | Richard Automotive',
   description:

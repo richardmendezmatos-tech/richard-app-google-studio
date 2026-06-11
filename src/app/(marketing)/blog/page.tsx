@@ -5,7 +5,7 @@ import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { blogService } from '@/entities/blog/api/blogService';
 import { BlogPost } from '@/shared/types/types';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 7200;
 
 export const metadata: Metadata = {
   title: 'Blog | Richard Automotive — Guías y Consejos de Autos en PR',

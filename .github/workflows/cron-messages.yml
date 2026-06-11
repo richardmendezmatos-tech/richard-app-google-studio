@@ -1,0 +1,15 @@
+name: Cron - WhatsApp Messages
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger WhatsApp Messages Cron
+        run: |
+          curl -s -X GET "https://richard-automotive.com/api/cron/messages" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

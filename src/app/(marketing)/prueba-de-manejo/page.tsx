@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { PruebaDeManejoForm } from './PruebaDeManejoForm';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Prueba de Manejo | Richard Automotive — Agenda tu Test Drive en PR',
   description:

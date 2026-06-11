@@ -1,4 +1,3 @@
-// src/app/api/cron/sync-inventory/route.ts
 import { NextResponse } from 'next/server';
 import { RunInventorySyncUseCase } from '@/features/inventory-sync/model/RunInventorySyncUseCase';
 import { SupabaseInventoryRepository } from '@/entities/inventory/api/SupabaseInventoryRepository';
@@ -6,16 +5,13 @@ import { ReconciliationEngine } from '@/features/inventory-sync/model/Reconcilia
 import { RestApiExtractorAdapter } from '@/shared/api/scrapers/RestApiExtractorAdapter';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { NeuralSourcingService } from '@/features/houston/api/NeuralSourcingService';
 
 export const runtime = 'nodejs';
 
-// Evita que Next.js convierta esta ruta en estática
-
-// Vercel Serverless Functions para Playwright necesitan más memoria/tiempo (si el plan lo permite)
-export const maxDuration = 300; // 5 minutos máximo
+export const maxDuration = 300;
 
 export async function GET(request: Request) {
-  // 1. Seguridad: Verificar el "Bearer Token" secreto de Vercel Cron o si es un trigger manual del Admin
   const { searchParams } = new URL(request.url);
   const isManual = searchParams.get('manual') === 'true';
   const authHeader = request.headers.get('authorization');
@@ -28,8 +24,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const telemetry: Record<string, any> = { timestamp: new Date().toISOString() };
+
   try {
-    // 2. Inicializar Cliente Supabase (Setup estricto @supabase/ssr)
     const cookieStore = await cookies();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey =
@@ -42,29 +39,20 @@ export async function GET(request: Request) {
 
     const supabaseClient = createServerClient(supabaseUrl, supabaseKey, {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
+        getAll() { return cookieStore.getAll(); },
         setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // Ignore if called from Server Component
-          }
+          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); }
+          catch { /* ignore Server Component call */ }
         },
       },
     });
 
-    // 3. Orquestación Inyección de Dependencias
+    // — Inventory Sync —
     const repository = new SupabaseInventoryRepository(supabaseClient);
     const extractor = new RestApiExtractorAdapter();
     const engine = new ReconciliationEngine();
-
     const useCase = new RunInventorySyncUseCase(repository, extractor, engine);
 
-    // 4. Disparo (Doble pasada: Nuevos y Usados para un Mirroring Completo)
     const result = await useCase.execute({
       targetUrls: [
         'https://centralfordpr.com/inventario-nuevos/',
@@ -73,26 +61,27 @@ export async function GET(request: Request) {
       useStealthMode: process.env.NODE_ENV === 'production',
     });
 
-    // 5. Respuesta
+    telemetry.sync = {
+      inserted: result.inserted,
+      updated: result.updated,
+      sold: result.sold,
+    };
+
     if (result.status === 'FAILED') {
-      return NextResponse.json(
-        {
-          error: result.error,
-          status: 'partial_failure',
-        },
-        { status: 500 },
-      );
+      console.error('[CRON Sync] Sync failed:', result.error);
     }
 
-    return NextResponse.json({
-      status: 'success',
-      telemetry: {
-        inserted: result.inserted,
-        updated: result.updated,
-        sold: result.sold,
-        timestamp: new Date().toISOString(),
-      },
-    });
+    // — Neural Sourcing (merged from neural-sourcing cron) —
+    try {
+      const neural = await NeuralSourcingService.processRecentGaps();
+      telemetry.neuralSourcing = { processed: neural.processed, success: neural.success };
+      console.log('[CRON Sync] Neural sourcing:', neural.processed, 'gaps processed');
+    } catch (neuralError: any) {
+      console.error('[CRON Sync] Neural sourcing error:', neuralError);
+      telemetry.neuralSourcing = { error: neuralError.message };
+    }
+
+    return NextResponse.json({ status: 'success', telemetry });
   } catch (error: any) {
     console.error('[CRON Sync] Error fatal:', error);
     return NextResponse.json({ error: 'Error interno del Cron Sync' }, { status: 500 });

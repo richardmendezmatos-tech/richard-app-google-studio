@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
 import { getCarById, getSimilarCars, getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
@@ -11,7 +12,7 @@ interface Props {
   params: Promise<{ id: string; slug: string }>;
 }
 
-// Sentinel N23.4: Hardened Dynamic Routing
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   try {
@@ -185,8 +186,9 @@ function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
 export default async function VehicleDetailPage({ params }: Props) {
   const { id } = await params;
 
-  // Fetch current car
   const currentCar = await getCarById(id);
+
+  if (!currentCar) notFound();
 
   // Fetch similar cars by make or type (for related/sidebar)
   const inventory = currentCar

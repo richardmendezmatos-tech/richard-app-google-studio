@@ -2,6 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { RecomiendaForm } from './RecomiendaForm';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Recomienda y Gana $200 | Richard Automotive — Programa de Referidos en PR',
   description:

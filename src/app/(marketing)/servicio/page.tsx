@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { ServiceForm } from './ServiceForm';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Servicio Automotriz | Richard Automotive — Citas de Mantenimiento en PR',
   description:

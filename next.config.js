@@ -41,6 +41,12 @@ const nextConfig = {
       'recharts',
       '@headlessui/react',
     ],
+    serverExternalPackages: [
+      '@sparticuz/chromium',
+      'puppeteer-core',
+      'playwright-core',
+      'playwright',
+    ],
   },
 
   turbopack: {},

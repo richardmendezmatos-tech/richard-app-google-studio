@@ -2,6 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 import PrivacyClient from './PrivacyClient';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Política de Privacidad | Richard Automotive',
   description:

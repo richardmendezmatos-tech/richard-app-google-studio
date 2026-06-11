@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export const maxDuration = 60;
 

@@ -1,0 +1,15 @@
+name: Cron - Email Scheduler + Stale Leads
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Email Scheduler Cron
+        run: |
+          curl -s -X GET "https://richard-automotive.com/api/cron/email-scheduler" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

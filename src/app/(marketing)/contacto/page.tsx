@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import ContactoClient from './ContactoClient';
+
+export const dynamic = 'force-static';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { getBreadcrumbSchema, getFAQSchema } from '@/shared/config/seoSchemas';
 

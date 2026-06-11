@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { DealMatcherWidget } from '@/features/deal-matcher/ui/DealMatcherWidget';
+
+export const dynamic = 'force-static';
 import { Compass, Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {

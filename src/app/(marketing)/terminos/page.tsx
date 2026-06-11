@@ -2,6 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 import TermsClient from './TermsClient';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Términos y Condiciones | Richard Automotive',
   description:
