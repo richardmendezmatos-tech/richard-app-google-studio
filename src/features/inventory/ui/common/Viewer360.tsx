@@ -144,7 +144,7 @@ const Viewer360: React.FC<Props> = ({
   useEffect(() => {
     if (images.length <= 1) return;
 
-    // Phase 1: Cardinal Angles (0, 90, 180, 270 degrees approx)
+    // Phase 1: Cardinal Angles — delayed 500ms so LCP frame 0 wins bandwidth first
     const cardinalIndices = [
       0,
       Math.floor(images.length / 4),
@@ -152,13 +152,15 @@ const Viewer360: React.FC<Props> = ({
       Math.floor((3 * images.length) / 4),
     ];
 
-    cardinalIndices.forEach((idx) => {
-      if (!loadedIndices.has(idx)) {
-        const img = new Image();
-        img.src = images[idx];
-        img.onload = () => setLoadedIndices((prev) => new Set(prev).add(idx));
-      }
-    });
+    const phase1Timer = setTimeout(() => {
+      cardinalIndices.forEach((idx) => {
+        if (idx !== 0 && !loadedIndices.has(idx)) {
+          const img = new Image();
+          img.src = images[idx];
+          img.onload = () => setLoadedIndices((prev) => new Set(prev).add(idx));
+        }
+      });
+    }, 500); // Wait 500ms → LCP frame 0 gets priority network bandwidth
 
     // Phase 2: Background full sequence loading (Low Priority)
     const timer = setTimeout(() => {
@@ -171,7 +173,10 @@ const Viewer360: React.FC<Props> = ({
       });
     }, 2000); // Wait 2s for critical UI thread to breathe
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(phase1Timer);
+      clearTimeout(timer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [images]);
 
@@ -290,6 +295,8 @@ const Viewer360: React.FC<Props> = ({
           fill
           className={`object-contain drop-shadow-2xl transition-all duration-300 ${isDragging && !isScanning ? 'cursor-grabbing' : 'cursor-grab'} ${isScanning ? 'brightness-125 contrast-125' : ''} ${!loadedIndices.has(currentFrame) ? 'blur-md' : ''}`}
           priority={currentFrame === 0}
+          fetchPriority={currentFrame === 0 ? 'high' : 'auto'}
+          sizes="(max-width: 768px) 100vw, 50vw"
           onLoad={() => setLoadedIndices((prev) => new Set(prev).add(currentFrame))}
           onClick={() => onImageClick?.(currentFrame)}
         />

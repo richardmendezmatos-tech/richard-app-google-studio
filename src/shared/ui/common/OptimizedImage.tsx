@@ -51,6 +51,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const imageLoading = priority ? 'eager' : 'lazy';
   const imagePlaceholder = placeholder === 'blur' && blurDataURL ? 'blur' : 'empty';
+  const effectiveFetchPriority = fetchPriority || (priority ? 'high' : undefined);
 
   if (!fill && (!width || !height)) {
     console.warn(
@@ -60,23 +61,21 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   if (fill) {
     return (
-      <div className={`relative h-full w-full ${className}`}>
-        <Image
-          src={displaySrc}
-          alt={alt}
-          fill
-          priority={priority}
-          fetchPriority={fetchPriority}
-          className="object-cover"
-          onLoad={onLoad}
-          onClick={onClick}
-          onError={() => setError(true)}
-          sizes={sizes}
-          loading={imageLoading}
-          placeholder={imagePlaceholder}
-          blurDataURL={blurDataURL}
-        />
-      </div>
+      <Image
+        src={displaySrc}
+        alt={alt}
+        fill
+        priority={priority}
+        fetchPriority={effectiveFetchPriority}
+        className={className}
+        onLoad={onLoad}
+        onClick={onClick}
+        onError={() => setError(true)}
+        sizes={sizes}
+        loading={imageLoading}
+        placeholder={imagePlaceholder}
+        blurDataURL={blurDataURL}
+      />
     );
   }
 
@@ -87,7 +86,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       width={width || 800}
       height={height || 600}
       priority={priority}
-      fetchPriority={fetchPriority}
+      fetchPriority={effectiveFetchPriority}
       className={className}
       onLoad={onLoad}
       onClick={onClick}

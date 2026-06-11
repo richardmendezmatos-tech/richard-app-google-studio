@@ -309,6 +309,19 @@ body {
   }
 }
 
+/* Viewer360: cinematic image layer */
+.cinematic-layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Viewer360: parallax motion effect (single image mode) */
+.cinematic-parallax-layer {
+  transform: translate(var(--p-x, 0px), var(--p-y, 0px));
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

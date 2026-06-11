@@ -237,10 +237,10 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
         {/* Left Column: Media Gallery */}
         <div className="space-y-10">
           {/* 360 Viewer Integration (Nivel 18 Cinema) */}
-          <div className="relative z-10 w-full min-h-[400px] lg:min-h-[500px]">
+          <div className="relative z-10 w-full aspect-[4/3]">
             <React.Suspense
               fallback={
-                <div className="w-full h-[400px] lg:h-[500px] animate-pulse bg-white/5 rounded-5xl border border-white/10" />
+                <div className="w-full aspect-[4/3] animate-pulse bg-white/5 rounded-4xl border border-white/10" />
               }
             >
               <Viewer360
