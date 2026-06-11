@@ -63,31 +63,36 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
     setActiveFloatingWidget(widget);
   }, []);
 
+  const displaySidebar = showSidebar && pathname !== '/recompensas-vip' && pathname !== '/qualify';
+  const displayHeader = pathname !== '/recompensas-vip' && pathname !== '/qualify';
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-transparent overflow-hidden relative selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Premium Glass Mobile Header (Nivel 22 Edge-to-Edge) */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 text-white lg:hidden glass-liquid border-b border-white/5 shadow-2xl">
-        <span className="font-cinematic text-3xl tracking-[0.2em] text-white text-glow">
-          RICHARD<span className="text-cyan-400 italic">AUTO</span>
-        </span>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            aria-label="Ver Inventario"
-            className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
-          >
-            <CarIcon className="text-cyan-400" size={20} />
-          </Link>
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            title="Abrir menú"
-            aria-label="Abrir menú"
-            className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
-          >
-            <Menu className="text-cyan-400" />
-          </button>
-        </div>
-      </header>
+      {displayHeader && (
+        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 text-white lg:hidden glass-liquid border-b border-white/5 shadow-2xl">
+          <span className="font-cinematic text-3xl tracking-[0.2em] text-white text-glow">
+            RICHARD<span className="text-cyan-400 italic">AUTO</span>
+          </span>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              aria-label="Ver Inventario"
+              className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
+            >
+              <CarIcon className="text-cyan-400" size={20} />
+            </Link>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              title="Abrir menú"
+              aria-label="Abrir menú"
+              className="rounded-2xl p-3 bg-white/5 border border-white/10 transition-all hover:bg-cyan-400/20 hover:border-cyan-400/40 active:scale-95"
+            >
+              <Menu className="text-cyan-400" />
+            </button>
+          </div>
+        </header>
+      )}
 
       {/* Nivel 22: Living Background Parallax Layer */}
       <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
@@ -108,7 +113,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
       </div>
 
       {/* Main Sidebar Component */}
-      {showSidebar && (
+      {displaySidebar && (
         <Sidebar
           isMobileOpen={isMobileMenuOpen}
           setIsMobileOpen={setIsMobileMenuOpen}
@@ -120,7 +125,7 @@ export const CinemaLayout: React.FC<CinemaLayoutProps> = ({ children, inventory 
       {/* Main Content Area */}
       <main
         id="cinema-content"
-        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${showSidebar ? (isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]') : 'w-full'}`}
+        className={`relative h-screen flex-1 overflow-x-hidden overflow-y-auto bg-transparent text-slate-100 scroll-smooth transition-all duration-300 pb-20 md:pb-0 ${displaySidebar ? (isSidebarCollapsed ? 'lg:w-[calc(100vw-80px)]' : 'lg:w-[calc(100vw-288px)]') : 'w-full'}`}
       >
         {/* Global Floating Notification Layer */}
         <div className="sticky top-0 z-50 pointer-events-none">

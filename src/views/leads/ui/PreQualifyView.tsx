@@ -53,7 +53,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
         }
       | undefined);
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showSSN, setShowSSN] = useState(false);
@@ -369,7 +369,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
           <div className="w-full max-w-2xl" data-mcp-role="lead-capture" data-mcp-purpose="pre-qualify" data-mcp-fields="firstName,phone,lastName,email,downPayment,term,income">
             {/* Progress */}
             <div className="flex gap-2 mb-8">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {[2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
                   className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-primary shadow-[0_0_10px_#00aed9]' : 'bg-slate-800'}`}
@@ -388,8 +388,6 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
                   <p className="text-slate-400 font-mono text-xs">Protegiendo sus datos</p>
                 </div>
               )}
-
-              {step === 1 && <RewardPicker onComplete={() => setStep(2)} />}
 
               {step === 2 && (
                 <div className="space-y-6 animate-in slide-in-from-right duration-500">

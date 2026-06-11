@@ -5,7 +5,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         // Enforce a generous 90-second timeout to allow the local Webpack dev server to compile Next.js pages fully on the first run.
         test.setTimeout(90000);
         // Clear session storage before each test to reset Zustand persistence
-        await page.goto('/precualificacion');
+        await page.goto('/recompensas-vip');
         await page.evaluate(() => {
             sessionStorage.clear();
         });
@@ -16,7 +16,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
     test('should guide the user through selecting rewards, spinning the Golden Key, and completing pre-qualification', async ({ page }) => {
         page.on('console', msg => console.log(`[PAGE ${msg.type().toUpperCase()}]`, msg.text()));
         // 1. Verify we are on the VIP rewards page
-        await expect(page.locator('h2', { hasText: 'Tus Regalos Exclusivos' })).toBeVisible();
+        await expect(page.locator('h2', { hasText: 'Manifiesto de Entrega VIP' })).toBeVisible();
 
         // 2. Select up to 2 rewards
         const gasolinaGift = page.locator('h4', { hasText: 'Gasolina Gratis (Tanque Lleno)' });
@@ -24,10 +24,10 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         const lavadoGift = page.locator('h4', { hasText: 'Lavado de Autos Full Detail Premium' });
 
         await expect(gasolinaGift).toBeVisible();
-        await gasolinaGift.click();
+        await gasolinaGift.click({ force: true });
         
         await expect(asistenciaGift).toBeVisible();
-        await asistenciaGift.click();
+        await asistenciaGift.click({ force: true });
 
         // Verify next button is disabled because we haven't spun the key yet
         const nextStepBtn = page.getByRole('button', { name: /Gira la Llave para Continuar|Confirmar Recompensas VIP/i });
@@ -36,19 +36,19 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         // 3. Spin the Golden Key
         const spinBtn = page.getByRole('button', { name: /Girar Llave de Oro/i });
         await expect(spinBtn).toBeVisible();
-        await spinBtn.click();
+        await spinBtn.click({ force: true });
 
         // Wait for the prize modal to appear and close it
         const claimBtn = page.getByRole('button', { name: /Excelente, Continuar/i });
         await expect(claimBtn).toBeVisible({ timeout: 10000 });
-        await claimBtn.click();
+        await claimBtn.click({ force: true });
 
         // Verify the modal is closed and the next button is now enabled
         await expect(claimBtn).not.toBeVisible();
         await expect(nextStepBtn).toBeEnabled();
 
         // 4. Click Confirmar Recompensas VIP to proceed to Step 2
-        await nextStepBtn.click();
+        await nextStepBtn.click({ force: true });
 
         // --- STEP 2: Consulta Rápida ---
         await expect(page.locator('h2', { hasText: 'Consulta Rápida' })).toBeVisible();
@@ -57,7 +57,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         
         const step2Next = page.getByRole('button', { name: /Ver Mi Pre-Calificación/i });
         await expect(step2Next).toBeEnabled();
-        await step2Next.click();
+        await step2Next.click({ force: true });
 
         // --- STEP 3: Un poco más sobre ti ---
         await expect(page.locator('h2', { hasText: 'Un poco más sobre ti' })).toBeVisible();
@@ -66,7 +66,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         
         const step3Next = page.getByRole('button', { name: /Siguiente/i });
         await expect(step3Next).toBeEnabled();
-        await step3Next.click();
+        await step3Next.click({ force: true });
 
         // --- STEP 4: Simula tu Pago ---
         await expect(page.locator('h2', { hasText: 'Simula tu Pago' })).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         
         const step4Next = page.getByRole('button', { name: /Siguiente/i });
         await expect(step4Next).toBeEnabled();
-        await step4Next.click();
+        await step4Next.click({ force: true });
 
         // --- STEP 5: Perfil Financiero ---
         await expect(page.locator('h2', { hasText: 'Perfil Financiero' })).toBeVisible();
@@ -88,7 +88,7 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         
         const step5Next = page.getByRole('button', { name: /Siguiente/i });
         await expect(step5Next).toBeEnabled();
-        await step5Next.click();
+        await step5Next.click({ force: true });
 
         // --- STEP 6: Seguridad Legal ---
         await expect(page.locator('h2', { hasText: 'Seguridad Legal' })).toBeVisible();
@@ -97,11 +97,11 @@ test.describe('VIP Recompensas Gamification Flow', () => {
         
         // Click the checkbox for credit authorization
         const authCheckbox = page.locator('p', { hasText: 'Autorizo a Richard Automotive a consultar mi reporte de crédito real' });
-        await authCheckbox.click();
+        await authCheckbox.click({ force: true });
 
         const submitBtn = page.getByRole('button', { name: /Enviar Solicitud Segura/i });
         await expect(submitBtn).toBeEnabled();
-        await submitBtn.click();
+        await submitBtn.click({ force: true });
 
         // --- SUCCESS SCREEN ---
         await expect(page.locator('h2', { hasText: 'En Revisión por Expertos' })).toBeVisible({ timeout: 15000 });

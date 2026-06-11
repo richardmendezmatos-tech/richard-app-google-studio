@@ -81,6 +81,9 @@ interface PreQualifyViewProps {
 const PreQualifyView = React.lazy(() =>
   lazyRetry(() => import('@/pages/leads/ui/PreQualifyView')),
 ) as unknown as React.ComponentType<PreQualifyViewProps>;
+const GamificationVIPView = React.lazy(() =>
+  lazyRetry(() => import('@/pages/leads/ui/GamificationVIPView')),
+) as unknown as React.ComponentType<{ onExit: () => void }>;
 const ExpressPrequalifyPage = React.lazy(() =>
   lazyRetry(() => import('@/pages/leads/ui/ExpressPrequalifyPage')),
 );
@@ -364,6 +367,14 @@ export const AnimatedRoutes: React.FC<AnimatedRoutesProps> = ({
                   <DigitalGaragePage inventory={inventory} onExit={() => navigate('/')} />
                 </PageWrapper>
               </AuthGuard>
+            }
+          />
+          <Route
+            path="/recompensas-vip"
+            element={
+              <PageWrapper>
+                <GamificationVIPView onExit={() => navigate('/')} />
+              </PageWrapper>
             }
           />
           <Route
