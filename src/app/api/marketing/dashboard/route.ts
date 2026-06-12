@@ -27,7 +27,7 @@ export async function GET() {
   try {
     const [leadsResult, blogResult, emailResult, distResult, campaignsResult] =
       await Promise.all([
-        supabase.from('leads').select('*').limit(1000),
+        supabase.from('leads').select('id, type, status, first_name, last_name, email, phone, vehicle_of_interest, source, created_at').limit(1000),
         supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
         supabase.from('message_queue').select('status, type').gte('created_at', last30d),
         supabase

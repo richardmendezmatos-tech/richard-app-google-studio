@@ -18,8 +18,10 @@ import {
   Mail,
   Share2,
 } from 'lucide-react';
-import { LeadSourceChart } from '@/features/command-center/ui/LeadSourceChart';
-import { ConversionFunnel } from '@/features/command-center/ui/ConversionFunnel';
+import dynamic from 'next/dynamic';
+
+const LeadSourceChart = dynamic(() => import('@/features/command-center/ui/LeadSourceChart').then(m => m.LeadSourceChart), { ssr: false });
+const ConversionFunnel = dynamic(() => import('@/features/command-center/ui/ConversionFunnel').then(m => m.ConversionFunnel), { ssr: false });
 
 interface LeadSummary {
   id: string;

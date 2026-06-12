@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { Zap, Activity, DollarSign } from 'lucide-react';
 import { Car } from '@/entities/inventory';
 import { Lead } from '@/entities/lead';
 import { InventoryHeatmap } from '@/features/inventory/ui/InventoryHeatmap';
-import { LeadSourceChart } from './LeadSourceChart';
-import { ConversionFunnel } from './ConversionFunnel';
-import { InventoryFinancialsChart } from './InventoryFinancialsChart';
 
-// Extra Icon for KPI
+const LeadSourceChart = dynamic(() => import('./LeadSourceChart').then(m => m.LeadSourceChart), { ssr: false });
+const ConversionFunnel = dynamic(() => import('./ConversionFunnel').then(m => m.ConversionFunnel), { ssr: false });
+const InventoryFinancialsChart = dynamic(() => import('./InventoryFinancialsChart').then(m => m.InventoryFinancialsChart), { ssr: false });
+
 import { TrendingUp, Award, Target } from 'lucide-react';
 
 interface Props {

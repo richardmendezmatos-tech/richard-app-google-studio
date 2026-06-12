@@ -237,6 +237,24 @@ const toolHandlers: Record<string, (args: any, inventory: Car[]) => any> = {
   },
 };
 
+const responseCache = new Map<string, { text: string; timestamp: number }>();
+const RESPONSE_CACHE_TTL = 5 * 60 * 1000;
+
+const getCachedResponse = (key: string): string | null => {
+  const cached = responseCache.get(key);
+  if (cached && Date.now() - cached.timestamp < RESPONSE_CACHE_TTL) return cached.text;
+  if (cached) responseCache.delete(key);
+  return null;
+};
+
+const setCachedResponse = (key: string, text: string) => {
+  if (responseCache.size > 100) {
+    const oldest = responseCache.keys().next().value;
+    if (oldest) responseCache.delete(oldest);
+  }
+  responseCache.set(key, { text, timestamp: Date.now() });
+};
+
 const callGeminiProxy = async (
   prompt: GeminiPrompt,
   systemInstruction?: string,
@@ -245,6 +263,13 @@ const callGeminiProxy = async (
   inventory?: Car[],
   skipTools?: boolean,
 ): Promise<string> => {
+  const cacheKey = JSON.stringify({ prompt, systemInstruction, modelName, config, skipTools });
+  const cached = getCachedResponse(cacheKey);
+  if (cached) {
+    console.log('[GeminiCache] Hit for prompt:', typeof prompt === 'string' ? prompt.slice(0, 50) : 'array');
+    return cached;
+  }
+
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
     if (!apiKey)
@@ -308,7 +333,9 @@ const callGeminiProxy = async (
       ),
     );
 
-    return response.text();
+    const text = response.text();
+    setCachedResponse(cacheKey, text);
+    return text;
   } catch (error: any) {
     console.error('AI Proxy Error:', error);
 

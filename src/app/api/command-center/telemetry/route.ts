@@ -41,7 +41,7 @@ export async function GET(req: Request) {
       await Promise.all([
         supabase
           .from('search_gaps')
-          .select('*')
+          .select('id, query, count')
           .order('created_at', { ascending: false })
           .limit(10),
         supabase.from('message_queue').select('status').gte('created_at', last7d),
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
         leadRepo.getLeads(DEALER_ID, 20),
         supabase
           .from('purchase_orders')
-          .select('*')
+          .select('id, query, status, created_at')
           .in('status', ['draft', 'confirmed'])
           .order('created_at', { ascending: false })
           .limit(10),
@@ -61,7 +61,7 @@ export async function GET(req: Request) {
           .gte('timestamp', last7d)
           .order('operational_score', { ascending: false })
           .limit(100),
-        supabase.from('leads').select('id, first_name, ai_analysis').order('ai_analysis->score', { ascending: false }).limit(5),
+        supabase.from('leads').select('id, first_name, ai_analysis->score').order('ai_analysis->score', { ascending: false }).limit(5),
       ]);
 
     // 2. Map and Score Leads
