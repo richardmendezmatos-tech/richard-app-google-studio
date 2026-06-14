@@ -14,6 +14,7 @@ const withAnalyzer = withBundleAnalyzer({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: process.env.NEXT_STATIC_EXPORT === 'true' ? 'export' : undefined,
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [320, 420, 768, 1024, 1200],
