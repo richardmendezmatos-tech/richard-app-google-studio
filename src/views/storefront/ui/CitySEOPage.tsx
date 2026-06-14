@@ -81,6 +81,62 @@ const cities: Record<string, CityConfig> = {
     ],
     landmark: 'Plaza Las Américas / Área Metro',
   },
+  'san-juan': {
+    name: 'San Juan',
+    slug: 'san-juan',
+    description:
+      'Explora el mejor inventario de autos usados de lujo en San Juan, Puerto Rico. Richard Automotive ofrece vehículos premium certificados para los sectores de Condado, Hato Rey y Miramar.',
+    heroImage: '/assets/seo/san-juan-hero.webp',
+    keywords: [
+      'autos usados san juan',
+      'dealer de lujo san juan',
+      'carros de lujo en condado',
+      'venta de autos san juan',
+    ],
+    landmark: 'Condado / Hato Rey / Miramar',
+  },
+  ponce: {
+    name: 'Ponce',
+    slug: 'ponce',
+    description:
+      'Autos usados premium y de lujo en la Ciudad Señorial. Richard Automotive te ofrece vehículos garantizados y la experiencia de compra más exclusiva de Ponce y toda la zona sur.',
+    heroImage: '/assets/seo/ponce-hero.webp',
+    keywords: [
+      'autos usados ponce',
+      'dealer ponce',
+      'carros de lujo ponce',
+      'venta de carros usados en ponce',
+    ],
+    landmark: 'Plaza Del Caribe / Zona Sur',
+  },
+  caguas: {
+    name: 'Caguas',
+    slug: 'caguas',
+    description:
+      'El dealer de autos de lujo preferido en Caguas. Richard Automotive ofrece vehículos premium inspeccionados de 150 puntos para la Ciudad Criolla con entrega a domicilio.',
+    heroImage: '/assets/seo/caguas-hero.webp',
+    keywords: [
+      'autos usados caguas',
+      'dealer de carros caguas',
+      'carros de lujo caguas',
+      'venta de autos usados caguas',
+    ],
+    landmark: 'Las Catalinas Mall / Área Central',
+  },
+  mayaguez: {
+    name: 'Mayagüez',
+    slug: 'mayaguez',
+    description:
+      'Encuentra el auto usado de lujo perfecto en Mayagüez y la zona oeste. Servicio personalizado premium de Richard Automotive para profesionales y la comunidad del RUM.',
+    heroImage: '/assets/seo/mayaguez-hero.webp',
+    keywords: [
+      'autos usados mayaguez',
+      'dealer mayaguez',
+      'carros de lujo zona oeste pr',
+      'venta de carros mayaguez',
+    ],
+    landmark: 'Recinto Universitario de Mayagüez (RUM)',
+  },
 };
 
 export const CitySEOPage: React.FC = () => {
