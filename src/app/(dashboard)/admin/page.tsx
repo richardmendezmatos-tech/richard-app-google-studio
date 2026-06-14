@@ -1,10 +1,23 @@
 'use client';
 
 import React from 'react';
-import CRMBoard from '@/features/command-center/ui/CRMBoard';
-import HoustonDashboard from '@/widgets/houston/HoustonDashboard';
-import UsersTab from '@/features/command-center/ui/UsersTab';
+import dynamic from 'next/dynamic';
 import SEO from '@/shared/ui/seo/SEO';
+
+const CRMBoard = dynamic(() => import('@/features/command-center/ui/CRMBoard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-white/5 animate-pulse" />,
+});
+
+const HoustonDashboard = dynamic(() => import('@/widgets/houston/HoustonDashboard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-white/5 animate-pulse" />,
+});
+
+const UsersTab = dynamic(() => import('@/features/command-center/ui/UsersTab'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-white/5 animate-pulse" />,
+});
 
 /**
  * Houston Command Center - Admin Dashboard

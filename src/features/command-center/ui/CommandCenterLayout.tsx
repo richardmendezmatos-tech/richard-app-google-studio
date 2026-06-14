@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useDealer } from '@/entities/dealer';
 import { useNavigate, Outlet } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
@@ -14,18 +15,18 @@ import { useCommandCenterData } from '../model/useCommandCenterData';
 import { TacticalSidebar } from './TacticalSidebar';
 import { SentinelInbox } from './SentinelInbox';
 
-// Lazy load modals & status bars that remain in layout
-const CommandCenterModal = React.lazy(() =>
-  import('./CommandCenterModal').then((m) => ({ default: m.CommandCenterModal })),
+// Dynamically load modals & status bars that remain in layout
+const CommandCenterModal = dynamic(() =>
+  import('./CommandCenterModal').then((m) => m.CommandCenterModal), { ssr: false }
 );
-const MarketingCreativeStudio = React.lazy(() =>
-  import('./MarketingCreativeStudio').then((m) => ({ default: m.MarketingCreativeStudio })),
+const MarketingCreativeStudio = dynamic(() =>
+  import('./MarketingCreativeStudio').then((m) => m.MarketingCreativeStudio), { ssr: false }
 );
-const ViralGeneratorModal = React.lazy(() =>
-  import('@/features/marketing').then((m) => ({ default: m.ViralGeneratorModal })),
+const ViralGeneratorModal = dynamic(() =>
+  import('@/features/marketing').then((m) => m.ViralGeneratorModal), { ssr: false }
 );
-const SentinelStatusBar = React.lazy(() =>
-  import('./SentinelStatusBar').then((m) => ({ default: m.SentinelStatusBar })),
+const SentinelStatusBar = dynamic(() =>
+  import('./SentinelStatusBar').then((m) => m.SentinelStatusBar), { ssr: false }
 );
 
 interface Props {

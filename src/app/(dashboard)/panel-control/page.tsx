@@ -22,20 +22,21 @@ import {
 } from 'lucide-react';
 import { NeuralSearchTicker } from '@/features/houston/ui/components/NeuralSearchTicker';
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
-import { HoloDashboard } from '@/features/houston/ui/components/HoloDashboard';
-import { NewsroomControlWidget } from '@/features/houston/ui/components/NewsroomControlWidget';
-import TelemetryFeedWidget from '@/features/dashboard/ui/TelemetryFeedWidget';
-import { SentinelLocalSEO } from '@/features/command-center/ui/SentinelLocalSEO';
-import { SentinelFinancialOptimizer } from '@/features/command-center/ui/SentinelFinancialOptimizer';
-import { BusinessHealthWidget } from '@/widgets/dashboard/ui/BusinessHealthWidget';
-import { MarketPulseWidget } from '@/features/market-intelligence/ui/MarketPulseWidget';
-import { SentinelDistributionWidget } from '@/features/command-center/ui/SentinelDistributionWidget';
 import { PurchaseOrder } from '@/entities/houston/model/types';
 import {
   SentinelIntelligenceWidget,
   IntelligenceSignal,
 } from '@/features/command-center/ui/SentinelIntelligenceWidget';
 import { subscribeDashboard } from '@/shared/api/realtime/dashboardChannel';
+
+const HoloDashboard = dynamic(() => import('@/features/houston/ui/components/HoloDashboard').then(m => m.HoloDashboard), { ssr: false });
+const NewsroomControlWidget = dynamic(() => import('@/features/houston/ui/components/NewsroomControlWidget').then(m => m.NewsroomControlWidget), { ssr: false });
+const TelemetryFeedWidget = dynamic(() => import('@/features/dashboard/ui/TelemetryFeedWidget'), { ssr: false });
+const SentinelLocalSEO = dynamic(() => import('@/features/command-center/ui/SentinelLocalSEO').then(m => m.SentinelLocalSEO), { ssr: false });
+const SentinelFinancialOptimizer = dynamic(() => import('@/features/command-center/ui/SentinelFinancialOptimizer').then(m => m.SentinelFinancialOptimizer), { ssr: false });
+const BusinessHealthWidget = dynamic(() => import('@/widgets/dashboard/ui/BusinessHealthWidget').then(m => m.BusinessHealthWidget), { ssr: false });
+const MarketPulseWidget = dynamic(() => import('@/features/market-intelligence/ui/MarketPulseWidget').then(m => m.MarketPulseWidget), { ssr: false });
+const SentinelDistributionWidget = dynamic(() => import('@/features/command-center/ui/SentinelDistributionWidget').then(m => m.SentinelDistributionWidget), { ssr: false });
 
 const RichardAIAdvisor = dynamic(() => import('@/features/command-center/ui/RichardAIAdvisor').then(m => m.RichardAIAdvisor), { ssr: false });
 
