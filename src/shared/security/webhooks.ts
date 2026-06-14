@@ -37,10 +37,13 @@ export const verifySendGridEventWebhook = (req: any, rawBody: Buffer): boolean =
 
   try {
     const signature = Buffer.from(sigB64, 'base64');
-    const signed = Buffer.concat([Buffer.from(ts, 'utf8'), rawBody]);
+    const signed = Buffer.concat([
+      Buffer.from(ts, 'utf8') as Uint8Array,
+      rawBody as Uint8Array
+    ]);
     const key = crypto.createPublicKey(publicKeyPem);
     // For Ed25519, algorithm is null.
-    return crypto.verify(null, signed, key, signature);
+    return crypto.verify(null, signed as any, key, signature as any);
   } catch (e) {
     console.warn('SendGrid webhook signature verification error', { error: String(e) });
     return false;
