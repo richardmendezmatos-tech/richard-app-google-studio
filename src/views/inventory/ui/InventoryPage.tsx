@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { Car } from '@/shared/types/types';
 import SEO from '@/shared/ui/seo/SEO';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -10,7 +11,12 @@ import { StorefrontToolbar } from '@/features/inventory';
 import StorefrontResultsGrid from '@/widgets/inventory/StorefrontResultsGrid';
 import StorefrontComparisonBar from '@/widgets/comparison/StorefrontComparisonBar';
 import StorefrontModals from '@/features/inventory/ui/StorefrontModals';
-import SentinelDiscoverySuite from '@/widgets/inventory/SentinelDiscoverySuite';
+
+// Lazy load the heavy Discovery Suite
+const SentinelDiscoverySuite = dynamic(() => import('@/widgets/inventory/SentinelDiscoverySuite'), {
+  ssr: false,
+  loading: () => <div className="h-48 w-full rounded-4xl bg-white/5 animate-pulse border border-white/5" />
+});
 
 // Custom Hook
 import { useStorefrontState } from '@/features/inventory';
