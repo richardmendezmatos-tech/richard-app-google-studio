@@ -137,6 +137,62 @@ const cities: Record<string, CityConfig> = {
     ],
     landmark: 'Recinto Universitario de Mayagüez (RUM)',
   },
+  arecibo: {
+    name: 'Arecibo',
+    slug: 'arecibo',
+    description:
+      'Explora nuestra selección exclusiva de autos usados certificados en Arecibo. Richard Automotive te ofrece calidad garantizada y financiamiento a tu medida en la Villa del Capitán Correa.',
+    heroImage: '/assets/seo/arecibo-hero.webp',
+    keywords: [
+      'autos usados arecibo',
+      'dealer de autos arecibo',
+      'carros de lujo arecibo',
+      'venta de carros usados en arecibo',
+    ],
+    landmark: 'Estatua de Colón / Zona Norte-Central',
+  },
+  humacao: {
+    name: 'Humacao',
+    slug: 'humacao',
+    description:
+      'Autos usados de lujo y deportivos en Humacao. Richard Automotive ofrece un servicio exclusivo de guante blanco adaptado al estilo de vida de Palmas del Mar y la zona este.',
+    heroImage: '/assets/seo/humacao-hero.webp',
+    keywords: [
+      'autos usados humacao',
+      'dealer de lujo humacao',
+      'carros en palmas del mar',
+      'venta de autos humacao',
+    ],
+    landmark: 'Palmas del Mar / Zona Este',
+  },
+  aguadilla: {
+    name: 'Aguadilla',
+    slug: 'aguadilla',
+    description:
+      'Los mejores carros usados y SUVs de lujo en Aguadilla. Adquiere tu próximo vehículo con financiamiento preferencial y entrega en toda la zona noroeste y base Ramey.',
+    heroImage: '/assets/seo/aguadilla-hero.webp',
+    keywords: [
+      'autos usados aguadilla',
+      'dealer aguadilla base ramey',
+      'carros de lujo aguadilla',
+      'venta de carros usados aguadilla',
+    ],
+    landmark: 'Base Ramey / Zona Noroeste',
+  },
+  manati: {
+    name: 'Manatí',
+    slug: 'manati',
+    description:
+      'Tu dealer de autos de lujo de confianza en Manatí. Encuentra carros usados certificados y el financiamiento más rápido en la zona norte de Puerto Rico.',
+    heroImage: '/assets/seo/manati-hero.webp',
+    keywords: [
+      'autos usados manati',
+      'dealer de carros manati',
+      'carros usados certificados manati',
+      'venta de autos manati',
+    ],
+    landmark: 'Hyatt Place / Zona Norte-Atenas',
+  },
 };
 
 export const CitySEOPage: React.FC = () => {
