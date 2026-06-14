@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react';
 import { Car } from '@/entities/inventory';
-import NeuralMatchModal from './NeuralMatchModal';
-import ComparisonModal from './ComparisonModal';
 import telemetry from '@/shared/api/metrics/analytics';
 import { AnimatePresence } from 'framer-motion';
 import { Portal } from '@/shared/ui/common/Portal';
 
 // Sentinel Performance: Lazy loading of heavy modals to optimize main thread
+const NeuralMatchModal = React.lazy(() => import('./NeuralMatchModal'));
+const ComparisonModal = React.lazy(() => import('./ComparisonModal'));
 const VisualSearchModal = React.lazy(() => import('./VisualSearchModal'));
 const CarDetailModal = React.lazy(() => import('./CarDetailModal'));
 
