@@ -3,6 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'edge';
 
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000;
+
 export async function GET(req: Request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -11,13 +14,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Sentinel Offline: Missing credentials' }, { status: 500 });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
   // Security Check (Internal Token)
   const token = req.headers.get('x-antigravity-token');
   if (token !== process.env.ANTIGRAVITY_INTERNAL_TOKEN && token !== 'client-internal') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const cached = cache.get('signals');
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return NextResponse.json(cached.data);
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
     const now = new Date();
@@ -102,7 +110,7 @@ export async function GET(req: Request) {
       }
     });
 
-    return NextResponse.json({
+    const responseData = {
       timestamp: now.toISOString(),
       version: 'N24-PRO',
       signals: signals.sort((a, b) => {
@@ -114,7 +122,10 @@ export async function GET(req: Request) {
         gap_count_7d: searchGaps.data?.length || 0,
         lead_count: hotLeads.data?.length || 0,
       },
-    });
+    };
+
+    cache.set('signals', { data: responseData, timestamp: Date.now() });
+    return NextResponse.json(responseData);
   } catch (error: any) {
     console.error('[Intelligence API] Sentinel System Fault:', error);
     return NextResponse.json({ error: 'Internal Signal Error' }, { status: 500 });
