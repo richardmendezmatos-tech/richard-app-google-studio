@@ -1,4 +1,6 @@
 import { Lead } from '@/entities/lead/model/LeadEntity';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // We extract VITE_HUBSPOT_TOKEN if available, otherwise fallback to HUBSPOT_ACCESS_TOKEN
 const HUBSPOT_ACCESS_TOKEN =
@@ -12,6 +14,7 @@ export class HubSpotService {
   async syncLeadToHubSpot(lead: Lead): Promise<string | null> {
     if (!HUBSPOT_ACCESS_TOKEN) {
       console.warn('[HubSpotService] Access Token missing. Skipping sync.');
+      this.writeWorkspaceCheckpoint(lead, 'pending', 'Missing HubSpot Access Token');
       return null;
     }
 
@@ -149,9 +152,11 @@ export class HubSpotService {
         await this.syncDealToHubSpot(lead, contactId);
       }
 
+      this.writeWorkspaceCheckpoint(lead, 'synced');
       return contactId;
-    } catch (error) {
+    } catch (error: any) {
       console.error('[HubSpotService] Sync Lead Error:', error);
+      this.writeWorkspaceCheckpoint(lead, 'pending', error?.message || String(error));
       return null;
     }
   }
@@ -212,6 +217,42 @@ export class HubSpotService {
       );
     } catch (error) {
       console.error('[HubSpotService] Sync Deal Error:', error);
+    }
+  }
+
+  /**
+   * Saves a checkpoint JSON of the lead transaction in the workspace (.agents/workspace)
+   * conforming to the persistence protocol [YYYY-MM-DD]_[CATEGORY]_[ID].json.
+   */
+  private writeWorkspaceCheckpoint(lead: Lead, status: 'synced' | 'pending', error?: string): void {
+    if (process.env.NODE_ENV === 'test') {
+      // Avoid polluting git with untracked test run checkpoints
+      return;
+    }
+
+    try {
+      const dateStr = new Date().toISOString().split('T')[0];
+      const category = 'HUBSPOT-SYNC';
+      const cleanId = String(lead.id || 'unknown').replace(/[^a-zA-Z0-9-_]/g, '');
+      const fileName = `${dateStr}_${category}_${cleanId}.json`;
+      
+      const workspaceDir = path.resolve(process.cwd(), '.agents/workspace');
+      if (!fs.existsSync(workspaceDir)) {
+        fs.mkdirSync(workspaceDir, { recursive: true });
+      }
+      
+      const filePath = path.join(workspaceDir, fileName);
+      const payload = {
+        timestamp: new Date().toISOString(),
+        status,
+        error: error || null,
+        lead,
+      };
+      
+      fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf8');
+      console.log(`[HubSpotService] Workspace checkpoint saved: ${fileName}`);
+    } catch (e) {
+      console.error('[HubSpotService] Failed to write workspace checkpoint:', e);
     }
   }
 }
