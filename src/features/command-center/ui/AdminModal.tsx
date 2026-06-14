@@ -74,7 +74,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
             ADICIONAL: Si se incluye una imagen, analiza visualmente el vehículo y menciona detalles específicos que veas (color, rines, estado de la pintura, extras visibles) para hacer la descripción más auténtica.`;
 
       // vision upgrade: use shared gemini service directly
-      const { generateVisionDescription } = await import('@/shared/api/ai/geminiService');
+      const { generateVisionDescription } = await import('@/shared/api/ai/client');
 
       let base64Image: string | undefined;
       if (uploadResults.length > 0) {

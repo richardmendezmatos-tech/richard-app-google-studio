@@ -60,6 +60,23 @@ export async function getAIResponse(
   );
 }
 
+export async function generateVisionDescription(
+  prompt: string,
+  imageSource?: string, // base64
+  systemInstruction?: string,
+): Promise<string> {
+  const contents: any[] = [prompt];
+  if (imageSource) {
+    contents.push({
+      inlineData: {
+        data: imageSource.replace(/^data:image\/\w+;base64,/, ''),
+        mimeType: 'image/jpeg',
+      },
+    });
+  }
+  return callGemini(contents, systemInstruction || 'Eres un vendedor experto de autos. Escribe en español.');
+}
+
 export async function analyzeCarImage(base64Image: string): Promise<Record<string, unknown>> {
   const text = await fetch('/api/ai/gemini', {
     method: 'POST',

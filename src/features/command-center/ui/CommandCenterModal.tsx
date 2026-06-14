@@ -110,7 +110,7 @@ export const CommandCenterModal: React.FC<CommandCenterModalProps> = ({
         }
       }
 
-      const { generateText } = await import('@/shared/api/ai/geminiService');
+      const { generateText } = await import('@/shared/api/ai/client');
 
       let multimodalData: any = null;
       if (uploadResults.length > 0) {

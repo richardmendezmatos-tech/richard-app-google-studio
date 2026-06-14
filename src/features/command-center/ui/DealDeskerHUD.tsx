@@ -26,7 +26,7 @@ import {
   Percent
 } from 'lucide-react';
 import { calculateFIDeal, getSuggestedAPR, getResidualPercentage } from '@/features/deal-desker/lib/fiCalculator';
-import { FIAdvisor, FIAdvisorAnalysis } from '@/features/deal-desker/api/fiAdvisor';
+import type { FIAdvisorAnalysis } from '@/features/deal-desker/api/fiAdvisor';
 import { CreditTier, BankRate, BankName } from '@/entities/deal/model/types';
 
 export const DealDeskerHUD: React.FC = () => {
@@ -146,29 +146,39 @@ export const DealDeskerHUD: React.FC = () => {
     setIsAnalyzing(true);
     setAnalysis(null);
     try {
-      const result = await FIAdvisor.analyzeDeal({
-        make: currentCar?.make || 'Ford',
-        model: currentCar?.model || 'Explorer',
-        year: currentCar?.year || 2024,
-        price: vehiclePrice,
-        mileage: 15,
-        creditTier,
-        downPayment,
-        tradeInValue,
-        tradeInPayoff,
-        term,
-        apr,
-        ltv: calculation.ltv,
-        estimatedMonthlyPayment: calculation.monthlyPayment,
-        gapInsuranceEnabled: gapInsurance,
-        extendedWarrantyEnabled: extendedWarranty,
-        powerPackEnabled: powerPack,
-        diamondCeramicEnabled: diamondCeramic,
-        monthlyIncome,
-        structureType,
-        residualValue: calculation.residualValue,
-        bankComparisons: calculation.bankComparisons
+      const response = await fetch('/api/deals/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          make: currentCar?.make || 'Ford',
+          model: currentCar?.model || 'Explorer',
+          year: currentCar?.year || 2024,
+          price: vehiclePrice,
+          mileage: 15,
+          creditTier,
+          downPayment,
+          tradeInValue,
+          tradeInPayoff,
+          term,
+          apr,
+          ltv: calculation.ltv,
+          estimatedMonthlyPayment: calculation.monthlyPayment,
+          gapInsuranceEnabled: gapInsurance,
+          extendedWarrantyEnabled: extendedWarranty,
+          powerPackEnabled: powerPack,
+          diamondCeramicEnabled: diamondCeramic,
+          monthlyIncome,
+          structureType,
+          residualValue: calculation.residualValue,
+          bankComparisons: calculation.bankComparisons
+        })
       });
+      if (!response.ok) {
+        throw new Error('Failed to analyze deal');
+      }
+      const result = await response.json();
       setAnalysis(result);
     } catch (err) {
       console.error('Error calling Sentinel advisor:', err);
