@@ -19,7 +19,6 @@ import {
   ChevronRight,
   Loader2
 } from 'lucide-react';
-import { supabase } from '@/shared/api/supabase/supabase';
 import { getSuggestedAPR } from '../lib/fiCalculator';
 import { CreditTier } from '@/entities/deal/model/types';
 
@@ -44,18 +43,13 @@ export const MiniDeskerClient: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
-  // Cargar inventario elegible de Supabase
+  // Cargar inventario elegible desde API Route
   useEffect(() => {
     async function fetchEligibleInventory() {
       try {
-        const { data } = await supabase
-          .from('inventory')
-          .select('vin, make, model, year, price, images, condition')
-          .eq('status', 'AVAILABLE')
-          .order('price', { ascending: true })
-          .limit(20);
-        
-        if (data) setInventory(data);
+        const res = await fetch('/api/inventory/available');
+        const data = await res.json();
+        if (Array.isArray(data)) setInventory(data);
       } catch (err) {
         console.error('Error fetching public inventory:', err);
       }
@@ -100,40 +94,32 @@ export const MiniDeskerClient: React.FC = () => {
     }
     setIsSubmitting(true);
     try {
-      // 1. Crear el Lead en Supabase
-      const { data: lead, error: leadError } = await supabase
-        .from('leads')
-        .insert({
-          name: leadName,
-          phone: leadPhone,
-          email: leadEmail || null,
-          status: 'new',
-          source: 'web',
-          message: `Precualificación automática para ${selectedCar?.year} ${selectedCar?.make} ${selectedCar?.model} - Presupuesto: $${targetMonthlyPayment}/mes, Pronto: $${downPayment}.`,
-          inventory_id: selectedCar?.vin || null,
-        })
-        .select()
-        .single();
-
-      if (leadError) throw leadError;
-
-      // 2. Crear el Deal estructurado asociado al Lead
       const apr = getSuggestedAPR(creditTier, term);
-      const { error: dealError } = await supabase
-        .from('deals')
-        .insert({
-          lead_id: lead.id,
-          inventory_id: selectedCar?.vin || null,
-          credit_tier: creditTier,
-          down_payment: downPayment,
-          term: term,
-          apr: apr,
-          ltv: Math.round(((selectedCar?.price - downPayment) / selectedCar?.price) * 100),
-          estimated_monthly_payment: targetMonthlyPayment,
-          status: 'structured',
-        });
+      const message = selectedCar
+        ? `Precualificación automática para ${selectedCar.year} ${selectedCar.make} ${selectedCar.model} - Presupuesto: $${targetMonthlyPayment}/mes, Pronto: $${downPayment}.`
+        : `Precualificación automática - Presupuesto: $${targetMonthlyPayment}/mes, Pronto: $${downPayment}.`;
 
-      if (dealError) throw dealError;
+      const res = await fetch('/api/deals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadName,
+          leadPhone,
+          leadEmail,
+          carVin: selectedCar?.vin || null,
+          downPayment,
+          targetMonthlyPayment,
+          creditTier,
+          term,
+          apr,
+          message,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to submit');
+      }
 
       setSubmitSuccess(true);
       setTimeout(() => {

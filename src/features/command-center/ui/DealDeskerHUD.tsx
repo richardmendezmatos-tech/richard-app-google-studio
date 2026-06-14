@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calculator,
@@ -25,8 +25,6 @@ import {
   ArrowRight,
   Percent
 } from 'lucide-react';
-import { supabase } from '@/shared/api/supabase/supabase';
-import { DealApi } from '@/entities/deal/api/dealApi';
 import { calculateFIDeal, getSuggestedAPR, getResidualPercentage } from '@/features/deal-desker/lib/fiCalculator';
 import { FIAdvisor, FIAdvisorAnalysis } from '@/features/deal-desker/api/fiAdvisor';
 import { CreditTier, BankRate, BankName } from '@/entities/deal/model/types';
@@ -65,28 +63,22 @@ export const DealDeskerHUD: React.FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
-  // Cargar Leads, Inventario y Tasas de Supabase
+  // Cargar Leads, Inventario y Tasas desde API Routes
   useEffect(() => {
     async function fetchData() {
       try {
-        const { data: dbLeads } = await supabase
-          .from('leads')
-          .select('id, first_name, last_name, phone, email')
-          .order('created_at', { ascending: false })
-          .limit(20);
-        
-        const { data: dbInventory } = await supabase
-          .from('inventory')
-          .select('vin, make, model, year, price, condition')
-          .eq('status', 'AVAILABLE')
-          .limit(20);
+        const headers = { 'x-antigravity-token': 'client-internal' };
+        const [leadsRes, inventoryRes, ratesRes] = await Promise.all([
+          fetch('/api/deals/leads', { headers }),
+          fetch('/api/inventory/available'),
+          fetch('/api/deals/bank-rates'),
+        ]);
 
-        const { data: dbRates } = await supabase
-          .from('bank_rates')
-          .select('*');
+        const dbLeads = await leadsRes.json();
+        const dbInventory = await inventoryRes.json();
+        const dbRates = await ratesRes.json();
 
-        if (dbLeads) {
-          // Mapear first_name/last_name a 'name' para compatibilidad retroactiva
+        if (Array.isArray(dbLeads)) {
           const mappedLeads = dbLeads.map(l => ({
             id: l.id,
             name: `${l.first_name || ''} ${l.last_name || ''}`.trim() || l.email,
@@ -95,10 +87,10 @@ export const DealDeskerHUD: React.FC = () => {
           }));
           setLeads(mappedLeads);
         }
-        if (dbInventory) setInventory(dbInventory);
-        if (dbRates) setBankRates(dbRates);
+        if (Array.isArray(dbInventory)) setInventory(dbInventory);
+        if (Array.isArray(dbRates)) setBankRates(dbRates);
       } catch (err) {
-        console.error('Error fetching Supabase data:', err);
+        console.error('Error fetching data:', err);
       }
     }
     fetchData();
@@ -194,24 +186,32 @@ export const DealDeskerHUD: React.FC = () => {
     setIsSaving(true);
     setSaveSuccess(false);
     try {
-      await DealApi.createDeal({
-        leadId: selectedLeadId,
-        inventoryId: selectedCarId || null,
-        creditTier,
-        downPayment,
-        tradeInValue,
-        tradeInPayoff,
-        term: term as any,
-        apr,
-        ltv: calculation.ltv,
-        estimatedMonthlyPayment: calculation.monthlyPayment,
-        frontEndProfit: calculation.frontEndProfit,
-        backEndProfit: calculation.backEndProfit,
-        bankSelected: selectedBank === 'popular' ? 'Banco Popular de PR' : selectedBank === 'firstbank' ? 'FirstBank PR' : 'Oriental Bank',
-        status: 'structured',
-        structureType,
-        residualValue: calculation.residualValue
+      const res = await fetch('/api/deals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-antigravity-token': 'client-internal' },
+        body: JSON.stringify({
+          leadId: selectedLeadId,
+          inventoryId: selectedCarId || null,
+          creditTier,
+          downPayment,
+          tradeInValue,
+          tradeInPayoff,
+          term,
+          apr,
+          ltv: calculation.ltv,
+          estimatedMonthlyPayment: calculation.monthlyPayment,
+          frontEndProfit: calculation.frontEndProfit,
+          backEndProfit: calculation.backEndProfit,
+          bankSelected: selectedBank === 'popular' ? 'Banco Popular de PR' : selectedBank === 'firstbank' ? 'FirstBank PR' : 'Oriental Bank',
+          status: 'structured',
+          structureType,
+          residualValue: calculation.residualValue
+        }),
       });
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to save deal');
+      }
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {

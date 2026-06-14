@@ -1,7 +1,8 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { createClient } from '@/shared/api/supabase/client';
 import { Car } from '@/entities/inventory';
-import { Zap, ArrowRight, Tag } from 'lucide-react';
+import { ArrowRight, Tag } from 'lucide-react';
 
 interface Props {
   tag: string;
@@ -13,17 +14,15 @@ export const BlogRelatedInventory: React.FC<Props> = ({ tag }) => {
 
   useEffect(() => {
     const fetchRelated = async () => {
-      const supabase = createClient();
-      if (!supabase) return;
-
-      const { data } = await supabase
-        .from('inventory')
-        .select('*')
-        .or(`make.ilike.%${tag}%,model.ilike.%${tag}%,condition.ilike.%${tag}%`)
-        .limit(3);
-
-      setCars(data || []);
-      setLoading(false);
+      try {
+        const res = await fetch(`/api/inventory/related?tag=${encodeURIComponent(tag)}`);
+        const data = await res.json();
+        setCars(Array.isArray(data) ? data : []);
+      } catch {
+        setCars([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchRelated();

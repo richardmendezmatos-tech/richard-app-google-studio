@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@/shared/api/supabase/client';
 import { CheckCircle2, XCircle, Bell, Zap, MessageSquare } from 'lucide-react';
 
 interface ApprovalRequest {
@@ -15,47 +14,39 @@ export const SentinelInbox: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
-    if (!supabase) return;
-
     const fetchRequests = async () => {
-      const { data } = await supabase
-        .from('agent_approvals')
-        .select('*')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
-
-      setRequests(data || []);
-      setLoading(false);
+      try {
+        const res = await fetch('/api/command-center/approvals', {
+          headers: { 'x-antigravity-token': 'client-internal' },
+        });
+        const data = await res.json();
+        setRequests(Array.isArray(data) ? data : []);
+      } catch {
+        setRequests([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchRequests();
 
-    // Real-time subscription
-    const subscription = supabase
-      .channel('agent_approvals_changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'agent_approvals' },
-        (payload: any) => {
-          setRequests((prev) => [payload.new as ApprovalRequest, ...prev]);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    const interval = setInterval(fetchRequests, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAction = async (id: string, status: 'approved' | 'rejected') => {
-    const supabase = createClient();
-    if (!supabase) return;
+    try {
+      const res = await fetch('/api/command-center/approvals', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-antigravity-token': 'client-internal' },
+        body: JSON.stringify({ id, status }),
+      });
 
-    const { error } = await supabase.from('agent_approvals').update({ status }).eq('id', id);
-
-    if (!error) {
-      setRequests((prev) => prev.filter((r) => r.id !== id));
+      if (res.ok) {
+        setRequests((prev) => prev.filter((r) => r.id !== id));
+      }
+    } catch {
+      // Silently fail
     }
   };
 

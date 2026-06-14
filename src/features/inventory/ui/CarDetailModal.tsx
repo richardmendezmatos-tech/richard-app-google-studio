@@ -14,7 +14,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateCarPitch } from '@/shared/api/ai/client';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
-import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';
 import { ARViewOverlay } from '@/features/inventory/ui/ARViewOverlay';
 import OverviewTab from './tabs/OverviewTab';
@@ -104,24 +103,21 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     const tiVal = tradeIn === '' ? 0 : tradeIn;
 
     // 1. Silent Lead Capture in Supabase (Sentinel N15 standard)
-    captureHotLead({
-      vehicleId: car.id,
-      vehicleName: car.name,
-      vehiclePrice: car.price,
-      monthlyPayment: calculatedPayment,
-      downPayment: dpVal,
-      tradeIn: tiVal,
-      term,
-      creditTier:
-        creditRate === 0.029
-          ? 'Excellent'
-          : creditRate === 0.059
-            ? 'Good'
-            : creditRate === 0.099
-              ? 'Fair'
-              : 'Poor',
-      source: `CarDetailModal_${activeTab}`,
-    });
+    fetch('/api/leads/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        vehicleId: car.vin,
+        vehicleName: `${car.year} ${car.make} ${car.model}`,
+        vehiclePrice: Number(car.price),
+        monthlyPayment,
+        downPayment,
+        tradeIn,
+        term,
+        creditTier,
+        source: 'whatsapp',
+      }),
+    }).catch(() => {});
 
     analytics.trackCarConfigure(car.id);
     auditRepo.log(
