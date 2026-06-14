@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
-import { connectToVoiceSession } from '@/shared/api/ai';
+import { connectToVoiceSession } from '@/shared/api/ai/client';
 import { VoiceCommandService } from '@/features/ai-hub/voice-command/api/VoiceCommandService';
 import { LiveServerMessage, GeminiBlob, ServerContent } from '@/shared/api/ai/geminiLiveTypes';
 import { decode, decodeAudioData, createBlob } from '@/shared/lib/utils/audioUtils';

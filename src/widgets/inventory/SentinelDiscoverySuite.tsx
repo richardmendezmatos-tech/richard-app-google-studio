@@ -28,7 +28,7 @@ import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
-import { generateNeuralMatch } from '@/shared/api/ai/aiService';
+import { generateNeuralMatch } from '@/shared/api/ai/client';
 
 interface SentinelDiscoverySuiteProps {
   inventory: Car[];

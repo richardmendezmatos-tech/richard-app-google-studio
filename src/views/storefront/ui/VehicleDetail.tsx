@@ -28,7 +28,7 @@ import {
   Key,
   Gift,
 } from 'lucide-react';
-import { sentinelAI } from '@/shared/api/ai';
+import { generateVehicleDeepAnalysis } from '@/shared/api/ai/client';
 import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
@@ -144,7 +144,7 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
     queryKey: ['deepAnalysis', car?.id],
     queryFn: async () => {
       if (!car) throw new Error('No vehicle found');
-      return await sentinelAI.generateVehicleDeepAnalysis(car);
+      return await generateVehicleDeepAnalysis(car);
     },
     enabled: !!car && isAnalysisOpen,
     staleTime: 1000 * 60 * 60 * 24,

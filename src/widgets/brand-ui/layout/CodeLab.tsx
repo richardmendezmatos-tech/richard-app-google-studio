@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { generateCode } from '@/shared/api/ai';
+import { generateCode } from '@/shared/api/ai/client';
 import hljs from 'highlight.js';
 import DOMPurify from 'dompurify';
 

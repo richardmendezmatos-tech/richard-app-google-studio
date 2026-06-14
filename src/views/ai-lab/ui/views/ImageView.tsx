@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { generateImage } from '@/shared/api/ai';
+import { generateImage } from '@/shared/api/ai/client';
 import { GeneratedImage } from '@/shared/types/types';
 import {
   ImageIcon,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Car } from '@/entities/inventory';
-import { analyzeCarImage } from '@/shared/api/ai/geminiService';
+import { analyzeCarImage } from '@/shared/api/ai/client';
 import { getCarImage } from '@/entities/inventory/lib/carImage';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';

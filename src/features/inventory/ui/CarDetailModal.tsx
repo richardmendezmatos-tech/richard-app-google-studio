@@ -12,7 +12,7 @@ import {
   Phone,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { generateCarPitch } from '@/shared/api/ai';
+import { generateCarPitch } from '@/shared/api/ai/client';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
 import { AuditRepository } from '@/shared/api/houston/AuditRepository';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { generateText } from '@/shared/api/ai';
+import { generateText } from '@/shared/api/ai/client';
 import { Terminal, Copy, Check, Zap, AlertCircle, Wrench } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
 

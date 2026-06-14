@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { generateVideo } from '@/shared/api/ai';
+import { generateVideo } from '@/shared/api/ai/client';
 import { Clapperboard, UploadCloud, Film, AlertTriangle, KeyRound, Download } from 'lucide-react';
 
 // Helper to convert file to base64

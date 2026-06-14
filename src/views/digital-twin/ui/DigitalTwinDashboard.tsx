@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Bot, Send, Save, RotateCcw, Trash2, Mic, MicOff, Camera, UserCircle2 } from 'lucide-react';
-import { getAIResponse } from '@/shared/api/ai';
+import { getAIResponse } from '@/shared/api/ai/client';
 import { AI_LEGAL_DISCLAIMER } from '@/shared/api/media/mediaShared';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { sendWhatsAppMessage } from '@/features/leads';

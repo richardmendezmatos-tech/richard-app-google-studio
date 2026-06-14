@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Car } from '@/shared/types/types';
 import { getCarImage } from '@/entities/inventory/lib/carImage';
-import { compareCars } from '@/shared/api/ai';
+import { compareCars } from '@/shared/api/ai/client';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Zap, ShieldCheck, Cpu, Gauge, Star, Sparkles } from 'lucide-react';

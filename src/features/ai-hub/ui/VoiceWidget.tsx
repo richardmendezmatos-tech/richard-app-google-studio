@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { voiceService } from '@/features/ai-hub/voice-command/api/voiceService';
-import { getAIResponse } from '@/shared/api/ai';
+import { getAIResponse } from '@/shared/api/ai/client';
 import { validationAgentService } from '@/features/ai-hub';
 
 // Icons

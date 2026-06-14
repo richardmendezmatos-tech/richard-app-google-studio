@@ -5,7 +5,7 @@
  * specific application actions and state changes.
  */
 
-import { parseVoiceIntent } from '@/shared/api/ai';
+import { parseVoiceIntent } from '@/shared/api/ai/client';
 
 export type VoiceAction =
   | { type: 'NAVIGATE'; payload: { path: string; tab?: string } }

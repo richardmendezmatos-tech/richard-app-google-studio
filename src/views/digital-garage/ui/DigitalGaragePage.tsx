@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Car } from '@/entities/inventory';
 // Feature FSD imports
 import { useSavedCarIds, useToggleSavedCar } from '@/features/garage/hooks/useGarage';
-import { analyzeGarageSelection } from '@/shared/api/ai';
+import { analyzeGarageSelection } from '@/shared/api/ai/client';
 import { BiometricService } from '@/shared/api/security/biometricService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';

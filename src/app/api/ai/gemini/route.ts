@@ -6,7 +6,7 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   try {
-    const { contents, model = 'gemini-2.0-flash' } = await req.json();
+    const { contents, system, model = 'gemini-2.0-flash' } = await req.json();
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
 
     const { text } = await generateText({
       model: google(model),
+      system,
       messages: [{ role: 'user', content: parts }],
     });
 
