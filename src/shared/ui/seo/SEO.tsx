@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import telemetry from '@/shared/api/metrics/analytics';

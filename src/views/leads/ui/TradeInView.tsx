@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { ArrowLeft } from 'lucide-react';

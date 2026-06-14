@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import FinanciamientoPage from '@/pages/financiamiento/ui/FinanciamientoPage';
 

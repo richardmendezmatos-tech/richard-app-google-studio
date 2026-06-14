@@ -1,6 +1,3 @@
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
-
 /**
  * Genera un archivo PDF a partir de una referencia HTML (DOM Element).
  * Diseñado para crear los "Bill of Sale" inmutables a partir de renderizados del Command Center.
@@ -16,10 +13,17 @@ export const generatePDFFromDOM = async (
   }
 
   try {
+    const [html2canvasModule, { jsPDF }] = await Promise.all([
+      import('html2canvas'),
+      import('jspdf'),
+    ]);
+
+    const html2canvas = html2canvasModule.default || html2canvasModule;
+
     // 1. Convertir el DOM a Canvas
     const canvas = await html2canvas(element, {
-      scale: 2, // Mejora la resolución del texto
-      useCORS: true, // Para imágenes externas
+      scale: 2,
+      useCORS: true,
       logging: false,
     });
 
@@ -33,7 +37,6 @@ export const generatePDFFromDOM = async (
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    // Proporción original: height = (imgHeight * pdfWidth) / imgWidth
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     // 3. Insertar la imagen en el PDF

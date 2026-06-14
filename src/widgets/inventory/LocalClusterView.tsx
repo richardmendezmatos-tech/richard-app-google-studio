@@ -7,9 +7,10 @@ import { Car } from '@/entities/inventory';
 import SEO from '@/shared/ui/seo/SEO';
 import HeroSection from '@/features/inventory/ui/storefront/HeroSection';
 import PremiumGlassCard from '@/widgets/inventory/PremiumGlassCard';
-import CarDetailModal from '@/features/inventory/ui/CarDetailModal';
 import { useInventoryAnalytics } from '@/features/inventory/hooks/useInventoryAnalytics';
 import { DatabaseZap, MapPin, Sparkles } from 'lucide-react';
+
+const CarDetailModal = React.lazy(() => import('@/features/inventory/ui/CarDetailModal'));
 
 interface LocalClusterViewProps {
   inventory: Car[];
@@ -141,7 +142,11 @@ const LocalClusterView: React.FC<LocalClusterViewProps> = ({ inventory }) => {
         </section>
       </main>
 
-      {selectedCar && <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />}
+      {selectedCar && (
+        <React.Suspense fallback={null}>
+          <CarDetailModal car={selectedCar} onClose={() => setSelectedCar(null)} />
+        </React.Suspense>
+      )}
     </div>
   );
 };

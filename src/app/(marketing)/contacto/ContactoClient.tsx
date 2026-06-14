@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import ContactoPage from '@/views/contacto/ui/ContactoPage';
 

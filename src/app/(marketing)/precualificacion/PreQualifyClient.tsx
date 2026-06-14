@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { MiniDeskerClient } from '@/features/deal-desker/ui/MiniDeskerClient';
 import { Sparkles, ShieldCheck } from 'lucide-react';

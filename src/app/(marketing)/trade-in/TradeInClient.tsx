@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import TradeInView from '@/views/leads/ui/TradeInView';
 

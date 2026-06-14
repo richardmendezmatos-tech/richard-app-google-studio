@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
@@ -34,8 +35,9 @@ import {
   SentinelIntelligenceWidget,
   IntelligenceSignal,
 } from '@/features/command-center/ui/SentinelIntelligenceWidget';
-import { RichardAIAdvisor } from '@/features/command-center/ui/RichardAIAdvisor';
 import { subscribeDashboard } from '@/shared/api/realtime/dashboardChannel';
+
+const RichardAIAdvisor = dynamic(() => import('@/features/command-center/ui/RichardAIAdvisor').then(m => m.RichardAIAdvisor), { ssr: false });
 
 interface HotLead {
   id: string;
@@ -205,7 +207,9 @@ export default function CommandCenterPage() {
 
         {/* Richard AI Advisor - Personal Strategy Channel */}
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-          <RichardAIAdvisor businessContext={data} />
+          <Suspense fallback={<div className="h-64 rounded-2xl bg-white/5 animate-pulse" />}>
+            <RichardAIAdvisor businessContext={data} />
+          </Suspense>
         </div>
 
         {/* Phase 3: Holo-Dashboard Intelligence */}

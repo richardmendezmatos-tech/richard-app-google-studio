@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { Calculator, DollarSign, Calendar, TrendingUp, ArrowRight, Info } from 'lucide-react';
 

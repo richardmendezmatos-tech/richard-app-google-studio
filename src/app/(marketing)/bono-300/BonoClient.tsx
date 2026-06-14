@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { ExpressPrequalifyPage } from '@/views/leads/ui/ExpressPrequalifyPage';
 

@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import TermsView from '@/widgets/brand-ui/layout/TermsView';
 
