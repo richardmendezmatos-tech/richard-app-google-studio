@@ -100,6 +100,7 @@ export class SupabaseLeadRepository implements LeadRepository {
       'customerMemory',
       'ai_analysis',
       'aiAnalysis',
+      'ai_score',
       'created_at',
       'createdAt',
     ];
@@ -120,6 +121,7 @@ export class SupabaseLeadRepository implements LeadRepository {
 
     const customer_memory = lead.customer_memory || lead.customerMemory || null;
     const ai_analysis = lead.ai_analysis || lead.aiAnalysis || null;
+    const ai_score = ai_analysis?.score || null;
 
     const dbPayload: any = {
       first_name: firstName,
@@ -136,6 +138,7 @@ export class SupabaseLeadRepository implements LeadRepository {
       behavioral_metrics,
       customer_memory,
       ai_analysis,
+      ai_score,
       created_at: lead.created_at || lead.createdAt || new Date().toISOString(),
     };
 
@@ -176,8 +179,10 @@ export class SupabaseLeadRepository implements LeadRepository {
       dbUpdates.vehicle_of_interest = data.vehicleOfInterest || data.vehicle_of_interest;
     if ('customerMemory' in data || 'customer_memory' in data)
       dbUpdates.customer_memory = data.customerMemory || data.customer_memory;
-    if ('aiAnalysis' in data || 'ai_analysis' in data)
+    if ('aiAnalysis' in data || 'ai_analysis' in data) {
       dbUpdates.ai_analysis = data.aiAnalysis || data.ai_analysis;
+      dbUpdates.ai_score = (data.aiAnalysis || data.ai_analysis)?.score || null;
+    }
     if ('behavioralMetrics' in data || 'behavioral_metrics' in data)
       dbUpdates.behavioral_metrics = data.behavioralMetrics || data.behavioral_metrics;
 
@@ -208,8 +213,14 @@ export class SupabaseLeadRepository implements LeadRepository {
   }
 
   async getAverageAIScore(dealerId: string): Promise<number> {
-    // This requires a more complex query if the score is inside a JSONB field.
-    // Assuming score is a top-level column for now, or just return mock.
-    return 85;
+    const { data, error } = await this.client
+      .from('leads')
+      .select('ai_score')
+      .eq('location', dealerId)
+      .not('ai_score', 'is', null);
+
+    if (error || !data || data.length === 0) return 0;
+    const sum = data.reduce((acc, row) => acc + (row.ai_score || 0), 0);
+    return Math.round(sum / data.length);
   }
 }

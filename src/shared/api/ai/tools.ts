@@ -145,8 +145,10 @@ export const aiTools = {
         phone: leadData.phone,
         email: leadData.email,
         vehicle_of_interest: leadData.vehicleOfInterest,
-        notes: leadData.notes,
-        source: 'AI Tool Capture',
+        behavioral_metrics: {
+          notes: leadData.notes || '',
+          source: 'AI Tool Capture',
+        },
         status: 'new',
       });
 

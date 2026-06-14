@@ -28,13 +28,20 @@ export async function submitAppointment(data: AppointmentInput) {
   if (existing) {
     leadId = existing.id;
   } else {
+    const nameParts = data.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
     const { data: lead, error: leadError } = await supabase
       .from('leads')
       .insert({
-        name: data.name,
+        first_name: firstName,
+        last_name: lastName,
         email: data.email,
         phone: data.phone,
-        source: data.type === 'test-drive' ? 'web_test_drive' : 'web_service',
+        behavioral_metrics: {
+          source: data.type === 'test-drive' ? 'web_test_drive' : 'web_service',
+        },
         status: 'new',
       })
       .select('id')
