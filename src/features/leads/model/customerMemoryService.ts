@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/api/supabase/supabase';
-import { generateEmbedding } from '@/shared/api/ai';
+import { generateEmbedding } from '@/shared/api/ai/server';
 import { vectorStoreService } from '@/features/ai-hub';
 import { intentAnalysisService, IntentMatrix } from './scoring/IntentAnalysisService';
 

@@ -1,4 +1,4 @@
-import { analyzeTradeInImages } from '@/shared/api/ai';
+import { analyzeTradeInImages } from '@/shared/api/ai/server';
 
 export interface AppraisalResult {
   condition: string;

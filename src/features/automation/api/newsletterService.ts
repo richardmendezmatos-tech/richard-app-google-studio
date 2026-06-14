@@ -1,4 +1,4 @@
-import { generateBlogPost } from '@/shared/api/ai';
+import { generateBlogPost } from '@/shared/api/ai/server';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
 
 export const sendAutoNewsletter = async (email: string) => {

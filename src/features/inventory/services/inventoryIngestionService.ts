@@ -1,4 +1,4 @@
-import { analyzeImageWithPrompt } from '@/shared/api/ai';
+import { analyzeImageWithPrompt } from '@/shared/api/ai/server';
 import { Car } from '@/entities/inventory';
 import { raSentinel } from '@/shared/lib/monitoring/raSentinelService';
 

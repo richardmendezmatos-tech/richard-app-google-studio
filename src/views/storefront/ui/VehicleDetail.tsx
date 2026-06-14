@@ -33,17 +33,16 @@ import { useDealer } from '@/entities/dealer';
 import { logIntentSignal } from '@/shared/api/tracking/moatTrackingService';
 import { useInventoryAnalytics } from '@/features/inventory';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
+import dynamic from 'next/dynamic';
 
-const ApprovalSimulatorWidget = React.lazy(() =>
-  import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => ({
-    default: m.ApprovalSimulatorWidget,
-  })),
+const ApprovalSimulatorWidget = dynamic(() =>
+  import('@/features/loans/ui/ApprovalSimulatorWidget').then((m) => m.ApprovalSimulatorWidget), { ssr: false }
 );
-const Viewer360 = React.lazy(() =>
-  import('@/features/inventory').then((m) => ({ default: m.Viewer360 })),
+const Viewer360 = dynamic(() =>
+  import('@/features/inventory').then((m) => m.Viewer360), { ssr: false }
 );
-const PreQualifyView = React.lazy(() =>
-  import('@/views/leads/ui/PreQualifyView').then((m) => ({ default: m.default })),
+const PreQualifyView = dynamic(() =>
+  import('@/views/leads/ui/PreQualifyView'), { ssr: false }
 );
 import { getCarImage } from '@/entities/inventory/lib/carImage';
 import SEO from '@/shared/ui/seo/SEO';
