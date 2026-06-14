@@ -30,6 +30,12 @@ const nextConfig = {
   },
   transpilePackages: [],
   allowedDevOrigins: ['127.0.0.1'],
+  serverExternalPackages: [
+    '@sparticuz/chromium',
+    'puppeteer-core',
+    'playwright-core',
+    'playwright',
+  ],
   experimental: {
     optimizePackageImports: [
       'lucide-react',
@@ -40,12 +46,6 @@ const nextConfig = {
       'date-fns',
       'recharts',
       '@headlessui/react',
-    ],
-    serverExternalPackages: [
-      '@sparticuz/chromium',
-      'puppeteer-core',
-      'playwright-core',
-      'playwright',
     ],
   },
 
