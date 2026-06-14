@@ -110,12 +110,19 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
         vehicleId: car.vin,
         vehicleName: `${car.year} ${car.make} ${car.model}`,
         vehiclePrice: Number(car.price),
-        monthlyPayment,
-        downPayment,
-        tradeIn,
+        monthlyPayment: calculatedPayment,
+        downPayment: dpVal,
+        tradeIn: tiVal,
         term,
-        creditTier,
-        source: 'whatsapp',
+        creditTier:
+          creditRate === 0.029
+            ? 'Excellent'
+            : creditRate === 0.059
+              ? 'Good'
+              : creditRate === 0.099
+                ? 'Fair'
+                : 'Poor',
+        source: `CarDetailModal_${activeTab}`,
       }),
     }).catch(() => {});
 
@@ -137,12 +144,16 @@ const CarDetailModal: React.FC<Props> = ({ car, onClose }) => {
     if (leadCapturedRef.current) return;
     leadCapturedRef.current = true;
     // 1. Silent Lead Capture
-    captureHotLead({
-      vehicleId: car.id,
-      vehicleName: car.name,
-      vehiclePrice: car.price,
-      source: `CarDetailModal_Call`,
-    });
+    fetch('/api/leads/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        vehicleId: car.vin || car.id,
+        vehicleName: car.name,
+        vehiclePrice: Number(car.price),
+        source: 'CarDetailModal_Call',
+      }),
+    }).catch(() => {});
 
     auditRepo.log(
       'conversion',
