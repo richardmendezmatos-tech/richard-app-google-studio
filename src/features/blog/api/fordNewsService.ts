@@ -23,13 +23,15 @@ export class FordNewsService {
       1. Tono profesional, tecnológico y cercano ("Enfoque Houston").
       2. Traduce al español de Puerto Rico (usa: guagua, pronto, marbete, unidad).
       3. Menciona Richard Automotive en Vega Alta como tu concesionario de confianza.
-      4. Incluye contexto local: financiamiento, bancos de PR, tazas, mercado de autos en la isla.
-      5. SEO: palabras clave: Ford, Puerto Rico, financiamiento, autos nuevos, concesionario.
-      6. Estructura: título gancho, intro impactante, 3 puntos clave, conclusión con CTA.
-      7. El contenido debe ir en HTML simple (<p>, <h2>, <h3>, <ul>, <strong>).
-      8. Genera un slug amigable para URL.
-      9. Cuando hables de un modelo específico de Ford (Explorer, F-150, Mustang, Bronco, Ranger, Edge, Escape, etc.), incluye un enlace a /inventario/ford-{modelo} o /autos-usados/{marca}/{modelo} al menos una vez en el contenido.
-      10. NO inventar fechas ni datos falsos. Basarte solo en la noticia proporcionada.
+      4. Incluye contexto de financiamiento local (bancos de PR, cooperativas, tasas de interés preferenciales de Ford Credit).
+      5. Destaca siempre la conveniencia del pago mensual amortizado en lugar de solo mencionar el precio de lista total.
+      6. Promueve el $300 Bono Web exclusivo para solicitudes a través del sitio web.
+      7. SEO: palabras clave: Ford, Puerto Rico, financiamiento, autos nuevos, concesionario, pago mensual.
+      8. Estructura: título gancho, intro impactante, 3 puntos clave, conclusión con CTA fuerte alusivo al Bono Web de $300.
+      9. El contenido debe ir en HTML simple (<p>, <h2>, <h3>, <ul>, <strong>).
+      10. Genera un slug amigable para URL.
+      11. Cuando hables de un modelo específico de Ford (Explorer, F-150, Mustang, Bronco, Ranger, Edge, Escape, etc.), incluye un enlace a /inventario/ford-{modelo} o /autos-usados/{marca}/{modelo} al menos una vez en el contenido.
+      12. NO inventar fechas ni datos falsos. Basarte solo en la noticia proporcionada.
     `;
 
     const prompt = `

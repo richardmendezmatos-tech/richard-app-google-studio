@@ -7,6 +7,8 @@ interface FordNewsAlert {
   excerpt: string;
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export class FordNewsBroadcaster {
   async broadcast(news: FordNewsAlert): Promise<{ notified: number }> {
     try {
@@ -27,6 +29,12 @@ export class FordNewsBroadcaster {
       const articleUrl = `https://www.richard-automotive.com/blog/${news.slug}`;
 
       for (const lead of leads) {
+        // Add a randomized delay (2000ms to 5000ms) between sending messages to prevent WhatsApp bans
+        if (notified > 0) {
+          const sleepTime = Math.random() * 3000 + 2000;
+          await delay(sleepTime);
+        }
+
         const clientName = lead.first_name?.split(' ')[0] || 'amigo';
         const message = `🚗 ¡Hola ${clientName}! Richard Automotive te trae una noticia que te puede interesar:\n\n📰 *${news.title}*\n${news.excerpt}\n\nLee el artículo completo aquí:\n${articleUrl}\n\n¿Te gustaría saber más? Estamos en Vega Alta. ¡Te esperamos! 🏁`;
 
@@ -46,3 +54,4 @@ export class FordNewsBroadcaster {
     }
   }
 }
+

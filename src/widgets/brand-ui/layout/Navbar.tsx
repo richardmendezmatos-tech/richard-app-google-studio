@@ -67,6 +67,12 @@ const Navbar: React.FC = () => {
               Contacto
             </Link>
             <Link
+              to="/blog"
+              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
+            >
+              Blog
+            </Link>
+            <Link
               to="/laboratorio"
               className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
             >
@@ -158,6 +164,12 @@ const Navbar: React.FC = () => {
             className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
           >
             Contacto
+          </Link>
+          <Link
+            to="/blog"
+            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
+          >
+            Blog
           </Link>
           <Link
             to="/laboratorio"

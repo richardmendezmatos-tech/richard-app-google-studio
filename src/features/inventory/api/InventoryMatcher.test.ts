@@ -17,6 +17,10 @@ class MockLeadRepository implements LeadRepository {
     return this.leads.find((l) => l.id === id) || null;
   }
 
+  async findByPhone(phone: string): Promise<Lead | null> {
+    return this.leads.find((l) => l.phone === phone) || null;
+  }
+
   async getHotLeads(limit: number): Promise<Lead[]> {
     return this.leads.filter((l) => l.category === 'HOT').slice(0, limit);
   }
