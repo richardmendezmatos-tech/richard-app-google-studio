@@ -9,8 +9,6 @@ import { NeuralSourcingService } from '@/features/houston/api/NeuralSourcingServ
 
 export const runtime = 'nodejs';
 
-export const maxDuration = 300;
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const isManual = searchParams.get('manual') === 'true';

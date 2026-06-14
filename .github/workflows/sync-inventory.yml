@@ -4,17 +4,20 @@ on:
   schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
-    inputs:
-      manual:
-        description: 'Manual sync with WhatsApp broadcast'
-        required: false
-        default: 'true'
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Inventory Sync Cron
-        run: |
-          curl -X GET "https://richard-automotive.com/api/cron/sync-inventory?manual=${{ github.event.inputs.manual || 'true' }}" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx tsx --tsconfig tsconfig.json scripts/sync-inventory.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

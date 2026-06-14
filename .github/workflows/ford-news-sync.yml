@@ -9,7 +9,15 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Ford News Cron
-        run: |
-          curl -X GET "https://richard-automotive.com/api/cron/ford-news" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx tsx --tsconfig tsconfig.json scripts/ford-news.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

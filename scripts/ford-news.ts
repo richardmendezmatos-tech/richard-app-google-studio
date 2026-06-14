@@ -1,15 +1,19 @@
-import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'crypto';
 import { FordNewsExtractor } from '@/shared/api/scrapers/FordNewsExtractor';
 import { FordNewsService } from '@/features/blog/api/fordNewsService';
 import { FordNewsBroadcaster } from '@/features/blog/api/FordNewsBroadcaster';
 import { supabase } from '@/shared/api/supabase/supabase';
-import { createHash } from 'crypto';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { generateStructuredJSON } from '@/shared/api/ai/geminiService';
 import { blogService } from '@/entities/blog/api/blogService';
 
-export const runtime = 'nodejs';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('[scripts/ford-news] Missing Supabase credentials');
+  process.exit(1);
+}
 
 const FORD_FEEDS = [
   'https://news.google.com/rss/search?q=Ford+Puerto+Rico+2025&hl=es-419&gl=PR&ceid=PR:es-419',
@@ -21,8 +25,8 @@ function urlHash(url: string): string {
 }
 
 function extractTopic(query: string): string {
-  const stopWords = ['como', 'que', 'cuanto', 'donde', 'cual', 'cuando', 'el', 'la', 'los', 'las', 'un', 'una', 'en', 'de', 'para', 'por', 'con', 'del'];
-  const words = query.toLowerCase().split(' ').filter(w => w.length > 2 && !stopWords.includes(w));
+  const stopWords = new Set(['como', 'que', 'cuanto', 'donde', 'cual', 'cuando', 'el', 'la', 'los', 'las', 'un', 'una', 'en', 'de', 'para', 'por', 'con', 'del']);
+  const words = query.toLowerCase().split(' ').filter(w => w.length > 2 && !stopWords.has(w));
   return words.slice(0, 3).join(' ');
 }
 
@@ -34,9 +38,9 @@ function slugify(text: string): string {
     .slice(0, 80);
 }
 
-async function getTopicGroups(supabase: any): Promise<Map<string, { query: string; count: number }[]>> {
+async function getTopicGroups(sb: any): Promise<Map<string, { query: string; count: number }[]>> {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: gaps, error } = await supabase
+  const { data: gaps, error } = await sb
     .from('search_gaps')
     .select('query, detected_intent, created_at')
     .gte('created_at', sevenDaysAgo)
@@ -55,15 +59,7 @@ async function getTopicGroups(supabase: any): Promise<Map<string, { query: strin
   return groups;
 }
 
-export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (
-    process.env.NODE_ENV === 'production' &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+async function runFordNews() {
   const fordResults = {
     fetched: 0,
     fordRelated: 0,
@@ -73,12 +69,15 @@ export async function GET(request: Request) {
     errors: [] as string[],
   };
 
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
   const extractor = new FordNewsExtractor();
   const newsService = new FordNewsService();
   const broadcaster = new FordNewsBroadcaster();
 
   try {
-    // — Ford News —
     for (const feedUrl of FORD_FEEDS) {
       const articles = await extractor.fetchLatest({ feedUrl, maxArticles: 15 });
       fordResults.fetched += articles.length;
@@ -88,7 +87,7 @@ export async function GET(request: Request) {
         fordResults.fordRelated++;
 
         const hash = urlHash(article.url);
-        const { data: existing } = await supabase
+        const { data: existing } = await sb
           .from('ford_news_cache')
           .select('id')
           .eq('url_hash', hash)
@@ -96,7 +95,7 @@ export async function GET(request: Request) {
         if (existing) continue;
         fordResults.newArticles++;
 
-        await supabase.from('ford_news_cache').insert({
+        await sb.from('ford_news_cache').insert({
           url_hash: hash, title: article.title, url: article.url,
           source: article.source, fetched_at: new Date().toISOString(), status: 'new',
         });
@@ -104,7 +103,7 @@ export async function GET(request: Request) {
         const blogPost = await newsService.generateBlogPost(article);
         if (!blogPost) { fordResults.errors.push(`AI generation failed for: ${article.title}`); continue; }
 
-        const { error: insertError } = await supabase.from('blog_posts').insert({
+        const { error: insertError } = await sb.from('blog_posts').insert({
           title: blogPost.title, slug: blogPost.slug, excerpt: blogPost.excerpt,
           content: blogPost.content, author: blogPost.author, tags: blogPost.tags,
           meta_description: blogPost.metaDescription,
@@ -116,23 +115,15 @@ export async function GET(request: Request) {
         if (insertError) { fordResults.errors.push(`Insert failed for ${article.title}: ${insertError.message}`); continue; }
         fordResults.published++;
 
-        await supabase.from('ford_news_cache').update({ status: 'published' }).eq('url_hash', hash);
+        await sb.from('ford_news_cache').update({ status: 'published' }).eq('url_hash', hash);
 
         const { notified } = await broadcaster.broadcast({ title: blogPost.title, slug: blogPost.slug || '', excerpt: blogPost.excerpt });
         fordResults.notified += notified;
       }
     }
 
-    // — Blog from Gaps (merged from blog-from-gaps cron) —
     let gapResult: Record<string, any> = { status: 'skipped' };
     try {
-      const cookieStore = await cookies();
-      const sb = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        { cookies: { getAll() { return cookieStore.getAll(); }, setAll() {} } },
-      );
-
       const [groups, existingPosts] = await Promise.all([
         getTopicGroups(sb),
         blogService.getBlogPosts(100),
@@ -173,21 +164,15 @@ export async function GET(request: Request) {
         }
       }
     } catch (gapError: any) {
-      console.error('[Cron:FordNews] Blog from gaps error:', gapError);
+      console.error('[scripts/ford-news] Blog from gaps error:', gapError);
       gapResult = { status: 'error', error: gapError.message };
     }
 
-    return NextResponse.json({
-      status: 'success',
-      fordNews: fordResults,
-      blogFromGaps: gapResult,
-      timestamp: new Date().toISOString(),
-    });
+    console.log('[scripts/ford-news] Done:', JSON.stringify({ fordNews: fordResults, blogFromGaps: gapResult, timestamp: new Date().toISOString() }));
   } catch (error: any) {
-    console.error('[Cron: FordNews] Error:', error);
-    return NextResponse.json(
-      { status: 'error', error: error.message, fordNews: fordResults },
-      { status: 500 },
-    );
+    console.error('[scripts/ford-news] Error:', error);
+    process.exit(1);
   }
 }
+
+runFordNews();
