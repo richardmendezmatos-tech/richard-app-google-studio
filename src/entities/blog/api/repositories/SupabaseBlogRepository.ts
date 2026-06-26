@@ -11,6 +11,8 @@ export class SupabaseBlogRepository {
   }
 
   async getBlogPosts(maxResults = 50): Promise<BlogPost[]> {
+    if (!this.client) return [];
+
     const { data, error } = await this.client
       .from(this.tableName)
       .select('*')
@@ -32,6 +34,8 @@ export class SupabaseBlogRepository {
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<BlogPost> {
+    if (!this.client) throw new Error('[SupabaseBlogRepository] No database client available');
+
     const { data, error } = await this.client
       .from(this.tableName)
       .insert([
@@ -61,6 +65,8 @@ export class SupabaseBlogRepository {
   }
 
   async deleteBlogPost(id: string): Promise<void> {
+    if (!this.client) throw new Error('[SupabaseBlogRepository] No database client available');
+
     const { error } = await this.client.from(this.tableName).delete().eq('id', id);
 
     if (error) {
