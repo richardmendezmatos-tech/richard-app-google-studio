@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type MockInstance } from 'vitest';
 import { ReindexInventory } from '../ReindexInventory';
 import type { InventoryRepository } from '@/features/inventory/api';
 import type { Car } from '@/entities/inventory/model/CarEntity';
@@ -23,23 +23,27 @@ function makeMockRepo(cars: Car[]): Pick<InventoryRepository, 'getAll'> {
 }
 
 describe('ReindexInventory', () => {
-  let callbackMock: ReturnType<typeof vi.fn>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let callbackRaw: MockInstance<any>;
 
   beforeEach(() => {
-    callbackMock = vi.fn().mockResolvedValue(undefined);
+    callbackRaw = vi.fn().mockResolvedValue(undefined);
   });
+
+  const asCallback = (mock: MockInstance<any>) =>
+    mock as unknown as (id: string, data: unknown) => Promise<void>;
 
   it('calls the embedding callback for each car and returns success with count', async () => {
     const cars = [makeCar('car-1'), makeCar('car-2'), makeCar('car-3')];
     const repo = makeMockRepo(cars);
     const useCase = new ReindexInventory(repo as InventoryRepository);
 
-    const result = await useCase.execute(callbackMock);
+    const result = await useCase.execute(asCallback(callbackRaw));
 
     expect(result.tag).toBe('success');
     if (result.tag === 'success') expect(result.value).toBe(3);
-    expect(callbackMock).toHaveBeenCalledTimes(3);
-    expect(callbackMock).toHaveBeenCalledWith('car-1', cars[0]);
+    expect(callbackRaw).toHaveBeenCalledTimes(3);
+    expect(callbackRaw).toHaveBeenCalledWith('car-1', cars[0]);
   });
 
   it('skips cars without an id', async () => {
@@ -47,11 +51,11 @@ describe('ReindexInventory', () => {
     const repo = makeMockRepo(cars);
     const useCase = new ReindexInventory(repo as InventoryRepository);
 
-    const result = await useCase.execute(callbackMock);
+    const result = await useCase.execute(asCallback(callbackRaw));
 
     expect(result.tag).toBe('success');
     if (result.tag === 'success') expect(result.value).toBe(1);
-    expect(callbackMock).toHaveBeenCalledTimes(1);
+    expect(callbackRaw).toHaveBeenCalledTimes(1);
   });
 
   it('returns failure when the repository throws', async () => {
@@ -60,22 +64,22 @@ describe('ReindexInventory', () => {
     } as unknown as InventoryRepository;
     const useCase = new ReindexInventory(repo);
 
-    const result = await useCase.execute(callbackMock);
+    const result = await useCase.execute(asCallback(callbackRaw));
 
     expect(result.tag).toBe('failure');
     if (result.tag === 'failure') expect(result.error.message).toContain('DB connection lost');
-    expect(callbackMock).not.toHaveBeenCalled();
+    expect(callbackRaw).not.toHaveBeenCalled();
   });
 
   it('returns failure when a callback throws mid-batch', async () => {
     const cars = [makeCar('car-1'), makeCar('car-2')];
     const repo = makeMockRepo(cars);
-    callbackMock
+    callbackRaw
       .mockResolvedValueOnce(undefined)
       .mockRejectedValueOnce(new Error('Embedding API timeout'));
     const useCase = new ReindexInventory(repo as InventoryRepository);
 
-    const result = await useCase.execute(callbackMock);
+    const result = await useCase.execute(asCallback(callbackRaw));
 
     expect(result.tag).toBe('failure');
     if (result.tag === 'failure') expect(result.error.message).toContain('Embedding API timeout');
@@ -85,10 +89,10 @@ describe('ReindexInventory', () => {
     const repo = makeMockRepo([]);
     const useCase = new ReindexInventory(repo as InventoryRepository);
 
-    const result = await useCase.execute(callbackMock);
+    const result = await useCase.execute(asCallback(callbackRaw));
 
     expect(result.tag).toBe('success');
     if (result.tag === 'success') expect(result.value).toBe(0);
-    expect(callbackMock).not.toHaveBeenCalled();
+    expect(callbackRaw).not.toHaveBeenCalled();
   });
 });
