@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/shared/api/supabase/client';
+import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 
 export interface AppointmentInput {
   name: string;
@@ -14,7 +13,8 @@ export interface AppointmentInput {
 }
 
 export async function submitAppointment(data: AppointmentInput) {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
+  if (!supabase) throw new Error('No database client available');
 
   // 1. Create or find lead
   const { data: existing } = await supabase
@@ -64,16 +64,6 @@ export async function submitAppointment(data: AppointmentInput) {
   });
 
   if (appointmentError) throw new Error(appointmentError.message);
-
-  // 3. Log message if provided
-  if (data.message || data.vehicleInfo) {
-    await supabase.from('conversations').insert({
-      lead_id: leadId,
-      message: data.message || data.vehicleInfo || '',
-      direction: 'inbound',
-      source: data.type === 'test-drive' ? 'test_drive_form' : 'service_form',
-    }).maybeSingle();
-  }
 
   return { leadId };
 }
