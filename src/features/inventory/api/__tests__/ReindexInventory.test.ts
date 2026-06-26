@@ -23,7 +23,6 @@ function makeMockRepo(cars: Car[]): Pick<InventoryRepository, 'getAll'> {
 }
 
 describe('ReindexInventory', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let callbackRaw: MockInstance<any>;
 
   beforeEach(() => {
