@@ -24,14 +24,14 @@ export async function GET() {
     if (leadError) throw leadError;
 
     // 3. Calculate Metrics
-    const totalInventoryValue = inventory.reduce((sum, item) => sum + (item.price || 0), 0);
+    const totalInventoryValue = inventory.reduce((sum: number, item: { price?: number }) => sum + (item.price || 0), 0);
     const avgInventoryPrice = inventory.length > 0 ? totalInventoryValue / inventory.length : 0;
 
     // Assume 12% profit margin for yield estimation if cost is not tracked
     const estimatedYield = avgInventoryPrice * 0.12;
 
     // Calculate Bankability (Credit Score > 640 as simple proxy)
-    const bankableLeads = leads.filter((l) => (l.credit_score || 0) >= 640).length;
+    const bankableLeads = leads.filter((l: { credit_score?: number }) => (l.credit_score || 0) >= 640).length;
     const bankabilityRate = leads.length > 0 ? (bankableLeads / leads.length) * 100 : 0;
 
     return NextResponse.json({

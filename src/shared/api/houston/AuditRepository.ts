@@ -135,7 +135,7 @@ export class AuditRepository {
       return [];
     }
 
-    return data.map((log) => ({
+    return data.map((log: Record<string, any>) => ({
       id: log.id,
       type: log.level as AuditEvent['type'],
       message: log.message,
