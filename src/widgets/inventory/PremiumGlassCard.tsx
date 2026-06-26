@@ -3,19 +3,19 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car } from '@/entities/inventory';
-import { ShieldCheck, Heart, GitCompare, ChevronRight, Sparkles, Activity } from 'lucide-react';
+import { Heart, GitCompare, Sparkles, Activity, Zap } from 'lucide-react';
 import { useComparison } from '@/features/comparison';
 import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
 import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
-
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
 import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
 import {
   calculateMonthlyPayment,
   calculateSuggestedPronto,
 } from '@/shared/lib/utils/financing';
+import { calculatePredictiveDTS } from '@/entities/inventory';
 
 interface PremiumGlassCardProps {
   car: Car;
@@ -40,52 +40,63 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   priority,
   isHighInterest,
 }) => {
-  console.log('PremiumGlassCard render for car:', car.id, 'img:', car.img);
   const navigate = useNavigate();
-  const { addCarToCompare, removeCarFromCompare, isInComparison } = useComparison();
+  const { addCarToCompare, removeCarFromCompare } = useComparison();
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // Check if this specific car is in comparison (removed to fix compilation error)
 
   const handleCompareToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isComparing) {
-      removeCarFromCompare(car.id);
-    } else {
-      addCarToCompare(car);
-    }
+    if (isComparing) removeCarFromCompare(car.id);
+    else addCarToCompare(car);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    cardRef.current.style.setProperty('--mouse-x', `${x}px`);
-    cardRef.current.style.setProperty('--mouse-y', `${y}px`);
+    cardRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    cardRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
   };
 
-  // F&I Logic (Expert Decision: real amortization > simple division)
   const suggestedPronto = calculateSuggestedPronto(car.price || 0);
   const estimatedMonthly = calculateMonthlyPayment(car.price || 0, suggestedPronto);
+  const isScarce = calculatePredictiveDTS(car).advantageScore > 70;
 
-  // Social Proof: real-time view/lead stats from Supabase
   const { data: stats } = useVehicleStats(car.id);
+  const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
 
   const carImages = getCarImages(car, 3);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const isHovering = useRef(false);
 
   useEffect(() => {
     if (carImages.length < 2) return;
     const interval = setInterval(() => {
-      setActiveImageIndex((prev) => (prev + 1) % carImages.length);
+      if (!isHovering.current) {
+        setActiveImageIndex((prev) => (prev + 1) % carImages.length);
+      }
     }, 4000);
     return () => clearInterval(interval);
   }, [carImages.length]);
 
-  const currentSrc = carImages.length > 1
-    ? carImages[activeImageIndex]
-    : getCarImage(car);
+  const currentSrc = carImages.length > 1 ? carImages[activeImageIndex] : getCarImage(car);
+  const isNew = car.condition === 'new';
+
+  // Real specs from car data — fallback to generic only when truly unknown
+  const specChips: { label: string; icon: string }[] = [
+    { label: car.year ? String(car.year) : '', icon: '📅' },
+    {
+      label: car.mileage != null
+        ? car.mileage === 0
+          ? '0 millas'
+          : `${car.mileage.toLocaleString()} mi`
+        : '',
+      icon: '🛣',
+    },
+    {
+      label: (car.transmission || car.fuel || car.fuelType || '').replace(/automática/i, 'Auto').replace(/manual/i, 'Manual') || '',
+      icon: '⚙',
+    },
+  ].filter((s) => s.label);
 
   return (
     <div
@@ -100,79 +111,77 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           else navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`);
         }
       }}
-      className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300"
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver detalles de ${car.name}`}
+      className="glass-premium group relative flex h-full cursor-pointer flex-col overflow-hidden text-left active:scale-[0.98] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
     >
-      {/* Image Section */}
-      <div className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-4 border-b border-white/5 h-card-image hud-brackets">
+      {/* ── Image Section ── */}
+      <div
+        className="relative w-full overflow-hidden flex items-center justify-center rounded-t-3xl bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 border-b border-white/5 h-card-image hud-brackets"
+        onMouseEnter={() => { isHovering.current = true; }}
+        onMouseLeave={() => { isHovering.current = false; }}
+      >
         <div className="scanline-overlay opacity-10" />
-        {/* Dynamic Shine Overlay */}
-        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-        {/* Badges */}
-        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 items-start scale-90 origin-top-left">
-          {isRecommended && (
-            <span className="font-tech animate-pulse rounded-full border border-white/20 bg-linear-to-r from-amber-400 to-orange-500 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-slate-900 shadow-[0_0_15px_rgba(251,191,36,0.4)]">
-              Recomendado para ti
+        {/* Gradient overlay bottom for legibility */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-slate-950/80 to-transparent z-10" />
+
+        {/* Shine on hover */}
+        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-tr from-white/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+        {/* ── Badges: max 2 visible ── */}
+        <div className="absolute top-4 left-4 z-20 flex flex-col gap-1.5 items-start">
+          {/* Condition — always shown */}
+          {isNew ? (
+            <span className="font-tech flex items-center gap-1.5 rounded-full border border-cyan-400/50 bg-linear-to-r from-cyan-500/80 to-blue-600/80 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-[0_0_16px_rgba(34,211,238,0.4)] backdrop-blur-xl">
+              <Sparkles size={10} className="animate-pulse" /> NUEVO
             </span>
-          )}
-          {car.type === 'suv' && (
-            <span className="font-tech flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-900/40 px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)] backdrop-blur-md">
-              <Sparkles size={10} className="animate-spin-slow" /> Richard's Pick: Confort Familiar
-            </span>
-          )}
-          {car.badge && (
-            <span className="font-tech rounded-full border border-white/10 bg-primary/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur-md">
-              {car.badge}
-            </span>
-          )}
-          {car.condition === 'new' && (
-            <span className="font-tech flex items-center gap-1.5 rounded-full border border-cyan-400/50 bg-linear-to-r from-cyan-500/80 to-blue-600/80 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.25em] text-white shadow-[0_0_20px_rgba(34,211,238,0.5)] backdrop-blur-xl animate-in zoom-in-95 duration-500">
-              <Sparkles size={12} className="animate-pulse" />
-              NUEVO
-            </span>
-          )}
-          {car.condition === 'used' && (
+          ) : (
             <span className="font-tech flex items-center gap-1.5 rounded-full border border-white/20 bg-slate-800/80 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-300 backdrop-blur-md">
               USADO
             </span>
           )}
-          <span className="font-tech flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/60 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-slate-200 shadow-sm backdrop-blur-md">
-            <ShieldCheck size={12} className="text-primary" /> Richard Certified
-          </span>
-          <span className="font-tech flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)] backdrop-blur-xl">
-            🎁 BONO DE $300 WEB
-          </span>
 
-          {/* Nivel 13: Neuro-Badge Predictive Social Proof */}
-          {isHighInterest && (
-            <div className="animate-in fade-in slide-in-from-left-2 duration-700">
-              <span className="font-tech flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.3)] backdrop-blur-xl">
-                <Activity size={10} className="animate-pulse" />
-                Pulso de Mercado: Alta Demanda
-              </span>
-            </div>
-          )}
+          {/* Urgency — only one, highest priority */}
+          {isRecommended ? (
+            <span className="font-tech animate-pulse rounded-full border border-amber-400/40 bg-linear-to-r from-amber-400 to-orange-500 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-slate-900 shadow-[0_0_12px_rgba(251,191,36,0.35)]">
+              ★ Para ti
+            </span>
+          ) : (isHighInterest || isScarce) ? (
+            <span className="font-tech flex items-center gap-1.5 rounded-full border border-rose-500/40 bg-rose-500/20 px-3 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-rose-400 backdrop-blur-xl">
+              <Zap size={9} fill="currentColor" /> Alta demanda
+            </span>
+          ) : null}
         </div>
 
-        {/* Actions */}
-        <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 scale-90 origin-top-right">
+        {/* ── Action buttons ── */}
+        <div className="absolute top-4 right-4 z-20 flex flex-col gap-2.5">
           <button
-            onClick={onToggleSave}
+            onClick={(e) => { e.stopPropagation(); onToggleSave(e); }}
             aria-label={isSaved ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-            className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isSaved ? 'border-rose-500 bg-rose-500 text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-rose-400'}`}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border shadow-md transition-all duration-200 backdrop-blur-md hover:scale-110 active:scale-95 ${isSaved ? 'border-rose-500 bg-rose-500 text-white' : 'border-white/10 bg-slate-900/50 text-white/60 hover:text-rose-400 hover:border-rose-500/40'}`}
           >
-            <Heart size={18} fill={isSaved ? 'currentColor' : 'none'} />
+            <Heart size={16} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
           <button
             onClick={handleCompareToggle}
             aria-label={isComparing ? 'Quitar de comparación' : 'Añadir a comparación'}
-            className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition-all backdrop-blur-md ${isComparing ? 'border-primary bg-primary text-white' : 'border-white/10 bg-slate-900/40 text-white hover:text-primary'}`}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border shadow-md transition-all duration-200 backdrop-blur-md hover:scale-110 active:scale-95 ${isComparing ? 'border-cyan-400 bg-cyan-500/20 text-cyan-400' : 'border-white/10 bg-slate-900/50 text-white/60 hover:text-cyan-400 hover:border-cyan-400/40'}`}
           >
-            <GitCompare size={18} />
+            <GitCompare size={16} />
           </button>
         </div>
 
-        {/* Image */}
+        {/* Social proof chip — bottom left over gradient */}
+        <div className="absolute bottom-3 left-4 z-20">
+          <span className="font-tech flex items-center gap-1 text-[9px] uppercase tracking-wider text-orange-300/90">
+            <Activity size={10} className="animate-pulse" />
+            {dailyViews} cotizaron hoy
+          </span>
+        </div>
+
+        {/* Car image */}
         <OptimizedImage
           src={currentSrc}
           alt={`${car.year} ${car.make} ${car.model} en venta Puerto Rico - Richard Automotive`}
@@ -180,21 +189,18 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
           fetchPriority="low"
           width={500}
           height={300}
-          className="w-full h-full object-contain transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.25)]"
+          className="w-full h-full object-contain transition-all duration-700 z-10 group-hover:scale-110 group-hover:-rotate-2 drop-shadow-[0_20px_50px_rgba(34,211,238,0.2)]"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
 
+        {/* Image dots */}
         {carImages.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+          <div className="absolute bottom-3 right-4 z-20 flex gap-1.5">
             {carImages.map((_, i) => (
               <button
                 key={i}
                 onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i === activeImageIndex
-                    ? 'bg-white w-4 shadow-md'
-                    : 'bg-white/40 hover:bg-white/70'
-                }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === activeImageIndex ? 'w-4 bg-white shadow-md' : 'w-1.5 bg-white/30 hover:bg-white/60'}`}
                 aria-label={`Imagen ${i + 1}`}
               />
             ))}
@@ -202,164 +208,108 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
         )}
       </div>
 
-      {/* SEO Schema.org: Rich Results Injection */}
+      {/* ── Schema.org ── */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org/',
             '@type': 'Product',
-            name: car.name || `${car.make || 'Ford'} ${car.model || 'Auto'} ${car.year || ''}`.trim(),
-            image: (car.images && car.images[0]) || car.image || car.img || '',
+            name: car.name || `${car.make} ${car.model} ${car.year}`.trim(),
+            image: car.images?.[0] || car.image || '',
             description: `Compra este ${car.name || 'vehículo'} en Richard Automotive. Financiamiento disponible y garantía local en Puerto Rico.`,
-            brand: {
-              '@type': 'Brand',
-              name: car.make || 'Ford',
-            },
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: '4.8',
-              reviewCount: '127',
-              bestRating: '5',
-            },
-            review: [
-              {
-                '@type': 'Review',
-                author: {
-                  '@type': 'Person',
-                  name: 'Cliente Richard Automotive',
-                },
-                datePublished: '2026-05-15',
-                reviewBody: `Excelente experiencia comprando mi ${car.name || 'vehículo'}. Proceso rápido y financiamiento aprobado en horas.`,
-                reviewRating: {
-                  '@type': 'Rating',
-                  ratingValue: '5',
-                  bestRating: '5',
-                },
-              },
-            ],
+            brand: { '@type': 'Brand', name: car.make || 'Ford' },
             offers: {
               '@type': 'Offer',
               url: `https://www.richard-automotive.com/inventario/${car.id}`,
               priceCurrency: 'USD',
               price: car.price || 0,
               availability: 'https://schema.org/InStock',
-              itemCondition: 'https://schema.org/UsedCondition',
-              hasMerchantReturnPolicy: {
-                '@type': 'MerchantReturnPolicy',
-                applicableCountry: 'PR',
-                returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-                merchantReturnDays: 7,
-                returnMethod: 'https://schema.org/ReturnByMail',
-                returnFees: 'https://schema.org/FreeReturn',
-              },
-              shippingDetails: {
-                '@type': 'OfferShippingDetails',
-                shippingRate: {
-                  '@type': 'MonetaryAmount',
-                  value: 0,
-                  currency: 'USD',
-                },
-                shippingDestination: {
-                  '@type': 'DefinedRegion',
-                  addressCountry: 'PR',
-                },
-                deliveryTime: {
-                  '@type': 'ShippingDeliveryTime',
-                  handlingTime: {
-                    '@type': 'QuantitativeValue',
-                    minValue: 1,
-                    maxValue: 3,
-                    unitCode: 'DAY',
-                  },
-                  transitTime: {
-                    '@type': 'QuantitativeValue',
-                    minValue: 1,
-                    maxValue: 5,
-                    unitCode: 'DAY',
-                  },
-                },
-              },
+              itemCondition: isNew
+                ? 'https://schema.org/NewCondition'
+                : 'https://schema.org/UsedCondition',
             },
           }),
         }}
       />
 
-      {/* Content Section */}
+      {/* ── Content ── */}
       <div className="p-6 flex-1 flex flex-col relative z-20">
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-tech text-[10px] uppercase tracking-[0.2em] text-primary">
-              {car.type}
-            </span>
-            <div className="h-px w-8 bg-primary/50"></div>
-          </div>
+
+        {/* Name */}
+        <div className="mb-5">
+          <span className="font-tech text-[9px] uppercase tracking-[0.25em] text-slate-500">
+            {car.make}
+          </span>
           <h3
             id={`car-title-${car.id}`}
-            className="font-cinematic text-[2rem] tracking-[0.04em] text-white transition-colors group-hover:text-primary line-clamp-1 drop-shadow-md text-glow glitch-hover"
+            className="font-cinematic text-[1.75rem] leading-none tracking-[0.04em] text-white transition-colors group-hover:text-cyan-300 line-clamp-1 mt-0.5"
           >
-            {car.name}
+            {car.model} {car.trim || ''}
           </h3>
-          <div className="mt-2 flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-[9px] text-orange-400 font-tech uppercase tracking-wider animate-pulse">
-              <Activity size={12} />
-              <span>🔥 {stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1} cotizaron hoy</span>
-            </div>
-            <div className="h-1 w-1 rounded-full bg-slate-700" />
-            <div className="text-[9px] text-cyan-400 font-tech uppercase tracking-widest">
-              Vista {stats?.views ?? ((car.id?.charCodeAt(1) || 0) % 20) + 5} veces
-            </div>
-          </div>
         </div>
 
-        {/* Specs */}
-        <div className="flex gap-2 mb-6 flex-wrap">
-          <span className="hud-tag">Auto</span>
-          <span className="hud-tag">Gasolina</span>
-          <span className="hud-tag">4 Puertas</span>
-        </div>
+        {/* Real specs chips */}
+        {specChips.length > 0 && (
+          <div className="flex gap-2 mb-5 flex-wrap">
+            {specChips.map((chip) => (
+              <span key={chip.label} className="hud-tag text-[10px]">
+                {chip.icon} {chip.label}
+              </span>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-auto border-t border-white/10 pt-6">
-          <div>
-            <p className="font-cinematic text-4xl tracking-[0.03em] text-white text-glow">
-              <AnimatedCounter value={car.price || 0} format="currency" />
-            </p>
-            <div className="mt-1">
-              <p className="font-tech flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-primary">
-                Desde{' '}
-                <AnimatedCounter value={estimatedMonthly} format="currency" duration={1500} />
-                /mes *
+        {/* ── Pricing: monthly first ── */}
+        <div className="mt-auto border-t border-white/10 pt-5">
+          <div className="flex items-end justify-between gap-2 mb-1">
+            <div>
+              <p className="font-tech text-[9px] uppercase tracking-[0.2em] text-slate-500 mb-0.5">
+                Desde
               </p>
-              <p className="font-tech text-[8px] uppercase tracking-[0.1em] text-slate-500 mt-0.5">
-                Con pronto de ${suggestedPronto.toLocaleString()}
+              <p className="font-cinematic text-4xl tracking-tight text-white leading-none">
+                <AnimatedCounter value={estimatedMonthly} format="currency" duration={1200} />
+                <span className="font-tech text-base text-slate-400 tracking-wider">/mes</span>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-tech text-[9px] uppercase tracking-[0.15em] text-slate-500 mb-0.5">
+                Precio
+              </p>
+              <p className="font-tech text-lg font-bold text-slate-300">
+                ${(car.price || 0).toLocaleString()}
               </p>
             </div>
           </div>
+          <p className="font-tech text-[8px] text-slate-600 mb-5">
+            Con pronto de ${suggestedPronto.toLocaleString()} · 72 meses · 8.5% APR · Sujeto a crédito
+          </p>
 
+          {/* WhatsApp CTA — primary */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               openWhatsAppWithCapture(car, estimatedMonthly, suggestedPronto);
             }}
-            className="mt-4 w-full py-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-[0_0_25px_rgba(37,211,102,0.5)] transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-[0_0_24px_rgba(37,211,102,0.45)] transition-all duration-200 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 shrink-0">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
             Cotizar por WhatsApp
           </button>
 
+          {/* Pre-qualify — secondary, text link style */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               navigate('/precualificacion', { state: { dealContext: { vehicle: car } } });
             }}
-            className="w-full mt-3 py-3 border border-white/20 hover:border-cyan-500/50 text-white/70 hover:text-white font-black text-[10px] uppercase tracking-widest rounded-full text-center transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1"
+            className="mt-3 w-full py-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors duration-200 text-center"
           >
-            <Sparkles size={12} /> Pre-cualifícate Express
+            Pre-cualifícate gratis →
           </button>
         </div>
-        <p className="text-[7px] text-slate-500 mt-2 leading-tight">
-          * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
-        </p>
       </div>
     </div>
   );
