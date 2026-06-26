@@ -1,5 +1,5 @@
-import { LeadRepository } from '@/features/leads/api';
-import { EmailRepository } from '@/features/leads/api';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
+import { EmailRepository } from '@/shared/api/repositories/IEmailRepository';
 
 export class NudgeStaleLeads {
   constructor(

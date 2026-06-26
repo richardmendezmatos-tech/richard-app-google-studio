@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LeadRepository } from '@/features/inventory/api';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
 import { Car, CarEntity } from '@/entities/inventory/model/CarEntity';
 import { Result, success, failure } from '@/shared/types/server-domain';
 import { MatchReasoningService } from '@/shared/api/ai/MatchReasoningService';

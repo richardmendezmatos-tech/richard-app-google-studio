@@ -1,4 +1,4 @@
-import { EmailRepository } from '@/features/automation/api';
+import { EmailRepository } from '@/shared/api/repositories/IEmailRepository';
 import { Lead } from '@/entities/lead/model/LeadEntity';
 
 export class NotifyLeadStatusChange {

@@ -1,4 +1,6 @@
-import { LeadRepository, EmailRepository, WhatsAppRepository } from '@/features/automation/api';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
+import { EmailRepository } from '@/shared/api/repositories/IEmailRepository';
+import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
 
 export class NotifyPriceDrop {
   constructor(

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { InventoryRepository } from '@/features/leads/api';
+import { InventoryRepository } from '@/entities/inventory/api/IInventoryRepository';
 import { ScoreCalculator } from './ScoreCalculator';
 import { Lead, LeadEntity } from '@/entities/lead/model/LeadEntity';
 import { Result, success, failure } from '@/shared/types/server-domain';

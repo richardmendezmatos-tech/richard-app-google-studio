@@ -1,4 +1,4 @@
-import { InventoryRepository } from '@/features/inventory/api';
+import { InventoryRepository } from '@/entities/inventory/api/IInventoryRepository';
 import { Result, success, failure } from '@/shared/types/server-domain';
 
 /**
