@@ -3,7 +3,7 @@ import { FordNewsExtractor } from '@/shared/api/scrapers/FordNewsExtractor';
 import { FordNewsService } from '@/features/blog/api/fordNewsService';
 import { FordNewsBroadcaster } from '@/features/blog/api/FordNewsBroadcaster';
 import { blogService } from '@/entities/blog/api/blogService';
-import { supabase } from '@/shared/api/supabase/supabase';
+import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 import { createHash } from 'crypto';
 
 export const runtime = 'nodejs';
@@ -31,6 +31,7 @@ export async function GET(request: Request) {
   };
 
   try {
+    const supabase = createServerSupabaseClient();
     const extractor = new FordNewsExtractor();
     const newsService = new FordNewsService();
     const broadcaster = new FordNewsBroadcaster();
