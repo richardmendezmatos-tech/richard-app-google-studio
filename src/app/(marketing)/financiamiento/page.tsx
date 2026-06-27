@@ -84,7 +84,31 @@ function FinanciamientoJsonLd() {
     },
   ]);
 
-  const schemas = [breadcrumb, howTo, faq];
+  const loanProduct = {
+    '@context': 'https://schema.org',
+    '@type': 'LoanOrCredit',
+    name: 'Financiamiento Automotriz — Richard Automotive',
+    description:
+      'Financiamiento de autos con aprobación expresa desde 4.9% APR en Puerto Rico. Soft pull sin afectar tu crédito. Plazos hasta 84 meses y opción de $0 down payment.',
+    url: 'https://www.richard-automotive.com/financiamiento',
+    provider: {
+      '@type': 'AutoDealer',
+      name: 'Richard Automotive',
+      url: 'https://www.richard-automotive.com',
+      telephone: '+1-787-368-2880',
+    },
+    currency: 'USD',
+    loanTerm: {
+      '@type': 'QuantitativeValue',
+      minValue: 12,
+      maxValue: 84,
+      unitCode: 'MON',
+    },
+    feesAndCommissionsSpecification: 'Sin cuotas de apertura. Tasa desde 4.9% APR para crédito aprobado. La tasa final depende del historial crediticio y vehículo seleccionado.',
+    areaServed: { '@type': 'Country', name: 'Puerto Rico' },
+  };
+
+  const schemas = [breadcrumb, howTo, faq, loanProduct];
 
   return schemas.map((schema, i) => (
     <script
