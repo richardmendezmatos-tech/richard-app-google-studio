@@ -70,10 +70,11 @@ import HeroStaticContent from '@/features/inventory/ui/storefront/HeroStaticCont
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react';
-import { getAutoDealerSchema } from '@/shared/config/seoSchemas';
+import { getAutoDealerSchema, getWebsiteSchema } from '@/shared/config/seoSchemas';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = getAutoDealerSchema();
+  const websiteSchema = getWebsiteSchema();
 
   const webmcpJsonLd = {
     '@context': 'https://schema.webmcp.dev',
@@ -106,7 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html
-      lang="es"
+      lang="es-PR"
       className={`${bebasNeue.variable} ${sora.variable} ${manrope.variable} antialiased`}
     >
       <head>
@@ -122,6 +123,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <script
           type="application/ld+json"

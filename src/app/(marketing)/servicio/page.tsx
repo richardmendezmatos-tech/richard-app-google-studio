@@ -3,6 +3,61 @@ import { ServiceForm } from './ServiceForm';
 
 export const dynamic = 'force-static';
 
+function ServicioJsonLd() {
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://www.richard-automotive.com' },
+      { '@type': 'ListItem', position: 2, name: 'Servicio', item: 'https://www.richard-automotive.com/servicio' },
+    ],
+  };
+
+  const service = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Servicio Automotriz — Richard Automotive',
+    description:
+      'Servicio de mantenimiento y reparación automotriz en Vega Alta, Puerto Rico. Cambio de aceite, frenos, A/C, inspección vehicular, gomas, batería, suspensión y transmisión.',
+    provider: {
+      '@type': 'AutoDealer',
+      name: 'Richard Automotive',
+      url: 'https://www.richard-automotive.com',
+      telephone: '+1-787-368-2880',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
+        addressLocality: 'Vega Alta',
+        addressRegion: 'PR',
+        postalCode: '00692',
+        addressCountry: 'US',
+      },
+    },
+    serviceType: 'Automotive Maintenance and Repair',
+    areaServed: { '@type': 'Country', name: 'Puerto Rico' },
+    url: 'https://www.richard-automotive.com/servicio',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Servicios Automotrices',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Cambio de Aceite' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Servicio de Frenos' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Servicio de A/C' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Inspección Vehicular de 50 Puntos' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Cambio y Rotación de Gomas' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Reemplazo de Batería' } },
+      ],
+    },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(service) }} />
+    </>
+  );
+}
+
 export const metadata: Metadata = {
   title: 'Servicio Automotriz | Richard Automotive — Citas de Mantenimiento en PR',
   description:
@@ -33,39 +88,42 @@ const SERVICE_OPTIONS = [
 
 export default function ServicioPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <div className="max-w-2xl mx-auto px-6 py-24">
-        <div className="text-center mb-12">
-          <h1
-            className="text-4xl md:text-6xl font-black leading-tight mb-4"
-            style={{ fontFamily: 'var(--font-cinematic)' }}
-          >
-            Agenda tu <span className="text-cyan-400">Servicio</span>
-          </h1>
-          <p className="text-slate-400 text-lg">
-            Mantenimiento profesional para tu vehículo en Vega Alta, Puerto Rico.
-          </p>
-        </div>
-
-        <div className="bg-slate-900/50 border border-white/10 rounded-3xl p-8 md:p-12">
-          <ServiceForm options={SERVICE_OPTIONS} />
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-2xl font-black text-cyan-400">+500</p>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Servicios Realizados</p>
+    <>
+      <ServicioJsonLd />
+      <div className="min-h-screen bg-slate-950 text-white">
+        <div className="max-w-2xl mx-auto px-6 py-24">
+          <div className="text-center mb-12">
+            <h1
+              className="text-4xl md:text-6xl font-black leading-tight mb-4"
+              style={{ fontFamily: 'var(--font-cinematic)' }}
+            >
+              Agenda tu <span className="text-cyan-400">Servicio</span>
+            </h1>
+            <p className="text-slate-400 text-lg">
+              Mantenimiento profesional para tu vehículo en Vega Alta, Puerto Rico.
+            </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-2xl font-black text-cyan-400">Garantía</p>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">En Todo Servicio</p>
+
+          <div className="bg-slate-900/50 border border-white/10 rounded-3xl p-8 md:p-12">
+            <ServiceForm options={SERVICE_OPTIONS} />
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-2xl font-black text-cyan-400">1 Hr</p>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Cambio de Aceite</p>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <p className="text-2xl font-black text-cyan-400">+500</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Servicios Realizados</p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <p className="text-2xl font-black text-cyan-400">Garantía</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">En Todo Servicio</p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <p className="text-2xl font-black text-cyan-400">1 Hr</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Cambio de Aceite</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

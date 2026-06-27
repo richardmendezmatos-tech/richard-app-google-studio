@@ -56,10 +56,33 @@ function ContactoJsonLd() {
     },
   ]);
 
+  const contactPage = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contacto — Richard Automotive',
+    description: 'Página de contacto del concesionario Richard Automotive en Vega Alta, Puerto Rico.',
+    url: 'https://www.richard-automotive.com/contacto',
+    mainEntity: {
+      '@type': 'AutoDealer',
+      name: 'Richard Automotive',
+      telephone: '+1-787-368-2880',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
+        addressLocality: 'Vega Alta',
+        addressRegion: 'PR',
+        postalCode: '00692',
+        addressCountry: 'US',
+      },
+      contactPoint: CONTACT_POINT,
+    },
+  };
+
   const schemas = [
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     faq,
     { '@context': 'https://schema.org', ...CONTACT_POINT },
+    contactPage,
   ];
 
   return schemas.map((schema, i) => (
