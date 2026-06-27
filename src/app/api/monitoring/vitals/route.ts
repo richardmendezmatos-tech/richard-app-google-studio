@@ -15,6 +15,7 @@ export async function POST(request: Request) {
         metric: m.metric,
         value: m.value,
         rating: m.rating || 'needs-improvement',
+        score: m.score ?? null,
         page: body.page || m.page || 'unknown',
         session_id: request.headers.get('x-session-id') || null,
       }));
