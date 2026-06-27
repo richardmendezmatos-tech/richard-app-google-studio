@@ -8,6 +8,7 @@ import {
   Phone,
   Zap,
   Shield,
+  ShieldCheck,
   TrendingDown,
 } from 'lucide-react';
 import { CreditCalculator } from '@/features/loans/ui/CreditCalculator';
@@ -252,6 +253,34 @@ const FinanciamientoPage: React.FC = () => {
               {faqs.length} respuestas sobre APR, documentos, plazos y más.
             </p>
             <FinanciamientoFAQ faqs={faqs} />
+          </div>
+        </section>
+
+        {/* Trust badges */}
+        <section className="py-10 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                { icon: ShieldCheck, label: 'Ford Authorized Dealer', sub: 'Central Ford PR' },
+                { icon: Shield, label: 'DTOP Licenciado', sub: 'Puerto Rico' },
+                { icon: CheckCircle, label: 'Sin costo de pre-aprobación', sub: 'Soft pull únicamente' },
+                { icon: FileText, label: 'Proceso 100 % transparente', sub: 'Sin letra pequeña' },
+              ].map(({ icon: Icon, label, sub }) => (
+                <div key={label} className="flex flex-col items-center text-center p-4 rounded-2xl border border-white/5 bg-slate-900/40 gap-2">
+                  <Icon size={18} className="text-cyan-400" />
+                  <p className="text-[10px] font-black text-white leading-tight">{label}</p>
+                  <p className="text-[9px] text-slate-500">{sub}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-white/5 bg-slate-900/40 p-5">
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                <strong className="text-slate-400">Aviso legal:</strong> Las tasas APR, plazos y mensualidades presentadas son estimados con fines educativos y pueden variar según el historial crediticio del solicitante, el banco financiero seleccionado y las condiciones del mercado al momento de la transacción. El financiamiento está sujeto a aprobación crediticia. Richard Automotive opera como franquiciado de Central Ford bajo licencia de Ford Motor Company y está licenciado por el DTOP de Puerto Rico. Para información sobre sus derechos como consumidor de crédito, visita{' '}
+                <a href="https://www.consumerfinance.gov" target="_blank" rel="noopener noreferrer" className="text-cyan-500 hover:underline">
+                  consumerfinance.gov
+                </a>.
+              </p>
+            </div>
           </div>
         </section>
 
