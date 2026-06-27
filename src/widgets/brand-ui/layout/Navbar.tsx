@@ -1,14 +1,32 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/entities/session';
 import { Link, useNavigate } from '@/shared/lib/next-route-adapter';
-import { Menu, X, User, LogOut, Car } from 'lucide-react';
+import { Menu, X, User, LogOut, Car, Phone, ChevronRight } from 'lucide-react';
+
+const NAV_LINKS = [
+  { to: '/inventario', label: 'Inventario' },
+  { to: '/financiamiento', label: 'Financiamiento' },
+  { to: '/match-automotriz', label: 'Deal Matcher', badge: 'NEW' },
+  { to: '/quienes-somos', label: 'Quiénes Somos' },
+  { to: '/blog', label: 'Blog' },
+  { to: '/contacto', label: 'Contacto' },
+];
+
+const WA_URL = 'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20un%20auto';
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -16,11 +34,18 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-cyan-300/15 bg-[rgba(6,15,24,0.82)] backdrop-blur-2xl">
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'border-b border-cyan-400/20 bg-slate-950/95 backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
+          : 'border-b border-white/8 bg-[rgba(6,15,24,0.80)] backdrop-blur-xl'
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-cyan-400 to-cyan-700 text-white shadow-lg shadow-cyan-500/25">
+        <div className="flex h-16 items-center justify-between gap-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-cyan-400 to-cyan-700 text-white shadow-lg shadow-cyan-500/30">
               <Car size={18} strokeWidth={2.6} />
             </div>
             <span className="font-cinematic text-2xl tracking-[0.12em] text-white">
@@ -28,187 +53,125 @@ const Navbar: React.FC = () => {
             </span>
           </Link>
 
-          <div className="hidden items-center space-x-8 md:flex">
-            <Link
-              to="/inventario"
-              className="group relative flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 transition-all hover:text-white"
+          {/* Desktop nav */}
+          <div className="hidden items-center gap-6 md:flex">
+            {NAV_LINKS.map(({ to, label, badge }) => (
+              <Link
+                key={to}
+                to={to}
+                className="group relative flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 transition-colors hover:text-white"
+              >
+                {label}
+                {badge && (
+                  <span className="px-1.5 py-0.5 bg-cyan-500/20 text-[7px] font-black text-cyan-300 border border-cyan-500/30 rounded-full animate-pulse">
+                    {badge}
+                  </span>
+                )}
+                <div className="absolute -bottom-0.5 left-0 h-px w-0 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
+          </div>
+
+          {/* Right actions */}
+          <div className="hidden md:flex items-center gap-3 shrink-0">
+            <a
+              href={WA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#25D366] hover:bg-[#25D366]/25 transition-colors"
             >
-              <div className="relative flex h-6 w-6 items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all group-hover:border-cyan-400/50 group-hover:bg-cyan-400/10">
-                <Car
-                  size={12}
-                  className="relative z-10 text-cyan-400 transition-transform group-hover:scale-110"
-                />
-                <div className="absolute inset-0 -z-0 hidden animate-pulse rounded-lg bg-cyan-400/20 blur-sm group-hover:block" />
-              </div>
-              <span className="relative">
-                Inventario
-                <div className="absolute -bottom-1 left-0 h-[1px] w-0 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
-              </span>
-            </Link>
-            <Link
-              to="/financiamiento"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
-            >
-              Financiamiento
-            </Link>
-            <Link
-              to="/match-automotriz"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200 flex items-center gap-1.5"
-            >
-              <span>Deal Matcher</span>
-              <span className="px-1.5 py-0.5 bg-cyan-500/20 text-[7px] font-black text-cyan-300 border border-cyan-500/30 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-                NEW!
-              </span>
-            </Link>
-            <Link
-              to="/contacto"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
-            >
-              Contacto
-            </Link>
-            <Link
-              to="/blog"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
-            >
-              Blog
-            </Link>
-            <Link
-              to="/laboratorio"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-cyan-200"
-            >
-              Laboratorio
-            </Link>
+              <Phone size={12} />
+              WhatsApp
+            </a>
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-4 border-l border-white/10 pl-4">
+              <div className="flex items-center gap-3 border-l border-white/10 pl-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-cyan-300">
-                    <User size={16} />
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-cyan-300">
+                    <User size={14} />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold leading-none text-white">
-                      {user?.email?.split('@')[0] || 'Usuario'}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-300">
-                      {user?.role || 'Cliente'}
-                    </span>
-                  </div>
+                  <span className="text-[10px] font-bold text-slate-300">
+                    {user?.email?.split('@')[0] || 'Usuario'}
+                  </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-slate-400 transition-colors hover:text-rose-400"
-                  aria-label="Cerrar Sesion"
-                  title="Cerrar Sesion"
+                  className="p-1.5 text-slate-400 transition-colors hover:text-rose-400"
+                  aria-label="Cerrar Sesión"
                 >
-                  <LogOut size={18} />
+                  <LogOut size={16} />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300 hover:text-cyan-200"
-                >
-                  Ingresar
-                </Link>
-                <Link
-                  to="/login"
-                  className="rounded-lg bg-cyan-500 px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-white transition-colors hover:bg-cyan-400"
-                >
-                  Registrarse
-                </Link>
-              </div>
+              <Link
+                to="/precualificacion"
+                className="rounded-xl bg-cyan-500 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-black hover:bg-cyan-400 transition-colors shadow-[0_0_16px_rgba(34,211,238,0.3)]"
+              >
+                Aplica Gratis
+              </Link>
             )}
           </div>
 
-          <div className="md:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-slate-200"
-              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-slate-200 p-1"
+            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="space-y-4 border-t border-cyan-300/15 bg-[#07111b] p-4 md:hidden">
-          <Link
-            to="/inventario"
-            className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4 text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            <div className="flex items-center gap-3">
-              <Car size={16} className="text-cyan-400" />
-              <span>Inventario</span>
-            </div>
-          </Link>
-          <Link
-            to="/financiamiento"
-            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            Financiamiento
-          </Link>
-          <Link
-            to="/match-automotriz"
-            className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            <span>Deal Matcher</span>
-            <span className="rounded-full bg-cyan-500/25 px-2 py-0.5 text-[9px] font-black text-cyan-300 animate-pulse border border-cyan-500/30">
-              MATCH!
-            </span>
-          </Link>
-          <Link
-            to="/contacto"
-            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            Contacto
-          </Link>
-          <Link
-            to="/blog"
-            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            Blog
-          </Link>
-          <Link
-            to="/laboratorio"
-            className="block text-xs font-bold uppercase tracking-[0.16em] text-slate-200"
-          >
-            Lab
-          </Link>
-          <div className="border-t border-white/10 pt-4">
-            {isAuthenticated ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-cyan-300">
-                    <User size={16} />
-                  </div>
-                  <span className="text-sm font-bold text-white">{user?.email}</span>
-                </div>
+        <div className="md:hidden border-t border-white/8 bg-slate-950/98 backdrop-blur-2xl">
+          <div className="p-4 space-y-1">
+            {NAV_LINKS.map(({ to, label, badge }) => (
+              <Link
+                key={to}
+                to={to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/3 px-4 py-3 text-[11px] font-black uppercase tracking-[0.15em] text-slate-200 hover:bg-white/8 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  {label}
+                  {badge && (
+                    <span className="rounded-full bg-cyan-500/25 px-2 py-0.5 text-[8px] font-black text-cyan-300 border border-cyan-500/30 animate-pulse">
+                      {badge}
+                    </span>
+                  )}
+                </span>
+                <ChevronRight size={14} className="text-slate-500" />
+              </Link>
+            ))}
+
+            <div className="pt-3 grid grid-cols-2 gap-3">
+              <a
+                href={WA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 py-3 text-[10px] font-black uppercase tracking-widest text-[#25D366]"
+              >
+                <Phone size={13} /> WhatsApp
+              </a>
+              {isAuthenticated ? (
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 text-sm font-bold text-rose-400"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-rose-500/20 py-3 text-[10px] font-black uppercase tracking-widest text-rose-400"
                 >
-                  <LogOut size={16} /> Cerrar Sesion
+                  <LogOut size={13} /> Salir
                 </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
+              ) : (
                 <Link
-                  to="/login"
-                  className="rounded-lg border border-white/10 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] text-slate-200"
+                  to="/precualificacion"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center rounded-xl bg-cyan-500 py-3 text-[10px] font-black uppercase tracking-widest text-black"
                 >
-                  Ingresar
+                  Aplica Gratis
                 </Link>
-                <Link
-                  to="/login"
-                  className="rounded-lg bg-cyan-500 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] text-white"
-                >
-                  Registrarse
-                </Link>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

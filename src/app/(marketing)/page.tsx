@@ -1,7 +1,5 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { getPaginatedCars, getDistinctFordModels } from '@/entities/inventory/api/adapters/serverInventoryService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
@@ -11,21 +9,20 @@ import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
 import FAQSection from '@/shared/ui/components/FAQSection';
 import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
 import StatsStrip from '@/shared/ui/components/StatsStrip';
+import FordCarouselStrip from '@/features/inventory/ui/storefront/FordCarouselStrip';
 
 function FordModelQuickLinksSkeleton() {
   return (
     <section className="relative z-10 -mt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex gap-6 overflow-hidden pb-4">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="shrink-0 w-40 md:w-48 bg-slate-900/40 rounded-2xl overflow-hidden"
-            >
+        <div className="flex gap-4 overflow-hidden pb-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="shrink-0 w-48 bg-slate-900/40 rounded-2xl overflow-hidden">
               <div className="aspect-[4/3] bg-slate-800 animate-pulse" />
               <div className="p-3 space-y-2">
+                <div className="h-2 bg-slate-800 rounded animate-pulse w-1/2" />
                 <div className="h-3 bg-slate-800 rounded animate-pulse w-3/4" />
-                <div className="h-2 bg-slate-800/50 rounded animate-pulse w-1/2" />
+                <div className="h-2 bg-slate-800/50 rounded animate-pulse w-2/3" />
               </div>
             </div>
           ))}
@@ -56,48 +53,8 @@ async function InventorySection() {
 
 async function FordModelQuickLinks() {
   const models = await getDistinctFordModels();
-  const topModels = models.slice(0, 6);
-
-  if (topModels.length === 0) return null;
-
-  return (
-    <section className="relative z-10 -mt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center gap-6 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
-          {topModels.map((m) => (
-            <Link
-              key={m.model}
-              href={`/ford/${m.model.toLowerCase()}`}
-              className="snap-start shrink-0 group relative w-40 md:w-48 bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-400/30 transition-all duration-300"
-            >
-              <div className="aspect-[4/3] relative bg-slate-800 flex items-center justify-center p-3">
-                <Image
-                  src={m.image}
-                  alt={`Ford ${m.model}`}
-                  fill
-                  className="object-contain group-hover:scale-105 transition-transform duration-500"
-                  sizes="200px"
-                />
-              </div>
-              <div className="p-3">
-                <p className="text-xs font-bold text-white truncate">{m.model}</p>
-                <p className="text-[10px] text-slate-500">Desde ${m.minPrice.toLocaleString()}</p>
-              </div>
-            </Link>
-          ))}
-          <Link
-            href="/ford"
-            className="snap-start shrink-0 w-40 md:w-48 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center p-6 hover:bg-cyan-500/20 transition-colors text-center"
-          >
-            <div>
-              <p className="text-xs font-black text-cyan-400 uppercase tracking-widest">Ver Todos</p>
-              <p className="text-[10px] text-slate-500 mt-1">los modelos Ford</p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+  if (models.length === 0) return null;
+  return <FordCarouselStrip models={models} />;
 }
 
 export const metadata: Metadata = {
