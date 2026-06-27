@@ -80,10 +80,33 @@ function TradeInJsonLd() {
     },
   ]);
 
+  const service = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Trade-In Automotriz — Tasación Digital',
+    description:
+      'Tasación digital de tu vehículo usado en 90 segundos. Recibe el máximo valor garantizado y aplícalo como down payment en tu próximo auto.',
+    provider: {
+      '@type': 'AutoDealer',
+      name: 'Richard Automotive',
+      url: 'https://www.richard-automotive.com',
+    },
+    serviceType: 'Trade-In Vehicle Appraisal',
+    areaServed: { '@type': 'Country', name: 'Puerto Rico' },
+    url: 'https://www.richard-automotive.com/trade-in',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      description: 'Tasación gratuita sin compromiso',
+    },
+  };
+
   const schemas = [
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumb.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: `https://www.richard-automotive.com${item.url}` })) },
     howTo,
     faq,
+    service,
   ];
 
   return schemas.map((schema, i) => (
