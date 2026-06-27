@@ -32,12 +32,30 @@ export async function GET(request: Request) {
 
   try {
     const supabase = createServerSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json({ success: false, error: 'Database client unavailable' }, { status: 503 });
+    }
     const extractor = new FordNewsExtractor();
     const newsService = new FordNewsService();
     const broadcaster = new FordNewsBroadcaster();
 
-    const feedUrl = 'https://media.ford.com/content/fordmedia/fna/us/en/news.feed.rss';
-    const articles = await extractor.fetchLatest({ feedUrl, maxArticles: 5 });
+    const feedUrls = [
+      'https://media.ford.com/content/fordmedia/fna/us/en/news.feed.rss',
+      'https://media.ford.com/content/fordmedia/fna/us/en/products.feed.rss',
+    ];
+
+    let articles: Awaited<ReturnType<typeof extractor.fetchLatest>> = [];
+    for (const feedUrl of feedUrls) {
+      const fetched = await extractor.fetchLatest({ feedUrl, maxArticles: 5 });
+      articles = [...articles, ...fetched];
+    }
+    // Deduplicate by URL
+    const seen = new Set<string>();
+    articles = articles.filter((a) => {
+      if (seen.has(a.url)) return false;
+      seen.add(a.url);
+      return true;
+    });
     results.fetched = articles.length;
 
     for (const article of articles) {

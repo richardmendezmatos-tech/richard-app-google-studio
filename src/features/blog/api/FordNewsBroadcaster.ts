@@ -13,11 +13,15 @@ export class FordNewsBroadcaster {
   async broadcast(news: FordNewsAlert): Promise<{ notified: number }> {
     try {
       const supabase = createServerSupabaseClient();
+      if (!supabase) {
+        console.error('[FordNewsBroadcaster] No database client available');
+        return { notified: 0 };
+      }
       const { data: leads, error } = await supabase
         .from('leads')
         .select('phone, first_name')
         .not('phone', 'is', null)
-        .or(`vehicle_of_interest.ilike.%Ford%,vehicle_of_interest.ilike.%ford%,notes.ilike.%ford%`)
+        .or(`vehicle_of_interest.ilike.%Ford%,vehicle_of_interest.ilike.%ford%`)
         .order('created_at', { ascending: false })
         .limit(50);
 
