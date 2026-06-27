@@ -53,6 +53,51 @@ const REVIEWS = [
     rating: 5,
     text: 'Vine con crédito bajo y pensé que no iba a calificar. Richard trabajó con 3 bancos distintos hasta conseguirme la aprobación. Profesional de verdad.',
   },
+  {
+    name: 'María G.',
+    city: 'Caguas',
+    rating: 5,
+    text: 'Compré mi Ford Maverick con el Bono de $300 y un pago mensual que no me creía. Richard fue súper honesto con todos los números, sin cargos escondidos. Lo recomiendo 100%.',
+  },
+  {
+    name: 'José A.',
+    city: 'Arecibo',
+    rating: 5,
+    text: 'Llamé por WhatsApp y en menos de una hora Richard ya me tenía tres opciones de financiamiento. Nunca había visto tanta eficiencia en un dealer. El proceso fue completamente digital.',
+  },
+  {
+    name: 'Xiomara L.',
+    city: 'Ponce',
+    rating: 5,
+    text: 'Primer auto de mi vida y Richard me hizo sentir segura en cada decisión. Me explicó la diferencia entre las tasas, los plazos y los seguros de forma que entendí todo. ¡Gracias!',
+  },
+];
+
+const FAQS = [
+  {
+    question: '¿Dónde está ubicado Richard Automotive?',
+    answer: 'Estamos en Carr. #2 KM 28.5, Bo. Espinosa, Vega Alta, Puerto Rico 00692. Frente a Plaza Vega Alta, fácil acceso desde la PR-22.',
+  },
+  {
+    question: '¿Cuáles son los horarios de atención?',
+    answer: 'Lunes a viernes de 8:00 AM a 7:00 PM, sábados de 9:00 AM a 5:00 PM. Domingos cerramos. También puedes contactarnos por WhatsApp las 24 horas.',
+  },
+  {
+    question: '¿Tienen financiamiento para crédito malo o sin historial?',
+    answer: 'Sí. Trabajamos con programas especiales para primeros compradores, crédito limitado y reconstrucción de crédito. Ofrecemos opciones con $0 down payment y plazos flexibles.',
+  },
+  {
+    question: '¿Puedo hacer el proceso de compra completamente online?',
+    answer: 'Sí, desde la precualificación hasta la firma de documentos puede hacerse de forma digital. Solo visitas el dealer para el test drive y la entrega de tu vehículo.',
+  },
+  {
+    question: '¿Aceptan trade-in?',
+    answer: 'Absolutamente. Tasamos tu vehículo actual en minutos y aplicamos el valor como parte del pago inicial de tu próximo auto. Aceptamos cualquier marca y modelo en buen estado.',
+  },
+  {
+    question: '¿Qué es el Bono Web de $300?',
+    answer: 'Es un descuento exclusivo de $300 para gastos de cierre disponible solo para clientes que nos contactan a través del sitio web o WhatsApp. Aplica en la compra de cualquier vehículo nuevo o usado certificado.',
+  },
 ];
 
 export function QuienesSomosPage() {
@@ -241,6 +286,36 @@ export function QuienesSomosPage() {
           <p className="text-center text-[11px] text-slate-600 mt-6">
             Reseñas reales de Google Maps · Richard Automotive Central Ford
           </p>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 mb-3">
+              Preguntas Frecuentes
+            </p>
+            <h2 className="text-3xl md:text-4xl font-black">
+              Todo lo que necesitas <span className="text-cyan-400">saber</span>
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {FAQS.map((faq) => (
+              <details
+                key={faq.question}
+                className="group rounded-2xl border border-white/5 bg-slate-900/60 overflow-hidden"
+              >
+                <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none select-none hover:bg-white/[0.02] transition">
+                  <span className="text-sm font-bold text-white">{faq.question}</span>
+                  <span className="shrink-0 text-cyan-400 group-open:rotate-45 transition-transform duration-200 text-xl leading-none">+</span>
+                </summary>
+                <div className="px-6 pb-5">
+                  <p className="text-sm text-slate-400 leading-relaxed">{faq.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
