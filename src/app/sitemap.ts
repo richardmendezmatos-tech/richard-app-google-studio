@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { seoService } from '@/entities/inventory/api/adapters/seoService';
 import { blogService } from '@/entities/blog/api/blogService';
+import { getDistinctFordModels } from '@/entities/inventory/api/adapters/fordModelService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
@@ -22,102 +23,20 @@ const SEO_CATEGORIES = ['suv', 'sedan', 'pickup', 'luxury', 'economico', 'electr
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    {
-      url: `${SITE_URL}/consultant`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/precualificacion`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/financiamiento`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/contacto`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/quienes-somos`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/panel-control`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/inventario`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/vision-automotriz`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/match-automotriz`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/laboratorio`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/servicio`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/trade-in`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/prueba-de-manejo`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/recomienda`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
-    {
-      url: `${SITE_URL}/bono-300`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
+    { url: SITE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    { url: `${SITE_URL}/inventario`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/ford`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/match-automotriz`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${SITE_URL}/financiamiento`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE_URL}/quienes-somos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/vision-automotriz`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${SITE_URL}/bono-300`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/trade-in`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/precualificacion`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/contacto`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/servicio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/prueba-de-manejo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/recomienda`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
   ];
 
   // Programmatic SEO: City Pages
@@ -135,6 +54,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'daily' as const,
     priority: 0.85,
   }));
+
+  // Dynamic: Ford model pages
+  let fordModelRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const fordModels = await getDistinctFordModels();
+    fordModelRoutes = fordModels.map((m) => ({
+      url: `${SITE_URL}/ford/${m.model.toLowerCase()}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
+    }));
+  } catch (err) {
+    console.error('🚨 Sitemap: Ford models fetch failed:', err);
+  }
 
   // Dynamic Discovery from Inventory (Sentinel N24)
   const [uniqueBrands, inventoryCombinations] = await Promise.all([
@@ -213,11 +146,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes,
+    ...fordModelRoutes,
     ...cityRoutes,
     ...categoryRoutes,
     ...brandCityRoutes,
     ...modelCityRoutes,
     ...blogRoutes,
-    ...inventoryRoutes
+    ...inventoryRoutes,
   ];
 }
