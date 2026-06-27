@@ -81,10 +81,39 @@ const BODY_STYLE_ICONS: Record<string, React.ReactNode> = {
 function ModelJsonLd({
   modelName,
   cars,
+  minPrice,
 }: {
   modelName: string;
   cars: any[];
+  minPrice: number;
 }) {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `¿Cuál es el precio de la Ford ${modelName} en Puerto Rico?`,
+        acceptedAnswer: { '@type': 'Answer', text: `El precio de la Ford ${modelName} en Puerto Rico comienza desde $${minPrice.toLocaleString()}. El precio varía según año, condición, millaje y equipamiento. Visita nuestro inventario para ver precios actualizados.` },
+      },
+      {
+        '@type': 'Question',
+        name: `¿Dónde puedo comprar una Ford ${modelName} en Puerto Rico?`,
+        acceptedAnswer: { '@type': 'Answer', text: `En Central Ford, ubicados en Vega Alta, Puerto Rico. Somos distribuidores autorizados Ford con inventario nuevo y usado. Además ofrecemos financiamiento Ford Credit, trade-in y bono web de $300.` },
+      },
+      {
+        '@type': 'Question',
+        name: `¿La Ford ${modelName} tiene financiamiento disponible?`,
+        acceptedAnswer: { '@type': 'Answer', text: `Sí, ofrecemos financiamiento a través de Ford Credit con tasas preferenciales. Puedes precalificar en línea sin impacto crediticio en nuestra página de precalificación.` },
+      },
+      {
+        '@type': 'Question',
+        name: `¿Puedo agendar una prueba de manejo de la Ford ${modelName}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `¡Claro! Puedes agendar tu prueba de manejo sin compromiso a través de nuestra página de prueba de manejo. Te esperamos en Central Ford, Vega Alta.` },
+      },
+    ],
+  };
+
   const schemas = [
     {
       '@context': 'https://schema.org',
@@ -116,15 +145,19 @@ function ModelJsonLd({
             name: `${car.year} ${car.make} ${car.model}`,
             model: modelName,
             manufacturer: 'Ford',
+            brand: { '@type': 'Brand', name: 'Ford' },
             offers: {
               '@type': 'Offer',
               price: car.price,
               priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
+              seller: { '@type': 'AutoDealer', name: 'Richard Automotive' },
             },
           },
         })),
       },
     },
+    faqSchema,
   ];
 
   return schemas.map((schema, i) => (
@@ -159,7 +192,7 @@ export default async function FordModelPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <ModelJsonLd modelName={modelName} cars={cars} />
+      <ModelJsonLd modelName={modelName} cars={cars} minPrice={minPrice} />
 
       {/* Hero */}
       <section className="relative overflow-hidden">

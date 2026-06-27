@@ -109,38 +109,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // JSON-LD Structured Data for the vehicle
-function VehicleJsonLd({ car }: { car?: Car }) {
+function VehicleJsonLd({ car, slug, id }: { car?: Car; slug: string; id: string }) {
   if (!car) return null;
 
-  const jsonLd = {
+  const pageUrl = `https://www.richard-automotive.com/inventario/${slug}/${id}`;
+  const isNew = car.condition === 'new';
+  const conditionUrl = isNew ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition';
+  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const images = car.images?.length ? car.images : [car.image || car.img || ''].filter(Boolean);
+
+  const jsonLd: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'Car',
     name: `${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''}`,
+    description: car.description || `${car.year} ${car.make} ${car.model}${car.trim ? ` ${car.trim}` : ''} disponible en Richard Automotive, Vega Alta, Puerto Rico. Precio: $${Number(car.price).toLocaleString()}. Financiamiento desde 4.9% APR.`,
+    brand: { '@type': 'Brand', name: car.make },
     manufacturer: car.make,
     model: car.model,
     vehicleModelDate: car.year?.toString(),
     color: car.color,
+    bodyType: car.type,
     mileageFromOdometer: car.mileage
       ? { '@type': 'QuantitativeValue', value: car.mileage, unitCode: 'SMI' }
       : undefined,
     fuelType: car.fuel || car.fuelType,
     vehicleTransmission: car.transmission,
     vehicleEngine: car.engine ? { '@type': 'EngineSpecification', name: car.engine } : undefined,
-    image: car.image || car.img || car.images?.[0] || '',
-    itemCondition:
-      car.condition === 'new'
-        ? 'https://schema.org/NewCondition'
-        : 'https://schema.org/UsedCondition',
+    image: images,
+    itemCondition: conditionUrl,
+    url: pageUrl,
+    sku: car.id,
+    additionalProperty: car.features?.map((f) => ({ '@type': 'PropertyValue', name: f })),
     offers: {
       '@type': 'Offer',
       price: car.price,
       priceCurrency: 'USD',
+      itemCondition: conditionUrl,
       availability:
         car.status === 'available' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: pageUrl,
+      priceValidUntil,
       seller: {
         '@type': 'AutoDealer',
         name: 'Richard Automotive — Central Ford',
         url: 'https://www.richard-automotive.com',
+        telephone: '+1-787-368-2880',
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
@@ -152,6 +165,9 @@ function VehicleJsonLd({ car }: { car?: Car }) {
       },
     },
   };
+
+  // Remove undefined fields
+  Object.keys(jsonLd).forEach((k) => jsonLd[k] === undefined && delete jsonLd[k]);
 
   return (
     <script
@@ -207,7 +223,7 @@ export default async function VehicleDetailPage({ params }: Props) {
         },
         {
           question: `¿Está disponible el ${currentCar.make} ${currentCar.model} en Richard Automotive?`,
-          answer: `Sí, este ${currentCar.year} ${currentCar.make} ${currentCar.model} está actualmente ${currentCar.status === 'available' ? 'disponible' : 'reservado'} en nuestro lote en Bayamón, Puerto Rico. Contáctanos para agendar un test drive.`,
+          answer: `Sí, este ${currentCar.year} ${currentCar.make} ${currentCar.model} está actualmente ${currentCar.status === 'available' ? 'disponible' : 'reservado'} en nuestro lote en Vega Alta, Puerto Rico. Contáctanos para agendar un test drive.`,
         },
         {
           question: '¿Ofrecen financiamiento para este vehículo?',
@@ -237,7 +253,7 @@ export default async function VehicleDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <VehicleJsonLd car={currentCar || undefined} />
+      <VehicleJsonLd car={currentCar || undefined} slug={slug} id={id} />
       <FAQJsonLd faqs={faqs} />
       <ReactQueryProvider>
         <VehicleDetail car={currentCar || undefined} inventory={inventory} />
