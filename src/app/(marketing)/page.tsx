@@ -10,6 +10,7 @@ import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontConte
 import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
 import FAQSection from '@/shared/ui/components/FAQSection';
 import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
+import StatsStrip from '@/shared/ui/components/StatsStrip';
 
 function FordModelQuickLinksSkeleton() {
   return (
@@ -221,6 +222,7 @@ export default function HomePage() {
         </Suspense>
       </main>
 
+      <StatsStrip />
       <TrustBar />
       <FAQSection />
       <TestimonialsSection />
