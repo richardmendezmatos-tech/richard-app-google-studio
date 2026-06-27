@@ -7,6 +7,7 @@ import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { ReactQueryProvider } from '@/shared/ui/providers/ReactQueryProvider';
+import { getBreadcrumbSchema } from '@/shared/config/seoSchemas';
 
 interface Props {
   params: Promise<{ id: string; slug: string }>;
@@ -138,12 +139,14 @@ function VehicleJsonLd({ car }: { car?: Car }) {
         car.status === 'available' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'AutoDealer',
-        name: 'Richard Automotive',
+        name: 'Richard Automotive — Central Ford',
         url: 'https://www.richard-automotive.com',
         address: {
           '@type': 'PostalAddress',
-          addressLocality: 'Bayamón',
+          streetAddress: 'Carr. #2 KM 28.5, Bo. Espinosa',
+          addressLocality: 'Vega Alta',
           addressRegion: 'PR',
+          postalCode: '00692',
           addressCountry: 'US',
         },
       },
@@ -184,7 +187,7 @@ function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }[] }) {
 }
 
 export default async function VehicleDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id, slug } = await params;
 
   const currentCar = await getCarById(id);
 
@@ -221,8 +224,19 @@ export default async function VehicleDetailPage({ params }: Props) {
 
   const faqs = currentCar?.seoFaqs?.length ? currentCar.seoFaqs : defaultFaqs;
 
+  const vehicleTitle = `${currentCar.year} ${currentCar.make} ${currentCar.model}${currentCar.trim ? ` ${currentCar.trim}` : ''}`;
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Inicio', url: '/' },
+    { name: 'Inventario', url: '/inventario' },
+    { name: vehicleTitle, url: `/inventario/${slug}/${id}` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <VehicleJsonLd car={currentCar || undefined} />
       <FAQJsonLd faqs={faqs} />
       <ReactQueryProvider>

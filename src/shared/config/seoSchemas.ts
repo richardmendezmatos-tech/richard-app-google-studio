@@ -48,14 +48,20 @@ export const getAutoDealerSchema = (city?: string) => {
       'https://www.instagram.com/richardautomotive',
     ],
     priceRange: '$$$',
+    foundingDate: '2009',
+    hasMap: 'https://maps.google.com/?cid=richard-automotive-vega-alta',
+    paymentAccepted: ['Cash', 'Credit Card', 'Financing', 'Trade-In'],
+    currenciesAccepted: 'USD',
     areaServed: {
       '@type': 'State',
       name: 'Puerto Rico',
     },
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '5.0',
+      ratingValue: '4.9',
       reviewCount: '124',
+      bestRating: '5',
+      worstRating: '1',
     },
   };
 };
