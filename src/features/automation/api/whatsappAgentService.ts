@@ -98,6 +98,9 @@ export class WhatsAppAgentService {
       .updateMemory(leadId, undefined, message.substring(0, 200), 'intent')
       .catch(() => {});
 
+    // Real-time lead score update based on intent level
+    this.updateLeadScore(leadId, result.hubspotData?.intentLevel).catch(() => {});
+
     // Appointment scheduling on explicit confirmation
     if (result.nextStage === 'closed' && message.toLowerCase().includes('si')) {
       appointmentService.schedule({
@@ -108,6 +111,34 @@ export class WhatsAppAgentService {
     }
 
     return result.reply;
+  }
+
+  private async updateLeadScore(leadId: string, intentLevel?: string): Promise<void> {
+    const scoreMap: Record<string, number> = {
+      low: 25,
+      medium: 50,
+      high: 75,
+      appointment_ready: 92,
+    };
+    const score = intentLevel ? (scoreMap[intentLevel] ?? 40) : 40;
+
+    try {
+      const cleanId = leadId.replace('whatsapp:', '').replace(/\s/g, '');
+      const existing = await this.leadRepo.findByPhone(cleanId);
+      if (!existing?.id) return;
+
+      const currentMetrics = (existing as any).behavioral_metrics || {};
+      await this.leadRepo.updateLead(existing.id, {
+        behavioral_metrics: {
+          ...currentMetrics,
+          intent_score: score,
+          last_intent_level: intentLevel || 'general',
+          last_scored_at: new Date().toISOString(),
+        },
+      } as any);
+    } catch {
+      // non-blocking
+    }
   }
 
   async toggleAutopilot(leadId: string, enabled: boolean): Promise<void> {
