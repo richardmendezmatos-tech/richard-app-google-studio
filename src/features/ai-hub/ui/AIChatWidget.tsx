@@ -15,6 +15,9 @@ import {
   ShieldCheck,
   Calculator,
   Banknote,
+  Car as CarIcon,
+  Calendar,
+  UserCheck,
 } from 'lucide-react';
 import { AI_LEGAL_DISCLAIMER } from '@/shared/api/media/mediaShared';
 import GenUICarCard from '@/shared/brand-ui/layout/chat/GenUICarCard';
@@ -260,13 +263,13 @@ const AIChatWidget: React.FC<Props> = () => {
               const { toolName, toolCallId, state } = toolInvocation;
 
               if (state === 'result') {
-                if (toolName === 'checkInventory') {
+                if (toolName === 'searchInventory') {
                   const result = toolInvocation.result as Car[];
                   return (
                     <GenUICarCard key={toolCallId} cars={Array.isArray(result) ? result : []} />
                   );
                 }
-                if (toolName === 'calculatePayment') {
+                if (toolName === 'calculateLoanPayment') {
                   const result = toolInvocation.result as any;
                   const monthlyPayment =
                     result?.bestOption?.monthlyPayment || result?.monthlyPayment || '---';
@@ -317,6 +320,74 @@ const AIChatWidget: React.FC<Props> = () => {
                         <div className="pt-2 border-t border-primary/10 flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-primary">
                           <span>Status: Secured</span>
                           <RefreshCw size={10} className="animate-spin-slow" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                if (toolName === 'estimateTradeIn') {
+                  const result = toolInvocation.result as any;
+                  return (
+                    <div key={toolCallId} className="flex justify-start">
+                      <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-200 dark:border-amber-800/50 flex items-center gap-3 max-w-[280px]">
+                        <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white shrink-0">
+                          <CarIcon size={20} />
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">
+                            Trade-In Estimado
+                          </div>
+                          <div className="text-sm font-black text-amber-700 dark:text-white leading-tight">
+                            {result?.estimate || result?.range || 'Ver valuación'}
+                          </div>
+                          <div className="text-[9px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">
+                            {result?.note || 'Sin compromiso. Inspección final en dealer.'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                if (toolName === 'scheduleTestDrive') {
+                  const result = toolInvocation.result as any;
+                  return (
+                    <div key={toolCallId} className="flex justify-start">
+                      <div className="bg-primary/5 dark:bg-primary/10 p-4 rounded-2xl border border-primary/20 flex items-center gap-3 max-w-[280px]">
+                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shrink-0">
+                          <Calendar size={20} />
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-black text-primary uppercase tracking-widest">
+                            Test Drive Agendado
+                          </div>
+                          <div className="text-sm font-black text-slate-800 dark:text-white leading-tight">
+                            {result?.confirmationMessage || '¡Cita confirmada!'}
+                          </div>
+                          <div className="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            {result?.date || ''} · Vega Alta, PR
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                if (toolName === 'requestHumanAgent') {
+                  return (
+                    <div key={toolCallId} className="flex justify-start">
+                      <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-2xl border border-rose-200 dark:border-rose-800/50 flex items-center gap-3 max-w-[280px]">
+                        <div className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white shrink-0 animate-pulse">
+                          <UserCheck size={20} />
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">
+                            Conectando con Richard
+                          </div>
+                          <div className="text-sm font-black text-slate-800 dark:text-white leading-tight">
+                            Un especialista te contactará pronto
+                          </div>
+                          <div className="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            (787) 883-1234 · WhatsApp disponible
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -393,16 +464,21 @@ const AIChatWidget: React.FC<Props> = () => {
                   );
                 }
               } else {
+                const loadingLabels: Record<string, string> = {
+                  searchInventory: '🔍 Buscando autos...',
+                  calculateLoanPayment: '🧮 Calculando pago...',
+                  estimateTradeIn: '🚗 Valuando tu vehículo...',
+                  scheduleTestDrive: '📅 Agendando test drive...',
+                  requestHumanAgent: '📞 Conectando con Richard...',
+                  captureCustomerLead: '✅ Registrando datos...',
+                  generatePreQualEstimate: '💳 Analizando perfil...',
+                };
                 return (
                   <div
                     key={toolCallId}
-                    className="flex justify-start opacity-50 italic text-[10px] text-slate-400"
+                    className="flex justify-start opacity-60 italic text-[10px] text-slate-400 animate-pulse"
                   >
-                    {toolName === 'checkInventory'
-                      ? '🔍 Buscando autos...'
-                      : toolName === 'calculatePayment'
-                        ? '🧮 Calculando pago...'
-                        : '⚙️ Procesando...'}
+                    {loadingLabels[toolName] || '⚙️ Procesando...'}
                   </div>
                 );
               }

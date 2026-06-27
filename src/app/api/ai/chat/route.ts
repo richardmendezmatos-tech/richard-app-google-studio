@@ -98,7 +98,7 @@ REGLAS:
       },
     });
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error: any) {
     console.error('[AI Chat API] Error:', error);
     return new Response(JSON.stringify({ error: error.message || 'Internal AI Error' }), {

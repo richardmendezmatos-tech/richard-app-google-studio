@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useChat } from '@ai-sdk/react';
 import type { UIMessage as AIMessage } from '@ai-sdk/react';
-import { TextStreamChatTransport } from 'ai';
+import { DefaultChatTransport } from 'ai';
 
 export interface Message extends Omit<AIMessage, 'parts'> {
   content: string;
@@ -32,7 +32,7 @@ export function useCopilotAgent(sessionId: string, options: UseCopilotAgentOptio
   const chatProps = useChat({
     id: sessionId,
     initialMessages: options.initialMessages as any[],
-    transport: new TextStreamChatTransport({
+    transport: new DefaultChatTransport({
       api: apiEndpoint,
       body: {
         leadId: sessionId,
