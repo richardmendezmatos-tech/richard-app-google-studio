@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/shared/api/supabase/client';
+import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 
 export const runtime = 'edge';
 
@@ -44,7 +44,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
-    const supabase = createClient();
+    const supabase = createServerSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
+    }
     const { data, error } = await supabase
       .from('leads')
       .insert({
