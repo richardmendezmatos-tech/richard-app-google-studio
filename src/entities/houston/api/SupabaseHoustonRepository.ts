@@ -217,7 +217,7 @@ export class SupabaseHoustonRepository implements HoustonRepository {
         return [];
       }
 
-      return (data || []) as PurchaseOrder[];
+      return (data || []) as unknown as PurchaseOrder[];
     } catch (e) {
       console.warn('[SupabaseHoustonRepository] Failed to fetch POs (Non-blocking):', e);
       return [];

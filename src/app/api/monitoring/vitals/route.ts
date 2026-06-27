@@ -15,6 +15,7 @@ export async function POST(request: Request) {
         metric: m.metric,
         value: m.value,
         rating: m.rating || 'needs-improvement',
+        score: m.score ?? null,
         page: body.page || m.page || 'unknown',
         session_id: request.headers.get('x-session-id') || null,
       }));
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
   const limit = parseInt(url.searchParams.get('limit') || '50', 10);
 
   const sb = await createClient();
-  let query = sb.from('web_vitals');
+  let query = sb.from('web_vitals').select();
 
   if (metric) {
     query = query.eq('metric', metric) as any;
