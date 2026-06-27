@@ -15,22 +15,21 @@ import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const BATCH_SIZE = 10;
-const EMBEDDING_MODEL = 'text-embedding-004';
+const EMBEDDING_MODEL = 'gemini-embedding-2';
 
 function buildCarText(car: Record<string, unknown>): string {
-  const features = Array.isArray(car.features)
-    ? car.features.join(', ')
-    : typeof car.features === 'object' && car.features !== null
-      ? JSON.stringify(car.features)
-      : '';
   return [
     `Vehículo: ${car.year} ${car.make} ${car.model}`,
     car.trim ? `Trim: ${car.trim}` : '',
     `Condición: ${car.condition ?? 'used'}`,
     `Precio: $${car.price}`,
     car.mileage ? `Millaje: ${car.mileage}` : '',
-    features ? `Características: ${features}` : '',
-    car.description ? `Descripción: ${car.description}` : '',
+    car.body_style ? `Estilo de carrocería: ${car.body_style}` : '',
+    car.transmission ? `Transmisión: ${car.transmission}` : '',
+    car.engine ? `Motor: ${car.engine}` : '',
+    car.drive_train ? `Tracción: ${car.drive_train}` : '',
+    car.exterior_color ? `Color exterior: ${car.exterior_color}` : '',
+    car.interior_color ? `Color interior: ${car.interior_color}` : '',
   ]
     .filter(Boolean)
     .join('\n');
@@ -53,14 +52,14 @@ async function main() {
 
   const supabase = createClient(supabaseUrl, supabaseKey);
   const genAI = new GoogleGenerativeAI(geminiKey);
-  const embeddingModel = genAI.getGenerativeModel({ model: EMBEDDING_MODEL });
+  const embeddingModel = genAI.getGenerativeModel({ model: EMBEDDING_MODEL }, { apiVersion: 'v1' });
 
   console.log(`🔍 Fetching active inventory${dryRun ? ' [DRY RUN]' : ''}...`);
 
   const { data: cars, error } = await supabase
     .from('inventory')
-    .select('id, make, model, year, price, mileage, condition, trim, features, description')
-    .in('dealer_status', ['listed', 'pending'])
+    .select('vin, make, model, year, price, mileage, condition, trim, body_style, transmission, engine, drive_train, exterior_color, interior_color')
+    .in('status', ['AVAILABLE', 'PENDING'])
     .limit(Number.isFinite(limit) ? limit : 10000);
 
   if (error) {
@@ -89,11 +88,14 @@ async function main() {
             return;
           }
 
-          const result = await embeddingModel.embedContent(text);
+          const result = await embeddingModel.embedContent({
+            content: { parts: [{ text: text }] },
+            outputDimensionality: 768
+          });
           const embedding = result.embedding.values;
 
           const { error: rpcError } = await supabase.rpc('upsert_inventory_vector', {
-            p_car_id: car.id,
+            p_car_id: car.vin,
             p_car_name: carName,
             p_content: text,
             p_embedding: embedding,

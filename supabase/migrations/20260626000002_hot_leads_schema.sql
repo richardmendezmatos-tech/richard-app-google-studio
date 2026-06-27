@@ -1,7 +1,7 @@
 -- F&I deal context captured from the DealDesker widget
 CREATE TABLE IF NOT EXISTS public.hot_leads (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  vehicle_id      UUID REFERENCES public.inventory(id) ON DELETE SET NULL,
+  vehicle_id      TEXT REFERENCES public.inventory(vin) ON DELETE SET NULL,
   vehicle_name    TEXT,
   vehicle_price   NUMERIC(12,2),
   monthly_payment NUMERIC(10,2),
