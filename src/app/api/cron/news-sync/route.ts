@@ -126,6 +126,20 @@ export async function GET(request: Request) {
 
         results.published++;
 
+        // Submit new post URL to Google Indexing API + IndexNow for immediate discovery
+        if (blogPost.slug) {
+          try {
+            const { submitUrlToGoogle, submitUrlIndexNow } = await import('@/shared/api/seo/gscService');
+            const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.richard-automotive.com'}/blog/${blogPost.slug}`;
+            await Promise.allSettled([
+              submitUrlToGoogle(postUrl, 'URL_UPDATED'),
+              submitUrlIndexNow(postUrl),
+            ]);
+          } catch (indexErr) {
+            console.warn('[news-sync] Indexing submission failed (non-fatal):', indexErr);
+          }
+        }
+
         // Update status in cache
         await supabase
           .from('ford_news_cache')
