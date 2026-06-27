@@ -47,7 +47,9 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
-        command: 'npx dotenvx run -- next dev --turbopack --port 3000',
+        command: process.env.CI
+            ? 'next dev --turbopack --port 3000'
+            : 'npx dotenvx run -- next dev --turbopack --port 3000',
         url: 'http://127.0.0.1:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 180 * 1000,
