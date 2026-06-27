@@ -4,6 +4,7 @@ import InventoryPage from '@/views/inventory/ui/InventoryPage';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/entities/inventory';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
+import { InventoryAlertBanner } from '@/widgets/brand-ui/layout/conversion/InventoryAlertBanner';
 
 export const metadata: Metadata = {
   title: 'Inventario de Autos Nuevos y Usados | Richard Automotive',
@@ -115,6 +116,7 @@ export default async function InventoryRoute({
         >
           <InventoryPage inventory={inventory} initialSearchTerm={initialSearchTerm} />
         </Suspense>
+        <InventoryAlertBanner />
       </main>
     </>
   );
