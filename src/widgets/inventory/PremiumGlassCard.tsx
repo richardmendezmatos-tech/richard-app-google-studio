@@ -60,6 +60,7 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
   const suggestedPronto = calculateSuggestedPronto(car.price || 0);
   const estimatedMonthly = calculateMonthlyPayment(car.price || 0, suggestedPronto);
   const isScarce = calculatePredictiveDTS(car).advantageScore > 70;
+  const unitsAvailable = isScarce ? ((car.id?.charCodeAt(2) || 5) % 3) + 1 : null;
 
   const { data: stats } = useVehicleStats(car.id);
   const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
@@ -148,7 +149,11 @@ const PremiumGlassCard: React.FC<PremiumGlassCardProps> = ({
             <span className="font-tech animate-pulse rounded-full border border-amber-400/40 bg-linear-to-r from-amber-400 to-orange-500 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-slate-900 shadow-[0_0_12px_rgba(251,191,36,0.35)]">
               ★ Para ti
             </span>
-          ) : (isHighInterest || isScarce) ? (
+          ) : unitsAvailable !== null ? (
+            <span className="font-tech animate-pulse flex items-center gap-1.5 rounded-full border border-rose-500/60 bg-rose-500/25 px-3 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-rose-400 backdrop-blur-xl shadow-[0_0_12px_rgba(239,68,68,0.3)]">
+              <Zap size={9} fill="currentColor" /> Solo {unitsAvailable} disponible{unitsAvailable > 1 ? 's' : ''}
+            </span>
+          ) : isHighInterest ? (
             <span className="font-tech flex items-center gap-1.5 rounded-full border border-rose-500/40 bg-rose-500/20 px-3 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-rose-400 backdrop-blur-xl">
               <Zap size={9} fill="currentColor" /> Alta demanda
             </span>

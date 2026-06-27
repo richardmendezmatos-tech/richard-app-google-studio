@@ -6,42 +6,53 @@ import {
   Clock,
   FileText,
   Phone,
-  ChevronRight,
   Zap,
   Shield,
+  ShieldCheck,
   TrendingDown,
 } from 'lucide-react';
 import { CreditCalculator } from '@/features/loans/ui/CreditCalculator';
 import { ApprovalSimulatorWidget } from '@/features/loans/ui/ApprovalSimulatorWidget';
+import { FinanciamientoFAQ } from './FinanciamientoFAQ';
 
 const WHATSAPP_LINK =
   'https://wa.me/17873682880?text=Hola%2C%20quiero%20información%20sobre%20financiamiento';
 
 const faqs = [
   {
-    question: '¿Qué necesito para solicitar financiamiento?',
+    question: '¿Qué documentos necesito para solicitar financiamiento de auto en Puerto Rico?',
     answer:
-      'Identificación válida (licencia de conducir o pasaporte), comprobante de ingresos (talonario o carta de empleo), comprobante de residencia y número de seguro social.',
+      'Necesitas: (1) licencia de conducir o pasaporte vigente, (2) número de Seguro Social, (3) talonarios de pago de los últimos 30 días o carta de empleo con sueldo, (4) comprobante de residencia reciente (factura de servicios o estado de cuenta bancario), y (5) referencias personales. Para trabajadores independientes o por cuenta propia, se requieren las últimas 2 declaraciones de IRS.',
   },
   {
-    question: '¿Cuánto tiempo tarda la aprobación?',
+    question: '¿Cuánto tiempo tarda la aprobación de financiamiento?',
     answer:
-      'Nuestra pre-aprobación en línea toma solo 24 horas. Con documentos completos, la aprobación final puede ser el mismo día.',
+      'La pre-aprobación en línea tarda entre 15 y 30 minutos y no afecta tu puntaje de crédito (soft pull). Con todos los documentos completos en mano, la aprobación formal con el banco puede completarse el mismo día. Ford Credit es especialmente rápido — respuesta en menos de 2 horas en la mayoría de los casos.',
   },
   {
-    question: '¿Aceptan personas con crédito bajo o sin historial?',
+    question: '¿Aceptan personas con crédito bajo o sin historial crediticio?',
     answer:
-      'Sí. Trabajamos con múltiples entidades financieras en Puerto Rico para encontrar la opción que mejor se adapte a tu situación crediticia.',
+      'Sí. Trabajamos con más de 15 entidades bancarias y cooperativas en Puerto Rico, incluyendo programas especiales para primeros compradores ("First Time Buyers") y personas con historial limitado. No te descartamos sin antes explorar todas las opciones disponibles para tu situación.',
   },
   {
-    question: '¿Puedo hacer trade-in como parte del pago inicial?',
+    question: '¿Cuánto es el pronto mínimo y puedo usar mi auto de trade-in como inicial?',
     answer:
-      'Absolutamente. Tasamos tu vehículo actual a precio justo de mercado y lo aplicamos directamente al enganche de tu próximo auto.',
+      'El pronto mínimo varía entre 0 % y 20 % del precio del vehículo según tu perfil crediticio. Sí aceptamos tu auto actual como parte del pago inicial (trade-in). Tasamos tu vehículo a precio justo de mercado y aplicamos ese valor directamente al enganche de tu próximo auto, reduciendo el monto a financiar.',
   },
   {
-    question: '¿Cuáles son los plazos de financiamiento disponibles?',
+    question: '¿Cuáles son los plazos de financiamiento y cuál me conviene más?',
     answer:
-      'Ofrecemos plazos flexibles de 24, 36, 48, 60 y hasta 72 meses para que tu pago mensual se ajuste a tu presupuesto.',
+      'Ofrecemos plazos de 24, 36, 48, 60 y 72 meses. Los plazos cortos (24-36 meses) tienen mensualidades más altas pero pagas menos intereses en total. Los plazos largos (60-72 meses) reducen la mensualidad mensual pero aumentan el costo total. Para autos nuevos Ford, Ford Credit ofrece ocasionalmente 0 % APR a 60 meses en modelos seleccionados — pregunta por las promociones vigentes.',
+  },
+  {
+    question: '¿Qué APR (tasa de interés) puedo esperar para mi auto en Puerto Rico?',
+    answer:
+      'Las tasas en Puerto Rico varían entre 3.9 % y 18 % APR dependiendo de tu puntaje FICO, plazo, tipo de vehículo (nuevo vs. usado) y el banco financiero. Los clientes con FICO 720+ suelen calificar para las mejores tasas. Con Ford Credit en vehículos nuevos, las promociones regulares ofrecen tasas desde 0 % hasta 5.9 % APR.',
+  },
+  {
+    question: '¿El financiamiento cubre autos usados también?',
+    answer:
+      'Sí. Financiamos tanto vehículos nuevos como usados certificados. Para autos usados, las tasas son ligeramente más altas y el plazo máximo generalmente es 60 meses. El vehículo debe tener menos de 100,000 millas y no más de 7-8 años de antigüedad para calificar en la mayoría de los bancos.',
   },
 ];
 
@@ -81,6 +92,16 @@ const FinanciamientoPage: React.FC = () => {
     },
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
   return (
     <>
       <SEO
@@ -88,7 +109,7 @@ const FinanciamientoPage: React.FC = () => {
         description="Aplica para financiamiento de autos nuevos y usados en Bayamón, PR. Pre-aprobación en 24h, tasas competitivas y crédito flexible. Dealer de autos líder en Puerto Rico."
         url="/financiamiento"
         type="website"
-        schema={schema}
+        schema={[schema, faqSchema]}
       />
 
       <div className="min-h-screen bg-[#0a0f1e] text-white">
@@ -222,30 +243,43 @@ const FinanciamientoPage: React.FC = () => {
           </div>
         </section>
 
-        {/* FAQ Schema */}
+        {/* FAQ */}
         <section className="py-16 px-6 bg-slate-900/30">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-black uppercase tracking-tight mb-8 text-center">
-              Preguntas Frecuentes — Financiamiento PR
+            <h2 className="text-2xl font-black uppercase tracking-tight mb-2 text-center">
+              Preguntas Frecuentes — Financiamiento en Puerto Rico
             </h2>
-            <div className="space-y-4">
-              {faqs.map((faq) => (
-                <details
-                  key={faq.question}
-                  className="group bg-slate-800/50 border border-white/5 rounded-4xl overflow-hidden"
-                >
-                  <summary className="flex items-center justify-between px-6 py-5 cursor-pointer font-bold text-white list-none">
-                    {faq.question}
-                    <ChevronRight
-                      size={16}
-                      className="text-slate-400 group-open:rotate-90 transition-transform"
-                    />
-                  </summary>
-                  <div className="px-6 pb-6 text-slate-300 text-sm leading-relaxed">
-                    {faq.answer}
-                  </div>
-                </details>
+            <p className="text-slate-400 text-sm text-center mb-10">
+              {faqs.length} respuestas sobre APR, documentos, plazos y más.
+            </p>
+            <FinanciamientoFAQ faqs={faqs} />
+          </div>
+        </section>
+
+        {/* Trust badges */}
+        <section className="py-10 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                { icon: ShieldCheck, label: 'Ford Authorized Dealer', sub: 'Central Ford PR' },
+                { icon: Shield, label: 'DTOP Licenciado', sub: 'Puerto Rico' },
+                { icon: CheckCircle, label: 'Sin costo de pre-aprobación', sub: 'Soft pull únicamente' },
+                { icon: FileText, label: 'Proceso 100 % transparente', sub: 'Sin letra pequeña' },
+              ].map(({ icon: Icon, label, sub }) => (
+                <div key={label} className="flex flex-col items-center text-center p-4 rounded-2xl border border-white/5 bg-slate-900/40 gap-2">
+                  <Icon size={18} className="text-cyan-400" />
+                  <p className="text-[10px] font-black text-white leading-tight">{label}</p>
+                  <p className="text-[9px] text-slate-500">{sub}</p>
+                </div>
               ))}
+            </div>
+            <div className="rounded-2xl border border-white/5 bg-slate-900/40 p-5">
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                <strong className="text-slate-400">Aviso legal:</strong> Las tasas APR, plazos y mensualidades presentadas son estimados con fines educativos y pueden variar según el historial crediticio del solicitante, el banco financiero seleccionado y las condiciones del mercado al momento de la transacción. El financiamiento está sujeto a aprobación crediticia. Richard Automotive opera como franquiciado de Central Ford bajo licencia de Ford Motor Company y está licenciado por el DTOP de Puerto Rico. Para información sobre sus derechos como consumidor de crédito, visita{' '}
+                <a href="https://www.consumerfinance.gov" target="_blank" rel="noopener noreferrer" className="text-cyan-500 hover:underline">
+                  consumerfinance.gov
+                </a>.
+              </p>
             </div>
           </div>
         </section>

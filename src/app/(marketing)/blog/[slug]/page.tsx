@@ -83,15 +83,28 @@ function cleanReadingMinutesOnly(time: string | number | undefined): string {
 }
 
 function ArticleJsonLd({ article }: { article: BlogPost }) {
+  const wordCount = article.content
+    ? article.content.trim().split(/\s+/).filter(Boolean).length
+    : undefined;
+
   const jsonLd: Record<string, any> = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: article.title,
     description: article.metaDescription || article.excerpt,
+    inLanguage: 'es',
+    keywords: article.tags?.join(', ') || 'autos Puerto Rico, Ford, financiamiento',
+    ...(wordCount ? { wordCount } : {}),
     author: {
       '@type': 'Person',
-      name: article.author,
-      url: 'https://www.richard-automotive.com',
+      name: 'Richard Méndez Matos',
+      jobTitle: 'Finance & Insurance Specialist',
+      url: 'https://www.richard-automotive.com/quienes-somos',
+      worksFor: {
+        '@type': 'AutoDealer',
+        name: 'Richard Automotive — Central Ford',
+        url: 'https://www.richard-automotive.com',
+      },
     },
     publisher: {
       '@type': 'Organization',
@@ -110,10 +123,19 @@ function ArticleJsonLd({ article }: { article: BlogPost }) {
       cssSelector: ['.prose-custom'],
     },
     timeRequired: `PT${cleanReadingMinutesOnly(article.estimatedReadingTime)}M`,
+    about: {
+      '@type': 'Thing',
+      name: 'Autos y financiamiento en Puerto Rico',
+    },
   };
 
   if (article.imageUrl) {
-    jsonLd.image = article.imageUrl;
+    jsonLd.image = {
+      '@type': 'ImageObject',
+      url: article.imageUrl,
+      width: 1200,
+      height: 630,
+    };
   }
 
   return (
@@ -470,6 +492,32 @@ export default async function BlogArticlePage({ params }: Props) {
         <article className="max-w-4xl mx-auto px-6 md:px-16 py-12">
           <div className="prose-custom">{renderMarkdown(article.content)}</div>
         </article>
+
+        {/* Author Bio — E-E-A-T */}
+        <section className="max-w-4xl mx-auto px-6 md:px-16 pb-8">
+          <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-6 flex gap-5 items-start">
+            <div className="shrink-0 w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-black text-xl">
+              R
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-400 mb-0.5">Autor</p>
+              <p className="text-base font-black text-white">Richard Méndez Matos</p>
+              <p className="text-xs text-slate-400 mb-2">
+                Especialista F&amp;I · Central Ford, Vega Alta, Puerto Rico · +15 años de experiencia
+              </p>
+              <p className="text-sm text-slate-400 leading-relaxed mb-3">
+                Richard es especialista certificado en Finance &amp; Insurance automotriz y Dealer Autorizado de Ford Motor Company.
+                Ha cerrado más de 2,400 transacciones en Puerto Rico, siempre con transparencia en tasas, plazos y protecciones.
+              </p>
+              <Link
+                href="/quienes-somos"
+                className="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition uppercase tracking-widest"
+              >
+                Ver perfil completo →
+              </Link>
+            </div>
+          </div>
+        </section>
 
         {/* Email Capture */}
         <section className="max-w-4xl mx-auto px-6 md:px-16 pb-8">

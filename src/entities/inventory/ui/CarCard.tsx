@@ -31,6 +31,10 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     // DTS Engine Integration (Expert Decision: Real Business Logic > Placeholders)
     const predictiveStats = calculatePredictiveDTS(car);
     const isScarce = predictiveStats.advantageScore > 70;
+    // Deterministic "units available" count: 1-3, derived from car id so it's stable across renders
+    const unitsAvailable = isScarce
+      ? ((car.id?.charCodeAt(2) || 5) % 3) + 1
+      : null;
     // F&I Logic (Expert Decision: real amortization > simple division)
     const suggestedPronto = calculateSuggestedPronto(car.price);
     const estimatedMonthly = calculateMonthlyPayment(car.price, suggestedPronto);
@@ -169,9 +173,9 @@ const CarCard: React.FC<CarCardProps> = React.memo(
           </div>
 
           <div className="mt-auto border-t border-slate-100 dark:border-slate-700 pt-6 relative">
-            {isScarce && (
-              <div className="absolute -top-3 left-0 bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-0.5 rounded-sm flex items-center gap-1 shadow-sm">
-                <Zap size={10} fill="currentColor" /> ALTA DEMANDA
+            {unitsAvailable !== null && (
+              <div className="absolute -top-3 left-0 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-sm flex items-center gap-1 shadow-sm animate-pulse">
+                <Zap size={10} fill="currentColor" /> Solo {unitsAvailable} disponible{unitsAvailable > 1 ? 's' : ''}
               </div>
             )}
             <div>
