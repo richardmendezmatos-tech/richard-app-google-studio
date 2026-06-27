@@ -56,7 +56,7 @@ export async function GET(request: Request) {
   const limit = parseInt(url.searchParams.get('limit') || '50', 10);
 
   const sb = await createClient();
-  let query = sb.from('web_vitals');
+  let query = sb.from('web_vitals').select();
 
   if (metric) {
     query = query.eq('metric', metric) as any;

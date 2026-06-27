@@ -1,1 +1,1 @@
-export { createSSRClient as createClient } from './factory';
+export { createSSRClient as createClient } from './factory.server';

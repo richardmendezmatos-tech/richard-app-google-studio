@@ -1,1 +1,2 @@
-export { createAnonClient, createSSRClient, createServiceClient } from './factory';
+export { createAnonClient, createServiceClient } from './factory';
+export { createSSRClient } from './factory.server';
