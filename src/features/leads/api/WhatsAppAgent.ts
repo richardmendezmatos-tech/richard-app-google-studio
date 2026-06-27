@@ -1,49 +1,30 @@
 import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
-import { generateText } from 'ai';
+import { generateObject } from 'ai';
+import { z } from 'zod';
 import { gemini15Flash } from '@/features/ai-hub/api/aiManager';
-import { WHATSAPP_AGENT_PROMPT } from './WhatsAppAgent.prompt';
+import { WHATSAPP_AGENT_SYSTEM_PROMPT, buildWhatsAppUserPrompt } from './WhatsAppAgent.prompt';
+import { conversationMemory } from '@/shared/api/ai/conversationMemory';
+import { houstonHandoffService } from '@/features/houston/api/HoustonHandoffService';
 
 // SDK Removed due to Firebase Cloud Functions PEER conflicts
 // Using pure HTTP fetch for Composio interactions
-/**
- * Conexión a Rube MCP (Composio) para HubSpot
- * Dispara la creación del Lead y del Deal asociado en el CRM
- */
 async function syncToHubspot(data: any): Promise<void> {
-  console.log('[Composio:HubSpot] Sincronizando Deal/Lead:', JSON.stringify(data));
-
   try {
     const apiKey = process.env.COMPOSIO_API_KEY;
-    if (!apiKey) {
-      console.warn('[Composio:HubSpot] Missing COMPOSIO_API_KEY. Skipping sync.');
-      return;
-    }
+    if (!apiKey) return;
 
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-    };
+    const headers = { 'Content-Type': 'application/json', 'x-api-key': apiKey };
 
-    // Create/Update Contact
-    const contactRes = await fetch('https://api.composio.dev/v1/actions/execute', {
+    await fetch('https://api.composio.dev/v1/actions/execute', {
       method: 'POST',
       headers,
       body: JSON.stringify({
         action: 'HUBSPOT_CREATE_CONTACT',
-        input: {
-          properties: {
-            phone: data.phone,
-            firstname: data.name || 'WhatsApp Lead',
-            lifecyclestage: 'lead',
-          },
-        },
+        input: { properties: { phone: data.phone, firstname: data.name || 'WhatsApp Lead', lifecyclestage: 'lead' } },
       }),
     });
 
-    console.log('[Composio:HubSpot] Contact ResponseStatus:', contactRes.status);
-
-    // Create Deal
-    const dealRes = await fetch('https://api.composio.dev/v1/actions/execute', {
+    await fetch('https://api.composio.dev/v1/actions/execute', {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -58,27 +39,37 @@ async function syncToHubspot(data: any): Promise<void> {
         },
       }),
     });
-
-    console.log('[Composio:HubSpot] Deal ResponseStatus:', dealRes.status);
   } catch (err: any) {
-    console.error('[Composio:HubSpot] Error syncing to CRM:', err.message || err);
+    console.error('[Composio:HubSpot] Error:', err.message || err);
   }
 }
+
+const WhatsAppResponseSchema = z.object({
+  reply: z.string().describe('Tu mensaje para el cliente. Máximo 280 caracteres, tono boricua ejecutivo.'),
+  intentLevel: z.enum(['low', 'medium', 'high', 'appointment_ready']),
+  hasTradeIn: z.boolean().nullable().describe('null si no se mencionó trade-in'),
+  budget: z.string().nullable().describe('Rango de presupuesto extraído, null si no se mencionó'),
+  suggestedVehicle: z.string().nullable().describe('Vehículo del inventario que sugieres, null si no aplica'),
+  needsHumanHandoff: z.boolean().describe('true si el cliente pide un humano o está frustrado'),
+});
+
+export type WhatsAppResponse = z.infer<typeof WhatsAppResponseSchema>;
 
 export interface WhatsAppAgentInput {
   leadId: string;
   message: string;
   customerContext?: any;
-  from: string; // Added 'from' property
+  from: string;
 }
 
 export interface WhatsAppAgentOutput {
   reply: string;
   nextStage: string;
+  needsHumanHandoff: boolean;
   hubspotData?: {
     hasTradeIn?: boolean | null;
-    budget?: number | string | null;
-    intentLevel?: 'low' | 'medium' | 'high' | 'appointment_ready';
+    budget?: string | null;
+    intentLevel?: string;
     suggestedVehicle?: string | null;
   };
 }
@@ -88,84 +79,100 @@ export class WhatsAppAgent {
 
   async execute(input: WhatsAppAgentInput): Promise<WhatsAppAgentOutput> {
     const sequence = await this.repo.getSequence(input.leadId);
-    const history = sequence?.history || [];
 
-    // Fetch active inventory to inject into prompt context
+    // Load real conversation history from DB for better context
+    const history = await conversationMemory.loadWhatsAppHistory(input.leadId);
+
+    // Fetch inventory for prompt context
     let inventorySummary = 'No hay unidades registradas en este momento.';
     try {
       const { SupabaseInventoryRepository } = await import('@/entities/inventory/api/SupabaseInventoryRepository');
       const { createClient } = await import('@/shared/api/supabase/client');
-      const supabaseClient = createClient();
-      const inventoryRepo = new SupabaseInventoryRepository(supabaseClient);
-      const cars = await inventoryRepo.getInventory('richard-automotive', 15);
-      if (cars && cars.length > 0) {
-        inventorySummary = cars.map(car => 
-          `- ${car.year} ${car.make} ${car.model} | Precio: $${car.price} | Millaje: ${car.mileage}mi | VIN: ${car.vin}`
-        ).join('\n');
+      const inventoryRepo = new SupabaseInventoryRepository(createClient());
+      const cars = await inventoryRepo.getInventory('richard-automotive', 12);
+      if (cars?.length) {
+        inventorySummary = cars
+          .map((c) => `- ${c.year} ${c.make} ${c.model} | $${c.price} | ${c.mileage}mi`)
+          .join('\n');
       }
     } catch (e) {
-      console.error('[WhatsAppAgent] Failed to fetch inventory for context:', e);
+      console.error('[WhatsAppAgent] Inventory fetch error:', e);
     }
 
-    // Simple prompt-based orchestration for now
-    const prompt = WHATSAPP_AGENT_PROMPT.replace(
-      '{{customerContext}}',
-      JSON.stringify(input.customerContext || {}),
-    )
-      .replace('{{history}}', JSON.stringify(history))
-      .replace('{{inventory}}', inventorySummary)
-      .replace('{{message}}', input.message);
+    const userPrompt = buildWhatsAppUserPrompt(
+      history,
+      input.customerContext,
+      inventorySummary,
+      input.message,
+    );
 
-    const { text } = await generateText({
-      model: gemini15Flash,
-      prompt,
-    });
-
-    let parsedResponse;
+    let parsed: WhatsAppResponse;
     try {
-      const cleanText = text
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .trim();
-      parsedResponse = JSON.parse(cleanText);
-    } catch (e) {
-      console.warn('Error parsing agent JSON directly, using fallback');
-      parsedResponse = {
-        reply: text || 'Entendido. Un especialista de Richard Automotive te contactará en breve.',
-        extractedData: { intentLevel: 'medium' },
+      const { object } = await generateObject({
+        model: gemini15Flash,
+        schema: WhatsAppResponseSchema,
+        system: WHATSAPP_AGENT_SYSTEM_PROMPT,
+        prompt: userPrompt,
+      });
+      parsed = object;
+    } catch (err) {
+      console.error('[WhatsAppAgent] generateObject failed:', err);
+      parsed = {
+        reply: 'Entendido. Un especialista de Richard Automotive te contactará en breve. 🚗',
+        intentLevel: 'medium',
+        hasTradeIn: null,
+        budget: null,
+        suggestedVehicle: null,
+        needsHumanHandoff: false,
       };
     }
 
-    let nextStage: any = sequence?.currentStage || 'welcome';
+    // Persist this turn to conversation history
+    conversationMemory.saveWhatsAppTurn(input.leadId, input.message, parsed.reply).catch(() => {});
+
+    // Handle human handoff
+    if (parsed.needsHumanHandoff) {
+      houstonHandoffService
+        .escalate({
+          leadPhone: input.leadId,
+          message: input.message,
+          reason: 'Customer requested human agent via WhatsApp',
+          channel: 'whatsapp',
+        })
+        .catch(() => {});
+    }
+
+    let nextStage = sequence?.currentStage || 'welcome';
     let justSuggestedAppointment = false;
 
     if (
-      parsedResponse.extractedData?.intentLevel === 'appointment_ready' &&
+      parsed.intentLevel === 'appointment_ready' &&
       nextStage !== 'appointment_suggested'
     ) {
       nextStage = 'appointment_suggested';
       justSuggestedAppointment = true;
     } else if (
-      (input.message.toLowerCase().includes('cita') ||
-        input.message.toLowerCase().includes('ver')) &&
+      (input.message.toLowerCase().includes('cita') || input.message.toLowerCase().includes('ver')) &&
       nextStage !== 'appointment_suggested'
     ) {
       nextStage = 'appointment_suggested';
       justSuggestedAppointment = true;
     }
 
-    // ✅ Phase 8 - If we just entered 'appointment_suggested', trigger HubSpot Deal Creation via Composio / Rube MCP
     if (justSuggestedAppointment) {
-      await syncToHubspot({
-        phone: input.from,
-        ...parsedResponse.extractedData,
-      });
+      syncToHubspot({ phone: input.from, ...parsed }).catch(() => {});
     }
 
     return {
-      reply: parsedResponse.reply,
+      reply: parsed.reply,
       nextStage,
-      hubspotData: parsedResponse.extractedData,
+      needsHumanHandoff: parsed.needsHumanHandoff,
+      hubspotData: {
+        hasTradeIn: parsed.hasTradeIn,
+        budget: parsed.budget,
+        intentLevel: parsed.intentLevel,
+        suggestedVehicle: parsed.suggestedVehicle,
+      },
     };
   }
 }

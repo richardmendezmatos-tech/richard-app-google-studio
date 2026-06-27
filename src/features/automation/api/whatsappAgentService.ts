@@ -73,28 +73,38 @@ export class WhatsAppAgentService {
 
   async processInboundMessage(leadId: string, message: string): Promise<string> {
     const memory = await customerMemoryService.getMemory(leadId);
-    const vehicleContext =
-      memory?.history && memory.history.length > 0
-        ? memory.history[memory.history.length - 1]
-        : undefined;
 
-    // 🔑 Upsert lead in Supabase (non-blocking)
+    // Build rich customer context for the agent
+    const customerContext = memory
+      ? {
+          preferences: memory.preferences,
+          vehicleHistory: memory.history,
+          recentNotes: memory.notes?.slice(-3) || [],
+        }
+      : undefined;
+
+    // Upsert lead in Supabase (non-blocking)
     this.upsertLead(leadId).catch(() => {});
 
     const result = await this.agent.execute({
       leadId,
       message,
-      customerContext: vehicleContext,
+      customerContext,
       from: 'whatsapp',
     });
 
-    // External side-effect: Appointment Scheduling
+    // Update customer memory with this interaction
+    customerMemoryService
+      .updateMemory(leadId, undefined, message.substring(0, 200), 'intent')
+      .catch(() => {});
+
+    // Appointment scheduling on explicit confirmation
     if (result.nextStage === 'closed' && message.toLowerCase().includes('si')) {
-      await appointmentService.schedule({
+      appointmentService.schedule({
         leadId,
-        date: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000),
         type: 'test-drive',
-      });
+      }).catch(() => {});
     }
 
     return result.reply;
