@@ -116,19 +116,12 @@ export function QuienesSomosPage() {
 
             {/* Photo card */}
             <div className="relative">
-              <div className="rounded-3xl overflow-hidden border border-white/10 bg-slate-900/60 aspect-[4/5] flex items-center justify-center">
+              <div className="rounded-3xl overflow-hidden border border-white/10 bg-slate-900/60 aspect-[4/5]">
                 <img
-                  src="/assets/team/richard-mendez.webp"
+                  src="/assets/images/richard_real.jpg"
                   alt="Richard Méndez Matos — Especialista F&I Central Ford Vega Alta Puerto Rico"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
+                  className="w-full h-full object-cover object-top"
                 />
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-8 text-center">
-                  <Users size={48} className="mb-4 opacity-20" />
-                  <p className="text-xs text-slate-600">Foto de Richard Méndez</p>
-                </div>
               </div>
               {/* Credential badge */}
               <div className="absolute -bottom-4 -right-4 bg-slate-950 border border-cyan-500/30 rounded-2xl p-4 shadow-[0_0_30px_rgba(34,211,238,0.15)]">

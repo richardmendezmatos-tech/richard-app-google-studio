@@ -28,6 +28,7 @@ const personSchema = {
   '@type': 'Person',
   name: 'Richard Méndez Matos',
   jobTitle: 'Finance & Insurance Specialist',
+  image: `${SITE_CONFIG.url}/assets/images/richard_real.jpg`,
   worksFor: {
     '@type': 'AutoDealer',
     name: 'Richard Automotive — Central Ford',
