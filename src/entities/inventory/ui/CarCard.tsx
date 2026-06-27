@@ -152,23 +152,28 @@ const CarCard: React.FC<CarCardProps> = React.memo(
         <div className="p-8 flex-1 flex flex-col">
           <div className="mb-4">
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-              {car.type}
+              {car.year && <>{car.year} · </>}{car.type?.toUpperCase() || 'AUTO'}
             </span>
             <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white tracking-tighter uppercase leading-none mt-1 group-hover:text-primary transition-colors">
               {car.name}
             </h3>
           </div>
 
-          {/* Key Features Mockup (CarMax style) */}
+          {/* Key Features — datos reales del vehículo */}
           <div className="flex gap-2 mb-6 flex-wrap">
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              Auto
+            <span className={`text-[10px] px-2 py-1 rounded-md font-black uppercase ${car.condition === 'new' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400'}`}>
+              {car.condition === 'new' ? 'Nuevo' : 'Usado'}
             </span>
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              Gasolina
+            {car.mileage != null && car.condition !== 'new' && (
+              <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
+                {car.mileage.toLocaleString()} mi
+              </span>
+            )}
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold capitalize">
+              {car.transmission || 'Automática'}
             </span>
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              4 Puertas
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold capitalize">
+              {car.fuel || car.fuelType || 'Gasolina'}
             </span>
           </div>
 
