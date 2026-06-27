@@ -419,17 +419,20 @@ export default async function BlogArticlePage({ params }: Props) {
       <BreadcrumbJsonLd article={article} />
       {faqs.length > 0 && <FaqJsonLd faqs={faqs} />}
 
-      <div className="min-h-screen bg-slate-950 text-white">
+      <div className="min-h-screen bg-[#070d1a] text-white [background-image:radial-gradient(circle,rgba(34,211,238,0.04)_1px,transparent_1px)] [background-size:28px_28px]">
         {/* Hero */}
-        <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
-          {article.imageUrl && (
+        <div className="relative h-[56vh] min-h-[440px] overflow-hidden">
+          {article.imageUrl ? (
             <img
               src={article.imageUrl}
               alt={article.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-30"
+              className="absolute inset-0 w-full h-full object-cover opacity-45 scale-105"
             />
+          ) : (
+            <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-[#0a1628] to-slate-950" />
           )}
-          <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#070d1a] via-[#070d1a]/65 to-[#070d1a]/20" />
+          <div className="absolute inset-0 bg-linear-to-r from-[#070d1a]/60 via-transparent to-transparent" />
           <div className="absolute bottom-0 inset-x-0 p-8 md:p-16 max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-xs text-slate-500 mb-4">
@@ -489,8 +492,10 @@ export default async function BlogArticlePage({ params }: Props) {
         </div>
 
         {/* Article Body */}
-        <article className="max-w-4xl mx-auto px-6 md:px-16 py-12">
-          <div className="prose-custom">{renderMarkdown(article.content)}</div>
+        <article className="max-w-4xl mx-auto px-4 md:px-6 py-8">
+          <div className="bg-slate-900/40 border border-white/6 rounded-3xl px-6 md:px-12 py-10 backdrop-blur-sm shadow-[0_0_60px_rgba(0,0,0,0.5)]">
+            <div className="prose-custom">{renderMarkdown(article.content)}</div>
+          </div>
         </article>
 
         {/* Author Bio — E-E-A-T */}
