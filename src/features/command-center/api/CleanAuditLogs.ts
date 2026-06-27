@@ -1,4 +1,4 @@
-import { LogRepository } from '@/features/command-center/api';
+import { LogRepository } from '@/shared/api/repositories/ILogRepository';
 
 export class CleanAuditLogs {
   constructor(private logRepo: LogRepository) {}

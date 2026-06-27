@@ -1,5 +1,5 @@
 import { SendGridEmailRepository } from '@/shared/api/communications/SendGridEmailRepository';
-import { SendNotification } from '@/features/automation/api';
+import { SendNotification } from './SendNotification';
 
 const emailRepo = new SendGridEmailRepository();
 const notifier = new SendNotification(emailRepo);

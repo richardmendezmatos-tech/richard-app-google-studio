@@ -1,4 +1,4 @@
-import { EmailRepository, EmailOptions } from '@/features/automation/api';
+import { EmailRepository, EmailOptions } from '@/shared/api/repositories/IEmailRepository';
 
 /**
  * Use Case: Send Notification

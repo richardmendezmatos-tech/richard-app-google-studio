@@ -1,4 +1,4 @@
-import { supabase } from '@/shared/api/supabase/supabase';
+import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 import { sendWhatsAppMessage } from '@/features/leads/model/whatsappService';
 
 interface FordNewsAlert {
@@ -12,11 +12,12 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class FordNewsBroadcaster {
   async broadcast(news: FordNewsAlert): Promise<{ notified: number }> {
     try {
+      const supabase = createServerSupabaseClient();
       const { data: leads, error } = await supabase
         .from('leads')
         .select('phone, first_name')
         .not('phone', 'is', null)
-        .or(`vehicleOfInterest.ilike.%Ford%,vehicleOfInterest.ilike.%ford%,notes.ilike.%ford%`)
+        .or(`vehicle_of_interest.ilike.%Ford%,vehicle_of_interest.ilike.%ford%,notes.ilike.%ford%`)
         .order('created_at', { ascending: false })
         .limit(50);
 

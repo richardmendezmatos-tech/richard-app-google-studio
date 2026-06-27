@@ -1,4 +1,4 @@
-import { WhatsAppRepository } from '@/features/leads/api';
+import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
 import { generateText } from 'ai';
 import { gemini15Flash } from '@/features/ai-hub/api/aiManager';
 import { WHATSAPP_AGENT_PROMPT } from './WhatsAppAgent.prompt';

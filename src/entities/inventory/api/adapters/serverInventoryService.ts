@@ -37,6 +37,7 @@ export const getPaginatedCars = async (
   sortBy: 'price' | 'year' | 'mileage' | 'created_at' = 'price',
 ) => {
   const sb = createServerSupabaseClient();
+  if (!sb) return { cars: [], nextOffset: null };
   let query = sb.from('inventory').select('*', { count: 'estimated' });
 
   if (searchTerm) {
@@ -90,6 +91,7 @@ export interface FordModelSummary {
 
 export const getDistinctFordModels = async (): Promise<FordModelSummary[]> => {
   const sb = createServerSupabaseClient();
+  if (!sb) return [];
   const { data, error } = await sb
     .from('inventory')
     .select('make, model, year, price, images, body_style, type, name, condition')

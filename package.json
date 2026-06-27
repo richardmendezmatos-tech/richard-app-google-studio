@@ -28,6 +28,7 @@
     "prepare": "husky",
     "format": "npx prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\" \"README.md\"",
     "sync:notebook": "npx -y @dotenvx/dotenvx run -- tsx scripts/sync-to-notebook.ts",
+    "inventory:reindex": "dotenvx run -- tsx scripts/reindex-inventory.ts",
     "circular": "madge --circular --extensions ts,tsx --exclude 'shared/vendor/kalidokit' --ts-config tsconfig.json src/"
   },
   "dependencies": {
@@ -43,7 +44,7 @@
     "@sendgrid/mail": "^8.1.6",
     "@serwist/next": "^9.5.11",
     "@serwist/sw": "^9.5.11",
-    "@supabase/ssr": "^0.10.3",
+    "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.105.4",
     "@tailwindcss/postcss": "^4.3.0",
     "@tanstack/react-query": "^5.95.2",
@@ -81,7 +82,7 @@
     "recharts": "^3.7.0",
     "remark-gfm": "^4.0.1",
     "rss-parser": "^3.13.0",
-    "sharp": "^0.34.0",
+    "sharp": "^0.35.2",
     "tailwindcss": "^4.3.0",
     "twilio": "^6.0.2",
     "uuid": "^14.0.0",

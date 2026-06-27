@@ -1,4 +1,4 @@
-import { VectorRepository } from '@/features/inventory/api';
+import { VectorRepository } from '@/features/ai-hub/api/IVectorRepository';
 import { Car } from '@/entities/inventory/model/CarEntity';
 
 /**

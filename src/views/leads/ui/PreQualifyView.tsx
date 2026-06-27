@@ -156,7 +156,7 @@ const PreQualifyView: React.FC<Props> = ({ onExit, dealContext: propDealContext 
     try {
       // SEGURIDAD: Encriptación Zero-Knowledge antes de salir del cliente
       // Usamos una llave derivada o de entorno para la encriptación pública
-      const PUBLIC_ENCRYPTION_KEY = process.env.VITE_SSN_PUBLIC_KEY || 'RA-SECURE-VAULT-2024';
+      const PUBLIC_ENCRYPTION_KEY = process.env.NEXT_PUBLIC_SSN_ENCRYPTION_KEY || 'RA-SECURE-VAULT-2024';
       const ssnEncryptedValue = await encryptSSN(formData.ssn, PUBLIC_ENCRYPTION_KEY);
 
       const submissionData = {

@@ -10,8 +10,8 @@ export function createClient() {
   const supabaseKey =
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ [Supabase Client] Missing environment variables');
+  if (!supabaseUrl?.startsWith('http') || !supabaseKey) {
+    console.error('❌ [Supabase Client] Missing or invalid environment variables');
     return null as any;
   }
 

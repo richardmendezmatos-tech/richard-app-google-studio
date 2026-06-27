@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CRMRepository, LeadTransition } from '@/features/leads/api';
+import { CRMRepository, LeadTransition } from '@/features/crm/api/ICRMRepository';
 import { Result, success, failure } from '@/shared/types/server-domain';
 
 /**

@@ -1,4 +1,4 @@
-import { MetaRepository } from '@/features/marketing/api';
+import { MetaRepository } from './IMetaRepository';
 import { sendMetaLeadEvent } from '@/features/marketing/api/MetaCapiAdapter';
 
 export class MetaCapiRepository implements MetaRepository {

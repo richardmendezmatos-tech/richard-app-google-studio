@@ -1,7 +1,7 @@
-import { ChatRepository, ChatSession, ChatMessage } from '@/features/leads/api';
-import { AgentOrchestrator } from '@/features/leads/api';
-import { LeadRepository } from '@/features/leads/api';
-import { InventoryRepository } from '@/features/leads/api';
+import { ChatRepository, ChatSession, ChatMessage } from '@/features/ai-hub/api/IChatRepository';
+import { AgentOrchestrator } from '@/features/ai-hub/api/IAgentOrchestratorRepository';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
+import { InventoryRepository } from '@/entities/inventory/api/IInventoryRepository';
 
 export interface WhatsAppMessageInput {
   from: string;

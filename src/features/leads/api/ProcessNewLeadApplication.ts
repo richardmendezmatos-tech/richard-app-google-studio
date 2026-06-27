@@ -1,11 +1,9 @@
 import { z } from 'zod';
-import {
-  LeadRepository,
-  EmailRepository,
-  SMSRepository,
-  MetaRepository,
-  WhatsAppRepository,
-} from '@/features/leads/api';
+import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
+import { EmailRepository } from '@/shared/api/repositories/IEmailRepository';
+import { SMSRepository } from '@/shared/api/repositories/ISMSRepository';
+import { MetaRepository } from '@/features/marketing/api/IMetaRepository';
+import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
 import { ScoreCalculator } from './ScoreCalculator';
 import { Lead, LeadEntity } from '@/entities/lead/model/LeadEntity';
 import { Result, success, failure } from '@/shared/types/server-domain';

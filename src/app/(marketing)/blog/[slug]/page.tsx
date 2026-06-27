@@ -379,7 +379,7 @@ export default async function BlogArticlePage({ params }: Props) {
     notFound();
   }
 
-  const dynamicPosts = await blogService.getBlogPosts(50);
+  const dynamicPosts = await blogService.getBlogPosts(50).catch(() => [] as BlogPost[]);
   const allArticles = [...SEED_ARTICLES, ...dynamicPosts] as BlogPost[];
 
   // Related articles by shared tags, fallback to recent
