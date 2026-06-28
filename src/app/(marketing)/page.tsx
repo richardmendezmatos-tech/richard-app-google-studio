@@ -10,6 +10,7 @@ import FAQSection from '@/shared/ui/components/FAQSection';
 import TestimonialsSection from '@/features/inventory/ui/storefront/TestimonialsSection';
 import StatsStrip from '@/shared/ui/components/StatsStrip';
 import FordCarouselStrip from '@/features/inventory/ui/storefront/FordCarouselStrip';
+import StorefrontMarketPulse from '@/features/inventory/ui/StorefrontMarketPulse';
 
 function FordModelQuickLinksSkeleton() {
   return (
@@ -55,6 +56,26 @@ async function FordModelQuickLinks() {
   const models = await getDistinctFordModels();
   if (models.length === 0) return null;
   return <FordCarouselStrip models={models} />;
+}
+
+async function MarketPulseSection() {
+  let avgPrice = 0;
+  let premiumUnits = 0;
+  let compactUnits = 0;
+  try {
+    const { cars } = await getPaginatedCars(200, null, 'all');
+    if (cars.length > 0) {
+      const total = cars.reduce((acc: number, c: any) => acc + (c.price || 0), 0);
+      avgPrice = Math.round(total / cars.length);
+      premiumUnits = cars.filter((c: any) => (c.price || 0) >= 40000).length;
+      compactUnits = cars.filter((c: any) => (c.price || 0) < 25000).length;
+    }
+  } catch {}
+  return (
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      <StorefrontMarketPulse avgPrice={avgPrice} premiumUnits={premiumUnits} compactUnits={compactUnits} />
+    </div>
+  );
 }
 
 export const metadata: Metadata = {
@@ -173,6 +194,9 @@ export default function HomePage() {
         <HeroBackground />
         <Suspense fallback={<FordModelQuickLinksSkeleton />}>
           <FordModelQuickLinks />
+        </Suspense>
+        <Suspense fallback={<div className="h-48 mx-6 animate-pulse rounded-3xl bg-white/5" />}>
+          <MarketPulseSection />
         </Suspense>
         <Suspense fallback={<InventorySectionSkeleton />}>
           <InventorySection />
