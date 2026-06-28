@@ -92,15 +92,24 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
 export default async function InventoryRoute({
   searchParams,
 }: {
-  searchParams: Promise<{ make?: string; model?: string }>;
+  searchParams: Promise<{
+    make?: string; model?: string; q?: string;
+    type?: string; sort?: string; order?: string;
+    year?: string; mileage?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const initialSearchTerm = [params.make, params.model].filter(Boolean).join(' ');
+  const initialSearchTerm = params.q || [params.make, params.model].filter(Boolean).join(' ');
+  const initialFilter = params.type || 'all';
+  const initialSortBy = params.sort || 'price';
+  const initialSortOrder = (params.order === 'asc' || params.order === 'desc') ? params.order : null;
+  const initialYear = params.year ? parseInt(params.year) : ('all' as const);
+  const initialMileage = params.mileage ? parseInt(params.mileage) : ('all' as const);
 
   let inventory: Car[] = [];
 
   try {
-    const result = await getPaginatedCars(12, null, 'all', null, initialSearchTerm || undefined);
+    const result = await getPaginatedCars(12, null, initialFilter, initialSortOrder, initialSearchTerm || undefined);
     inventory = result.cars;
   } catch (error) {
     console.error('Error fetching inventory for SSR:', error);
@@ -132,7 +141,15 @@ export default async function InventoryRoute({
             </div>
           }
         >
-          <InventoryPage inventory={inventory} initialSearchTerm={initialSearchTerm} />
+          <InventoryPage
+            inventory={inventory}
+            initialSearchTerm={initialSearchTerm}
+            initialFilter={initialFilter}
+            initialSortBy={initialSortBy}
+            initialSortOrder={initialSortOrder}
+            initialYear={initialYear}
+            initialMileage={initialMileage}
+          />
         </Suspense>
         <InventoryAlertBanner />
       </main>

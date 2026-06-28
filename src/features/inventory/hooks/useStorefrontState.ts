@@ -1,4 +1,5 @@
-import { useState, useContext, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLocation, useNavigate } from '@/shared/lib/next-route-adapter';
 import { Car, CarType } from '@/shared/types/types';
 import { useVisualSearch } from './useVisualSearch';
@@ -15,14 +16,22 @@ export function useStorefrontState(
   onOpenGarage?: () => void,
   onMagicFix?: () => Promise<void>,
   initialSearchTerm?: string,
+  initialFilter?: CarType | 'all',
+  initialSortBy?: 'price' | 'year' | 'mileage' | 'created_at',
+  initialSortOrder?: 'asc' | 'desc' | null,
+  initialYearFilter?: number | 'all',
+  initialMileageFilter?: number | 'all',
 ) {
+  const router = useRouter();
+  const isFirstRender = useRef(true);
+
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
-  const [filter, setFilter] = useState<CarType | 'all'>('all');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const [sortBy, setSortBy] = useState<'price' | 'year' | 'mileage' | 'created_at'>('price');
+  const [filter, setFilter] = useState<CarType | 'all'>(initialFilter || 'all');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(initialSortOrder ?? null);
+  const [sortBy, setSortBy] = useState<'price' | 'year' | 'mileage' | 'created_at'>(initialSortBy || 'price');
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-  const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
-  const [mileageFilter, setMileageFilter] = useState<number | 'all'>('all');
+  const [yearFilter, setYearFilter] = useState<number | 'all'>(initialYearFilter || 'all');
+  const [mileageFilter, setMileageFilter] = useState<number | 'all'>(initialMileageFilter || 'all');
   const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
   const [isNeuralMatchOpen, setIsNeuralMatchOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
@@ -33,6 +42,20 @@ export function useStorefrontState(
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    if (!location.pathname.startsWith('/inventario')) return;
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('q', searchTerm);
+    if (filter !== 'all') params.set('type', filter);
+    if (sortBy !== 'price') params.set('sort', sortBy);
+    if (sortOrder) params.set('order', sortOrder);
+    if (yearFilter !== 'all') params.set('year', String(yearFilter));
+    if (mileageFilter !== 'all') params.set('mileage', String(mileageFilter));
+    const qs = params.toString();
+    router.replace(qs ? `/inventario?${qs}` : '/inventario', { scroll: false });
+  }, [searchTerm, filter, sortBy, sortOrder, yearFilter, mileageFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const analytics = useInventoryAnalytics();
   const savedCars = useSavedCars();
