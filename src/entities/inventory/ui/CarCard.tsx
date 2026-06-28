@@ -5,7 +5,8 @@ import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
-import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
+import { getCarImage, getCarImages, hasImage } from '@/entities/inventory/lib/carImage';
+import { CarImagePlaceholder } from '@/entities/inventory/ui/CarImagePlaceholder';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
 import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
@@ -42,6 +43,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     const { data: stats } = useVehicleStats(car.id);
     const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
 
+    const carHasRealImage = hasImage(car);
     const carImages = getCarImages(car, 3);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -119,13 +121,24 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             </div>
           </div>
 
-          <OptimizedImage
-            src={currentSrc}
-            alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
-            className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
-            aspectRatio="aspect-[4/3]"
-            fetchPriority="low"
-          />
+          {carHasRealImage ? (
+            <OptimizedImage
+              src={currentSrc}
+              alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
+              className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
+              aspectRatio="aspect-[4/3]"
+              fetchPriority="low"
+            />
+          ) : (
+            <div className="absolute inset-0 z-10">
+              <CarImagePlaceholder
+                make={car.make}
+                model={car.model}
+                year={car.year}
+                className="rounded-none"
+              />
+            </div>
+          )}
 
           {carImages.length > 1 && (
             <div
