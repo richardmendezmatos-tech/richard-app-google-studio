@@ -419,11 +419,13 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px]">
-                {car.type} • {year}{car.vin ? ` • ••••${car.vin.slice(-4)}` : ''} • Vega Alta, PR
+                {car.type}{car.trim ? ` • ${car.trim}` : ''} • {year}{car.vin ? ` • ••••${car.vin.slice(-4)}` : ''} • Vega Alta, PR
               </span>
             </motion.div>
             <h1 className="font-cinematic text-5xl lg:text-8xl text-white tracking-tighter leading-none text-glow uppercase">
-              {car.name}
+              {(car.year && car.make && car.model)
+                ? `${car.year} ${car.make} ${car.model}`
+                : car.name}
             </h1>
             <div className="flex flex-col gap-4">
               <div className="flex items-baseline gap-6 mt-4">
@@ -505,12 +507,15 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               {[
                 { label: 'Año', value: car.year?.toString() },
                 { label: 'Condición', value: car.condition === 'new' ? 'Nuevo' : car.condition === 'used' ? 'Usado' : null },
+                { label: 'Versión / Trim', value: car.trim || null },
                 { label: 'Millaje', value: car.mileage != null ? `${car.mileage.toLocaleString()} mi` : null },
                 { label: 'Transmisión', value: car.transmission ? car.transmission.charAt(0).toUpperCase() + car.transmission.slice(1) : null },
                 { label: 'Combustible', value: (car.fuel || car.fuelType) ? (car.fuel || car.fuelType || '').charAt(0).toUpperCase() + (car.fuel || car.fuelType || '').slice(1) : null },
                 { label: 'Motor / HP', value: [car.engine, car.hp ? `${car.hp} HP` : null].filter(Boolean).join(' · ') || null },
+                { label: 'Tracción', value: (car as any).drive_train || null },
                 { label: 'Tipo', value: car.type ? car.type.charAt(0).toUpperCase() + car.type.slice(1) : null },
-                { label: 'Color', value: car.color || null },
+                { label: 'Color Exterior', value: car.color && car.color !== 'N/A' ? car.color : null },
+                { label: 'Color Interior', value: (car as any).interior_color || null },
               ].filter((s) => s.value).map((spec) => (
                 <div key={spec.label} className="bg-white/5 rounded-xl p-3">
                   <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{spec.label}</p>
@@ -519,6 +524,16 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
               ))}
             </div>
           </GlassContainer>
+
+          {/* Description */}
+          {car.description && (
+            <GlassContainer intensity="low" opacity={0.04} className="p-6">
+              <h3 className="font-tech text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-3">
+                DESCRIPCIÓN
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed">{car.description}</p>
+            </GlassContainer>
+          )}
 
           {/* Features Tags */}
           {car.features && car.features.length > 0 && (

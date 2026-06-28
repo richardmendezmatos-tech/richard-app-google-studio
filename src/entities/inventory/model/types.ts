@@ -35,6 +35,13 @@ export interface Car {
   inventoryId?: string;
   createdAt?: any;
 
+  // Extended vehicle data (Central Ford sync)
+  interior_color?: string;
+  drive_train?: string;
+  body_style?: string;
+  dealer_id?: string;
+  last_scraped_at?: string;
+
   // Storefront & Marketing
   badge?: string;
   webpSrc?: string;
