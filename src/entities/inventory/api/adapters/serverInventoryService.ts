@@ -3,11 +3,20 @@ import { Car } from '@/entities/inventory/model/types';
 
 const mapRowToVehicle = (item: any): Car => {
   const make = item.make || 'Ford';
-  const model = item.model || '';
   const year = item.year || 2025;
-  const name = item.name || `${make} ${model} ${year}`.trim();
   const condition = (item.condition || 'used').toLowerCase();
+
+  // Clean model: Central Ford sync stores full title "2025 Ford Explorer XLT" in model column
+  const rawModel = item.model || '';
+  const model = rawModel
+    .replace(/^\d{4}\s+/, '')   // strip leading year
+    .replace(/^ford\s+/i, '')   // strip leading "Ford"
+    .trim() || rawModel;
+
+  const name = item.name || `${year} ${make} ${model}`.trim();
+
   return {
+    ...item,   // spread first so explicit fields override
     id: item.vin || item.id,
     vin: item.vin || item.id,
     make,
@@ -24,7 +33,6 @@ const mapRowToVehicle = (item: any): Car => {
     name,
     category: item.category || (condition === 'new' ? 'nuevos' : 'usados'),
     dealerId: item.dealer_id || 'central-ford',
-    ...item,
   };
 };
 

@@ -15,12 +15,21 @@ export type Vehicle = Car;
 
 const mapRowToVehicle = (item: any): Vehicle => {
   const make = item.make || 'Ford';
-  const model = item.model || '';
   const year = item.year || 2025;
-  const name = item.name || `${make} ${model} ${year}`.trim();
   const condition = (item.condition || 'used').toLowerCase();
 
+  // Clean model: Central Ford sync stores full title "2025 Ford Explorer XLT" in model column
+  const rawModel = item.model || '';
+  const model = rawModel
+    .replace(/^\d{4}\s+/, '')   // strip leading year
+    .replace(/^ford\s+/i, '')   // strip leading "Ford"
+    .trim() || rawModel;
+
+  // Build clean display name from structured fields
+  const name = item.name || `${year} ${make} ${model}`.trim();
+
   return {
+    ...item,   // spread first so our explicit fields below override
     id: item.vin || item.id,
     vin: item.vin || item.id,
     make,
@@ -37,7 +46,6 @@ const mapRowToVehicle = (item: any): Vehicle => {
     name,
     category: item.category || (condition === 'new' ? 'nuevos' : 'usados'),
     dealerId: item.dealer_id || 'central-ford',
-    ...item,
   };
 };
 
