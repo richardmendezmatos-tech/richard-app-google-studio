@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from '@/shared/lib/next-route-adapter';
+import Link from 'next/link';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
@@ -23,7 +23,7 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = React.memo(
   ({ car, isSaved, onToggleSave, onCompare, isComparing, onSelect }) => {
-    const navigate = useNavigate();
+    const url = `/inventario/${generateVehicleSlug(car)}/${car.id}`;
     const handleCompareToggle = (e: React.MouseEvent) => {
       e.stopPropagation();
       onCompare(e);
@@ -66,15 +66,8 @@ const CarCard: React.FC<CarCardProps> = React.memo(
       : getCarImage(car);
 
     return (
-      <div
-        onClick={() => navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`);
-          }
-        }}
-        role="button"
-        tabIndex={0}
+      <Link
+        href={url}
         className="group content-auto bg-white dark:bg-slate-800 rounded-5xl overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
       >
         <div className="relative aspect-[4/3] bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
@@ -218,7 +211,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
               Cotizar por WhatsApp
             </button>
             <div className="mt-2 text-center">
-              <span className="px-4 py-2 inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-primary transition-colors cursor-pointer border border-slate-200 dark:border-slate-600 rounded-xl" onClick={(e) => { e.stopPropagation(); navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`); }}>
+              <span className="px-4 py-2 inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-primary transition-colors cursor-pointer border border-slate-200 dark:border-slate-600 rounded-xl">
                 Solicitar Prueba →
               </span>
             </div>
@@ -227,7 +220,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
           </p>
         </div>
-      </div>
+      </Link>
     );
   },
 );
