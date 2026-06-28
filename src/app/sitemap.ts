@@ -25,6 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: `${SITE_URL}/inventario`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/inventario?type=nuevos`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
+    { url: `${SITE_URL}/inventario?type=usados`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${SITE_URL}/ford`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${SITE_URL}/match-automotriz`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${SITE_URL}/financiamiento`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -99,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let inventoryRoutes: MetadataRoute.Sitemap = [];
 
   try {
-    const result = await getPaginatedCars(100, null, 'all');
+    const result = await getPaginatedCars(500, null, 'all');
     const inventory = result.cars;
 
     if (Array.isArray(inventory) && inventory.length > 0) {
