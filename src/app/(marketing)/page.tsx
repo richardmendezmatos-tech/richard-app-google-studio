@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { getPaginatedCars, getDistinctFordModels } from '@/entities/inventory/api/adapters/serverInventoryService';
 import { BUSINESS_CONTACT } from '@/shared/consts/businessContact';
 import { SessionRecoveryBridge } from '@/features/auth/ui/SessionRecoveryBridge';
-import HeroBackground from '@/features/inventory/ui/storefront/HeroBackground';
+import HeroWrapper from '@/features/inventory/ui/storefront/HeroWrapper';
 import { LazyStorefrontContent } from '@/views/storefront/ui/LazyStorefrontContent';
 import TrustBar from '@/features/inventory/ui/storefront/TrustBar';
 import FAQSection from '@/shared/ui/components/FAQSection';
@@ -191,7 +191,7 @@ export default function HomePage() {
 
       <main className="relative">
         <SessionRecoveryBridge />
-        <HeroBackground />
+        <HeroWrapper />
         <Suspense fallback={<FordModelQuickLinksSkeleton />}>
           <FordModelQuickLinks />
         </Suspense>

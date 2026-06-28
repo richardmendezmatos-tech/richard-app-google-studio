@@ -107,7 +107,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 max-w-[1500px] mx-auto w-full px-6 lg:px-12 py-20 lg:py-0 hero-fade-in"
       >
         {/* Left: Intelligence & Branding */}
-        <div className="flex-1 space-y-10 text-left invisible pointer-events-none select-none">
+        <div className="flex-1 space-y-10 text-left hero-fade-in">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-2 backdrop-blur-3xl shadow-[0_0_20px_rgba(0,229,255,0.1)]">
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_12px_#00e5ff]" />
@@ -168,7 +168,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="w-full lg:w-[460px] min-h-[400px] rounded-2xl bg-slate-900/30 animate-pulse" />
           }
         >
-          <div className="w-full lg:w-[460px]">
+          <div className="w-full lg:w-[460px] hero-fade-right">
             <HeroCTAPanel
               onBrowseInventory={onBrowseInventory}
               onNeuralMatch={onNeuralMatch}
@@ -213,15 +213,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           100% { background-position: 0% 50%; }
         }
         .hero-fade-in {
-          opacity: 1;
+          animation: heroFadeIn 0.8s ease-out forwards;
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         .hero-fade-slide {
-          opacity: 1;
-          transform: translateX(0);
+          animation: heroFadeSlide 0.6s ease-out forwards;
+        }
+        @keyframes heroFadeSlide {
+          from { opacity: 0; transform: translateX(-20px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
         .hero-fade-right {
-          opacity: 1;
-          transform: translateX(0);
+          animation: heroFadeRight 0.8s 0.2s ease-out both;
+        }
+        @keyframes heroFadeRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </section>
