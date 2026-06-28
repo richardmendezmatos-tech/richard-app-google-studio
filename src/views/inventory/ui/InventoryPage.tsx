@@ -24,14 +24,39 @@ import { useStorefrontState } from '@/features/inventory';
 interface Props {
   inventory: Car[];
   initialSearchTerm?: string;
+  initialFilter?: string;
+  initialSortBy?: string;
+  initialSortOrder?: string | null;
+  initialYear?: number | 'all';
+  initialMileage?: number | 'all';
   initialVisualSearch?: string | null;
   onClearVisualSearch?: () => void;
   onMagicFix?: () => Promise<void>;
   onOpenGarage?: () => void;
 }
 
-const InventoryPage: React.FC<Props> = ({ inventory, initialSearchTerm, onMagicFix, onOpenGarage }) => {
-  const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix, initialSearchTerm);
+const InventoryPage: React.FC<Props> = ({
+  inventory,
+  initialSearchTerm,
+  initialFilter,
+  initialSortBy,
+  initialSortOrder,
+  initialYear,
+  initialMileage,
+  onMagicFix,
+  onOpenGarage,
+}) => {
+  const { state, actions } = useStorefrontState(
+    inventory,
+    onOpenGarage,
+    onMagicFix,
+    initialSearchTerm,
+    (initialFilter as any) || 'all',
+    (initialSortBy as any) || 'price',
+    (initialSortOrder as 'asc' | 'desc' | null) ?? null,
+    initialYear,
+    initialMileage,
+  );
 
   return (
     <>
