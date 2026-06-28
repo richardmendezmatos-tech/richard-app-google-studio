@@ -2,12 +2,6 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
-  "crons": [
-    { "path": "/api/cron/news-sync",      "schedule": "0 8,20 * * *" },
-    { "path": "/api/cron/email-scheduler","schedule": "0 9 * * *"    },
-    { "path": "/api/cron/messages",       "schedule": "0 */4 * * *"  },
-    { "path": "/api/cron/market-scraper", "schedule": "0 3 * * *"    }
-  ],
   "github": {
     "silent": true,
     "autoJobCancelation": true,
