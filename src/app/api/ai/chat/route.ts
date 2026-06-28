@@ -1,121 +1,104 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { streamText, stepCountIs } from 'ai';
+import { google } from '@ai-sdk/google';
 import { RICHARD_KNOWLEDGE_BASE } from '@/entities/knowledge';
 import { FINANCIAL_ENTITIES_PR } from '@/shared/config/financialEntities';
 import { MARKET_INTELLIGENCE_PR } from '@/shared/config/marketIntelligence';
 import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { searchSemanticInventory } from '@/shared/api/supabase/supabaseClient';
 import { aiTools } from '@/shared/api/ai/tools';
+import { conversationMemory } from '@/shared/api/ai/conversationMemory';
 
 export const runtime = 'nodejs';
-
-export const maxDuration = 30;
+export const maxDuration = 45;
 
 export async function POST(req: Request) {
   try {
     const { messages, leadId } = await req.json();
+    const sessionId = leadId || 'anonymous';
+    const lastMessage = messages?.[messages.length - 1];
+    const userText: string = lastMessage?.content || '';
 
-    // 1. RAG Semántico en Tiempo Real
+    // RAG: semantic inventory search on purchase intent
     let semanticContext = '';
-    const lastMessage = messages[messages.length - 1];
+    const hasSearchIntent =
+      /quiero|busco|interes|auto|carro|guagua|pickup|suv|sedan|precio|pago|cuota|financiar|comprar/i.test(
+        userText,
+      );
 
-    if (lastMessage && lastMessage.role === 'user' && typeof lastMessage.content === 'string') {
-      const text = lastMessage.content;
-      const hasSearchIntent =
-        /quiero|busco|interes|auto|carro|guagua|pickup|suv|sedan|precio|pago|cuota|financiar|comprar/i.test(text);
-
-      if (hasSearchIntent && text.length > 5) {
-        console.log(`[AI Chat RAG] Detectada intención de búsqueda: "${text}"`);
-        try {
-          const embedding = await sentinelAI.generateEmbedding(text);
-          const matches = await searchSemanticInventory(embedding, 0.35, 3);
-
-          if (matches && matches.length > 0) {
-            console.log(`[AI Chat RAG] ${matches.length} coincidencias.`);
-            const carIds = matches.map((m) => m.car_id);
-            const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
-            const sb = await gs();
-            const { data: dbCars } = await sb.from('inventory').select('vin, year, make, model, condition, id, price, description, status').in('vin', carIds).limit(50);
-
-            if (dbCars && dbCars.length > 0) {
-              semanticContext = `
-              UNIDADES RELEVANTES DISPONIBLES:
-              ${dbCars.map((c: any) => `
-                - ${c.year} ${c.make} ${c.model} (${c.condition === 'new' ? 'Nueva' : 'Usada'})
-                  ID: ${c.id} | Precio: $${c.price?.toLocaleString()}
-              `).join('\n')}
-              RECOMIENDA estas unidades con sus precios reales.
-              `;
-            }
+    if (hasSearchIntent && userText.length > 5) {
+      try {
+        const embedding = await sentinelAI.generateEmbedding(userText);
+        const matches = await searchSemanticInventory(embedding, 0.35, 3);
+        if (matches?.length) {
+          const { getSupabase: gs } = await import('@/shared/api/supabase/supabaseClient');
+          const sb = await gs();
+          const { data: dbCars } = await sb
+            .from('inventory')
+            .select('vin, year, make, model, condition, id, price, description, status')
+            .in('vin', matches.map((m) => m.car_id))
+            .limit(50);
+          if (dbCars?.length) {
+            semanticContext = `\nUNIDADES RELEVANTES DISPONIBLES:\n${dbCars
+              .map(
+                (c: any) =>
+                  `- ${c.year} ${c.make} ${c.model} (${c.condition === 'new' ? 'Nueva' : 'Usada'}) ID:${c.id} $${c.price?.toLocaleString()}`,
+              )
+              .join('\n')}\nRECOMIENDA estas unidades con sus precios reales.\n`;
           }
-        } catch (ragError) {
-          console.warn('[AI Chat RAG] Error:', ragError);
         }
+      } catch (ragErr) {
+        console.warn('[AI Chat RAG] Error:', ragErr);
       }
     }
 
-    const systemPrompt = `
-      ${RICHARD_KNOWLEDGE_BASE}
+    const systemPrompt = `${RICHARD_KNOWLEDGE_BASE}
 
-      ESTRATEGIA COMERCIAL "FORD-FIRST":
-      - Tu prioridad principal es vender UNIDADES FORD NUEVAS.
-      - Si el cliente busca una guagua, pickup o auto general, destaca primero los beneficios de un Ford Nuevo (Garantía de fábrica 3/36k o 5/60k, tecnología SYNC 4, mayor valor de reventa).
-      - Respaldo total de Central Ford en Vega Alta.
-      - Menciona los beneficios de financiar con Ford Credit.
+ESTRATEGIA COMERCIAL "FORD-FIRST":
+- Prioridad: Ford Nuevo (garantía 3/36k o 5/60k, SYNC 4, Ford Credit) → Ford CPO → Ford usado → otra marca.
+- Siempre destaca la cuota mensual, nunca solo el precio total.
+- Menciona el Bono Web de $300 para solicitudes online.
+- Financiamiento: ${FINANCIAL_ENTITIES_PR.filter((e) => e.tier === 1)
+      .map((e) => `${e.name} (${e.baseRate}% APR)`)
+      .join(', ')}.
+- ${MARKET_INTELLIGENCE_PR.regionalInsights.metro}
+${semanticContext}
 
-      ESTRATEGIA FINANCIERA PR:
-      - Bancos locales: Banco Popular PR, FirstBank PR.
-      - Entidades: ${FINANCIAL_ENTITIES_PR.filter((e) => e.tier === 1).map((e) => `${e.name} (${e.baseRate}% APR)`).join(', ')}.
+HERRAMIENTAS DISPONIBLES (úsalas cuando aplique):
+- searchInventory: cuando el cliente busca un auto específico.
+- calculateLoanPayment: cuando preguntan por cuota mensual.
+- estimateTradeIn: cuando mencionan entregar su auto.
+- scheduleTestDrive: cuando quieren agendar una visita o prueba de manejo.
+- captureCustomerLead: cuando compartan nombre y teléfono.
+- requestHumanAgent: cuando el cliente pida hablar con Richard directamente o esté frustrado.
 
-      INTELIGENCIA DE MERCADO:
-      - ${MARKET_INTELLIGENCE_PR.regionalInsights.metro}
-      - Marcas: ${MARKET_INTELLIGENCE_PR.powerBrands.map((b) => b.name).join(', ')}
+REGLAS:
+1. Sé profesional, cálido y boricua. Usa "guagua", "pronto", "unidad".
+2. Nunca uses placeholders. Si falta info, invita a visitar o llamar.
+3. Si el cliente pide hablar con un humano, usa requestHumanAgent inmediatamente.`;
 
-      PAGO TODO INCLUIDO: La cuota mensual ya incluye Contrato de Servicio Premium.
+    // Map UI messages to CoreMessage format for streamText
+    const coreMessages = messages
+      .map((m: any) => ({
+        role: (m.role === 'assistant' ? 'assistant' : 'user') as 'user' | 'assistant',
+        content: typeof m.content === 'string' ? m.content : '',
+      }))
+      .filter((m: any) => m.content.trim());
 
-      ${semanticContext}
-
-      REGLAS:
-      1. Eres asistente de Richard Automotive, sé profesional y servicial.
-      2. Si el cliente está interesado, captura su nombre y teléfono.
-      3. Jamás uses placeholders. Si te falta info, invítalo a hablar con Richard.
-    `;
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
-      systemInstruction: systemPrompt,
-    });
-
-    const history = messages.slice(0, -1).map((m: any) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content || '' }],
-    }));
-
-    const chat = model.startChat({ history });
-    const result = await chat.sendMessageStream(lastMessage?.content || '');
-
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        let full = '';
-        for await (const chunk of result.stream) {
-          const delta = chunk.text();
-          if (delta) {
-            full += delta;
-            controller.enqueue(encoder.encode(delta));
-          }
+    const result = streamText({
+      model: google('gemini-2.0-flash'),
+      system: systemPrompt,
+      messages: coreMessages,
+      tools: aiTools,
+      stopWhen: stepCountIs(3),
+      onFinish: async ({ text }) => {
+        // Persist conversation for analytics and future context (non-blocking)
+        if (text) {
+          conversationMemory.saveWebTurn(sessionId, userText, text).catch(() => {});
         }
-        controller.close();
       },
     });
 
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-      },
-    });
+    return result.toUIMessageStreamResponse();
   } catch (error: any) {
     console.error('[AI Chat API] Error:', error);
     return new Response(JSON.stringify({ error: error.message || 'Internal AI Error' }), {

@@ -47,6 +47,21 @@ export const getAutoDealerSchema = (city?: string) => {
       'https://www.facebook.com/richardautomotive',
       'https://www.instagram.com/richardautomotive',
     ],
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: C.phone,
+        contactType: 'sales',
+        areaServed: 'PR',
+        availableLanguage: ['Spanish', 'English'],
+        hoursAvailable: {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
+      },
+    ],
     priceRange: '$$$',
     foundingDate: '2009',
     hasMap: 'https://maps.google.com/?cid=richard-automotive-vega-alta',

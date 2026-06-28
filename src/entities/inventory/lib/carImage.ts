@@ -1,29 +1,35 @@
+import { getBestImageUrl, isRealImage } from '@/shared/lib/utils/carImageEnricher';
+
 export const PLACEHOLDER_IMAGE = '/placeholder-car.webp';
 
-export function getCarImage(car: {
+type CarImageInput = {
   image?: string | null;
   img?: string | null;
   images?: (string | null)[] | null;
-}): string {
-  return car.image || car.img || car.images?.[0] || PLACEHOLDER_IMAGE;
+  year?: number;
+  make?: string;
+  model?: string;
+};
+
+export function getCarImage(car: CarImageInput): string {
+  return getBestImageUrl(car);
 }
 
-export function getCarImages(car: {
-  image?: string | null;
-  img?: string | null;
-  images?: (string | null)[] | null;
-}, limit: number = 3): string[] {
+export function getCarImages(car: CarImageInput, limit: number = 3): string[] {
   const all = [car.image, car.img, ...(car.images || [])].filter(
-    (url): url is string => !!url && url !== PLACEHOLDER_IMAGE,
+    (url): url is string => isRealImage(url),
   );
   const unique = [...new Set(all)];
+
+  if (unique.length === 0) {
+    const enriched = getBestImageUrl(car);
+    if (enriched && enriched !== PLACEHOLDER_IMAGE) return [enriched];
+    return [];
+  }
+
   return unique.slice(0, limit);
 }
 
-export function hasImage(car: {
-  image?: string | null;
-  img?: string | null;
-  images?: (string | null)[] | null;
-}): boolean {
-  return !!(car.image || car.img || car.images?.length);
+export function hasImage(car: CarImageInput): boolean {
+  return isRealImage(car.image || car.img || car.images?.[0]);
 }

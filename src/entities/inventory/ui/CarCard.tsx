@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from '@/shared/lib/next-route-adapter';
+import Link from 'next/link';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
-import { getCarImage, getCarImages } from '@/entities/inventory/lib/carImage';
+import { getCarImage, getCarImages, hasImage } from '@/entities/inventory/lib/carImage';
+import { CarImagePlaceholder } from '@/entities/inventory/ui/CarImagePlaceholder';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
 import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
@@ -22,7 +23,7 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = React.memo(
   ({ car, isSaved, onToggleSave, onCompare, isComparing, onSelect }) => {
-    const navigate = useNavigate();
+    const url = `/inventario/${generateVehicleSlug(car)}/${car.id}`;
     const handleCompareToggle = (e: React.MouseEvent) => {
       e.stopPropagation();
       onCompare(e);
@@ -42,6 +43,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     const { data: stats } = useVehicleStats(car.id);
     const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
 
+    const carHasRealImage = hasImage(car);
     const carImages = getCarImages(car, 3);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -64,15 +66,8 @@ const CarCard: React.FC<CarCardProps> = React.memo(
       : getCarImage(car);
 
     return (
-      <div
-        onClick={() => navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`);
-          }
-        }}
-        role="button"
-        tabIndex={0}
+      <Link
+        href={url}
         className="group content-auto bg-white dark:bg-slate-800 rounded-5xl overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-2xl hover:shadow-cyan-900/10 transition-all duration-500 cursor-pointer text-left flex flex-col relative h-full"
       >
         <div className="relative aspect-[4/3] bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden p-8 flex items-center justify-center">
@@ -119,13 +114,24 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             </div>
           </div>
 
-          <OptimizedImage
-            src={currentSrc}
-            alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
-            className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
-            aspectRatio="aspect-[4/3]"
-            fetchPriority="low"
-          />
+          {carHasRealImage ? (
+            <OptimizedImage
+              src={currentSrc}
+              alt={`${car.year ?? ''} ${car.make ?? car.name} ${car.model ?? ''} ${car.badge?.toLowerCase().includes('nuevo') ? 'Nuevo' : 'Usado'} en Venta en Puerto Rico`.trim()}
+              className="w-full h-full object-contain transition-all duration-700 drop-shadow-2xl z-10 group-hover:scale-110 group-hover:-rotate-2"
+              aspectRatio="aspect-[4/3]"
+              fetchPriority="low"
+            />
+          ) : (
+            <div className="absolute inset-0 z-10">
+              <CarImagePlaceholder
+                make={car.make}
+                model={car.model}
+                year={car.year}
+                className="rounded-none"
+              />
+            </div>
+          )}
 
           {carImages.length > 1 && (
             <div
@@ -152,23 +158,28 @@ const CarCard: React.FC<CarCardProps> = React.memo(
         <div className="p-8 flex-1 flex flex-col">
           <div className="mb-4">
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-              {car.type}
+              {car.year && <>{car.year} · </>}{car.type?.toUpperCase() || 'AUTO'}
             </span>
             <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white tracking-tighter uppercase leading-none mt-1 group-hover:text-primary transition-colors">
               {car.name}
             </h3>
           </div>
 
-          {/* Key Features Mockup (CarMax style) */}
+          {/* Key Features — datos reales del vehículo */}
           <div className="flex gap-2 mb-6 flex-wrap">
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              Auto
+            <span className={`text-[10px] px-2 py-1 rounded-md font-black uppercase ${car.condition === 'new' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400'}`}>
+              {car.condition === 'new' ? 'Nuevo' : 'Usado'}
             </span>
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              Gasolina
+            {car.mileage != null && car.condition !== 'new' && (
+              <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
+                {car.mileage.toLocaleString()} mi
+              </span>
+            )}
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold capitalize">
+              {car.transmission || 'Automática'}
             </span>
-            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
-              4 Puertas
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold capitalize">
+              {car.fuel || car.fuelType || 'Gasolina'}
             </span>
           </div>
 
@@ -200,7 +211,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
               Cotizar por WhatsApp
             </button>
             <div className="mt-2 text-center">
-              <span className="px-4 py-2 inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-primary transition-colors cursor-pointer border border-slate-200 dark:border-slate-600 rounded-xl" onClick={(e) => { e.stopPropagation(); navigate(`/inventario/${generateVehicleSlug(car)}/${car.id}`); }}>
+              <span className="px-4 py-2 inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-primary transition-colors cursor-pointer border border-slate-200 dark:border-slate-600 rounded-xl">
                 Solicitar Prueba →
               </span>
             </div>
@@ -209,7 +220,7 @@ const CarCard: React.FC<CarCardProps> = React.memo(
             * Mensualidad estimada a 72 meses con 8.5% APR. Sujeto a aprobación de crédito.
           </p>
         </div>
-      </div>
+      </Link>
     );
   },
 );

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Car } from '@/entities/inventory';
 import {
   Calculator,
@@ -9,6 +9,7 @@ import {
   Calendar,
   ShieldCheck,
   AlertCircle,
+  Gift,
 } from 'lucide-react';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import AnimatedNumber from './AnimatedNumber';
@@ -33,6 +34,8 @@ const RATES = [
   { rate: 0.219, label: 'POB' },
 ] as const;
 
+const BONO_WEB = 300;
+
 const FinancialsTab: React.FC<Props> = ({
   car,
   downPayment,
@@ -44,7 +47,17 @@ const FinancialsTab: React.FC<Props> = ({
   setTradeIn,
   setTerm,
   setCreditRate,
-}) => (
+}) => {
+  const [bonoApplied, setBonoApplied] = useState(false);
+
+  const handleApplyBono = () => {
+    if (bonoApplied) return;
+    setBonoApplied(true);
+    const current = typeof downPayment === 'number' ? downPayment : 0;
+    setDownPayment(current + BONO_WEB);
+  };
+
+  return (
   <div className="h-full flex flex-col lg:flex-row gap-6">
     <div className="w-full lg:w-2/3 bg-slate-900/60 rounded-5xl border border-white/10 p-8 lg:p-12 overflow-y-auto custom-scrollbar shadow-2xl">
       <div className="flex items-center gap-2 mb-8">
@@ -53,6 +66,32 @@ const FinancialsTab: React.FC<Props> = ({
           Simulador de Aprobación
         </h3>
       </div>
+
+      {/* Bono Web $300 Banner */}
+      <button
+        onClick={handleApplyBono}
+        disabled={bonoApplied}
+        className={`w-full mb-6 flex items-center justify-between px-6 py-4 rounded-3xl border transition-all ${bonoApplied ? 'bg-emerald-500/10 border-emerald-500/30 cursor-default' : 'bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 cursor-pointer'}`}
+      >
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${bonoApplied ? 'bg-emerald-500/20' : 'bg-amber-500/20'}`}>
+            <Gift size={18} className={bonoApplied ? 'text-emerald-400' : 'text-amber-400'} />
+          </div>
+          <div className="text-left">
+            <p className={`text-[10px] font-black uppercase tracking-widest ${bonoApplied ? 'text-emerald-400' : 'text-amber-400'}`}>
+              {bonoApplied ? '✓ Bono Web Aplicado' : 'Bono Web Exclusivo'}
+            </p>
+            <p className="text-xs text-slate-400 font-bold">
+              {bonoApplied ? '$300 añadidos a tu pronto' : '$300 de descuento solo para visitas online'}
+            </p>
+          </div>
+        </div>
+        {!bonoApplied && (
+          <span className="px-4 py-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-[10px] font-black text-amber-400 uppercase tracking-widest whitespace-nowrap">
+            Aplicar $300
+          </span>
+        )}
+      </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
@@ -170,6 +209,7 @@ const FinancialsTab: React.FC<Props> = ({
       </GlassContainer>
     </div>
   </div>
-);
+  );
+};
 
 export default FinancialsTab;

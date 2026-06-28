@@ -60,7 +60,25 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
     },
   };
 
-  const schemas = [breadcrumb, collection];
+  const prices = (inventory || []).map((c) => c.price).filter(Boolean);
+  const minPrice = prices.length ? Math.min(...prices) : 5000;
+  const maxPrice = prices.length ? Math.max(...prices) : 80000;
+  const aggregateOffer = {
+    '@context': 'https://schema.org',
+    '@type': 'AggregateOffer',
+    name: 'Inventario de Autos Richard Automotive',
+    offerCount: inventory?.length || 0,
+    lowPrice: minPrice,
+    highPrice: maxPrice,
+    priceCurrency: 'USD',
+    seller: {
+      '@type': 'AutoDealer',
+      name: 'Richard Automotive',
+      url: 'https://www.richard-automotive.com',
+    },
+  };
+
+  const schemas = [breadcrumb, collection, aggregateOffer];
 
   return schemas.map((schema, i) => (
     <script
