@@ -43,6 +43,10 @@ const CarCard: React.FC<CarCardProps> = React.memo(
     const { data: stats } = useVehicleStats(car.id);
     const dailyViews = stats?.dailyViews ?? ((car.id?.charCodeAt(0) || 0) % 3) + 1;
 
+    const isNew =
+      car.condition?.toLowerCase() === 'new' ||
+      car.badge?.toLowerCase().includes('nuevo');
+
     const carHasRealImage = hasImage(car);
     const carImages = getCarImages(car, 3);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -167,10 +171,10 @@ const CarCard: React.FC<CarCardProps> = React.memo(
 
           {/* Key Features — datos reales del vehículo */}
           <div className="flex gap-2 mb-6 flex-wrap">
-            <span className={`text-[10px] px-2 py-1 rounded-md font-black uppercase ${car.condition === 'new' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400'}`}>
-              {car.condition === 'new' ? 'Nuevo' : 'Usado'}
+            <span className={`text-[10px] px-2 py-1 rounded-md font-black uppercase ${isNew ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400'}`}>
+              {isNew ? 'Nuevo' : 'Usado'}
             </span>
-            {car.mileage != null && car.condition !== 'new' && (
+            {car.mileage != null && !isNew && (
               <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-500 font-bold">
                 {car.mileage.toLocaleString()} mi
               </span>

@@ -19,12 +19,17 @@ const UsersTab = dynamic(() => import('@/features/command-center/ui/UsersTab'), 
   loading: () => <div className="h-64 rounded-2xl bg-white/5 animate-pulse" />,
 });
 
+const LeadsListView = dynamic(() => import('@/features/command-center/ui/LeadsListView'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-white/5 animate-pulse" />,
+});
+
 /**
  * Houston Command Center - Admin Dashboard
  * Punto de entrada oficial de Richard Automotive.
  */
 export default function AdminPage() {
-  const [activeView, setActiveView] = React.useState<'crm' | 'houston' | 'users'>('crm');
+  const [activeView, setActiveView] = React.useState<'crm' | 'houston' | 'users' | 'leads'>('crm');
 
   return (
     <div className="min-h-screen bg-[#0d2232] text-white overflow-x-hidden">
@@ -65,6 +70,16 @@ export default function AdminPage() {
             Telemetría
           </button>
           <button
+            onClick={() => setActiveView('leads')}
+            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+              activeView === 'leads'
+                ? 'bg-cyan-500 text-slate-950 shadow-lg'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Leads
+          </button>
+          <button
             onClick={() => setActiveView('users')}
             className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
               activeView === 'users'
@@ -91,7 +106,7 @@ export default function AdminPage() {
             </div>
           }
         >
-          {activeView === 'crm' ? <CRMBoard /> : activeView === 'houston' ? <HoustonDashboard /> : <UsersTab />}
+          {activeView === 'crm' ? <CRMBoard /> : activeView === 'houston' ? <HoustonDashboard /> : activeView === 'leads' ? <LeadsListView /> : <UsersTab />}
         </React.Suspense>
       </main>
     </div>
