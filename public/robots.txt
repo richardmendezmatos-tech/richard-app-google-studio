@@ -13,4 +13,10 @@ Disallow: /qualify/
 Disallow: /login/
 Disallow: /admin-login/
 
+# Inventory filter noise — canonical handles duplicate content but save crawl budget
+Disallow: /inventario?sort=
+Disallow: /inventario?order=
+Disallow: /inventario?year=
+Disallow: /inventario?mileage=
+
 Sitemap: https://www.richard-automotive.com/sitemap.xml

@@ -6,20 +6,51 @@ import { Car } from '@/entities/inventory';
 import { SITE_CONFIG } from '@/shared/config/siteConfig';
 import { InventoryAlertBanner } from '@/widgets/brand-ui/layout/conversion/InventoryAlertBanner';
 
-export const metadata: Metadata = {
-  title: 'Inventario de Autos Nuevos y Usados | Richard Automotive',
-  description:
-    'Explora nuestro inventario completo de autos nuevos y usados en Vega Alta, Puerto Rico. Filtra por marca, modelo, precio y tipo de vehículo.',
-  keywords: [
-    'inventario autos',
-    'buscar autos',
-    'carros puerto rico',
-    'richard automotive inventario',
-  ],
-  alternates: {
-    canonical: 'https://www.richard-automotive.com/inventario',
-  },
-};
+const BASE_URL = 'https://www.richard-automotive.com';
+
+type SearchParams = Promise<{
+  make?: string; model?: string; q?: string;
+  type?: string; sort?: string; order?: string;
+  year?: string; mileage?: string;
+}>;
+
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const params = await searchParams;
+
+  if (params.type === 'nuevos') {
+    return {
+      title: 'Autos Nuevos Ford en Puerto Rico | Richard Automotive',
+      description: 'Compra tu Ford nuevo con garantía de fábrica y Ford Credit en Richard Automotive, Vega Alta. Financiamiento desde 4.9% APR.',
+      keywords: ['autos nuevos ford puerto rico', 'ford nuevos vega alta', 'comprar ford nuevo pr'],
+      alternates: { canonical: `${BASE_URL}/inventario?type=nuevos` },
+    };
+  }
+
+  if (params.type === 'usados') {
+    return {
+      title: 'Autos Usados Certificados Puerto Rico | Richard Automotive',
+      description: 'Selección premium de autos usados certificados con garantía Richard Automotive en Puerto Rico. Precios competitivos y financiamiento disponible.',
+      keywords: ['autos usados certificados puerto rico', 'carros usados vega alta', 'usados garantizados pr'],
+      alternates: { canonical: `${BASE_URL}/inventario?type=usados` },
+    };
+  }
+
+  const q = params.q || [params.make, params.model].filter(Boolean).join(' ');
+  if (q) {
+    return {
+      title: `${q} en Venta Puerto Rico | Richard Automotive`,
+      description: `Encuentra ${q} nuevo o usado en Richard Automotive. Financiamiento disponible. Vega Alta, Puerto Rico.`,
+      alternates: { canonical: `${BASE_URL}/inventario?q=${encodeURIComponent(q)}` },
+    };
+  }
+
+  return {
+    title: 'Inventario de Autos Nuevos y Usados | Richard Automotive',
+    description: 'Explora nuestro inventario completo de autos nuevos y usados en Vega Alta, Puerto Rico. Filtra por marca, modelo, precio y tipo de vehículo.',
+    keywords: ['inventario autos', 'buscar autos', 'carros puerto rico', 'richard automotive inventario'],
+    alternates: { canonical: `${BASE_URL}/inventario` },
+  };
+}
 
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 
@@ -89,15 +120,7 @@ function InventoryJsonLd({ inventory }: { inventory: Car[] }) {
   ));
 }
 
-export default async function InventoryRoute({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    make?: string; model?: string; q?: string;
-    type?: string; sort?: string; order?: string;
-    year?: string; mileage?: string;
-  }>;
-}) {
+export default async function InventoryRoute({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const initialSearchTerm = params.q || [params.make, params.model].filter(Boolean).join(' ');
   const initialFilter = params.type || 'all';
