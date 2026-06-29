@@ -5,7 +5,7 @@ import { SEED_ARTICLES } from '@/entities/blog/data/seedArticles';
 import { blogService } from '@/entities/blog/api/blogService';
 import { BlogPost } from '@/shared/types/types';
 
-export const revalidate = 7200;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Blog | Richard Automotive — Guías y Consejos de Autos en PR',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Blog | Richard Automotive',
-    description: 'Todo lo que necesitas saber sobre autos usados en Puerto Rico.',
+    description: 'Todo lo que necesitas saber sobre autos nuevos y usados Ford en Puerto Rico.',
     type: 'website',
     siteName: 'Richard Automotive',
     locale: 'es_PR',
@@ -28,7 +28,7 @@ function BlogJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'Richard Automotive Blog',
-    description: 'Guías y consejos para comprar autos usados en Puerto Rico.',
+    description: 'Guías y consejos para comprar autos Ford nuevos y usados en Puerto Rico. Expertos en financiamiento, trade-in y F&I desde Vega Alta, PR.',
     url: 'https://www.richard-automotive.com/blog',
     publisher: {
       '@type': 'Organization',
@@ -200,11 +200,11 @@ export default async function BlogIndexPage() {
           <section className="mt-16 text-center bg-linear-to-r from-cyan-500/5 to-blue-500/5 border border-white/5 rounded-4xl p-12">
             <h2 className="text-2xl font-black mb-3">¿Listo para encontrar tu próximo auto?</h2>
             <p className="text-slate-400 mb-6">
-              Más de 50 vehículos certificados esperan por ti en Bayamón.
+              Más de 99 vehículos Ford nuevos y usados te esperan en Vega Alta, Puerto Rico.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/autos-usados/bayamon"
+                href="/inventario"
                 className="px-8 py-3 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition"
               >
                 Ver Inventario

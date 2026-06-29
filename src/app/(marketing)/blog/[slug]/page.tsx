@@ -498,6 +498,46 @@ export default async function BlogArticlePage({ params }: Props) {
           </div>
         </article>
 
+        {/* Inventory CTA — internal link from blog to conversion */}
+        <section className="max-w-4xl mx-auto px-4 md:px-6 pb-8">
+          <div className="rounded-3xl border border-cyan-500/20 bg-slate-900/60 p-8 flex flex-col sm:flex-row gap-6 items-center justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400 mb-2">
+                Central Ford — Vega Alta, Puerto Rico
+              </p>
+              <h3 className="text-xl font-black text-white mb-1">
+                {article.tags.some((t) => ['ford', 'nuevos', 'pickup', 'suv'].includes(t.toLowerCase()))
+                  ? '¿Listo para estrenar tu Ford nuevo?'
+                  : '¿Buscas tu próximo auto en Puerto Rico?'}
+              </h3>
+              <p className="text-sm text-slate-400">
+                Tenemos más de 99 unidades Ford nuevas y usadas.{' '}
+                <strong className="text-emerald-400">Bono Web $300 activo.</strong>
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 shrink-0">
+              <Link
+                href={
+                  article.tags.some((t) => ['ford', 'nuevos'].includes(t.toLowerCase()))
+                    ? '/inventario?type=nuevos'
+                    : '/inventario'
+                }
+                className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all text-center whitespace-nowrap"
+              >
+                Ver Inventario Ford →
+              </Link>
+              <a
+                href="https://wa.me/17874010505?text=Hola%2C%20le%C3%AD%20el%20blog%20de%20Richard%20Automotive%20y%20quiero%20informaci%C3%B3n%20sobre%20un%20veh%C3%ADculo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-[#25D366]/15 border border-[#25D366]/30 hover:bg-[#25D366]/25 text-[#25D366] font-bold text-xs uppercase tracking-widest rounded-xl transition-all text-center whitespace-nowrap"
+              >
+                Chatear por WhatsApp
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* Author Bio — E-E-A-T */}
         <section className="max-w-4xl mx-auto px-6 md:px-16 pb-8">
           <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-6 flex gap-5 items-start">
