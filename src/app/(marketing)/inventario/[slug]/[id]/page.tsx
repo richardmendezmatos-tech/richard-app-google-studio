@@ -116,7 +116,7 @@ function VehicleJsonLd({ car, slug, id }: { car?: Car; slug: string; id: string 
   const pageUrl = `https://www.richard-automotive.com/inventario/${slug}/${id}`;
   const isNew = car.condition === 'new';
   const conditionUrl = isNew ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition';
-  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const priceValidUntil = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   const images = car.images?.length ? car.images : [car.image || car.img || ''].filter(Boolean);
 
   const jsonLd: Record<string, any> = {

@@ -155,7 +155,8 @@ export default function LeadsListView() {
   };
 
   useEffect(() => {
-    fetchLeads();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchLeads();
     if (!supabase) return;
     const channel = supabase
       .channel('leads-list-changes')

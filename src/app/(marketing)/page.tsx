@@ -70,7 +70,7 @@ async function MarketPulseSection() {
       premiumUnits = cars.filter((c: any) => (c.price || 0) >= 40000).length;
       compactUnits = cars.filter((c: any) => (c.price || 0) < 25000).length;
     }
-  } catch {}
+  } catch (_) { /* inventory fetch failed — render with defaults */ }
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
       <StorefrontMarketPulse avgPrice={avgPrice} premiumUnits={premiumUnits} compactUnits={compactUnits} />
