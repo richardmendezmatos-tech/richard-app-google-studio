@@ -38,6 +38,10 @@ export async function searchInventory(
   sortBy: 'price' | 'year' | 'mileage' | 'created_at' = 'price',
 ) {
   const sb = createServerSupabaseClient();
+  if (!sb) {
+    console.error('[searchInventory] Supabase service client unavailable — check SUPABASE_SERVICE_ROLE_KEY');
+    return { cars: [], nextOffset: null };
+  }
   let query = sb.from('inventory').select('*', { count: 'estimated' });
 
   if (searchTerm) {
