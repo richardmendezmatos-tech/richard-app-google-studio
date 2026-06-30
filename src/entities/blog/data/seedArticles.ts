@@ -1110,4 +1110,264 @@ La buena noticia: ambos son vehículos excepcionales que van a durar y retener s
       { label: 'Off-road', value: 'Ambos 9/10', icon: 'performance' },
     ],
   },
+  {
+    title: 'Ford F-150 2025 en Puerto Rico: Precios, Versiones y Por Qué Es la Pickup #1',
+    slug: 'ford-f150-2025-precio-puerto-rico',
+    excerpt:
+      'La Ford F-150 2025 es la pickup más vendida en Puerto Rico. Descubre sus precios por versión, motores disponibles, capacidad de carga y por qué sigue dominando el mercado de pickups en la isla.',
+    content: `
+# Ford F-150 2025 en Puerto Rico: Precios, Versiones y Por Qué Es la Pickup #1
+
+La **Ford F-150** lleva más de 40 años consecutivos siendo la camioneta más vendida en Estados Unidos — y Puerto Rico no es la excepción. En 2025, la F-150 sigue dominando los lotes de concesionarios en toda la isla, desde Bayamón hasta Ponce. En este artículo te explicamos todo: precios, versiones, motores, y qué versión te conviene más según tu uso.
+
+## ¿Cuánto cuesta una Ford F-150 2025 en Puerto Rico?
+
+Los precios de la F-150 2025 en Puerto Rico varían significativamente según la versión (trim) y las opciones adicionales:
+
+| Versión | Precio Base (USD) | Descripción |
+|---------|------------------|-------------|
+| **Regular Cab XL** | $36,000 – $39,000 | Trabajo y utilidad básica |
+| **SuperCab XLT** | $42,000 – $48,000 | El más popular en PR |
+| **SuperCrew Lariat** | $52,000 – $60,000 | Confort y tecnología |
+| **SuperCrew King Ranch** | $62,000 – $70,000 | Lujo con alma de trabajo |
+| **SuperCrew Platinum** | $68,000 – $76,000 | Tope de gama |
+| **Raptor** | $78,000 – $90,000+ | Off-road extremo |
+
+*Precios aproximados en concesionarios de Puerto Rico. El precio final depende de opciones, Ford Credit y negociación.*
+
+## Motores disponibles en la F-150 2025
+
+La F-150 ofrece más opciones de motor que cualquier otra pickup en su categoría:
+
+### 1. V6 3.3L Ti-VCT (Motor base)
+- **290 HP / 265 lb-ft de torque**
+- Ideal para uso urbano y cargas moderadas
+- Mejor eficiencia de combustible del lineup
+- Disponible en XL y XLT
+
+### 2. EcoBoost 2.7L V6 Turbo ⭐ (El más popular)
+- **325 HP / 400 lb-ft de torque**
+- Combina potencia con eficiencia
+- Puede remolcar hasta 8,500 lbs
+- El motor favorito de los compradores en PR
+
+### 3. EcoBoost 3.5L V6 Turbo (El más potente de gasolina)
+- **400 HP / 500 lb-ft de torque**
+- Capacidad de remolque hasta 13,500 lbs
+- Disponible en Lariat, King Ranch y Platinum
+
+### 4. PowerBoost 3.5L Híbrido
+- **430 HP / 570 lb-ft de torque**
+- Generador integrado de 7.2 kW (ProPower Onboard)
+- Ideal para trabajo en el campo sin acceso a electricidad
+
+### 5. Raptor 3.5L EcoBoost High Output
+- **450 HP / 510 lb-ft**
+- Exclusivo del F-150 Raptor
+- Suspensión FOX LIVE VALVE
+
+## ¿Por qué la F-150 domina en Puerto Rico?
+
+### Versatilidad real
+En PR usamos el auto para todo: ir al trabajo, cargar materiales del Home Depot, llegar a la playa por un camino de tierra, y recoger los niños en la escuela. La F-150 hace todo esto sin quejarse.
+
+### Carga y remolque superiores
+- Capacidad de carga: hasta **2,238 lbs** en la caja
+- Capacidad de remolque: hasta **13,500 lbs** (con motor correcto)
+- Caja de aluminio militar — más liviana y resistente a la corrosión que el acero
+
+### Tecnología
+- Pantalla SYNC 4 de hasta 15.5 pulgadas
+- Pro Trailer Backup Assist (el camión se estaciona solo con el tráiler)
+- 360° Camera con vista de la caja
+- Ford Pass Connect (control remoto desde el celular)
+
+### Disponibilidad de piezas y mecánicos
+Al ser la pickup más vendida, encontrar piezas y mecánicos especializados en PR es fácil. Hay más talleres con experiencia en F-150 que en cualquier otra pickup.
+
+## F-150 vs la competencia en Puerto Rico
+
+| Característica | Ford F-150 | Chevy Silverado | RAM 1500 | Toyota Tundra |
+|---|---|---|---|---|
+| Precio base | $36k | $37k | $38k | $40k |
+| Remolque máx | 13,500 lbs | 13,300 lbs | 12,750 lbs | 12,000 lbs |
+| Carga máx | 2,238 lbs | 2,250 lbs | 2,300 lbs | 1,940 lbs |
+| Opciones de motor | 5 | 3 | 3 | 2 |
+| Garantía | 3 años/36k mi | 3 años/36k mi | 3 años/36k mi | 3 años/36k mi |
+| Retención de valor | Alta | Media | Media | Muy alta |
+
+## ¿Qué versión de la F-150 te conviene en PR?
+
+**Si haces trabajo de construcción o transporte:** XLT con EcoBoost 2.7L. Tienes toda la potencia que necesitas a un precio razonable.
+
+**Si la usas como auto familiar y de trabajo:** Lariat SuperCrew. Tienes 4 puertas cómodas para la familia y capacidad de trabajo seria.
+
+**Si quieres lo mejor de lo mejor:** King Ranch o Platinum. Interior de cuero premium, tecnología de punta, y aún así puedes jalar un bote.
+
+**Si quieres aventura off-road:** Raptor. Punto. No hay nada igual en PR para explorar carreteras de tierra.
+
+## Financiamiento de la F-150 en Puerto Rico
+
+Con **Ford Credit**, puedes estructurar tu F-150 desde:
+- XLT EcoBoost 2.7L: desde **$589/mes** a 72 meses con pronto razonable
+- Lariat: desde **$749/mes** a 72 meses
+- Garantía de fábrica: **3 años/36,000 millas** bumper-to-bumper + **5 años/60,000 millas** tren de potencia
+
+En **Richard Automotive** somos concesionario oficial Ford en Vega Alta y manejamos las aprobaciones más agresivas de la isla, incluyendo clientes con historial crediticio desafiante. Además, actualmente tenemos activo el **Bono Web de $300** para compras iniciadas en línea.
+
+## Preguntas frecuentes sobre la F-150 en Puerto Rico
+
+### ¿La F-150 consume mucho gasolina en PR?
+El motor EcoBoost 2.7L promedía 18-20 MPG en carretera — mejor que muchos SUVs medianos. En ciudad, espera 15-17 MPG dependiendo del tráfico.
+
+### ¿Se puede financiar sin pronto inicial?
+Sí. Con buen historial crediticio, Ford Credit ofrece estructuras de 0 down payment. Pregúntanos por disponibilidad.
+
+### ¿La F-150 de aluminio se oxida en Puerto Rico?
+No. El aluminio militar de la caja y la carrocería es resistente a la corrosión — una ventaja enorme en el ambiente salino de PR. El chasis sí es de acero, pero con tratamiento anticorrosión de fábrica.
+
+### ¿Cuánto vale mi pickup actual en trade-in?
+Depende del año, millaje y condición. En Richard Automotive hacemos la tasación gratis en 90 segundos — sin compromiso. [Empieza aquí](/trade-in).
+
+---
+
+**¿Listo para tu F-150?** [Ve las F-150 disponibles en nuestro inventario](/inventario?type=nuevos) o [habla con Richard directamente por WhatsApp](https://wa.me/17874010505?text=Hola%2C%20me%20interesa%20una%20Ford%20F-150%202025.%20%C2%BFQu%C3%A9%20tienen%20disponible%3F) — sin presión, sin trucos.
+    `.trim(),
+    author: 'Richard Méndez',
+    date: '2026-04-18',
+    tags: ['ford', 'f-150', 'pickup', 'precio', 'puerto rico', '2025', 'nuevos', 'financiamiento'],
+    estimatedReadingTime: '8 min',
+    metaDescription:
+      'Ford F-150 2025 en Puerto Rico: precios por versión ($36k–$90k+), motores EcoBoost, capacidad de remolque y cuál versión conviene según tu uso. Guía completa del concesionario Ford en Vega Alta.',
+    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&auto=format',
+    specs: [
+      { label: 'Desde', value: '$36,000', icon: 'fuel' },
+      { label: 'Motor base', value: 'EcoBoost 2.7L', icon: 'performance' },
+      { label: 'Remolque máx', value: '13,500 lbs', icon: 'performance' },
+      { label: 'Versiones', value: '6 trims', icon: 'fuel' },
+    ],
+  },
+  {
+    title: 'Ford Escape 2025 en Puerto Rico: ¿El SUV Compacto Perfecto para la Isla?',
+    slug: 'ford-escape-2025-precio-puerto-rico',
+    excerpt:
+      'El Ford Escape 2025 es el SUV compacto favorito de Puerto Rico: maniobrabilidad en el tráfico de San Juan, eficiencia de combustible y espacio familiar. Precios, versiones y comparativa completa.',
+    content: `
+# Ford Escape 2025 en Puerto Rico: ¿El SUV Compacto Perfecto para la Isla?
+
+Si buscas un SUV compacto en Puerto Rico, el **Ford Escape 2025** merece ser el primero en tu lista. Es lo suficientemente pequeño para el tráfico de la Expreso Luis A. Ferré, pero lo suficientemente grande para la familia, la playa y las compras del supermercado. En este artículo te damos todos los detalles: precios, versiones, motores y si realmente te conviene.
+
+## Precios del Ford Escape 2025 en Puerto Rico
+
+| Versión | Precio Aproximado | Lo que incluye |
+|---------|-----------------|----------------|
+| **Escape S** | $29,000 – $32,000 | Motor EcoBoost 1.5L, pantalla SYNC 4 de 8" |
+| **Escape SE** | $33,000 – $37,000 | El más popular — añade cámara de reversa y Apple CarPlay |
+| **Escape ST-Line** | $36,000 – $40,000 | Aspecto deportivo, suspensión ajustada |
+| **Escape Titanium** | $40,000 – $44,000 | Cuero, techo panorámico, asientos calefaccionados |
+| **Escape PHEV** | $42,000 – $47,000 | Híbrido enchufable — ahorra gasolina significativamente |
+
+*Precios referenciales para Puerto Rico. Incluyen destino; excluyen impuestos, títulos y otros cargos.*
+
+## Motores disponibles
+
+### EcoBoost 1.5L Turbo (Motor estándar)
+- **180 HP / 177 lb-ft**
+- Tracción delantera (FWD) o AWD disponible
+- 27-30 MPG combinado
+- El motor más equilibrado para uso cotidiano en PR
+
+### EcoBoost 2.0L Turbo (ST-Line y Titanium)
+- **250 HP / 280 lb-ft**
+- AWD estándar
+- Más potencia para salidas a la montaña o adelantamientos en PR-52
+- 23-28 MPG
+
+### PHEV 2.5L Atkinson + Motor Eléctrico (Plug-In Hybrid)
+- **210 HP combinados**
+- Hasta **37 millas en modo 100% eléctrico**
+- Después de esas 37 millas, funciona como híbrido normal
+- Ideal si puedes cargarlo en tu casa overnight
+- MPGe: 105 en modo eléctrico
+
+## ¿Por qué el Escape funciona tan bien en Puerto Rico?
+
+### Tamaño ideal para nuestras carreteras
+Puerto Rico tiene carreteras estrechas, semáforos apretados y parqueos pequeños. El Escape mide **4.64 metros** — más fácil de estacionar que un Expedition o un Explorer, pero más espacioso que un Bronco Sport.
+
+### Consumo de combustible
+Con gasolina a más de $3.50 en la isla, el EcoBoost 1.5L que promedía **28 MPG** te ahorra significativamente versus una pickup o SUV grande. El PHEV ahorra aún más si cargas en casa.
+
+### Confort en el tráfico
+El Escape tiene una posición de manejo elevada (sin ser exagerada), dirección precisa y suspensión calibrada para absorber los huecos de nuestras carreteras.
+
+### Tecnología de seguridad incluida
+Desde la versión SE, el Escape incluye de serie:
+- **Pre-Collision Assist** con frenado automático
+- **Lane-Keeping System**
+- **Auto High-Beam Headlamps**
+- **Ford Co-Pilot360** — suite completa de asistencia al conductor
+
+## Escape vs la competencia en PR
+
+| Modelo | Precio base | MPG | Espacio cargo | AWD disponible |
+|--------|------------|-----|--------------|----------------|
+| **Ford Escape** | $29k | 28 | 37.5 ft³ | Sí |
+| Honda CR-V | $31k | 28 | 36.3 ft³ | Sí |
+| Toyota RAV4 | $29k | 27 | 37.6 ft³ | Sí |
+| Chevrolet Equinox | $28k | 28 | 29.9 ft³ | Sí |
+| Hyundai Tucson | $28k | 26 | 38.7 ft³ | Sí |
+
+El Escape compite de tú a tú en precio y eficiencia. Su ventaja: **la red de servicio Ford** — en PR hay talleres autorizados de Aguadilla a Ponce, y las piezas llegan rápido.
+
+## ¿Qué versión del Escape te conviene?
+
+**Para uso diario urbano (San Juan, Bayamón, Carolina):** Escape SE con EcoBoost 1.5L FWD. Excelente relación precio-valor, todas las tecnologías importantes.
+
+**Si viajas a zonas altas o llueve mucho:** Escape SE o ST-Line con AWD. El AWD inteligente de Ford distribuye la potencia automáticamente.
+
+**Para familia con consciencia ambiental:** Escape PHEV. Si tienes garage para cargar overnight, el costo de gasolina baja dramáticamente.
+
+**Si quieres lo máximo:** Escape Titanium. Cuero, techo panorámico, asientos calefaccionados — viaje de lujo a precio razonable.
+
+## Financiamiento del Escape 2025 en Puerto Rico
+
+Con Ford Credit en **Richard Automotive**:
+- **Escape SE:** desde **$459/mes** a 72 meses con pronto razonable
+- **Escape Titanium:** desde **$579/mes** a 72 meses
+- Aprobación express — muchos clientes salen aprobados el mismo día
+- **Bono Web de $300** activo para compras iniciadas en línea
+
+## Preguntas frecuentes
+
+### ¿El Ford Escape tiene tracción en las 4 ruedas?
+El Escape ofrece AWD (All-Wheel Drive) inteligente — diferente al 4x4 de una pickup. Es excelente para lluvia y condiciones resbalosas, pero no es para off-road extremo. Para eso, mira el Bronco Sport.
+
+### ¿Cuántos pasajeros caben en el Escape?
+5 pasajeros cómodamente. El espacio trasero es adecuado para adultos — no tan espacioso como un Explorer o un Expedition, pero suficiente para uso familiar normal.
+
+### ¿Vale la pena el Escape PHEV en Puerto Rico?
+Si puedes cargarlo en casa todas las noches y tu uso diario es menor a 37 millas, el PHEV tiene sentido económico. Las 37 millas en modo eléctrico cubren la mayoría de los trayectos diarios en PR. El costo inicial es más alto, pero te recuperas en gasolina.
+
+### ¿El Escape 2025 tiene CarPlay y Android Auto?
+Sí. Desde la versión SE, incluye Apple CarPlay y Android Auto de forma inalámbrica en la pantalla SYNC 4 de 8 pulgadas.
+
+---
+
+**¿Te interesa el Ford Escape?** [Explora los disponibles en nuestro inventario](/inventario?type=nuevos) o [habla con Richard por WhatsApp ahora](https://wa.me/17874010505?text=Hola%2C%20me%20interesa%20el%20Ford%20Escape%202025.%20%C2%BFQu%C3%A9%20versiones%20tienen%20disponibles%3F) para una cotización personalizada con el Bono Web de $300.
+    `.trim(),
+    author: 'Richard Méndez',
+    date: '2026-04-25',
+    tags: ['ford', 'escape', 'suv', 'compacto', 'precio', 'puerto rico', '2025', 'nuevos', 'hibrido'],
+    estimatedReadingTime: '7 min',
+    metaDescription:
+      'Ford Escape 2025 en Puerto Rico: precios por versión ($29k–$47k), motores EcoBoost y PHEV, consumo de combustible y si es el SUV compacto que mejor se adapta a las carreteras de la isla.',
+    imageUrl: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=1200&auto=format',
+    specs: [
+      { label: 'Desde', value: '$29,000', icon: 'fuel' },
+      { label: 'Motor', value: 'EcoBoost 1.5L', icon: 'performance' },
+      { label: 'MPG combinado', value: '28 MPG', icon: 'fuel' },
+      { label: 'PHEV eléctrico', value: '37 millas', icon: 'performance' },
+    ],
+  },
 ];
