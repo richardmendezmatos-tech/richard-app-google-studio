@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/inventario?type=nuevos`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${SITE_URL}/inventario?type=usados`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${SITE_URL}/ford`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/vega-alta`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${SITE_URL}/match-automotriz`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${SITE_URL}/financiamiento`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/quienes-somos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
