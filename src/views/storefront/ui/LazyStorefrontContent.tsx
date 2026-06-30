@@ -10,7 +10,7 @@ interface Props {
 export function LazyStorefrontContent({ inventory }: Props) {
   return (
     <>
-      <Storefront inventory={inventory} />
+      <Storefront inventory={inventory} hideHero hideMarketPulse />
       <ContactInfoSection />
     </>
   );
