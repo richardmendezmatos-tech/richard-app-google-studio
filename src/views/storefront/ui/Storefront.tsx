@@ -58,6 +58,8 @@ interface Props {
   onOpenGarage?: () => void;
   customTitle?: string;
   customDescription?: string;
+  hideHero?: boolean;
+  hideMarketPulse?: boolean;
 }
 
 const Storefront: React.FC<Props> = ({
@@ -66,6 +68,8 @@ const Storefront: React.FC<Props> = ({
   onOpenGarage,
   customTitle,
   customDescription,
+  hideHero = false,
+  hideMarketPulse = false,
 }) => {
   const { state, actions } = useStorefrontState(inventory, onOpenGarage, onMagicFix);
   const router = useRouter();
@@ -201,11 +205,13 @@ const Storefront: React.FC<Props> = ({
         </h1>
 
         {/* Hero Section */}
-        <HeroSection
-          onNeuralMatch={() => actions.openNeuralMatch('hero')}
-          onBrowseInventory={() => router.push('/inventario')}
-          onSellCar={() => actions.openAppraisal('hero')}
-        />
+        {!hideHero && (
+          <HeroSection
+            onNeuralMatch={() => actions.openNeuralMatch('hero')}
+            onBrowseInventory={() => router.push('/inventario')}
+            onSellCar={() => actions.openAppraisal('hero')}
+          />
+        )}
 
         {/* Main Content Container (Nivel 18: Adaptive Flow) */}
         <main className="relative z-20 mx-auto -mt-20 max-w-[1600px] space-y-20 px-6 pb-28 lg:px-12 lg:pb-16">
@@ -213,13 +219,15 @@ const Storefront: React.FC<Props> = ({
             <AuthoritySection />
           </section>
 
-          <GlassContainer intensity="medium" opacity={0.03} className="p-8 lg:p-12 reveal-up">
-            <StorefrontMarketPulse
-              avgPrice={state.marketPulse?.avgPrice || 0}
-              premiumUnits={state.marketPulse?.premiumUnits || 0}
-              compactUnits={state.marketPulse?.compactUnits || 0}
-            />
-          </GlassContainer>
+          {!hideMarketPulse && (
+            <GlassContainer intensity="medium" opacity={0.03} className="p-8 lg:p-12 reveal-up">
+              <StorefrontMarketPulse
+                avgPrice={state.marketPulse?.avgPrice || 0}
+                premiumUnits={state.marketPulse?.premiumUnits || 0}
+                compactUnits={state.marketPulse?.compactUnits || 0}
+              />
+            </GlassContainer>
+          )}
 
           {/* Autos Destacados */}
           <section id="featured-inventory" className="scroll-mt-32">

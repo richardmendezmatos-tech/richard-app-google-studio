@@ -98,7 +98,7 @@ export const AuthoritySection: React.FC = () => {
               {[...Array(5)].map((_, i) => (
                 <Star key={i} size={10} className="ra-authority__star" />
               ))}
-              <span>5.0</span>
+              <span>4.9</span>
             </div>
           </div>
 
