@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { getSuggestedAPR } from '../lib/fiCalculator';
 import { CreditTier } from '@/entities/deal/model/types';
+import { trackMetaEvent } from '@/shared/lib/analytics/useMetaPixel';
 
 export const MiniDeskerClient: React.FC = () => {
   // Parámetros de Precualificación
@@ -84,6 +85,13 @@ export const MiniDeskerClient: React.FC = () => {
   const handlePreQualifyClick = (car: any) => {
     setSelectedCar(car);
     setIsModalOpen(true);
+    trackMetaEvent('InitiateCheckout', {
+      content_ids: [car.vin || car.id],
+      content_name: `${car.year} ${car.make} ${car.model}`,
+      value: car.price,
+      currency: 'USD',
+      num_items: 1,
+    });
   };
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -120,6 +128,15 @@ export const MiniDeskerClient: React.FC = () => {
         const errData = await res.json();
         throw new Error(errData.error || 'Failed to submit');
       }
+
+      trackMetaEvent('Lead', {
+        content_name: selectedCar
+          ? `${selectedCar.year} ${selectedCar.make} ${selectedCar.model}`
+          : 'Precualificación',
+        content_category: 'prequal_form',
+        value: selectedCar?.price,
+        currency: 'USD',
+      });
 
       setSubmitSuccess(true);
       setTimeout(() => {

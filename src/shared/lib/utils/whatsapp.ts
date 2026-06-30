@@ -1,4 +1,5 @@
 import { captureHotLead } from '@/shared/api/supabase/supabaseClient';
+import { trackMetaEvent } from '@/shared/lib/analytics/useMetaPixel';
 
 const WHATSAPP_NUMBER = '17873682880';
 
@@ -11,6 +12,13 @@ export function openWhatsAppWithCapture(
   const paymentStr = payment ? ` — pago estimado $${payment}/mes` : '';
   const prontoStr = pronto ? ` con pronto de $${pronto.toLocaleString()}` : '';
   const message = `Hola Richard! 👋 Me interesa el ${car.name}${priceStr}${paymentStr}${prontoStr}. ¿Está disponible? También quiero información sobre el Bono Web de $300.`;
+
+  trackMetaEvent('Lead', {
+    content_name: car.name,
+    content_category: 'whatsapp_click',
+    value: car.price,
+    currency: 'USD',
+  });
 
   captureHotLead({
     vehicleId: car.id,
