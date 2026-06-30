@@ -184,8 +184,8 @@ const VehicleDetail: React.FC<Props> = ({ inventory, car: propCar }) => {
     }
   };
 
-  const whatsappUrl = `https://wa.me/${BUSINESS_CONTACT.phone.replace(/-/g, '')}?text=${encodeURIComponent(
-    `Hola Richard, vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. Quisiera más información para comprarlo.`,
+  const whatsappUrl = `https://wa.me/1${BUSINESS_CONTACT.phone.replace(/\D/g, '')}?text=${encodeURIComponent(
+    `Hola Richard! 👋 Vi el ${car.name} (${year}) en tu web por $${car.price.toLocaleString()}. ¿Está disponible? También quiero info sobre el Bono Web de $300.`,
   )}`;
 
   return (
