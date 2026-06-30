@@ -1,5 +1,5 @@
 import React from 'react';
-import PrivacyView from '@/pages/privacy/ui/PrivacyView';
+import PrivacyView from '@/views/privacy/ui/PrivacyView';
 
 export default function PrivacyClient() {
   return (

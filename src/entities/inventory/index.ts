@@ -1,5 +1,7 @@
 export type { CarType, Car } from './model/types';
 export { CarSchema } from './model/types';
+export { StatusBadge } from './ui/StatusBadge';
+export { useVehicleStats } from './hooks/useVehicleStats';
 export { calculatePredictiveDTS } from './lib/dtsEngine';
 export { initialInventoryData } from './model/initialInventory';
 export type { InventoryRepository } from './api/InventoryRepository';

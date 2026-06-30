@@ -3,7 +3,7 @@
  * Propósito: Sincronización automática de leads de emergencia.
  */
 
-import { Lead } from '@/entities/lead';
+import type { Lead } from '@/entities/lead';
 
 export interface Rehydratable {
   saveLead: (lead: Partial<Lead>) => Promise<string>;

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PreQualifyView from '@/pages/leads/ui/PreQualifyView';
+import PreQualifyView from '@/views/leads/ui/PreQualifyView';
 import { useRouter } from 'next/navigation';
 
 /**

@@ -41,9 +41,6 @@
       "@/*": [
         "src/*"
       ],
-      "@/pages/*": [
-        "src/views/*"
-      ],
       "@infra/*": [
         "src/infra/*"
       ],

@@ -1,5 +1,5 @@
 import React from 'react';
-import FinanciamientoPage from '@/pages/financiamiento/ui/FinanciamientoPage';
+import FinanciamientoPage from '@/views/financiamiento/ui/FinanciamientoPage';
 
 export default function FinanciamientoClient() {
   return (

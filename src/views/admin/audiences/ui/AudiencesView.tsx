@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 import { SubscriberData as Subscriber } from '@/entities/lead/model/captureTypes';
 import { Users, Mail, Bell, Search, Filter, Loader2, Send } from 'lucide-react';
 import { motion } from 'framer-motion';

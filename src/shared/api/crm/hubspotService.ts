@@ -1,4 +1,4 @@
-import { Lead } from '@/entities/lead/model/LeadEntity';
+import type { Lead } from '@/entities/lead/model/LeadEntity';
 import fs from 'node:fs';
 import path from 'node:path';
 

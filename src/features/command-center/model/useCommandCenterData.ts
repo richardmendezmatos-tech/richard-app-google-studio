@@ -3,7 +3,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 
 import { Lead } from '@/entities/lead/model/types';
 import { Subscriber } from '@/shared/types/types';

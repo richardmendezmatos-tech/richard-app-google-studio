@@ -6,6 +6,7 @@ import { dispatchLeadToWebhook } from '@/shared/api/communications/webhookServic
 import { sendWhatsAppRetargeting } from '@/shared/api/communications/whatsappService';
 import { leadIntelligenceService } from './leadIntelligenceService';
 import { sendTransactionalEmail } from '@/shared/api/communications/emailService';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- valida con el Zod LeadSchema del dominio; deuda conocida, reubicar a entities/lead o features/leads
 import { LeadSchema } from '@/entities/lead/lib/leadSchema';
 
 export type { Lead };

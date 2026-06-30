@@ -139,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/pages/storefront/ui/Storefront').catch(() => {})}
+          onMouseEnter={() => import('@/views/storefront/ui/Storefront').catch(() => {})}
           icon={<ShoppingBag size={19} />}
           label={t('sidebar.storefront')}
           isCollapsed={isCollapsed}
@@ -151,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/garage');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/pages/digital-garage/ui/DigitalGaragePage').catch(() => {})}
+          onMouseEnter={() => import('@/views/digital-garage/ui/DigitalGaragePage').catch(() => {})}
           icon={<Warehouse size={19} />}
           label={t('sidebar.garage')}
           isCollapsed={isCollapsed}
@@ -163,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/qualify');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/pages/leads/ui/PreQualifyView').catch(() => {})}
+          onMouseEnter={() => import('@/views/leads/ui/PreQualifyView').catch(() => {})}
           icon={<FileCheck2 size={19} />}
           label={t('sidebar.qualify')}
           isCollapsed={isCollapsed}
@@ -175,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/trade-in');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/pages/leads/ui/TradeInView').catch(() => {})}
+          onMouseEnter={() => import('@/views/leads/ui/TradeInView').catch(() => {})}
           icon={<CarIcon size={19} />}
           label={t('sidebar.tradeIn')}
           isCollapsed={isCollapsed}
@@ -199,7 +199,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             navigate('/blog');
             setIsMobileOpen(false);
           }}
-          onMouseEnter={() => import('@/pages/blog/ui/BlogPage').catch(() => {})}
+          onMouseEnter={() => import('@/views/blog/ui/BlogPage').catch(() => {})}
           icon={<Newspaper size={19} />}
           label={t('sidebar.blog')}
           isCollapsed={isCollapsed}
@@ -259,7 +259,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 navigate('/admin/newsroom');
                 setIsMobileOpen(false);
               }}
-              onMouseEnter={() => import('@/pages/admin/newsroom/ui/NewsroomPage').catch(() => {})}
+              onMouseEnter={() => import('@/views/admin/newsroom/ui/NewsroomPage').catch(() => {})}
               icon={<Newspaper size={19} />}
               label="Newsroom"
               isCollapsed={isCollapsed}
@@ -271,7 +271,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 setIsMobileOpen(false);
               }}
               onMouseEnter={() =>
-                import('@/pages/admin/audiences/ui/AudiencesView').catch(() => {})
+                import('@/views/admin/audiences/ui/AudiencesView').catch(() => {})
               }
               icon={<UserIcon size={19} />}
               label="Audiencias"

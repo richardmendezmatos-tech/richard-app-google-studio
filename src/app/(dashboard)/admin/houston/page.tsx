@@ -29,7 +29,7 @@ import {
   Search,
   HelpCircle,
 } from 'lucide-react';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
 import SEO from '@/shared/ui/seo/SEO';
 import { createPurchaseOrderDraft } from '@/shared/api/supabase/supabaseClient';

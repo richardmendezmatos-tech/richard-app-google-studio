@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ProfilePage from '@/pages/profile/ui/ProfilePage';
+import ProfilePage from '@/views/profile/ui/ProfilePage';
 
 /**
  * Next.js App Router entry point for /profile

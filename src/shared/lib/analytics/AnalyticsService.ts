@@ -1,5 +1,5 @@
-import { Lead } from '@/entities/lead';
-import { Car } from '@/entities/inventory';
+import type { Lead } from '@/entities/lead';
+import type { Car } from '@/entities/inventory';
 
 export class AnalyticsService {
   /**

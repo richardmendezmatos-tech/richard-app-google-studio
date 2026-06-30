@@ -7,7 +7,7 @@ import { useNavigate } from '@/shared/lib/next-route-adapter';
 import SEO from '@/shared/ui/seo/SEO';
 import { Turnstile } from '@marsidev/react-turnstile';
 
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 import { usePhotoUploader } from '@/shared/lib/hooks/usePhotoUploader';
 import { getAppraisalBaseValue, appraisalVisionService } from '@/features/appraisal';
 

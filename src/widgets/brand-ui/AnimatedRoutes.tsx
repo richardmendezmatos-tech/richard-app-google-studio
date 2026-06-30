@@ -16,7 +16,7 @@ interface StorefrontProps {
   onOpenGarage: () => void;
 }
 const Storefront = React.lazy(() =>
-  lazyRetry(() => import('@/pages/storefront/ui/Storefront')),
+  lazyRetry(() => import('@/views/storefront/ui/Storefront')),
 ) as unknown as React.ComponentType<StorefrontProps>;
 interface AdminRoutesProps {
   inventory: Car[];
@@ -33,7 +33,7 @@ const AdminRoutes = React.lazy(() =>
   ),
 ) as unknown as React.ComponentType<AdminRoutesProps>;
 const StrategyLabDashboard = React.lazy(() =>
-  lazyRetry(() => import('@/pages/digital-twin/ui/DigitalTwinDashboard')),
+  lazyRetry(() => import('@/views/digital-twin/ui/DigitalTwinDashboard')),
 );
 interface AIConsultantProps {
   inventory: Car[];
@@ -41,53 +41,53 @@ interface AIConsultantProps {
 const AIConsultant = React.lazy(() =>
   lazyRetry(() => import('@/features/ai-hub/ui/AIConsultant')),
 ) as unknown as React.ComponentType<AIConsultantProps>;
-const AILabPage = React.lazy(() => lazyRetry(() => import('@/pages/ai-lab/ui/AILabPage')));
-const UserLogin = React.lazy(() => lazyRetry(() => import('@/pages/auth/ui/UserLogin')));
+const AILabPage = React.lazy(() => lazyRetry(() => import('@/views/ai-lab/ui/AILabPage')));
+const UserLogin = React.lazy(() => lazyRetry(() => import('@/views/auth/ui/UserLogin')));
 interface VehicleDetailProps {
   inventory: Car[];
 }
 const VehicleDetail = React.lazy(() =>
-  lazyRetry(() => import('@/pages/storefront/ui/VehicleDetail')),
+  lazyRetry(() => import('@/views/storefront/ui/VehicleDetail')),
 ) as unknown as React.ComponentType<VehicleDetailProps>;
-const TradeInView = React.lazy(() => lazyRetry(() => import('@/pages/leads/ui/TradeInView')));
-const AppraisalView = React.lazy(() => lazyRetry(() => import('@/pages/leads/ui/AppraisalView')));
+const TradeInView = React.lazy(() => lazyRetry(() => import('@/views/leads/ui/TradeInView')));
+const AppraisalView = React.lazy(() => lazyRetry(() => import('@/views/leads/ui/AppraisalView')));
 const ComparisonView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/comparison/ui/ComparisonView')),
+  lazyRetry(() => import('@/views/comparison/ui/ComparisonView')),
 );
 const SystemAccessLogin = React.lazy(() =>
-  lazyRetry(() => import('@/pages/auth/ui/SystemAccessLogin')),
+  lazyRetry(() => import('@/views/auth/ui/SystemAccessLogin')),
 );
-const BlogPage = React.lazy(() => lazyRetry(() => import('@/pages/blog/ui/BlogPage')));
+const BlogPage = React.lazy(() => lazyRetry(() => import('@/views/blog/ui/BlogPage')));
 
 // --- SEO Programático: Colecciones ---
 interface CollectionProps {
   inventory: Car[];
 }
 const CollectionPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/storefront/ui/CollectionPage')),
+  lazyRetry(() => import('@/views/storefront/ui/CollectionPage')),
 ) as unknown as React.ComponentType<CollectionProps>;
 
-const ProfilePage = React.lazy(() => lazyRetry(() => import('@/pages/profile/ui/ProfilePage')));
+const ProfilePage = React.lazy(() => lazyRetry(() => import('@/views/profile/ui/ProfilePage')));
 interface DigitalGarageProps {
   inventory: Car[];
   onExit: () => void;
 }
 const DigitalGaragePage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/digital-garage/ui/DigitalGaragePage')),
+  lazyRetry(() => import('@/views/digital-garage/ui/DigitalGaragePage')),
 ) as unknown as React.ComponentType<DigitalGarageProps>;
 interface PreQualifyViewProps {
   onExit: () => void;
 }
 const PreQualifyView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/leads/ui/PreQualifyView')),
+  lazyRetry(() => import('@/views/leads/ui/PreQualifyView')),
 ) as unknown as React.ComponentType<PreQualifyViewProps>;
 const GamificationVIPView = React.lazy(() =>
-  lazyRetry(() => import('@/pages/leads/ui/GamificationVIPView')),
+  lazyRetry(() => import('@/views/leads/ui/GamificationVIPView')),
 ) as unknown as React.ComponentType<{ onExit: () => void }>;
 const ExpressPrequalifyPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/leads/ui/ExpressPrequalifyPage')),
+  lazyRetry(() => import('@/views/leads/ui/ExpressPrequalifyPage')),
 );
-const PrivacyView = React.lazy(() => lazyRetry(() => import('@/pages/privacy/ui/PrivacyView')));
+const PrivacyView = React.lazy(() => lazyRetry(() => import('@/views/privacy/ui/PrivacyView')));
 const TermsView = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/TermsView')));
 const NotFound = React.lazy(() => lazyRetry(() => import('@/widgets/brand-ui/layout/NotFound')));
 const FrameworkDashboard = React.lazy(() =>
@@ -113,13 +113,13 @@ const LocalClusterView = React.lazy(() =>
   lazyRetry(() => import('@/widgets/inventory/LocalClusterView')),
 );
 const CreditAppPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/storefront/ui/CreditAppPage')),
+  lazyRetry(() => import('@/views/storefront/ui/CreditAppPage')),
 );
 const FinanciamientoPage = React.lazy(() =>
-  lazyRetry(() => import('@/pages/financiamiento/ui/FinanciamientoPage')),
+  lazyRetry(() => import('@/views/financiamiento/ui/FinanciamientoPage')),
 );
-const ContactoPage = React.lazy(() => lazyRetry(() => import('@/pages/contacto/ui/ContactoPage')));
-const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/pages/storefront/ui/CitySEOPage')));
+const ContactoPage = React.lazy(() => lazyRetry(() => import('@/views/contacto/ui/ContactoPage')));
+const CitySEOPage = React.lazy(() => lazyRetry(() => import('@/views/storefront/ui/CitySEOPage')));
 
 const CRMBoard = React.lazy(() =>
   lazyRetry(() => import('@/features/command-center/ui/CRMBoard')),

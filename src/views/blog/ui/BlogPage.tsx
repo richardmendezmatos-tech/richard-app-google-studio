@@ -5,7 +5,7 @@ import { PostConversionWidget } from '@/features/blog/ui/components/PostConversi
 import { SpecCard } from '@/features/blog/ui/components/SpecCard';
 import { BlogRelatedInventory } from '@/features/blog/ui/components/BlogRelatedInventory';
 import { BlogArticleSidebar } from '@/features/blog/ui/components/BlogArticleSidebar';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 
 import { BlogPost } from '@/shared/types/types';
 import { useBlogPosts } from '@/features/blog/hooks/useBlog';

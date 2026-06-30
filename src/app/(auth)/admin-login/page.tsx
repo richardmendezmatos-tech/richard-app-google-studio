@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import SystemAccessLogin from '@/pages/auth/ui/SystemAccessLogin';
+import SystemAccessLogin from '@/views/auth/ui/SystemAccessLogin';
 
 export default function AdminLoginPage() {
   return (

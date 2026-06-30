@@ -51,7 +51,7 @@ import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
 import { ProgressRing } from '@/shared/ui/common/ProgressRing';
 import { ImageLightbox } from '@/shared/ui/common/ImageLightbox';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
-import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
+import { StatusBadge } from '@/entities/inventory';
 import { GlassContainer } from '@/shared/ui/common/GlassContainer';
 import { motion, AnimatePresence } from 'framer-motion';
 

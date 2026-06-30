@@ -1,4 +1,5 @@
 import { WebExtractorPort, ExtractorConfig } from './WebExtractorPort';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- infra adapter usa la factory Vehicle.create() del dominio; deuda conocida, reubicar a entities/infra
 import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 
 interface AjaxInventoryResponse {
