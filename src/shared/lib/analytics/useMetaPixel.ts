@@ -62,7 +62,7 @@ export const trackMetaEvent = (eventName: string, data = {}) => {
 };
 
 export const useMetaPixel = () => {
-  const pixelId = process.env.VITE_META_PIXEL_ID;
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
   const initPixel = useCallback(() => {
     if (pixelId) initMetaPixel(pixelId);
