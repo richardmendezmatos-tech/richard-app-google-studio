@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import VehicleDetail from '@/pages/storefront/ui/VehicleDetail';
+import VehicleDetail from '@/views/storefront/ui/VehicleDetail';
 import { getCarById, getSimilarCars, getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { Car } from '@/entities/inventory';

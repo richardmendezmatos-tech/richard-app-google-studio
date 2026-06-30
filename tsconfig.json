@@ -35,7 +35,6 @@
     "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["src/*"],
-      "@/pages/*": ["src/views/*"],
       "@infra/*": ["src/infra/*"],
       "@/app/*": ["src/app/*"],
       "@app/*": ["src/app/*"]

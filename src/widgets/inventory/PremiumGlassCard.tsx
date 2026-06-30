@@ -10,7 +10,7 @@ import { OptimizedImage } from '@/shared/ui/common/OptimizedImage';
 import { AnimatedCounter } from '@/shared/ui/common/AnimatedCounter';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
-import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
+import { useVehicleStats } from '@/entities/inventory';
 import {
   calculateMonthlyPayment,
   calculateSuggestedPronto,

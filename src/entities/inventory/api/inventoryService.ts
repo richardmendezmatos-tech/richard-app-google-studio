@@ -1,11 +1,13 @@
-import { DI } from '@/app/(dashboard)/di/registry';
+import { createClient } from '@/shared/api/supabase/client';
 import { STATIC_INVENTORY_FALLBACK } from '@/shared/api/inventory/staticInventory';
 
 export const inventoryService = {
   async fetchInventory(dealerId: string) {
     try {
-      const useCase = DI.getInventoryUseCase();
-      const results = await useCase.execute(dealerId);
+      // Repository Pattern: instanciar el repo del propio dominio (sin pasar por el DI de app)
+      const { SupabaseInventoryRepository } = await import('./SupabaseInventoryRepository');
+      const repository = new SupabaseInventoryRepository(createClient());
+      const results = await repository.getInventory(dealerId);
 
       // Sentinel Check: If empty or nearly empty, augment with fallback for cinematic density
       if (!results || results.length === 0) {

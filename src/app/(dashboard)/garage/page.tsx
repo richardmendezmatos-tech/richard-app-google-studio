@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import DigitalGaragePage from '@/pages/digital-garage/ui/DigitalGaragePage';
+import DigitalGaragePage from '@/views/digital-garage/ui/DigitalGaragePage';
 import { useCars } from '@/features/inventory/hooks/useCars';
 import { useRouter } from 'next/navigation';
 

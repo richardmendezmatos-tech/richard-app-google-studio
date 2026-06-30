@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { generateBlogPost, generateCoverImage } from '@/shared/api/ai/client';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 
 import { BlogPost } from '@/shared/types/types';
 import { useBlogPosts, useCreateBlogPost } from '@/features/blog/hooks/useBlog';

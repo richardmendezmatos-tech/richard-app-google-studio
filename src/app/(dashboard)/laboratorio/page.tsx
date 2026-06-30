@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AILabPage from '@/pages/ai-lab/ui/AILabPage';
+import AILabPage from '@/views/ai-lab/ui/AILabPage';
 
 /**
  * Next.js App Router entry point for /laboratorio

@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { Car } from '@/entities/inventory';
 import { ShieldCheck, Heart, GitCompare, ChevronRight, Users, Zap } from 'lucide-react';
 import { generateVehicleSlug } from '@/shared/lib/utils/seo';
-import { StatusBadge } from '@/features/inventory/ui/StatusBadge';
+import { StatusBadge } from '@/entities/inventory/ui/StatusBadge';
 import OptimizedImage from '@/shared/ui/common/OptimizedImage';
 import { getCarImage, getCarImages, hasImage } from '@/entities/inventory/lib/carImage';
 import { CarImagePlaceholder } from '@/entities/inventory/ui/CarImagePlaceholder';
 import { calculatePredictiveDTS } from '@/entities/inventory';
 import { openWhatsAppWithCapture } from '@/shared/lib/utils/whatsapp';
-import { useVehicleStats } from '@/features/inventory/hooks/useVehicleStats';
+import { useVehicleStats } from '@/entities/inventory/hooks/useVehicleStats';
 import { calculateMonthlyPayment, calculateSuggestedPronto } from '@/shared/lib/utils/financing';
 
 interface CarCardProps {

@@ -1,4 +1,4 @@
-import { Car } from '@/entities/inventory';
+import type { Car } from '@/entities/inventory';
 
 const JAVA_BACKEND_URL =
   process.env.JAVA_BACKEND_URL || 'https://api-java-gcp.richard-automotive.com';

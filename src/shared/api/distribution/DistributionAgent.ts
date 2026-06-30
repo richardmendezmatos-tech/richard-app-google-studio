@@ -1,4 +1,4 @@
-import { Car } from '@/entities/inventory';
+import type { Car } from '@/entities/inventory';
 import { createClient } from '@/shared/api/supabase/client';
 
 export type Platform = 'facebook_marketplace' | 'clasificados_online' | 'instagram';

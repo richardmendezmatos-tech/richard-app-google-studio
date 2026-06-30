@@ -9,7 +9,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from 'lucide-react';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 
 import { LeadHealthSensor } from '@/shared/lib/resilience/LeadHealthSensor';
 import { PersuasionWrapper } from '@/shared/ui/containers/PersuasionWrapper';

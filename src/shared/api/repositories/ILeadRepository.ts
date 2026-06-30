@@ -1,4 +1,4 @@
-import { Lead } from '@/entities/lead/model/LeadEntity';
+import type { Lead } from '@/entities/lead/model/LeadEntity';
 
 export interface LeadRepository {
   getById(id: string): Promise<Lead | null>;

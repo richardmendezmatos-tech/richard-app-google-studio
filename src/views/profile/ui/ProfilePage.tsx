@@ -5,7 +5,7 @@ import { useAuthStore } from '@/entities/session';
 import { updateUserProfile, updateUserPassword, User as AppAuthUser } from '@/features/auth';
 import { usePrivacyStore } from '@/features/privacy';
 
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 import { Camera, Lock, Save, Loader2, ShieldCheck, Mail, Smartphone, Edit2, Gift } from 'lucide-react';
 import { ReferralWidget } from '@/features/referrals';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';

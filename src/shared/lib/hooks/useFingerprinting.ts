@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { BehavioralFingerprint } from '@/entities/lead';
+import type { BehavioralFingerprint } from '@/entities/lead';
 
 /**
  * useFingerprinting - Nivel 14: Orquestación Predictiva

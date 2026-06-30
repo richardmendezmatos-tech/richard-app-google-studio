@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from '@/shared/api/supabase/serverClient';
 import { LeadRepository } from '@/shared/api/repositories/ILeadRepository';
-import { Lead } from '@/entities/lead/model/LeadEntity';
+import type { Lead } from '@/entities/lead/model/LeadEntity';
 
 export class SupabaseLeadRepository implements LeadRepository {
   private tableName = 'leads';

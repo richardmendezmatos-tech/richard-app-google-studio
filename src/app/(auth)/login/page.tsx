@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import UserLogin from '@/pages/auth/ui/UserLogin';
+import UserLogin from '@/views/auth/ui/UserLogin';
 import SEO from '@/shared/ui/seo/SEO';
 
 export default function LoginPage() {

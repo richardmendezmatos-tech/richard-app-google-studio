@@ -1,5 +1,5 @@
 // src/features/inventory-sync/domain/ports/WebExtractorPort.ts
-import { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
+import type { Vehicle } from '@/entities/inventory/model/sync/Vehicle';
 
 export interface ExtractorConfig {
   targetUrls: string[];

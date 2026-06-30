@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
-import Storefront from '@/pages/storefront/ui/Storefront';
+import Storefront from '@/views/storefront/ui/Storefront';
 import { getPaginatedCars } from '@/entities/inventory/api/adapters/inventoryService';
 import { Car } from '@/entities/inventory';
 import { notFound } from 'next/navigation';

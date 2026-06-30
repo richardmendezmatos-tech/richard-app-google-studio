@@ -18,7 +18,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useNotification } from '@/shared/ui/providers/NotificationProvider';
-import { DI } from '@/app/(dashboard)/di/registry';
+import { DI } from '@/shared/di/registry';
 import { addLead } from '@/shared/api/adapters/leads/crmService';
 import { encryptSSN } from '@/shared/api/security/ssnEncryptionService';
 import { useMetaPixel } from '@/shared/lib/analytics/useMetaPixel';
