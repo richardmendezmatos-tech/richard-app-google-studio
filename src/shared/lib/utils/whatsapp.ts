@@ -7,7 +7,10 @@ export function openWhatsAppWithCapture(
   payment?: number,
   pronto?: number,
 ) {
-  const message = `Hola Richard! 👋 Me interesa el ${car.name}.${payment ? ` Vi que tiene un pago estimado de $${payment}/mes` : ''}${pronto ? ` con pronto de $${pronto.toLocaleString()}` : ''}. ¿Está disponible?`;
+  const priceStr = car.price ? ` a $${car.price.toLocaleString()}` : '';
+  const paymentStr = payment ? ` — pago estimado $${payment}/mes` : '';
+  const prontoStr = pronto ? ` con pronto de $${pronto.toLocaleString()}` : '';
+  const message = `Hola Richard! 👋 Me interesa el ${car.name}${priceStr}${paymentStr}${prontoStr}. ¿Está disponible? También quiero información sobre el Bono Web de $300.`;
 
   captureHotLead({
     vehicleId: car.id,
