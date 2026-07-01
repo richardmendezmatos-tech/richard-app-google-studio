@@ -15,7 +15,7 @@ interface HealthMetrics {
   isLoading: boolean;
 }
 
-export const BusinessHealthWidget: React.FC = () => {
+export const BusinessVelocityWidget: React.FC = () => {
   const { currentDealer } = useDealer();
   const [metrics, setMetrics] = useState<HealthMetrics>({
     leadVelocity: 0,
@@ -61,7 +61,7 @@ export const BusinessHealthWidget: React.FC = () => {
           isLoading: false,
         });
       } catch (err) {
-        console.error('[BusinessHealthWidget] Failed to load metrics:', err);
+        console.error('[BusinessVelocityWidget] Failed to load metrics:', err);
         setMetrics((prev) => ({ ...prev, isLoading: false }));
       }
     };

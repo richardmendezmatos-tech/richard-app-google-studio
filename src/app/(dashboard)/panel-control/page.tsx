@@ -34,7 +34,7 @@ const NewsroomControlWidget = dynamic(() => import('@/features/houston/ui/compon
 const TelemetryFeedWidget = dynamic(() => import('@/features/dashboard/ui/TelemetryFeedWidget'), { ssr: false });
 const SentinelLocalSEO = dynamic(() => import('@/features/command-center/ui/SentinelLocalSEO').then(m => m.SentinelLocalSEO), { ssr: false });
 const SentinelFinancialOptimizer = dynamic(() => import('@/features/command-center/ui/SentinelFinancialOptimizer').then(m => m.SentinelFinancialOptimizer), { ssr: false });
-const BusinessHealthWidget = dynamic(() => import('@/widgets/dashboard/ui/BusinessHealthWidget').then(m => m.BusinessHealthWidget), { ssr: false });
+const SystemVitalityWidget = dynamic(() => import('@/widgets/dashboard/ui/SystemVitalityWidget').then(m => m.SystemVitalityWidget), { ssr: false });
 const MarketPulseWidget = dynamic(() => import('@/features/market-intelligence/ui/MarketPulseWidget').then(m => m.MarketPulseWidget), { ssr: false });
 const SentinelDistributionWidget = dynamic(() => import('@/features/command-center/ui/SentinelDistributionWidget').then(m => m.SentinelDistributionWidget), { ssr: false });
 
@@ -372,7 +372,7 @@ export default function CommandCenterPage() {
                     <SentinelFinancialOptimizer />
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                    <BusinessHealthWidget />
+                    <SystemVitalityWidget />
                   </motion.div>
                 </div>
               </div>
@@ -402,7 +402,7 @@ export default function CommandCenterPage() {
                 <SentinelFinancialOptimizer />
               </motion.div>
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <BusinessHealthWidget />
+                <SystemVitalityWidget />
               </motion.div>
             </div>
           </div>
