@@ -43,10 +43,11 @@ async function verifyGithubMCP() {
 
         // Demonstrate a simple repository search as verification
         console.log("🔍 Checking repository visibility...");
+        const owner = process.env.GITHUB_OWNER || "richardmendezmatos-tech";
         const result = await client.callTool({
             name: "search_repositories",
             arguments: {
-                query: "richard-app-google-studio"
+                query: `user:${owner}`
             }
         });
 
