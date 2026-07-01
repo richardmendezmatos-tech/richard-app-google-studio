@@ -90,6 +90,12 @@ export default function AdminPage() {
             Users
           </button>
           <a
+            href="/admin/deal-desker"
+            className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-white"
+          >
+            Deal Desker
+          </a>
+          <a
             href="/admin/houston"
             className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
           >
