@@ -3,6 +3,16 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import SEO from '@/shared/ui/seo/SEO';
+import { Activity, TrendingUp, Bot, FlaskConical, Calculator } from 'lucide-react';
+
+// Hub unificado: acceso a las demás superficies admin desde un punto único
+const ADMIN_TOOLS = [
+  { href: '/admin/deal-desker', label: 'Deal Desker F&I', icon: Calculator, desc: 'Estructuración de negocios F&I (four-square)' },
+  { href: '/panel-control', label: 'Panel de Control', icon: Activity, desc: 'Monitoreo de sistema en tiempo real' },
+  { href: '/panel-control/marketing', label: 'Marketing', icon: TrendingUp, desc: 'Fuentes de leads y embudo de conversión' },
+  { href: '/consultant', label: 'Consultor IA', icon: Bot, desc: 'Chat asesor cara al cliente' },
+  { href: '/laboratorio', label: 'AI Lab', icon: FlaskConical, desc: 'Chat, voz, visión, video y sandbox' },
+];
 
 const CRMBoard = dynamic(() => import('@/features/command-center/ui/CRMBoard'), {
   ssr: false,
@@ -90,12 +100,6 @@ export default function AdminPage() {
             Users
           </button>
           <a
-            href="/admin/deal-desker"
-            className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-white"
-          >
-            Deal Desker
-          </a>
-          <a
             href="/admin/houston"
             className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-md hover:scale-105"
           >
@@ -103,6 +107,27 @@ export default function AdminPage() {
           </a>
         </nav>
       </header>
+
+      {/* Hub unificado de herramientas admin */}
+      <div className="px-4 py-2.5 border-b border-white/5 bg-slate-950/40 flex items-center gap-2 overflow-x-auto flex-nowrap">
+        <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] shrink-0 mr-1">
+          Herramientas
+        </span>
+        {ADMIN_TOOLS.map((tool) => {
+          const Icon = tool.icon;
+          return (
+            <a
+              key={tool.href}
+              href={tool.href}
+              title={tool.desc}
+              className="group shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all"
+            >
+              <Icon size={12} className="text-cyan-400 group-hover:scale-110 transition-transform" />
+              {tool.label}
+            </a>
+          );
+        })}
+      </div>
 
       <main className="p-6">
         <React.Suspense
