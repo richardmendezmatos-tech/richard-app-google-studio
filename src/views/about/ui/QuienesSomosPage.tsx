@@ -29,9 +29,7 @@ const CREDENTIALS = [
   'Especialista certificado en Finance & Insurance (F&I)',
   'Dealer Autorizado Ford Motor Company — Central Ford',
   'Licenciado por el DTOP de Puerto Rico',
-  'Afiliado a la Puerto Rico Automobile Dealers Association (PRADA)',
   'Certificación Ford Product Training — nivel avanzado',
-  'Miembro activo de la cámara de comercio de Vega Alta',
 ];
 
 const REVIEWS = [
@@ -376,7 +374,7 @@ export function QuienesSomosPage() {
               { icon: Award, label: 'Ford Dealer Award', sub: 'Certificación Oficial' },
               { icon: ShieldCheck, label: 'DTOP Licenciado', sub: 'Puerto Rico' },
               { icon: Star, label: '4.9 / 5.0 estrellas', sub: 'Google Reviews' },
-              { icon: Users, label: 'PRADA Miembro', sub: 'Dealers Association PR' },
+              { icon: TrendingUp, label: 'Especialista F&I', sub: 'Finance & Insurance' },
             ].map(({ icon: Icon, label, sub }) => (
               <div
                 key={label}
