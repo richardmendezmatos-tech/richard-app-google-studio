@@ -12,7 +12,7 @@ interface HealthMetric {
   icon: React.ReactNode;
 }
 
-export const BusinessHealthWidget: React.FC = () => {
+export const SystemVitalityWidget: React.FC = () => {
   const [metrics, setMetrics] = useState<HealthMetric[]>([
     {
       label: 'Edge Latency',

@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { HoustonTelemetry } from '@/entities/houston';
 import { OutreachOpportunity } from '@/entities/lead';
-import { BusinessHealthWidget } from '@/features/houston/ui/components/BusinessHealthWidget';
+import { BusinessVelocityWidget } from '@/features/houston/ui/components/BusinessVelocityWidget';
 
 export const PipelineTab: React.FC<{
   opportunities: OutreachOpportunity[];
@@ -128,7 +128,7 @@ export const PipelineTab: React.FC<{
               />
             </div>
           </div>
-          <BusinessHealthWidget />
+          <BusinessVelocityWidget />
         </div>
       </div>
 

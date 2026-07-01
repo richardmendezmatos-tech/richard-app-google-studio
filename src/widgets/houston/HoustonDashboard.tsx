@@ -33,7 +33,6 @@ import { DI } from '@/shared/di/registry';
 import { HoustonTelemetry } from '@/entities/houston';
 import { OutreachOpportunity } from '@/entities/lead';
 import { useMouseGlow } from '@/shared/ui/hooks/useMouseGlow';
-import { BusinessHealthWidget } from '@/features/houston/ui/components/BusinessHealthWidget';
 import { SourcingLogWidget } from '@/features/houston/ui/components/SourcingLogWidget';
 import { useBusinessTelemetry } from '@/entities/houston/api/useBusinessTelemetry';
 

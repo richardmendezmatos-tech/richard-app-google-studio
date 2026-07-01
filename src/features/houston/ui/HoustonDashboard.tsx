@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import styles from './HoustonDashboard.module.css';
 import { HoustonTerminalLog } from './components/HoustonTerminalLog';
-import { BusinessHealthWidget } from './components/BusinessHealthWidget';
+import { BusinessVelocityWidget } from './components/BusinessVelocityWidget';
 import { LeadIntelligenceWidget } from './components/LeadIntelligenceWidget';
 import { NeuralSearchTicker } from './components/NeuralSearchTicker';
 import { WhatsAppOperationsHUD } from './components/WhatsAppOperationsHUD';
@@ -164,7 +164,7 @@ export const HoustonDashboard: React.FC = () => {
           <SourcingLogWidget orders={businessData?.purchaseOrders || []} onUpdate={refreshBiz} />
           <WhatsAppOperationsHUD stats={businessData?.whatsappStats} />
 
-          <BusinessHealthWidget />
+          <BusinessVelocityWidget />
         </div>
 
         {/* COL RIGHT: System Telemetry (Sentinel) */}
