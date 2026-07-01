@@ -1,7 +1,6 @@
 import { WhatsAppRepository } from '@/shared/api/repositories/IWhatsAppRepository';
-import { generateObject } from 'ai';
 import { z } from 'zod';
-import { gemini15Flash } from '@/features/ai-hub/api/aiManager';
+import { sentinelAI } from '@/shared/api/ai/sentinelAI';
 import { WHATSAPP_AGENT_SYSTEM_PROMPT, buildWhatsAppUserPrompt } from './WhatsAppAgent.prompt';
 import { conversationMemory } from '@/shared/api/ai/conversationMemory';
 import { houstonHandoffService } from '@/features/houston/api/HoustonHandoffService';
@@ -108,13 +107,11 @@ export class WhatsAppAgent {
 
     let parsed: WhatsAppResponse;
     try {
-      const { object } = await generateObject({
-        model: gemini15Flash,
-        schema: WhatsAppResponseSchema,
-        system: WHATSAPP_AGENT_SYSTEM_PROMPT,
-        prompt: userPrompt,
-      });
-      parsed = object;
+      parsed = await sentinelAI.generateStructuredObject(
+        WhatsAppResponseSchema,
+        userPrompt,
+        WHATSAPP_AGENT_SYSTEM_PROMPT,
+      );
     } catch (err) {
       console.error('[WhatsAppAgent] generateObject failed:', err);
       parsed = {

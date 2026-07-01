@@ -259,6 +259,29 @@ export const sentinelAI = {
   },
 
   /**
+   * Classifies a prompt into one of a fixed set of enum values.
+   */
+  async classifyEnum(
+    enumValues: readonly string[],
+    prompt: string,
+    temperature: number = 0,
+  ): Promise<string> {
+    try {
+      const { object } = await generateObject({
+        model: google('gemini-2.0-flash'),
+        output: 'enum',
+        enum: enumValues as string[],
+        prompt,
+        temperature,
+      });
+      return object;
+    } catch (error: any) {
+      this.logError('ClassifyEnum', error);
+      throw error;
+    }
+  },
+
+  /**
    * Generic text generation for administrative tasks.
    */
   async quickGen(prompt: string, system?: string): Promise<string> {
